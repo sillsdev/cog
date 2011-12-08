@@ -64,8 +64,8 @@ namespace SIL.Cog
 				{
 					if (!first)
 						sb.Append(" ");
-					string strRep1 = tuple.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
-					string strRep2 = tuple.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
+					var strRep1 = (string) tuple.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+					var strRep2 = (string) tuple.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
 					sb.Append(strRep1.PadRight(Math.Max(GetLength(strRep1), GetLength(strRep2))));
 					first = false;
 				}
@@ -87,8 +87,8 @@ namespace SIL.Cog
 				{
 					if (!first)
 						sb.Append(" ");
-					string strRep1 = tuple.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
-					string strRep2 = tuple.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
+					var strRep1 = (string) tuple.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+					var strRep2 = (string) tuple.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
 					sb.Append(strRep2.PadRight(Math.Max(GetLength(strRep1), GetLength(strRep2))));
 					first = false;
 				}
@@ -109,7 +109,7 @@ namespace SIL.Cog
 				return "";
 
 			return startNode.GetNodes(endNode).Aggregate(new StringBuilder(),
-				(str, node) => str.Append(node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single())).ToString();
+				(str, node) => str.Append((string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep))).ToString();
 		}
 
 		private int GetLength(string str)

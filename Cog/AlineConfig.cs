@@ -15,7 +15,7 @@ namespace SIL.Cog
 		private readonly Segmenter _segmenter;
 		private readonly IDBearerSet<SymbolicFeature> _relevantVowelFeatures;
 		private readonly IDBearerSet<SymbolicFeature> _relevantConsFeatures;
-		private readonly Dictionary<Tuple<string, string>, SegmentPair> _segmentPairs;
+		private readonly Dictionary<Tuple<string, string>, SegmentPair> _segmentCorrespondences;
 
 		public AlineConfig(SpanFactory<ShapeNode> spanFactory, string configFilePath)
 		{
@@ -25,7 +25,7 @@ namespace SIL.Cog
 			_segmenter = new Segmenter(spanFactory);
 			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>();
 			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>();
-			_segmentPairs = new Dictionary<Tuple<string, string>, SegmentPair>();
+			_segmentCorrespondences = new Dictionary<Tuple<string, string>, SegmentPair>();
 		}
 
 		public SpanFactory<ShapeNode> SpanFactory
@@ -53,14 +53,19 @@ namespace SIL.Cog
 			get { return _relevantConsFeatures; }
 		}
 
-		public void AddSegmentPair(SegmentPair pair)
+		public IEnumerable<SegmentPair> SegmentCorrespondences
 		{
-			_segmentPairs[Tuple.Create(pair.U, pair.V)] = pair;
+			get { return _segmentCorrespondences.Values; }
 		}
 
-		public bool TryGetSegmentPair(string u, string v, out SegmentPair pair)
+		public void AddSegmentCorrespondence(SegmentPair pair)
 		{
-			return _segmentPairs.TryGetValue(Tuple.Create(u, v), out pair);
+			_segmentCorrespondences[Tuple.Create(pair.U, pair.V)] = pair;
+		}
+
+		public bool TryGetSegmentCorrespondence(string u, string v, out SegmentPair pair)
+		{
+			return _segmentCorrespondences.TryGetValue(Tuple.Create(u, v), out pair);
 		}
 
 		public void Load()

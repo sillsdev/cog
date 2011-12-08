@@ -4,13 +4,15 @@
 	{
 		private readonly string _u;
 		private readonly string _v;
-		private readonly int _coocurCount;
+		private readonly int _linkCount;
+		private readonly double _corrProb;
 
-		public SegmentPair(string u, string v, int cooccurCount)
+		public SegmentPair(string u, string v, int linkCount, double corrProb)
 		{
 			_u = u;
 			_v = v;
-			_coocurCount = cooccurCount;
+			_linkCount = linkCount;
+			_corrProb = corrProb;
 		}
 
 		public string U
@@ -23,13 +25,14 @@
 			get { return _v; }
 		}
 
-		public int CooccurCount
+		public int LinkCount
 		{
-			get { return _coocurCount; }
+			get { return _linkCount; }
 		}
 
-		public double Score { get; set; }
-		public int LinkCount { get; set; }
-		public double CorrespondenceProbability { get; set; }
+		public double CorrespondenceProbability
+		{
+			get { return _corrProb; }
+		}
 	}
 }

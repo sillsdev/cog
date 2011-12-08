@@ -35,7 +35,7 @@ namespace SIL.Cog
 		public override string ToString()
 		{
 			return _shape.Aggregate(new StringBuilder(),
-				(sb, node) => sb.Append(node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single())).ToString();
+				(sb, node) => sb.Append((string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep))).ToString();
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace SIL.Cog
 		public static int Main(string[] args)
 		{
 			var spanFactory = new SpanFactory<ShapeNode>((x, y) => x.CompareTo(y), (start, end) => start.GetNodes(end).Count(), true);
-			var config = new AlineConfig(spanFactory, ".\\xml\\ipa-aline.xml");
+			var config = new AlineConfig(spanFactory, "data\\ipa-aline.xml");
 			config.Load();
 
 			WordIndex index;
@@ -26,102 +26,69 @@ namespace SIL.Cog
 			string lang2 = args[2];
 
 			var writer = new StreamWriter(args[3]);
-			HashSet<string> lang1Segments = GetUniqueSegments(index.GetLanguageWords(lang1));
-			HashSet<string> lang2Segments = GetUniqueSegments(index.GetLanguageWords(lang2));
-
-			var pairs = new HashSet<SegmentPair>();
-			foreach (string u in lang1Segments)
+			var pairLinkCounts = new Dictionary<Tuple<string, string>, int>();
+			var lang1LinkCounts = new Dictionary<string, int>();
+			var lang2LinkCounts = new Dictionary<string, int>();
+			foreach (string gloss in index.Glosses)
 			{
-				foreach (string v in lang2Segments)
+				Word lang1Word, lang2Word;
+				if (index.TryGetWord(gloss, lang1, out lang1Word) && index.TryGetWord(gloss, lang2, out lang2Word))
 				{
-					int aCoocur = 0;
-					int bCoocur = 0;
-					int cCoocur = 0;
-					int dCoocur = 0;
-					foreach (string gloss in index.Glosses)
+					var aline = new Aline(config, lang1Word.Shape, lang2Word.Shape);
+					Alignment alignment = aline.GetAlignments().First();
+					Annotation<ShapeNode> ann1 = alignment.Shape1.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+					Annotation<ShapeNode> ann2 = alignment.Shape2.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+					if (ann1 != null && ann2 != null)
 					{
-						Word lang1Word, lang2Word;
-						if (index.TryGetWord(gloss, lang1, out lang1Word) && index.TryGetWord(gloss, lang2, out lang2Word))
+						foreach (Tuple<ShapeNode, ShapeNode> possibleLink in alignment.Shape1.GetNodes(ann1.Span).Zip(alignment.Shape2.GetNodes(ann2.Span)))
 						{
-							int uFreq = lang1Word.Shape.Count(seg => seg.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Contains(u));
-							int vFreq = lang2Word.Shape.Count(seg => seg.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Contains(v));
-							int notUFreq = lang1Word.Shape.Count(seg => !seg.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Contains(u));
-							int notVFreq = lang2Word.Shape.Count(seg => !seg.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Contains(v));
-
-							aCoocur += Math.Min(uFreq, vFreq);
-							bCoocur += Math.Min(notUFreq, vFreq);
-							cCoocur += Math.Min(uFreq, notVFreq);
-							dCoocur += Math.Min(notUFreq, notVFreq);
-						}
-					}
-
-					pairs.Add(new SegmentPair(u, v, aCoocur) { Score = aCoocur == 0 ? double.NegativeInfinity : Stats.LogLikelihoodRatio(aCoocur, bCoocur, cCoocur, dCoocur) });
-				}
-			}
-
-			double threshold = 0.0;
-			bool converged = false;
-			var correspondences = new Dictionary<Tuple<string, string>, SegmentPair>();
-			while (!converged)
-			{
-				correspondences.Clear();
-				foreach (SegmentPair pair in pairs.OrderByDescending(pair => pair.Score))
-				{
-					if (pair.Score >= threshold)
-						correspondences[Tuple.Create(pair.U, pair.V)] = pair;
-					pair.LinkCount = 0;
-				}
-
-				int totalLinkCount = 0;
-				foreach (string gloss in index.Glosses)
-				{
-					Word lang1Word, lang2Word;
-					if (index.TryGetWord(gloss, lang1, out lang1Word) && index.TryGetWord(gloss, lang2, out lang2Word))
-					{
-						var aline = new Aline(config, lang1Word.Shape, lang2Word.Shape);
-						Alignment alignment = aline.GetAlignment();
-						Annotation<ShapeNode> ann1 = alignment.Shape1.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-						Annotation<ShapeNode> ann2 = alignment.Shape2.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-						if (ann1 != null && ann2 != null)
-						{
-							foreach (Tuple<ShapeNode, ShapeNode> possibleLink in alignment.Shape1.GetNodes(ann1.Span).Zip(alignment.Shape2.GetNodes(ann2.Span)))
+							var u = (string) possibleLink.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+							var v = (string) possibleLink.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+							if (possibleLink.Item1.Annotation.Type != CogFeatureSystem.NullType && possibleLink.Item2.Annotation.Type != CogFeatureSystem.NullType)
 							{
-								string u = possibleLink.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
-								string v = possibleLink.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
-								SegmentPair pair;
-								if (correspondences.TryGetValue(Tuple.Create(u, v), out pair))
-								{
-									pair.LinkCount++;
-									totalLinkCount++;
-								}
+								Tuple<string, string> key = Tuple.Create(u, v);
+								if (!pairLinkCounts.ContainsKey(key))
+									pairLinkCounts[key] = 0;
+								pairLinkCounts[key]++;
+							}
+
+							if (possibleLink.Item1.Annotation.Type != CogFeatureSystem.NullType)
+							{
+								if (!lang1LinkCounts.ContainsKey(u))
+									lang1LinkCounts[u] = 0;
+								lang1LinkCounts[u]++;
+							}
+
+							if (possibleLink.Item2.Annotation.Type != CogFeatureSystem.NullType)
+							{
+								if (!lang2LinkCounts.ContainsKey(v))
+									lang2LinkCounts[v] = 0;
+								lang2LinkCounts[v]++;
 							}
 						}
 					}
 				}
+			}
 
-				converged = true;
-				foreach (SegmentPair pair in pairs)
+			foreach (KeyValuePair<Tuple<string, string>, int> pairLinkCount in pairLinkCounts)
+			{
+				if (pairLinkCount.Key.Item1 != pairLinkCount.Key.Item2 && pairLinkCount.Value > 1)
 				{
-					double newProb = (double)pair.LinkCount / totalLinkCount;
-					if (Math.Abs(newProb - pair.CorrespondenceProbability) > 0.0001)
-						converged = false;
-					pair.CorrespondenceProbability = newProb;
-					pair.Score = Math.Log(pair.CorrespondenceProbability);
+					double lang1Prob = (double) pairLinkCount.Value/lang1LinkCounts[pairLinkCount.Key.Item1];
+					double lang2Prob = (double) pairLinkCount.Value/lang2LinkCounts[pairLinkCount.Key.Item2];
+					double prob = lang1Prob * lang2Prob;
+					var pair = new SegmentPair(pairLinkCount.Key.Item1, pairLinkCount.Key.Item2, pairLinkCount.Value, prob);
+					config.AddSegmentCorrespondence(pair);
 				}
-				threshold = Math.Log(3.0 / totalLinkCount);
 			}
 
 			var sb = new StringBuilder();
 			sb.AppendFormat("{0}\t{1}\tProb\tLink Count", lang1, lang2);
 			sb.AppendLine();
-			foreach (SegmentPair pair in correspondences.Values.OrderByDescending(pair => pair.CorrespondenceProbability))
+			foreach (SegmentPair correspondence in config.SegmentCorrespondences.Where(corr => corr.CorrespondenceProbability > 0.02).OrderByDescending(corr => corr.CorrespondenceProbability))
 			{
-				if (pair.U != pair.V)
-				{
-					sb.AppendFormat("{0}\t{1}\t{2}\t{3}", pair.U, pair.V, pair.CorrespondenceProbability, pair.LinkCount);
-					sb.AppendLine();
-					config.AddSegmentPair(pair);
-				}
+				sb.AppendFormat("{0}\t{1}\t{2:0.0####}\t{3}", correspondence.U, correspondence.V, correspondence.CorrespondenceProbability, correspondence.LinkCount);
+				sb.AppendLine();
 			}
 			writer.WriteLine(sb);
 
@@ -134,7 +101,7 @@ namespace SIL.Cog
 				if (index.TryGetWord(gloss, lang1, out lang1Word) && index.TryGetWord(gloss, lang2, out lang2Word))
 				{
 					var aline = new Aline(config, lang1Word.Shape, lang2Word.Shape);
-					Alignment alignment = aline.GetAlignment();
+					Alignment alignment = aline.GetAlignments().First();
 					totalScore += alignment.Score;
 					if (alignment.Score >= 0.75)
 						cognates.Add(Tuple.Create(alignment, gloss));
@@ -156,14 +123,6 @@ namespace SIL.Cog
 			writer.Close();
 
 			return 0;
-		}
-
-		private static HashSet<string> GetUniqueSegments(IEnumerable<Word> words)
-		{
-			return new HashSet<string>(from word in words
-									   from node in word.Shape
-									   where node.Annotation.Type.IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType)
-									   select node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single());
 		}
 
 		private static bool CreateWordIndex(string wordFilePath, Segmenter segmenter, out WordIndex index)

@@ -12,8 +12,7 @@ namespace SIL.Cog
 		private const int MaxSubstitutionScore = 35 * Precision;
 		private const int MaxExpansionScore = 45 * Precision;
 		private const int DeletionCost = 10 * Precision;
-		private const int VowelCost = 10 * Precision;
-		private const int CorrespondenceScore = 15 * Precision;
+		private const int VowelCost = 0 * Precision;
  
 		private readonly AlineConfig _config;
 		private readonly Shape _shape1;
@@ -30,7 +29,17 @@ namespace SIL.Cog
 			_bestScore = ComputeSimilarityMatrix();
 		}
 
-		public Alignment GetAlignment()
+		public IEnumerable<Alignment> GetAlignments()
+		{
+			return GetAlignments(_bestScore, false);
+		}
+
+		public IEnumerable<Alignment> GetAlignments(double scoreMargin)
+		{
+			return GetAlignments((int) (scoreMargin * _bestScore), true);
+		}
+
+		private IEnumerable<Alignment> GetAlignments(int threshold, bool all)
 		{
 			ShapeNode node1 = _shape1.First;
 			for (int i = 1; i < _shape1.Count + 1; i++)
@@ -38,23 +47,23 @@ namespace SIL.Cog
 				ShapeNode node2 = _shape2.First;
 				for (int j = 1; j < _shape2.Count + 1; j++)
 				{
-					if (_sim[i, j] >= _bestScore)
+					if (_sim[i, j] >= threshold)
 					{
 						IEnumerable<Tuple<Shape, Shape, int>> alignments;
-						if (Retrieve(node1, node2, i, j, 0, CreateEmptyShape(), CreateEmptyShape(), _bestScore, false, out alignments))
+						if (Retrieve(node1, node2, i, j, 0, CreateEmptyShape(), CreateEmptyShape(), threshold, all, out alignments))
 						{
-							Tuple<Shape, Shape, int> alignment = alignments.Single();
-							AddNodesToEnd(node1.Next, alignment.Item1);
-							AddNodesToEnd(node2.Next, alignment.Item2);
-							return new Alignment(alignment.Item1, alignment.Item2, CalcNormalizedScore(alignment.Item1, alignment.Item2, alignment.Item3));
+							foreach (Tuple<Shape, Shape, int> alignment in alignments)
+							{
+								AddNodesToEnd(node1.Next, alignment.Item1);
+								AddNodesToEnd(node2.Next, alignment.Item2);
+								yield return new Alignment(alignment.Item1, alignment.Item2, CalcNormalizedScore(alignment.Item1, alignment.Item2, alignment.Item3));
+							}
 						}
 					}
 					node2 = node2.Next;
 				}
 				node1 = node1.Next;
 			}
-
-			return null;
 		}
 
 		private int ComputeSimilarityMatrix()
@@ -130,7 +139,7 @@ namespace SIL.Cog
 			if (_sim[i, j - 1] + opScore + score >= threshold)
 			{
 				Shape newShape1 = shape1.Clone();
-				newShape1.Insert(newShape1.Begin, CogFeatureSystem.NullType, FeatureStruct.New(CogFeatureSystem.Instance).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
+				newShape1.Insert(newShape1.Begin, CogFeatureSystem.NullType, FeatureStruct.New().Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 				Shape newShape2 = shape2.Clone();
 				newShape2.Insert(newShape2.Begin, node2.Clone());
 				IEnumerable<Tuple<Shape, Shape, int>> curAlignments;
@@ -153,8 +162,8 @@ namespace SIL.Cog
 					Shape newShape2 = shape2.Clone();
 					FeatureStruct fs = node2.Prev.Annotation.FeatureStruct.Clone();
 					fs.Merge(node2.Annotation.FeatureStruct);
-					fs.AddValue(CogFeatureSystem.StrRep, node2.Prev.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single()
-						+ node2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single());
+					fs.AddValue(CogFeatureSystem.StrRep, (string) node2.Prev.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)
+						+ (string) node2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
 					newShape2.Insert(newShape2.Begin, node2.Prev.Annotation.Type, fs);
 					IEnumerable<Tuple<Shape, Shape, int>> curAlignments;
 					if (Retrieve(node1.Prev, node2.Prev.Prev, i - 1, j - 2, score + opScore, newShape1, newShape2, threshold, all, out curAlignments))
@@ -173,7 +182,7 @@ namespace SIL.Cog
 				Shape newShape1 = shape1.Clone();
 				newShape1.Insert(newShape1.Begin, node1.Clone());
 				Shape newShape2 = shape2.Clone();
-				newShape2.Insert(newShape2.Begin, CogFeatureSystem.NullType, FeatureStruct.New(CogFeatureSystem.Instance).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
+				newShape2.Insert(newShape2.Begin, CogFeatureSystem.NullType, FeatureStruct.New().Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 				IEnumerable<Tuple<Shape, Shape, int>> curAlignments;
 				if (Retrieve(node1.Prev, node2, i - 1, j, score + opScore, newShape1, newShape2, threshold, all, out curAlignments))
 				{
@@ -192,8 +201,8 @@ namespace SIL.Cog
 					Shape newShape1 = shape1.Clone();
 					FeatureStruct fs = node1.Prev.Annotation.FeatureStruct.Clone();
 					fs.Merge(node1.Annotation.FeatureStruct);
-					fs.AddValue(CogFeatureSystem.StrRep, node1.Prev.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single()
-						+ node1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single());
+					fs.AddValue(CogFeatureSystem.StrRep, (string) node1.Prev.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)
+						+ (string) node1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
 					newShape1.Insert(newShape1.Begin, node1.Prev.Annotation.Type, fs);
 					Shape newShape2 = shape2.Clone();
 					newShape2.Insert(newShape2.Begin, node2.Clone());
@@ -264,11 +273,11 @@ namespace SIL.Cog
 
 			int delta = features.Aggregate(0, (val, feat) => val + (Diff(p, q, feat) * (int) feat.Weight));
 
-			string pStrRep = p.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
-			string qStrRep = q.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep).Values.Single();
-			SegmentPair pair;
-			if (_config.TryGetSegmentPair(pStrRep, qStrRep, out pair))
-				return Math.Max(0, delta - (int) ((pair.CorrespondenceProbability * 100.0) * CorrespondenceScore));
+			var pStrRep = (string) p.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+			var qStrRep = (string) q.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+			SegmentPair correspondence;
+			if (_config.TryGetSegmentCorrespondence(pStrRep, qStrRep, out correspondence))
+				return (int) (delta * (1.0 - correspondence.CorrespondenceProbability));
 			return delta;
 		}
 

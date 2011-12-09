@@ -11,7 +11,7 @@ namespace SIL.Cog
 	{
 		public static int Main(string[] args)
 		{
-			var spanFactory = new SpanFactory<ShapeNode>((x, y) => x.CompareTo(y), (start, end) => start.GetNodes(end).Count(), true);
+			var spanFactory = new ShapeSpanFactory();
 			var config = new AlineConfig(spanFactory, "data\\ipa-aline.xml");
 			config.Load();
 

@@ -68,8 +68,8 @@ namespace SIL.Cog
 		{
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString());
-			shape = new Shape(_spanFactory, new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, new FeatureStruct()),
-				new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, new FeatureStruct()));
+			shape = new Shape(_spanFactory, new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, FeatureStruct.New().Value),
+				new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, FeatureStruct.New().Value));
 			foreach (Match match in _regex.Matches(str))
 			{
 				if (match.Groups["vowelSeg"].Success)

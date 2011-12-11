@@ -24,8 +24,11 @@ namespace SIL.Cog
 
 			string lang1 = args[1];
 			string lang2 = args[2];
-
 			var writer = new StreamWriter(args[3]);
+			var soundChangeInducer = new SoundChangeInducer(config);
+			soundChangeInducer.InduceSoundChanges(index.GetLanguageWords(lang1), index.GetLanguageWords(lang2));
+
+#if COMMENTOUT
 			var pairLinkCounts = new Dictionary<Tuple<string, string>, int>();
 			var lang1LinkCounts = new Dictionary<string, int>();
 			var lang2LinkCounts = new Dictionary<string, int>();
@@ -81,11 +84,12 @@ namespace SIL.Cog
 					config.AddSegmentCorrespondence(pair);
 				}
 			}
+#endif
 
 			var sb = new StringBuilder();
 			sb.AppendFormat("{0}\t{1}\tProb\tLink Count", lang1, lang2);
 			sb.AppendLine();
-			foreach (SegmentPair correspondence in config.SegmentCorrespondences.Where(corr => corr.CorrespondenceProbability > 0.02).OrderByDescending(corr => corr.CorrespondenceProbability))
+			foreach (SoundChange correspondence in config.SegmentCorrespondences.Where(corr => corr.CorrespondenceProbability > 0.02 && corr.U != corr.V).OrderByDescending(corr => corr.CorrespondenceProbability))
 			{
 				sb.AppendFormat("{0}\t{1}\t{2:0.0####}\t{3}", correspondence.U, correspondence.V, correspondence.CorrespondenceProbability, correspondence.LinkCount);
 				sb.AppendLine();

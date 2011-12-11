@@ -10,8 +10,8 @@ namespace SIL.Cog
 	{
 		private const int Precision = 100;
 		private const int MaxSubstitutionScore = 35 * Precision;
-		private const int MaxExpansionScore = 45 * Precision;
-		private const int DeletionCost = 10 * Precision;
+		private const int MaxExpansionScore = 0 * Precision;
+		private const int IndelCost = 10 * Precision;
 		private const int VowelCost = 0 * Precision;
  
 		private readonly AlineConfig _config;
@@ -76,8 +76,8 @@ namespace SIL.Cog
 				for (int j = 1; j < _shape2.Count + 1; j++)
 				{
 					_sim[i, j] = new[] {
-						_sim[i - 1, j] + SigmaSkip(node1),
-						_sim[i, j - 1] + SigmaSkip(node2),
+						_sim[i - 1, j] + SigmaDel(node1),
+						_sim[i, j - 1] + SigmaIn(node2),
 						_sim[i - 1, j - 1] + SigmaSub(node1, node2),
 						j - 2 < 0 ? int.MinValue : _sim[i - 1, j - 2] + SigmaExp(node1, node2.Prev, node2),
 						i - 2 < 0 ? int.MinValue : _sim[i - 2, j - 1] + SigmaExp(node2, node1.Prev, node1),
@@ -135,7 +135,7 @@ namespace SIL.Cog
 				}
 			}
 
-			opScore = SigmaSkip(node2);
+			opScore = SigmaIn(node2);
 			if (_sim[i, j - 1] + opScore + score >= threshold)
 			{
 				Shape newShape1 = shape1.Clone();
@@ -176,7 +176,7 @@ namespace SIL.Cog
 				}
 			}
 
-			opScore = SigmaSkip(node1);
+			opScore = SigmaDel(node1);
 			if (_sim[i - 1, j] + opScore + score >= threshold)
 			{
 				Shape newShape1 = shape1.Clone();
@@ -246,14 +246,33 @@ namespace SIL.Cog
 			}
 		}
 
-		private int SigmaSkip(ShapeNode p)
+		private int SigmaIn(ShapeNode q)
 		{
-			return -DeletionCost;
+			var qStrRep = (string)q.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+			SoundChange correspondence;
+			if (_config.TryGetSegmentCorrespondence("-", qStrRep, out correspondence))
+				return (int)(-IndelCost * (1.0 - correspondence.CorrespondenceProbability));
+			return -IndelCost;
+		}
+
+		private int SigmaDel(ShapeNode p)
+		{
+			var pStrRep = (string)p.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+			SoundChange correspondence;
+			if (_config.TryGetSegmentCorrespondence(pStrRep, "-", out correspondence))
+				return (int)(-IndelCost * (1.0 - correspondence.CorrespondenceProbability));
+			return -IndelCost;
 		}
 
 		private int SigmaSub(ShapeNode p, ShapeNode q)
 		{
-			return MaxSubstitutionScore - Delta(p, q) - V(p) - V(q);
+			int score = MaxSubstitutionScore - Delta(p, q) - V(p) - V(q);
+			var pStrRep = (string)p.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+			var qStrRep = (string)q.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+			SoundChange correspondence;
+			if (_config.TryGetSegmentCorrespondence(pStrRep, qStrRep, out correspondence))
+				return (int)(score * correspondence.CorrespondenceProbability);
+			return score;
 		}
 
 		private int SigmaExp(ShapeNode p, ShapeNode q1, ShapeNode q2)
@@ -271,14 +290,7 @@ namespace SIL.Cog
 			IEnumerable<SymbolicFeature> features = p.Annotation.Type == CogFeatureSystem.VowelType && q.Annotation.Type == CogFeatureSystem.VowelType
 				? _config.RelevantVowelFeatures : _config.RelevantConsonantFeatures;
 
-			int delta = features.Aggregate(0, (val, feat) => val + (Diff(p, q, feat) * (int) feat.Weight));
-
-			var pStrRep = (string) p.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
-			var qStrRep = (string) q.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
-			SegmentPair correspondence;
-			if (_config.TryGetSegmentCorrespondence(pStrRep, qStrRep, out correspondence))
-				return (int) (delta * (1.0 - correspondence.CorrespondenceProbability));
-			return delta;
+			return features.Aggregate(0, (val, feat) => val + (Diff(p, q, feat) * (int) feat.Weight));
 		}
 
 		private int Diff(ShapeNode p, ShapeNode q, SymbolicFeature feature)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -29,9 +30,27 @@ namespace SIL.Cog
 			get { return _shape2; }
 		}
 
+		public int AlignedNodesCount
+		{
+			get { return _shape1.Count; }
+		}
+
 		public double Score
 		{
 			get { return _score; }
+		}
+
+		public IEnumerable<Tuple<ShapeNode, ShapeNode>> AlignedNodes
+		{
+			get
+			{
+				Annotation<ShapeNode> ann1 = _shape1.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+				Annotation<ShapeNode> ann2 = _shape2.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+				if (ann1 != null && ann2 != null)
+					return _shape1.GetNodes(ann1.Span).Zip(_shape2.GetNodes(ann2.Span));
+
+				return Enumerable.Empty<Tuple<ShapeNode, ShapeNode>>();
+			}
 		}
 
 		public override string ToString()

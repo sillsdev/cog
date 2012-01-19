@@ -32,5 +32,7 @@ namespace SIL.Cog
 		public abstract int SigmaCompression(WordPair wordPair, ShapeNode p1, ShapeNode p2, ShapeNode q);
 
 		public abstract int Delta(ShapeNode p, ShapeNode q);
+
+		public abstract int GetMaxScore(WordPair wordPair, ShapeNode node);
 	}
 }

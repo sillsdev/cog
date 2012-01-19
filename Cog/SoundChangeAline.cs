@@ -39,6 +39,11 @@ namespace SIL.Cog
 			return base.SigmaCompression(wordPair, p1, p2, q) + SoundChange(wordPair, p1, p2, q, q);
 		}
 
+		public override int GetMaxScore(WordPair wordPair, ShapeNode node)
+		{
+			return base.GetMaxScore(wordPair, node) + (int) (MaxSoundChangeScore * 0.85);
+		}
+
 		private int SoundChange(WordPair wordPair, ShapeNode pStartNode, ShapeNode pEndNode, ShapeNode qStartNode, ShapeNode qEndNode)
 		{
 			string pStrRep = GetStrRep(pStartNode, pEndNode);

@@ -73,6 +73,11 @@ namespace SIL.Cog
 			return features.Aggregate(0, (val, feat) => val + (Diff(p, q, feat) * (int) feat.Weight));
 		}
 
+		public override int GetMaxScore(WordPair wordPair, ShapeNode node)
+		{
+			return MaxSubstitutionScore - (V(node) * 2);
+		}
+
 		private static int Diff(ShapeNode p, ShapeNode q, SymbolicFeature feature)
 		{
 			SymbolicFeatureValue pValue;

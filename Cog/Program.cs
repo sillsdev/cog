@@ -93,6 +93,14 @@ namespace SIL.Cog
 			//        sb.AppendLine();
 			//    }
 			//    writer.WriteLine(sb);
+
+			//    foreach (WordPair cognate in vp.Cognates.OrderByDescending(cognate => cognate.PhoneticSimilarityScore))
+			//    {
+			//        writer.WriteLine(cognate.Word1);
+			//        writer.WriteLine(cognate.Word2);
+			//        writer.WriteLine("Score: {0}", cognate.PhoneticSimilarityScore);
+			//        writer.WriteLine();
+			//    }
 			//}
 
 			Console.Write("Analyzing Varieties...");

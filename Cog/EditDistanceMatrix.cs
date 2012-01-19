@@ -250,14 +250,14 @@ namespace SIL.Cog
 
 		private double CalcNormalizedScore(Shape shape1, Shape shape2, int score)
 		{
-			return (score * 2.0) / (CalcMaxScore(shape1) + CalcMaxScore(shape2));
+			return Math.Min(1.0, (double) score / Math.Max(CalcMaxScore(shape1), CalcMaxScore(shape2)));
 		}
 
 		private int CalcMaxScore(Shape shape)
 		{
 			Annotation<ShapeNode> ann = shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-			return shape.Aggregate(0, (score, node) => score + (ann != null && ann.Span.Contains(node) ? _editDistance.SigmaSubstitution(_wordPair, node, node)
-				: (_editDistance.SigmaSubstitution(_wordPair, node, node) / 2)));
+			return shape.Aggregate(0, (score, node) => score + (ann != null && ann.Span.Contains(node) ? _editDistance.GetMaxScore(_wordPair, node)
+				: (_editDistance.GetMaxScore(_wordPair, node) / 2)));
 		}
 	}
 }

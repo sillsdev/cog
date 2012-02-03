@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using SIL.Machine;
 
 namespace SIL.Cog
 {
@@ -9,7 +9,10 @@ namespace SIL.Cog
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly List<WordPair> _wordPairs; 
-		private readonly Dictionary<Tuple<NaturalClass, string, NaturalClass>, SoundChange> _soundChanges;
+		private readonly Dictionary<Tuple<NaturalClass, NPhone, NaturalClass>, SoundChange> _soundChanges;
+		private readonly double _defaultCorrespondenceProbability;
+		private readonly int _possibleCorrespondenceCount;
+		private readonly Dictionary<Phoneme, HashSet<Phoneme>> _similarPhonemes; 
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
@@ -22,7 +25,12 @@ namespace SIL.Cog
 				if (_variety2.TryGetWord(word1.Gloss, out word2))
 					_wordPairs.Add(new WordPair(this, word1, word2));
 			}
-			_soundChanges = new Dictionary<Tuple<NaturalClass, string, NaturalClass>, SoundChange>();
+			_soundChanges = new Dictionary<Tuple<NaturalClass, NPhone, NaturalClass>, SoundChange>();
+
+			int phonemeCount = _variety2.Phonemes.Count;
+			_possibleCorrespondenceCount = (phonemeCount * phonemeCount) + phonemeCount;
+			_defaultCorrespondenceProbability = 1.0 / _possibleCorrespondenceCount;
+			_similarPhonemes = new Dictionary<Phoneme, HashSet<Phoneme>>();
 		}
 
 		public Variety Variety1
@@ -35,51 +43,61 @@ namespace SIL.Cog
 			get { return _variety2; }
 		}
 
-		public IEnumerable<WordPair> WordPairs
+		public IReadOnlyCollection<WordPair> WordPairs
 		{
-			get { return _wordPairs; }
-		}
-
-		public int WordPairCount
-		{
-			get { return _wordPairs.Count; }
-		}
-
-		public IEnumerable<WordPair> Cognates
-		{
-			get { return _wordPairs.Where(wordPair => wordPair.AreCognates); }
+			get { return _wordPairs.AsReadOnlyCollection(); }
 		}
 
 		public double PhoneticSimilarityScore { get; set; }
 
 		public double LexicalSimilarityScore { get; set; }
 
-		public IEnumerable<SoundChange> SoundChanges
+		public double Significance { get; set; }
+
+		public double Precision { get; set; }
+
+		public double Recall { get; set; }
+
+		public double DefaultCorrespondenceProbability
 		{
-			get { return _soundChanges.Values; }
+			get { return _defaultCorrespondenceProbability; }
 		}
 
-		public SoundChange AddSoundChange(NaturalClass leftEnv, string target, NaturalClass rightEnv)
+		public int PossibleCorrespondenceCount
 		{
-			Tuple<NaturalClass, string, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
-			var soundChange = new SoundChange(_variety2.PhonemeCount, leftEnv, target, rightEnv);
-			_soundChanges[key] = soundChange;
-			return soundChange;
+			get { return _possibleCorrespondenceCount; }
 		}
 
-		public bool TryGetSoundChange(NaturalClass leftEnv, string target, NaturalClass rightEnv, out SoundChange soundChange)
+		public IReadOnlyCollection<SoundChange> SoundChanges
 		{
-			Tuple<NaturalClass, string, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
+			get { return _soundChanges.Values.AsReadOnlyCollection(); }
+		}
+
+		public SoundChange GetSoundChange(NaturalClass leftEnv, NPhone target, NaturalClass rightEnv)
+		{
+			Tuple<NaturalClass, NPhone, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
+			return _soundChanges.GetValue(key, () => new SoundChange(_possibleCorrespondenceCount, leftEnv, target, rightEnv));
+		}
+
+		public bool TryGetSoundChange(NaturalClass leftEnv, NPhone target, NaturalClass rightEnv, out SoundChange soundChange)
+		{
+			Tuple<NaturalClass, NPhone, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
 			return _soundChanges.TryGetValue(key, out soundChange);
 		}
 
-		public double GetCorrespondenceProbability(NaturalClass leftEnv, string target, NaturalClass rightEnv, string correspondence)
+		public void AddSimilarPhoneme(Phoneme ph1, Phoneme ph2)
 		{
-			SoundChange change;
-			if (TryGetSoundChange(leftEnv, target, rightEnv, out change))
-				return change[correspondence];
+			HashSet<Phoneme> phonemes = _similarPhonemes.GetValue(ph1, () => new HashSet<Phoneme>());
+			phonemes.Add(ph2);
+		}
 
-			return 1.0 / ((_variety2.PhonemeCount * _variety2.PhonemeCount) + _variety2.PhonemeCount);
+		public IReadOnlySet<Phoneme> GetSimilarPhonemes(Phoneme ph)
+		{
+			HashSet<Phoneme> phonemes;
+			if (_similarPhonemes.TryGetValue(ph, out  phonemes))
+				return phonemes.AsReadOnlySet();
+
+			return new ReadOnlySet<Phoneme>(new HashSet<Phoneme>());
 		}
 	}
 }

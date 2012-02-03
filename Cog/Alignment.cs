@@ -30,26 +30,21 @@ namespace SIL.Cog
 			get { return _shape2; }
 		}
 
-		public int AlignedNodesCount
-		{
-			get { return _shape1.Count; }
-		}
-
 		public double Score
 		{
 			get { return _score; }
 		}
 
-		public IEnumerable<Tuple<ShapeNode, ShapeNode>> AlignedNodes
+		public IEnumerable<Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>>> AlignedAnnotations
 		{
 			get
 			{
 				Annotation<ShapeNode> ann1 = _shape1.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
 				Annotation<ShapeNode> ann2 = _shape2.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
 				if (ann1 != null && ann2 != null)
-					return _shape1.GetNodes(ann1.Span).Zip(_shape2.GetNodes(ann2.Span));
+					return ann1.Children.Zip(ann2.Children);
 
-				return Enumerable.Empty<Tuple<ShapeNode, ShapeNode>>();
+				return Enumerable.Empty<Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>>>();
 			}
 		}
 
@@ -79,12 +74,12 @@ namespace SIL.Cog
 				}
 				sb.Append("|");
 				bool first = true;
-				foreach (Tuple<ShapeNode, ShapeNode> tuple in _shape1.GetNodes(ann1.Span).Zip(_shape2.GetNodes(ann2.Span)))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> tuple in ann1.Children.Zip(ann2.Children))
 				{
 					if (!first)
 						sb.Append(" ");
-					var strRep1 = (string) tuple.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
-					var strRep2 = (string) tuple.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+					string strRep1 = tuple.Item1.StrRep();
+					string strRep2 = tuple.Item2.StrRep();
 					sb.Append(strRep1.PadRight(Math.Max(GetLength(strRep1), GetLength(strRep2))));
 					first = false;
 				}
@@ -102,12 +97,12 @@ namespace SIL.Cog
 				}
 				sb.Append("|");
 				first = true;
-				foreach (Tuple<ShapeNode, ShapeNode> tuple in _shape1.GetNodes(ann1.Span).Zip(_shape2.GetNodes(ann2.Span)))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> tuple in ann1.Children.Zip(ann2.Children))
 				{
 					if (!first)
 						sb.Append(" ");
-					var strRep1 = (string) tuple.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
-					var strRep2 = (string) tuple.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
+					string strRep1 = tuple.Item1.StrRep();
+					string strRep2 = tuple.Item2.StrRep();
 					sb.Append(strRep2.PadRight(Math.Max(GetLength(strRep1), GetLength(strRep2))));
 					first = false;
 				}
@@ -127,8 +122,7 @@ namespace SIL.Cog
 			if (startNode == null || endNode == null || startNode == shape.End || endNode == shape.Begin)
 				return "";
 
-			return startNode.GetNodes(endNode).Aggregate(new StringBuilder(),
-				(str, node) => str.Append((string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep))).ToString();
+			return string.Concat(startNode.GetNodes(endNode).Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
 		}
 
 		private int GetLength(string str)

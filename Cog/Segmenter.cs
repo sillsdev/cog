@@ -111,7 +111,7 @@ namespace SIL.Cog
 
 		private FeatureStruct BuildFeatStruct(Match match, string groupName, Dictionary<string, FeatureStruct> bases)
 		{
-			string baseStr = match.Groups[groupName].Value;
+			string baseStr = match.Groups[groupName].Value.ToLowerInvariant();
 			FeatureStruct fs = bases[baseStr].Clone();
 			var sb = new StringBuilder();
 			sb.Append(baseStr);

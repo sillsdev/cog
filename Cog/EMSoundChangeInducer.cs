@@ -5,7 +5,7 @@ using SIL.Machine;
 
 namespace SIL.Cog
 {
-	public class EMSoundChangeInducer : IAnalyzer
+	public class EMSoundChangeInducer : IProcessor<VarietyPair>
 	{
 		private readonly EditDistance _initEditDistance;
 		private readonly SoundChangeAline _soundChangeAline;
@@ -18,7 +18,7 @@ namespace SIL.Cog
 			_threshold = threshold;
 		}
 
-		public void Analyze(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
 			bool converged = false;
 			for (int i = 0; i < 15 && !converged; i++)
@@ -37,28 +37,21 @@ namespace SIL.Cog
 				Alignment alignment = editDistanceMatrix.GetAlignments().First();
 				if (alignment.Score >= _threshold)
 				{
-					foreach (Tuple<ShapeNode, ShapeNode> possibleLink in alignment.AlignedNodes)
+					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						var u = (string) possibleLink.Item1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
-						var v = (string) possibleLink.Item2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep);
-						if (u != "-" && v != "-")
-						{
-							NaturalClass leftEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
-								constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.GetPrev(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
-							NaturalClass rightEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
-								constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.GetNext(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
-							SoundChange change;
-							if (!pair.TryGetSoundChange(leftEnv, u, rightEnv, out change))
-								change = pair.AddSoundChange(leftEnv, u, rightEnv);
+						if (possibleLink.Item1.Type == CogFeatureSystem.NullType || possibleLink.Item2.Type == CogFeatureSystem.NullType)
+							continue;
 
-							ExpectedCount expectedCount;
-							if (!expectedCounts.TryGetValue(change, out expectedCount))
-							{
-								expectedCount = new ExpectedCount();
-								expectedCounts[change] = expectedCount;
-							}
-							expectedCount.Increment(v);
-						}
+						var u = new NPhone(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.GetPhoneme(node)));
+						var v = new NPhone(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.GetPhoneme(node)));
+
+						NaturalClass leftEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
+							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+						NaturalClass rightEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
+							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+						SoundChange change = pair.GetSoundChange(leftEnv, u, rightEnv);
+						ExpectedCount expectedCount = expectedCounts.GetValue(change, () => new ExpectedCount());
+						expectedCount.Increment(v);
 					}
 				}
 			}
@@ -73,9 +66,9 @@ namespace SIL.Cog
 				ExpectedCount expectedCount;
 				if (expectedCounts.TryGetValue(change, out expectedCount))
 				{
-					foreach (string correspondence in expectedCount.Correspondences)
+					foreach (NPhone correspondence in expectedCount.Correspondences)
 					{
-						double prob = (expectedCount.GetCorrespondenceCount(correspondence) + (1.0 / change.CorrespondenceCount)) / (expectedCount.Count + 1.0);
+						double prob = (expectedCount.GetCorrespondenceCount(correspondence) + (1.0 / pair.PossibleCorrespondenceCount)) / (expectedCount.Count + 1.0);
 						if (Math.Abs(prob - change[correspondence]) > 0.0001)
 							converged = false;
 						change[correspondence] = prob;
@@ -92,11 +85,11 @@ namespace SIL.Cog
 		private class ExpectedCount
 		{
 			private int _count;
-			private readonly Dictionary<string, int> _correspondenceCounts;
+			private readonly Dictionary<NPhone, int> _correspondenceCounts;
 
 			public ExpectedCount()
 			{
-				_correspondenceCounts = new Dictionary<string, int>();
+				_correspondenceCounts = new Dictionary<NPhone, int>();
 			}
 
 			public int Count
@@ -104,12 +97,12 @@ namespace SIL.Cog
 				get { return _count; }
 			}
 
-			public IEnumerable<string> Correspondences
+			public IEnumerable<NPhone> Correspondences
 			{
 				get { return _correspondenceCounts.Keys; }
 			}
 
-			public int GetCorrespondenceCount(string correspondence)
+			public int GetCorrespondenceCount(NPhone correspondence)
 			{
 				int count;
 				if (_correspondenceCounts.TryGetValue(correspondence, out count))
@@ -117,12 +110,9 @@ namespace SIL.Cog
 				return 0;
 			}
 
-			public void Increment(string correspondence)
+			public void Increment(NPhone correspondence)
 			{
-				int count;
-				if (!_correspondenceCounts.TryGetValue(correspondence, out count))
-					count = 0;
-				_correspondenceCounts[correspondence] = count + 1;
+				_correspondenceCounts.UpdateValue(correspondence, () => 0, count => count + 1);
 				_count++;
 			}
 		}

@@ -1,6 +1,6 @@
 ﻿namespace SIL.Cog
 {
-	public class ThresholdCognateIdentifier : IAnalyzer
+	public class ThresholdCognateIdentifier : IProcessor<VarietyPair>
 	{
 		private readonly EditDistance _editDistance;
 		private readonly double _threshold;
@@ -11,7 +11,7 @@
 			_threshold = threshold;
 		}
 
-		public void Analyze(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
@@ -27,13 +27,14 @@
 				}
 				wordPair.PhoneticSimilarityScore = totalAlignmentScore / alignmentCount;
 				totalScore += wordPair.PhoneticSimilarityScore;
-				wordPair.AreCognates = wordPair.PhoneticSimilarityScore >= _threshold;
-				if (wordPair.AreCognates)
+				wordPair.AreCognatesPredicted = wordPair.PhoneticSimilarityScore >= _threshold;
+				if (wordPair.AreCognatesPredicted)
 					totalCognateCount++;
 			}
 
-			varietyPair.PhoneticSimilarityScore = totalScore / varietyPair.WordPairCount;
-			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / varietyPair.WordPairCount;
+			int wordPairCount = varietyPair.WordPairs.Count;
+			varietyPair.PhoneticSimilarityScore = totalScore / wordPairCount;
+			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
 		}
 	}
 }

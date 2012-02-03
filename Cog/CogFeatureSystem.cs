@@ -14,6 +14,7 @@ namespace SIL.Cog
 		public const string ToneType = "tone";
 		public const string NullType = "null";
 		public const string StemType = "stem";
+		public const string ClusterType = "cluster";
 
 		private static readonly CogFeatureSystem FeatureSystem;
 

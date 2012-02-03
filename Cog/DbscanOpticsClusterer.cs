@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 
 namespace SIL.Cog
 {
@@ -24,7 +25,7 @@ namespace SIL.Cog
 					if (oe.CoreDistance <= _epsilon)
 					{
 						if (curCluster != null)
-							clusters.Add(new Cluster<T>(clusters.Count.ToString(), curCluster));
+							clusters.Add(new Cluster<T>(clusters.Count.ToString(CultureInfo.InvariantCulture), curCluster));
 						curCluster = new HashSet<T> { oe.DataObject };
 					}
 					else
@@ -41,7 +42,8 @@ namespace SIL.Cog
 					noise.Add(oe.DataObject);
 				}
 			}
-			clusters.Add(new Cluster<T>(clusters.Count.ToString(), curCluster));
+			if (curCluster != null)
+				clusters.Add(new Cluster<T>(clusters.Count.ToString(CultureInfo.InvariantCulture), curCluster));
 			if (noise.Count > 0)
 				clusters.Add(new Cluster<T>("Noise", noise, true));
 			return clusters;

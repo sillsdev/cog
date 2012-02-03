@@ -10,7 +10,7 @@ namespace SIL.Cog
 	{
 		public static int Delta(IEnumerable<SymbolicFeature> relevantFeatures, ShapeNode p, ShapeNode q)
 		{
-			return relevantFeatures.Aggregate(0, (val, feat) => val + (Diff(p, q, feat) * (int)feat.Weight));
+			return relevantFeatures.Sum(feat => Diff(p, q, feat) * (int) feat.Weight);
 		}
 
 		private static int Diff(ShapeNode p, ShapeNode q, SymbolicFeature feature)
@@ -54,7 +54,9 @@ namespace SIL.Cog
 		{
 			_editDistance = editDistance;
 			_wordPair = wordPair;
-			_sim = new int[_wordPair.Word1.Shape.Count + 1, _wordPair.Word2.Shape.Count + 1];
+			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			_sim = new int[(ann1 != null ? ann1.Span.Length : _wordPair.Word1.Shape.Count) + 1, (ann2 != null ? ann2.Span.Length : _wordPair.Word2.Shape.Count) + 1];
 		}
 
 		public IEnumerable<Alignment> GetAlignments()
@@ -73,19 +75,23 @@ namespace SIL.Cog
 
 		private IEnumerable<Alignment> GetAlignments(int threshold, bool all)
 		{
-			ShapeNode node1 = _wordPair.Word1.Shape.First;
-			for (int i = 1; i < _wordPair.Word1.Shape.Count + 1; i++)
+			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			ShapeNode node1 = ann1 != null ? ann1.Span.Start : _wordPair.Word1.Shape.First;
+			for (int i = 1; node1 != (ann1 != null ? ann1.Span.End.Next : _wordPair.Word1.Shape.End); i++)
 			{
-				ShapeNode node2 = _wordPair.Word2.Shape.First;
-				for (int j = 1; j < _wordPair.Word2.Shape.Count + 1; j++)
+				ShapeNode node2 = ann2 != null ? ann2.Span.Start : _wordPair.Word2.Shape.First;
+				for (int j = 1; node2 != (ann2 != null ? ann2.Span.End.Next : _wordPair.Word2.Shape.End); j++)
 				{
 					if (_sim[i, j] >= threshold)
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1, node2, i, j, 0, threshold, all))
 						{
-							alignment.Item1.Annotations.Add(CogFeatureSystem.StemType, alignment.Item3.Next, alignment.Item1.Last, FeatureStruct.New().Value);
+							if (alignment.Item3.Next.CompareTo(alignment.Item1.Last) <= 0)
+								alignment.Item1.Annotations.Add(CogFeatureSystem.StemType, alignment.Item3.Next, alignment.Item1.Last, FeatureStruct.New().Value);
 							AddNodesToEnd(node1.Next, alignment.Item1);
-							alignment.Item2.Annotations.Add(CogFeatureSystem.StemType, alignment.Item4.Next, alignment.Item2.Last, FeatureStruct.New().Value);
+							if (alignment.Item4.Next.CompareTo(alignment.Item2.Last) <= 0)
+								alignment.Item2.Annotations.Add(CogFeatureSystem.StemType, alignment.Item4.Next, alignment.Item2.Last, FeatureStruct.New().Value);
 							AddNodesToEnd(node2.Next, alignment.Item2);
 							yield return new Alignment(alignment.Item1, alignment.Item2, CalcNormalizedScore(alignment.Item1, alignment.Item2, alignment.Item5));
 						}
@@ -99,11 +105,13 @@ namespace SIL.Cog
 		private int ComputeSimilarityMatrix()
 		{
 			int maxScore = int.MinValue;
-			ShapeNode node1 = _wordPair.Word1.Shape.First;
-			for (int i = 1; i < _wordPair.Word1.Shape.Count + 1; i++)
+			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			ShapeNode node1 = ann1 != null ? ann1.Span.Start : _wordPair.Word1.Shape.First;
+			for (int i = 1; node1 != (ann1 != null ? ann1.Span.End.Next : _wordPair.Word1.Shape.End); i++)
 			{
-				ShapeNode node2 = _wordPair.Word2.Shape.First;
-				for (int j = 1; j < _wordPair.Word2.Shape.Count + 1; j++)
+				ShapeNode node2 = ann2 != null ? ann2.Span.Start : _wordPair.Word2.Shape.First;
+				for (int j = 1; node2 != (ann2 != null ? ann2.Span.End.Next : _wordPair.Word2.Shape.End); j++)
 				{
 					_sim[i, j] = new[] {
 						_sim[i - 1, j] + _editDistance.SigmaDeletion(_wordPair, node1),
@@ -172,11 +180,12 @@ namespace SIL.Cog
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev, node2.Prev.Prev, i - 1, j - 2, score + opScore, threshold, all))
 						{
 							alignment.Item1.Add(node1.Clone());
-							FeatureStruct fs = node2.Prev.Annotation.FeatureStruct.Clone();
-							fs.Union(node2.Annotation.FeatureStruct);
-							fs.AddValue(CogFeatureSystem.StrRep, (string) node2.Prev.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)
-								+ (string) node2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
-							alignment.Item2.Add(node2.Prev.Annotation.Type, fs);
+
+							ShapeNode clusterNode1 = node2.Prev.Clone();
+							alignment.Item2.Add(clusterNode1);
+							ShapeNode clusterNode2 = node2.Clone();
+							alignment.Item2.Add(clusterNode2);
+							alignment.Item2.Annotations.Add(CogFeatureSystem.ClusterType, clusterNode1, clusterNode2, FeatureStruct.New().Value);
 							yield return alignment;
 							if (!all)
 								yield break;
@@ -204,11 +213,12 @@ namespace SIL.Cog
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev.Prev, node2.Prev, i - 2, j - 1, score + opScore, threshold, all))
 						{
-							FeatureStruct fs = node1.Prev.Annotation.FeatureStruct.Clone();
-							fs.Union(node1.Annotation.FeatureStruct);
-							fs.AddValue(CogFeatureSystem.StrRep, (string) node1.Prev.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)
-								+ (string) node1.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
-							alignment.Item1.Add(node1.Prev.Annotation.Type, fs);
+							ShapeNode clusterNode1 = node1.Prev.Clone();
+							alignment.Item1.Add(clusterNode1);
+							ShapeNode clusterNode2 = node1.Clone();
+							alignment.Item1.Add(clusterNode2);
+							alignment.Item1.Annotations.Add(CogFeatureSystem.ClusterType, clusterNode1, clusterNode2, FeatureStruct.New().Value);
+
 							alignment.Item2.Add(node2.Clone());
 							yield return alignment;
 							if (!all)

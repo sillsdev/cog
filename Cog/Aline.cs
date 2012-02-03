@@ -47,17 +47,17 @@ namespace SIL.Cog
 
 		public override int SigmaSubstitution(WordPair wordPair, ShapeNode p, ShapeNode q)
 		{
-			return MaxSubstitutionScore - (Delta(p, q) + V(p) + V(q));
+			return MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(p) + V(q));
 		}
 
 		public override int SigmaExpansion(WordPair wordPair, ShapeNode p, ShapeNode q1, ShapeNode q2)
 		{
-			return MaxExpansionCompressionScore - (Delta(p, q1) + Delta(p, q2) + V(p) + Math.Max(V(q1), V(q2)));
+			return MaxExpansionCompressionScore - (Delta(p.Annotation.FeatureStruct, q1.Annotation.FeatureStruct) + Delta(p.Annotation.FeatureStruct, q2.Annotation.FeatureStruct) + V(p) + Math.Max(V(q1), V(q2)));
 		}
 
 		public override int SigmaCompression(WordPair wordPair, ShapeNode p1, ShapeNode p2, ShapeNode q)
 		{
-			return MaxExpansionCompressionScore - (Delta(p1, q) + Delta(p2, q) + V(q) + Math.Max(V(p1), V(p2)));
+			return MaxExpansionCompressionScore - (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(q) + Math.Max(V(p1), V(p2)));
 		}
 
 		private int V(ShapeNode node)
@@ -65,12 +65,13 @@ namespace SIL.Cog
 			return node.Annotation.Type == CogFeatureSystem.VowelType ? VowelCost : 0;
 		}
 
-		public override int Delta(ShapeNode p, ShapeNode q)
+		public override int Delta(FeatureStruct fs1, FeatureStruct fs2)
 		{
-			IEnumerable<SymbolicFeature> features = p.Annotation.Type == CogFeatureSystem.VowelType && q.Annotation.Type == CogFeatureSystem.VowelType
+			IEnumerable<SymbolicFeature> features = ((string) fs1.GetValue(AnnotationFeatureSystem.Type)) == CogFeatureSystem.VowelType
+				&& ((string) fs2.GetValue(AnnotationFeatureSystem.Type)) == CogFeatureSystem.VowelType
 				? _relevantVowelFeatures : _relevantConsFeatures;
 
-			return features.Aggregate(0, (val, feat) => val + (Diff(p, q, feat) * (int) feat.Weight));
+			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * (int) feat.Weight));
 		}
 
 		public override int GetMaxScore(WordPair wordPair, ShapeNode node)
@@ -78,13 +79,13 @@ namespace SIL.Cog
 			return MaxSubstitutionScore - (V(node) * 2);
 		}
 
-		private static int Diff(ShapeNode p, ShapeNode q, SymbolicFeature feature)
+		private static int Diff(FeatureStruct fs1, FeatureStruct fs2, SymbolicFeature feature)
 		{
 			SymbolicFeatureValue pValue;
-			if (!p.Annotation.FeatureStruct.TryGetValue(feature, out pValue))
+			if (!fs1.TryGetValue(feature, out pValue))
 				pValue = null;
 			SymbolicFeatureValue qValue;
-			if (!q.Annotation.FeatureStruct.TryGetValue(feature, out qValue))
+			if (!fs2.TryGetValue(feature, out qValue))
 				qValue = null;
 
 			if (pValue == null && qValue == null)

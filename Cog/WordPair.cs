@@ -28,7 +28,9 @@
 			get { return _word2; }
 		}
 
-		public bool AreCognates { get; set; }
+		public bool AreCognatesActual { get; set; }
+
+		public bool AreCognatesPredicted { get; set; }
 
 		public double PhoneticSimilarityScore { get; set; }
 	}

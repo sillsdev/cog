@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,8 +10,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.Cog</RootNamespace>
     <AssemblyName>Cog</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Affix.cs" />
     <Compile Include="Alignment.cs" />
     <Compile Include="Aline.cs" />
     <Compile Include="BlairCognateIdentifier.cs" />
@@ -55,15 +62,22 @@
     <Compile Include="CogFeatureSystem.cs" />
     <Compile Include="DbscanClusterer.cs" />
     <Compile Include="DbscanOpticsClusterer.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="NPhone.cs" />
+    <Compile Include="Phoneme.cs" />
+    <Compile Include="PrecisionRecallCalculator.cs" />
     <Compile Include="LsdbcClusterer.cs" />
+    <Compile Include="MonteCarloSignificanceTest.cs" />
     <Compile Include="Optics.cs" />
     <Compile Include="OpticsClusterer.cs" />
     <Compile Include="OpticsDropDownClusterer.cs" />
     <Compile Include="OpticsXiClusterer.cs" />
+    <Compile Include="SimilarPhonemeIdentifier.cs" />
+    <Compile Include="VarietyPairTextOutput.cs" />
     <Compile Include="ThresholdCognateIdentifier.cs" />
     <Compile Include="EditDistanceMatrix.cs" />
     <Compile Include="EditDistance.cs" />
-    <Compile Include="IAnalyzer.cs" />
+    <Compile Include="IProcessor.cs" />
     <Compile Include="NaturalClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,8 +85,10 @@
     <Compile Include="SoundChange.cs" />
     <Compile Include="SoundChangeAline.cs" />
     <Compile Include="EMSoundChangeInducer.cs" />
+    <Compile Include="UnsupervisedStemmer.cs" />
     <Compile Include="Variety.cs" />
     <Compile Include="VarietyPair.cs" />
+    <Compile Include="VarietyTextOutput.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="WordPair.cs" />
   </ItemGroup>

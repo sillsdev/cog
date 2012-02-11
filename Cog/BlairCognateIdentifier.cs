@@ -28,7 +28,7 @@ namespace SIL.Cog
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						if (possibleLink.Item1.Type == CogFeatureSystem.NullType || possibleLink.Item2.Type == CogFeatureSystem.NullType)
+						if (possibleLink.Item1.Type() == CogFeatureSystem.NullType || possibleLink.Item2.Type() == CogFeatureSystem.NullType)
 							continue;
 
 						string uStr = possibleLink.Item1.StrRep();
@@ -53,7 +53,7 @@ namespace SIL.Cog
 				int totalCount = 0;
 				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> link in wordPair.Item2.AlignedAnnotations)
 				{
-					if (link.Item1.Type == CogFeatureSystem.NullType || link.Item2.Type == CogFeatureSystem.NullType)
+					if (link.Item1.Type() == CogFeatureSystem.NullType || link.Item2.Type() == CogFeatureSystem.NullType)
 						continue;
 
 					Phoneme u1 = varietyPair.Variety1.GetPhoneme(link.Item1.Span.Start);

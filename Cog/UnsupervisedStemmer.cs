@@ -59,8 +59,9 @@ namespace SIL.Cog
 					sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
 					AffixInfo affixInfo = affixes.GetValue(sb.ToString(), () =>
 																			{
-																				var shape = new Shape(_spanFactory, new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, new FeatureStruct()),
-																					new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, new FeatureStruct()));
+																				var shape = new Shape(_spanFactory,
+																					new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value),
+																					new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 																				var span = _spanFactory.Create(word.Shape.GetFirst(dir), node, dir);
 																				word.Shape.CopyTo(span, shape);
 																				return new AffixInfo(shape);
@@ -76,7 +77,7 @@ namespace SIL.Cog
 					sb = new StringBuilder();
 					foreach (ShapeNode node2 in node1.GetNodes(dir).Take(_maxAffixLength))
 					{
-						sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, (string) node2.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
+						sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, node2.StrRep());
 						count++;
 						nonaffixes.UpdateValue(sb.ToString(), () => 0, freq => freq + 1);
 						totalNonaffixFreqs.UpdateValue(count, () => 0, freq => freq + 1);
@@ -125,11 +126,11 @@ namespace SIL.Cog
 				{
 					var pattern = new Pattern<Word, ShapeNode> {Acceptable = CheckStemWholeWord};
 					if (dir == Direction.LeftToRight)
-						pattern.Children.Add(new Constraint<Word, ShapeNode>(CogFeatureSystem.AnchorType, FeatureStruct.New().Value));
+						pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 					foreach (ShapeNode node in affixInfo.Shape)
-						pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.Type, node.Annotation.FeatureStruct.Clone()));
+						pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.FeatureStruct.Clone()));
 					if (dir == Direction.RightToLeft)
-						pattern.Children.Add(new Constraint<Word, ShapeNode>(CogFeatureSystem.AnchorType, FeatureStruct.New().Value));
+						pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 					string category = affixInfo.MainCategory;
 					ruleSpec.AddRuleSpec(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Category == category));
 					variety.AddAffix(new Affix(affixStr, type, affixInfo.MainCategory) {Score = affixInfo.Score});
@@ -144,7 +145,7 @@ namespace SIL.Cog
 
 		private bool CheckStemWholeWord(Match<Word, ShapeNode> match)
 		{
-			Annotation<ShapeNode> stemAnn = match.Input.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> stemAnn = match.Input.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 			Span<ShapeNode> span = stemAnn != null ? stemAnn.Span : _spanFactory.Create(match.Input.Shape.First, match.Input.Shape.Last);
 			return !match.Span.Contains(span);
 		}
@@ -152,7 +153,7 @@ namespace SIL.Cog
 		private ShapeNode MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match, out Word output)
 		{
 			output = match.Input;
-			Annotation<ShapeNode> stemAnn = output.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> stemAnn = output.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 			ShapeNode startNode = null;
 			ShapeNode endNode = null;
 			switch (rule.MatcherSettings.Direction)
@@ -169,7 +170,7 @@ namespace SIL.Cog
 			}
 			if (stemAnn != null)
 				stemAnn.Remove();
-			output.Annotations.Add(CogFeatureSystem.StemType, startNode, endNode, FeatureStruct.New().Value);
+			output.Annotations.Add(startNode, endNode, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
 			return null;
 		}
 

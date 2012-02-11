@@ -54,8 +54,8 @@ namespace SIL.Cog
 		{
 			_editDistance = editDistance;
 			_wordPair = wordPair;
-			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 			_sim = new int[(ann1 != null ? ann1.Span.Length : _wordPair.Word1.Shape.Count) + 1, (ann2 != null ? ann2.Span.Length : _wordPair.Word2.Shape.Count) + 1];
 		}
 
@@ -75,8 +75,8 @@ namespace SIL.Cog
 
 		private IEnumerable<Alignment> GetAlignments(int threshold, bool all)
 		{
-			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 			ShapeNode node1 = ann1 != null ? ann1.Span.Start : _wordPair.Word1.Shape.First;
 			for (int i = 1; node1 != (ann1 != null ? ann1.Span.End.Next : _wordPair.Word1.Shape.End); i++)
 			{
@@ -88,10 +88,10 @@ namespace SIL.Cog
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1, node2, i, j, 0, threshold, all))
 						{
 							if (alignment.Item3.Next.CompareTo(alignment.Item1.Last) <= 0)
-								alignment.Item1.Annotations.Add(CogFeatureSystem.StemType, alignment.Item3.Next, alignment.Item1.Last, FeatureStruct.New().Value);
+								alignment.Item1.Annotations.Add(alignment.Item3.Next, alignment.Item1.Last, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
 							AddNodesToEnd(node1.Next, alignment.Item1);
 							if (alignment.Item4.Next.CompareTo(alignment.Item2.Last) <= 0)
-								alignment.Item2.Annotations.Add(CogFeatureSystem.StemType, alignment.Item4.Next, alignment.Item2.Last, FeatureStruct.New().Value);
+								alignment.Item2.Annotations.Add(alignment.Item4.Next, alignment.Item2.Last, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
 							AddNodesToEnd(node2.Next, alignment.Item2);
 							yield return new Alignment(alignment.Item1, alignment.Item2, CalcNormalizedScore(alignment.Item1, alignment.Item2, alignment.Item5));
 						}
@@ -105,8 +105,8 @@ namespace SIL.Cog
 		private int ComputeSimilarityMatrix()
 		{
 			int maxScore = int.MinValue;
-			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann1 = _wordPair.Word1.Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> ann2 = _wordPair.Word2.Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 			ShapeNode node1 = ann1 != null ? ann1.Span.Start : _wordPair.Word1.Shape.First;
 			for (int i = 1; node1 != (ann1 != null ? ann1.Span.End.Next : _wordPair.Word1.Shape.End); i++)
 			{
@@ -164,7 +164,7 @@ namespace SIL.Cog
 				{
 					foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1, node2.Prev, i, j - 1, score + opScore, threshold, all))
 					{
-						alignment.Item1.Add(CogFeatureSystem.NullType, FeatureStruct.New().Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
+						alignment.Item1.Add(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 						alignment.Item2.Add(node2.Clone());
 						yield return alignment;
 						if (!all)
@@ -185,7 +185,7 @@ namespace SIL.Cog
 							alignment.Item2.Add(clusterNode1);
 							ShapeNode clusterNode2 = node2.Clone();
 							alignment.Item2.Add(clusterNode2);
-							alignment.Item2.Annotations.Add(CogFeatureSystem.ClusterType, clusterNode1, clusterNode2, FeatureStruct.New().Value);
+							alignment.Item2.Annotations.Add(clusterNode1, clusterNode2, FeatureStruct.New().Symbol(CogFeatureSystem.ClusterType).Value);
 							yield return alignment;
 							if (!all)
 								yield break;
@@ -199,7 +199,7 @@ namespace SIL.Cog
 					foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev, node2, i - 1, j, score + opScore, threshold, all))
 					{
 						alignment.Item1.Add(node1.Clone());
-						alignment.Item2.Add(CogFeatureSystem.NullType, FeatureStruct.New().Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
+						alignment.Item2.Add(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 						yield return alignment;
 						if (!all)
 							yield break;
@@ -217,7 +217,7 @@ namespace SIL.Cog
 							alignment.Item1.Add(clusterNode1);
 							ShapeNode clusterNode2 = node1.Clone();
 							alignment.Item1.Add(clusterNode2);
-							alignment.Item1.Annotations.Add(CogFeatureSystem.ClusterType, clusterNode1, clusterNode2, FeatureStruct.New().Value);
+							alignment.Item1.Annotations.Add(clusterNode1, clusterNode2, FeatureStruct.New().Symbol(CogFeatureSystem.ClusterType).Value);
 
 							alignment.Item2.Add(node2.Clone());
 							yield return alignment;
@@ -244,8 +244,8 @@ namespace SIL.Cog
 
 		private Shape CreateEmptyShape()
 		{
-			var shape = new Shape(_editDistance.SpanFactory, new ShapeNode(_editDistance.SpanFactory, CogFeatureSystem.AnchorType, new FeatureStruct()),
-				new ShapeNode(_editDistance.SpanFactory, CogFeatureSystem.AnchorType, new FeatureStruct()));
+			var shape = new Shape(_editDistance.SpanFactory, new ShapeNode(_editDistance.SpanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value),
+				new ShapeNode(_editDistance.SpanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 			return shape;
 		}
 
@@ -265,8 +265,8 @@ namespace SIL.Cog
 
 		private int CalcMaxScore(Shape shape)
 		{
-			Annotation<ShapeNode> ann = shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-			return shape.Aggregate(0, (score, node) => score + (ann != null && ann.Span.Contains(node) ? _editDistance.GetMaxScore(_wordPair, node)
+			Annotation<ShapeNode> stemAnn = shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			return shape.Aggregate(0, (score, node) => score + (stemAnn != null && stemAnn.Span.Contains(node) ? _editDistance.GetMaxScore(_wordPair, node)
 				: (_editDistance.GetMaxScore(_wordPair, node) / 2)));
 		}
 	}

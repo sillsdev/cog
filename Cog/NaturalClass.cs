@@ -7,23 +7,15 @@ namespace SIL.Cog
 	{
 		private readonly FeatureStruct _fs;
 
-		public NaturalClass(string id, string type, FeatureStruct fs)
+		public NaturalClass(string id, FeatureStruct fs)
 			: base(id)
 		{
 			_fs = fs;
-			if (!string.IsNullOrEmpty(type))
-				_fs.AddValue(AnnotationFeatureSystem.Type, type);
 		}
 
-		public string Type
+		public FeatureSymbol Type
 		{
-			get
-			{
-				StringFeatureValue sfv;
-				if (FeatureStruct.TryGetValue(AnnotationFeatureSystem.Type, out sfv))
-					return (string) sfv;
-				return null;
-			}
+			get { return (FeatureSymbol) _fs.GetValue(CogFeatureSystem.Type); }
 		}
 
 		public FeatureStruct FeatureStruct

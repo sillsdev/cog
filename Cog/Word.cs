@@ -44,12 +44,12 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			Annotation<ShapeNode> ann = _shape.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> stemAnn = _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 
 			var sb = new StringBuilder();
-			if (ann != null)
+			if (stemAnn != null)
 			{
-				string prefix = GetString(_shape.First, ann.Span.Start.Prev);
+				string prefix = GetString(_shape.First, stemAnn.Span.Start.Prev);
 				if (prefix.Length > 0)
 				{
 					sb.Append(prefix);
@@ -58,7 +58,7 @@ namespace SIL.Cog
 			}
 			sb.Append("|");
 			bool first = true;
-			foreach (ShapeNode node in ann == null ? _shape : _shape.GetNodes(ann.Span))
+			foreach (ShapeNode node in stemAnn == null ? _shape : _shape.GetNodes(stemAnn.Span))
 			{
 				if (!first)
 					sb.Append(" ");
@@ -67,9 +67,9 @@ namespace SIL.Cog
 			}
 			sb.Append("|");
 
-			if (ann != null)
+			if (stemAnn != null)
 			{
-				string suffix = GetString(ann.Span.End.Next, _shape.Last);
+				string suffix = GetString(stemAnn.Span.End.Next, _shape.Last);
 				if (suffix.Length > 0)
 				{
 					sb.Append(" ");

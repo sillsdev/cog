@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using SIL.Machine;
+using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
@@ -469,7 +470,7 @@ namespace SIL.Cog
 			}
 		}
 
-		private static void WriteSimilarityGraph(IEnumerable<Variety> varieties, string type, string filePath, int threshold, Aline aline)
+		private static void WriteSimilarityGraph(IEnumerable<Variety> varieties, FeatureSymbol type, string filePath, int threshold, Aline aline)
 		{
 			Phoneme[] phonemeArray = (from v in varieties
 									  from ph in v.Phonemes
@@ -495,7 +496,7 @@ namespace SIL.Cog
 			}
 		}
 
-		private static void WritePhonemeList(IEnumerable<Variety> varieties, string type, string filePath)
+		private static void WritePhonemeList(IEnumerable<Variety> varieties, FeatureSymbol type, string filePath)
 		{
 			using (var writer = new StreamWriter(filePath))
 			{

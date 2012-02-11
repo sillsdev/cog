@@ -39,8 +39,8 @@ namespace SIL.Cog
 		{
 			get
 			{
-				Annotation<ShapeNode> ann1 = _shape1.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-				Annotation<ShapeNode> ann2 = _shape2.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+				Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+				Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 				if (ann1 != null && ann2 != null)
 					return ann1.Children.Zip(ann2.Children);
 
@@ -50,8 +50,8 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			Annotation<ShapeNode> ann1 = _shape1.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
-			Annotation<ShapeNode> ann2 = _shape2.Annotations.GetNodes(CogFeatureSystem.StemType).SingleOrDefault();
+			Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 
 			var sb = new StringBuilder();
 			if (ann1 == null || ann2 == null)

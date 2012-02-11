@@ -52,9 +52,9 @@ namespace SIL.Cog
 			NPhone corr = q2 == null ? new NPhone(corrPhoneme) : new NPhone(corrPhoneme, wordPair.VarietyPair.Variety2.GetPhoneme(q2));
 
 			NaturalClass leftEnv = _naturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 			NaturalClass rightEnv = _naturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 			SoundChange soundChange;
 			double prob = wordPair.VarietyPair.TryGetSoundChange(leftEnv, target, rightEnv, out soundChange) ? soundChange[corr]
 				: wordPair.VarietyPair.DefaultCorrespondenceProbability;

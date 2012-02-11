@@ -39,16 +39,16 @@ namespace SIL.Cog
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						if (possibleLink.Item1.Type == CogFeatureSystem.NullType || possibleLink.Item2.Type == CogFeatureSystem.NullType)
+						if (possibleLink.Item1.Type() == CogFeatureSystem.NullType || possibleLink.Item2.Type() == CogFeatureSystem.NullType)
 							continue;
 
 						var u = new NPhone(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.GetPhoneme(node)));
 						var v = new NPhone(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.GetPhoneme(node)));
 
 						NaturalClass leftEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
-							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 						NaturalClass rightEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
-							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 						SoundChange change = pair.GetSoundChange(leftEnv, u, rightEnv);
 						ExpectedCount expectedCount = expectedCounts.GetValue(change, () => new ExpectedCount());
 						expectedCount.Increment(v);

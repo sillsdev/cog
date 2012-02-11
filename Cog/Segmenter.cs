@@ -71,18 +71,18 @@ namespace SIL.Cog
 		{
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-			shape = new Shape(_spanFactory, new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, FeatureStruct.New().Value),
-				new ShapeNode(_spanFactory, CogFeatureSystem.AnchorType, FeatureStruct.New().Value));
+			shape = new Shape(_spanFactory, new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value),
+				new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 
 			foreach (Match match in _regex.Matches(str.Normalize(NormalizationForm.FormD)))
 			{
 				if (match.Groups["vowelSeg"].Success)
 				{
-					shape.Add(CogFeatureSystem.VowelType, BuildFeatStruct(match, "vowel", _vowels));
+					shape.Add(BuildFeatStruct(match, "vowel", _vowels, CogFeatureSystem.VowelType));
 				}
 				else if (match.Groups["consSeg"].Success)
 				{
-					shape.Add(CogFeatureSystem.ConsonantType, BuildFeatStruct(match, "cons", _consonants));
+					shape.Add(BuildFeatStruct(match, "cons", _consonants, CogFeatureSystem.ConsonantType));
 				}
 				else if (match.Groups["affricate"].Success)
 				{
@@ -90,15 +90,8 @@ namespace SIL.Cog
 					FeatureStruct fs = _consonants[fricative.Value].Clone();
 					fs.PriorityUnion(_joiners[match.Groups["joiner"].Value]);
 					fs.AddValue(CogFeatureSystem.StrRep, match.Groups["affricate"].Value);
-					shape.Add(CogFeatureSystem.ConsonantType, fs);
-				}
-				else if (match.Groups["tone"].Success)
-				{
-					//shape.Add(CogFeatureSystem.ToneType, FeatureStruct.New().Feature(CogFeatureSystem.StrRep).EqualTo(match.Groups["tone"].Value).Value);
-				}
-				else if (match.Groups["bdry"].Success)
-				{
-					//shape.Add(CogFeatureSystem.BoundaryType, FeatureStruct.New().Feature(CogFeatureSystem.StrRep).EqualTo(match.Groups["bdry"].Value).Value);
+					fs.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
+					shape.Add(fs);
 				}
 
 				if (match.Index + match.Length == str.Length)
@@ -109,7 +102,7 @@ namespace SIL.Cog
 			return false;
 		}
 
-		private FeatureStruct BuildFeatStruct(Match match, string groupName, Dictionary<string, FeatureStruct> bases)
+		private FeatureStruct BuildFeatStruct(Match match, string groupName, Dictionary<string, FeatureStruct> bases, FeatureSymbol type)
 		{
 			string baseStr = match.Groups[groupName].Value.ToLowerInvariant();
 			FeatureStruct fs = bases[baseStr].Clone();
@@ -132,6 +125,7 @@ namespace SIL.Cog
 			}
 			modStrs.Sort();
 			fs.AddValue(CogFeatureSystem.StrRep, modStrs.Aggregate(sb, (strRep, modStr) => strRep.Append(modStr)).ToString());
+			fs.AddValue(CogFeatureSystem.Type, type);
 			return fs;
 		}
 

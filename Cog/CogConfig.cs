@@ -74,7 +74,8 @@ namespace SIL.Cog
 					foreach (XElement ncElem in naturalClassesElem.Elements("NaturalClass"))
 					{
 						FeatureStruct fs = ParseFeatureStruct(ncElem);
-						_naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), CogFeatureSystem.VowelType, fs));
+						fs.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
+						_naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), fs));
 					}
 				}
 				XElement symbolsElem = vowelsElem.Element("Symbols");
@@ -98,7 +99,8 @@ namespace SIL.Cog
 					foreach (XElement ncElem in naturalClassesElem.Elements("NaturalClass"))
 					{
 						FeatureStruct fs = ParseFeatureStruct(ncElem);
-						_naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), CogFeatureSystem.ConsonantType, fs));
+						fs.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
+						_naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), fs));
 					}
 				}
 				XElement symbolsElem = consElem.Element("Symbols");

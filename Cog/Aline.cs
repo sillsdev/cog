@@ -62,13 +62,13 @@ namespace SIL.Cog
 
 		private int V(ShapeNode node)
 		{
-			return node.Annotation.Type == CogFeatureSystem.VowelType ? VowelCost : 0;
+			return node.Annotation.Type() == CogFeatureSystem.VowelType ? VowelCost : 0;
 		}
 
 		public override int Delta(FeatureStruct fs1, FeatureStruct fs2)
 		{
-			IEnumerable<SymbolicFeature> features = ((string) fs1.GetValue(AnnotationFeatureSystem.Type)) == CogFeatureSystem.VowelType
-				&& ((string) fs2.GetValue(AnnotationFeatureSystem.Type)) == CogFeatureSystem.VowelType
+			IEnumerable<SymbolicFeature> features = ((FeatureSymbol) fs1.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
+				&& ((FeatureSymbol) fs2.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
 				? _relevantVowelFeatures : _relevantConsFeatures;
 
 			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * (int) feat.Weight));

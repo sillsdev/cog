@@ -1,5 +1,4 @@
-﻿using SIL.Machine;
-using SIL.Machine.FeatureModel;
+﻿using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
@@ -19,15 +18,9 @@ namespace SIL.Cog
 			get { return (string) _fs.GetValue(CogFeatureSystem.StrRep); }
 		}
 
-		public string Type
+		public FeatureSymbol Type
 		{
-			get
-			{
-				StringFeatureValue sfv;
-				if (_fs.TryGetValue(AnnotationFeatureSystem.Type, out sfv))
-					return (string) sfv;
-				return null;
-			}
+			get { return (FeatureSymbol) _fs.GetValue(CogFeatureSystem.Type); }
 		}
 
 		public FeatureStruct FeatureStruct

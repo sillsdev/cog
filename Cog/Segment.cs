@@ -2,12 +2,12 @@
 
 namespace SIL.Cog
 {
-	public class Phoneme
+	public class Segment
 	{
 		private readonly double _probability;
 		private readonly FeatureStruct _fs;
 
-		public Phoneme(FeatureStruct fs, double probability)
+		public Segment(FeatureStruct fs, double probability)
 		{
 			_fs = fs;
 			_probability = probability;

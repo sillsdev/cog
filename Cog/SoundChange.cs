@@ -8,17 +8,17 @@ namespace SIL.Cog
 	{
 		private readonly int _possibleCorrespondenceCount;
 		private readonly NaturalClass _leftEnv;
-		private readonly NPhone _target;
+		private readonly NSegment _target;
 		private readonly NaturalClass _rightEnv;
-		private readonly Dictionary<NPhone, double> _probabilities;
+		private readonly Dictionary<NSegment, double> _probabilities;
 
-		internal SoundChange(int possibleCorrespondenceCount, NaturalClass leftEnv, NPhone target, NaturalClass rightEnv)
+		internal SoundChange(int possibleCorrespondenceCount, NaturalClass leftEnv, NSegment target, NaturalClass rightEnv)
 		{
 			_possibleCorrespondenceCount = possibleCorrespondenceCount;
 			_leftEnv = leftEnv;
 			_target = target;
 			_rightEnv = rightEnv;
-			_probabilities = new Dictionary<NPhone, double>();
+			_probabilities = new Dictionary<NSegment, double>();
 		}
 
 		public NaturalClass LeftEnvironment
@@ -26,7 +26,7 @@ namespace SIL.Cog
 			get { return _leftEnv; }
 		}
 
-		public NPhone Target
+		public NSegment Target
 		{
 			get { return _target; }
 		}
@@ -36,12 +36,12 @@ namespace SIL.Cog
 			get { return _rightEnv; }
 		}
 
-		public IReadOnlyCollection<NPhone> ObservedCorrespondences
+		public IReadOnlyCollection<NSegment> ObservedCorrespondences
 		{
 			get { return _probabilities.Keys.AsReadOnlyCollection(); }
 		}
 
-		public double this[NPhone correspondence]
+		public double this[NSegment correspondence]
 		{
 			get
 			{

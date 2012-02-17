@@ -9,10 +9,10 @@ namespace SIL.Cog
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly List<WordPair> _wordPairs; 
-		private readonly Dictionary<Tuple<NaturalClass, NPhone, NaturalClass>, SoundChange> _soundChanges;
+		private readonly Dictionary<Tuple<NaturalClass, NSegment, NaturalClass>, SoundChange> _soundChanges;
 		private readonly double _defaultCorrespondenceProbability;
 		private readonly int _possibleCorrespondenceCount;
-		private readonly Dictionary<Phoneme, HashSet<Phoneme>> _similarPhonemes; 
+		private readonly Dictionary<Segment, HashSet<Segment>> _similarSegments; 
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
@@ -25,12 +25,12 @@ namespace SIL.Cog
 				if (_variety2.TryGetWord(word1.Gloss, out word2))
 					_wordPairs.Add(new WordPair(this, word1, word2));
 			}
-			_soundChanges = new Dictionary<Tuple<NaturalClass, NPhone, NaturalClass>, SoundChange>();
+			_soundChanges = new Dictionary<Tuple<NaturalClass, NSegment, NaturalClass>, SoundChange>();
 
-			int phonemeCount = _variety2.Phonemes.Count;
+			int phonemeCount = _variety2.Segments.Count;
 			_possibleCorrespondenceCount = (phonemeCount * phonemeCount) + phonemeCount;
 			_defaultCorrespondenceProbability = 1.0 / _possibleCorrespondenceCount;
-			_similarPhonemes = new Dictionary<Phoneme, HashSet<Phoneme>>();
+			_similarSegments = new Dictionary<Segment, HashSet<Segment>>();
 		}
 
 		public Variety Variety1
@@ -73,31 +73,31 @@ namespace SIL.Cog
 			get { return _soundChanges.Values.AsReadOnlyCollection(); }
 		}
 
-		public SoundChange GetSoundChange(NaturalClass leftEnv, NPhone target, NaturalClass rightEnv)
+		public SoundChange GetSoundChange(NaturalClass leftEnv, NSegment target, NaturalClass rightEnv)
 		{
-			Tuple<NaturalClass, NPhone, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
+			Tuple<NaturalClass, NSegment, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
 			return _soundChanges.GetValue(key, () => new SoundChange(_possibleCorrespondenceCount, leftEnv, target, rightEnv));
 		}
 
-		public bool TryGetSoundChange(NaturalClass leftEnv, NPhone target, NaturalClass rightEnv, out SoundChange soundChange)
+		public bool TryGetSoundChange(NaturalClass leftEnv, NSegment target, NaturalClass rightEnv, out SoundChange soundChange)
 		{
-			Tuple<NaturalClass, NPhone, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
+			Tuple<NaturalClass, NSegment, NaturalClass> key = Tuple.Create(leftEnv, target, rightEnv);
 			return _soundChanges.TryGetValue(key, out soundChange);
 		}
 
-		public void AddSimilarPhoneme(Phoneme ph1, Phoneme ph2)
+		public void AddSimilarSegment(Segment seg1, Segment seg2)
 		{
-			HashSet<Phoneme> phonemes = _similarPhonemes.GetValue(ph1, () => new HashSet<Phoneme>());
-			phonemes.Add(ph2);
+			HashSet<Segment> segments = _similarSegments.GetValue(seg1, () => new HashSet<Segment>());
+			segments.Add(seg2);
 		}
 
-		public IReadOnlySet<Phoneme> GetSimilarPhonemes(Phoneme ph)
+		public IReadOnlySet<Segment> GetSimilarSegments(Segment seg)
 		{
-			HashSet<Phoneme> phonemes;
-			if (_similarPhonemes.TryGetValue(ph, out  phonemes))
-				return phonemes.AsReadOnlySet();
+			HashSet<Segment> segments;
+			if (_similarSegments.TryGetValue(seg, out  segments))
+				return segments.AsReadOnlySet();
 
-			return new ReadOnlySet<Phoneme>(new HashSet<Phoneme>());
+			return new ReadOnlySet<Segment>(new HashSet<Segment>());
 		}
 	}
 }

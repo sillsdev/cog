@@ -30,7 +30,7 @@ namespace SIL.Cog
 					foreach (SoundChange soundChange in varietyPair.SoundChanges)
 					{
 						SoundChange newSoundChange = randVarietyPair.GetSoundChange(soundChange.LeftEnvironment, soundChange.Target, soundChange.RightEnvironment);
-						foreach (NPhone corr in soundChange.ObservedCorrespondences)
+						foreach (NSegment corr in soundChange.ObservedCorrespondences)
 							newSoundChange[corr] = soundChange[corr];
 					}
 				}

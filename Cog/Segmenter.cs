@@ -78,20 +78,43 @@ namespace SIL.Cog
 			{
 				if (match.Groups["vowelSeg"].Success)
 				{
-					shape.Add(BuildFeatStruct(match, "vowel", _vowels, CogFeatureSystem.VowelType));
+					Group vowelComp = match.Groups["vowelComp"];
+					string strRep;
+					FeatureStruct phonemeFS = BuildFeatStruct(match, vowelComp.Captures[0], "vowelBase", _vowels, out strRep);
+					var sb = new StringBuilder();
+					sb.Append(strRep);
+					if (match.Groups["joiner"].Success)
+					{
+						string joinerStr = match.Groups["joiner"].Value;
+						sb.Append(joinerStr);
+						phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[1], "vowelBase", _vowels, out strRep));
+						sb.Append(strRep);
+						phonemeFS.PriorityUnion(_joiners[joinerStr]);
+					}
+
+					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
+					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
+					shape.Add(phonemeFS);
 				}
 				else if (match.Groups["consSeg"].Success)
 				{
-					shape.Add(BuildFeatStruct(match, "cons", _consonants, CogFeatureSystem.ConsonantType));
-				}
-				else if (match.Groups["affricate"].Success)
-				{
-					Capture fricative = match.Groups["cons"].Captures[match.Groups["cons"].Captures.Count - 1];
-					FeatureStruct fs = _consonants[fricative.Value].Clone();
-					fs.PriorityUnion(_joiners[match.Groups["joiner"].Value]);
-					fs.AddValue(CogFeatureSystem.StrRep, match.Groups["affricate"].Value);
-					fs.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
-					shape.Add(fs);
+					Group consComp = match.Groups["consComp"];
+					string strRep;
+					FeatureStruct phonemeFS = BuildFeatStruct(match, consComp.Captures[0], "consBase", _consonants, out strRep);
+					var sb = new StringBuilder();
+					sb.Append(strRep);
+					if (match.Groups["joiner"].Success)
+					{
+						string joinerStr = match.Groups["joiner"].Value;
+						sb.Append(joinerStr);
+						phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[1], "consBase", _consonants, out strRep));
+						sb.Append(strRep);
+						phonemeFS.PriorityUnion(_joiners[joinerStr]);
+					}
+
+					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
+					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
+					shape.Add(phonemeFS);
 				}
 
 				if (match.Index + match.Length == str.Length)
@@ -102,14 +125,14 @@ namespace SIL.Cog
 			return false;
 		}
 
-		private FeatureStruct BuildFeatStruct(Match match, string groupName, Dictionary<string, FeatureStruct> bases, FeatureSymbol type)
+		private FeatureStruct BuildFeatStruct(Match match, Capture capture, string baseGroupName, Dictionary<string, FeatureStruct> bases, out string strRep)
 		{
-			string baseStr = match.Groups[groupName].Value.ToLowerInvariant();
+			string baseStr = match.Groups[baseGroupName].Captures.Cast<Capture>().Single(cap => capture.Index == cap.Index).Value;
 			FeatureStruct fs = bases[baseStr].Clone();
 			var sb = new StringBuilder();
 			sb.Append(baseStr);
 			var modStrs = new List<string>();
-			foreach (Capture modifier in match.Groups["mod"].Captures)
+			foreach (Capture modifier in match.Groups["mod"].Captures.Cast<Capture>().Where(cap => capture.Index <= cap.Index && (capture.Index + capture.Length) >= (cap.Index + cap.Length)))
 			{
 				string modStr = modifier.Value;
 				Tuple<FeatureStruct, bool> modInfo = _modifiers[modStr];
@@ -123,9 +146,7 @@ namespace SIL.Cog
 				else
 					modStrs.Add(modStr);
 			}
-			modStrs.Sort();
-			fs.AddValue(CogFeatureSystem.StrRep, modStrs.Aggregate(sb, (strRep, modStr) => strRep.Append(modStr)).ToString());
-			fs.AddValue(CogFeatureSystem.Type, type);
+			strRep = modStrs.OrderBy(str => str).Aggregate(sb, (s, modStr) => s.Append(modStr)).ToString();
 			return fs;
 		}
 
@@ -144,13 +165,16 @@ namespace SIL.Cog
 
 		private string CreateRegexString()
 		{
-			string vowelStr = CreateSymbolRegexString("vowel", _vowels.Keys);
-			string consStr = CreateSymbolRegexString("cons", _consonants.Keys);
+			string vowelBaseStr = CreateSymbolRegexString("vowelBase", _vowels.Keys);
+			string consBaseStr = CreateSymbolRegexString("consBase", _consonants.Keys);
 			string modStr = CreateSymbolRegexString("mod", _modifiers.Keys);
 			string joinerStr = CreateSymbolRegexString("joiner", _joiners.Keys);
 			string toneStr = CreateSymbolRegexString("tone", _toneLetters);
 			string bdryStr = CreateSymbolRegexString("bdry", _boundaries);
-			return string.Format("(?'affricate'{0}{3}{0})|(?'consSeg'{0}{2}*)|(?'vowelSeg'{1}{2}*)|{4}|{5}", consStr, vowelStr, modStr, joinerStr, toneStr, bdryStr);
+
+			string consCompStr = string.Format("(?'consComp'{0}{1}*)", consBaseStr, modStr);
+			string voweCompStr = string.Format("(?'vowelComp'{0}{1}*)", vowelBaseStr, modStr);
+			return string.Format("(?'consSeg'{0}(?:{2}{0})?)|(?'vowelSeg'{1}(?:{2}{1}))|{3}|{4}", consCompStr, voweCompStr, joinerStr, toneStr, bdryStr);
 		}
 
 		private static string CreateSymbolRegexString(string name, IEnumerable<string> strings)
@@ -164,8 +188,7 @@ namespace SIL.Cog
 					sb.Append("|");
 				if (str.Length > 1)
 					sb.Append("(?:");
-				foreach (char c in str)
-					sb.AppendFormat("\\u{0}", ((int) c).ToString("X4"));
+				sb.Append(str);
 				if (str.Length > 1)
 					sb.Append(")");
 				first = false;

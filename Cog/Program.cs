@@ -95,7 +95,8 @@ namespace SIL.Cog
 					varietyPairProcessors = new IProcessor<VarietyPair>[]
 			                					{
 			                						new EMSoundChangeInducer(aline, soundChangeAline, 0.5),
-													new SimilarPhonemeIdentifier(soundChangeAline, 500, 600), 
+													new SimilarSegmentListIdentifier("data\\similar-segments.txt"), 
+													//new SimilarSegmentThresholdIdentifier(soundChangeAline, 500, 600), 
 													new BlairCognateIdentifier(soundChangeAline, 0.5),
 													new VarietyPairTextOutput(dir, soundChangeAline) 
 			                					};
@@ -472,22 +473,22 @@ namespace SIL.Cog
 
 		private static void WriteSimilarityGraph(IEnumerable<Variety> varieties, FeatureSymbol type, string filePath, int threshold, Aline aline)
 		{
-			Phoneme[] phonemeArray = (from v in varieties
-									  from ph in v.Phonemes
+			Segment[] segmentArray = (from v in varieties
+									  from ph in v.Segments
 									  where ph.Type == type
 									  select ph).DistinctBy(ph => ph.StrRep).ToArray();
 			using (var writer = new StreamWriter(filePath))
 			{
 				writer.WriteLine("graph G {");
 				writer.WriteLine("  graph [overlap=\"scale\", splines=\"true\"];");
-				for (int i = 0; i < phonemeArray.Length; i++)
+				for (int i = 0; i < segmentArray.Length; i++)
 				{
-					string iStrRep = phonemeArray[i].StrRep;
+					string iStrRep = segmentArray[i].StrRep;
 					writer.WriteLine("  \"{0}\" [shape=\"circle\"];", iStrRep);
-					for (int j = i + 1; j < phonemeArray.Length; j++)
+					for (int j = i + 1; j < segmentArray.Length; j++)
 					{
-						string jStrRep = phonemeArray[j].StrRep;
-						if (aline.Delta(phonemeArray[i].FeatureStruct, phonemeArray[j].FeatureStruct) <= threshold)
+						string jStrRep = segmentArray[j].StrRep;
+						if (aline.Delta(segmentArray[i].FeatureStruct, segmentArray[j].FeatureStruct) <= threshold)
 							writer.WriteLine("  \"{0}\" -- \"{1}\"", iStrRep, jStrRep);
 					}
 				}
@@ -501,7 +502,7 @@ namespace SIL.Cog
 			using (var writer = new StreamWriter(filePath))
 			{
 				foreach (string phoneme in (from v in varieties
-										    from ph in v.Phonemes
+										    from ph in v.Segments
 										    where ph.Type == type
 										    select ph.StrRep).Distinct())
 				{

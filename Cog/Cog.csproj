@@ -63,8 +63,8 @@
     <Compile Include="DbscanClusterer.cs" />
     <Compile Include="DbscanOpticsClusterer.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="NPhone.cs" />
-    <Compile Include="Phoneme.cs" />
+    <Compile Include="NSegment.cs" />
+    <Compile Include="Segment.cs" />
     <Compile Include="PrecisionRecallCalculator.cs" />
     <Compile Include="LsdbcClusterer.cs" />
     <Compile Include="MonteCarloSignificanceTest.cs" />
@@ -72,7 +72,8 @@
     <Compile Include="OpticsClusterer.cs" />
     <Compile Include="OpticsDropDownClusterer.cs" />
     <Compile Include="OpticsXiClusterer.cs" />
-    <Compile Include="SimilarPhonemeIdentifier.cs" />
+    <Compile Include="SimilarSegmentThresholdIdentifier.cs" />
+    <Compile Include="SimilarSegmentListIdentifier.cs" />
     <Compile Include="VarietyPairTextOutput.cs" />
     <Compile Include="ThresholdCognateIdentifier.cs" />
     <Compile Include="EditDistanceMatrix.cs" />

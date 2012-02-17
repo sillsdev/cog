@@ -27,7 +27,7 @@ namespace SIL.Cog
 				foreach (SoundChange change in varietyPair.SoundChanges)
 				{
 					sb.AppendLine(change.ToString());
-					sb.AppendLine("Phoneme\tProb");
+					sb.AppendLine("Segment\tProb");
 					foreach (var correspondence in change.ObservedCorrespondences.Select(corr => new {Phone = corr, Probability = change[corr]}).OrderByDescending(corr => corr.Probability))
 					{
 						sb.AppendFormat("{0}\t{1:0.0####}", correspondence.Phone, correspondence.Probability);

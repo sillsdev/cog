@@ -88,7 +88,7 @@ namespace SIL.Cog
 			foreach (AffixInfo affix in affixes.Values)
 			{
 				string affixStr = affix.ToString();
-				var caffixes = (from c in variety.Phonemes
+				var caffixes = (from c in variety.Segments
 								let ca = dir == Direction.LeftToRight ? affixStr + c.StrRep : c.StrRep + affixStr
 								where affixes.ContainsKey(ca)
 								select new { Affix = affixes[ca], Phoneme = c }).ToArray();

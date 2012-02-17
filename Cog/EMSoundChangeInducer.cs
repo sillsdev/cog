@@ -42,8 +42,8 @@ namespace SIL.Cog
 						if (possibleLink.Item1.Type() == CogFeatureSystem.NullType || possibleLink.Item2.Type() == CogFeatureSystem.NullType)
 							continue;
 
-						var u = new NPhone(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.GetPhoneme(node)));
-						var v = new NPhone(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.GetPhoneme(node)));
+						var u = new NSegment(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.GetSegment(node)));
+						var v = new NSegment(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.GetSegment(node)));
 
 						NaturalClass leftEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
 							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
@@ -66,7 +66,7 @@ namespace SIL.Cog
 				ExpectedCount expectedCount;
 				if (expectedCounts.TryGetValue(change, out expectedCount))
 				{
-					foreach (NPhone correspondence in expectedCount.Correspondences)
+					foreach (NSegment correspondence in expectedCount.Correspondences)
 					{
 						double prob = (expectedCount.GetCorrespondenceCount(correspondence) + (1.0 / pair.PossibleCorrespondenceCount)) / (expectedCount.Count + 1.0);
 						if (Math.Abs(prob - change[correspondence]) > 0.0001)
@@ -85,11 +85,11 @@ namespace SIL.Cog
 		private class ExpectedCount
 		{
 			private int _count;
-			private readonly Dictionary<NPhone, int> _correspondenceCounts;
+			private readonly Dictionary<NSegment, int> _correspondenceCounts;
 
 			public ExpectedCount()
 			{
-				_correspondenceCounts = new Dictionary<NPhone, int>();
+				_correspondenceCounts = new Dictionary<NSegment, int>();
 			}
 
 			public int Count
@@ -97,12 +97,12 @@ namespace SIL.Cog
 				get { return _count; }
 			}
 
-			public IEnumerable<NPhone> Correspondences
+			public IEnumerable<NSegment> Correspondences
 			{
 				get { return _correspondenceCounts.Keys; }
 			}
 
-			public int GetCorrespondenceCount(NPhone correspondence)
+			public int GetCorrespondenceCount(NSegment correspondence)
 			{
 				int count;
 				if (_correspondenceCounts.TryGetValue(correspondence, out count))
@@ -110,7 +110,7 @@ namespace SIL.Cog
 				return 0;
 			}
 
-			public void Increment(NPhone correspondence)
+			public void Increment(NSegment correspondence)
 			{
 				_correspondenceCounts.UpdateValue(correspondence, () => 0, count => count + 1);
 				_count++;

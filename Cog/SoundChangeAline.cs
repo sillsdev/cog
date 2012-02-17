@@ -45,11 +45,11 @@ namespace SIL.Cog
 
 		private int SoundChange(WordPair wordPair, ShapeNode p1, ShapeNode p2, ShapeNode q1, ShapeNode q2)
 		{
-			Phoneme targetPhoneme = wordPair.VarietyPair.Variety1.GetPhoneme(p1);
-			NPhone target = p2 == null ? new NPhone(targetPhoneme) : new NPhone(targetPhoneme, wordPair.VarietyPair.Variety1.GetPhoneme(p2));
+			Segment targetSegment = wordPair.VarietyPair.Variety1.GetSegment(p1);
+			NSegment target = p2 == null ? new NSegment(targetSegment) : new NSegment(targetSegment, wordPair.VarietyPair.Variety1.GetSegment(p2));
 
-			Phoneme corrPhoneme = wordPair.VarietyPair.Variety2.GetPhoneme(q1);
-			NPhone corr = q2 == null ? new NPhone(corrPhoneme) : new NPhone(corrPhoneme, wordPair.VarietyPair.Variety2.GetPhoneme(q2));
+			Segment corrSegment = wordPair.VarietyPair.Variety2.GetSegment(q1);
+			NSegment corr = q2 == null ? new NSegment(corrSegment) : new NSegment(corrSegment, wordPair.VarietyPair.Variety2.GetSegment(q2));
 
 			NaturalClass leftEnv = _naturalClasses.FirstOrDefault(constraint =>
 				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));

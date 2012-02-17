@@ -28,9 +28,6 @@ namespace SIL.Cog
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						if (possibleLink.Item1.Type() == CogFeatureSystem.NullType || possibleLink.Item2.Type() == CogFeatureSystem.NullType)
-							continue;
-
 						string uStr = possibleLink.Item1.StrRep();
 						string vStr = possibleLink.Item2.StrRep();
 						if (uStr != vStr)
@@ -53,13 +50,10 @@ namespace SIL.Cog
 				int totalCount = 0;
 				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> link in wordPair.Item2.AlignedAnnotations)
 				{
-					if (link.Item1.Type() == CogFeatureSystem.NullType || link.Item2.Type() == CogFeatureSystem.NullType)
-						continue;
-
-					Phoneme u1 = varietyPair.Variety1.GetPhoneme(link.Item1.Span.Start);
-					Phoneme u2 = link.Item1.Span.Length == 1 ? null : varietyPair.Variety1.GetPhoneme(link.Item1.Span.End);
-					Phoneme v1 = varietyPair.Variety2.GetPhoneme(link.Item2.Span.Start);
-					Phoneme v2 = link.Item2.Span.Length == 1 ? null : varietyPair.Variety2.GetPhoneme(link.Item2.Span.End);
+					var u = new NSegment(link.Item1.Type() == CogFeatureSystem.NullType ? Enumerable.Empty<Segment>()
+						: wordPair.Item2.Shape1.GetNodes(link.Item1.Span).Select(node => varietyPair.Variety1.GetSegment(node)));
+					var v = new NSegment(link.Item2.Type() == CogFeatureSystem.NullType ? Enumerable.Empty<Segment>()
+						: wordPair.Item2.Shape2.GetNodes(link.Item2.Span).Select(node => varietyPair.Variety2.GetSegment(node)));
 					string uStr = link.Item1.StrRep();
 					string vStr = link.Item2.StrRep();
 					if (uStr == vStr)
@@ -67,12 +61,17 @@ namespace SIL.Cog
 						type1Count++;
 						type1And2Count++;
 					}
-					else if (u1.Type == CogFeatureSystem.VowelType && v1.Type == CogFeatureSystem.VowelType)
+					else if (u.Count == 0 || v.Count == 0)
 					{
-						int cat = GetVowelCategory(varietyPair, u1, v1, v2);
-						if (u2 != null && cat != 1)
-							cat = Math.Min(cat, GetVowelCategory(varietyPair, u2, v1, v2));
-
+						if (correspondences.Contains(Tuple.Create(uStr, vStr)))
+						{
+							type1Count++;
+							type1And2Count++;
+						}
+					}
+					else if (u[0].Type == CogFeatureSystem.VowelType && v[0].Type == CogFeatureSystem.VowelType)
+					{
+						int cat = GetVowelCategory(varietyPair, u, v);
 						if (cat <= 2)
 						{
 							if (cat == 1)
@@ -80,9 +79,9 @@ namespace SIL.Cog
 							type1And2Count++;
 						}
 					}
-					else if (u1.Type == CogFeatureSystem.ConsonantType && v1.Type == CogFeatureSystem.ConsonantType)
+					else if (u[0].Type == CogFeatureSystem.ConsonantType && v[0].Type == CogFeatureSystem.ConsonantType)
 					{
-						if (AreConsonantsSimilar(varietyPair, u1, v1, v2) || (u2 != null && AreConsonantsSimilar(varietyPair, u2, v1, v2)))
+						if (AreConsonantsSimilar(varietyPair, u, v))
 						{
 							if (correspondences.Contains(Tuple.Create(uStr, vStr)))
 								type1Count++;
@@ -106,26 +105,42 @@ namespace SIL.Cog
 			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
 		}
 
-		private int GetVowelCategory(VarietyPair varietyPair, Phoneme u, Phoneme v1, Phoneme v2)
+		private int GetVowelCategory(VarietyPair varietyPair, NSegment u, NSegment v)
 		{
-			IReadOnlySet<Phoneme> cat1 = varietyPair.GetSimilarPhonemes(u);
-			if (cat1.Contains(v1) || (v2 != null && cat1.Contains(v2)))
-				return 1;
-
-			foreach (Phoneme ph in cat1)
+			int minCat = 3;
+			foreach (Segment uSeg in u)
 			{
-				IReadOnlySet<Phoneme> cat2 = varietyPair.GetSimilarPhonemes(ph);
-				if (cat2.Contains(v1) || (v2 != null && cat2.Contains(v2)))
-					return 2;
+				foreach (Segment vSeg in v)
+				{
+					IReadOnlySet<Segment> cat1 = varietyPair.GetSimilarSegments(uSeg);
+					if (cat1.Contains(vSeg))
+						return 1;
+
+					foreach (Segment seg in cat1)
+					{
+						IReadOnlySet<Segment> cat2 = varietyPair.GetSimilarSegments(seg);
+						if (cat2.Contains(vSeg))
+							minCat = 2;
+					}
+				}
 			}
 
-			return 3;
+			return minCat;
 		}
 
-		private bool AreConsonantsSimilar(VarietyPair varietyPair, Phoneme u, Phoneme v1, Phoneme v2)
+		private bool AreConsonantsSimilar(VarietyPair varietyPair, NSegment u, NSegment v)
 		{
-			IReadOnlySet<Phoneme> phonemes = varietyPair.GetSimilarPhonemes(u);
-			return phonemes.Contains(v1) || phonemes.Contains(v2);
+			foreach (Segment uSeg in u)
+			{
+				IReadOnlySet<Segment> segments = varietyPair.GetSimilarSegments(uSeg);
+				foreach (Segment vSeg in v)
+				{
+					if (segments.Contains(vSeg))
+						return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

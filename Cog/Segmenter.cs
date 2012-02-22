@@ -31,6 +31,36 @@ namespace SIL.Cog
 			_boundaries = new HashSet<string>();
 		}
 
+		public IReadOnlyCollection<string> Vowels
+		{
+			get { return _vowels.Keys.AsReadOnlyCollection(); }
+		}
+
+		public IReadOnlyCollection<string> Consonants
+		{
+			get { return _consonants.Keys.AsReadOnlyCollection(); }
+		}
+
+		public IReadOnlyCollection<string> Modifiers
+		{
+			get { return _modifiers.Keys.AsReadOnlyCollection(); }
+		}
+
+		public IReadOnlyCollection<string> Joiners
+		{
+			get { return _joiners.Keys.AsReadOnlyCollection(); }
+		}
+
+		public IReadOnlyCollection<string> ToneLetters
+		{
+			get { return _toneLetters.AsReadOnlyCollection(); }
+		}
+
+		public IReadOnlyCollection<string> Boundaries
+		{
+			get { return _boundaries.AsReadOnlyCollection(); }
+		}
+
 		public void AddVowel(string strRep, FeatureStruct fs)
 		{
 			_vowels[strRep] = fs;
@@ -71,8 +101,7 @@ namespace SIL.Cog
 		{
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-			shape = new Shape(_spanFactory, new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value),
-				new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 
 			foreach (Match match in _regex.Matches(str.Normalize(NormalizationForm.FormD)))
 			{
@@ -174,7 +203,7 @@ namespace SIL.Cog
 
 			string consCompStr = string.Format("(?'consComp'{0}{1}*)", consBaseStr, modStr);
 			string voweCompStr = string.Format("(?'vowelComp'{0}{1}*)", vowelBaseStr, modStr);
-			return string.Format("(?'consSeg'{0}(?:{2}{0})?)|(?'vowelSeg'{1}(?:{2}{1}))|{3}|{4}", consCompStr, voweCompStr, joinerStr, toneStr, bdryStr);
+			return string.Format("(?'consSeg'{0}(?:{2}{0})?)|(?'vowelSeg'{1}(?:{2}{1})?)|{3}|{4}", consCompStr, voweCompStr, joinerStr, toneStr, bdryStr);
 		}
 
 		private static string CreateSymbolRegexString(string name, IEnumerable<string> strings)

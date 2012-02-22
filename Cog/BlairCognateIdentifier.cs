@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using SIL.Machine;
 
@@ -45,8 +46,8 @@ namespace SIL.Cog
 			int totalCognateCount = 0;
 			foreach (Tuple<WordPair, Alignment> wordPair in wordPairs)
 			{
-				int type1Count = 0;
-				int type1And2Count = 0;
+				int cat1Count = 0;
+				int cat1And2Count = 0;
 				int totalCount = 0;
 				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> link in wordPair.Item2.AlignedAnnotations)
 				{
@@ -56,43 +57,38 @@ namespace SIL.Cog
 						: wordPair.Item2.Shape2.GetNodes(link.Item2.Span).Select(node => varietyPair.Variety2.GetSegment(node)));
 					string uStr = link.Item1.StrRep();
 					string vStr = link.Item2.StrRep();
+					int cat = 3;
 					if (uStr == vStr)
 					{
-						type1Count++;
-						type1And2Count++;
+						cat = 1;
 					}
 					else if (u.Count == 0 || v.Count == 0)
 					{
 						if (correspondences.Contains(Tuple.Create(uStr, vStr)))
-						{
-							type1Count++;
-							type1And2Count++;
-						}
+							cat = 1;
 					}
 					else if (u[0].Type == CogFeatureSystem.VowelType && v[0].Type == CogFeatureSystem.VowelType)
 					{
-						int cat = GetVowelCategory(varietyPair, u, v);
-						if (cat <= 2)
-						{
-							if (cat == 1)
-								type1Count++;
-							type1And2Count++;
-						}
+						cat = AreSegmentsSimilar(varietyPair, u, v) ? 1 : 2;
 					}
 					else if (u[0].Type == CogFeatureSystem.ConsonantType && v[0].Type == CogFeatureSystem.ConsonantType)
 					{
-						if (AreConsonantsSimilar(varietyPair, u, v))
-						{
-							if (correspondences.Contains(Tuple.Create(uStr, vStr)))
-								type1Count++;
-							type1And2Count++;
-						}
+						if (AreSegmentsSimilar(varietyPair, u, v))
+							cat = correspondences.Contains(Tuple.Create(uStr, vStr)) ? 1 : 2;
 					}
+
+					if (cat < 3)
+					{
+						cat1And2Count++;
+						if (cat == 1)
+							cat1Count++;
+					}
+					wordPair.Item1.AlignmentNotes.Add(cat.ToString(CultureInfo.InvariantCulture));
 					totalCount++;
 				}
 
-				double type1Score = (double) type1Count / totalCount;
-				double type1And2Score = (double) type1And2Count / totalCount;
+				double type1Score = (double) cat1Count / totalCount;
+				double type1And2Score = (double) cat1And2Count / totalCount;
 				wordPair.Item1.AreCognatesPredicted = type1Score >= 0.5 && type1And2Score >= 0.75;
 				wordPair.Item1.PhoneticSimilarityScore = (type1Score * 0.75) + (type1And2Score * 0.25);
 				if (wordPair.Item1.AreCognatesPredicted)
@@ -105,30 +101,7 @@ namespace SIL.Cog
 			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
 		}
 
-		private int GetVowelCategory(VarietyPair varietyPair, NSegment u, NSegment v)
-		{
-			int minCat = 3;
-			foreach (Segment uSeg in u)
-			{
-				foreach (Segment vSeg in v)
-				{
-					IReadOnlySet<Segment> cat1 = varietyPair.GetSimilarSegments(uSeg);
-					if (cat1.Contains(vSeg))
-						return 1;
-
-					foreach (Segment seg in cat1)
-					{
-						IReadOnlySet<Segment> cat2 = varietyPair.GetSimilarSegments(seg);
-						if (cat2.Contains(vSeg))
-							minCat = 2;
-					}
-				}
-			}
-
-			return minCat;
-		}
-
-		private bool AreConsonantsSimilar(VarietyPair varietyPair, NSegment u, NSegment v)
+		private bool AreSegmentsSimilar(VarietyPair varietyPair, NSegment u, NSegment v)
 		{
 			foreach (Segment uSeg in u)
 			{

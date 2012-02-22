@@ -19,16 +19,10 @@ namespace SIL.Cog
 			_variety1 = variety1;
 			_variety2 = variety2;
 			_wordPairs = new List<WordPair>();
-			foreach (Word word1 in _variety1.Words)
-			{
-				Word word2;
-				if (_variety2.TryGetWord(word1.Gloss, out word2))
-					_wordPairs.Add(new WordPair(this, word1, word2));
-			}
 			_soundChanges = new Dictionary<Tuple<NaturalClass, NSegment, NaturalClass>, SoundChange>();
 
 			int phonemeCount = _variety2.Segments.Count;
-			_possibleCorrespondenceCount = (phonemeCount * phonemeCount) + phonemeCount;
+			_possibleCorrespondenceCount = (phonemeCount * phonemeCount) + phonemeCount + 1;
 			_defaultCorrespondenceProbability = 1.0 / _possibleCorrespondenceCount;
 			_similarSegments = new Dictionary<Segment, HashSet<Segment>>();
 		}
@@ -98,6 +92,11 @@ namespace SIL.Cog
 				return segments.AsReadOnlySet();
 
 			return new ReadOnlySet<Segment>(new HashSet<Segment>());
+		}
+
+		public void AddWordPair(Word word1, Word word2)
+		{
+			_wordPairs.Add(new WordPair(this, word1, word2));
 		}
 	}
 }

@@ -7,14 +7,12 @@ namespace SIL.Cog
 	public class Word : IData<ShapeNode>
 	{
 		private readonly Shape _shape;
-		private readonly string _gloss;
-		private readonly string _category;
+		private readonly Sense _sense;
 
-		public Word(Shape shape, string gloss, string category)
+		public Word(Shape shape, Sense sense)
 		{
 			_shape = shape;
-			_gloss = gloss;
-			_category = category;
+			_sense = sense;
 		}
 
 		public Shape Shape
@@ -22,14 +20,9 @@ namespace SIL.Cog
 			get { return _shape; }
 		}
 
-		public string Gloss
+		public Sense Sense
 		{
-			get { return _gloss; }
-		}
-
-		public string Category
-		{
-			get { return _category; }
+			get { return _sense; }
 		}
 
 		public Span<ShapeNode> Span

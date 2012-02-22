@@ -50,6 +50,11 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
+			return ToString(Enumerable.Empty<string>());
+		}
+
+		public string ToString(IEnumerable<string> notes)
+		{
 			Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 			Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 
@@ -61,6 +66,11 @@ namespace SIL.Cog
 			}
 			else
 			{
+				List<string> notesList = notes.ToList();
+				bool noNotes = notesList.Count == 0;
+				while (notesList.Count < ann1.Children.Count)
+					notesList.Add("");
+
 				string prefix1 = GetString(_shape1, _shape1.First, ann1.Span.Start.Prev);
 				string prefix2 = GetString(_shape2, _shape2.First, ann2.Span.Start.Prev);
 
@@ -69,50 +79,72 @@ namespace SIL.Cog
 
 				if (prefix1.Length > 0 || prefix2.Length > 0)
 				{
-					sb.Append(prefix1.PadRight(Math.Max(GetLength(prefix1), GetLength(prefix2))));
+					sb.Append(PadString(prefix1, prefix2, ""));
 					sb.Append(" ");
 				}
 				sb.Append("|");
 				bool first = true;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> tuple in ann1.Children.Zip(ann2.Children))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
 				{
 					if (!first)
 						sb.Append(" ");
-					string strRep1 = tuple.Item1.StrRep();
-					string strRep2 = tuple.Item2.StrRep();
-					sb.Append(strRep1.PadRight(Math.Max(GetLength(strRep1), GetLength(strRep2))));
+					sb.Append(PadString(tuple.Item1.StrRep(), tuple.Item2.StrRep(), tuple.Item3));
 					first = false;
 				}
 				sb.Append("|");
 				if (suffix1.Length > 0)
 				{
 					sb.Append(" ");
-					sb.Append(suffix1.PadRight(Math.Max(GetLength(suffix1), GetLength(suffix2))));
+					sb.Append(PadString(suffix1, suffix2, ""));
 				}
 				sb.AppendLine();
 				if (prefix1.Length > 0 || prefix2.Length > 0)
 				{
-					sb.Append(prefix2.PadRight(Math.Max(GetLength(prefix1), GetLength(prefix2))));
+					sb.Append(PadString(prefix2, prefix1, ""));
 					sb.Append(" ");
 				}
 				sb.Append("|");
 				first = true;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> tuple in ann1.Children.Zip(ann2.Children))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
 				{
 					if (!first)
 						sb.Append(" ");
-					string strRep1 = tuple.Item1.StrRep();
-					string strRep2 = tuple.Item2.StrRep();
-					sb.Append(strRep2.PadRight(Math.Max(GetLength(strRep1), GetLength(strRep2))));
+					sb.Append(PadString(tuple.Item2.StrRep(), tuple.Item1.StrRep(), tuple.Item3));
 					first = false;
 				}
 				sb.Append("|");
 				if (suffix2.Length > 0)
 				{
 					sb.Append(" ");
-					sb.Append(suffix2.PadRight(Math.Max(GetLength(suffix1), GetLength(suffix2))));
+					sb.Append(PadString(suffix2, suffix1, ""));
 				}
 				sb.AppendLine();
+
+				if (!noNotes)
+				{
+					if (prefix1.Length > 0 || prefix2.Length > 0)
+					{
+						sb.Append(PadString("", prefix1, prefix2));
+						sb.Append(" ");
+					}
+
+					sb.Append("|");
+					first = true;
+					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+					{
+						if (!first)
+							sb.Append(" ");
+						sb.Append(PadString(tuple.Item3, tuple.Item1.StrRep(), tuple.Item2.StrRep()));
+						first = false;
+					}
+					sb.Append("|");
+					if (suffix2.Length > 0)
+					{
+						sb.Append(" ");
+						sb.Append(PadString("", suffix1, suffix2));
+					}
+					sb.AppendLine();
+				}
 			}
 			return sb.ToString();
 		}
@@ -123,6 +155,18 @@ namespace SIL.Cog
 				return "";
 
 			return string.Concat(startNode.GetNodes(endNode).Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
+		}
+
+		private string PadString(string str, params string[] strs)
+		{
+			int len = GetLength(str);
+			int maxLen = strs.Select(GetLength).Concat(len).Max();
+			var sb = new StringBuilder();
+			sb.Append(str);
+			for (int i = 0; i < maxLen - len; i++)
+				sb.Append(" ");
+
+			return sb.ToString();
 		}
 
 		private int GetLength(string str)

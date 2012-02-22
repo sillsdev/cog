@@ -39,11 +39,10 @@ namespace SIL.Cog
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						if (possibleLink.Item1.Type() == CogFeatureSystem.NullType || possibleLink.Item2.Type() == CogFeatureSystem.NullType)
-							continue;
-
-						var u = new NSegment(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.GetSegment(node)));
-						var v = new NSegment(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.GetSegment(node)));
+						var u = possibleLink.Item1.Type() == CogFeatureSystem.NullType ? new NSegment(Segment.Null)
+							: new NSegment(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.GetSegment(node)));
+						var v = possibleLink.Item2.Type() == CogFeatureSystem.NullType ? new NSegment(Segment.Null)
+							: new NSegment(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.GetSegment(node)));
 
 						NaturalClass leftEnv = _soundChangeAline.NaturalClasses.FirstOrDefault(constraint =>
 							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));

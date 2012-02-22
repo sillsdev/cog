@@ -41,9 +41,10 @@ namespace SIL.Cog
 				{
 					EditDistanceMatrix matrix = _editDistance.Compute(pair);
 					Alignment alignment = matrix.GetAlignments().First();
-					writer.WriteLine(pair.Word1.Gloss);
-					writer.WriteLine(pair.Word1.Category);
-					writer.Write(alignment.ToString());
+					writer.WriteLine(pair.Word1.Sense.Gloss);
+					if (!string.IsNullOrEmpty(pair.Word1.Sense.Category))
+						writer.WriteLine(pair.Word1.Sense.Category);
+					writer.Write(alignment.ToString(pair.AlignmentNotes));
 					writer.WriteLine("Score: {0:0.0####}", pair.PhoneticSimilarityScore);
 					if (pair.AreCognatesPredicted)
 						writer.WriteLine("***Cognate***");

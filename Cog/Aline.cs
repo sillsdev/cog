@@ -19,7 +19,13 @@ namespace SIL.Cog
 
 		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures,
 			IEnumerable<SymbolicFeature> relevantConsFeatures)
-			: base(spanFactory)
+			: this(spanFactory, relevantVowelFeatures, relevantConsFeatures, new EditDistanceSettings())
+		{
+		}
+
+		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures,
+			IEnumerable<SymbolicFeature> relevantConsFeatures, EditDistanceSettings settings)
+			: base(spanFactory, settings)
 		{
 			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures);
 			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures);
@@ -35,27 +41,27 @@ namespace SIL.Cog
 			get { return _relevantConsFeatures; }
 		}
 
-		public override int SigmaInsertion(WordPair wordPair, ShapeNode q)
+		public override int SigmaInsertion(VarietyPair varietyPair, ShapeNode q)
 		{
 			return -IndelCost;
 		}
 
-		public override int SigmaDeletion(WordPair wordPair, ShapeNode p)
+		public override int SigmaDeletion(VarietyPair varietyPair, ShapeNode p)
 		{
 			return -IndelCost;
 		}
 
-		public override int SigmaSubstitution(WordPair wordPair, ShapeNode p, ShapeNode q)
+		public override int SigmaSubstitution(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
 		{
 			return MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(p) + V(q));
 		}
 
-		public override int SigmaExpansion(WordPair wordPair, ShapeNode p, ShapeNode q1, ShapeNode q2)
+		public override int SigmaExpansion(VarietyPair varietyPair, ShapeNode p, ShapeNode q1, ShapeNode q2)
 		{
 			return MaxExpansionCompressionScore - (Delta(p.Annotation.FeatureStruct, q1.Annotation.FeatureStruct) + Delta(p.Annotation.FeatureStruct, q2.Annotation.FeatureStruct) + V(p) + Math.Max(V(q1), V(q2)));
 		}
 
-		public override int SigmaCompression(WordPair wordPair, ShapeNode p1, ShapeNode p2, ShapeNode q)
+		public override int SigmaCompression(VarietyPair varietyPair, ShapeNode p1, ShapeNode p2, ShapeNode q)
 		{
 			return MaxExpansionCompressionScore - (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(q) + Math.Max(V(p1), V(p2)));
 		}
@@ -74,7 +80,7 @@ namespace SIL.Cog
 			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * (int) feat.Weight));
 		}
 
-		public override int GetMaxScore(WordPair wordPair, ShapeNode node)
+		public override int GetMaxScore(VarietyPair varietyPair, ShapeNode node)
 		{
 			return MaxSubstitutionScore - (V(node) * 2);
 		}

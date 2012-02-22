@@ -37,11 +37,58 @@ namespace SIL.Cog
 			string dir = Path.Combine("data", string.Format("{0}-{1}", name, method));
 			Directory.CreateDirectory(dir);
 
-			IList<IProcessor<Variety>> varietyProcessors = new IProcessor<Variety>[]
-			                                               	{
-			                                               		new UnsupervisedStemmer(spanFactory, 100.0, 5),
-			                                               		new VarietyTextOutput(dir)
-			                                               	};
+			IList<IProcessor<Variety>> varietyProcessors;
+			IList<IProcessor<VarietyPair>> varietyPairProcessors;
+			switch (method)
+			{
+				case "aline":
+					{
+						varietyProcessors = new IProcessor<Variety>[]
+			                                {
+			                                    new UnsupervisedStemmer(spanFactory, 100.0, 5),
+			                                    new VarietyTextOutput(dir)
+			                                };
+
+						var settings = new EditDistanceSettings {Mode = EditDistanceMode.Local};
+						var aline = new Aline(spanFactory, config.RelevantVowelFeatures, config.RelevantConsonantFeatures, settings);
+						var soundChangeAline = new SoundChangeAline(spanFactory, config.RelevantVowelFeatures, config.RelevantConsonantFeatures,
+							config.NaturalClasses, settings);
+						varietyPairProcessors = new IProcessor<VarietyPair>[]
+					                        	{
+													new WordPairGenerator(aline), 
+					                        		new EMSoundChangeInducer(aline, soundChangeAline, 0.5),
+					                        		new ThresholdCognateIdentifier(soundChangeAline, 0.5),
+					                        		new VarietyPairTextOutput(dir, soundChangeAline)
+					                        	};
+					}
+					break;
+
+				case "blair":
+					{
+						varietyProcessors = new IProcessor<Variety>[]
+			                                {
+			                                    new VarietyTextOutput(dir)
+			                                };
+
+						var settings = new EditDistanceSettings {DisableExpansionCompression = true};
+						var aline = new Aline(spanFactory, config.RelevantVowelFeatures, config.RelevantConsonantFeatures, settings);
+						var soundChangeAline = new SoundChangeAline(spanFactory, config.RelevantVowelFeatures, config.RelevantConsonantFeatures,
+							config.NaturalClasses, settings);
+						varietyPairProcessors = new IProcessor<VarietyPair>[]
+			                					{
+													new WordPairGenerator(aline), 
+			                						new EMSoundChangeInducer(aline, soundChangeAline, 0.25),
+													new SimilarSegmentListIdentifier("data\\similar-vowels.txt", "data\\similar-consonants.txt", config.Segmenter.Joiners), 
+													new BlairCognateIdentifier(soundChangeAline, 0.25),
+													new VarietyPairTextOutput(dir, soundChangeAline) 
+			                					};
+					}
+					break;
+
+				default:
+					Console.WriteLine("Invalid method.");
+					return -1;
+			}
 
 			var varietyEvent = new CountdownEvent(varieties.Count * varietyProcessors.Count);
 			Console.Write("Analyzing varieties...");
@@ -60,51 +107,13 @@ namespace SIL.Cog
 			varietyEvent.Wait();
 			Console.WriteLine("Done.");
 
-			var aline = new Aline(spanFactory, config.RelevantVowelFeatures, config.RelevantConsonantFeatures);
-
 			WritePhonemeList(varieties, CogFeatureSystem.VowelType, Path.Combine(dir, "vowels.txt"));
 			WritePhonemeList(varieties, CogFeatureSystem.ConsonantType, Path.Combine(dir, "consonants.txt"));
 
-			//WriteSimilarityGraph((from variety in varieties
-			//                      from word in variety.Words
-			//                      from node in word.Shape
-			//                      where node.Annotation.Type == CogFeatureSystem.VowelType
-			//                      select node).DistinctBy(node => (string)node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)), "data\\vowels.dot", 500, aline);
-
-			//WriteSimilarityGraph((from variety in varieties
-			//                      from word in variety.Words
-			//                      from node in word.Shape
-			//                      where node.Annotation.Type == CogFeatureSystem.ConsonantType
-			//                      select node).DistinctBy(node => (string)node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)), "data\\consonants.dot", 500, aline);
-
-			var soundChangeAline = new SoundChangeAline(spanFactory, config.RelevantVowelFeatures, config.RelevantConsonantFeatures, config.NaturalClasses);
-
-			IList<IProcessor<VarietyPair>> varietyPairProcessors;
-			switch (method)
+			var vp = new VarietyPair(varieties.Single(v => v.ID == "Buceh"), varieties.Single(v => v.ID == "Luma"));
+			foreach (IProcessor<VarietyPair> varietyPairProcessor in varietyPairProcessors)
 			{
-				case "aline":
-					varietyPairProcessors = new IProcessor<VarietyPair>[]
-					                        	{
-					                        		new EMSoundChangeInducer(aline, soundChangeAline, 0.5),
-					                        		new ThresholdCognateIdentifier(soundChangeAline, 0.5),
-					                        		new VarietyPairTextOutput(dir, soundChangeAline)
-					                        	};
-					break;
-
-				case "blair":
-					varietyPairProcessors = new IProcessor<VarietyPair>[]
-			                					{
-			                						new EMSoundChangeInducer(aline, soundChangeAline, 0.5),
-													new SimilarSegmentListIdentifier("data\\similar-segments.txt"), 
-													//new SimilarSegmentThresholdIdentifier(soundChangeAline, 500, 600), 
-													new BlairCognateIdentifier(soundChangeAline, 0.5),
-													new VarietyPairTextOutput(dir, soundChangeAline) 
-			                					};
-					break;
-
-				default:
-					Console.WriteLine("Invalid method.");
-					return -1;
+				varietyPairProcessor.Process(vp);
 			}
 
 			Console.Write("Analyzing variety pairs...  0%");
@@ -235,6 +244,11 @@ namespace SIL.Cog
 					return Enumerable.Empty<Variety>();
 
 				string[] categories = line.Split('\t');
+
+				var senses = new List<Sense>();
+				for (int i = 1; i < glosses.Length; i++)
+					senses.Add(new Sense(glosses[i].Trim(), categories.Length <= i ? null : categories[i].Trim()));
+
 				while ((line = file.ReadLine()) != null)
 				{
 					var words = new List<Word>();
@@ -244,10 +258,12 @@ namespace SIL.Cog
 						string wordStr = wordStrs[i].Trim();
 						if (!string.IsNullOrEmpty(wordStr))
 						{
-							string w = wordStr.Split(',').First().Trim();
-							Shape shape;
-							if (segmenter.ToShape(w, out shape))
-								words.Add(new Word(shape, glosses[i].Trim(), categories[i].Trim()));
+							foreach (string w in wordStr.Split(','))
+							{
+								Shape shape;
+								if (segmenter.ToShape(w.Trim(), out shape))
+									words.Add(new Word(shape, senses[i - 1]));
+							}
 						}
 					}
 
@@ -268,6 +284,7 @@ namespace SIL.Cog
 			{
 				var gloss = (string) concept.Attribute("ID");
 				var category = (string) concept.Attribute("ROLE");
+				var sense = new Sense(gloss, category);
 				foreach (XElement varietyElem in concept.Elements().Where(elem => elem.Name != "NOTE"))
 				{
 					string id = varietyElem.Name.LocalName.ToLowerInvariant();
@@ -280,7 +297,7 @@ namespace SIL.Cog
 					var str = ((string) varietyElem.Element("STEM").Attribute("PHON")).Replace(" ", "");
 					Shape shape;
 					if (segmenter.ToShape(str, out shape))
-						words.Add(new Word(shape, gloss, category));
+						words.Add(new Word(shape, sense));
 
 					var cognateVarieties = (string) varietyElem.Attribute("COGN_PROB");
 					if (!string.IsNullOrEmpty(cognateVarieties))
@@ -308,22 +325,18 @@ namespace SIL.Cog
 			Variety[] varietyArray = varieties.ToArray();
 			using (var writer = new StreamWriter(filePath))
 			{
-				foreach (Variety variety in varietyArray.Reverse())
-				{
-					writer.Write("\t");
-					writer.Write(variety.ID);
-				}
-				writer.WriteLine();
-
 				for (int i = 0; i < varietyArray.Length; i++)
 				{
-					writer.Write(varietyArray[i].ID);
-					for (int j = varietyArray.Length - 1; j > i; j--)
+					for (int j = 0; j < i; j++)
 					{
+						if (j > 0)
+							writer.Write("\t");
 						VarietyPair varietyPair = varietyArray[i].VarietyPairs.Single(pair => pair.Variety1 == varietyArray[j] || pair.Variety2 == varietyArray[j]);
-						writer.Write("\t{0:0.0####}", varietyPair.LexicalSimilarityScore);
+						writer.Write("{0:0.00}", varietyPair.LexicalSimilarityScore);
 					}
-					writer.WriteLine();
+					if (i > 0)
+						writer.Write("\t");
+					writer.WriteLine(varietyArray[i].ID);
 				}
 			}
 		}

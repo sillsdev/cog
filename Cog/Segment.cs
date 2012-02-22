@@ -4,6 +4,12 @@ namespace SIL.Cog
 {
 	public class Segment
 	{
+		private static readonly Segment NullSegment = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value, 0);
+		public static Segment Null
+		{
+			get { return NullSegment; }
+		}
+
 		private readonly double _probability;
 		private readonly FeatureStruct _fs;
 
@@ -31,6 +37,11 @@ namespace SIL.Cog
 		public double Probability
 		{
 			get { return _probability; }
+		}
+
+		public override string ToString()
+		{
+			return StrRep;
 		}
 	}
 }

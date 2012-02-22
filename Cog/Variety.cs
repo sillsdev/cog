@@ -8,7 +8,7 @@ namespace SIL.Cog
 {
 	public class Variety : IDBearerBase
 	{
-		private readonly Dictionary<string, Word> _words;
+		private readonly Dictionary<Sense, List<Word>> _words;
 		private readonly Dictionary<string, Segment> _segments;
 		private readonly List<VarietyPair> _varietyPairs;
 		private readonly List<Affix> _affixes;  
@@ -16,7 +16,7 @@ namespace SIL.Cog
 		public Variety(string id, IEnumerable<Word> words)
 			: base(id)
 		{
-			_words = new Dictionary<string, Word>();
+			_words = new Dictionary<Sense, List<Word>>();
 
 			int total = 0;
 			var segFreqs = new Dictionary<string, Tuple<FeatureStruct, int>>();
@@ -27,7 +27,8 @@ namespace SIL.Cog
 					segFreqs.UpdateValue(node.StrRep(), () => Tuple.Create(node.Annotation.FeatureStruct.Clone(), 0), tuple => Tuple.Create(tuple.Item1, tuple.Item2 + 1));
 					total++;
 				}
-				_words[word.Gloss] = word;
+				List<Word> senseWords = _words.GetValue(word.Sense, () => new List<Word>());
+				senseWords.Add(word);
 			}
 
 			_segments = segFreqs.ToDictionary(kvp => kvp.Key, kvp => new Segment(kvp.Value.Item1, (double) kvp.Value.Item2 / total));
@@ -40,9 +41,9 @@ namespace SIL.Cog
 			get { return _segments.Values.AsReadOnlyCollection(); }
 		}
 
-		public IReadOnlyCollection<Word> Words
+		public IReadOnlyCollection<Sense> Senses
 		{
-			get { return _words.Values.AsReadOnlyCollection(); }
+			get { return _words.Keys.AsReadOnlyCollection(); }
 		}
 
 		public IReadOnlyCollection<VarietyPair> VarietyPairs
@@ -55,14 +56,12 @@ namespace SIL.Cog
 			get { return _affixes.AsReadOnlyCollection(); }
 		}
 
-		public Word GetWord(string glossID)
+		public IReadOnlyCollection<Word> GetWords(Sense sense)
 		{
-			return _words[glossID];
-		}
-
-		public bool TryGetWord(string glossID, out Word word)
-		{
-			return _words.TryGetValue(glossID, out word);
+			List<Word> words;
+			if (_words.TryGetValue(sense, out words))
+				return words.AsReadOnlyCollection();
+			return new ReadOnlyCollection<Word>(new Word[0]);
 		}
 
 		public Segment GetSegment(string strRep)

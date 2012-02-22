@@ -62,6 +62,7 @@
     <Compile Include="CogFeatureSystem.cs" />
     <Compile Include="DbscanClusterer.cs" />
     <Compile Include="DbscanOpticsClusterer.cs" />
+    <Compile Include="EditDistanceSettings.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="NSegment.cs" />
     <Compile Include="Segment.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="OpticsClusterer.cs" />
     <Compile Include="OpticsDropDownClusterer.cs" />
     <Compile Include="OpticsXiClusterer.cs" />
+    <Compile Include="Sense.cs" />
     <Compile Include="SimilarSegmentThresholdIdentifier.cs" />
     <Compile Include="SimilarSegmentListIdentifier.cs" />
     <Compile Include="VarietyPairTextOutput.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="VarietyTextOutput.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="WordPair.cs" />
+    <Compile Include="WordPairGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Machine\Machine.csproj">

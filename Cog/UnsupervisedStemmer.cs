@@ -48,7 +48,7 @@ namespace SIL.Cog
 			var affixes = new Dictionary<string, AffixInfo>();
 			var nonaffixes = new Dictionary<string, int>();
 
-			foreach (Word word in variety.Words)
+			foreach (Word word in variety.Senses.SelectMany(sense => variety.GetWords(sense)))
 			{
 				if (word.Shape.Count == 1)
 					continue;
@@ -60,13 +60,12 @@ namespace SIL.Cog
 					AffixInfo affixInfo = affixes.GetValue(sb.ToString(), () =>
 																			{
 																				var shape = new Shape(_spanFactory,
-																					new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value),
-																					new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+																					begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 																				var span = _spanFactory.Create(word.Shape.GetFirst(dir), node, dir);
 																				word.Shape.CopyTo(span, shape);
 																				return new AffixInfo(shape);
 																			});
-					affixInfo.Increment(word.Category);
+					affixInfo.Increment(word.Sense.Category);
 
 					totalAffixFreqs.UpdateValue(affixInfo.Shape.Count, () => 0, freq => freq + 1);
 				}
@@ -132,14 +131,14 @@ namespace SIL.Cog
 					if (dir == Direction.RightToLeft)
 						pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 					string category = affixInfo.MainCategory;
-					ruleSpec.AddRuleSpec(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Category == category));
+					ruleSpec.AddRuleSpec(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
 					variety.AddAffix(new Affix(affixStr, type, affixInfo.MainCategory) {Score = affixInfo.Score});
 				}
 			}
 
 			var rule = new PatternRule<Word, ShapeNode>(_spanFactory, ruleSpec, matcherSettings);
 
-			foreach (Word word in variety.Words)
+			foreach (Word word in variety.Senses.SelectMany(sense => variety.GetWords(sense)))
 				rule.Apply(word);
 		}
 

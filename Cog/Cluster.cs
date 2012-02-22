@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using SIL.Machine;
 
 namespace SIL.Cog
@@ -15,6 +16,7 @@ namespace SIL.Cog
 		}
 
 		public Cluster(string id, IEnumerable<T> dataObjects, bool noise)
+			: base(begin => new Cluster<T>(null, Enumerable.Empty<T>()))
 		{
 			_id = id;
 			_dataObjects = new HashSet<T>(dataObjects);

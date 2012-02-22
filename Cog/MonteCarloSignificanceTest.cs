@@ -22,8 +22,9 @@ namespace SIL.Cog
 			int num = 0;
 			for (int n = 0; n < _iterationCount; n++)
 			{
-				var randVariety2 = new Variety(varietyPair.Variety2.ID + "-rand" + n, varietyPair.Variety2.Words.Select(word => new { word.Gloss, word.Category }).OrderBy(gloss => Guid.NewGuid())
-					.Zip(varietyPair.Variety2.Words.Select(word => word.Shape), (gi, shape) => new Word(shape, gi.Gloss, gi.Category)));
+				var randVariety2 = new Variety(varietyPair.Variety2.ID + "-rand" + n, varietyPair.Variety2.Senses.OrderBy(gloss => Guid.NewGuid())
+					.Zip(varietyPair.Variety2.Senses.Select(sense => varietyPair.Variety2.GetWords(sense).FirstOrDefault()).Where(word => word != null).Select(word => word.Shape),
+						(sense, shape) => new Word(shape, sense)));
 				var randVarietyPair = new VarietyPair(varietyPair.Variety1, randVariety2);
 				if (_useSoundChanges)
 				{

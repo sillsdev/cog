@@ -16,15 +16,24 @@ namespace SIL.Cog
 		{
 			using (var writer = new StreamWriter(Path.Combine(_path, string.Format("{0}.txt", variety.ID))))
 			{
-				writer.WriteLine("Affix\tCategory\tScore");
-				foreach (Affix affix in variety.Affixes.OrderByDescending(a => a.Score))
-					writer.WriteLine("{0}\t{1}\t{2:0.0####}", affix, string.IsNullOrEmpty(affix.Category) ? "?" : affix.Category, affix.Score);
+				writer.WriteLine("Seg\tProb");
+				foreach (Segment seg in variety.Segments.OrderByDescending(s => s.Probability))
+					writer.WriteLine("{0}\t{1:0.0####}", seg.StrRep, seg.Probability);
 				writer.WriteLine();
 
-				foreach (Word word in variety.Words)
+				if (variety.Affixes.Count > 0)
 				{
-					writer.WriteLine(word.Gloss);
-					writer.WriteLine(word.Category);
+					writer.WriteLine("Affix\tCategory\tScore");
+					foreach (Affix affix in variety.Affixes.OrderByDescending(a => a.Score))
+						writer.WriteLine("{0}\t{1}\t{2:0.0####}", affix, string.IsNullOrEmpty(affix.Category) ? "?" : affix.Category, affix.Score);
+					writer.WriteLine();
+				}
+
+				foreach (Word word in variety.Senses.SelectMany(variety.GetWords))
+				{
+					writer.WriteLine(word.Sense.Gloss);
+					if (!string.IsNullOrEmpty(word.Sense.Category))
+						writer.WriteLine(word.Sense.Category);
 					writer.WriteLine(word.ToString());
 					writer.WriteLine();
 				}

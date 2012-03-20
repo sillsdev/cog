@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog

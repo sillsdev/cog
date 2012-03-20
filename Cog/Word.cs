@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 using SIL.Machine;
+using DataStructureExtensions = SIL.Collections.CollectionsExtensions;
 
 namespace SIL.Cog
 {
@@ -78,7 +79,7 @@ namespace SIL.Cog
 			if (startNode == null || endNode == null || startNode == _shape.End || endNode == _shape.Begin)
 				return "";
 
-			return string.Concat(startNode.GetNodes(endNode).Select(node => (string)node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
+			return string.Concat(DataStructureExtensions.GetNodes(startNode, endNode).Select(node => (string)node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
 		}
 	}
 }

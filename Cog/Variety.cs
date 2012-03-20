@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -24,7 +25,7 @@ namespace SIL.Cog
 			{
 				foreach (ShapeNode node in word.Shape)
 				{
-					segFreqs.UpdateValue(node.StrRep(), () => Tuple.Create(node.Annotation.FeatureStruct.Clone(), 0), tuple => Tuple.Create(tuple.Item1, tuple.Item2 + 1));
+					segFreqs.UpdateValue(node.StrRep(), () => Tuple.Create(node.Annotation.FeatureStruct.DeepClone(), 0), tuple => Tuple.Create(tuple.Item1, tuple.Item2 + 1));
 					total++;
 				}
 				List<Word> senseWords = _words.GetValue(word.Sense, () => new List<Word>());

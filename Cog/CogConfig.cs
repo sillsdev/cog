@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -60,8 +61,8 @@ namespace SIL.Cog
 				{
 					var feat = new SymbolicFeature((string) featureElem.Attribute("id")) {Weight = double.Parse((string) featureElem.Attribute("weight"))};
 					foreach (XElement valueElem in featureElem.Elements("Value"))
-						feat.AddPossibleSymbol(new FeatureSymbol((string) valueElem.Attribute("id")) {Weight = 100.0 * double.Parse((string) valueElem.Attribute("metric"))});
-					_featSys.AddFeature(feat);
+						feat.PossibleSymbols.Add(new FeatureSymbol((string) valueElem.Attribute("id")) {Weight = 100.0 * double.Parse((string) valueElem.Attribute("metric"))});
+					_featSys.Add(feat);
 				}
 			}
 			XElement vowelsElem = root.Element("Vowels");

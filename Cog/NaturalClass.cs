@@ -1,4 +1,5 @@
-﻿using SIL.Machine;
+﻿using SIL.Collections;
+using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog

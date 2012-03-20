@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
-using SIL.Machine.Transduction;
+using SIL.Machine.Rules;
 
 namespace SIL.Cog
 {
@@ -127,11 +128,11 @@ namespace SIL.Cog
 					if (dir == Direction.LeftToRight)
 						pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 					foreach (ShapeNode node in affixInfo.Shape)
-						pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.FeatureStruct.Clone()));
+						pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.FeatureStruct.DeepClone()));
 					if (dir == Direction.RightToLeft)
 						pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 					string category = affixInfo.MainCategory;
-					ruleSpec.AddRuleSpec(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
+					ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
 					variety.AddAffix(new Affix(affixStr, type, affixInfo.MainCategory) {Score = affixInfo.Score});
 				}
 			}

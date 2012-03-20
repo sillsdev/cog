@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using SIL.Collections;
 using SIL.Machine;
+using DataStructureExtensions = SIL.Collections.CollectionsExtensions;
 
 namespace SIL.Cog
 {
@@ -42,7 +44,7 @@ namespace SIL.Cog
 				Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 				Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 				if (ann1 != null && ann2 != null)
-					return ann1.Children.Zip(ann2.Children);
+					return DataStructureExtensions.Zip(ann1.Children, ann2.Children);
 
 				return Enumerable.Empty<Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>>>();
 			}
@@ -84,7 +86,7 @@ namespace SIL.Cog
 				}
 				sb.Append("|");
 				bool first = true;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in DataStructureExtensions.Zip(ann1.Children, ann2.Children, notesList))
 				{
 					if (!first)
 						sb.Append(" ");
@@ -105,7 +107,7 @@ namespace SIL.Cog
 				}
 				sb.Append("|");
 				first = true;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in DataStructureExtensions.Zip(ann1.Children, ann2.Children, notesList))
 				{
 					if (!first)
 						sb.Append(" ");
@@ -130,7 +132,7 @@ namespace SIL.Cog
 
 					sb.Append("|");
 					first = true;
-					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in DataStructureExtensions.Zip(ann1.Children, ann2.Children, notesList))
 					{
 						if (!first)
 							sb.Append(" ");
@@ -154,7 +156,7 @@ namespace SIL.Cog
 			if (startNode == null || endNode == null || startNode == shape.End || endNode == shape.Begin)
 				return "";
 
-			return string.Concat(startNode.GetNodes(endNode).Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
+			return string.Concat(DataStructureExtensions.GetNodes(startNode, endNode).Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
 		}
 
 		private string PadString(string str, params string[] strs)

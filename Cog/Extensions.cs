@@ -1,6 +1,7 @@
 ﻿using SIL.Machine;
 using System.Linq;
 using SIL.Machine.FeatureModel;
+using DataStructureExtensions = SIL.Collections.CollectionsExtensions;
 
 namespace SIL.Cog
 {
@@ -13,7 +14,7 @@ namespace SIL.Cog
 
 		public static string StrRep(this Annotation<ShapeNode> ann)
 		{
-			return string.Concat(ann.Span.Start.GetNodes(ann.Span.End).Select(node => node.StrRep()));
+			return string.Concat(DataStructureExtensions.GetNodes(ann.Span.Start, ann.Span.End).Select(node => node.StrRep()));
 		}
 
 		public static FeatureSymbol Type(this Annotation<ShapeNode> ann)

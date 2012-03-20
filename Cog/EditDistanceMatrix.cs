@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -230,7 +231,7 @@ namespace SIL.Cog
 			if (startNode != startNode.List.End)
 			{
 				foreach (ShapeNode node in startNode.GetNodes())
-					shape.Add(node.Clone());
+					shape.Add(node.DeepClone());
 			}
 		}
 
@@ -254,8 +255,8 @@ namespace SIL.Cog
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev, node2.Prev, i - 1, j - 1, score + opScore, threshold, all))
 						{
-							alignment.Item1.Add(node1.Clone());
-							alignment.Item2.Add(node2.Clone());
+							alignment.Item1.Add(node1.DeepClone());
+							alignment.Item2.Add(node2.DeepClone());
 							yield return alignment;
 							if (!all)
 								yield break;
@@ -271,7 +272,7 @@ namespace SIL.Cog
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1, node2.Prev, i, j - 1, score + opScore, threshold, all))
 						{
 							alignment.Item1.Add(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
-							alignment.Item2.Add(node2.Clone());
+							alignment.Item2.Add(node2.DeepClone());
 							yield return alignment;
 							if (!all)
 								yield break;
@@ -286,11 +287,11 @@ namespace SIL.Cog
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev, node2.Prev.Prev, i - 1, j - 2, score + opScore, threshold, all))
 						{
-							alignment.Item1.Add(node1.Clone());
+							alignment.Item1.Add(node1.DeepClone());
 
-							ShapeNode clusterNode1 = node2.Prev.Clone();
+							ShapeNode clusterNode1 = node2.Prev.DeepClone();
 							alignment.Item2.Add(clusterNode1);
-							ShapeNode clusterNode2 = node2.Clone();
+							ShapeNode clusterNode2 = node2.DeepClone();
 							alignment.Item2.Add(clusterNode2);
 							alignment.Item2.Annotations.Add(clusterNode1, clusterNode2, FeatureStruct.New().Symbol(CogFeatureSystem.ClusterType).Value);
 							yield return alignment;
@@ -307,7 +308,7 @@ namespace SIL.Cog
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev, node2, i - 1, j, score + opScore, threshold, all))
 						{
-							alignment.Item1.Add(node1.Clone());
+							alignment.Item1.Add(node1.DeepClone());
 							alignment.Item2.Add(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 							yield return alignment;
 							if (!all)
@@ -323,13 +324,13 @@ namespace SIL.Cog
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1.Prev.Prev, node2.Prev, i - 2, j - 1, score + opScore, threshold, all))
 						{
-							ShapeNode clusterNode1 = node1.Prev.Clone();
+							ShapeNode clusterNode1 = node1.Prev.DeepClone();
 							alignment.Item1.Add(clusterNode1);
-							ShapeNode clusterNode2 = node1.Clone();
+							ShapeNode clusterNode2 = node1.DeepClone();
 							alignment.Item1.Add(clusterNode2);
 							alignment.Item1.Annotations.Add(clusterNode1, clusterNode2, FeatureStruct.New().Symbol(CogFeatureSystem.ClusterType).Value);
 
-							alignment.Item2.Add(node2.Clone());
+							alignment.Item2.Add(node2.DeepClone());
 							yield return alignment;
 							if (!all)
 								yield break;
@@ -363,7 +364,7 @@ namespace SIL.Cog
 			if (startNode != startNode.List.Begin)
 			{
 				foreach (ShapeNode node in startNode.GetNodes(Direction.RightToLeft))
-					shape.AddAfter(shape.Begin, node.Clone());
+					shape.AddAfter(shape.Begin, node.DeepClone());
 			}
 		}
 

@@ -21,17 +21,17 @@ namespace SIL.Cog
 		{
 			Type = new SymbolicFeature(Guid.NewGuid().ToString()) {Description = "Type"};
 			AnchorType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "anchor"};
-			Type.AddPossibleSymbol(AnchorType);
+			Type.PossibleSymbols.Add(AnchorType);
 			VowelType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "vowel"};
-			Type.AddPossibleSymbol(VowelType);
+			Type.PossibleSymbols.Add(VowelType);
 			ConsonantType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "consonant"};
-			Type.AddPossibleSymbol(ConsonantType);
+			Type.PossibleSymbols.Add(ConsonantType);
 			NullType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "null"};
-			Type.AddPossibleSymbol(NullType);
+			Type.PossibleSymbols.Add(NullType);
 			StemType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "stem"};
-			Type.AddPossibleSymbol(StemType);
+			Type.PossibleSymbols.Add(StemType);
 			ClusterType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "cluster"};
-			Type.AddPossibleSymbol(ClusterType);
+			Type.PossibleSymbols.Add(ClusterType);
 
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};
 
@@ -45,18 +45,9 @@ namespace SIL.Cog
 
 		private CogFeatureSystem()
 		{
-			base.AddFeature(Type);
-			base.AddFeature(StrRep);
-		}
-
-		public override void AddFeature(Feature feature)
-		{
-			throw new NotSupportedException("This feature system is readonly.");
-		}
-
-		public override void Reset()
-		{
-			throw new NotSupportedException("This feature system is readonly.");
+			Add(Type);
+			Add(StrRep);
+			IsReadOnly = true;
 		}
 	}
 }

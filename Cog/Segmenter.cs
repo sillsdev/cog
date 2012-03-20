@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -157,7 +158,7 @@ namespace SIL.Cog
 		private FeatureStruct BuildFeatStruct(Match match, Capture capture, string baseGroupName, Dictionary<string, FeatureStruct> bases, out string strRep)
 		{
 			string baseStr = match.Groups[baseGroupName].Captures.Cast<Capture>().Single(cap => capture.Index == cap.Index).Value;
-			FeatureStruct fs = bases[baseStr].Clone();
+			FeatureStruct fs = bases[baseStr].DeepClone();
 			var sb = new StringBuilder();
 			sb.Append(baseStr);
 			var modStrs = new List<string>();

@@ -117,7 +117,7 @@ namespace SIL.Cog
 			}
 
 			var ruleSpec = new BatchPatternRuleSpec<Word, ShapeNode>();
-			var matcherSettings = new MatcherSettings<ShapeNode> { Quasideterministic = true, Direction = dir };
+			var matcherSettings = new MatcherSettings<ShapeNode> { FastCompile = true, Direction = dir };
 			foreach (AffixInfo affixInfo in affixes.Values.Where(p => p.Score >= _threshold).OrderByDescending(p => p.Score))
 			{
 				string affixStr = affixInfo.ToString();

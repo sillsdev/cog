@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog
 {
@@ -54,7 +53,7 @@ namespace SIL.Cog
 
 		public override int GetHashCode()
 		{
-			return _segments.Aggregate(23, (code, seg) => code * 31 + seg.GetHashCode());
+			return _segments.GetSequenceHashCode();
 		}
 
 		public override string ToString()

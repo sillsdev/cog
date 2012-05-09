@@ -37,6 +37,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NDesk.Options">
+      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -60,6 +63,7 @@
     <Compile Include="ClusterOrderEntry.cs" />
     <Compile Include="CogConfig.cs" />
     <Compile Include="CogFeatureSystem.cs" />
+    <Compile Include="ComparandaLoader.cs" />
     <Compile Include="DbscanClusterer.cs" />
     <Compile Include="DbscanOpticsClusterer.cs" />
     <Compile Include="EditDistanceSettings.cs" />
@@ -73,9 +77,12 @@
     <Compile Include="OpticsClusterer.cs" />
     <Compile Include="OpticsDropDownClusterer.cs" />
     <Compile Include="OpticsXiClusterer.cs" />
+    <Compile Include="SegmentCollection.cs" />
     <Compile Include="Sense.cs" />
     <Compile Include="SimilarSegmentThresholdIdentifier.cs" />
     <Compile Include="SimilarSegmentListIdentifier.cs" />
+    <Compile Include="TextLoader.cs" />
+    <Compile Include="VarietyPairCollection.cs" />
     <Compile Include="VarietyPairTextOutput.cs" />
     <Compile Include="ThresholdCognateIdentifier.cs" />
     <Compile Include="EditDistanceMatrix.cs" />
@@ -93,8 +100,10 @@
     <Compile Include="VarietyPair.cs" />
     <Compile Include="VarietyTextOutput.cs" />
     <Compile Include="Word.cs" />
+    <Compile Include="WordListsLoader.cs" />
     <Compile Include="WordPair.cs" />
     <Compile Include="WordPairGenerator.cs" />
+    <Compile Include="WordSurvXmlLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Collections\Collections.csproj">
@@ -105,6 +114,9 @@
       <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
       <Name>Machine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -133,7 +133,7 @@ namespace SIL.Cog
 						pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 					string category = affixInfo.MainCategory;
 					ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
-					variety.AddAffix(new Affix(affixStr, type, affixInfo.MainCategory) {Score = affixInfo.Score});
+					variety.Affixes.Add(new Affix(affixStr, type, affixInfo.MainCategory) {Score = affixInfo.Score});
 				}
 			}
 

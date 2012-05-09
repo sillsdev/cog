@@ -69,8 +69,8 @@ namespace SIL.Cog
 			}
 			else
 			{
-				Segment targetSegment = varietyPair.Variety1.GetSegment(p1);
-				target = p2 == null ? new NSegment(targetSegment) : new NSegment(targetSegment, varietyPair.Variety1.GetSegment(p2));
+				Segment targetSegment = varietyPair.Variety1.Segments[p1];
+				target = p2 == null ? new NSegment(targetSegment) : new NSegment(targetSegment, varietyPair.Variety1.Segments[p2]);
 			}
 
 			NSegment corr;
@@ -80,8 +80,8 @@ namespace SIL.Cog
 			}
 			else
 			{
-				Segment corrSegment = varietyPair.Variety2.GetSegment(q1);
-				corr = q2 == null ? new NSegment(corrSegment) : new NSegment(corrSegment, varietyPair.Variety2.GetSegment(q2));
+				Segment corrSegment = varietyPair.Variety2.Segments[q1];
+				corr = q2 == null ? new NSegment(corrSegment) : new NSegment(corrSegment, varietyPair.Variety2.Segments[q2]);
 			}
 
 			NaturalClass leftEnv = _naturalClasses.FirstOrDefault(constraint =>

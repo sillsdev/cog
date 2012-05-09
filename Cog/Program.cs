@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using NDesk.Options;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -17,17 +17,63 @@ namespace SIL.Cog
 	{
 		public static int Main(string[] args)
 		{
-			string name = Path.GetFileNameWithoutExtension(args[0]);
-			string method = args[1].ToLowerInvariant();
+			string configFile = null;
+            string inputFile = null;
+			string outputFolder = null;
+			string format = "text";
+			string method = "blair";
+            bool showHelp = false;
+
+			var p = new OptionSet
+                    	{
+							{ "c|config-file=", "read configuration from {FILE}", value => configFile = value },
+							{ "f|input-format=", "the format of the input file {[text|wordsurv|comparanda]}, default: text", value => format = value },
+                    		{ "i|input-file=", "read word lists from {FILE}", value => inputFile = value },
+							{ "o|output-folder=", "saves results to {FOLDER}", value => outputFolder = value },
+							{ "m|method=", "comparison method {[blair|aline]}, default: blair", value => method = value },
+							{ "h|help", "show this help message and exit", value => showHelp = value != null }
+                    	};
+
+            try
+            {
+                p.Parse(args);
+            }
+            catch (OptionException)
+            {
+                ShowHelp(p);
+                return -1;
+            }
+
+            if (showHelp || string.IsNullOrEmpty(inputFile) || string.IsNullOrEmpty(configFile) || string.IsNullOrEmpty(outputFolder))
+            {
+                ShowHelp(p);
+                return -1;
+            }
 
 			var spanFactory = new ShapeSpanFactory();
-			var config = new CogConfig(spanFactory, "data\\ipa-aline.xml");
+			var config = new CogConfig(spanFactory, configFile);
 			config.Load();
 
 			Console.Write("Loading the wordlist...");
-			List<Variety> varieties = ReadWordlists(args[0], config.Segmenter).ToList();
-			//Dictionary<Tuple<string, string>, HashSet<string>> cognates;
-			//List<Variety> varieties = ReadComparanda(args[0], config.Segmenter, out cognates).ToList();
+
+			WordListsLoader loader;
+			switch (format)
+			{
+				case "text":
+					loader = new TextLoader(config.Segmenter, inputFile);
+					break;
+				case "wordsurv":
+					loader = new WordSurvXmlLoader(config.Segmenter, inputFile);
+					break;
+				case "comparanda":
+					loader = new ComparandaLoader(config.Segmenter, inputFile);
+					break;
+				default:
+					ShowHelp(p);
+					return -1;
+			}
+
+			List<Variety> varieties = loader.Load().ToList();
 			Console.WriteLine("Done.");
 			if (varieties.Count == 0)
 			{
@@ -35,8 +81,7 @@ namespace SIL.Cog
 				return -1;
 			}
 
-			string dir = Path.Combine("data", string.Format("{0}-{1}", name, method));
-			Directory.CreateDirectory(dir);
+			Directory.CreateDirectory(outputFolder);
 
 			IList<IProcessor<Variety>> varietyProcessors;
 			IList<IProcessor<VarietyPair>> varietyPairProcessors;
@@ -47,7 +92,7 @@ namespace SIL.Cog
 						varietyProcessors = new IProcessor<Variety>[]
 			                                {
 			                                    new UnsupervisedStemmer(spanFactory, 100.0, 5),
-			                                    new VarietyTextOutput(dir)
+			                                    new VarietyTextOutput(outputFolder)
 			                                };
 
 						var settings = new EditDistanceSettings {Mode = EditDistanceMode.Local};
@@ -59,7 +104,7 @@ namespace SIL.Cog
 													new WordPairGenerator(aline), 
 					                        		new EMSoundChangeInducer(aline, soundChangeAline, 0.5),
 					                        		new ThresholdCognateIdentifier(soundChangeAline, 0.5),
-					                        		new VarietyPairTextOutput(dir, soundChangeAline)
+					                        		new VarietyPairTextOutput(outputFolder, soundChangeAline)
 					                        	};
 					}
 					break;
@@ -68,7 +113,7 @@ namespace SIL.Cog
 					{
 						varietyProcessors = new IProcessor<Variety>[]
 			                                {
-			                                    new VarietyTextOutput(dir)
+			                                    new VarietyTextOutput(outputFolder)
 			                                };
 
 						var settings = new EditDistanceSettings {DisableExpansionCompression = true};
@@ -81,13 +126,13 @@ namespace SIL.Cog
 			                						new EMSoundChangeInducer(aline, soundChangeAline, 0.25),
 													new SimilarSegmentListIdentifier("data\\similar-vowels.txt", "data\\similar-consonants.txt", config.Segmenter.Joiners), 
 													new BlairCognateIdentifier(soundChangeAline, 0.25),
-													new VarietyPairTextOutput(dir, soundChangeAline) 
+													new VarietyPairTextOutput(outputFolder, soundChangeAline) 
 			                					};
 					}
 					break;
 
 				default:
-					Console.WriteLine("Invalid method.");
+					ShowHelp(p);
 					return -1;
 			}
 
@@ -97,54 +142,39 @@ namespace SIL.Cog
 			{
 				Variety v = variety;
 				Task.Factory.StartNew(() =>
-				{
-					foreach (IProcessor<Variety> varietyProcessor in varietyProcessors)
-					{
-						varietyProcessor.Process(v);
-						varietyEvent.Signal();
-					}
-				});
+										{
+											foreach (IProcessor<Variety> varietyProcessor in varietyProcessors)
+											{
+												varietyProcessor.Process(v);
+												varietyEvent.Signal();
+											}
+										});
 			}
 			varietyEvent.Wait();
 			Console.WriteLine("Done.");
 
-			WritePhonemeList(varieties, CogFeatureSystem.VowelType, Path.Combine(dir, "vowels.txt"));
-			WritePhonemeList(varieties, CogFeatureSystem.ConsonantType, Path.Combine(dir, "consonants.txt"));
+			WritePhonemeList(varieties, CogFeatureSystem.VowelType, Path.Combine(outputFolder, "vowels.txt"));
+			WritePhonemeList(varieties, CogFeatureSystem.ConsonantType, Path.Combine(outputFolder, "consonants.txt"));
 
-			var vp = new VarietyPair(varieties.Single(v => v.ID == "Buceh"), varieties.Single(v => v.ID == "Luma"));
-			foreach (IProcessor<VarietyPair> varietyPairProcessor in varietyPairProcessors)
-			{
-				varietyPairProcessor.Process(vp);
-			}
-
+			var varietyPairs = new HashSet<VarietyPair>(varieties.SelectMany(variety => variety.VarietyPairs));
+			var varietyPairEvent = new CountdownEvent(varietyPairs.Count * varietyPairProcessors.Count);
 			Console.Write("Analyzing variety pairs...  0%");
-			var varietyPairEvent = new CountdownEvent(((varieties.Count * (varieties.Count - 1)) / 2) * varietyPairProcessors.Count);
-			for (int i = 0; i < varieties.Count; i++)
+
+			foreach (VarietyPair varietyPair in varietyPairs)
 			{
-				for (int j = i + 1; j < varieties.Count; j++)
-				{
-					var varietyPair = new VarietyPair(varieties[i], varieties[j]);
-					varieties[i].AddVarietyPair(varietyPair);
-					varieties[j].AddVarietyPair(varietyPair);
-					//HashSet<string> cognateGlosses;
-					//if (cognates.TryGetValue(Tuple.Create(varietyPair.Variety1.ID, varietyPair.Variety2.ID), out cognateGlosses))
-					//{
-					//    foreach (WordPair wp in varietyPair.WordPairs)
-					//        wp.AreCognatesActual = cognateGlosses.Contains(wp.Word1.Gloss);
-					//}
-					Task.Factory.StartNew(() =>
-					                      	{
-												foreach (IProcessor<VarietyPair> varietyPairProcessor in varietyPairProcessors)
-												{
-													varietyPairProcessor.Process(varietyPair);
-													varietyPairEvent.Signal();
-												}
-					                      	});
-				}
+				VarietyPair vp = varietyPair;
+				Task.Factory.StartNew(() =>
+					                    {
+											foreach (IProcessor<VarietyPair> varietyPairProcessor in varietyPairProcessors)
+											{
+												varietyPairProcessor.Process(vp);
+												varietyPairEvent.Signal();
+											}
+					                    });
 			}
 
 			int lastPcnt = 0;
-			while (!varietyPairEvent.Wait(2000))
+			while (!varietyPairEvent.Wait(500))
 			{
 				int curPcnt = ((varietyPairEvent.InitialCount - varietyPairEvent.CurrentCount) * 100) / varietyPairEvent.InitialCount;
 				if (curPcnt != lastPcnt)
@@ -210,115 +240,31 @@ namespace SIL.Cog
 			//}
 			//Console.WriteLine();
 
-			WriteSimilarityGraph(varieties, Path.Combine(dir, "varieties.dot"), 0.7);
+			WriteSimilarityGraph(varieties, Path.Combine(outputFolder, "varieties.dot"), 0.7);
 			var optics = new Optics<Variety>(variety => variety.VarietyPairs.Select(pair =>
 				Tuple.Create(variety == pair.Variety1 ? pair.Variety2 : pair.Variety1, 1.0 - pair.LexicalSimilarityScore)).Concat(Tuple.Create(variety, 0.0)), 2);
 			var opticsClusterer = new OpticsDropDownClusterer<Variety>(optics);
 			var dbscanClusterer = new DbscanOpticsClusterer<Variety>(optics, 0.3);
 			IList<ClusterOrderEntry<Variety>> clusterOrder = opticsClusterer.Optics.ClusterOrder(varieties);
-			WriteClusterGraph(dbscanClusterer.GenerateClusters(clusterOrder), opticsClusterer.GenerateClusters(clusterOrder), Path.Combine(dir, "clusters.dot"));
-			WriteSimilarityMatrix(clusterOrder.Select(oe => oe.DataObject), Path.Combine(dir, "sim-matrix.txt"));
-			WriteReachabilityPlot(clusterOrder, Path.Combine(dir, "reachability.txt"));
+			WriteClusterGraph(dbscanClusterer.GenerateClusters(clusterOrder), opticsClusterer.GenerateClusters(clusterOrder), Path.Combine(outputFolder, "clusters.dot"));
+			WriteSimilarityMatrix(clusterOrder.Select(oe => oe.DataObject), Path.Combine(outputFolder, "sim-matrix.txt"));
+			WriteReachabilityPlot(clusterOrder, Path.Combine(outputFolder, "reachability.txt"));
 
 			return 0;
 		}
+
+        private static void ShowHelp(OptionSet p)
+        {
+            Console.WriteLine("Usage: cog [OPTIONS]");
+            Console.WriteLine("Cog is a tool for comparative linguistics.");
+            Console.WriteLine();
+            p.WriteOptionDescriptions(Console.Out);
+        }
 
 		private static IEnumerable<Variety> GetKNearestNeighbors(Variety variety, int k)
 		{
 			return variety.VarietyPairs.OrderByDescending(pair => pair.LexicalSimilarityScore)
 				.Take(k).Select(pair => variety == pair.Variety1 ? pair.Variety2 : pair.Variety1);
-		}
-
-		private static IEnumerable<Variety> ReadWordlists(string wordFilePath, Segmenter segmenter)
-		{
-			var varieties = new List<Variety>();
-			using (var file = new StreamReader(wordFilePath))
-			{
-				string line = file.ReadLine();
-				if (line == null)
-					return Enumerable.Empty<Variety>();
-
-				string[] glosses = line.Split('\t');
-
-				line = file.ReadLine();
-				if (line == null)
-					return Enumerable.Empty<Variety>();
-
-				string[] categories = line.Split('\t');
-
-				var senses = new List<Sense>();
-				for (int i = 1; i < glosses.Length; i++)
-					senses.Add(new Sense(glosses[i].Trim(), categories.Length <= i ? null : categories[i].Trim()));
-
-				while ((line = file.ReadLine()) != null)
-				{
-					var words = new List<Word>();
-					string[] wordStrs = line.Split('\t');
-					for (int i = 1; i < wordStrs.Length; i++)
-					{
-						string wordStr = wordStrs[i].Trim();
-						if (!string.IsNullOrEmpty(wordStr))
-						{
-							foreach (string w in wordStr.Split(','))
-							{
-								Shape shape;
-								if (segmenter.ToShape(w.Trim(), out shape))
-									words.Add(new Word(shape, senses[i - 1]));
-							}
-						}
-					}
-
-					varieties.Add(new Variety(wordStrs[0].Trim(), words));
-				}
-			}
-
-			return varieties;
-		}
-
-		private static IEnumerable<Variety> ReadComparanda(string path, Segmenter segmenter, out Dictionary<Tuple<string, string>, HashSet<string>> cognates)
-		{
-			var varietyWords = new Dictionary<string, List<Word>>();
-			cognates = new Dictionary<Tuple<string, string>, HashSet<string>>();
-
-			XElement root = XElement.Load(path);
-			foreach (XElement concept in root.Elements("CONCEPT"))
-			{
-				var gloss = (string) concept.Attribute("ID");
-				var category = (string) concept.Attribute("ROLE");
-				var sense = new Sense(gloss, category);
-				foreach (XElement varietyElem in concept.Elements().Where(elem => elem.Name != "NOTE"))
-				{
-					string id = varietyElem.Name.LocalName.ToLowerInvariant();
-					List<Word> words;
-					if (!varietyWords.TryGetValue(id, out words))
-					{
-						words = new List<Word>();
-						varietyWords[id] = words;
-					}
-					var str = ((string) varietyElem.Element("STEM").Attribute("PHON")).Replace(" ", "");
-					Shape shape;
-					if (segmenter.ToShape(str, out shape))
-						words.Add(new Word(shape, sense));
-
-					var cognateVarieties = (string) varietyElem.Attribute("COGN_PROB");
-					if (!string.IsNullOrEmpty(cognateVarieties))
-					{
-						foreach (string id2 in cognateVarieties.Split(','))
-						{
-							Tuple<string, string> key = Tuple.Create(id, id2);
-							HashSet<string> cogs;
-							if (!cognates.TryGetValue(key, out cogs))
-							{
-								cogs = new HashSet<string>();
-								cognates[key] = cogs;
-							}
-							cogs.Add(gloss);
-						}
-					}
-				}
-			}
-
-			return varietyWords.Select(kvp => new Variety(kvp.Key, kvp.Value));
 		}
 
 		private static void WriteSimilarityMatrix(IEnumerable<Variety> varieties, string filePath)

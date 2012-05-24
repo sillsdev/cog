@@ -1,4 +1,7 @@
-﻿namespace SIL.Cog
+﻿using SIL.Machine;
+using System.Linq;
+
+namespace SIL.Cog
 {
 	public enum AffixType
 	{
@@ -8,20 +11,20 @@
 
 	public class Affix
 	{
-		private readonly string _strRep;
 		private readonly AffixType _type;
+		private readonly Shape _shape;
 		private readonly string _category;
 
-		public Affix(string strRep, AffixType type, string category)
+		public Affix(AffixType type, Shape shape, string category)
 		{
-			_strRep = strRep;
+			_shape = shape;
 			_type = type;
 			_category = category;
 		}
 
-		public string StrRep
+		public Shape Shape
 		{
-			get { return _strRep; }
+			get { return _shape; }
 		}
 
 		public AffixType Type
@@ -34,11 +37,17 @@
 			get { return _category; }
 		}
 
+		public string StrRep
+		{
+			get { return string.Concat(_shape.Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep))); }
+		}
+
 		public double Score { get; set; }
 
 		public override string ToString()
 		{
-			return _type == AffixType.Prefix ? _strRep + "-" : "-" + _strRep;
+			string strRep = StrRep;
+			return _type == AffixType.Prefix ? strRep + "-" : "-" + strRep;
 		}
 	}
 }

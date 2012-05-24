@@ -5,7 +5,7 @@ namespace SIL.Cog
 {
 	public class Variety : IDBearerBase
 	{
-		private readonly Dictionary<Sense, List<Word>> _words;
+		private readonly WordCollection _words;
 		private readonly SegmentCollection _segments;
 		private readonly VarietyPairCollection _varietyPairs;
 		private readonly List<Affix> _affixes;  
@@ -13,13 +13,7 @@ namespace SIL.Cog
 		public Variety(string id, IEnumerable<Word> words)
 			: base(id)
 		{
-			_words = new Dictionary<Sense, List<Word>>();
-			foreach (Word word in words)
-			{
-				List<Word> senseWords = _words.GetValue(word.Sense, () => new List<Word>());
-				senseWords.Add(word);
-			}
-
+			_words = new WordCollection(words);
 			_segments = new SegmentCollection(this);
 			_varietyPairs = new VarietyPairCollection(this);
 			_affixes = new List<Affix>();
@@ -30,9 +24,9 @@ namespace SIL.Cog
 			get { return _segments; }
 		}
 
-		public IReadOnlyCollection<Sense> Senses
+		public WordCollection Words
 		{
-			get { return _words.Keys.AsReadOnlyCollection(); }
+			get { return _words; }
 		}
 
 		public VarietyPairCollection VarietyPairs
@@ -43,14 +37,6 @@ namespace SIL.Cog
 		public ICollection<Affix> Affixes
 		{
 			get { return _affixes; }
-		}
-
-		public IReadOnlyCollection<Word> GetWords(Sense sense)
-		{
-			List<Word> words;
-			if (_words.TryGetValue(sense, out words))
-				return words.AsReadOnlyCollection();
-			return new ReadOnlyCollection<Word>(new Word[0]);
 		}
 	}
 }

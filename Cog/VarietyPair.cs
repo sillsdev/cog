@@ -1,25 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog
 {
 	public class VarietyPair
 	{
+		public static VarietyPair Create(Variety variety1, Variety variety2)
+		{
+			var varietyPair = new VarietyPair(variety1, variety2);
+			variety1.VarietyPairs.Add(varietyPair);
+			variety2.VarietyPairs.Add(varietyPair);
+			return varietyPair;
+		}
+
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
-		private readonly List<WordPair> _wordPairs; 
+		private readonly WordPairCollection _wordPairs; 
 		private readonly Dictionary<Tuple<NaturalClass, NSegment, NaturalClass>, SoundChange> _soundChanges;
 		private readonly double _defaultCorrespondenceProbability;
 		private readonly int _possibleCorrespondenceCount;
 		private readonly Dictionary<Segment, HashSet<Segment>> _similarSegments; 
 
-		public VarietyPair(Variety variety1, Variety variety2)
+		internal VarietyPair(Variety variety1, Variety variety2)
 		{
 			_variety1 = variety1;
 			_variety2 = variety2;
-			_wordPairs = new List<WordPair>();
+			_wordPairs = new WordPairCollection(this);
 			_soundChanges = new Dictionary<Tuple<NaturalClass, NSegment, NaturalClass>, SoundChange>();
 
 			int phonemeCount = _variety2.Segments.Count;
@@ -38,9 +45,9 @@ namespace SIL.Cog
 			get { return _variety2; }
 		}
 
-		public IReadOnlyCollection<WordPair> WordPairs
+		public WordPairCollection WordPairs
 		{
-			get { return _wordPairs.AsReadOnlyCollection(); }
+			get { return _wordPairs; }
 		}
 
 		public double PhoneticSimilarityScore { get; set; }
@@ -93,11 +100,6 @@ namespace SIL.Cog
 				return segments.AsReadOnlySet();
 
 			return new ReadOnlySet<Segment>(new HashSet<Segment>());
-		}
-
-		public void AddWordPair(Word word1, Word word2)
-		{
-			_wordPairs.Add(new WordPair(this, word1, word2));
 		}
 	}
 }

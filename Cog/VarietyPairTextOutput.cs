@@ -17,7 +17,7 @@ namespace SIL.Cog
 
 		public void Process(VarietyPair varietyPair)
 		{
-			using (var writer = new StreamWriter(Path.Combine(_path, string.Format("{0}+{1}.txt", varietyPair.Variety1.ID, varietyPair.Variety2.ID))))
+			using (var writer = new StreamWriter(Path.Combine(_path, string.Format("{0}+{1}.txt", varietyPair.Variety1, varietyPair.Variety2))))
 			{
 				writer.WriteLine("Lexical Similarity: {0:0.0####}", varietyPair.LexicalSimilarityScore);
 				writer.WriteLine("Phonetic Similarity: {0:0.0####}", varietyPair.PhoneticSimilarityScore);

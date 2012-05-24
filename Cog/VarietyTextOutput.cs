@@ -14,7 +14,7 @@ namespace SIL.Cog
 
 		public void Process(Variety variety)
 		{
-			using (var writer = new StreamWriter(Path.Combine(_path, string.Format("{0}.txt", variety.ID))))
+			using (var writer = new StreamWriter(Path.Combine(_path, string.Format("{0}.txt", variety))))
 			{
 				writer.WriteLine("Seg\tProb");
 				foreach (Segment seg in variety.Segments.OrderByDescending(s => s.Probability))
@@ -29,7 +29,7 @@ namespace SIL.Cog
 					writer.WriteLine();
 				}
 
-				foreach (Word word in variety.Senses.SelectMany(variety.GetWords))
+				foreach (Word word in variety.Words)
 				{
 					writer.WriteLine(word.Sense.Gloss);
 					if (!string.IsNullOrEmpty(word.Sense.Category))

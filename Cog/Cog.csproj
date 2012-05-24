@@ -44,6 +44,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -79,8 +80,9 @@
     <Compile Include="OpticsXiClusterer.cs" />
     <Compile Include="SegmentCollection.cs" />
     <Compile Include="Sense.cs" />
-    <Compile Include="SimilarSegmentThresholdIdentifier.cs" />
-    <Compile Include="SimilarSegmentListIdentifier.cs" />
+    <Compile Include="Stemmer.cs" />
+    <Compile Include="ThresholdSimilarSegmentIdentifier.cs" />
+    <Compile Include="ListSimilarSegmentIdentifier.cs" />
     <Compile Include="TextLoader.cs" />
     <Compile Include="VarietyPairCollection.cs" />
     <Compile Include="VarietyPairTextOutput.cs" />
@@ -95,13 +97,15 @@
     <Compile Include="SoundChange.cs" />
     <Compile Include="SoundChangeAline.cs" />
     <Compile Include="EMSoundChangeInducer.cs" />
-    <Compile Include="UnsupervisedStemmer.cs" />
+    <Compile Include="UnsupervisedAffixIdentifier.cs" />
     <Compile Include="Variety.cs" />
     <Compile Include="VarietyPair.cs" />
     <Compile Include="VarietyTextOutput.cs" />
     <Compile Include="Word.cs" />
+    <Compile Include="WordCollection.cs" />
     <Compile Include="WordListsLoader.cs" />
     <Compile Include="WordPair.cs" />
+    <Compile Include="WordPairCollection.cs" />
     <Compile Include="WordPairGenerator.cs" />
     <Compile Include="WordSurvXmlLoader.cs" />
   </ItemGroup>

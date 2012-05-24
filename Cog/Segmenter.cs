@@ -116,7 +116,7 @@ namespace SIL.Cog
 					if (match.Groups["joiner"].Success)
 					{
 						string joinerStr = match.Groups["joiner"].Value;
-						sb.Append(joinerStr);
+						//sb.Append(joinerStr);
 						phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[1], "vowelBase", _vowels, out strRep));
 						sb.Append(strRep);
 						phonemeFS.PriorityUnion(_joiners[joinerStr]);
@@ -136,7 +136,7 @@ namespace SIL.Cog
 					if (match.Groups["joiner"].Success)
 					{
 						string joinerStr = match.Groups["joiner"].Value;
-						sb.Append(joinerStr);
+						//sb.Append(joinerStr);
 						phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[1], "consBase", _consonants, out strRep));
 						sb.Append(strRep);
 						phonemeFS.PriorityUnion(_joiners[joinerStr]);
@@ -148,7 +148,15 @@ namespace SIL.Cog
 				}
 
 				if (match.Index + match.Length == str.Length)
+				{
+					if (shape.Count == 0)
+					{
+						shape = null;
+						return false;
+					}
+
 					return true;
+				}
 			}
 
 			shape = null;
@@ -166,15 +174,18 @@ namespace SIL.Cog
 			{
 				string modStr = modifier.Value;
 				Tuple<FeatureStruct, bool> modInfo = _modifiers[modStr];
-				if (modInfo.Item2)
-					fs.PriorityUnion(modInfo.Item1);
-				else
-					fs.Union(modInfo.Item1);
+				if (!modInfo.Item1.IsEmpty)
+				{
+					if (modInfo.Item2)
+						fs.PriorityUnion(modInfo.Item1);
+					else
+						fs.Add(modInfo.Item1);
 
-				if (modStr.Length == 1 && IsStackingDiacritic(modStr[0]))
-					sb.Append(modStr);
-				else
-					modStrs.Add(modStr);
+					if (modStr.Length == 1 && IsStackingDiacritic(modStr[0]))
+						sb.Append(modStr);
+					else
+						modStrs.Add(modStr);
+				}
 			}
 			strRep = modStrs.OrderBy(str => str).Aggregate(sb, (s, modStr) => s.Append(modStr)).ToString();
 			return fs;

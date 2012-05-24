@@ -30,9 +30,7 @@ namespace SIL.Cog
 			{
 				for (int j = i + 1; j < varieties.Count; j++)
 				{
-					var varietyPair = new VarietyPair(varieties[i], varieties[j]);
-					varieties[i].VarietyPairs.Add(varietyPair);
-					varieties[i].VarietyPairs.Add(varietyPair);
+					VarietyPair varietyPair = VarietyPair.Create(varieties[i], varieties[j]);
 					if (action != null)
 						action(varietyPair);
 				}

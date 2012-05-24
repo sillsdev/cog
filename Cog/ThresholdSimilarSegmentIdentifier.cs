@@ -1,12 +1,12 @@
 ﻿namespace SIL.Cog
 {
-	public class SimilarSegmentThresholdIdentifier : IProcessor<VarietyPair>
+	public class ThresholdSimilarSegmentIdentifier : IProcessor<VarietyPair>
 	{
 		private readonly EditDistance _editDistance;
 		private readonly int _vowelThreshold;
 		private readonly int _consonantThreshold;
 
-		public SimilarSegmentThresholdIdentifier(EditDistance editDistance, int vowelThreshold, int consonantThreshold)
+		public ThresholdSimilarSegmentIdentifier(EditDistance editDistance, int vowelThreshold, int consonantThreshold)
 		{
 			_editDistance = editDistance;
 			_vowelThreshold = vowelThreshold;

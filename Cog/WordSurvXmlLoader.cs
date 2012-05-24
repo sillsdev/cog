@@ -31,17 +31,23 @@ namespace SIL.Cog
 			{
 				var gloss = (string) glossElem.Element("name");
 				var pos = (string) glossElem.Element("part_of_speech");
-				var sense = new Sense(gloss, pos);
+				var sense = new Sense(gloss.Trim(), pos);
 				foreach (XElement transElem in glossElem.Elements("transcriptions").Elements("transcription"))
 				{
 					var varietyID = (string) transElem.Element("word_list_id");
 					var wordform = (string) transElem.Element("name");
-					Tuple<string, List<Word>> varietyInfo;
-					if (varietyInfos.TryGetValue(varietyID, out varietyInfo))
+					if (wordform != null)
 					{
-						Shape shape;
-						if (Segmenter.ToShape(wordform, out shape))
-							varietyInfo.Item2.Add(new Word(shape, sense));
+						Tuple<string, List<Word>> varietyInfo;
+						if (varietyInfos.TryGetValue(varietyID, out varietyInfo))
+						{
+							foreach (string w in wordform.Split(','))
+							{
+								Shape shape;
+								if (Segmenter.ToShape(w.Trim(), out shape))
+									varietyInfo.Item2.Add(new Word(shape, sense));
+							}
+						}
 					}
 				}
 			}

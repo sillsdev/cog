@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Collections;
@@ -9,21 +11,20 @@ namespace SIL.Cog
 {
 	public class CogConfig
 	{
+		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly string _configFilePath;
 		private readonly FeatureSystem _featSys;
-		private readonly Segmenter _segmenter;
-		private readonly IDBearerSet<SymbolicFeature> _relevantVowelFeatures;
-		private readonly IDBearerSet<SymbolicFeature> _relevantConsFeatures;
-		private readonly IDBearerSet<NaturalClass> _naturalClasses; 
+
+		private WordListsLoader _loader;
+		private IReadOnlyList<IProcessor<Variety>> _varietyProcessors;
+		private IReadOnlyList<IProcessor<VarietyPair>> _varietyPairProcessors;
+		private string _outputPath;
 
 		public CogConfig(SpanFactory<ShapeNode> spanFactory, string configFilePath)
 		{
+			_spanFactory = spanFactory;
 			_configFilePath = configFilePath;
 			_featSys = new FeatureSystem();
-			_segmenter = new Segmenter(spanFactory);
-			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>();
-			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>();
-			_naturalClasses = new IDBearerSet<NaturalClass>();
 		}
 
 		public FeatureSystem FeatureSystem
@@ -31,29 +32,166 @@ namespace SIL.Cog
 			get { return _featSys; }
 		}
 
-		public Segmenter Segmenter
+		public WordListsLoader Loader
 		{
-			get { return _segmenter; }
+			get { return _loader; }
 		}
 
-		public IEnumerable<SymbolicFeature> RelevantVowelFeatures
+		public IReadOnlyList<IProcessor<Variety>> VarietyProcessors
 		{
-			get { return _relevantVowelFeatures; }
+			get { return _varietyProcessors; }
 		}
 
-		public IEnumerable<SymbolicFeature> RelevantConsonantFeatures
+		public IReadOnlyList<IProcessor<VarietyPair>> VarietyPairProcessors
 		{
-			get { return _relevantConsFeatures; }
+			get { return _varietyPairProcessors; }
 		}
 
-		public IEnumerable<NaturalClass> NaturalClasses
+		public string OutputPath
 		{
-			get { return _naturalClasses; }
+			get { return _outputPath; }
 		}
 
 		public void Load()
 		{
 			XElement root = XElement.Load(_configFilePath);
+			string dirPath = Path.GetDirectoryName(_configFilePath);
+			var segmentPath = (string) root.Element("Segmentation");
+			if (dirPath != null && !Path.IsPathRooted(segmentPath))
+				segmentPath = Path.Combine(dirPath, segmentPath);
+
+			Segmenter segmenter;
+			IDBearerSet<SymbolicFeature> relevantVowelFeatures, relevantConsFeatures;
+			IDBearerSet<NaturalClass> naturalClasses;
+			LoadSegmentation(segmentPath, out segmenter, out relevantVowelFeatures, out relevantConsFeatures, out naturalClasses);
+			XElement wordlistsElem = root.Element("Wordlists");
+			Debug.Assert(wordlistsElem != null);
+
+			var wordlistsPath = (string) wordlistsElem;
+			if (dirPath != null && !Path.IsPathRooted(wordlistsPath))
+				wordlistsPath = Path.Combine(dirPath, wordlistsPath);
+			switch ((string) wordlistsElem.Attribute("type"))
+			{
+				case "text":
+					_loader = new TextLoader(segmenter, wordlistsPath);
+					break;
+				case "wordsurv":
+					_loader = new WordSurvXmlLoader(segmenter, wordlistsPath);
+					break;
+				case "comparanda":
+					_loader = new ComparandaLoader(segmenter, wordlistsPath);
+					break;
+			}
+
+			var varietyProcessors = new List<IProcessor<Variety>>();
+			XElement stemmingElem = root.Element("Stemming");
+			if (stemmingElem != null)
+			{
+				var stemmingType = (string) stemmingElem.Attribute("type");
+				switch (stemmingType)
+				{
+					case "heuristic":
+						var stemThresholdStr = (string) stemmingElem.Element("AffixThreshold");
+						var maxAffixLenStr = (string) stemmingElem.Element("MaxAffixLength");
+						var catRequired = (string) stemmingElem.Element("CategoryRequired");
+						varietyProcessors.Add(new UnsupervisedAffixIdentifier(_spanFactory, double.Parse(stemThresholdStr), int.Parse(maxAffixLenStr), catRequired != null && bool.Parse(catRequired)));
+						varietyProcessors.Add(new Stemmer(_spanFactory));
+						break;
+
+					case "list":
+						break;
+				}
+			}
+
+			XElement alignmentElem = root.Element("Alignment");
+			Debug.Assert(alignmentElem != null);
+			var settings = new EditDistanceSettings();
+			var modeStr = (string) alignmentElem.Element("Mode");
+			if (modeStr != null)
+			{
+				switch (modeStr)
+				{
+					case "local":
+						settings.Mode = EditDistanceMode.Local;
+						break;
+					case "global":
+						settings.Mode = EditDistanceMode.Global;
+						break;
+					case "semi-global":
+						settings.Mode = EditDistanceMode.SemiGlobal;
+						break;
+					case "half-local":
+						settings.Mode = EditDistanceMode.HalfLocal;
+						break;
+				}
+			}
+			var disableExpansionCompressionStr = (string) alignmentElem.Element("DisableExpansionCompression");
+			if (disableExpansionCompressionStr != null)
+				settings.DisableExpansionCompression = bool.Parse(disableExpansionCompressionStr);
+			var aline = new Aline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, settings);
+			var soundChangeAline = new SoundChangeAline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, naturalClasses, settings);
+
+			var varietyPairProcessors = new List<IProcessor<VarietyPair>> {new WordPairGenerator(aline)};
+
+			XElement soundChangeElem = root.Element("SoundChangeInducer");
+			Debug.Assert(soundChangeElem != null);
+			var soundChangeThresholdStr = (string) soundChangeElem.Element("AlignmentThreshold");
+			varietyPairProcessors.Add(new EMSoundChangeInducer(aline, soundChangeAline, double.Parse(soundChangeThresholdStr)));
+
+			XElement cognateIdentElem = root.Element("CognateIdentification");
+			Debug.Assert(cognateIdentElem != null);
+			switch ((string) cognateIdentElem.Attribute("type"))
+			{
+				case "blair":
+					XElement similarSegmentsElem = cognateIdentElem.Element("SimilarSegments");
+					Debug.Assert(similarSegmentsElem != null);
+					switch ((string) similarSegmentsElem.Attribute("type"))
+					{
+						case "list":
+							var vowelsPath = (string) similarSegmentsElem.Element("SimilarVowels");
+							if (dirPath != null && !Path.IsPathRooted(vowelsPath))
+								vowelsPath = Path.Combine(dirPath, vowelsPath);
+							var consPath = (string) similarSegmentsElem.Element("SimilarConsonants");
+							if (dirPath != null && !Path.IsPathRooted(consPath))
+								consPath = Path.Combine(dirPath, consPath);
+							var genVowelsStr = (string) similarSegmentsElem.Element("GenerateDiphthongs") ?? "false";
+							varietyPairProcessors.Add(new ListSimilarSegmentIdentifier(vowelsPath, consPath, segmenter.Joiners, bool.Parse(genVowelsStr)));
+							break;
+
+						case "threshold":
+							var vowelThresholdStr = (string) similarSegmentsElem.Element("VowelThreshold");
+							var consThresholdStr = (string) similarSegmentsElem.Element("ConsonantThreshold");
+							varietyPairProcessors.Add(new ThresholdSimilarSegmentIdentifier(aline, int.Parse(vowelThresholdStr), int.Parse(consThresholdStr)));
+							break;
+					}
+					var blairThresholdStr = (string) cognateIdentElem.Element("AlignmentThreshold");
+					varietyPairProcessors.Add(new BlairCognateIdentifier(soundChangeAline, double.Parse(blairThresholdStr)));
+					break;
+
+				case "aline":
+					var alineThresholdStr = (string) cognateIdentElem.Element("AlignmentThreshold");
+					varietyPairProcessors.Add(new ThresholdCognateIdentifier(soundChangeAline, double.Parse(alineThresholdStr)));
+					break;
+			}
+
+			_outputPath = (string) root.Element("Output");
+			if (dirPath != null && !Path.IsPathRooted(_outputPath))
+				_outputPath = Path.Combine(dirPath, _outputPath);
+			varietyProcessors.Add(new VarietyTextOutput(_outputPath));
+			varietyPairProcessors.Add(new VarietyPairTextOutput(_outputPath, soundChangeAline));
+
+			_varietyProcessors = new ReadOnlyList<IProcessor<Variety>>(varietyProcessors);
+			_varietyPairProcessors = new ReadOnlyList<IProcessor<VarietyPair>>(varietyPairProcessors);
+		}
+
+		private void LoadSegmentation(string path, out Segmenter segmenter, out IDBearerSet<SymbolicFeature> relevantVowelFeatures,
+			out IDBearerSet<SymbolicFeature> relevantConsFeatures, out IDBearerSet<NaturalClass> naturalClasses)
+		{
+			XElement root = XElement.Load(path);
+			segmenter = new Segmenter(_spanFactory);
+			relevantVowelFeatures = new IDBearerSet<SymbolicFeature>();
+			relevantConsFeatures = new IDBearerSet<SymbolicFeature>();
+			naturalClasses = new IDBearerSet<NaturalClass>();
 			XElement featSysElem = root.Element("FeatureSystem");
 			if (featSysElem != null)
 			{
@@ -68,7 +206,7 @@ namespace SIL.Cog
 			XElement vowelsElem = root.Element("Vowels");
 			if (vowelsElem != null)
 			{
-				_relevantVowelFeatures.UnionWith(((string) vowelsElem.Attribute("relevantFeatures")).Split(' ').Select(id => (SymbolicFeature) _featSys.GetFeature(id)));
+				relevantVowelFeatures.UnionWith(((string) vowelsElem.Attribute("relevantFeatures")).Split(' ').Select(id => (SymbolicFeature) _featSys.GetFeature(id)));
 				XElement naturalClassesElem = vowelsElem.Element("NaturalClasses");
 				if (naturalClassesElem != null)
 				{
@@ -76,7 +214,7 @@ namespace SIL.Cog
 					{
 						FeatureStruct fs = ParseFeatureStruct(ncElem);
 						fs.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
-						_naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), fs));
+						naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), fs));
 					}
 				}
 				XElement symbolsElem = vowelsElem.Element("Symbols");
@@ -85,7 +223,7 @@ namespace SIL.Cog
 					foreach (XElement symbolElem in symbolsElem.Elements("Symbol"))
 					{
 						FeatureStruct fs = ParseFeatureStruct(symbolElem);
-						_segmenter.AddVowel((string) symbolElem.Attribute("char"), fs);
+						segmenter.AddVowel((string) symbolElem.Attribute("char"), fs);
 					}
 				}
 			}
@@ -93,7 +231,7 @@ namespace SIL.Cog
 			XElement consElem = root.Element("Consonants");
 			if (consElem != null)
 			{
-				_relevantConsFeatures.UnionWith(((string) consElem.Attribute("relevantFeatures")).Split(' ').Select(id => (SymbolicFeature) _featSys.GetFeature(id)));
+				relevantConsFeatures.UnionWith(((string) consElem.Attribute("relevantFeatures")).Split(' ').Select(id => (SymbolicFeature) _featSys.GetFeature(id)));
 				XElement naturalClassesElem = consElem.Element("NaturalClasses");
 				if (naturalClassesElem != null)
 				{
@@ -101,7 +239,7 @@ namespace SIL.Cog
 					{
 						FeatureStruct fs = ParseFeatureStruct(ncElem);
 						fs.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
-						_naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), fs));
+						naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("id"), fs));
 					}
 				}
 				XElement symbolsElem = consElem.Element("Symbols");
@@ -110,7 +248,7 @@ namespace SIL.Cog
 					foreach (XElement symbolElem in symbolsElem.Elements("Symbol"))
 					{
 						FeatureStruct fs = ParseFeatureStruct(symbolElem);
-						_segmenter.AddConsonant((string) symbolElem.Attribute("char"), fs);
+						segmenter.AddConsonant((string) symbolElem.Attribute("char"), fs);
 					}
 				}
 			}
@@ -121,7 +259,7 @@ namespace SIL.Cog
 				foreach (XElement symbolElem in modsElem.Elements("Symbol"))
 				{
 					FeatureStruct fs = ParseFeatureStruct(symbolElem);
-					_segmenter.AddModifier((string) symbolElem.Attribute("char"), fs, ((string) symbolElem.Attribute("overwrite")) != "false");
+					segmenter.AddModifier((string) symbolElem.Attribute("char"), fs, ((string) symbolElem.Attribute("overwrite")) != "false");
 				}
 			}
 
@@ -129,14 +267,14 @@ namespace SIL.Cog
 			if (bdrysElem != null)
 			{
 				foreach (XElement symbolElem in bdrysElem.Elements("Symbol"))
-					_segmenter.AddBoundary((string) symbolElem.Attribute("char"));
+					segmenter.AddBoundary((string) symbolElem.Attribute("char"));
 			}
 
 			XElement tonesElem = root.Element("ToneLetters");
 			if (tonesElem != null)
 			{
 				foreach (XElement symbolElem in tonesElem.Elements("Symbol"))
-					_segmenter.AddToneLetter((string) symbolElem.Attribute("char"));
+					segmenter.AddToneLetter((string) symbolElem.Attribute("char"));
 			}
 
 			XElement joinersElem = root.Element("Joiners");
@@ -145,7 +283,7 @@ namespace SIL.Cog
 				foreach (XElement symbolElem in joinersElem.Elements("Symbol"))
 				{
 					FeatureStruct fs = ParseFeatureStruct(symbolElem);
-					_segmenter.AddJoiner((string) symbolElem.Attribute("char"), fs);
+					segmenter.AddJoiner((string) symbolElem.Attribute("char"), fs);
 				}
 			}
 		}

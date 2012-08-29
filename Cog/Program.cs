@@ -95,8 +95,8 @@ namespace SIL.Cog
 			WritePhonemeList(varieties, CogFeatureSystem.VowelType, Path.Combine(config.OutputPath, "vowels.txt"));
 			WritePhonemeList(varieties, CogFeatureSystem.ConsonantType, Path.Combine(config.OutputPath, "consonants.txt"));
 
-			//VarietyPair varPair = varieties.Single(v => v.ID == "Chuyo (Kyuyan Noknyo)").VarietyPairs["Gakat (Wakat Kyukhu)"];
-			//foreach (IProcessor<VarietyPair> varietyPairProcessor in varietyPairProcessors)
+			//VarietyPair varPair = varieties.Single(v => v.ID == "Doitu_Maungywa").VarietyPairs["Uppu_Ngapyagin (Hget-pya-kyin)"];
+			//foreach (IProcessor<VarietyPair> varietyPairProcessor in config.VarietyPairProcessors)
 			//    varietyPairProcessor.Process(varPair);
 
 			var varietyPairs = new HashSet<VarietyPair>(varieties.SelectMany(variety => variety.VarietyPairs));
@@ -190,7 +190,8 @@ namespace SIL.Cog
 			var dbscanClusterer = new DbscanOpticsClusterer<Variety>(optics, 0.3);
 			IList<ClusterOrderEntry<Variety>> clusterOrder = opticsClusterer.Optics.ClusterOrder(varieties);
 			WriteClusterGraph(dbscanClusterer.GenerateClusters(clusterOrder), opticsClusterer.GenerateClusters(clusterOrder), Path.Combine(config.OutputPath, "clusters.dot"));
-			WriteSimilarityMatrix(clusterOrder.Select(oe => oe.DataObject), Path.Combine(config.OutputPath, "sim-matrix.txt"));
+			WriteSimilarityMatrix(clusterOrder.Select(oe => oe.DataObject), Path.Combine(config.OutputPath, "lexical-sim-matrix.txt"), vp => vp.LexicalSimilarityScore);
+			WriteSimilarityMatrix(clusterOrder.Select(oe => oe.DataObject), Path.Combine(config.OutputPath, "phonetic-sim-matrix.txt"), vp => vp.PhoneticSimilarityScore);
 			WriteReachabilityPlot(clusterOrder, Path.Combine(config.OutputPath, "reachability.txt"));
 
 			return 0;
@@ -210,7 +211,7 @@ namespace SIL.Cog
 				.Take(k).Select(pair => variety == pair.Variety1 ? pair.Variety2 : pair.Variety1);
 		}
 
-		private static void WriteSimilarityMatrix(IEnumerable<Variety> varieties, string filePath)
+		private static void WriteSimilarityMatrix(IEnumerable<Variety> varieties, string filePath, Func<VarietyPair, double> scoreSelector)
 		{
 			Variety[] varietyArray = varieties.ToArray();
 			using (var writer = new StreamWriter(filePath))
@@ -222,7 +223,7 @@ namespace SIL.Cog
 						if (j > 0)
 							writer.Write("\t");
 						VarietyPair varietyPair = varietyArray[i].VarietyPairs[varietyArray[j]];
-						writer.Write("{0:0.00}", varietyPair.LexicalSimilarityScore);
+						writer.Write("{0:0.00}", scoreSelector(varietyPair));
 					}
 					if (i > 0)
 						writer.Write("\t");

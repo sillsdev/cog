@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using SIL.Collections;
+using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
@@ -20,7 +21,7 @@ namespace SIL.Cog
 
 			if (generateVowels)
 			{
-				string[] vowels = _similarVowels.Keys.ToArray();
+				string[] vowels = _similarVowels.Keys.Where(v => v != "-").ToArray();
 				foreach (string vowel1 in vowels)
 				{
 					foreach (string vowel2 in vowels)
@@ -77,20 +78,41 @@ namespace SIL.Cog
 		{
 			foreach (Segment seg1 in varietyPair.Variety1.Segments)
 			{
-				foreach (Segment seg2 in varietyPair.Variety2.Segments)
+				Dictionary<string, HashSet<string>> similarSegments = seg1.Type == CogFeatureSystem.ConsonantType ? _similarConsonants : _similarVowels;
+				string str1 = RemoveJoiners(seg1.StrRep);
+
+				HashSet<string> segments;
+				if (similarSegments.TryGetValue(str1, out segments))
 				{
-					if (seg1.Type == seg2.Type && seg1.StrRep != seg2.StrRep)
+					foreach (Segment seg2 in varietyPair.Variety2.Segments)
 					{
-						Dictionary<string, HashSet<string>> similarSegments = seg1.Type == CogFeatureSystem.ConsonantType ? _similarConsonants : _similarVowels;
-						string str1 = RemoveJoiners(seg1.StrRep);
-						HashSet<string> segments;
-						if (similarSegments.TryGetValue(str1, out segments))
+						if (seg1.Type == seg2.Type && seg1.StrRep != seg2.StrRep)
 						{
 							string str2 = RemoveJoiners(seg2.StrRep);
 							if (segments.Contains(str2))
 								varietyPair.AddSimilarSegment(seg1, seg2);
-						}	
+						}
 					}
+
+					if (segments.Contains("-"))
+						varietyPair.AddSimilarSegment(seg1, Segment.Null);
+				}
+			}
+
+			AddNullSegment(varietyPair, _similarConsonants, CogFeatureSystem.ConsonantType);
+			AddNullSegment(varietyPair, _similarVowels, CogFeatureSystem.VowelType);
+		}
+
+		private void AddNullSegment(VarietyPair varietyPair, Dictionary<string, HashSet<string>> similarSegments, FeatureSymbol type)
+		{
+			HashSet<string> segments;
+			if (similarSegments.TryGetValue("-", out segments))
+			{
+				foreach (Segment seg2 in varietyPair.Variety2.Segments.Where(s => s.Type == type))
+				{
+					string str2 = RemoveJoiners(seg2.StrRep);
+					if (segments.Contains(str2))
+						varietyPair.AddSimilarSegment(Segment.Null, seg2);
 				}
 			}
 		}

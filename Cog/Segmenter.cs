@@ -115,11 +115,15 @@ namespace SIL.Cog
 					sb.Append(strRep);
 					if (match.Groups["joiner"].Success)
 					{
-						string joinerStr = match.Groups["joiner"].Value;
-						//sb.Append(joinerStr);
-						phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[1], "vowelBase", _vowels, out strRep));
-						sb.Append(strRep);
-						phonemeFS.PriorityUnion(_joiners[joinerStr]);
+						Group joinerGroup = match.Groups["joiner"];
+						for (int i = 0; i < joinerGroup.Captures.Count; i++)
+						{
+							string joinerStr = joinerGroup.Captures[i].Value;
+							//sb.Append(joinerStr);
+							phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out strRep));
+							sb.Append(strRep);
+							phonemeFS.PriorityUnion(_joiners[joinerStr]);
+						}
 					}
 
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
@@ -135,11 +139,15 @@ namespace SIL.Cog
 					sb.Append(strRep);
 					if (match.Groups["joiner"].Success)
 					{
-						string joinerStr = match.Groups["joiner"].Value;
-						//sb.Append(joinerStr);
-						phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[1], "consBase", _consonants, out strRep));
-						sb.Append(strRep);
-						phonemeFS.PriorityUnion(_joiners[joinerStr]);
+						Group joinerGroup = match.Groups["joiner"];
+						for (int i = 0; i < joinerGroup.Captures.Count; i++)
+						{
+							string joinerStr = joinerGroup.Captures[i].Value;
+							//sb.Append(joinerStr);
+							phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out strRep));
+							sb.Append(strRep);
+							phonemeFS.PriorityUnion(_joiners[joinerStr]);
+						}
 					}
 
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
@@ -215,7 +223,7 @@ namespace SIL.Cog
 
 			string consCompStr = string.Format("(?'consComp'{0}{1}*)", consBaseStr, modStr);
 			string voweCompStr = string.Format("(?'vowelComp'{0}{1}*)", vowelBaseStr, modStr);
-			return string.Format("(?'consSeg'{0}(?:{2}{0})?)|(?'vowelSeg'{1}(?:{2}{1})?)|{3}|{4}", consCompStr, voweCompStr, joinerStr, toneStr, bdryStr);
+			return string.Format("(?'consSeg'{0}(?:{2}{0})*)|(?'vowelSeg'{1}(?:{2}{1})*)|{3}|{4}", consCompStr, voweCompStr, joinerStr, toneStr, bdryStr);
 		}
 
 		private static string CreateSymbolRegexString(string name, IEnumerable<string> strings)

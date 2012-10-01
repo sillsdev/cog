@@ -2,24 +2,22 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FFCBA55F-8BF1-47E8-8719-EA91287B10C8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.Cog</RootNamespace>
     <AssemblyName>Cog</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkProfile />
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -28,7 +26,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -37,79 +36,220 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NDesk.Options">
-      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight.Extras.WPF4, Version=4.0.23.37706, Culture=neutral, PublicKeyToken=1673db7d5906b0ad, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.WPF4, Version=4.0.23.37706, Culture=neutral, PublicKeyToken=63eb5c012e0b3c1c, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\GalaSoft.MvvmLight.WPF4.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Affix.cs" />
-    <Compile Include="Alignment.cs" />
-    <Compile Include="Aline.cs" />
-    <Compile Include="BlairCognateIdentifier.cs" />
-    <Compile Include="Cluster.cs" />
-    <Compile Include="Clusterer.cs" />
-    <Compile Include="ClusterOrderEntry.cs" />
-    <Compile Include="CogConfig.cs" />
-    <Compile Include="CogFeatureSystem.cs" />
-    <Compile Include="ComparandaLoader.cs" />
-    <Compile Include="DbscanClusterer.cs" />
-    <Compile Include="DbscanOpticsClusterer.cs" />
-    <Compile Include="EditDistanceSettings.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="NSegment.cs" />
-    <Compile Include="Segment.cs" />
-    <Compile Include="PrecisionRecallCalculator.cs" />
-    <Compile Include="LsdbcClusterer.cs" />
-    <Compile Include="MonteCarloSignificanceTest.cs" />
-    <Compile Include="Optics.cs" />
-    <Compile Include="OpticsClusterer.cs" />
-    <Compile Include="OpticsDropDownClusterer.cs" />
-    <Compile Include="OpticsXiClusterer.cs" />
-    <Compile Include="SegmentCollection.cs" />
-    <Compile Include="Sense.cs" />
-    <Compile Include="Stemmer.cs" />
-    <Compile Include="ThresholdSimilarSegmentIdentifier.cs" />
-    <Compile Include="ListSimilarSegmentIdentifier.cs" />
-    <Compile Include="TextLoader.cs" />
-    <Compile Include="VarietyPairCollection.cs" />
-    <Compile Include="VarietyPairTextOutput.cs" />
-    <Compile Include="ThresholdCognateIdentifier.cs" />
-    <Compile Include="EditDistanceMatrix.cs" />
-    <Compile Include="EditDistance.cs" />
-    <Compile Include="IProcessor.cs" />
-    <Compile Include="NaturalClass.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Segmenter.cs" />
-    <Compile Include="SoundChange.cs" />
-    <Compile Include="SoundChangeAline.cs" />
-    <Compile Include="EMSoundChangeInducer.cs" />
-    <Compile Include="UnsupervisedAffixIdentifier.cs" />
-    <Compile Include="Variety.cs" />
-    <Compile Include="VarietyPair.cs" />
-    <Compile Include="VarietyTextOutput.cs" />
-    <Compile Include="Word.cs" />
-    <Compile Include="WordCollection.cs" />
-    <Compile Include="WordListsLoader.cs" />
-    <Compile Include="WordPair.cs" />
-    <Compile Include="WordPairCollection.cs" />
-    <Compile Include="WordPairGenerator.cs" />
-    <Compile Include="WordSurvXmlLoader.cs" />
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\FileDialogResult.cs" />
+    <Compile Include="Services\FileType.cs" />
+    <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\IViewRegistrationService.cs" />
+    <Compile Include="Services\IWindowViewModelMappings.cs" />
+    <Compile Include="Services\ServiceExtensions.cs" />
+    <Compile Include="Services\ViewRegistrationService.cs" />
+    <Compile Include="Services\WindowViewModelMappings.cs" />
+    <Compile Include="Theme\ContentToMarginConverter.cs" />
+    <Compile Include="Theme\ContentToPathConverter.cs" />
+    <Compile Include="ViewModels\AffixViewModel.cs" />
+    <Compile Include="ViewModels\CommandViewModel.cs" />
+    <Compile Include="ViewModels\ComparisonMasterViewModel.cs" />
+    <Compile Include="ViewModels\DataSettingsViewModel.cs" />
+    <Compile Include="ViewModels\EditSenseViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\MasterViewModel.cs" />
+    <Compile Include="ViewModels\CogViewModel.cs" />
+    <Compile Include="ViewModels\NewAffixViewModel.cs" />
+    <Compile Include="ViewModels\EditVarietyViewModel.cs" />
+    <Compile Include="ViewModels\ProgressViewModel.cs" />
+    <Compile Include="ViewModels\RunStemmerViewModel.cs" />
+    <Compile Include="ViewModels\SegmentVarietyViewModel.cs" />
+    <Compile Include="ViewModels\SegmentVarietyViewModelCollection.cs" />
+    <Compile Include="ViewModels\SensesViewModel.cs" />
+    <Compile Include="ViewModels\SenseViewModel.cs" />
+    <Compile Include="ViewModels\StemmerSettingsViewModel.cs" />
+    <Compile Include="ViewModels\TaskAreaViewModel.cs" />
+    <Compile Include="ViewModels\VarietySenseViewModel.cs" />
+    <Compile Include="ViewModels\SwitchViewMessage.cs" />
+    <Compile Include="ViewModels\DataMasterViewModel.cs" />
+    <Compile Include="ViewModels\VarietiesViewModel.cs" />
+    <Compile Include="ViewModels\VarietySenseWordListsViewModel.cs" />
+    <Compile Include="ViewModels\VarietyViewModel.cs" />
+    <Compile Include="ViewModels\VarietyWordListsViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelCollection.cs" />
+    <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="ViewModels\ViewModelUtilities.cs" />
+    <Compile Include="ViewModels\VisualizationMasterViewModel.cs" />
+    <Compile Include="ViewModels\WordListsViewModel.cs" />
+    <Compile Include="ViewModels\WordSegmentViewModel.cs" />
+    <Compile Include="ViewModels\WordViewModel.cs" />
+    <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
+    <Compile Include="ViewModels\WorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\WrapperViewModel.cs" />
+    <Compile Include="Views\DataGridBehaviors.cs" />
+    <Compile Include="Views\EditSenseDialog.xaml.cs">
+      <DependentUpon>EditSenseDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditVarietyDialog.xaml.cs">
+      <DependentUpon>EditVarietyDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EnumMatchToBooleanConverter.cs" />
+    <Compile Include="Views\ProgressDialog.xaml.cs">
+      <DependentUpon>ProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RunStemmerDialog.xaml.cs">
+      <DependentUpon>RunStemmerDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SensesView.xaml.cs">
+      <DependentUpon>SensesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TabControlEx.cs" />
+    <Compile Include="Views\FrameworkElementBehaviors.cs" />
+    <Compile Include="Views\TaskAreaView.xaml.cs">
+      <DependentUpon>TaskAreaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TextBlockBehaviors.cs" />
+    <Compile Include="Views\ItemsControlDragDrop.cs" />
+    <Compile Include="Views\DraggedAdorner.cs" />
+    <Compile Include="Views\ItemsControlDrag.cs" />
+    <Compile Include="Views\ItemsControlDrop.cs" />
+    <Compile Include="Views\InsertionAdorner.cs" />
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\NewAffixDialog.xaml.cs">
+      <DependentUpon>NewAffixDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProbabilityToWidthConverter.cs" />
+    <Compile Include="Views\TextBoxBehaviors.cs" />
+    <Compile Include="Views\ViewUtilities.cs" />
+    <Compile Include="Views\WordsToInlinesConverter.cs" />
+    <Compile Include="Views\VarietiesView.xaml.cs">
+      <DependentUpon>VarietiesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VarietyView.xaml.cs">
+      <DependentUpon>VarietyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WordView.xaml.cs">
+      <DependentUpon>WordView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WordListsView.xaml.cs">
+      <DependentUpon>WordListsView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Theme\MainThemeStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditSenseDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NewAffixDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditVarietyDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProgressDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RunStemmerDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SensesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TaskAreaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VarietiesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VarietyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WordView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WordListsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CogLib\CogLib.csproj">
+      <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
+      <Name>CogLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Collections\Collections.csproj">
       <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
       <Name>Collections</Name>
@@ -118,9 +258,6 @@
       <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
       <Name>Machine</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

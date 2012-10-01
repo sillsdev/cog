@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="SIL.Cog.Views.VarietyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Services="clr-namespace:SIL.Cog.Services"
+             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
+             Services:ViewRegistrationService.IsRegisteredView="True">
+    <UserControl.Resources>
+        <Views:ProbabilityToWidthConverter x:Key="probConverter" />
+        <CollectionViewSource x:Key="sensesSource" Source="{Binding Senses}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="Gloss" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource x:Key="segmentsSource" Source="{Binding Segments}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="Probability" Direction="Descending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
+    <DockPanel>
+        <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
+            <StackPanel>
+                <DataGrid ItemsSource="{Binding Affixes}" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentAffix}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*" />
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Border BorderThickness="1,0,1,1" BorderBrush="{StaticResource DataGridBorderBrush}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Affixes.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="Click New to add an affix" />
+                </Border>
+                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
+                    <Button Margin="5,5,0,5" Width="70" Command="{Binding RemoveAffixCommand}">Remove</Button>
+                    <Button Margin="5,5,0,5" Width="70" Command="{Binding NewAffixCommand}">New</Button>
+                </StackPanel>
+            </StackPanel>
+        </HeaderedContentControl>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.7*" />
+                <ColumnDefinition Width="0.3*" />
+            </Grid.ColumnDefinitions>
+            <HeaderedContentControl Grid.Column="0" Margin="0,10,10,0" Header="Words">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Source={StaticResource sensesSource}}" AlternationCount="2">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="row" Padding="0,5,0,5">
+                                    <StackPanel>
+                                        <TextBlock Foreground="{StaticResource TextBrush}">
+                                            <TextBlock Text="{Binding Gloss}" />
+                                            <TextBlock Text="{Binding Category, StringFormat={}({0})}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Category}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Category}" Value="{x:Static System:String.Empty}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Words}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Views:WordView />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter TargetName="row" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
+                                    </Trigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </HeaderedContentControl>
+            <HeaderedContentControl Margin="10,10,0,0"  Grid.Column="1" Header="Segments">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Source={StaticResource segmentsSource}}" Grid.IsSharedSizeScope="True">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition SharedSizeGroup="strRep"/>
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Margin="1" Grid.Column="0" FontSize="16" Text="{Binding StrRep}" />
+                                        <StackPanel Margin="1" Orientation="Horizontal" Grid.Column="1">
+                                            <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
+                                                <Rectangle.Width>
+                                                    <MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
+                                                        <Binding Mode="OneWay" Path="Probability" />
+                                                        <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}" Path="DataContext.Segments[0].Probability" />
+                                                    </MultiBinding>
+                                                </Rectangle.Width>
+                                            </Rectangle>
+                                            <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </HeaderedContentControl>
+        </Grid>
+    </DockPanel>
+</UserControl>

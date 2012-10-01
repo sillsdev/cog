@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels" mc:Ignorable="d" StartupUri="Views\MainWindow.xaml"
+             x:Class="SIL.Cog.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ViewModels:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Theme/MainThemeStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -15,7 +15,7 @@
                 <MenuItem Header="E_xit" />
             </MenuItem>
         </Menu>
-        <TabControl Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True"
+        <Views:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding Views}" SelectedItem="{Binding CurrentView}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
@@ -25,7 +25,7 @@
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <Views:TabControlEx Padding="0" Style="{StaticResource SubTabControlStyle}" TabStripPlacement="Top"
-                                        ItemsSource="{Binding Views}" SelectedItem="{Binding CurrentView}">
+                                        ItemsSource="{Binding Views}" ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding CurrentView}">
                         <TabControl.Template>
                             <ControlTemplate TargetType="TabControl">
                                 <DockPanel>
@@ -36,19 +36,7 @@
                         </TabControl.Template>
                         <TabControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding}">
-                                    <ContentPresenter.Resources>
-                                        <DataTemplate DataType="{x:Type ViewModels:WorkspaceViewModel}">
-                                            <TextBlock Text="{Binding DisplayName}" />
-                                        </DataTemplate>
-                                        <DataTemplate DataType="{x:Type ViewModels:MasterViewModel}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding DisplayName}" />
-                                                <Polygon VerticalAlignment="Center" Margin="3,3,0,0" Fill="{TemplateBinding TextElement.Foreground}" Points="0,0 8,0 4,5 0,0" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ContentPresenter.Resources>
-                                </ContentPresenter>
+                                <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
                         </TabControl.ItemTemplate>
                         <TabControl.ContentTemplate>
@@ -74,24 +62,23 @@
                                             <DataTemplate DataType="{x:Type ViewModels:SensesViewModel}">
                                                 <Views:SensesView />
                                             </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ViewModels:DataSettingsViewModel}">
+                                                <Views:DataSettingsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ViewModels:SimilarityMatrixViewModel}">
+                                                <Views:SimilarityMatrixView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ViewModels:VarietyPairsViewModel}">
+                                                <Views:VarietyPairsView />
+                                            </DataTemplate>
                                         </ContentPresenter.Resources>
                                     </ContentPresenter>
                                 </DockPanel>
                             </DataTemplate>
                         </TabControl.ContentTemplate>
-                        <TabControl.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource SubTabItemStyle}" TargetType="TabItem">
-                                <Setter Property="ContextMenu">
-                                    <Setter.Value>
-                                        <ContextMenu Placement="Bottom" ItemsSource="{Binding Views}" />
-                                    </Setter.Value>
-                                </Setter>
-                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TabItem_PreviewMouseLeftButtonDown" />
-                            </Style>
-                        </TabControl.ItemContainerStyle>
                     </Views:TabControlEx>
                 </DataTemplate>
             </TabControl.ContentTemplate>
-        </TabControl>
+        </Views:TabControlEx>
     </DockPanel>
 </Window>

@@ -28,12 +28,20 @@ namespace SIL.Cog.Processors
 				IReadOnlyCollection<Word> words2 = varietyPair.Variety2.Words[sense];
 				if (words1.Count == 1 && words2.Count == 1)
 				{
-					varietyPair.WordPairs.Add(words1.Single(), words2.Single());
+					Word word1 = words1.Single();
+					Word word2 = words2.Single();
+					if (word1.Shape.Count > 0 && word2.Shape.Count > 0)
+						varietyPair.WordPairs.Add(word1, word2);
 				}
 				else if (words2.Count > 0)
 				{
-					var bestwp = words1.SelectMany(w1 => words2.Select(w2 => new {Word1 = w1, Word2 = w2})).MaxBy(wp => aligner.Compute(varietyPair, wp.Word1, wp.Word2).BestScore);
-					varietyPair.WordPairs.Add(bestwp.Word1, bestwp.Word2);
+					var candidates = words1.Where(word => word.Shape.Count > 0)
+						.SelectMany(w1 => words2.Where(word => word.Shape.Count > 0).Select(w2 => new {Word1 = w1, Word2 = w2})).ToArray();
+					if (candidates.Length > 0)
+					{
+						var bestwp = candidates.MaxBy(wp => aligner.Compute(varietyPair, wp.Word1, wp.Word2).BestScore);
+						varietyPair.WordPairs.Add(bestwp.Word1, bestwp.Word2);
+					}
 				}
 			}
 		}

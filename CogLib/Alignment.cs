@@ -36,11 +36,47 @@ namespace SIL.Cog
 			get { return _score; }
 		}
 
+		public IEnumerable<Annotation<ShapeNode>> Prefix1
+		{
+			get
+			{
+				Annotation<ShapeNode> prefixAnn1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
+				return prefixAnn1 != null ? prefixAnn1.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+			}
+		}
+
+		public IEnumerable<Annotation<ShapeNode>> Prefix2
+		{
+			get
+			{
+				Annotation<ShapeNode> prefixAnn2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
+				return prefixAnn2 != null ? prefixAnn2.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+			}
+		}
+
+		public IEnumerable<Annotation<ShapeNode>> Suffix1
+		{
+			get
+			{
+				Annotation<ShapeNode> suffixAnn1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
+				return suffixAnn1 != null ? suffixAnn1.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+			}
+		}
+
+		public IEnumerable<Annotation<ShapeNode>> Suffix2
+		{
+			get
+			{
+				Annotation<ShapeNode> suffixAnn2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
+				return suffixAnn2 != null ? suffixAnn2.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+			}
+		}
+
 		public IEnumerable<Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>>> AlignedAnnotations
 		{
 			get
 			{
-				Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => CogExtensions.Type(ann) == CogFeatureSystem.StemType);
+				Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 				Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 				if (ann1 != null && ann2 != null)
 					return ann1.Children.Zip(ann2.Children);
@@ -56,11 +92,11 @@ namespace SIL.Cog
 
 		public string ToString(IEnumerable<string> notes)
 		{
-			Annotation<ShapeNode> ann1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
-			Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> stemAnn1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> stemAnn2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 
 			var sb = new StringBuilder();
-			if (ann1 == null || ann2 == null)
+			if (stemAnn1 == null || stemAnn2 == null)
 			{
 				sb.AppendLine(GetString(_shape1, _shape1.First, _shape1.Last));
 				sb.AppendLine(GetString(_shape2, _shape2.First, _shape2.Last));
@@ -69,14 +105,14 @@ namespace SIL.Cog
 			{
 				List<string> notesList = notes.ToList();
 				bool noNotes = notesList.Count == 0;
-				while (notesList.Count < ann1.Children.Count)
+				while (notesList.Count < stemAnn1.Children.Count)
 					notesList.Add("");
 
-				string prefix1 = GetString(_shape1, _shape1.First, ann1.Span.Start.Prev);
-				string prefix2 = GetString(_shape2, _shape2.First, ann2.Span.Start.Prev);
+				string prefix1 = GetString(Prefix1);
+				string prefix2 = GetString(Prefix2);
 
-				string suffix1 = GetString(_shape1, ann1.Span.End.Next, _shape1.Last);
-				string suffix2 = GetString(_shape2, ann2.Span.End.Next, _shape2.Last);
+				string suffix1 = GetString(Suffix1);
+				string suffix2 = GetString(Suffix2);
 
 				if (prefix1.Length > 0 || prefix2.Length > 0)
 				{
@@ -85,7 +121,7 @@ namespace SIL.Cog
 				}
 				sb.Append("|");
 				bool first = true;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in stemAnn1.Children.Zip(stemAnn2.Children, notesList))
 				{
 					if (!first)
 						sb.Append(" ");
@@ -106,7 +142,7 @@ namespace SIL.Cog
 				}
 				sb.Append("|");
 				first = true;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in stemAnn1.Children.Zip(stemAnn2.Children, notesList))
 				{
 					if (!first)
 						sb.Append(" ");
@@ -131,7 +167,7 @@ namespace SIL.Cog
 
 					sb.Append("|");
 					first = true;
-					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in ann1.Children.Zip(ann2.Children, notesList))
+					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in stemAnn1.Children.Zip(stemAnn2.Children, notesList))
 					{
 						if (!first)
 							sb.Append(" ");
@@ -150,7 +186,7 @@ namespace SIL.Cog
 			return sb.ToString();
 		}
 
-		private string GetString(Shape shape, ShapeNode startNode, ShapeNode endNode)
+		private static string GetString(Shape shape, ShapeNode startNode, ShapeNode endNode)
 		{
 			if (startNode == null || endNode == null || startNode == shape.End || endNode == shape.Begin)
 				return "";
@@ -158,7 +194,12 @@ namespace SIL.Cog
 			return string.Concat(startNode.GetNodes(endNode).Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
 		}
 
-		private string PadString(string str, params string[] strs)
+		private static string GetString(IEnumerable<Annotation<ShapeNode>> anns)
+		{
+			return string.Concat(anns.Select(ann => (string) ann.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
+		}
+
+		private static string PadString(string str, params string[] strs)
 		{
 			int len = GetLength(str);
 			int maxLen = strs.Select(GetLength).Concat(len).Max();
@@ -170,7 +211,7 @@ namespace SIL.Cog
 			return sb.ToString();
 		}
 
-		private int GetLength(string str)
+		private static int GetLength(string str)
 		{
 			int len = 0;
 			foreach (char c in str)

@@ -25,5 +25,10 @@ namespace SIL.Cog.ViewModels
 		{
 			get { return _segment.Frequency; }
 		}
+
+		public Segment ModelSegment
+		{
+			get { return _segment; }
+		}
 	}
 }

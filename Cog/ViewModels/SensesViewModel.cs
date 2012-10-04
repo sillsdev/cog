@@ -6,7 +6,7 @@ using SIL.Cog.Services;
 
 namespace SIL.Cog.ViewModels
 {
-	public class SensesViewModel : WorkspaceViewModel
+	public class SensesViewModel : WorkspaceViewModelBase
 	{
 		private readonly IDialogService _dialogService;
 		private ViewModelCollection<SenseViewModel, Sense> _senses;

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SIL.Cog.Views.NewAffixDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="New Affix" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
+        Title="{Binding DisplayName}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=_affixTextBox}" SizeToContent="WidthAndHeight">
     <Grid Margin="10">
         <Grid.Resources>

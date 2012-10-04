@@ -41,6 +41,16 @@ namespace SIL.Cog
 			get { return _wordPairs; }
 		}
 
+		public Variety GetOtherVariety(Variety variety)
+		{
+			Variety otherVariety = null;
+			if (_variety1 == variety)
+				otherVariety = _variety2;
+			else if (_variety2 == variety)
+				otherVariety = _variety1;
+			return otherVariety;
+		}
+
 		public double PhoneticSimilarityScore
 		{
 			get { return _phoneticSimilarityScore; }

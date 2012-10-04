@@ -7,7 +7,7 @@ using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public class WrapperViewModel : ViewModelBase
+	public class WrapperViewModelBase : ViewModelBase
 	{
 		/// <summary>
 		/// Stores all properties of the object we are wrapping
@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 		/// <summary>
 		/// Initialises the Property Dictionary
 		/// </summary>
-		static WrapperViewModel()
+		static WrapperViewModelBase()
 		{
 			PropertyDictionary = new Dictionary<Type, Collection<string>>();
 		}
@@ -25,7 +25,7 @@ namespace SIL.Cog.ViewModels
 		private readonly Type _type;
 		private INotifyPropertyChanged _wrappedObject;
 
-		public WrapperViewModel()
+		public WrapperViewModelBase()
 		{
 			_type = GetType();
 			//if we have already added the properties for this object dont readd them
@@ -43,7 +43,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public WrapperViewModel(INotifyPropertyChanged wrappedObject)
+		public WrapperViewModelBase(INotifyPropertyChanged wrappedObject)
 			: this()
 		{
 			WrappedObject = wrappedObject;

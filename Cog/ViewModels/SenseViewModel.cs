@@ -1,6 +1,6 @@
 ﻿namespace SIL.Cog.ViewModels
 {
-	public class SenseViewModel : WrapperViewModel
+	public class SenseViewModel : WrapperViewModelBase
 	{
 		private readonly Sense _sense;
 

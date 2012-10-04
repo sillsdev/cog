@@ -58,7 +58,7 @@ namespace SIL.Cog.Processors
 						writer.WriteLine(pair.Word1.Sense.Category);
 					writer.Write(alignment.ToString(pair.AlignmentNotes));
 					writer.WriteLine("Score: {0:0.0####}", pair.PhoneticSimilarityScore);
-					if (pair.AreCognatesPredicted)
+					if (pair.AreCognatePredicted)
 						writer.WriteLine("***Cognate***");
 					writer.WriteLine();
 				}

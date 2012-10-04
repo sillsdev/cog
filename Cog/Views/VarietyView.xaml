@@ -22,26 +22,27 @@
     <DockPanel>
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
             <StackPanel>
-                <DataGrid ItemsSource="{Binding Affixes}" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentAffix}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*" />
-                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*" />
-                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Border BorderThickness="1,0,1,1" BorderBrush="{StaticResource DataGridBorderBrush}">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Affixes.Count}" Value="0">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="Click New to add an affix" />
-                </Border>
+                <Grid>
+                    <DataGrid ItemsSource="{Binding Affixes}" Height="125" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentAffix}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*" />
+                            <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*" />
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBlock Margin="3,23,3,0" Text="Click New to add an affix">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Affixes.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
                     <Button Margin="5,5,0,5" Width="70" Command="{Binding RemoveAffixCommand}">Remove</Button>
                     <Button Margin="5,5,0,5" Width="70" Command="{Binding NewAffixCommand}">New</Button>
@@ -101,26 +102,24 @@
                     <ItemsControl ItemsSource="{Binding Source={StaticResource segmentsSource}}" Grid.IsSharedSizeScope="True">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition SharedSizeGroup="strRep"/>
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Margin="1" Grid.Column="0" FontSize="16" Text="{Binding StrRep}" />
-                                        <StackPanel Margin="1" Orientation="Horizontal" Grid.Column="1">
-                                            <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
-                                                <Rectangle.Width>
-                                                    <MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
-                                                        <Binding Mode="OneWay" Path="Probability" />
-                                                        <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}" Path="DataContext.Segments[0].Probability" />
-                                                    </MultiBinding>
-                                                </Rectangle.Width>
-                                            </Rectangle>
-                                            <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="strRep"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="1" Grid.Column="0" FontSize="16" Text="{Binding StrRep}" />
+                                    <StackPanel Margin="1" Orientation="Horizontal" Grid.Column="1">
+                                        <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
+                                            <Rectangle.Width>
+                                                <MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
+                                                    <Binding Mode="OneWay" Path="Probability" />
+                                                    <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}" Path="DataContext.Segments[0].Probability" />
+                                                </MultiBinding>
+                                            </Rectangle.Width>
+                                        </Rectangle>
+                                        <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
+                                    </StackPanel>
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

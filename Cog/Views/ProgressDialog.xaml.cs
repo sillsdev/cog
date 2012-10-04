@@ -1,5 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
 using System.Windows;
+using System.Windows.Threading;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -17,19 +18,14 @@ namespace SIL.Cog.Views
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			var vm = (ProgressViewModel) DataContext;
-			vm.PropertyChanged += ViewModel_PropertyChanged;
 			vm.Execute();
 		}
 
-		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void _progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			var vm = (ProgressViewModel) sender;
-			switch (e.PropertyName)
+			if (IsLoaded && _progressBar.Value >= _progressBar.Maximum)
 			{
-				case "IsCompleted":
-					if (vm.IsCompleted)
-						DialogResult = true;
-					break;
+				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => DialogResult = true));
 			}
 		}
 	}

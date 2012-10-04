@@ -1,13 +1,9 @@
 namespace SIL.Cog.ViewModels
 {
-	public class ComparisonMasterViewModel : MasterViewModel
+	public class ComparisonMasterViewModel : MasterViewModelBase
 	{
-		public ComparisonMasterViewModel()
-			: base("Comparison")
-		{
-		}
-
-		public override void Initialize(CogProject model)
+		public ComparisonMasterViewModel(SimilarityMatrixViewModel similarityMatrixViewModel, VarietyPairsViewModel varietyPairsViewModel)
+			: base("Comparison", similarityMatrixViewModel, varietyPairsViewModel)
 		{
 		}
 	}

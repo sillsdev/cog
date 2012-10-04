@@ -79,28 +79,38 @@
     <Compile Include="Theme\ContentToMarginConverter.cs" />
     <Compile Include="Theme\ContentToPathConverter.cs" />
     <Compile Include="ViewModels\AffixViewModel.cs" />
+    <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\CommandViewModel.cs" />
     <Compile Include="ViewModels\ComparisonMasterViewModel.cs" />
     <Compile Include="ViewModels\DataSettingsViewModel.cs" />
     <Compile Include="ViewModels\EditSenseViewModel.cs" />
+    <Compile Include="ViewModels\InitializableCogViewModelBase.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MasterViewModel.cs" />
-    <Compile Include="ViewModels\CogViewModel.cs" />
+    <Compile Include="ViewModels\MasterViewModelBase.cs" />
+    <Compile Include="ViewModels\CogViewModelBase.cs" />
     <Compile Include="ViewModels\NewAffixViewModel.cs" />
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
+    <Compile Include="ViewModels\Notifications.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
     <Compile Include="ViewModels\SegmentVarietyViewModel.cs" />
-    <Compile Include="ViewModels\SegmentVarietyViewModelCollection.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
-    <Compile Include="ViewModels\StemmerSettingsViewModel.cs" />
+    <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
+    <Compile Include="ViewModels\SoundCorrespondenceViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaViewModel.cs" />
+    <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\VarietyPairSimilarityMatrixViewModelCollection.cs" />
+    <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
+    <Compile Include="ViewModels\VarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModel.cs" />
     <Compile Include="ViewModels\SwitchViewMessage.cs" />
     <Compile Include="ViewModels\DataMasterViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseWordListsViewModel.cs" />
+    <Compile Include="ViewModels\VarietySimilarityMatrixViewModel.cs" />
+    <Compile Include="ViewModels\VarietyPairSimilarityMatrixViewModel.cs" />
+    <Compile Include="ViewModels\VarietyVarietiesViewModel.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietyWordListsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelCollection.cs" />
@@ -108,12 +118,18 @@
     <Compile Include="ViewModels\ViewModelUtilities.cs" />
     <Compile Include="ViewModels\VisualizationMasterViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />
+    <Compile Include="ViewModels\WordPairViewModel.cs" />
     <Compile Include="ViewModels\WordSegmentViewModel.cs" />
     <Compile Include="ViewModels\WordViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
-    <Compile Include="ViewModels\WorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\WrapperViewModel.cs" />
+    <Compile Include="ViewModels\WorkspaceViewModelBase.cs" />
+    <Compile Include="ViewModels\WrapperViewModelBase.cs" />
+    <Compile Include="Views\BackgroundToForegroundConverter.cs" />
+    <Compile Include="Views\BooleanToYesNoConverter.cs" />
     <Compile Include="Views\DataGridBehaviors.cs" />
+    <Compile Include="Views\DataSettingsView.xaml.cs">
+      <DependentUpon>DataSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditSenseDialog.xaml.cs">
       <DependentUpon>EditSenseDialog.xaml</DependentUpon>
     </Compile>
@@ -121,6 +137,8 @@
       <DependentUpon>EditVarietyDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EnumMatchToBooleanConverter.cs" />
+    <Compile Include="Views\HslColor.cs" />
+    <Compile Include="Views\PercentageToColorConverter.cs" />
     <Compile Include="Views\ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -130,8 +148,10 @@
     <Compile Include="Views\SensesView.xaml.cs">
       <DependentUpon>SensesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SimilarityMatrixView.xaml.cs">
+      <DependentUpon>SimilarityMatrixView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TabControlEx.cs" />
-    <Compile Include="Views\FrameworkElementBehaviors.cs" />
     <Compile Include="Views\TaskAreaView.xaml.cs">
       <DependentUpon>TaskAreaView.xaml</DependentUpon>
     </Compile>
@@ -153,6 +173,16 @@
     </Compile>
     <Compile Include="Views\ProbabilityToWidthConverter.cs" />
     <Compile Include="Views\TextBoxBehaviors.cs" />
+    <Compile Include="Views\UnsupervisedAffixIdentifierView.xaml.cs">
+      <DependentUpon>UnsupervisedAffixIdentifierView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StringFormatConverter.cs" />
+    <Compile Include="Views\VarietyPairsView.xaml.cs">
+      <DependentUpon>VarietyPairsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VarietyPairView.xaml.cs">
+      <DependentUpon>VarietyPairView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ViewUtilities.cs" />
     <Compile Include="Views\WordsToInlinesConverter.cs" />
     <Compile Include="Views\VarietiesView.xaml.cs">
@@ -168,6 +198,10 @@
       <DependentUpon>WordListsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Theme\MainThemeStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -199,11 +233,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SimilarityMatrixView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TaskAreaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\UnsupervisedAffixIdentifierView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\VarietiesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VarietyPairsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VarietyPairView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

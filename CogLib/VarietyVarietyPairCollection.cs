@@ -23,7 +23,7 @@ namespace SIL.Cog
 		internal void VarietyPairAdded(VarietyPair varietyPair)
 		{
 			CheckReentrancy();
-			Variety otherVariety = GetOtherVariety(varietyPair);
+			Variety otherVariety = varietyPair.GetOtherVariety(_variety);
 			_varietyPairs.Add(otherVariety, varietyPair);
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, varietyPair));
 		}
@@ -31,7 +31,7 @@ namespace SIL.Cog
 		internal void VarietyPairRemoved(VarietyPair varietyPair)
 		{
 			CheckReentrancy();
-			Variety otherVariety = GetOtherVariety(varietyPair);
+			Variety otherVariety = varietyPair.GetOtherVariety(_variety);
 			_varietyPairs.Remove(otherVariety);
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, varietyPair));
 		}
@@ -73,16 +73,6 @@ namespace SIL.Cog
 		public bool Contains(Variety key)
 		{
 			return _varietyPairs.ContainsKey(key);
-		}
-
-		private Variety GetOtherVariety(VarietyPair pair)
-		{
-			Variety otherVariety = null;
-			if (pair.Variety1 == _variety)
-				otherVariety = pair.Variety2;
-			else if (pair.Variety2 == _variety)
-				otherVariety = pair.Variety1;
-			return otherVariety;
 		}
 
 		protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

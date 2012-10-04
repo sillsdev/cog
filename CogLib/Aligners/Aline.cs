@@ -90,15 +90,16 @@ namespace SIL.Cog.Aligners
 			if (varietyPair.SoundChanges.Count > 0)
 			{
 				var target = new NSegment(varietyPair.Variety1.Segments[p]);
-				NaturalClass leftEnv = Settings.NaturalClasses.FirstOrDefault(constraint =>
+				NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
 					constraint.FeatureStruct.IsUnifiable(p.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
-				NaturalClass rightEnv = Settings.NaturalClasses.FirstOrDefault(constraint =>
+				NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
 					constraint.FeatureStruct.IsUnifiable(p.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 
 				var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
+				double prob = varietyPair.SoundChanges.DefaultCorrespondenceProbability;
 				SoundChange soundChange;
-				double prob = varietyPair.SoundChanges.TryGetValue(lhs, out soundChange) ? soundChange.ObservedCorrespondences.Max(nseg => soundChange[nseg])
-					: varietyPair.SoundChanges.DefaultCorrespondenceProbability;
+				if (varietyPair.SoundChanges.TryGetValue(lhs, out soundChange) && soundChange.ObservedCorrespondences.Count > 0)
+					prob = soundChange.ObservedCorrespondences.Max(nseg => soundChange[nseg]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
 			}
 			return maxScore;
@@ -109,7 +110,7 @@ namespace SIL.Cog.Aligners
 			int maxScore = GetMaxScore(q);
 			if (varietyPair.SoundChanges.Count > 0)
 			{
-				var corr = new NSegment(varietyPair.Variety1.Segments[q]);
+				var corr = new NSegment(varietyPair.Variety2.Segments[q]);
 
 				double prob = varietyPair.SoundChanges.Max(soundChange => soundChange[corr]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
@@ -149,9 +150,9 @@ namespace SIL.Cog.Aligners
 				corr = q2 == null ? new NSegment(corrSegment) : new NSegment(corrSegment, varietyPair.Variety2.Segments[q2]);
 			}
 
-			NaturalClass leftEnv = Settings.NaturalClasses.FirstOrDefault(constraint =>
+			NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
 				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
-			NaturalClass rightEnv = Settings.NaturalClasses.FirstOrDefault(constraint =>
+			NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
 				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 
 			var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);

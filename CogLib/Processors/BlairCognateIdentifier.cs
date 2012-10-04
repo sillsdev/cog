@@ -127,9 +127,9 @@ namespace SIL.Cog.Processors
 
 				double type1Score = (double) cat1Count / totalCount;
 				double type1And2Score = (double) cat1And2Count / totalCount;
-				wordPair.Item1.AreCognatesPredicted = type1Score >= 0.5 && type1And2Score >= 0.75;
+				wordPair.Item1.AreCognatePredicted = type1Score >= 0.5 && type1And2Score >= 0.75;
 				wordPair.Item1.PhoneticSimilarityScore = wordPair.Item2.Score;
-				if (wordPair.Item1.AreCognatesPredicted)
+				if (wordPair.Item1.AreCognatePredicted)
 					totalCognateCount++;
 				totalScore += wordPair.Item1.PhoneticSimilarityScore;
 			}

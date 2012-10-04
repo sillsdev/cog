@@ -390,15 +390,15 @@ namespace SIL.Cog.Aligners
 		private int CalcMaxScore1(Shape shape1)
 		{
 			Annotation<ShapeNode> stemAnn = shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
-			return shape1.Aggregate(0, (score, node) => score + (stemAnn != null && stemAnn.Span.Contains(node) ? _aligner.GetMaxScore1(_varietyPair, node)
-				: (_aligner.GetMaxScore1(_varietyPair, node) / 2)));
+			return shape1.Where(node => node.Annotation.Type() != CogFeatureSystem.NullType).Aggregate(0,
+				(score, node) => score + (stemAnn != null && stemAnn.Span.Contains(node) ? _aligner.GetMaxScore1(_varietyPair, node) : (_aligner.GetMaxScore1(_varietyPair, node) / 2)));
 		}
 
 		private int CalcMaxScore2(Shape shape2)
 		{
 			Annotation<ShapeNode> stemAnn = shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
-			return shape2.Aggregate(0, (score, node) => score + (stemAnn != null && stemAnn.Span.Contains(node) ? _aligner.GetMaxScore2(_varietyPair, node)
-				: (_aligner.GetMaxScore2(_varietyPair, node) / 2)));
+			return shape2.Where(node => node.Annotation.Type() != CogFeatureSystem.NullType).Aggregate(0,
+				(score, node) => score + (stemAnn != null && stemAnn.Span.Contains(node) ? _aligner.GetMaxScore2(_varietyPair, node) : (_aligner.GetMaxScore2(_varietyPair, node) / 2)));
 		}
 	}
 }

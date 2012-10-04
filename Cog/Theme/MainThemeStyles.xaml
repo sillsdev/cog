@@ -7,8 +7,8 @@
 
     <SolidColorBrush x:Key="TextBrush" Color="#FF10257F" />
     <LinearGradientBrush x:Key="TaskAreaBackgroundBrush" StartPoint="0,0.5" EndPoint="1,0.5">
-        <GradientStop Color="#FFCBE4FC" Offset="0.0" />
-        <GradientStop Color="#FFE2F1FE" Offset="1.0" />
+        <GradientStop Color="#FFCBE4FC" Offset="0" />
+        <GradientStop Color="#FFE2F1FE" Offset="1" />
     </LinearGradientBrush>
     <SolidColorBrush x:Key="TaskAreaBorderBrush" Color="#FFBCDAF7" />
     <SolidColorBrush x:Key="ViewBackgroundBrush" Color="White" />
@@ -30,6 +30,11 @@
     <SolidColorBrush x:Key="DataGridSelectedBrush" Color="#FFFFF0C2" />
     <SolidColorBrush x:Key="TaskAreaHeaderLineBrush" Color="#FF88B0E4" />
     <SolidColorBrush x:Key="AlternatingRowBrush" Color="#FFF6FAFD" />
+    <SolidColorBrush x:Key="SettingsAreaBackgroundBrush" Color="#FFEFF7FD" />
+    <LinearGradientBrush x:Key="DataGridGroupingBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Color="#FFE4F1FB" Offset="0" />
+        <GradientStop Color="#FFD2E6F9" Offset="1" />
+    </LinearGradientBrush>
     
     <Style x:Key="MainWindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{StaticResource MainWindowBrush}" />
@@ -48,7 +53,8 @@
                         </Grid.RowDefinitions>
                         <Border Grid.Row="1" BorderThickness="2,0,2,2" Panel.ZIndex="2" BorderBrush="{StaticResource TabBorderBrush}" CornerRadius="0,0,2,2"
                                         Background="{StaticResource SelectedTabBackgroundBrush}">
-                            <ContentPresenter ContentSource="SelectedContent"/>
+                            <Grid x:Name="PART_ItemsHolder" />
+                            <!--ContentPresenter ContentSource="SelectedContent"/-->
                         </Border>
                         <StackPanel Orientation="Horizontal" Grid.Row="0" Panel.ZIndex="1" IsItemsHost="true"/>
                         <Rectangle Grid.Row="0" Height="2" VerticalAlignment="Bottom" Fill="{StaticResource TabBorderBrush}"/>
@@ -114,10 +120,6 @@
                         <Trigger Property="Selector.IsSelected" Value="True">
                             <Setter Property="TextElement.Foreground" Value="{StaticResource SelectedTabTextBrush}" TargetName="TabItemContent"/>
                         </Trigger>
-                        <Trigger Property="Views:FrameworkElementBehaviors.IsContextMenuOpen" Value="True">
-                            <Setter Property="TextElement.Foreground" Value="{StaticResource SelectedTabTextBrush}" TargetName="TabItemContent"/>
-                            <Setter Property="Background" Value="{StaticResource SubTabMouseOverBrush}" TargetName="border" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -150,6 +152,27 @@
         </Setter>
     </Style>
 
+    <Style x:Key="SettingsAreaStyle" BasedOn="{StaticResource {x:Type HeaderedContentControl}}" TargetType="HeaderedContentControl">
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border BorderBrush="{StaticResource DataGridBorderBrush}" BorderThickness="1" Background="{StaticResource DataGridHeaderBrush}" Padding="5">
+                        <TextBlock Foreground="{StaticResource TextBrush}" FontWeight="Bold" Text="{TemplateBinding ContentControl.Content}" />
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border BorderBrush="{StaticResource DataGridBorderBrush}" BorderThickness="1,0,1,1" Background="{StaticResource SettingsAreaBackgroundBrush}" Padding="5">
+                        <ContentPresenter Content="{TemplateBinding Content}" />
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="Hyperlink">
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         <Style.Triggers>
@@ -157,6 +180,10 @@
                 <Setter Property="Foreground" Value="Blue" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="BlackHyperlinkStyle" TargetType="Hyperlink" BasedOn="{StaticResource {x:Type Hyperlink}}">
+        <Setter Property="Foreground" Value="Black" />
     </Style>
 
     <Style x:Key="TaskAreaHeaderStyle" TargetType="HeaderedContentControl" BasedOn="{StaticResource {x:Type HeaderedContentControl}}">
@@ -196,6 +223,21 @@
         <Setter Property="AlternatingRowBackground" Value="{StaticResource AlternatingRowBrush}" />
         <Setter Property="HorizontalGridLinesBrush" Value="LightGray" />
         <Setter Property="VerticalGridLinesBrush" Value="LightGray" />
+        <Setter Property="Views:DataGridBehaviors.SelectAllButtonStyle">
+            <Setter.Value>
+                <Style TargetType="Button">
+                    <Setter Property="Command" Value="{x:Null}" />
+                    <Setter Property="IsEnabled" Value="False" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Border" BorderBrush="{StaticResource DataGridBorderBrush}" BorderThickness="0,0,1,1" Background="{StaticResource DataGridHeaderBrush}" VerticalAlignment="Stretch" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style x:Key="DataGrid_ColumnHeaderThumbStyle" TargetType="Thumb">
         <Setter Property="Width" Value="8" />
@@ -321,9 +363,6 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <ControlTemplate x:Key="DataGridSelectAllButtonTemplate" TargetType="Button">
-        <Border x:Name="Border" BorderBrush="{StaticResource DataGridBorderBrush}" BorderThickness="0,0,1,1" Background="{StaticResource DataGridHeaderBrush}" VerticalAlignment="Stretch" />
-    </ControlTemplate>
     <Style TargetType="ListBox">
         <Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
     </Style>

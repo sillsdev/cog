@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
-using GalaSoft.MvvmLight;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class NewAffixViewModel : ViewModelBase, IDataErrorInfo
+	public class NewAffixViewModel : CogViewModelBase, IDataErrorInfo
 	{
 		private readonly CogProject _project;
 		private string _strRep;
@@ -12,6 +11,7 @@ namespace SIL.Cog.ViewModels
 		private string _category;
 
 		public NewAffixViewModel(CogProject project)
+			: base("New Affix")
 		{
 			_project = project;
 		}

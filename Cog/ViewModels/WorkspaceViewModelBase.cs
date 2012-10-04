@@ -1,12 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 
 namespace SIL.Cog.ViewModels
 {
-	public abstract class WorkspaceViewModel : CogViewModel
+	public abstract class WorkspaceViewModelBase : InitializableCogViewModelBase
 	{
 		private readonly ObservableCollection<TaskAreaViewModel> _taskAreas; 
 
-		protected WorkspaceViewModel(string displayName)
+		protected WorkspaceViewModelBase(string displayName)
 			: base(displayName)
 		{
 			_taskAreas = new ObservableCollection<TaskAreaViewModel>();
@@ -15,6 +16,11 @@ namespace SIL.Cog.ViewModels
 		public ObservableCollection<TaskAreaViewModel> TaskAreas
 		{
 			get { return _taskAreas; }
+		}
+
+		public override bool SwitchView(Type viewType, object model)
+		{
+			return viewType == GetType();
 		}
 	}
 }

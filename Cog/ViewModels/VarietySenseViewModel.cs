@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietySenseViewModel : ViewModelBase
+	public class VarietySenseViewModel : WrapperViewModelBase
 	{
 		private readonly Sense _modelSense;
 		private readonly ObservableCollection<Word> _modelWords;
 		private readonly ViewModelCollection<WordViewModel, Word> _words;
 
 		public VarietySenseViewModel(Sense sense, IEnumerable<Word> words)
+			: base(sense)
 		{
 			_modelSense = sense;
 			_modelWords = new ObservableCollection<Word>(words);

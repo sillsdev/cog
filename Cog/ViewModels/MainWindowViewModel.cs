@@ -1,18 +1,16 @@
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Config;
+using SIL.Cog.Processors;
 using SIL.Cog.Services;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class MainWindowViewModel : MasterViewModel
+	public class MainWindowViewModel : MasterViewModelBase
 	{
 		private static readonly FileType CogProjectFileType = new FileType("Cog Project", ".cogx");
-
-		private readonly DataMasterViewModel _dataMasterViewModel;
-		private readonly ComparisonMasterViewModel _comparisonMasterViewModel;
-		private readonly VisualizationMasterViewModel _visualizationMasterViewModel;
 
 		private readonly ICommand _newCommand;
 		private readonly ICommand _openCommand;
@@ -30,10 +28,6 @@ namespace SIL.Cog.ViewModels
 			: base("Cog", dataMasterViewModel, comparisonMasterViewModel, visualizationMasterViewModel)
 		{
 			_dialogService = dialogService;
-
-			_dataMasterViewModel = dataMasterViewModel;
-			_comparisonMasterViewModel = comparisonMasterViewModel;
-			_visualizationMasterViewModel = visualizationMasterViewModel;
 
 			_spanFactory = spanFactory;
 
@@ -65,7 +59,14 @@ namespace SIL.Cog.ViewModels
 				});
 			_importCommand = new RelayCommand(() => ViewModelUtilities.ImportWordLists(_dialogService, _project, this));
 
+			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
+
 			NewProject();
+		}
+
+		private void HandleSwitchView(SwitchViewMessage message)
+		{
+			SwitchView(message.ViewModelType, message.Model);
 		}
 
 		public ICommand NewCommand
@@ -96,8 +97,13 @@ namespace SIL.Cog.ViewModels
 		private void OpenProject(string path)
 		{
 			_projectFilePath = path;
-			Initialize(ConfigManager.Load(_spanFactory, path));
-			CurrentView = _dataMasterViewModel;
+
+			CogProject project = ConfigManager.Load(_spanFactory, path);
+			var generator = new VarietyPairGenerator();
+			generator.Process(project);
+			_project = project;
+			Initialize(project);
+			CurrentView = Views[0];
 		}
 
 		private void NewProject()
@@ -110,14 +116,6 @@ namespace SIL.Cog.ViewModels
 		{
 			ConfigManager.Save(_project, path);
 			_projectFilePath = path;
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			_dataMasterViewModel.Initialize(project);
-			_comparisonMasterViewModel.Initialize(project);
-			_visualizationMasterViewModel.Initialize(project);
 		}
 	}
 }

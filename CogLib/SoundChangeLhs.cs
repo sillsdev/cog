@@ -69,13 +69,13 @@ namespace SIL.Cog
 		{
 			string targetStr = _target.ToString();
 			if (_leftEnv != null && _rightEnv != null)
-				return string.Format("{0} -> ? / {1} _ {2}", targetStr, _leftEnv, _rightEnv);
+				return string.Format("{0} -> ? / [{1}] _ [{2}]", targetStr, _leftEnv.Name, _rightEnv.Name);
 			if (_leftEnv == null && _rightEnv == null)
 				return string.Format("{0} -> ?", targetStr);
 			if (_leftEnv == null)
-				return string.Format("{0} -> ? / _ {1}", targetStr, _rightEnv);
+				return string.Format("{0} -> ? / _ [{1}]", targetStr, _rightEnv.Name);
 
-			return string.Format("{0} -> ? / {1} _", targetStr, _leftEnv);
+			return string.Format("{0} -> ? / [{1}] _", targetStr, _leftEnv.Name);
 		}
 	}
 }

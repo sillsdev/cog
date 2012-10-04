@@ -1,0 +1,184 @@
+﻿<UserControl x:Class="SIL.Cog.Views.VarietyPairView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" DataContextChanged="VarietyPairView_DataContextChanged">
+    <UserControl.Resources>
+        <Views:ProbabilityToWidthConverter x:Key="probConverter" />
+        <Views:BooleanToYesNoConverter x:Key="boolConverter" />
+        <System:Double x:Key="MaxProbability">1.0</System:Double>
+        <CollectionViewSource x:Key="wordPairsSource" Source="{Binding WordPairs}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="PhoneticSimilarityScore" Direction="Descending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
+    <DockPanel>
+        <HeaderedContentControl Header="Similarity" Margin="0,10,0,10" DockPanel.Dock="Top">
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="Margin" Value="5" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource TextBrush}">Lexical:</TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding LexicalSimilarityScore, StringFormat=p}" />
+                <TextBlock Grid.Column="0" Grid.Row="1" Foreground="{StaticResource TextBrush}">Phonetic:</TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PhoneticSimilarityScore, StringFormat=p}" />
+            </Grid>
+        </HeaderedContentControl>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.7*" />
+                <ColumnDefinition Width="0.3*" />
+            </Grid.ColumnDefinitions>
+            <HeaderedContentControl Margin="0,10,10,0" Grid.Column="0" Header="Word pairs">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Source={StaticResource wordPairsSource}}" AlternationCount="2">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="row" Padding="0,5,0,5">
+                                    <StackPanel>
+                                        <TextBlock Foreground="{StaticResource TextBrush}">
+                                            <TextBlock Text="{Binding Sense.Gloss}" />
+                                            <TextBlock Text="{Binding Sense.Category, StringFormat={}({0})}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Sense.Category}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Sense.Category}" Value="{x:Static System:String.Empty}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </TextBlock>
+                                        <Grid>
+                                            <Grid.Resources>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Margin" Value="5" />
+                                                </Style>
+                                            </Grid.Resources>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource TextBrush}">Cognate:</TextBlock>
+                                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding AreCognate, Converter={StaticResource boolConverter}}" />
+                                            <TextBlock Grid.Column="0" Grid.Row="1" Foreground="{StaticResource TextBrush}">Phonetic Similarity:</TextBlock>
+                                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PhoneticSimilarityScore, StringFormat=p}" />
+                                        </Grid>
+                                        <ItemsControl ItemsSource="{Binding AlignedNodes}" Grid.IsSharedSizeScope="True">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.Resources>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontSize" Value="16" />
+                                                                <Setter Property="Padding" Value="3" />
+                                                            </Style>
+                                                        </Grid.Resources>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition SharedSizeGroup="strRep1" />
+                                                            <RowDefinition SharedSizeGroup="strRep2" />
+                                                            <RowDefinition SharedSizeGroup="note" />
+                                                        </Grid.RowDefinitions>
+                                                        <TextBlock Grid.Row="0" Text="{Binding StrRep1}" />
+                                                        <TextBlock Grid.Row="1" Text="{Binding StrRep2}" />
+                                                        <TextBlock Grid.Row="2" Text="{Binding Note}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter TargetName="row" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
+                                    </Trigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </HeaderedContentControl>
+            <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Header="Sound changes">
+                <DataGrid Name="_correspondenceDataGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" HorizontalScrollBarVisibility="Disabled"
+                          AlternatingRowBackground="White" IsReadOnly="True" CanUserSortColumns="False" SelectedItem="{Binding CurrentCorrespondence}">
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <StackPanel>
+                                                    <TextBlock Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource TextBrush}" Text="{Binding Name}" />
+                                                    <ItemsPresenter />
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                            <GroupStyle.Panel>
+                                <ItemsPanelTemplate>
+                                    <DataGridRowsPresenter />
+                                </ItemsPanelTemplate>
+                            </GroupStyle.Panel>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Segment" Binding="{Binding Correspondence}" Width="*" />
+                        <DataGridTemplateColumn Header="Probability" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
+                                            <Rectangle.Width>
+                                                <MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
+                                                    <Binding Mode="OneWay" Path="Probability" />
+                                                    <Binding Mode="OneWay" Source="{StaticResource MaxProbability}" />
+                                                </MultiBinding>
+                                            </Rectangle.Width>
+                                        </Rectangle>
+                                        <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                            <Setter Property="FontSize" Value="16" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                </DataGrid>
+            </HeaderedContentControl>
+        </Grid>
+    </DockPanel>
+</UserControl>

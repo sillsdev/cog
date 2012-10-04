@@ -2,14 +2,13 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Processors;
 using SIL.Cog.Services;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class WordListsViewModel : WorkspaceViewModel
+	public class WordListsViewModel : WorkspaceViewModelBase
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
@@ -71,10 +70,10 @@ namespace SIL.Cog.ViewModels
 				Debug.Assert(processors != null);
 				var pipeline = new MultiThreadedPipeline<Variety>(processors);
 
-				var progressVM = new ProgressViewModel("Stemming", pvm =>
+				var progressVM = new ProgressViewModel(pvm =>
 					{
-						pipeline.ProgressUpdated += (sender, e) => DispatcherHelper.CheckBeginInvokeOnUI(() => pvm.Value = e.PercentCompleted);
-						pipeline.Completed += (sender, e) => DispatcherHelper.CheckBeginInvokeOnUI(() => pvm.IsCompleted = true);
+						pvm.Text = "Stemming all varieties...";
+						pipeline.ProgressUpdated += (sender, e) => pvm.Value = e.PercentCompleted;
 						pipeline.Process(_project.Varieties);
 					});
 

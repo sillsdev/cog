@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SIL.Cog.Processors;
 using SIL.Cog.Services;
 using SIL.Cog.WordListsLoaders;
 
@@ -24,6 +25,8 @@ namespace SIL.Cog.ViewModels
 				project.Senses.Clear();
 				project.Varieties.Clear();
 				WordListsLoaders[result.SelectedFileType].Load(result.FileName, project);
+				var generator = new VarietyPairGenerator();
+				generator.Process(project);
 			}
 		}
 	}

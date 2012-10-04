@@ -39,8 +39,8 @@ namespace SIL.Cog.Processors
 				}
 				wordPair.PhoneticSimilarityScore = totalAlignmentScore / alignmentCount;
 				totalScore += wordPair.PhoneticSimilarityScore;
-				wordPair.AreCognatesPredicted = wordPair.PhoneticSimilarityScore >= _threshold;
-				if (wordPair.AreCognatesPredicted)
+				wordPair.AreCognatePredicted = wordPair.PhoneticSimilarityScore >= _threshold;
+				if (wordPair.AreCognatePredicted)
 					totalCognateCount++;
 			}
 

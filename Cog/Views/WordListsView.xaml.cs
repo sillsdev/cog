@@ -28,25 +28,6 @@ namespace SIL.Cog.Views
 			textBox.SelectAll();
 		}
 
-		private void _wordListsGrid_LayoutUpdated(object sender, EventArgs e)
-		{
-            DependencyObject dep = _wordListsGrid;
-            while (dep != null && VisualTreeHelper.GetChildrenCount(dep) != 0
-                && !(dep is Button && ((Button) dep).Command == DataGrid.SelectAllCommand))
-            {
-                dep = VisualTreeHelper.GetChild(dep, 0);
-            }
- 
-            var button = dep as Button;
-            if (button != null)
-            {
-	            button.Template = (ControlTemplate) Application.Current.Resources["DataGridSelectAllButtonTemplate"];
-	            button.Command = null;
-                _wordListsGrid.LayoutUpdated -= _wordListsGrid_LayoutUpdated;
-            }
-
-		}
-
 		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			LoadColumns();

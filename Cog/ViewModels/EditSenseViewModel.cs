@@ -1,21 +1,19 @@
 ﻿using System.ComponentModel;
 using System.Linq;
-using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public class EditSenseViewModel : ViewModelBase, IDataErrorInfo
+	public class EditSenseViewModel : CogViewModelBase, IDataErrorInfo
 	{
 		private readonly CogProject _project;
-		private readonly string _displayName;
 		private readonly Sense _sense;
 
 		private string _gloss;
 		private string _category;
 
 		public EditSenseViewModel(CogProject project, Sense sense)
+			: base("Edit Sense")
 		{
-			_displayName = "Edit Sense";
 			_project = project;
 			_sense = sense;
 			_gloss = sense.Gloss;
@@ -23,14 +21,9 @@ namespace SIL.Cog.ViewModels
 		}
 
 		public EditSenseViewModel(CogProject project)
+			: base("New Sense")
 		{
 			_project = project;
-			_displayName = "New Sense";
-		}
-
-		public string DisplayName
-		{
-			get { return _displayName; }
 		}
 
 		public string Gloss

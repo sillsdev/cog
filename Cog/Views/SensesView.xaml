@@ -6,41 +6,12 @@
              xmlns:Services="clr-namespace:SIL.Cog.Services" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Services:ViewRegistrationService.IsRegisteredView="True">
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Margin="5" Style="{StaticResource ViewTitleStyle}" Text="Senses" />
-        <DataGrid ItemsSource="{Binding Senses}" SelectedItem="{Binding CurrentSense}" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" HeadersVisibility="Column">
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Senses</TextBlock>
+        <DataGrid Margin="0,5,0,0" ItemsSource="{Binding Senses}" SelectedItem="{Binding CurrentSense}" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" HeadersVisibility="Column">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Gloss" Binding="{Binding Gloss}" Width="*" />
                 <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
-        <!-- ListBox ItemsSource="{Binding Senses}" SelectedItem="{Binding CurrentSense}" AlternationCount="2">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Foreground="{StaticResource TextBrush}" Margin="0,0,5,0">Gloss:</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Gloss}" />
-                        <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Foreground="{StaticResource TextBrush}" Margin="0,0,5,0">Category:</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Category}" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Style.Triggers>
-                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                            <Setter Property="Background" Value="{StaticResource AlternatingRowBrush}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox-->
     </DockPanel>
 </UserControl>

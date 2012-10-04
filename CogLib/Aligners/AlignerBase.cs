@@ -8,17 +8,19 @@ namespace SIL.Cog.Aligners
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly AlignerSettings _settings;
+		private readonly List<NaturalClass> _naturalClasses; 
 
 		protected AlignerBase(SpanFactory<ShapeNode> spanFactory, AlignerSettings settings)
 		{
 			_spanFactory = spanFactory;
 			_settings = settings;
+			_naturalClasses = _settings.NaturalClasses == null ? new List<NaturalClass>() : new List<NaturalClass>(_settings.NaturalClasses);
 			_settings.ReadOnly = true;
 		}
 
 		public IEnumerable<NaturalClass> NaturalClasses
 		{
-			get { return _settings.NaturalClasses; }
+			get { return _naturalClasses; }
 		}
 
 		public IAlignerResult Compute(VarietyPair varietyPair, Word word1, Word word2)

@@ -11,6 +11,11 @@ namespace SIL.Cog
 			_varietyPair = pair;
 		}
 
+		protected override SoundChangeLhs GetKeyForItem(SoundChange item)
+		{
+			return item.Lhs;
+		}
+
 		public double DefaultCorrespondenceProbability
 		{
 			get { return 1.0 / PossibleCorrespondenceCount; }

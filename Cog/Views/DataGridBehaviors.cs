@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -180,6 +181,52 @@ namespace SIL.Cog.Views
 			}
 
 			return null;
+		}
+
+		public static readonly DependencyProperty SelectAllButtonStyleProperty =
+			DependencyProperty.RegisterAttached(
+				"SelectAllButtonStyle", 
+				typeof(Style), 
+				typeof(DataGridBehaviors), 
+				new UIPropertyMetadata(null, OnSelectAllButtonStyleChanged));
+
+		private static void OnSelectAllButtonStyleChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		{
+			var dataGrid = depObj as DataGrid;
+			if (dataGrid == null)
+				return;
+
+			var style = e.NewValue as Style;
+
+			if (style != null)
+				dataGrid.Loaded += DataGrid_Loaded;
+			else
+				dataGrid.Loaded -= DataGrid_Loaded;
+		}
+
+		public static Style GetSelectAllButtonStyle(DataGrid datagrid)
+		{
+			return (Style) datagrid.GetValue(SelectAllButtonStyleProperty);
+		}
+
+		public static void SetSelectAllButtonStyle(DataGrid datagrid, Style value)
+		{
+			datagrid.SetValue(SelectAllButtonStyleProperty, value);
+		}
+
+		private static void DataGrid_Loaded(object sender, EventArgs e)
+		{
+			var dataGrid = (DataGrid) sender;
+            DependencyObject dep = dataGrid;
+            while (dep != null && VisualTreeHelper.GetChildrenCount(dep) != 0
+                && !(dep is Button && ((Button) dep).Command == DataGrid.SelectAllCommand))
+            {
+                dep = VisualTreeHelper.GetChild(dep, 0);
+            }
+ 
+            var button = dep as Button;
+            if (button != null)
+	            button.Style = GetSelectAllButtonStyle(dataGrid);
 		}
 	}
 }

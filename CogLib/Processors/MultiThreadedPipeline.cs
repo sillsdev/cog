@@ -10,6 +10,7 @@ namespace SIL.Cog.Processors
 	{
 		private CancellationTokenSource _tokenSource;
 		private bool _canceled;
+		private Task _task;
 
 		public MultiThreadedPipeline()
 		{
@@ -22,30 +23,32 @@ namespace SIL.Cog.Processors
 
 		public override void Process(IEnumerable<T> items)
 		{
-			T[] itemArray = items.ToArray();
-			var countdownEvent = new CountdownEvent(itemArray.Length * Processors.Count);
 			_canceled = false;
 			_tokenSource = new CancellationTokenSource();
 			var token = _tokenSource.Token;
-			foreach (T secondaryData in itemArray)
-			{
-				T sd = secondaryData;
-				Task.Factory.StartNew(() =>
-					                    {
-											foreach (IProcessor<T> processor in Processors)
-											{
-												if (token.IsCancellationRequested)
-													break;
-												processor.Process(sd);
-												countdownEvent.Signal();
-											}
-					                    }, token);
-			}
 
-			Task.Factory.StartNew(() =>
+			_task = Task.Factory.StartNew(() =>
 				{
+					T[] itemArray = items.ToArray();
+					var countdownEvent = new CountdownEvent(itemArray.Length * Processors.Count);
+
+					foreach (T secondaryData in itemArray)
+					{
+						T sd = secondaryData;
+						Task.Factory.StartNew(() =>
+							{
+								foreach (IProcessor<T> processor in Processors)
+								{
+									if (token.IsCancellationRequested)
+										break;
+									processor.Process(sd);
+									countdownEvent.Signal();
+								}
+							}, token);
+					}
+
 					int lastPcnt = 0;
-					while (!countdownEvent.Wait(50))
+					while (!countdownEvent.Wait(100))
 					{
 						if (token.IsCancellationRequested)
 							break;
@@ -58,8 +61,14 @@ namespace SIL.Cog.Processors
 						}
 					}
 
+					OnProgressUpdated(new ProgressEventArgs(100));
 					OnCompleted(new EventArgs());
 				}, token);
+		}
+
+		public void WaitForComplete()
+		{
+			_task.Wait();
 		}
 
 		public void Cancel()

@@ -1,22 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Processors;
 using SIL.Cog.Services;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietiesViewModel : WorkspaceViewModel
+	public class VarietiesViewModel : WorkspaceViewModelBase
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
-		private ViewModelCollection<VarietyViewModel, Variety> _varieties;
-		private VarietyViewModel _currentVariety;
+		private ViewModelCollection<VarietyVarietiesViewModel, Variety> _varieties;
+		private VarietyVarietiesViewModel _currentVariety;
 		private CogProject _project;
 
 		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService)
@@ -41,7 +41,7 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			if (_varieties != null)
 				_varieties.CollectionChanged -= VarietiesChanged;
-			Set("Varieties", ref _varieties, new ViewModelCollection<VarietyViewModel, Variety>(_project.Varieties, variety => new VarietyViewModel(_dialogService, _project, variety)));
+			Set("Varieties", ref _varieties, new ViewModelCollection<VarietyVarietiesViewModel, Variety>(_project.Varieties, variety => new VarietyVarietiesViewModel(_dialogService, _project, variety)));
 			_varieties.CollectionChanged += VarietiesChanged;
 			CurrentVariety = _varieties.Count > 0 ? _varieties[0] : null;
 		}
@@ -97,8 +97,7 @@ namespace SIL.Cog.ViewModels
 				switch (vm.Method)
 				{
 					case StemmingMethod.Automatic:
-						foreach (Variety variety in _project.Varieties)
-							variety.Affixes.Clear();
+						_currentVariety.ModelVariety.Affixes.Clear();
 						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory)};
 						break;
 					case StemmingMethod.Hybrid:
@@ -111,10 +110,10 @@ namespace SIL.Cog.ViewModels
 				Debug.Assert(processors != null);
 				var pipeline = new MultiThreadedPipeline<Variety>(processors);
 
-				var progressVM = new ProgressViewModel("Stemming", pvm =>
+				var progressVM = new ProgressViewModel(pvm =>
 					{
-						pipeline.ProgressUpdated += (sender, e) => DispatcherHelper.CheckBeginInvokeOnUI(() => pvm.Value = e.PercentCompleted);
-						pipeline.Completed += (sender, e) => DispatcherHelper.CheckBeginInvokeOnUI(() => pvm.IsCompleted = true);
+						pvm.Text = string.Format("Stemming {0}...", _currentVariety.Name);
+						pipeline.ProgressUpdated += (sender, e) => pvm.Value = e.PercentCompleted;
 						pipeline.Process(new [] {_currentVariety.ModelVariety});
 					});
 
@@ -123,18 +122,28 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ObservableCollection<VarietyViewModel> Varieties
+		public ObservableCollection<VarietyVarietiesViewModel> Varieties
 		{
 			get { return _varieties; }
 		}
 
-		public VarietyViewModel CurrentVariety
+		public VarietyVarietiesViewModel CurrentVariety
 		{
 			get { return _currentVariety; }
 			set { Set("CurrentVariety", ref _currentVariety, value); }
 		}
 
-		public void SwitchVariety(Variety variety)
+		public override bool SwitchView(Type viewType, object model)
+		{
+			if (base.SwitchView(viewType, model))
+			{
+				SwitchVariety((Variety) model);
+				return true;
+			}
+			return false;
+		}
+
+		private void SwitchVariety(Variety variety)
 		{
 			CurrentVariety = _varieties.Single(vm => vm.ModelVariety == variety);
 		}

@@ -8,15 +8,16 @@
              DataContextChanged="WordListsView_DataContextChanged">
     <DockPanel>
         <TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Word lists</TextBlock>
-        <DataGrid x:Name="_wordListsGrid" Margin="0,10,0,0" AutoGenerateColumns="False" ItemsSource="{Binding Varieties}" SelectionUnit="Cell"
-                  LayoutUpdated="_wordListsGrid_LayoutUpdated" PreparingCellForEdit="_wordListsGrid_PreparingCellForEdit" Views:DataGridBehaviors.CommitOnLostFocus="True">
+        <DataGrid Name="_wordListsGrid" Margin="0,10,0,0" AutoGenerateColumns="False" ItemsSource="{Binding Varieties}" SelectionUnit="Cell" EnableColumnVirtualization="True"
+                  EnableRowVirtualization="True"
+                  PreparingCellForEdit="_wordListsGrid_PreparingCellForEdit" Views:DataGridBehaviors.CommitOnLostFocus="True">
             <DataGrid.RowHeaderStyle>
                 <Style TargetType="DataGridRowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
                     <Setter Property="Content" Value="{Binding}" />
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><TextBlock Text="{Binding Name}" /></Hyperlink></TextBlock>
+                                <TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

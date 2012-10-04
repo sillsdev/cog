@@ -55,7 +55,8 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<VarietiesViewModel>();
 			SimpleIoc.Default.Register<SensesViewModel>();
 			SimpleIoc.Default.Register<DataSettingsViewModel>();
-			SimpleIoc.Default.Register<StemmerSettingsViewModel>();
+			SimpleIoc.Default.Register<SimilarityMatrixViewModel>();
+			SimpleIoc.Default.Register<VarietyPairsViewModel>();
         }
 
         public MainWindowViewModel Main

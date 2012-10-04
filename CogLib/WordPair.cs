@@ -9,8 +9,8 @@ namespace SIL.Cog
 		private readonly Word _word1;
 		private readonly Word _word2;
 		private readonly ObservableCollection<string> _alignmentNotes;
-		private bool _areCognatesActual;
-		private bool _areCognatesPredicted;
+		private bool _areCognateActual;
+		private bool _areCognatePredicted;
 		private double _phoneticSimilarityScore;
 
 		public WordPair(VarietyPair varietyPair, Word word1, Word word2)
@@ -41,23 +41,23 @@ namespace SIL.Cog
 			get { return _alignmentNotes; }
 		}
 
-		public bool AreCognatesActual
+		public bool AreCognateActual
 		{
-			get { return _areCognatesActual; }
+			get { return _areCognateActual; }
 			set
 			{
-				_areCognatesActual = value;
-				OnPropertyChanged("AreCognatesActual");
+				_areCognateActual = value;
+				OnPropertyChanged("AreCognateActual");
 			}
 		}
 
-		public bool AreCognatesPredicted
+		public bool AreCognatePredicted
 		{
-			get { return _areCognatesPredicted; }
+			get { return _areCognatePredicted; }
 			set
 			{
-				_areCognatesPredicted = value;
-				OnPropertyChanged("AreCognatesPredicted");
+				_areCognatePredicted = value;
+				OnPropertyChanged("AreCognatePredicted");
 			}
 		}
 

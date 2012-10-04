@@ -2,11 +2,11 @@
 
 namespace SIL.Cog.ViewModels
 {
-	public abstract class CogViewModel : ViewModelBase
+	public abstract class CogViewModelBase : ViewModelBase
 	{
 		private readonly string _displayName;
 
-		protected CogViewModel(string displayName)
+		protected CogViewModelBase(string displayName)
 		{
 			_displayName = displayName;
 		}
@@ -16,6 +16,9 @@ namespace SIL.Cog.ViewModels
 			get { return _displayName; }
 		}
 
-		public abstract void Initialize(CogProject project);
+		public override string ToString()
+		{
+			return _displayName;
+		}
 	}
 }

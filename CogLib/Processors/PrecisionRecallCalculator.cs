@@ -9,14 +9,14 @@ namespace SIL.Cog.Processors
 			int fn = 0;
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
-				if (wp.AreCognatesPredicted)
+				if (wp.AreCognatePredicted)
 				{
-					if (wp.AreCognatesActual)
+					if (wp.AreCognateActual)
 						tp++;
 					else
 						fp++;
 				}
-				else if (wp.AreCognatesActual)
+				else if (wp.AreCognateActual)
 				{
 						fn++;
 				}

@@ -29,7 +29,9 @@ namespace SIL.Cog.ViewModels
 			: base("List", project)
 		{
 			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, project, similarSegmentIdentifier.ConsonantMappings);
+			_consMappings.Mappings.CollectionChanged += MappingsChanged;
 			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, project, similarSegmentIdentifier.VowelMappings);
+			_vowelMappings.Mappings.CollectionChanged += MappingsChanged;
 			_generateDiphthongs = similarSegmentIdentifier.GenerateDiphthongs;
 		}
 

@@ -228,5 +228,52 @@ namespace SIL.Cog.Views
             if (button != null)
 	            button.Style = GetSelectAllButtonStyle(dataGrid);
 		}
+
+		public static readonly DependencyProperty AutoScrollOnSelectionProperty =
+			DependencyProperty.RegisterAttached(
+				"AutoScrollOnSelection", 
+				typeof(bool), 
+				typeof(DataGridBehaviors), 
+				new UIPropertyMetadata(false, OnAutoScrollOnSelectionChanged));
+
+		private static void OnAutoScrollOnSelectionChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		{
+			var dataGrid = depObj as DataGrid;
+			if (dataGrid == null)
+				return;
+
+			if (!(e.NewValue is bool))
+				return;
+
+			if ((bool) e.NewValue)
+				dataGrid.SelectionChanged += DataGrid_SelectionChanged;
+			else
+				dataGrid.SelectionChanged -= DataGrid_SelectionChanged;
+		}
+
+		private static void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// Only react to the SelectionChanged event raised by the DataGrid
+			// Ignore all ancestors.
+			if (sender != e.OriginalSource)
+				return;
+
+			var dataGrid = e.OriginalSource as DataGrid;
+			if (dataGrid != null && dataGrid.SelectedItem != null)
+				dataGrid.ScrollIntoView(dataGrid.SelectedItem);
+		}
+
+		public static bool GetAutoScrollOnSelection(DataGrid datagrid)
+		{
+			return (bool) datagrid.GetValue(AutoScrollOnSelectionProperty);
+		}
+
+		public static void SetAutoScrollOnSelection(DataGrid datagrid, bool value)
+		{
+			datagrid.SetValue(AutoScrollOnSelectionProperty, value);
+		}
+
+
+
 	}
 }

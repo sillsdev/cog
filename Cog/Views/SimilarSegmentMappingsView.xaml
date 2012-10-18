@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Services="clr-namespace:SIL.Cog.Services" mc:Ignorable="d" 
+             xmlns:Services="clr-namespace:SIL.Cog.Services" xmlns:Views="clr-namespace:SIL.Cog.Views" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Services:ViewRegistrationService.IsRegisteredView="True">
     <StackPanel>
         <Grid>
-            <DataGrid ItemsSource="{Binding Mappings}" Height="125" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentMapping}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
+            <DataGrid ItemsSource="{Binding Mappings}" Views:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentMapping}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Segment 1" Binding="{Binding Item1}" Width="*" />
                     <DataGridTextColumn Header="Segment 2" Binding="{Binding Item2}" Width="*" />

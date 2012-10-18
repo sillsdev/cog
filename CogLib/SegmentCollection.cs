@@ -88,7 +88,7 @@ namespace SIL.Cog
 
 		public bool Contains(Segment segment)
 		{
-			return _segments.ContainsKey(segment.StrRep);
+			return _segments.ContainsKey(segment.NormalizedStrRep);
 		}
 
 		public bool Contains(string strRep)

@@ -6,9 +6,9 @@ using GalaSoft.MvvmLight.Threading;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietySenseViewModelCollection<T> : ViewModelCollection<T, Sense> where T : VarietySenseViewModel
+	public class VarietySenseViewModelCollection : ListViewModelCollection<ObservableCollection<Sense>, VarietySenseViewModel, Sense>
 	{
-		public VarietySenseViewModelCollection(ObservableCollection<Sense> senses, WordCollection words, Func<Sense, T> viewModelFactory)
+		public VarietySenseViewModelCollection(ObservableCollection<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
 			: base(senses, viewModelFactory)
 		{
 			words.CollectionChanged += WordsChanged;
@@ -23,7 +23,7 @@ namespace SIL.Cog.ViewModels
 						case NotifyCollectionChangedAction.Add:
 							foreach (Word word in e.NewItems)
 							{
-								T vm = this.Single(v => v.ModelSense == word.Sense);
+								VarietySenseViewModel vm = this.Single(v => v.ModelSense == word.Sense);
 								if (!vm.ModelWords.Contains(word))
 									vm.ModelWords.Add(word);
 							}
@@ -32,13 +32,13 @@ namespace SIL.Cog.ViewModels
 						case NotifyCollectionChangedAction.Remove:
 							foreach (Word word in e.OldItems)
 							{
-								T vm = this.Single(v => v.ModelSense == word.Sense);
+								VarietySenseViewModel vm = this.Single(v => v.ModelSense == word.Sense);
 								vm.ModelWords.Remove(word);
 							}
 							break;
 
 						case NotifyCollectionChangedAction.Reset:
-							foreach (T vm in this)
+							foreach (VarietySenseViewModel vm in this)
 								vm.ModelWords.Clear();
 							break;
 					}

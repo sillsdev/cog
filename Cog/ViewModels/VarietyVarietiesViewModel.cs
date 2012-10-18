@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Services;
 using SIL.Machine;
 
@@ -14,9 +11,11 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly ObservableCollection<SegmentVarietyViewModel> _segments;
-		private readonly VarietySenseViewModelCollection<VarietySenseViewModel> _senses;
-		private readonly ViewModelCollection<AffixViewModel, Affix> _affixes;
+		private readonly UnorderedViewModelCollection<SegmentCollection, SegmentVarietyViewModel, Segment> _segments;
+		private readonly UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
+		private readonly UnorderedViewModelCollection<WordCollection, WordViewModel, Word> _words; 
+		private readonly ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix> _affixes;
+		private SegmentVarietyViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _removeAffixCommand;
@@ -26,50 +25,23 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_dialogService = dialogService;
-			_segments = new ObservableCollection<SegmentVarietyViewModel>(variety.Segments.Select(seg => new SegmentVarietyViewModel(seg)));
-			variety.Segments.CollectionChanged += SegmentsChanged;
-			_senses = new VarietySenseViewModelCollection<VarietySenseViewModel>(_project.Senses, ModelVariety.Words, sense => new VarietySenseViewModel(sense, ModelVariety.Words[sense]));
-			_affixes = new ViewModelCollection<AffixViewModel, Affix>(ModelVariety.Affixes, affix => new AffixViewModel(affix));
+			_segments = new UnorderedViewModelCollection<SegmentCollection, SegmentVarietyViewModel, Segment>(variety.Segments, segment => new SegmentVarietyViewModel(segment), vm => vm.ModelSegment);
+			_senses = new UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
+			_words = new UnorderedViewModelCollection<WordCollection, WordViewModel, Word>(variety.Words, word =>
+				{
+					var vm = new WordViewModel(project, _senses[word.Sense], word);
+					vm.PropertyChanged += ChildPropertyChanged;
+					return vm;
+				}, vm => vm.ModelWord);
+
+			_affixes = new ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix>(ModelVariety.Affixes, affix => new AffixViewModel(affix));
 			if (_affixes.Count > 0)
 				_currentAffix = _affixes[0];
-			_newAffixCommand = new RelayCommand(ExecuteNewAffix);
-			_removeAffixCommand = new RelayCommand(ExecuteRemoveAffix, CanExecuteRemoveAffix);
+			_newAffixCommand = new RelayCommand(NewAffix);
+			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
 		}
 
-		private void SegmentsChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					switch (e.Action)
-					{
-						case NotifyCollectionChangedAction.Add:
-							foreach (Segment segment in e.NewItems)
-								_segments.Add(new SegmentVarietyViewModel(segment));
-							break;
-
-						case NotifyCollectionChangedAction.Remove:
-							var removedSegments = new HashSet<Segment>(e.OldItems.Cast<Segment>());
-							int numRemoved = 0;
-							for (int i = _segments.Count - 1; i >= 0; i--)
-							{
-								if (removedSegments.Contains(_segments[i].ModelSegment))
-								{
-									_segments.RemoveAt(i);
-									numRemoved++;
-									if (numRemoved == removedSegments.Count)
-										break;
-								}
-							}
-							break;
-
-						case NotifyCollectionChangedAction.Reset:
-							_segments.Clear();
-							break;
-					}
-				});
-		}
-
-		private void ExecuteNewAffix()
+		private void NewAffix()
 		{
 			var vm = new NewAffixViewModel(_project);
 			if (_dialogService.ShowDialog(this, vm) == true)
@@ -77,18 +49,28 @@ namespace SIL.Cog.ViewModels
 				Shape shape;
 				if (!_project.Segmenter.ToShape(vm.StrRep, out shape))
 					shape = _project.Segmenter.EmptyShape;
-				ModelVariety.Affixes.Add(new Affix(vm.StrRep, vm.Type == "Prefix" ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category));
+				var affix = new Affix(vm.StrRep, vm.Type == "Prefix" ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
+				ModelVariety.Affixes.Add(affix);
+				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
+				IsChanged = true;
 			}
 		}
 
-		private void ExecuteRemoveAffix()
+		private void RemoveAffix()
 		{
 			ModelVariety.Affixes.Remove(CurrentAffix.ModelAffix);
+			IsChanged = true;
 		}
 
-		private bool CanExecuteRemoveAffix()
+		private bool CanRemoveAffix()
 		{
 			return CurrentAffix != null;
+		}
+
+		public override void AcceptChanges()
+		{
+			base.AcceptChanges();
+			ChildrenAcceptChanges(_words);
 		}
 
 		public ObservableCollection<SegmentVarietyViewModel> Segments
@@ -96,9 +78,14 @@ namespace SIL.Cog.ViewModels
 			get { return _segments; }
 		}
 
-		public ObservableCollection<VarietySenseViewModel> Senses
+		public ObservableCollection<SenseViewModel> Senses
 		{
 			get { return _senses; }
+		}
+
+		public ObservableCollection<WordViewModel> Words
+		{
+			get { return _words; }
 		}
 
 		public ObservableCollection<AffixViewModel> Affixes
@@ -110,6 +97,20 @@ namespace SIL.Cog.ViewModels
 		{
 			get { return _currentAffix; }
 			set { Set("CurrentAffix", ref _currentAffix, value); }
+		}
+
+		public SegmentVarietyViewModel CurrentSegment
+		{
+			get { return _currentSegment; }
+			set
+			{
+				Set("CurrentSegment", ref _currentSegment, value);
+				foreach (WordViewModel word in _words)
+				{
+					foreach (WordSegmentViewModel segment in word.Segments)
+						segment.IsSelected = _currentSegment != null && segment.StrRep == _currentSegment.StrRep;
+				}
+			}
 		}
 
 		public ICommand NewAffixCommand

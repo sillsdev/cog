@@ -7,6 +7,7 @@ using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Processors;
 using SIL.Cog.Services;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -15,15 +16,18 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
-		private ViewModelCollection<VarietyVarietiesViewModel, Variety> _varieties;
+		private readonly IProgressService _progressService;
+		private ListViewModelCollection<ObservableCollection<Variety>, VarietyVarietiesViewModel, Variety> _varieties;
 		private VarietyVarietiesViewModel _currentVariety;
 		private CogProject _project;
+		private bool _isVarietySelected;
 
-		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService)
+		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService)
 			: base("Varieties")
 		{
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
+			_progressService = progressService;
 			TaskAreas.Add(new TaskAreaViewModel("Common tasks", new []
 				{
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
@@ -41,7 +45,13 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			if (_varieties != null)
 				_varieties.CollectionChanged -= VarietiesChanged;
-			Set("Varieties", ref _varieties, new ViewModelCollection<VarietyVarietiesViewModel, Variety>(_project.Varieties, variety => new VarietyVarietiesViewModel(_dialogService, _project, variety)));
+			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, VarietyVarietiesViewModel, Variety>(_project.Varieties,
+				variety =>
+					{
+						var vm = new VarietyVarietiesViewModel(_dialogService, _project, variety);
+						vm.PropertyChanged += ChildPropertyChanged;
+						return vm;
+					}));
 			_varieties.CollectionChanged += VarietiesChanged;
 			CurrentVariety = _varieties.Count > 0 ? _varieties[0] : null;
 		}
@@ -59,8 +69,15 @@ namespace SIL.Cog.ViewModels
 			{
 				var variety = new Variety(vm.Name);
 				_project.Varieties.Add(variety);
+				IsChanged = true;
 				SwitchVariety(variety);
 			}
+		}
+
+		public override void AcceptChanges()
+		{
+			base.AcceptChanges();
+			ChildrenAcceptChanges(_varieties);
 		}
 
 		private void RenameCurrentVariety()
@@ -70,7 +87,10 @@ namespace SIL.Cog.ViewModels
 
 			var vm = new EditVarietyViewModel(_project, _currentVariety.ModelVariety);
 			if (_dialogService.ShowDialog(this, vm) == true)
+			{
 				_currentVariety.Name = vm.Name;
+				IsChanged = true;
+			}
 		}
 
 		private void RemoveCurrentVariety()
@@ -85,6 +105,7 @@ namespace SIL.Cog.ViewModels
 				if (index == _varieties.Count)
 					index--;
 				CurrentVariety = _varieties.Count > 0 ? _varieties[index] : null;
+				IsChanged = true;
 			}
 		}
 
@@ -98,27 +119,20 @@ namespace SIL.Cog.ViewModels
 				{
 					case StemmingMethod.Automatic:
 						_currentVariety.ModelVariety.Affixes.Clear();
-						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory)};
+						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory, _project)};
 						break;
 					case StemmingMethod.Hybrid:
-						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory)};
+						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory, _project)};
 						break;
 					case StemmingMethod.Manual:
-						processors = new[] {new Stemmer(_spanFactory)};
+						processors = new[] {new Stemmer(_spanFactory, _project)};
 						break;
 				}
 				Debug.Assert(processors != null);
-				var pipeline = new MultiThreadedPipeline<Variety>(processors);
+				var pipeline = new Pipeline<Variety>(processors);
 
-				var progressVM = new ProgressViewModel(pvm =>
-					{
-						pvm.Text = string.Format("Stemming {0}...", _currentVariety.Name);
-						pipeline.ProgressUpdated += (sender, e) => pvm.Value = e.PercentCompleted;
-						pipeline.Process(new [] {_currentVariety.ModelVariety});
-					});
-
-				if (_dialogService.ShowDialog(this, progressVM) == false)
-					pipeline.Cancel();
+				_progressService.ShowProgress(this, () => pipeline.Process(_currentVariety.ModelVariety.ToEnumerable()));
+				IsChanged = true;
 			}
 		}
 
@@ -130,7 +144,17 @@ namespace SIL.Cog.ViewModels
 		public VarietyVarietiesViewModel CurrentVariety
 		{
 			get { return _currentVariety; }
-			set { Set("CurrentVariety", ref _currentVariety, value); }
+			set
+			{
+				Set(() => CurrentVariety, ref _currentVariety, value);
+				IsVarietySelected = _currentVariety != null;
+			}
+		}
+
+		public bool IsVarietySelected
+		{
+			get { return _isVarietySelected; }
+			set { Set(() => IsVarietySelected, ref _isVarietySelected, value); }
 		}
 
 		public override bool SwitchView(Type viewType, object model)

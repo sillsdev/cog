@@ -16,7 +16,7 @@ namespace SIL.Cog
 		private double _precision;
 		private double _recall;
 
-		internal VarietyPair(Variety variety1, Variety variety2)
+		public VarietyPair(Variety variety1, Variety variety2)
 		{
 			_variety1 = variety1;
 			_variety2 = variety2;

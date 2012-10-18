@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="SIL.Cog.Views.NetworkGraphView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
+             xmlns:Views="clr-namespace:SIL.Cog.Views" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
+             xmlns:Controls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <cnvtrs:EdgeRouteToPathConverter x:Key="routeToPathConverter" />
+        <cnvtrs:NumberLessThanConverter x:Key="numConverter" />
+    </UserControl.Resources>
+    <zoom:ZoomControl ZoomBoxOpacity="0.5">
+        <Views:NetworkGraphLayout Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple">
+            <Views:NetworkGraphLayout.Resources>
+                <DataTemplate DataType="{x:Type ViewModels:NetworkGraphVertex}">
+                    <TextBlock Name="nameText" Text="{Binding Name}" />
+                </DataTemplate>
+                <Style TargetType="Controls:EdgeControl">
+                    <Style.Resources>
+                        <ToolTip x:Key="toolTipContent">
+                            <TextBlock Text="{Binding LexicalSimilarityScore, StringFormat=p}" />
+                        </ToolTip>
+                    </Style.Resources>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Controls:EdgeControl}">
+                                <Path Stroke="{TemplateBinding Foreground}"
+                                      StrokeThickness="{TemplateBinding StrokeThickness}"
+                                      MinWidth="1"
+                                      MinHeight="1"
+                                      ToolTip="{TemplateBinding ToolTip}"
+                                      x:Name="edgePath">
+                                    <Path.Data>
+                                        <PathGeometry>
+                                            <PathGeometry.Figures>
+                                                <MultiBinding Converter="{StaticResource routeToPathConverter}">
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(Controls:GraphCanvas.X)" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(Controls:GraphCanvas.Y)" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualWidth" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualHeight" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(Controls:GraphCanvas.X)" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(Controls:GraphCanvas.Y)" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualWidth" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualHeight" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="RoutePoints" />
+                                                </MultiBinding>
+                                            </PathGeometry.Figures>
+                                        </PathGeometry>
+                                    </Path.Data>
+                                </Path>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="ToolTip" Value="{StaticResource toolTipContent}" />
+                    <Style.Triggers>
+                        <Trigger Property="Controls:GraphElementBehaviour.IsHighlighted" Value="True">
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                        <Trigger Property="Controls:GraphElementBehaviour.IsSemiHighlighted" Value="True">
+                            <Setter Property="Foreground" Value="Red" />
+                        </Trigger>
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <Binding Path="LexicalSimilarityScore" Converter="{StaticResource numConverter}">
+                                    <Binding.ConverterParameter>
+                                        <sys:Double>0.7</sys:Double>
+                                    </Binding.ConverterParameter>
+                                </Binding>
+                            </DataTrigger.Binding>
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="Controls:VertexControl">
+                    <Style.Triggers>
+                        <Trigger Property="Controls:GraphElementBehaviour.IsHighlighted" Value="True">
+                            <Setter Property="BorderBrush" Value="Orange" />
+                            <Setter Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="Controls:GraphElementBehaviour.IsSemiHighlighted" Value="True">
+                            <Setter Property="BorderBrush" Value="Red" />
+                            <Setter Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Views:NetworkGraphLayout.Resources>
+        </Views:NetworkGraphLayout>
+    </zoom:ZoomControl>
+</UserControl>

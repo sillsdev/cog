@@ -9,7 +9,7 @@ namespace SIL.Cog.Config
 	{
 		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
-			var thresholdStr = (string) elem.Element("AlignmentThreshold");
+			var thresholdStr = (string) elem.Element("Threshold");
 			XElement alignerElem = elem.Element("ApplicableAligner");
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
@@ -19,7 +19,7 @@ namespace SIL.Cog.Config
 		public void Save(IProcessor<VarietyPair> component, XElement elem)
 		{
 			var identifier = (ThresholdCognateIdentifier) component;
-			elem.Add(new XElement("AlignmentThreshold", identifier.Threshold));
+			elem.Add(new XElement("Threshold", identifier.Threshold));
 			elem.Add(new XElement("ApplicableAligner", new XAttribute("ref", identifier.AlignerID)));
 		}
 	}

@@ -1,6 +1,6 @@
 ﻿namespace SIL.Cog.ViewModels
 {
-	public class VarietyViewModel : WrapperViewModelBase
+	public class VarietyViewModel : WrapperViewModel
 	{
 		private readonly Variety _variety;
 

@@ -8,19 +8,19 @@ namespace SIL.Cog.Processors
 {
 	public class EMSoundChangeInducer : ProcessorBase<VarietyPair>
 	{
-		private readonly double _threshold;
+		private readonly double _alignmentThreshold;
 		private readonly string _alignerID;
 
-		public EMSoundChangeInducer(CogProject project, double threshold, string alignerID)
+		public EMSoundChangeInducer(CogProject project, double alignmentThreshold, string alignerID)
 			: base(project)
 		{
-			_threshold = threshold;
+			_alignmentThreshold = alignmentThreshold;
 			_alignerID = alignerID;
 		}
 
-		public double Threshold
+		public double AlignmentThreshold
 		{
-			get { return _threshold; }
+			get { return _alignmentThreshold; }
 		}
 
 		public string AlignerID
@@ -46,7 +46,7 @@ namespace SIL.Cog.Processors
 			{
 				IAlignerResult alignerResult = aligner.Compute(wordPair);
 				Alignment alignment = alignerResult.GetAlignments().First();
-				if (alignment.Score >= _threshold)
+				if (alignment.Score >= _alignmentThreshold)
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{

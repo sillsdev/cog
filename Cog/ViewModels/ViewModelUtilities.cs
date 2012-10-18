@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SIL.Cog.Processors;
 using SIL.Cog.Services;
 using SIL.Cog.WordListsLoaders;
 
@@ -17,7 +16,7 @@ namespace SIL.Cog.ViewModels
 				};
 		}
 
-		public static void ImportWordLists(IDialogService dialogService, CogProject project, object ownerViewModel)
+		public static bool ImportWordLists(IDialogService dialogService, CogProject project, object ownerViewModel)
 		{
 			FileDialogResult result = dialogService.ShowOpenFileDialog(ownerViewModel, "Import Word Lists", WordListsLoaders.Keys);
 			if (result.IsValid)
@@ -25,9 +24,9 @@ namespace SIL.Cog.ViewModels
 				project.Senses.Clear();
 				project.Varieties.Clear();
 				WordListsLoaders[result.SelectedFileType].Load(result.FileName, project);
-				var generator = new VarietyPairGenerator();
-				generator.Process(project);
+				return true;
 			}
+			return false;
 		}
 	}
 }

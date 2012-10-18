@@ -8,7 +8,7 @@ namespace SIL.Cog.Config
 	{
 		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
-			return new Stemmer(spanFactory);
+			return new Stemmer(spanFactory, project);
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -16,6 +17,7 @@ namespace SIL.Cog.Config
 
 			XElement root = XElement.Load(configFilePath);
 
+			var featSys = new FeatureSystem();
 			XElement featSysElem = root.Element("FeatureSystem");
 			Debug.Assert(featSysElem != null);
 			foreach (XElement featureElem in featSysElem.Elements("Feature"))
@@ -23,8 +25,10 @@ namespace SIL.Cog.Config
 				var feat = new SymbolicFeature((string) featureElem.Attribute("id")) {Weight = double.Parse((string) featureElem.Attribute("weight"))};
 				foreach (XElement valueElem in featureElem.Elements("Value"))
 					feat.PossibleSymbols.Add(new FeatureSymbol((string) valueElem.Attribute("id")) {Weight = 100.0 * double.Parse((string) valueElem.Attribute("metric"))});
-				project.FeatureSystem.Add(feat);
+				featSys.Add(feat);
 			}
+			featSys.Freeze();
+			project.FeatureSystem = featSys;
 
 			XElement segmentationElem = root.Element("Segmentation");
 			Debug.Assert(segmentationElem != null);
@@ -88,16 +92,52 @@ namespace SIL.Cog.Config
 				Debug.Assert(wordsElem != null);
 				foreach (XElement wordElem in wordsElem.Elements("Word"))
 				{
-
 					Sense sense;
 					if (senses.TryGetValue((string) wordElem.Attribute("sense"), out sense))
 					{
-						var wordStr = (string) wordElem;
+						var sb = new StringBuilder();
+						string prefix = null;
+						XElement prefixElem = wordElem.Element("Prefix");
+						if (prefixElem != null)
+						{
+							prefix = ((string) prefixElem).Trim();
+							sb.Append(prefix);
+						}
+						var stem = ((string) wordElem.Element("Stem")).Trim();
+						sb.Append(stem);
+						string suffix = null;
+						XElement suffixElem = wordElem.Element("Suffix");
+						if (suffixElem != null)
+						{
+							suffix = ((string) suffixElem).Trim();
+							sb.Append(suffix);
+						}
 						Shape shape;
-						if (!project.Segmenter.ToShape(wordStr, out shape))
+						if (!project.Segmenter.ToShape(prefix, stem, suffix, out shape))
 							shape = project.Segmenter.EmptyShape;
-						variety.Words.Add(new Word(wordStr, shape, sense));
+						variety.Words.Add(new Word(sb.ToString(), shape, sense));
 					}
+				}
+				XElement affixesElem = varietyElem.Element("Affixes");
+				Debug.Assert(affixesElem != null);
+				foreach (XElement affixElem in affixesElem.Elements("Affix"))
+				{
+					var type = AffixType.Prefix;
+					switch ((string) affixElem.Attribute("type"))
+					{
+						case "prefix":
+							type = AffixType.Prefix;
+							break;
+						case "suffix":
+							type = AffixType.Suffix;
+							break;
+					}
+
+					var affixStr = ((string) affixElem).Trim();
+					Shape shape;
+					if (!project.Segmenter.ToShape(affixStr, out shape))
+						shape = project.Segmenter.EmptyShape;
+					variety.Affixes.Add(new Affix(affixStr, type, shape, (string) affixElem.Attribute("category")));
 				}
 				project.Varieties.Add(variety);
 			}
@@ -153,13 +193,16 @@ namespace SIL.Cog.Config
 
 		public static void Save(CogProject project, string configFilePath)
 		{
-			// TODO: save configuration file
 			var root = new XElement("CogProject",
 				new XElement("FeatureSystem", project.FeatureSystem.Cast<SymbolicFeature>().Select(feature => new XElement("Feature", new XAttribute("id", feature.ID), new XAttribute("weight", feature.Weight),
 					feature.PossibleSymbols.Select(symbol => new XElement("Value", new XAttribute("id", symbol.ID), new XAttribute("metric", symbol.Weight / 100.0)))))),
 				new XElement("Segmentation",
-					new XElement("Vowels", new XAttribute("maxLength", project.Segmenter.MaxVowelLength), project.Segmenter.Vowels.Select(symbol => new XElement("Symbol", new XAttribute("strRep", symbol.StrRep),
-							CreateFeatureStruct(symbol.FeatureStruct))))));
+					new XElement("Vowels", new XAttribute("maxLength", project.Segmenter.MaxVowelLength), SaveSymbols(project.Segmenter.Vowels)),
+					new XElement("Consonants", new XAttribute("maxLength", project.Segmenter.MaxConsonantLength), SaveSymbols(project.Segmenter.Consonants)),
+					new XElement("Modifiers", SaveSymbols(project.Segmenter.Modifiers)),
+					new XElement("Boundaries", SaveSymbols(project.Segmenter.Boundaries)),
+					new XElement("ToneLetters", SaveSymbols(project.Segmenter.ToneLetters)),
+					new XElement("Joiners", SaveSymbols(project.Segmenter.Joiners))));
 
 			root.Add(new XElement("Aligners", project.Aligners.Select(kvp => SaveComponent("Aligner", kvp.Key, kvp.Value))));
 
@@ -179,13 +222,60 @@ namespace SIL.Cog.Config
 
 			root.Add(new XElement("Varieties",
 				project.Varieties.Select(variety => new XElement("Variety", new XAttribute("name", variety.Name),
-					new XElement("Words", variety.Words.Select(word => new XElement("Word", new XAttribute("sense", senseIds[word.Sense]), word.StrRep)))))));
+					new XElement("Words", variety.Words.Select(word => SaveWord(word, senseIds[word.Sense]))),
+					new XElement("Affixes", variety.Affixes.Select(SaveAffix))))));
 
 			root.Add(new XElement("ProjectProcessors", project.ProjectProcessors.Select(kvp => SaveComponent("ProjectProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement("VarietyProcessors", project.VarietyProcessors.Select(kvp => SaveComponent("VarietyProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement("VarietyPairProcessors", project.VarietyPairProcessors.Select(kvp => SaveComponent("VarietyPairProcessor", kvp.Key, kvp.Value))));
 
 			root.Save(configFilePath);
+		}
+
+		private static IEnumerable<XElement> SaveSymbols(IEnumerable<Symbol> symbols)
+		{
+			return symbols.Select(symbol => new XElement("Symbol", new XAttribute("strRep", symbol.StrRep),
+				CreateFeatureStruct(symbol.FeatureStruct)));
+		}
+
+		private static XElement SaveWord(Word word, string senseId)
+		{
+			var wordElem = new XElement("Word", new XAttribute("sense", senseId));
+			if (word.Shape.Count > 0)
+			{
+				Annotation<ShapeNode> prefix = word.Prefix;
+				if (prefix != null)
+					wordElem.Add(new XElement("Prefix", prefix.OriginalStrRep()));
+				wordElem.Add(new XElement("Stem", word.Stem.OriginalStrRep()));
+				Annotation<ShapeNode> suffix = word.Suffix;
+				if (suffix != null)
+					wordElem.Add(new XElement("Suffix", suffix.OriginalStrRep()));
+			}
+			else
+			{
+				wordElem.Add(new XElement("Stem", word.StrRep));
+			}
+			return wordElem;
+		}
+
+		private static XElement SaveAffix(Affix affix)
+		{
+			string typeStr = null;
+			switch (affix.Type)
+			{
+				case AffixType.Prefix:
+					typeStr = "prefix";
+					break;
+				case AffixType.Suffix:
+					typeStr = "suffix";
+					break;
+			}
+			Debug.Assert(typeStr != null);
+			var affixElem = new XElement("Affix", new XAttribute("type", typeStr));
+			if (!string.IsNullOrEmpty(affix.Category))
+				affixElem.Add(new XAttribute("category", affix.Category));
+			affixElem.Add(affix.StrRep);
+			return affixElem;
 		}
 
 		public static IEnumerable<XElement> CreateFeatureStruct(FeatureStruct fs)

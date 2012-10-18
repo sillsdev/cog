@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Cog.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4, Version=4.0.23.37706, Culture=neutral, PublicKeyToken=1673db7d5906b0ad, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
@@ -42,49 +45,90 @@
     <Reference Include="GalaSoft.MvvmLight.WPF4, Version=4.0.23.37706, Culture=neutral, PublicKeyToken=63eb5c012e0b3c1c, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
+    <Reference Include="GraphSharp">
+      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphSharp.Controls">
+      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.Controls.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFExtensions">
+      <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.1.7.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
+    <Compile Include="Converters\BooleanToCognateStringConverter.cs" />
+    <Compile Include="Converters\BooleanToBrushConverter.cs" />
+    <Compile Include="Converters\ContentToMarginConverter.cs" />
+    <Compile Include="Converters\ContentToPathConverter.cs" />
+    <Compile Include="Converters\DebugConverter.cs" />
+    <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
+    <Compile Include="Converters\EnumMatchToBooleanConverter.cs" />
+    <Compile Include="Converters\EnumMatchToVisibilityConverter.cs" />
+    <Compile Include="Converters\HslColor.cs" />
+    <Compile Include="Converters\NumberLessThanConverter.cs" />
+    <Compile Include="Converters\PercentageToGradientColorConverter.cs" />
+    <Compile Include="Converters\PercentageToSpectrumColorConverter.cs" />
+    <Compile Include="Converters\ProbabilityToWidthConverter.cs" />
+    <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\WordsToInlinesConverter.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\FileDialogResult.cs" />
     <Compile Include="Services\FileType.cs" />
     <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\IProgressService.cs" />
     <Compile Include="Services\IViewRegistrationService.cs" />
     <Compile Include="Services\IWindowViewModelMappings.cs" />
+    <Compile Include="Services\ProgressService.cs" />
     <Compile Include="Services\ServiceExtensions.cs" />
     <Compile Include="Services\ViewRegistrationService.cs" />
     <Compile Include="Services\WindowViewModelMappings.cs" />
-    <Compile Include="Theme\ContentToMarginConverter.cs" />
-    <Compile Include="Theme\ContentToPathConverter.cs" />
+    <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
+    <Compile Include="ViewModels\NetworkGraphEdge.cs" />
+    <Compile Include="ViewModels\NetworkGraphVertex.cs" />
+    <Compile Include="ViewModels\NetworkGraphViewModel.cs" />
+    <Compile Include="ViewModels\NewSimilarSegmentMappingViewModel.cs" />
     <Compile Include="ViewModels\AffixViewModel.cs" />
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
+    <Compile Include="ViewModels\AlineViewModel.cs" />
+    <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\CommandViewModel.cs" />
     <Compile Include="ViewModels\ComparisonMasterViewModel.cs" />
+    <Compile Include="ViewModels\ComparisonSettingsViewModel.cs" />
+    <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
+    <Compile Include="ViewModels\ComponentSettingsViewModelBase.cs" />
     <Compile Include="ViewModels\DataSettingsViewModel.cs" />
     <Compile Include="ViewModels\EditSenseViewModel.cs" />
-    <Compile Include="ViewModels\InitializableCogViewModelBase.cs" />
+    <Compile Include="ViewModels\EMSoundChangeInducerViewModel.cs" />
+    <Compile Include="ViewModels\ListSimilarSegmentIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\RelevantFeatureViewModel.cs" />
+    <Compile Include="ViewModels\InitializableViewModelBase.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MasterViewModelBase.cs" />
     <Compile Include="ViewModels\CogViewModelBase.cs" />
@@ -96,7 +140,14 @@
     <Compile Include="ViewModels\SegmentVarietyViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
+    <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />
     <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
+    <Compile Include="ViewModels\SimilarSegmentMappingsViewModel.cs" />
+    <Compile Include="ViewModels\SoundCorrespondenceLhsViewModel.cs" />
+    <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\ThresholdSimilarSegmentIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
+    <Compile Include="ViewModels\UnorderedViewModelCollection.cs" />
     <Compile Include="ViewModels\SoundCorrespondenceViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaViewModel.cs" />
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
@@ -107,13 +158,12 @@
     <Compile Include="ViewModels\SwitchViewMessage.cs" />
     <Compile Include="ViewModels\DataMasterViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />
-    <Compile Include="ViewModels\VarietySenseWordListsViewModel.cs" />
     <Compile Include="ViewModels\VarietySimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairSimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\VarietyVarietiesViewModel.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietyWordListsViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelCollection.cs" />
+    <Compile Include="ViewModels\ListViewModelCollection.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="ViewModels\ViewModelUtilities.cs" />
     <Compile Include="ViewModels\VisualizationMasterViewModel.cs" />
@@ -123,9 +173,31 @@
     <Compile Include="ViewModels\WordViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\WorkspaceViewModelBase.cs" />
-    <Compile Include="ViewModels\WrapperViewModelBase.cs" />
-    <Compile Include="Views\BackgroundToForegroundConverter.cs" />
-    <Compile Include="Views\BooleanToYesNoConverter.cs" />
+    <Compile Include="ViewModels\WrapperViewModel.cs" />
+    <Compile Include="Views\AboutBox.xaml.cs">
+      <DependentUpon>AboutBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HierarchicalGraphView.xaml.cs">
+      <DependentUpon>HierarchicalGraphView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NetworkGraphHighlightAlgorithmFactory.cs" />
+    <Compile Include="Views\NetworkGraphLayout.cs" />
+    <Compile Include="Views\NetworkGraphView.xaml.cs">
+      <DependentUpon>NetworkGraphView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NetworkGraphHighlightAlgorithm.cs" />
+    <Compile Include="Views\NewSimilarSegmentMappingDialog.xaml.cs">
+      <DependentUpon>NewSimilarSegmentMappingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AlineView.xaml.cs">
+      <DependentUpon>AlineView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BlairCognateIdentifierView.xaml.cs">
+      <DependentUpon>BlairCognateIdentifierView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ComparisonSettingsView.xaml.cs">
+      <DependentUpon>ComparisonSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataGridBehaviors.cs" />
     <Compile Include="Views\DataSettingsView.xaml.cs">
       <DependentUpon>DataSettingsView.xaml</DependentUpon>
@@ -136,9 +208,12 @@
     <Compile Include="Views\EditVarietyDialog.xaml.cs">
       <DependentUpon>EditVarietyDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EnumMatchToBooleanConverter.cs" />
-    <Compile Include="Views\HslColor.cs" />
-    <Compile Include="Views\PercentageToColorConverter.cs" />
+    <Compile Include="Views\EMSoundChangeInducerView.xaml.cs">
+      <DependentUpon>EMSoundChangeInducerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ListSimilarSegmentIdentifierView.xaml.cs">
+      <DependentUpon>ListSimilarSegmentIdentifierView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -150,6 +225,9 @@
     </Compile>
     <Compile Include="Views\SimilarityMatrixView.xaml.cs">
       <DependentUpon>SimilarityMatrixView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SimilarSegmentMappingsView.xaml.cs">
+      <DependentUpon>SimilarSegmentMappingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabControlEx.cs" />
     <Compile Include="Views\TaskAreaView.xaml.cs">
@@ -171,12 +249,17 @@
     <Compile Include="Views\NewAffixDialog.xaml.cs">
       <DependentUpon>NewAffixDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProbabilityToWidthConverter.cs" />
     <Compile Include="Views\TextBoxBehaviors.cs" />
+    <Compile Include="Views\ThresholdCognateIdentifierView.xaml.cs">
+      <DependentUpon>ThresholdCognateIdentifierView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThresholdSimilarSegmentIdentifierView.xaml.cs">
+      <DependentUpon>ThresholdSimilarSegmentIdentifierView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UnsupervisedAffixIdentifierView.xaml.cs">
       <DependentUpon>UnsupervisedAffixIdentifierView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StringFormatConverter.cs" />
+    <Compile Include="Views\HierarchicalGraphLayout.cs" />
     <Compile Include="Views\VarietyPairsView.xaml.cs">
       <DependentUpon>VarietyPairsView.xaml</DependentUpon>
     </Compile>
@@ -184,13 +267,13 @@
       <DependentUpon>VarietyPairView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewUtilities.cs" />
-    <Compile Include="Views\WordsToInlinesConverter.cs" />
     <Compile Include="Views\VarietiesView.xaml.cs">
       <DependentUpon>VarietiesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VarietyView.xaml.cs">
       <DependentUpon>VarietyView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\OverrideCursor.cs" />
     <Compile Include="Views\WordView.xaml.cs">
       <DependentUpon>WordView.xaml</DependentUpon>
     </Compile>
@@ -201,11 +284,47 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AboutBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HierarchicalGraphView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NetworkGraphView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewSimilarSegmentMappingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AlineView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BlairCognateIdentifierView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ComparisonSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\DataSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditSenseDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EMSoundChangeInducerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ListSimilarSegmentIdentifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,7 +356,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SimilarSegmentMappingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TaskAreaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThresholdCognateIdentifierView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThresholdSimilarSegmentIdentifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -288,6 +419,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="NewProject.cogx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -308,6 +440,14 @@
       <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
       <Name>Machine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\AboutLogo.png">
+      <SubType>Image</SubType>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Cog.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,43 +3,57 @@ using System.Collections.ObjectModel;
 
 namespace SIL.Cog.ViewModels
 {
-	public abstract class MasterViewModelBase : InitializableCogViewModelBase
+	public abstract class MasterViewModelBase : InitializableViewModelBase
 	{
-		private InitializableCogViewModelBase _currentView;
-		private readonly ReadOnlyCollection<InitializableCogViewModelBase> _views; 
+		private InitializableViewModelBase _currentView;
+		private readonly ReadOnlyCollection<InitializableViewModelBase> _views; 
 
-		protected MasterViewModelBase(string displayName, params InitializableCogViewModelBase[] views)
+		protected MasterViewModelBase(string displayName, params InitializableViewModelBase[] views)
 			: base(displayName)
 		{
-			_views = new ReadOnlyCollection<InitializableCogViewModelBase>(views);
+			_views = new ReadOnlyCollection<InitializableViewModelBase>(views);
 			if (_views.Count > 0)
 				CurrentView = _views[0];
+			foreach (InitializableViewModelBase view in _views)
+				view.PropertyChanged += ChildPropertyChanged;
 		}
 
-		public ReadOnlyCollection<InitializableCogViewModelBase> Views
+		public override void AcceptChanges()
+		{
+			base.AcceptChanges();
+			ChildrenAcceptChanges(_views);
+		}
+
+		public ReadOnlyCollection<InitializableViewModelBase> Views
 		{
 			get { return _views; }
 		}
 
-		public InitializableCogViewModelBase CurrentView
+		public InitializableViewModelBase CurrentView
 		{
 			get { return _currentView; }
-			set { Set("CurrentView", ref _currentView, value); }
+			set
+			{
+				Set("CurrentView", ref _currentView, value);
+				var cv = _currentView as MasterViewModelBase;
+				if (cv != null && cv.Views.Count > 0)
+					cv.CurrentView = cv.Views[0];
+			}
 		}
 
 		public override void Initialize(CogProject project)
 		{
-			foreach (InitializableCogViewModelBase vm in _views)
+			foreach (InitializableViewModelBase vm in _views)
 				vm.Initialize(project);
 		}
 
 		public override bool SwitchView(Type viewType, object model)
 		{
-			foreach (InitializableCogViewModelBase view in _views)
+			foreach (InitializableViewModelBase view in _views)
 			{
 				if (view.SwitchView(viewType, model))
 				{
-					CurrentView = view;
+					Set("CurrentView", ref _currentView, view);
 					return true;
 				}
 			}

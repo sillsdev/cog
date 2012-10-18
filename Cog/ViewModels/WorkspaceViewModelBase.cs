@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace SIL.Cog.ViewModels
 {
-	public abstract class WorkspaceViewModelBase : InitializableCogViewModelBase
+	public abstract class WorkspaceViewModelBase : InitializableViewModelBase
 	{
 		private readonly ObservableCollection<TaskAreaViewModel> _taskAreas; 
 

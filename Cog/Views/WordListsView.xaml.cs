@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Linq;
+using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -71,7 +72,14 @@ namespace SIL.Cog.Views
 				textBoxFactory.Name = "textBox";
 				var cellEditTemplate = new DataTemplate {VisualTree = textBoxFactory};
 
-				var column = new DataGridTemplateColumn {Header = sense.Item1.Gloss, CellTemplate = cellTemplate, CellEditingTemplate = cellEditTemplate};
+
+				var column = new DataGridTemplateColumn
+					{
+						Header = sense.Item1.Gloss,
+						CellTemplate = cellTemplate,
+						CellEditingTemplate = cellEditTemplate,
+						ClipboardContentBinding = new Binding(string.Format("Senses[{0}].StrRep", sense.Item2))
+					};
 
 				_wordListsGrid.Columns.Add(column);
 			}

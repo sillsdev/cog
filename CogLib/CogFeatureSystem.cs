@@ -7,14 +7,19 @@ namespace SIL.Cog
 	{
 		public static readonly SymbolicFeature Type;
 		public static readonly FeatureSymbol AnchorType;
+		
 		public static readonly FeatureSymbol VowelType;
 		public static readonly FeatureSymbol ConsonantType;
+		public static readonly FeatureSymbol ToneLetterType;
+		public static readonly FeatureSymbol BoundaryType;
+
 		public static readonly FeatureSymbol NullType;
 		public static readonly FeatureSymbol PrefixType;
 		public static readonly FeatureSymbol SuffixType;
 		public static readonly FeatureSymbol StemType;
 		public static readonly FeatureSymbol ClusterType;
 
+		public static readonly StringFeature OriginalStrRep;
 		public static readonly StringFeature StrRep;
 
 		private static readonly CogFeatureSystem FeatureSystem;
@@ -28,6 +33,10 @@ namespace SIL.Cog
 			Type.PossibleSymbols.Add(VowelType);
 			ConsonantType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "consonant"};
 			Type.PossibleSymbols.Add(ConsonantType);
+			ToneLetterType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "toneLetter"};
+			Type.PossibleSymbols.Add(ToneLetterType);
+			BoundaryType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "boundary"};
+			Type.PossibleSymbols.Add(BoundaryType);
 			NullType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "null"};
 			Type.PossibleSymbols.Add(NullType);
 			StemType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "stem"};
@@ -39,6 +48,7 @@ namespace SIL.Cog
 			ClusterType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "cluster"};
 			Type.PossibleSymbols.Add(ClusterType);
 
+			OriginalStrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "OriginalStrRep"};
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};
 
 			FeatureSystem = new CogFeatureSystem();
@@ -52,8 +62,9 @@ namespace SIL.Cog
 		private CogFeatureSystem()
 		{
 			Add(Type);
+			Add(OriginalStrRep);
 			Add(StrRep);
-			IsReadOnly = true;
+			Freeze();
 		}
 	}
 }

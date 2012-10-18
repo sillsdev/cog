@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietyPairSimilarityMatrixViewModelCollection : ViewModelCollection<VarietyPairSimilarityMatrixViewModel, Variety>
+	public class VarietyPairSimilarityMatrixViewModelCollection : ListViewModelCollection<ObservableCollection<Variety>, VarietyPairSimilarityMatrixViewModel, Variety>
 	{
 		private readonly Variety _variety;
 

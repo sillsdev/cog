@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SIL.Cog.Aligners
 {
@@ -15,7 +16,7 @@ namespace SIL.Cog.Aligners
 	{
 		private AlignerMode _mode;
 		private bool _disableExpansionCompression;
-		private IEnumerable<NaturalClass> _naturalClasses;
+		private NaturalClass[] _naturalClasses;
 
 		internal bool ReadOnly { get; set; }
 
@@ -45,7 +46,7 @@ namespace SIL.Cog.Aligners
 			set
 			{
 				CheckReadOnly();
-				_naturalClasses = value;
+				_naturalClasses = value == null ? null : value.ToArray();
 			}
 		}
 

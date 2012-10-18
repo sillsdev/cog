@@ -3,14 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
-             mc:Ignorable="d" 
+             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <cnvtrs:EnumMatchToVisibilityConverter x:Key="enumConverter" />
+        <CollectionViewSource x:Key="varietiesSource1" Source="{Binding Varieties}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource x:Key="varietiesSource2" Source="{Binding Varieties}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Variety pair details" />
-            <ComboBox Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding Varieties}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" />
-            <ComboBox Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding Varieties}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" />
+            <Border Background="{StaticResource Variety1Brush}" Padding="3" Margin="0,0,5,0" CornerRadius="5">
+                <ComboBox FontSize="16" ItemsSource="{Binding Source={StaticResource varietiesSource1}}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" />    
+            </Border>
+            <Border Background="{StaticResource Variety2Brush}" Padding="3" CornerRadius="5">
+                <ComboBox FontSize="16" ItemsSource="{Binding Source={StaticResource varietiesSource2}}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" />
+            </Border>
         </StackPanel>
-        <Views:VarietyPairView DataContext="{Binding CurrentVarietyPair}" />
+        <Grid>
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding CurrentVarietyPairState, Converter={StaticResource enumConverter}, ConverterParameter=NotSelected}">No variety pair selected.</TextBlock>
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding CurrentVarietyPairState, Converter={StaticResource enumConverter}, ConverterParameter=SelectedAndNotCompared}">The selected variety pair has not been compared.</TextBlock>
+            <Border Visibility="{Binding CurrentVarietyPairState, Converter={StaticResource enumConverter}, ConverterParameter=SelectedAndCompared}">
+                <Views:VarietyPairView DataContext="{Binding CurrentVarietyPair}" />
+            </Border>
+        </Grid>
     </DockPanel>
 </UserControl>

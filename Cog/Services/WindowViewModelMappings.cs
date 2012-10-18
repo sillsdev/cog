@@ -20,7 +20,8 @@ namespace SIL.Cog.Services
 				{typeof(EditVarietyViewModel), typeof(EditVarietyDialog)},
 				{typeof(EditSenseViewModel), typeof(EditSenseDialog)},
 				{typeof(RunStemmerViewModel), typeof(RunStemmerDialog)},
-				{typeof(ProgressViewModel), typeof(ProgressDialog)}
+				{typeof(ProgressViewModel), typeof(ProgressDialog)},
+				{typeof(NewSimilarSegmentMappingViewModel), typeof(NewSimilarSegmentMappingDialog)}
 			};
 		}
 

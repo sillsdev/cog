@@ -2,42 +2,109 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using GalaSoft.MvvmLight;
-using SIL.Machine;
+using System.Text;
 using SIL.Collections;
+using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class WordViewModel : ViewModelBase, IDataErrorInfo
+	public class WordViewModel : CogViewModelBase, IDataErrorInfo
 	{
+		private readonly CogProject _project; 
 		private readonly Word _word;
-		private readonly ObservableCollection<WordSegmentViewModel> _segments; 
+		private readonly ObservableCollection<WordSegmentViewModel> _segments;
+		private readonly SenseViewModel _sense;
+		private bool _isValid;
+		private readonly SimpleMonitor _monitor;
 
-		public WordViewModel(Word word)
+		public WordViewModel(CogProject project, SenseViewModel sense, Word word)
 		{
+			_project = project;
+			_sense = sense;
 			_word = word;
 			_segments = new ObservableCollection<WordSegmentViewModel>();
-			Annotation<ShapeNode> prefixAnn = _word.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
-			if (prefixAnn != null)
-				_segments.AddRange(_word.Shape.GetNodes(prefixAnn.Span).Select(node => new WordSegmentViewModel(node)));
-			_segments.Add(new WordSegmentViewModel("|"));
-			Annotation<ShapeNode> stemAnn = _word.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
-			_segments.AddRange(stemAnn != null ? _word.Shape.GetNodes(stemAnn.Span).Select(node => new WordSegmentViewModel(node)) : _word.Shape.Select(node => new WordSegmentViewModel(node)));
-			_segments.Add(new WordSegmentViewModel("|"));
-			Annotation<ShapeNode> suffixAnn = _word.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
-			if (suffixAnn != null)
-				_segments.AddRange(_word.Shape.GetNodes(suffixAnn.Span).Select(node => new WordSegmentViewModel(node)));
-			_segments.CollectionChanged += SegmentsChanged;
+			LoadSegments();
+			_monitor = new SimpleMonitor();
+			_word.PropertyChanged += WordPropertyChanged;
+		}
+
+		private void WordPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "Shape":
+					if (_monitor.Busy)
+						return;
+					_segments.CollectionChanged -= SegmentsChanged;
+					_segments.Clear();
+					LoadSegments();
+					break;
+			}
+		}
+
+		private void LoadSegments()
+		{
+			if (_word.Shape.Count > 0)
+			{
+				Annotation<ShapeNode> prefixAnn = _word.Prefix;
+				if (prefixAnn != null)
+					_segments.AddRange(_word.Shape.GetNodes(prefixAnn.Span).Select(node => new WordSegmentViewModel(node)));
+				_segments.Add(new WordSegmentViewModel());
+				_segments.AddRange(_word.Shape.GetNodes(_word.Stem.Span).Select(node => new WordSegmentViewModel(node)));
+				_segments.Add(new WordSegmentViewModel());
+				Annotation<ShapeNode> suffixAnn = _word.Suffix;
+				if (suffixAnn != null)
+					_segments.AddRange(_word.Shape.GetNodes(suffixAnn.Span).Select(node => new WordSegmentViewModel(node)));
+				_segments.CollectionChanged += SegmentsChanged;
+			}
+			IsValid = _word.Shape.Count > 0;
 		}
 
 		private void SegmentsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
+				return;
 
+			var sb = new StringBuilder();
+			int i = 0;
+			for (; !_segments[i].IsBoundary; i++)
+				sb.Append(_segments[i].OriginalStrRep);
+			string prefix = sb.ToString();
+
+			sb = new StringBuilder();
+			i++;
+			for (; !_segments[i].IsBoundary; i++)
+				sb.Append(_segments[i].OriginalStrRep);
+			string stem = sb.ToString();
+
+			sb = new StringBuilder();
+			i++;
+			for (; i < _segments.Count; i++)
+				sb.Append(_segments[i].OriginalStrRep);
+			string suffix = sb.ToString();
+
+			Shape shape;
+			_project.Segmenter.ToShape(prefix, stem, suffix, out shape);
+
+			using (_monitor.Enter())
+				_word.Shape = shape;
+			IsChanged = true;
+		}
+
+		public SenseViewModel Sense
+		{
+			get { return _sense; }
 		}
 
 		public string StrRep
 		{
 			get { return _word.StrRep; }
+		}
+
+		public bool IsValid
+		{
+			get { return _isValid; }
+			set { Set(() => IsValid, ref _isValid, value); }
 		}
 
 		public ObservableCollection<WordSegmentViewModel> Segments
@@ -64,6 +131,11 @@ namespace SIL.Cog.ViewModels
 		public string Error
 		{
 			get { return null; }
+		}
+
+		public Word ModelWord
+		{
+			get { return _word; }
 		}
 	}
 }

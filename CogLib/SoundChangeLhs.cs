@@ -47,6 +47,9 @@ namespace SIL.Cog
 
 		public bool Equals(SoundChangeLhs other)
 		{
+			if (other == null)
+				return false;
+
 			return _leftEnv == other._leftEnv && _target.Equals(other._target) && _rightEnv == other._rightEnv;
 		}
 

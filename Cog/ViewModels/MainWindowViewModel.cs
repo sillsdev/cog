@@ -2,7 +2,6 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Config;
-using SIL.Cog.Processors;
 using SIL.Cog.Services;
 using SIL.Machine;
 
@@ -17,6 +16,7 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _saveCommand;
 		private readonly ICommand _saveAsCommand;
 		private readonly ICommand _importCommand;
+		private readonly ICommand _exitCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly SpanFactory<ShapeNode> _spanFactory;
@@ -31,33 +31,12 @@ namespace SIL.Cog.ViewModels
 
 			_spanFactory = spanFactory;
 
-			_newCommand = new RelayCommand(NewProject);
-			_openCommand = new RelayCommand(() =>
-				{
-					FileDialogResult result = _dialogService.ShowOpenFileDialog(this, CogProjectFileType);
-					if (result.IsValid)
-						OpenProject(result.FileName);
-				});
-			_saveCommand = new RelayCommand(() =>
-				{
-					if (_projectFilePath == null)
-					{
-						FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
-						if (result.IsValid)
-							SaveProject(result.FileName);
-					}
-					else
-					{
-						SaveProject(_projectFilePath);
-					}
-				});
-			_saveAsCommand = new RelayCommand(() =>
-				{
-					FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
-					if (result.IsValid)
-						SaveProject(result.FileName);
-				});
-			_importCommand = new RelayCommand(() => ViewModelUtilities.ImportWordLists(_dialogService, _project, this));
+			_newCommand = new RelayCommand(New);
+			_openCommand = new RelayCommand(Open);
+			_saveCommand = new RelayCommand(Save, CanSave);
+			_saveAsCommand = new RelayCommand(SaveAs);
+			_importCommand = new RelayCommand(Import);
+			_exitCommand = new RelayCommand(Exit, CanExit);
 
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
@@ -67,6 +46,82 @@ namespace SIL.Cog.ViewModels
 		private void HandleSwitchView(SwitchViewMessage message)
 		{
 			SwitchView(message.ViewModelType, message.Model);
+		}
+
+		private void New()
+		{
+			if (CanCloseProject())
+				NewProject();
+		}
+
+		private void Open()
+		{
+			if (CanCloseProject())
+			{
+				FileDialogResult result = _dialogService.ShowOpenFileDialog(this, CogProjectFileType);
+				if (result.IsValid)
+					OpenProject(result.FileName);
+			}
+		}
+
+		private bool CanSave()
+		{
+			return IsChanged;
+		}
+
+		private void Save()
+		{
+			if (_projectFilePath == null)
+			{
+				FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
+				if (result.IsValid)
+					SaveProject(result.FileName);
+			}
+			else
+			{
+				SaveProject(_projectFilePath);
+			}
+		}
+
+		private void SaveAs()
+		{
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
+			if (result.IsValid)
+				SaveProject(result.FileName);
+		}
+
+		private void Import()
+		{
+			if (ViewModelUtilities.ImportWordLists(_dialogService, _project, this))
+				IsChanged = true;
+		}
+
+		private bool CanExit()
+		{
+			if (CanCloseProject())
+			{
+				if (IsChanged)
+					AcceptChanges();
+				return true;
+			}
+			return false;
+		}
+
+		private bool CanCloseProject()
+		{
+			if (IsChanged)
+			{
+				bool? res = _dialogService.ShowQuestion(this, "Do you want to save the changes to this project?", "Cog");
+				if (res == true)
+					Save();
+				else if (res == null)
+					return false;
+			}
+			return true;
+		}
+
+		private void Exit()
+		{
 		}
 
 		public ICommand NewCommand
@@ -94,28 +149,35 @@ namespace SIL.Cog.ViewModels
 			get { return _importCommand; }
 		}
 
+		public ICommand ExitCommand
+		{
+			get { return _exitCommand; }
+		}
+
 		private void OpenProject(string path)
 		{
+			if (IsChanged)
+				AcceptChanges();
 			_projectFilePath = path;
 
 			CogProject project = ConfigManager.Load(_spanFactory, path);
-			var generator = new VarietyPairGenerator();
-			generator.Process(project);
 			_project = project;
 			Initialize(project);
-			CurrentView = Views[0];
+			SwitchView(typeof(WordListsViewModel), null);
 		}
 
 		private void NewProject()
 		{
 			OpenProject("NewProject.cogx");
 			_projectFilePath = null;
+			SwitchView(typeof(WordListsViewModel), null);
 		}
 
 		private void SaveProject(string path)
 		{
 			ConfigManager.Save(_project, path);
 			_projectFilePath = path;
+			AcceptChanges();
 		}
 	}
 }

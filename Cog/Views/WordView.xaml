@@ -3,21 +3,51 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
-             mc:Ignorable="d" 
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <DataTemplate x:Key="blankTemplate" />
+        <BooleanToVisibilityConverter x:Key="boolConverter" />
+        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="inverseBoolConverter" />
     </UserControl.Resources>
-    <ListBox BorderThickness="0" x:Name="_listBox" Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" Views:ItemsControlDragDrop.DragDropTemplate="{StaticResource blankTemplate}">
-        <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-        </ListBox.ItemsPanel>
-        <ListBox.ItemContainerStyle>
-            <Style TargetType="ListBoxItem">
-                <Setter Property="Padding" Value="3" />
-            </Style>
-        </ListBox.ItemContainerStyle>
-    </ListBox>
+    <Grid>
+        <TextBlock Margin="3,0,0,0"  FontSize="16" Visibility="{Binding IsValid, Converter={StaticResource inverseBoolConverter}}" Text="{Binding StrRep}">
+            <TextBlock.TextDecorations>
+                <TextDecorationCollection>
+                    <TextDecoration Location="Underline" PenOffset="1">
+                        <TextDecoration.Pen>
+                            <Pen Brush="Red" Thickness="2">
+                                <Pen.DashStyle>
+                                    <DashStyle Dashes="2,2" />
+                                </Pen.DashStyle>
+                            </Pen>
+                        </TextDecoration.Pen>
+                    </TextDecoration>
+                </TextDecorationCollection>
+            </TextBlock.TextDecorations>
+        </TextBlock>
+        <ListBox BorderThickness="0" x:Name="_listBox" Visibility="{Binding IsValid, Converter={StaticResource boolConverter}}" SelectionChanged="_listBox_SelectionChanged"
+             Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" Views:ItemsControlDragDrop.DragDropTemplate="{StaticResource blankTemplate}" LostFocus="_listBox_LostFocus">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.Template>
+                <ControlTemplate>
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </ListBox.Template>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="3" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </Grid>
 </UserControl>

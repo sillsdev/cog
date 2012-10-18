@@ -91,9 +91,9 @@ namespace SIL.Cog.Aligners
 			{
 				var target = new NSegment(varietyPair.Variety1.Segments[p]);
 				NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
-					constraint.FeatureStruct.IsUnifiable(p.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+					constraint.FeatureStruct.IsUnifiable(p.GetPrev(AlignerResult.Filter).Annotation.FeatureStruct));
 				NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
-					constraint.FeatureStruct.IsUnifiable(p.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+					constraint.FeatureStruct.IsUnifiable(p.GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
 
 				var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
 				double prob = varietyPair.SoundChanges.DefaultCorrespondenceProbability;
@@ -151,9 +151,9 @@ namespace SIL.Cog.Aligners
 			}
 
 			NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(AlignerResult.Filter).Annotation.FeatureStruct));
 			NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
 
 			var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
 			SoundChange soundChange;

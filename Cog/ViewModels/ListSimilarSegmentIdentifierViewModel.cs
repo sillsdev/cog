@@ -1,0 +1,61 @@
+﻿using System.Collections.Specialized;
+using SIL.Cog.Processors;
+using SIL.Cog.Services;
+
+namespace SIL.Cog.ViewModels
+{
+	public class ListSimilarSegmentIdentifierViewModel : ComponentSettingsViewModelBase
+	{
+		private readonly SimilarSegmentMappingsViewModel _consMappings;
+		private readonly SimilarSegmentMappingsViewModel _vowelMappings;
+		private bool _generateDiphthongs;
+
+		public ListSimilarSegmentIdentifierViewModel(IDialogService dialogService, CogProject project)
+			: base("List", project)
+		{
+			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, project);
+			_consMappings.Mappings.CollectionChanged += MappingsChanged;
+			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, project);
+			_vowelMappings.Mappings.CollectionChanged += MappingsChanged;
+			_generateDiphthongs = true;
+		}
+
+		private void MappingsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			IsChanged = true;
+		}
+		
+		public ListSimilarSegmentIdentifierViewModel(IDialogService dialogService, CogProject project, ListSimilarSegmentIdentifier similarSegmentIdentifier)
+			: base("List", project)
+		{
+			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, project, similarSegmentIdentifier.ConsonantMappings);
+			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, project, similarSegmentIdentifier.VowelMappings);
+			_generateDiphthongs = similarSegmentIdentifier.GenerateDiphthongs;
+		}
+
+		public SimilarSegmentMappingsViewModel ConsonantMappings
+		{
+			get { return _consMappings; }
+		}
+
+		public SimilarSegmentMappingsViewModel VowelMappings
+		{
+			get { return _vowelMappings; }
+		}
+
+		public bool GenerateDiphthongs
+		{
+			get { return _generateDiphthongs; }
+			set
+			{
+				Set(() => GenerateDiphthongs, ref _generateDiphthongs, value);
+				IsChanged = true;
+			}
+		}
+
+		public override void UpdateComponent()
+		{
+			Project.VarietyPairProcessors["similarSegmentIdentifier"] = new ListSimilarSegmentIdentifier(_vowelMappings.Mappings, _consMappings.Mappings, _generateDiphthongs);
+		}
+	}
+}

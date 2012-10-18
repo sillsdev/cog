@@ -16,7 +16,7 @@ namespace SIL.Cog
 			_fs = fs;
 		}
 
-		public string StrRep
+		public string NormalizedStrRep
 		{
 			get { return (string) _fs.GetValue(CogFeatureSystem.StrRep); }
 		}
@@ -53,7 +53,7 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			return StrRep;
+			return NormalizedStrRep;
 		}
 	}
 }

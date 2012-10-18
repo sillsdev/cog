@@ -38,7 +38,7 @@ namespace SIL.Cog.WordListsLoaders
 							{
 								string str = w.Trim();
 								Shape shape;
-								if (!project.Segmenter.ToShape(str, out shape))
+								if (!project.Segmenter.ToShape(null, str, null, out shape))
 									shape = project.Segmenter.EmptyShape;
 								variety.Words.Add(new Word(str, shape, sense));
 							}

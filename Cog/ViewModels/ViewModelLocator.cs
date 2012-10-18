@@ -45,6 +45,7 @@ namespace SIL.Cog.ViewModels
             SimpleIoc.Default.Register<IWindowViewModelMappings, WindowViewModelMappings>();
 	        SimpleIoc.Default.Register<IViewRegistrationService>(() => ViewRegistrationService.Instance);
 			SimpleIoc.Default.Register<IDialogService, DialogService>();
+			SimpleIoc.Default.Register<IProgressService, ProgressService>();
 			SimpleIoc.Default.Register<SpanFactory<ShapeNode>, ShapeSpanFactory>();
 
             SimpleIoc.Default.Register<MainWindowViewModel>();
@@ -57,6 +58,9 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<DataSettingsViewModel>();
 			SimpleIoc.Default.Register<SimilarityMatrixViewModel>();
 			SimpleIoc.Default.Register<VarietyPairsViewModel>();
+			SimpleIoc.Default.Register<ComparisonSettingsViewModel>();
+			SimpleIoc.Default.Register<HierarchicalGraphViewModel>();
+			SimpleIoc.Default.Register<NetworkGraphViewModel>();
         }
 
         public MainWindowViewModel Main

@@ -1,9 +1,12 @@
-﻿using System.Collections.Specialized;
+﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Media;
+using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -20,26 +23,12 @@ namespace SIL.Cog.Views
 
 		private void SimilarityMatrixView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var oldVM = e.OldValue as SimilarityMatrixViewModel;
-			if (oldVM != null)
-			{
-				oldVM.PropertyChanged -= ViewModel_PropertyChanged;
-				oldVM.PropertyChanging -= ViewModel_PropertyChanging;
-				oldVM.Varieties.CollectionChanged -= Varieties_CollectionChanged;
-			}
 			var vm = e.NewValue as SimilarityMatrixViewModel;
 			if (vm != null)
 			{
 				LoadColumns();
 				vm.PropertyChanged += ViewModel_PropertyChanged;
-				vm.PropertyChanging += ViewModel_PropertyChanging;
-				vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			}
-		}
-
-		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			LoadColumns();
 		}
 
 		private void LoadColumns()
@@ -49,6 +38,14 @@ namespace SIL.Cog.Views
 				return;
 
 			_simMatrixGrid.Columns.Clear();
+
+			double width = 0.0;
+			foreach (VarietySimilarityMatrixViewModel variety in vm.Varieties)
+			{
+				var typeface = new Typeface(_simMatrixGrid.FontFamily, _simMatrixGrid.FontStyle, _simMatrixGrid.FontWeight, _simMatrixGrid.FontStretch);
+				var text = new FormattedText(variety.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, _simMatrixGrid.FontSize, _simMatrixGrid.Foreground);
+				width = Math.Max(text.Width, width);
+			}
 
 			for (int i = 0; i < vm.Varieties.Count; i++)
 			{
@@ -61,8 +58,9 @@ namespace SIL.Cog.Views
 				hyperlinkFactory.SetValue(FrameworkContentElement.StyleProperty, Application.Current.Resources["BlackHyperlinkStyle"]);
 				hyperlinkFactory.AppendChild(runFactory);
 				var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
+				textBlockFactory.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
 				textBlockFactory.AppendChild(hyperlinkFactory);
-				var backgroundBinding = new Binding(string.Format("VarietyPairs[{0}].LexicalSimilarityScore", i)) {Converter = new PercentageToColorConverter()};
+				var backgroundBinding = new Binding(string.Format("VarietyPairs[{0}].LexicalSimilarityScore", i)) {Converter = new PercentageToSpectrumColorConverter()};
 				textBlockFactory.SetBinding(TextBlock.BackgroundProperty, backgroundBinding);
 				//var foregroundBinding = new Binding("Background") {RelativeSource = new RelativeSource(RelativeSourceMode.Self), Converter = new BackgroundToForegroundConverter()};
 				//textBlockFactory.SetBinding(TextBlock.ForegroundProperty, foregroundBinding);
@@ -75,31 +73,28 @@ namespace SIL.Cog.Views
 				textBlockFactory.SetValue(ToolTipProperty, tooltipBinding);
 				var cellTemplate = new DataTemplate {VisualTree = textBlockFactory};
 
-				var column = new DataGridTemplateColumn {Header = vm.Varieties[i].Name, CellTemplate = cellTemplate};
+				textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
+				textBlockFactory.SetValue(TextBlock.TextProperty, vm.Varieties[i].Name);
+				textBlockFactory.SetValue(MarginProperty, new Thickness(0, 3, 0, 3));
+				textBlockFactory.SetValue(LayoutTransformProperty, new RotateTransform(270.0));
+				textBlockFactory.SetValue(VerticalAlignmentProperty, VerticalAlignment.Bottom);
+				var gridFactory = new FrameworkElementFactory(typeof(Grid));
+				gridFactory.SetValue(HeightProperty, width + 6.0);
+				gridFactory.AppendChild(textBlockFactory);
+				var headerTemplate = new DataTemplate {VisualTree = gridFactory};
+
+				var column = new DataGridTemplateColumn {HeaderTemplate = headerTemplate, CellTemplate = cellTemplate, Width = new DataGridLength(30)};
 
 				_simMatrixGrid.Columns.Add(column);
 			}
 		}
 
-		private void ViewModel_PropertyChanging(object sender, PropertyChangingEventArgs e)
-		{
-			var vm = (SimilarityMatrixViewModel) sender;
-			switch (e.PropertyName)
-			{
-				case "Varieties":
-					vm.Varieties.CollectionChanged -= Varieties_CollectionChanged;
-					break;
-			}
-		}
-
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var vm = (SimilarityMatrixViewModel) sender;
 			switch (e.PropertyName)
 			{
 				case "Varieties":
 					LoadColumns();
-					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 					break;
 			}
 		}

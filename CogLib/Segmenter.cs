@@ -114,6 +114,59 @@ namespace SIL.Cog
 			get { return _emptyShape; }
 		}
 
+		public bool ToShape(string prefix, string stem, string suffix, out Shape shape)
+		{
+			if (string.IsNullOrEmpty(stem))
+			{
+				shape = _emptyShape;
+				return true;
+			}
+
+			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+
+			ShapeNode start = shape.Begin;
+			if (!string.IsNullOrEmpty(prefix))
+			{
+				if (SegmentString(shape, prefix))
+				{
+					shape.Annotations.Add(start.Next, shape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.PrefixType).Value);
+					start = shape.Last;
+				}
+				else
+				{
+					shape = null;
+					return false;
+				}
+			}
+
+			if (SegmentString(shape, stem))
+			{
+				shape.Annotations.Add(start.Next, shape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
+				start = shape.Last;
+			}
+			else
+			{
+				shape = null;
+				return false;
+			}
+
+			if (!string.IsNullOrEmpty(suffix))
+			{
+				if (SegmentString(shape, suffix))
+				{
+					shape.Annotations.Add(start.Next, shape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SuffixType).Value);
+				}
+				else
+				{
+					shape = null;
+					return false;
+				}
+			}
+
+			shape.Freeze();
+			return true;
+		}
+
 		public bool ToShape(string str, out Shape shape)
 		{
 			if (string.IsNullOrEmpty(str))
@@ -122,10 +175,22 @@ namespace SIL.Cog
 				return true;
 			}
 
+			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+
+			if (SegmentString(shape, str))
+			{
+				shape.Freeze();
+				return true;
+			}
+
+			shape = null;
+			return false;
+		}
+
+		private bool SegmentString(Shape shape, string str)
+		{
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-
-			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 
 			int index = 0;
 			foreach (Match match in _regex.Matches(str.Normalize(NormalizationForm.FormD)))
@@ -162,6 +227,7 @@ namespace SIL.Cog
 					}
 
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
+					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
 					shape.Add(phonemeFS);
 				}
@@ -194,8 +260,23 @@ namespace SIL.Cog
 					}
 
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
+					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
 					shape.Add(phonemeFS);
+				}
+				else if (match.Groups["tone"].Success)
+				{
+					shape.Add(FeatureStruct.New()
+						.Symbol(CogFeatureSystem.ToneLetterType)
+						.Feature(CogFeatureSystem.StrRep).EqualTo(match.Value)
+						.Feature(CogFeatureSystem.OriginalStrRep).EqualTo(match.Value).Value);
+				}
+				else if (match.Groups["bdry"].Success)
+				{
+					shape.Add(FeatureStruct.New()
+						.Symbol(CogFeatureSystem.BoundaryType)
+						.Feature(CogFeatureSystem.StrRep).EqualTo(match.Value)
+						.Feature(CogFeatureSystem.OriginalStrRep).EqualTo(match.Value).Value);
 				}
 
 				index = match.Index + match.Length;
@@ -205,12 +286,10 @@ namespace SIL.Cog
 					if (shape.Count == 0)
 						break;
 
-					shape.Freeze();
 					return true;
 				}
 			}
 
-			shape = null;
 			return false;
 		}
 

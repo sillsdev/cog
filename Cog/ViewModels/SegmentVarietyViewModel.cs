@@ -13,7 +13,7 @@ namespace SIL.Cog.ViewModels
 
 		public string StrRep
 		{
-			get { return _segment.StrRep; }
+			get { return _segment.NormalizedStrRep; }
 		}
 
 		public double Probability

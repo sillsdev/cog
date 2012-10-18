@@ -14,13 +14,13 @@ namespace SIL.Cog
 		private readonly SimpleMonitor _reentrancyMonitor = new SimpleMonitor();
 		private readonly Variety _variety;
 		private readonly Dictionary<Sense, HashSet<Word>> _words;
-		private readonly ReadOnlyCollection<Word> _emptyWords;
+		private readonly SimpleReadOnlyCollection<Word> _emptyWords;
 
 		internal WordCollection(Variety variety)
 		{
 			_variety = variety;
 			_words = new Dictionary<Sense, HashSet<Word>>();
-			_emptyWords = new ReadOnlyCollection<Word>(new Word[0]);
+			_emptyWords = new SimpleReadOnlyCollection<Word>(new Word[0]);
 		}
 
 		IEnumerator<Word> IEnumerable<Word>.GetEnumerator()

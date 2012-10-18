@@ -17,14 +17,23 @@ namespace SIL.Cog.Views
 
 		private void VarietyPairView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var vm = (VarietyPairViewModel) DataContext;
-			var source = new ListCollectionView(vm.Correspondences);
-			source.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
-			_correspondenceDataGrid.ItemsSource = source;
-			source.SortDescriptions.Add(new SortDescription("Lhs", ListSortDirection.Ascending));
-			source.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
-			source.Refresh();
+			var vm = DataContext as VarietyPairViewModel;
+			if (vm == null)
+				return;
+
+			var correspondenceSource = new ListCollectionView(vm.Correspondences);
+			correspondenceSource.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
+			_correspondenceDataGrid.ItemsSource = correspondenceSource;
+			correspondenceSource.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
+			correspondenceSource.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
+			correspondenceSource.Refresh();
 			_correspondenceDataGrid.SelectedIndex = 0;
+
+			var wordPairSource = new ListCollectionView(vm.WordPairs);
+			wordPairSource.GroupDescriptions.Add(new PropertyGroupDescription("AreCognate"));
+			_wordPairsControl.ItemsSource = wordPairSource;
+			wordPairSource.SortDescriptions.Add(new SortDescription("PhoneticSimilarityScore", ListSortDirection.Descending));
+			wordPairSource.Refresh();
 		}
 	}
 }

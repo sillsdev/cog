@@ -6,16 +6,18 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly SoundChange _soundChange;
 		private readonly NSegment _correspondence;
+		private readonly SoundCorrespondenceLhsViewModel _lhs;
 
 		public SoundCorrespondenceViewModel(SoundChange soundChange, NSegment correspondence)
 		{
 			_soundChange = soundChange;
 			_correspondence = correspondence;
+			_lhs = new SoundCorrespondenceLhsViewModel(soundChange.Lhs);
 		}
 
-		public string Lhs
+		public SoundCorrespondenceLhsViewModel Lhs
 		{
-			get { return _soundChange.Lhs.ToString(); }
+			get { return _lhs; }
 		}
 
 		public string Correspondence
@@ -31,6 +33,11 @@ namespace SIL.Cog.ViewModels
 		public SoundChange ModelSoundChange
 		{
 			get { return _soundChange; }
+		}
+
+		public NSegment ModelCorrespondence
+		{
+			get { return _correspondence; }
 		}
 	}
 }

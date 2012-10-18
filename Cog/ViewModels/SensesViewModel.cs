@@ -9,7 +9,7 @@ namespace SIL.Cog.ViewModels
 	public class SensesViewModel : WorkspaceViewModelBase
 	{
 		private readonly IDialogService _dialogService;
-		private ViewModelCollection<SenseViewModel, Sense> _senses;
+		private ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
 		private SenseViewModel _currentSense;
 		private CogProject _project;
 
@@ -33,6 +33,7 @@ namespace SIL.Cog.ViewModels
 				var newSense = new Sense(vm.Gloss, vm.Category);
 				_project.Senses.Add(newSense);
 				CurrentSense = _senses.Single(s => s.ModelSense == newSense);
+				IsChanged = true;
 			}
 		}
 
@@ -46,6 +47,7 @@ namespace SIL.Cog.ViewModels
 			{
 				_currentSense.ModelSense.Gloss = vm.Gloss;
 				_currentSense.ModelSense.Category = vm.Category;
+				IsChanged = true;
 			}
 		}
 
@@ -61,6 +63,7 @@ namespace SIL.Cog.ViewModels
 				if (index == _senses.Count)
 					index--;
 				CurrentSense = _senses.Count > 0 ?  _senses[index] : null;
+				IsChanged = true;
 			}
 		}
 
@@ -69,7 +72,7 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			if (_senses != null)
 				_senses.CollectionChanged -= SensesChanged;
-			Set("Senses", ref _senses, new ViewModelCollection<SenseViewModel, Sense>(_project.Senses, sense => new SenseViewModel(sense)));
+			Set("Senses", ref _senses, new ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(_project.Senses, sense => new SenseViewModel(sense)));
 			_senses.CollectionChanged += SensesChanged;
 			CurrentSense = _senses.Count > 0 ? _senses[0] : null;
 		}

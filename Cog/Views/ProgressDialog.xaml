@@ -1,7 +1,6 @@
 ﻿<Window x:Class="SIL.Cog.Views.ProgressDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding ElementName=_progressBar, Path=Value, StringFormat={}{0}% completed}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="Window_Loaded" SizeToContent="WidthAndHeight">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="{Binding Value, StringFormat={}{0}% completed}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="Window_Loaded" SizeToContent="WidthAndHeight">
     <StackPanel Margin="10" >
         <TextBlock Margin="0,0,0,5" Text="{Binding Text}" />
         <TextBlock Margin="0,0,0,5" Text="{Binding TimeRemaining}" />

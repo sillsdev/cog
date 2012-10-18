@@ -3,13 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
-             xmlns:Services="clr-namespace:SIL.Cog.Services" mc:Ignorable="d" Services:ViewRegistrationService.IsRegisteredView="True"
+             xmlns:Services="clr-namespace:SIL.Cog.Services"
+             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" Services:ViewRegistrationService.IsRegisteredView="True"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="boolConverter" />
+        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="reverseBoolConverter" />
+        <CollectionViewSource x:Key="varietiesSource" Source="{Binding Varieties}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Variety details" />
-            <ComboBox Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding Varieties}" SelectedItem="{Binding CurrentVariety}" DisplayMemberPath="Name" />
+            <ComboBox Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding Source={StaticResource varietiesSource}}" SelectedItem="{Binding CurrentVariety}" DisplayMemberPath="Name" />
         </StackPanel>
-        <Views:VarietyView DataContext="{Binding CurrentVariety}" />
+        <Grid>
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsVarietySelected, Converter={StaticResource reverseBoolConverter}}">No variety selected.</TextBlock>
+            <Border Visibility="{Binding IsVarietySelected, Converter={StaticResource boolConverter}}">
+                <Views:VarietyView DataContext="{Binding CurrentVariety}" />
+            </Border>
+        </Grid>
     </DockPanel>
 </UserControl>

@@ -23,9 +23,13 @@ namespace SIL.Cog.Views
 
 		private void _progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (IsLoaded && _progressBar.Value >= _progressBar.Maximum)
+			if (_progressBar.Value >= _progressBar.Maximum)
 			{
-				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => DialogResult = true));
+				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+					{
+						if (IsLoaded)
+							DialogResult = true;
+					}));
 			}
 		}
 	}

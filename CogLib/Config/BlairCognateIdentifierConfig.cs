@@ -23,7 +23,7 @@ namespace SIL.Cog.Config
 		public void Save(IProcessor<VarietyPair> component, XElement elem)
 		{
 			var blair = (BlairCognateIdentifier) component;
-			elem.Add(new XElement("AlignmentThreshold", blair.Threshold));
+			elem.Add(new XElement("AlignmentThreshold", blair.AlignmentThreshold));
 			elem.Add(new XElement("IgnoreRegularInsertionDeletion", blair.IgnoreRegularInsertionDeletion));
 			elem.Add(new XElement("RegularConsonantsAreEqual", blair.RegularConsonantEqual));
 			elem.Add(new XElement("ApplicableAligner", new XAttribute("ref", blair.AlignerID)));

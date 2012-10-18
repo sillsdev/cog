@@ -3,16 +3,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Services="clr-namespace:SIL.Cog.Services"
         xmlns:Views="clr-namespace:SIL.Cog.Views" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
         Title="{Binding DisplayName}" Height="768" Width="1024" DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Services:ViewRegistrationService.IsRegisteredView="True" Style="{StaticResource MainWindowStyle}">
+        Services:ViewRegistrationService.IsRegisteredView="True" Style="{StaticResource MainWindowStyle}" Closing="Window_Closing">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding NewCommand}" Gesture="CTRL+N" />
+        <KeyBinding Command="{Binding OpenCommand}" Gesture="CTRL+O" />
+        <KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S" />
+    </Window.InputBindings>
     <DockPanel>
         <Menu Height="23" DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" Command="{Binding NewCommand}" />
-                <MenuItem Header="_Open..." Command="{Binding OpenCommand}" />
-                <MenuItem Header="_Save" Command="{Binding SaveCommand}" />
+                <MenuItem Header="_New" Command="{Binding NewCommand}" InputGestureText="Ctrl+N" />
+                <MenuItem Header="_Open..." Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
+                <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
                 <MenuItem Header="_Import..." Command="{Binding ImportCommand}" />
-                <MenuItem Header="E_xit" />
+                <MenuItem Header="E_xit" Click="Exit_Click" InputGestureText="Alt+F4" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Command="Cut" />
+                <MenuItem Command="Copy" />
+                <MenuItem Command="Paste" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="About Cog" Click="AboutBox_Click" />
             </MenuItem>
         </Menu>
         <Views:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True"
@@ -70,6 +83,15 @@
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type ViewModels:VarietyPairsViewModel}">
                                                 <Views:VarietyPairsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ViewModels:ComparisonSettingsViewModel}">
+                                                <Views:ComparisonSettingsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ViewModels:HierarchicalGraphViewModel}">
+                                                <Views:HierarchicalGraphView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ViewModels:NetworkGraphViewModel}">
+                                                <Views:NetworkGraphView />
                                             </DataTemplate>
                                         </ContentPresenter.Resources>
                                     </ContentPresenter>

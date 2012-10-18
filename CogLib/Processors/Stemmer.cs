@@ -9,22 +9,30 @@ using SIL.Machine.Rules;
 
 namespace SIL.Cog.Processors
 {
-	public class Stemmer : IProcessor<Variety>
+	public class Stemmer : ProcessorBase<Variety>
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
+		private readonly SpanFactory<ShapeNode> _spanFactory;
 
-		public Stemmer(SpanFactory<ShapeNode> spanFactory)
+		public Stemmer(SpanFactory<ShapeNode> spanFactory, CogProject project)
+			: base(project)
 		{
 			_spanFactory = spanFactory;
 		}
 
-		public void Process(Variety variety)
+		public override void Process(Variety variety)
 		{
+			foreach (Word word in variety.Words.Where(w => w.Shape.Count > 0 && (w.Prefix != null || w.Suffix != null)))
+			{
+				Shape shape;
+				Project.Segmenter.ToShape(null, word.StrRep, null, out shape);
+				word.Shape = shape;
+			}
+
 			StemWords(Direction.LeftToRight, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Prefix));
 			StemWords(Direction.RightToLeft, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Suffix));
 		}
 
-		private void StemWords(Direction dir, WordCollection words, IEnumerable<Affix> affixes)
+		private void StemWords(Direction dir, IEnumerable<Word> words, IEnumerable<Affix> affixes)
 		{
 			var ruleSpec = new BatchPatternRuleSpec<Word, ShapeNode>();
 			foreach (Affix affix in affixes)
@@ -40,38 +48,21 @@ namespace SIL.Cog.Processors
 				ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
 			}
 
-			var matcherSettings = new MatcherSettings<ShapeNode> {FastCompile = true, Direction = dir};
+			var matcherSettings = new MatcherSettings<ShapeNode> {FastCompile = true, Direction = dir, Filter = ann => ann.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)};
 			var rule = new PatternRule<Word, ShapeNode>(_spanFactory, ruleSpec, matcherSettings);
 
-
-			foreach (Word word in words.ToArray())
-			{
-				words.Remove(word);
-				Word newWord = rule.Apply(word).SingleOrDefault();
-				if (newWord != null)
-				{
-					words.Add(newWord);
-				}
-				else
-				{
-					var newShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
-					newShape.AddRange(word.Shape.Select(n => n.DeepClone()));
-					newShape.Freeze();
-					words.Add(new Word(word.StrRep, newShape, word.Sense));
-				}
-			}
+			foreach (Word word in words.Where(w => w.Shape.Count > 0))
+				rule.Apply(word);
 		}
 
 		private bool CheckStemWholeWord(Match<Word, ShapeNode> match)
 		{
-			Annotation<ShapeNode> stemAnn = match.Input.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
-			Span<ShapeNode> span = stemAnn != null ? stemAnn.Span : _spanFactory.Create(match.Input.Shape.First, match.Input.Shape.Last);
-			return !match.Span.Contains(span);
+			return !match.Span.Contains(match.Input.Stem.Span);
 		}
 
 		private ShapeNode MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match, out Word output)
 		{
-			Annotation<ShapeNode> stemAnn = match.Input.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			Annotation<ShapeNode> stemAnn = match.Input.Stem;
 
 			var newShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 
@@ -86,12 +77,12 @@ namespace SIL.Cog.Processors
 					case Direction.LeftToRight:
 						if (node == match.Span.End.Next)
 							startNode = newNode;
-						if ((stemAnn != null && node == stemAnn.Span.End) || (stemAnn == null && node == match.Input.Shape.Last))
+						if (node == stemAnn.Span.End)
 							endNode = newNode;
 						break;
 
 					case Direction.RightToLeft:
-						if ((stemAnn != null && node == stemAnn.Span.Start) || (stemAnn == null && node == match.Input.Shape.First))
+						if (node == stemAnn.Span.Start)
 							startNode = newNode;
 						if (node == match.Span.Start.Prev)
 							endNode = newNode;
@@ -106,7 +97,8 @@ namespace SIL.Cog.Processors
 			if (endNode != newShape.Last)
 				newShape.Annotations.Add(endNode.Next, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SuffixType).Value);
 			newShape.Freeze();
-			output = new Word(match.Input.StrRep, newShape, match.Input.Sense);
+			output = match.Input;
+			output.Shape = newShape;
 			return null;
 		}
 	}

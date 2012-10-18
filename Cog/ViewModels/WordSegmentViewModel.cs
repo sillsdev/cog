@@ -5,16 +5,25 @@ namespace SIL.Cog.ViewModels
 {
 	public class WordSegmentViewModel : ViewModelBase
 	{
+		private readonly string _originalStrRep;
 		private readonly string _strRep;
+		private bool _isSelected;
 
 		public WordSegmentViewModel(ShapeNode node)
 		{
+			_originalStrRep = node.OriginalStrRep();
 			_strRep = node.StrRep();
 		}
 
-		public WordSegmentViewModel(string strRep)
+		public WordSegmentViewModel()
 		{
-			_strRep = strRep;
+			_originalStrRep = "|";
+			_strRep = "|";
+		}
+
+		public string OriginalStrRep
+		{
+			get { return _originalStrRep; }
 		}
 
 		public string StrRep
@@ -24,12 +33,18 @@ namespace SIL.Cog.ViewModels
 
 		public bool IsBoundary
 		{
-			get { return _strRep == "|"; }
+			get { return _originalStrRep == "|"; }
+		}
+
+		public bool IsSelected
+		{
+			get { return _isSelected; }
+			set { Set("IsSelected", ref _isSelected, value); }
 		}
 
 		public override string ToString()
 		{
-			return _strRep;
+			return _originalStrRep;
 		}
 	}
 }

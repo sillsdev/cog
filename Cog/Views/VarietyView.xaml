@@ -4,20 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
              xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Services="clr-namespace:SIL.Cog.Services"
-             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
-             Services:ViewRegistrationService.IsRegisteredView="True">
+             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:Converters="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
+             Services:ViewRegistrationService.IsRegisteredView="True" DataContextChanged="VarietyView_DataContextChanged">
     <UserControl.Resources>
-        <Views:ProbabilityToWidthConverter x:Key="probConverter" />
-        <CollectionViewSource x:Key="sensesSource" Source="{Binding Senses}">
-            <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="Gloss" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-        <CollectionViewSource x:Key="segmentsSource" Source="{Binding Segments}">
-            <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="Probability" Direction="Descending" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
+        <Converters:ProbabilityToWidthConverter x:Key="probConverter" />
     </UserControl.Resources>
     <DockPanel>
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
@@ -55,60 +46,68 @@
                 <ColumnDefinition Width="0.3*" />
             </Grid.ColumnDefinitions>
             <HeaderedContentControl Grid.Column="0" Margin="0,10,10,0" Header="Words">
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding Source={StaticResource sensesSource}}" AlternationCount="2">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border x:Name="row" Padding="0,5,0,5">
-                                    <StackPanel>
-                                        <TextBlock Foreground="{StaticResource TextBrush}">
-                                            <TextBlock Text="{Binding Gloss}" />
-                                            <TextBlock Text="{Binding Category, StringFormat={}({0})}">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Category}" Value="{x:Null}">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Category}" Value="{x:Static System:String.Empty}">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </TextBlock>
-                                        <ItemsControl ItemsSource="{Binding Words}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Views:WordView />
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </Border>
-                                <DataTemplate.Triggers>
-                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                                        <Setter TargetName="row" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
-                                    </Trigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                <Border BorderThickness="1" BorderBrush="{StaticResource DataGridBorderBrush}">
+                    <ScrollViewer>
+                        <ItemsControl Name="_wordsControl">
+                            <ItemsControl.GroupStyle>
+                                <GroupStyle AlternationCount="2">
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                        <Border x:Name="row" Padding="0,5,0,5">
+                                                            <StackPanel>
+                                                                <TextBlock FontSize="14" Foreground="{StaticResource TextBrush}">
+                                                                    <TextBlock Text="{Binding Name.Gloss}" />
+                                                                    <TextBlock Text="{Binding Name.Category, StringFormat={}({0})}">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding Category}" Value="{x:Null}">
+                                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding Category}" Value="{x:Static System:String.Empty}">
+                                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                </TextBlock>
+                                                                <ItemsPresenter />
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                                                <Setter TargetName="row" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ItemsControl.GroupStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Views:WordView />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
             </HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0"  Grid.Column="1" Header="Segments">
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding Source={StaticResource segmentsSource}}" Grid.IsSharedSizeScope="True">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition SharedSizeGroup="strRep"/>
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Margin="1" Grid.Column="0" FontSize="16" Text="{Binding StrRep}" />
-                                    <StackPanel Margin="1" Orientation="Horizontal" Grid.Column="1">
+                <DataGrid Name="_segmentsDataGrid" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="Column"
+                          SelectionUnit="FullRow" SelectedItem="{Binding CurrentSegment}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="*" Header="Segment" FontSize="16" Binding="{Binding StrRep}" />
+                        <DataGridTemplateColumn Width="*" Header="Probability">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="1" Orientation="Horizontal">
                                         <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
                                             <Rectangle.Width>
                                                 <MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
@@ -119,11 +118,11 @@
                                         </Rectangle>
                                         <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
                                     </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
             </HeaderedContentControl>
         </Grid>
     </DockPanel>

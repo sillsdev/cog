@@ -47,6 +47,11 @@ namespace SIL.Cog.Processors
 			}
 		}
 
+		private static bool Filter(ShapeNode node)
+		{
+			return node.Annotation.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType);
+		}
+
 		private void IdentifyAffixes(Variety variety, AffixType type)
 		{
 			var dir = Direction.LeftToRight;
@@ -76,17 +81,21 @@ namespace SIL.Cog.Processors
 					continue;
 
 				var sb = new StringBuilder();
-				foreach (ShapeNode node in word.Shape.GetNodes(word.Shape.GetFirst(dir), word.Shape.GetLast(dir).GetPrev(dir), dir).Take(_maxAffixLength))
+				foreach (ShapeNode node in word.Shape.GetNodes(word.Shape.GetFirst(dir), word.Shape.GetLast(dir).GetPrev(dir), dir).Where(Filter).Take(_maxAffixLength))
 				{
-					sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
+					sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, node.StrRep());
 					string affixStr = sb.ToString();
 					bool newAffix = !affixes.ContainsKey(affixStr);
 					AffixInfo affixInfo = affixes.GetValue(affixStr, () =>
 																		{
 																			var shape = new Shape(_spanFactory,
 																				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
-																			var span = _spanFactory.Create(word.Shape.GetFirst(dir), node, dir);
-																			word.Shape.CopyTo(span, shape);
+																			foreach (ShapeNode n in word.Shape.GetNodes(word.Shape.GetFirst(dir), node, dir).Where(Filter))
+																			{
+																				ShapeNode newNode = n.DeepClone();
+																				newNode.Annotation.FeatureStruct.RemoveValue(CogFeatureSystem.OriginalStrRep);
+																				shape.Add(newNode);
+																			}
 																			shape.Freeze();
 																			return new AffixInfo(shape);
 																		});
@@ -97,11 +106,11 @@ namespace SIL.Cog.Processors
 						totalAffixes.GetValue(affixInfo.Shape.Count, () => new FrequencyInfo()).Increment(word.Sense.Category);
 				}
 
-				foreach (ShapeNode node1 in word.Shape.GetFirst(dir).GetNext(dir).GetNodes(dir))
+				foreach (ShapeNode node1 in word.Shape.GetFirst(dir).GetNext(dir).GetNodes(dir).Where(Filter))
 				{
 					int count = 0;
 					sb = new StringBuilder();
-					foreach (ShapeNode node2 in node1.GetNodes(dir).Take(_maxAffixLength))
+					foreach (ShapeNode node2 in node1.GetNodes(dir).Where(Filter).Take(_maxAffixLength))
 					{
 						sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, node2.StrRep());
 						count++;
@@ -117,12 +126,15 @@ namespace SIL.Cog.Processors
 
 			foreach (AffixInfo affix in affixes.Values)
 			{
-				string category = affix.Categories.MaxBy(c => affix.GetFrequency(c));
 				int freq = affix.Frequency;
-				if (((double) affix.GetFrequency(category) / affix.Frequency) > 0.75)
+				if (affix.Categories.Count > 0)
 				{
-					affix.MainCategory = category;
-					freq = affix.GetFrequency(category);
+					string category = affix.Categories.MaxBy(c => affix.GetFrequency(c));
+					if (((double) affix.GetFrequency(category) / affix.Frequency) > 0.75)
+					{
+						affix.MainCategory = category;
+						freq = affix.GetFrequency(category);
+					}
 				}
 
 				string affixStr = affix.ToString();
@@ -139,7 +151,7 @@ namespace SIL.Cog.Processors
 				int caffixTotalFreq = 0;
 				foreach (Segment seg in variety.Segments)
 				{
-					string caffixStr = dir == Direction.LeftToRight ? affixStr + seg.StrRep : seg.StrRep + affixStr;
+					string caffixStr = dir == Direction.LeftToRight ? affixStr + seg.NormalizedStrRep : seg.NormalizedStrRep + affixStr;
 					AffixInfo ai;
 					if (affixes.TryGetValue(caffixStr, out ai))
 					{
@@ -214,7 +226,7 @@ namespace SIL.Cog.Processors
 				get { return _frequency; }
 			}
 
-			public IEnumerable<string> Categories
+			public ICollection<string> Categories
 			{
 				get { return _categoryFrequencies.Keys; }
 			}
@@ -222,7 +234,8 @@ namespace SIL.Cog.Processors
 			public void Increment(string category)
 			{
 				_frequency++;
-				_categoryFrequencies.UpdateValue(category, () => 0, freq => freq + 1);
+				if (!string.IsNullOrEmpty(category))
+					_categoryFrequencies.UpdateValue(category, () => 0, freq => freq + 1);
 			}
 
 			public int GetFrequency(string category)
@@ -256,7 +269,7 @@ namespace SIL.Cog.Processors
 
 			public override string ToString()
 			{
-				return string.Concat(_shape.Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
+				return string.Concat(_shape.Select(node => node.StrRep()));
 			}
 		}
 	}

@@ -9,7 +9,7 @@ namespace SIL.Cog
 {
 	public class CogProject : NotifyPropertyChangedBase
 	{
-		private readonly FeatureSystem _featSys;
+		private FeatureSystem _featSys;
 		private readonly Segmenter _segmenter;
 
 		private readonly ObservableCollection<Variety> _varieties;
@@ -24,7 +24,6 @@ namespace SIL.Cog
 
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
-			_featSys = new FeatureSystem();
 			_segmenter = new Segmenter(spanFactory);
 			_senses = new ObservableCollection<Sense>();
 			_senses.CollectionChanged += SensesChanged;
@@ -67,6 +66,11 @@ namespace SIL.Cog
 		public FeatureSystem FeatureSystem
 		{
 			get { return _featSys; }
+			set
+			{
+				_featSys = value;
+				OnPropertyChanged("FeatureSystem");
+			}
 		}
 
 		public Segmenter Segmenter

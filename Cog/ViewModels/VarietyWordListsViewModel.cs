@@ -7,18 +7,29 @@ namespace SIL.Cog.ViewModels
 {
 	public class VarietyWordListsViewModel : VarietyViewModel
 	{
-		private readonly VarietySenseViewModelCollection<VarietySenseWordListsViewModel> _senses;
+		private readonly VarietySenseViewModelCollection _senses;
 		private readonly ICommand _switchToVarietyCommand;
  
 		public VarietyWordListsViewModel(CogProject project, Variety variety)
 			: base(variety)
 		{
-			_senses = new VarietySenseViewModelCollection<VarietySenseWordListsViewModel>(project.Senses,
-				ModelVariety.Words, sense => new VarietySenseWordListsViewModel(project, ModelVariety, sense, ModelVariety.Words[sense]));
+			_senses = new VarietySenseViewModelCollection(project.Senses,
+				ModelVariety.Words, sense =>
+					{
+						var vm = new VarietySenseViewModel(project, ModelVariety, sense, ModelVariety.Words[sense]);
+						vm.PropertyChanged += ChildPropertyChanged;
+						return vm;
+					});
 			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), ModelVariety)));
 		}
 
-		public ObservableCollection<VarietySenseWordListsViewModel> Senses
+		public override void AcceptChanges()
+		{
+			base.AcceptChanges();
+			ChildrenAcceptChanges(_senses);
+		}
+
+		public ObservableCollection<VarietySenseViewModel> Senses
 		{
 			get { return _senses; }
 		}

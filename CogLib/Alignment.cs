@@ -36,39 +36,35 @@ namespace SIL.Cog
 			get { return _score; }
 		}
 
-		public IEnumerable<Annotation<ShapeNode>> Prefix1
+		public Annotation<ShapeNode> Prefix1
 		{
 			get
 			{
-				Annotation<ShapeNode> prefixAnn1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
-				return prefixAnn1 != null ? prefixAnn1.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+				return _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
 			}
 		}
 
-		public IEnumerable<Annotation<ShapeNode>> Prefix2
+		public Annotation<ShapeNode> Prefix2
 		{
 			get
 			{
-				Annotation<ShapeNode> prefixAnn2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
-				return prefixAnn2 != null ? prefixAnn2.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+				return _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
 			}
 		}
 
-		public IEnumerable<Annotation<ShapeNode>> Suffix1
+		public Annotation<ShapeNode> Suffix1
 		{
 			get
 			{
-				Annotation<ShapeNode> suffixAnn1 = _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
-				return suffixAnn1 != null ? suffixAnn1.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+				return _shape1.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
 			}
 		}
 
-		public IEnumerable<Annotation<ShapeNode>> Suffix2
+		public Annotation<ShapeNode> Suffix2
 		{
 			get
 			{
-				Annotation<ShapeNode> suffixAnn2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
-				return suffixAnn2 != null ? suffixAnn2.Children : Enumerable.Empty<Annotation<ShapeNode>>();
+				return _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
 			}
 		}
 
@@ -80,7 +76,6 @@ namespace SIL.Cog
 				Annotation<ShapeNode> ann2 = _shape2.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 				if (ann1 != null && ann2 != null)
 					return ann1.Children.Zip(ann2.Children);
-
 				return Enumerable.Empty<Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>>>();
 			}
 		}
@@ -194,9 +189,11 @@ namespace SIL.Cog
 			return string.Concat(startNode.GetNodes(endNode).Select(node => (string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
 		}
 
-		private static string GetString(IEnumerable<Annotation<ShapeNode>> anns)
+		private static string GetString(Annotation<ShapeNode> ann)
 		{
-			return string.Concat(anns.Select(ann => (string) ann.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
+			if (ann == null)
+				return "";
+			return ann.StrRep();
 		}
 
 		private static string PadString(string str, params string[] strs)

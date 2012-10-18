@@ -19,7 +19,7 @@ namespace SIL.Cog.Config
 		public void Save(IProcessor<VarietyPair> component, XElement elem)
 		{
 			var inducer = (EMSoundChangeInducer) component;
-			elem.Add(new XElement("AlignmentThreshold", inducer.Threshold));
+			elem.Add(new XElement("AlignmentThreshold", inducer.AlignmentThreshold));
 			elem.Add(new XElement("ApplicableAligner", new XAttribute("ref", inducer.AlignerID)));
 		}
 	}

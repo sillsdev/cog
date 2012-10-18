@@ -24,7 +24,7 @@
             </Style>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -32,12 +32,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_thresholdSlider}">Affix Threshold:</Label>
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_thresholdSlider}">Affix threshold:</Label>
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
             <Slider Name="_thresholdSlider" HorizontalAlignment="Left" Minimum="0" Maximum="1" Grid.Column="1" Grid.Row="0"  Value="{Binding Threshold}" TickFrequency="0.01" IsSnapToTickEnabled="True" />
             <TextBlock Text="{Binding ElementName=_thresholdSlider, Path=Value, StringFormat={}{0:0.##}}" />
         </StackPanel>
-        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_maxLengthComboBox}">Maximum Affix Length:</Label>
+        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_maxLengthComboBox}">Maximum affix length:</Label>
         <ComboBox Name="_maxLengthComboBox" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Text="{Binding MaxAffixLength}">
             <ComboBoxItem>1</ComboBoxItem>
             <ComboBoxItem>2</ComboBoxItem>
@@ -48,7 +48,6 @@
             <ComboBoxItem>7</ComboBoxItem>
             <ComboBoxItem>8</ComboBoxItem>
         </ComboBox>
-        <Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=_categoryRequiredCheckBox}">Category Required:</Label>
-        <CheckBox Name="_categoryRequiredCheckBox" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" IsChecked="{Binding CategoryRequired}" />
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding CategoryRequired}">Category required</CheckBox>
     </Grid>
 </UserControl>

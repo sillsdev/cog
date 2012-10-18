@@ -5,10 +5,10 @@ using SIL.Machine;
 
 namespace SIL.Cog
 {
-	public class Word : IData<ShapeNode>
+	public class Word : NotifyPropertyChangedBase, IData<ShapeNode>
 	{
 		private readonly string _strRep;
-		private readonly Shape _shape;
+		private Shape _shape;
 		private readonly Sense _sense;
 
 		public Word(string strRep, Shape shape, Sense sense)
@@ -26,6 +26,11 @@ namespace SIL.Cog
 		public Shape Shape
 		{
 			get { return _shape; }
+			set
+			{
+				_shape = value;
+				OnPropertyChanged("Shape");
+			}
 		}
 
 		public Sense Sense
@@ -33,60 +38,72 @@ namespace SIL.Cog
 			get { return _sense; }
 		}
 
+		public Annotation<ShapeNode> Prefix
+		{
+			get
+			{
+				return _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
+			}
+		}
+
+		public Annotation<ShapeNode> Stem
+		{
+			get
+			{
+				return _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			}
+		}
+
+		public Annotation<ShapeNode> Suffix
+		{
+			get
+			{
+				return _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
+			}
+		}
+
 		public Span<ShapeNode> Span
 		{
-			get { return Shape.Span; }
+			get { return _shape.Span; }
 		}
 
 		public AnnotationList<ShapeNode> Annotations
 		{
-			get { return Shape.Annotations; }
+			get { return _shape.Annotations; }
 		}
 
 		public override string ToString()
 		{
-			Annotation<ShapeNode> stemAnn = Shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
+			if (_shape.Count == 0)
+				return _strRep;
 
 			var sb = new StringBuilder();
-			if (stemAnn != null)
+
+			Annotation<ShapeNode> prefixAnn = Prefix;
+			if (prefixAnn != null)
 			{
-				string prefix = GetString(Shape.First, stemAnn.Span.Start.Prev);
-				if (prefix.Length > 0)
-				{
-					sb.Append(prefix);
-					sb.Append(" ");
-				}
+				sb.Append(prefixAnn.OriginalStrRep());
+				sb.Append(" ");
 			}
 			sb.Append("|");
 			bool first = true;
-			foreach (ShapeNode node in stemAnn == null ? Shape : Shape.GetNodes(stemAnn.Span))
+			foreach (ShapeNode node in _shape.GetNodes(Stem.Span))
 			{
 				if (!first)
 					sb.Append(" ");
-				sb.Append((string) node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep));
+				sb.Append(node.OriginalStrRep());
 				first = false;
 			}
 			sb.Append("|");
 
-			if (stemAnn != null)
+			Annotation<ShapeNode> suffixAnn = Suffix;
+			if (suffixAnn != null)
 			{
-				string suffix = GetString(stemAnn.Span.End.Next, Shape.Last);
-				if (suffix.Length > 0)
-				{
-					sb.Append(" ");
-					sb.Append(suffix);
-				}
+				sb.Append(" ");
+				sb.Append(suffixAnn.OriginalStrRep());
 			}
 
 			return sb.ToString();
-		}
-
-		private string GetString(ShapeNode startNode, ShapeNode endNode)
-		{
-			if (startNode == null || endNode == null || startNode == Shape.End || endNode == Shape.Begin)
-				return "";
-
-			return string.Concat(startNode.GetNodes(endNode).Select(node => (string)node.Annotation.FeatureStruct.GetValue(CogFeatureSystem.StrRep)));
 		}
 	}
 }

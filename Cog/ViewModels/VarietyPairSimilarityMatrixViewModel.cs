@@ -4,7 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietyPairSimilarityMatrixViewModel : WrapperViewModelBase
+	public class VarietyPairSimilarityMatrixViewModel : WrapperViewModel
 	{
 		private VarietyPair _varietyPair;
 		private readonly Variety _otherVariety;

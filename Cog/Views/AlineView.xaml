@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="SIL.Cog.Views.AlineView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="ComboBox">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+            </Style>
+            <Style TargetType="CheckBox">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Margin" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="ItemsControl">
+                <Setter Property="Height" Value="70" />
+                <Setter Property="ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <CheckBox Margin="3" Content="{Binding DisplayName}" IsChecked="{Binding IsSelected}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_modeComboBox}">Alignment mode:</Label>
+        <ComboBox Grid.Column="1" Grid.Row="0" Name="_modeComboBox" SelectedValuePath="Content" SelectedValue="{Binding Mode}">
+            <ComboBoxItem>Global</ComboBoxItem>
+            <ComboBoxItem>Local</ComboBoxItem>
+            <ComboBoxItem>Semi-global</ComboBoxItem>
+            <ComboBoxItem>Half-local</ComboBoxItem>
+        </ComboBox>
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding DisableExpansionCompression}">Disable expansion/compression</CheckBox>
+        <Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=_relevantVowelFeatControl}">Relevant vowel features:</Label>
+        <Border Grid.Column="1" Grid.Row="2">
+            <ItemsControl Name="_relevantVowelFeatControl" ItemsSource="{Binding RelevantVowelFeatures}" />
+        </Border>
+        <Label Grid.Column="0" Grid.Row="3" Target="{Binding ElementName=_relevantConsFeatControl}">Relevant consonant features:</Label>
+        <Border Grid.Column="1" Grid.Row="3">
+            <ItemsControl Name="_relevantConsFeatControl" ItemsSource="{Binding RelevantConsonantFeatures}" />
+        </Border>
+    </Grid>
+</UserControl>

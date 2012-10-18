@@ -58,7 +58,7 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			return string.Concat(_segments.Select(seg => seg.StrRep));
+			return string.Concat(_segments.Select(seg => seg.NormalizedStrRep));
 		}
 	}
 }

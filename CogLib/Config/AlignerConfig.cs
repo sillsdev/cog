@@ -73,8 +73,11 @@ namespace SIL.Cog.Config
 			}
 			elem.Add(new XElement("Mode", modeStr));
 			elem.Add(new XElement("DisableExpansionCompression", settings.DisableExpansionCompression));
-			elem.Add(new XElement("NaturalClasses", settings.NaturalClasses.Select(naturalClass => new XElement("NaturalClass", new XAttribute("name", naturalClass.Name),
-				new XAttribute("type", naturalClass.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), ConfigManager.CreateFeatureStruct(naturalClass.FeatureStruct)))));
+			if (settings.NaturalClasses != null)
+			{
+				elem.Add(new XElement("NaturalClasses", settings.NaturalClasses.Select(naturalClass => new XElement("NaturalClass", new XAttribute("name", naturalClass.Name),
+					new XAttribute("type", naturalClass.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), ConfigManager.CreateFeatureStruct(naturalClass.FeatureStruct)))));
+			}
 		}
 	}
 }

@@ -47,6 +47,7 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<IDialogService, DialogService>();
 			SimpleIoc.Default.Register<IProgressService, ProgressService>();
 			SimpleIoc.Default.Register<SpanFactory<ShapeNode>, ShapeSpanFactory>();
+			SimpleIoc.Default.Register<IExportGraphService, ExportGraphService>();
 
             SimpleIoc.Default.Register<MainWindowViewModel>();
 			SimpleIoc.Default.Register<DataMasterViewModel>();

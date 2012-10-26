@@ -1,8 +1,8 @@
-﻿using GraphSharp.Algorithms.Highlight;
+using GraphSharp.Algorithms.Highlight;
 using QuickGraph;
 using SIL.Cog.ViewModels;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Controls
 {
 	public class NetworkGraphHighlightAlgorithm : HighlightAlgorithmBase<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>, IHighlightParameters>
 	{

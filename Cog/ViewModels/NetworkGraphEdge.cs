@@ -6,8 +6,8 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly VarietyPair _varietyPair;
 
-		public NetworkGraphEdge(NetworkGraphVertex source, NetworkGraphVertex target, VarietyPair varietyPair)
-			: base(source, target, varietyPair.LexicalSimilarityScore * 100.0)
+		public NetworkGraphEdge(NetworkGraphVertex source, NetworkGraphVertex target, VarietyPair varietyPair, SimilarityMetric similarityMetric)
+			: base(source, target, (similarityMetric == SimilarityMetric.Lexical ? varietyPair.LexicalSimilarityScore : varietyPair.PhoneticSimilarityScore) * 100.0)
 		{
 			_varietyPair = varietyPair;
 		}

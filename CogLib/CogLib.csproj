@@ -43,6 +43,8 @@
     <Compile Include="Affix.cs" />
     <Compile Include="Alignment.cs" />
     <Compile Include="Cluster.cs" />
+    <Compile Include="Clusterers\NeighborJoiningClusterer.cs" />
+    <Compile Include="Clusterers\UpgmaClusterer.cs" />
     <Compile Include="Config\AlineConfig.cs" />
     <Compile Include="Config\BlairCognateIdentifierConfig.cs" />
     <Compile Include="Config\ConfigManager.cs" />

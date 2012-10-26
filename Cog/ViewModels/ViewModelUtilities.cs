@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GraphSharp;
 using SIL.Cog.Services;
 using SIL.Cog.WordListsLoaders;
 

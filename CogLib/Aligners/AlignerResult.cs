@@ -9,43 +9,6 @@ namespace SIL.Cog.Aligners
 {
 	public class AlignerResult : IAlignerResult
 	{
-		public static int Delta(IEnumerable<SymbolicFeature> relevantFeatures, ShapeNode p, ShapeNode q)
-		{
-			return relevantFeatures.Sum(feat => Diff(p, q, feat) * (int) feat.Weight);
-		}
-
-		private static int Diff(ShapeNode p, ShapeNode q, SymbolicFeature feature)
-		{
-			SymbolicFeatureValue pValue;
-			if (!p.Annotation.FeatureStruct.TryGetValue(feature, out pValue))
-				pValue = null;
-			SymbolicFeatureValue qValue;
-			if (!q.Annotation.FeatureStruct.TryGetValue(feature, out qValue))
-				qValue = null;
-
-			if (pValue == null && qValue == null)
-				return 0;
-
-			if (pValue == null)
-				return (int) qValue.Values.MinBy(symbol => symbol.Weight).Weight;
-
-			if (qValue == null)
-				return (int) pValue.Values.MinBy(symbol => symbol.Weight).Weight;
-
-			int min = -1;
-			foreach (FeatureSymbol pSymbol in pValue.Values)
-			{
-				foreach (FeatureSymbol qSymbol in qValue.Values)
-				{
-					int diff = Math.Abs((int)pSymbol.Weight - (int)qSymbol.Weight);
-					if (min == -1 || diff < min)
-						min = diff;
-				}
-			}
-
-			return min;
-		}
-
 		private readonly AlignerBase _aligner;
 		private readonly VarietyPair _varietyPair;
 		private readonly Word _word1;

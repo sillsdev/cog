@@ -46,7 +46,7 @@
                 <ItemsControl Grid.Row="0" ItemsSource="{Binding Components}" >
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <HeaderedContentControl Margin="0,10,0,0" Style="{StaticResource SettingsAreaStyle}" Header="{Binding DisplayName}">
+                            <HeaderedContentControl HorizontalAlignment="Left" Margin="0,10,0,0" Width="600" Style="{StaticResource SettingsAreaStyle}" Header="{Binding DisplayName}">
                                 <ContentPresenter Content="{Binding}" />
                             </HeaderedContentControl>
                         </DataTemplate>

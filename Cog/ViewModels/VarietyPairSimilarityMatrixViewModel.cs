@@ -1,26 +1,28 @@
 ﻿using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietyPairSimilarityMatrixViewModel : WrapperViewModel
+	public class VarietyPairSimilarityMatrixViewModel : ViewModelBase
 	{
-		private VarietyPair _varietyPair;
+		private readonly VarietyPair _varietyPair;
 		private readonly Variety _otherVariety;
 		private readonly ICommand _switchToVarietyPairCommand;
+		private readonly SimilarityMetric _similarityMetric;
 
 		public VarietyPairSimilarityMatrixViewModel(Variety otherVariety)
-			: this(otherVariety, null)
 		{
+			_otherVariety = otherVariety;
 		}
 
-		public VarietyPairSimilarityMatrixViewModel(Variety otherVariety, VarietyPair varietyPair)
-			: base(varietyPair)
+		public VarietyPairSimilarityMatrixViewModel(SimilarityMetric similarityMetric, Variety otherVariety, VarietyPair varietyPair)
 		{
-			ModelVarietyPair = varietyPair;
+			_varietyPair = varietyPair;
 			_otherVariety = otherVariety;
 			_switchToVarietyPairCommand = new RelayCommand(SwitchToVarietyPair);
+			_similarityMetric = similarityMetric;
 		}
 
 		private void SwitchToVarietyPair()
@@ -34,36 +36,27 @@ namespace SIL.Cog.ViewModels
 			get { return _otherVariety.Name; }
 		}
 
-		public double LexicalSimilarityScore
+		public double SimilarityScore
 		{
 			get
 			{
-				if (_varietyPair == null)
-					return -1;
-				return _varietyPair.LexicalSimilarityScore * 100;
-			}
-		}
-
-		public double PhoneticSimilarityScore
-		{
-			get
-			{
-				if (_varietyPair == null)
-					return -1;
-				return _varietyPair.PhoneticSimilarityScore * 100;
+				if (_varietyPair != null)
+				{
+					switch (_similarityMetric)
+					{
+						case SimilarityMetric.Lexical:
+							return _varietyPair.LexicalSimilarityScore * 100;
+						case SimilarityMetric.Phonetic:
+							return _varietyPair.PhoneticSimilarityScore * 100;
+					}
+				}
+				return -1;
 			}
 		}
 
 		public VarietyPair ModelVarietyPair
 		{
 			get { return _varietyPair; }
-			set
-			{
-				_varietyPair = value;
-				WrappedObject = value;
-				RaisePropertyChanged("LexicalSimilarityScore");
-				RaisePropertyChanged("PhoneticSimilarityScore");
-			}
 		}
 
 		public Variety ModelOtherVariety

@@ -50,7 +50,7 @@ namespace SIL.Cog.Views
 			for (int i = 0; i < vm.Varieties.Count; i++)
 			{
 				var runFactory = new FrameworkElementFactory(typeof(Run));
-				var textBinding = new Binding(string.Format("VarietyPairs[{0}].LexicalSimilarityScore", i)) {StringFormat = "{0:#0; ;0}", Mode = BindingMode.OneWay};
+				var textBinding = new Binding(string.Format("VarietyPairs[{0}].SimilarityScore", i)) {StringFormat = "{0:#0; ;0}", Mode = BindingMode.OneWay};
 				runFactory.SetBinding(Run.TextProperty, textBinding);
 				var hyperlinkFactory = new FrameworkElementFactory(typeof(Hyperlink));
 				var commandBinding = new Binding(string.Format("VarietyPairs[{0}].SwitchToVarietyPairCommand", i));
@@ -60,7 +60,7 @@ namespace SIL.Cog.Views
 				var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
 				textBlockFactory.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
 				textBlockFactory.AppendChild(hyperlinkFactory);
-				var backgroundBinding = new Binding(string.Format("VarietyPairs[{0}].LexicalSimilarityScore", i)) {Converter = new PercentageToSpectrumColorConverter()};
+				var backgroundBinding = new Binding(string.Format("VarietyPairs[{0}].SimilarityScore", i)) {Converter = new PercentageToSpectrumColorConverter()};
 				textBlockFactory.SetBinding(TextBlock.BackgroundProperty, backgroundBinding);
 				//var foregroundBinding = new Binding("Background") {RelativeSource = new RelativeSource(RelativeSourceMode.Self), Converter = new BackgroundToForegroundConverter()};
 				//textBlockFactory.SetBinding(TextBlock.ForegroundProperty, foregroundBinding);

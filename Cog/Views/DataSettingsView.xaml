@@ -16,7 +16,7 @@
             <ItemsControl Grid.Row="0" ItemsSource="{Binding Components}" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <HeaderedContentControl Margin="0,10,0,0" Style="{StaticResource SettingsAreaStyle}" Header="{Binding DisplayName}">
+                        <HeaderedContentControl HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource SettingsAreaStyle}" Header="{Binding DisplayName}" Width="600">
                             <ContentPresenter Content="{Binding}">
                                 <ContentPresenter.Resources>
                                     <DataTemplate DataType="{x:Type ViewModels:UnsupervisedAffixIdentifierViewModel}">

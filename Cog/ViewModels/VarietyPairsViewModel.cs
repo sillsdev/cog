@@ -33,10 +33,8 @@ namespace SIL.Cog.ViewModels
 			_progressService = progressService;
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks", new []
-				{
-					new CommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison))
-				}));
+			TaskAreas.Add(new TaskAreaViewModel("Common tasks", 
+				new CommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison))));
 		}
 
 		private void PerformComparison()

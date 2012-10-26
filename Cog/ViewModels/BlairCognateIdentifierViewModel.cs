@@ -64,12 +64,12 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public bool RegularConsonantEqual
+		public bool RegularConsonantsEqual
 		{
 			get { return _regularConsEqual; }
 			set
 			{
-				Set(() => RegularConsonantEqual, ref _regularConsEqual, value);
+				Set(() => RegularConsonantsEqual, ref _regularConsEqual, value);
 				IsChanged = true;
 			}
 		}

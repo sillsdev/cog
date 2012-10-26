@@ -16,31 +16,45 @@ namespace SIL.Cog.Aligners
 		private const int IndelCost = 10 * Precision;
 		private const int VowelCost = 0 * Precision;
 
-		private readonly IDBearerSet<SymbolicFeature> _relevantVowelFeatures;
 		private readonly IDBearerSet<SymbolicFeature> _relevantConsFeatures;
+		private readonly IDBearerSet<SymbolicFeature> _relevantVowelFeatures; 
+		private readonly Dictionary<SymbolicFeature, int> _featureWeights;
+		private readonly Dictionary<FeatureSymbol, int> _valueMetrics; 
 
-		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures,
-			IEnumerable<SymbolicFeature> relevantConsFeatures)
-			: this(spanFactory, relevantVowelFeatures, relevantConsFeatures, new AlignerSettings())
+		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
+			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics)
+			: this(spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new AlignerSettings())
 		{
 		}
 
-		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures,
-			IEnumerable<SymbolicFeature> relevantConsFeatures, AlignerSettings settings)
+		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
+			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, AlignerSettings settings)
 			: base(spanFactory, settings)
 		{
 			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures);
 			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures);
+			_featureWeights = new Dictionary<SymbolicFeature, int>(featureWeights);
+			_valueMetrics = new Dictionary<FeatureSymbol, int>(valueMetrics);
 		}
 
-		public IEnumerable<SymbolicFeature> RelevantVowelFeatures
+		public IReadOnlySet<SymbolicFeature> RelevantVowelFeatures
 		{
-			get { return _relevantVowelFeatures; }
+			get { return _relevantVowelFeatures.AsReadOnlySet(); }
 		}
 
-		public IEnumerable<SymbolicFeature> RelevantConsonantFeatures
+		public IReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
 		{
-			get { return _relevantConsFeatures; }
+			get { return _relevantConsFeatures.AsReadOnlySet(); }
+		} 
+
+		public IReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
+		{
+			get { return _featureWeights.AsReadOnlyDictionary(); }
+		}
+
+		public IReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
+		{
+			get { return _valueMetrics.AsReadOnlyDictionary(); }
 		}
 
 		public override int SigmaInsertion(VarietyPair varietyPair, ShapeNode q)
@@ -81,7 +95,7 @@ namespace SIL.Cog.Aligners
 				&& ((FeatureSymbol) fs2.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
 				? _relevantVowelFeatures : _relevantConsFeatures;
 
-			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * (int) feat.Weight));
+			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * _featureWeights[feat]));
 		}
 
 		public override int GetMaxScore1(VarietyPair varietyPair, ShapeNode p)
@@ -162,7 +176,7 @@ namespace SIL.Cog.Aligners
 			return (int) (MaxSoundChangeScore * prob);
 		}
 
-		private static int Diff(FeatureStruct fs1, FeatureStruct fs2, SymbolicFeature feature)
+		private int Diff(FeatureStruct fs1, FeatureStruct fs2, SymbolicFeature feature)
 		{
 			SymbolicFeatureValue pValue;
 			if (!fs1.TryGetValue(feature, out pValue))
@@ -175,17 +189,17 @@ namespace SIL.Cog.Aligners
 				return 0;
 
 			if (pValue == null)
-				return (int)qValue.Values.MinBy(symbol => symbol.Weight).Weight;
+				return qValue.Values.Min(symbol => _valueMetrics[symbol]);
 
 			if (qValue == null)
-				return (int)pValue.Values.MinBy(symbol => symbol.Weight).Weight;
+				return pValue.Values.Min(symbol => _valueMetrics[symbol]);
 
 			int min = -1;
 			foreach (FeatureSymbol pSymbol in pValue.Values)
 			{
 				foreach (FeatureSymbol qSymbol in qValue.Values)
 				{
-					int diff = Math.Abs((int)pSymbol.Weight - (int)qSymbol.Weight);
+					int diff = Math.Abs(_valueMetrics[pSymbol] - _valueMetrics[qSymbol]);
 					if (min == -1 || diff < min)
 						min = diff;
 				}

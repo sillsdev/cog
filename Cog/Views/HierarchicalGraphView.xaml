@@ -4,25 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
-             xmlns:Views="clr-namespace:SIL.Cog.Views" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
-             mc:Ignorable="d" 
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:Controls="clr-namespace:SIL.Cog.Controls"
+             xmlns:Services="clr-namespace:SIL.Cog.Services" mc:Ignorable="d" Services:ViewRegistrationService.IsRegisteredView="True"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <cnvtrs:EnumMatchToVisibilityConverter x:Key="visConverter" />
+    </UserControl.Resources>
     <zoom:ZoomControl ZoomBoxOpacity="0.5">
-        <Views:HierarchicalGraphLayout Graph="{Binding Graph}" LayoutAlgorithmType="Tree" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple">
-            <Views:HierarchicalGraphLayout.Resources>
-                <DataTemplate DataType="{x:Type ViewModels:HierarchicalGraphVertex}">
-                    <Grid>
-                        <TextBlock Name="nameText" Text="{Binding Name}" />
-                        <Ellipse Name="circle" Width="5" Height="5" Fill="Black" Visibility="Collapsed" />
-                    </Grid>
-                    <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsCluster}" Value="True">
-                            <Setter TargetName="nameText" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="circle" Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </DataTemplate.Triggers>
-                </DataTemplate>
-            </Views:HierarchicalGraphLayout.Resources>
-        </Views:HierarchicalGraphLayout>
+        <Grid>
+            <Controls:DendrogramLayout Visibility="{Binding GraphType, Converter={StaticResource visConverter}, ConverterParameter=Dendrogram}" Graph="{Binding Graph}" Background="White" />
+			<Controls:HierarchicalGraphLayout Visibility="{Binding GraphType, Converter={StaticResource visConverter}, ConverterParameter=Tree}" Background="White"
+                                            Graph="{Binding Graph}" LayoutAlgorithmType="EfficientSugiyama" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple" />
+        </Grid>
     </zoom:ZoomControl>
 </UserControl>

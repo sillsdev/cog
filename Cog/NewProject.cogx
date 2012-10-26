@@ -1,92 +1,92 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CogProject>
 	<FeatureSystem>
-		<Feature id="place" weight="40">
-			<Value id="bilabial" metric="1.0"/>
-			<Value id="labiodental" metric="0.95"/>
-			<Value id="dental" metric="0.9"/>
-			<Value id="alveolar" metric="0.8"/>
-			<Value id="retroflex" metric="0.75"/>
-			<Value id="palato-alveolar" metric="0.7"/>
-			<Value id="alveolo-palatal" metric="0.65"/>
-			<Value id="palatal" metric="0.6"/>
-			<Value id="velar" metric="0.5"/>
-			<Value id="uvular" metric="0.4"/>
-			<Value id="pharyngeal" metric="0.3"/>
-			<Value id="epiglottal" metric="0.2"/>
-			<Value id="glottal" metric="0.1"/>
+		<Feature id="place" name="Place">
+			<Value id="bilabial" name="bilabial" />
+			<Value id="labiodental" name="labiodental" />
+			<Value id="dental" name="dental"/>
+			<Value id="alveolar" name="alveolar"/>
+			<Value id="retroflex" name="retroflex"/>
+			<Value id="palato-alveolar" name="palato-alveolar"/>
+			<Value id="alveolo-palatal" name="alveolo-palatal"/>
+			<Value id="palatal" name="palatal"/>
+			<Value id="velar" name="velar"/>
+			<Value id="uvular" name="uvular"/>
+			<Value id="pharyngeal" name="pharyngeal"/>
+			<Value id="epiglottal" name="epiglottal"/>
+			<Value id="glottal" name="glottal"/>
 		</Feature>
-		<Feature id="manner" weight="50">
-			<Value id="stop" metric="1.0"/>
-			<Value id="affricate" metric="0.95"/>
-			<Value id="fricative" metric="0.9"/>
-			<Value id="approximant" metric="0.8"/>
-			<Value id="trill" metric="0.6"/>
-			<Value id="flap" metric="0.5"/>
-			<Value id="close-vowel" metric="0.3"/>
-			<Value id="mid-vowel" metric="0.15"/>
-			<Value id="open-vowel" metric="0.0"/>
+		<Feature id="manner" name="Manner">
+			<Value id="stop" name="stop"/>
+			<Value id="affricate" name="affricate"/>
+			<Value id="fricative" name="fricative"/>
+			<Value id="approximant" name="approximant"/>
+			<Value id="trill" name="trill"/>
+			<Value id="flap" name="flap"/>
+			<Value id="close-vowel" name="close-vowel"/>
+			<Value id="mid-vowel" name="mid-vowel"/>
+			<Value id="open-vowel" name="open-vowel"/>
 		</Feature>
-		<Feature id="syllabic" weight="5">
-			<Value id="syllabic+" metric="1.0"/>
-			<Value id="syllabic-" metric="0.0"/>
+		<Feature id="syllabic" name="Syllabic">
+			<Value id="syllabic+" name="+"/>
+			<Value id="syllabic-" name="-"/>
 		</Feature>
-		<Feature id="voice" weight="5">
-			<Value id="voice+" metric="1.0"/>
-			<Value id="voice-" metric="0.0"/>
+		<Feature id="voice" name="Voice">
+			<Value id="voice+" name="+"/>
+			<Value id="voice-" name="-"/>
 		</Feature>
-		<Feature id="nasal" weight="5">
-			<Value id="nasal+" metric="1.0"/>
-			<Value id="nasal-" metric="0.0"/>
+		<Feature id="nasal" name="Nasal">
+			<Value id="nasal+" name="+"/>
+			<Value id="nasal-" name="-"/>
 		</Feature>
-		<Feature id="lateral" weight="5">
-			<Value id="lateral+" metric="1.0"/>
-			<Value id="lateral-" metric="0.0"/>
+		<Feature id="lateral" name="Lateral">
+			<Value id="lateral+" name="+"/>
+			<Value id="lateral-" name="-"/>
 		</Feature>
-		<Feature id="aspirated" weight="2">
-			<Value id="aspirated+" metric="1.0"/>
-			<Value id="aspirated-" metric="0.0"/>
+		<Feature id="aspirated" name="Aspirated">
+			<Value id="aspirated+" name="+"/>
+			<Value id="aspirated-" name="-"/>
 		</Feature>
-		<Feature id="palatalized" weight="2">
-			<Value id="palatalized+" metric="1.0"/>
-			<Value id="palatalized-" metric="1.0"/>
+		<Feature id="palatalized" name="Palatalized">
+			<Value id="palatalized+" name="+"/>
+			<Value id="palatalized-" name="-"/>
 		</Feature>
-		<Feature id="labialized" weight="2">
-			<Value id="labialized+" metric="1.0"/>
-			<Value id="labialized-" metric="1.0"/>
+		<Feature id="labialized" name="Labialized">
+			<Value id="labialized+" name="+"/>
+			<Value id="labialized-" name="-"/>
 		</Feature>
-		<Feature id="velarized" weight="2">
-			<Value id="velarized+" metric="1.0"/>
-			<Value id="velarized-" metric="1.0"/>
+		<Feature id="velarized" name="Velarized">
+			<Value id="velarized+" name="+"/>
+			<Value id="velarized-" name="-"/>
 		</Feature>
-		<Feature id="pharyngealized" weight="2">
-			<Value id="pharyngealized+" metric="1.0"/>
-			<Value id="pharyngealized-" metric="1.0"/>
+		<Feature id="pharyngealized" name="Pharyngealized">
+			<Value id="pharyngealized+" name="+"/>
+			<Value id="pharyngealized-" name="-"/>
 		</Feature>
 		
-		<Feature id="height" weight="10">
-			<Value id="close" metric="1.0"/>
-			<Value id="near-close" metric="0.85"/>
-			<Value id="close-mid" metric="0.65"/>
-			<Value id="mid" metric="0.5"/>
-			<Value id="open-mid" metric="0.35"/>
-			<Value id="near-open" metric="0.15"/>
-			<Value id="open" metric="0.0"/>
+		<Feature id="height" name="Height">
+			<Value id="close" name="close"/>
+			<Value id="near-close" name="near-close"/>
+			<Value id="close-mid" name="close-mid"/>
+			<Value id="mid" name="mid"/>
+			<Value id="open-mid" name="open-mid"/>
+			<Value id="near-open" name="near-open"/>
+			<Value id="open" name="open"/>
 		</Feature>
-		<Feature id="backness" weight="10">
-			<Value id="front" metric="1.0"/>
-			<Value id="near-front" metric="0.8"/>
-			<Value id="central" metric="0.5"/>
-			<Value id="near-back" metric="0.2"/>
-			<Value id="back" metric="0.0"/>
+		<Feature id="backness" name="Backness">
+			<Value id="front" name="front"/>
+			<Value id="near-front" name="near-front"/>
+			<Value id="central" name="central"/>
+			<Value id="near-back" name="near-back"/>
+			<Value id="back" name="back"/>
 		</Feature>
-		<Feature id="round" weight="2">
-			<Value id="round+" metric="1.0"/>
-			<Value id="round-" metric="0.0"/>
+		<Feature id="round" name="Round">
+			<Value id="round+" name="+"/>
+			<Value id="round-" name="-"/>
 		</Feature>
-		<Feature id="long" weight="1">
-			<Value id="long+" metric="1.0"/>
-			<Value id="long-" metric="0.0"/>
+		<Feature id="long" name="Long">
+			<Value id="long+" name="+"/>
+			<Value id="long-" name="-"/>
 		</Feature>
 	</FeatureSystem>
 	<Segmentation>
@@ -1156,7 +1156,96 @@
 			<Mode>local</Mode>
 			<DisableExpansionCompression>false</DisableExpansionCompression>
 			<NaturalClasses />
-			<RelevantFeatures vowelFeatures="syllabic nasal height backness round long" consonantFeatures="syllabic manner voice nasal lateral aspirated place palatalized labialized velarized pharyngealized" />
+			<RelevantFeatures>
+				<RelevantFeature ref="height" weight="10" vowel="true">
+					<RelevantValue ref="close" metric="100"/>
+					<RelevantValue ref="near-close" metric="85"/>
+					<RelevantValue ref="close-mid" metric="65"/>
+					<RelevantValue ref="mid" metric="50"/>
+					<RelevantValue ref="open-mid" metric="35"/>
+					<RelevantValue ref="near-open" metric="15"/>
+					<RelevantValue ref="open" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="backness" weight="10" vowel="true">
+					<RelevantValue ref="front" metric="100"/>
+					<RelevantValue ref="near-front" metric="80"/>
+					<RelevantValue ref="central" metric="50"/>
+					<RelevantValue ref="near-back" metric="20"/>
+					<RelevantValue ref="back" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="round" weight="2" vowel="true">
+					<RelevantValue ref="round+" metric="100"/>
+					<RelevantValue ref="round-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="long" weight="1" vowel="true">
+					<RelevantValue ref="long+" metric="100"/>
+					<RelevantValue ref="long-" metric="0"/>
+				</RelevantFeature>
+
+				<RelevantFeature ref="syllabic" weight="5" vowel="true" consonant="true">
+					<RelevantValue ref="syllabic+" metric="100"/>
+					<RelevantValue ref="syllabic-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="nasal" weight="5" vowel="true" consonant="true">
+					<RelevantValue ref="nasal+" metric="100"/>
+					<RelevantValue ref="nasal-" metric="0"/>
+				</RelevantFeature>
+				
+				<RelevantFeature ref="manner" weight="50" consonant="true">
+					<RelevantValue ref="stop" metric="100"/>
+					<RelevantValue ref="affricate" metric="95"/>
+					<RelevantValue ref="fricative" metric="90"/>
+					<RelevantValue ref="approximant" metric="80"/>
+					<RelevantValue ref="trill" metric="60"/>
+					<RelevantValue ref="flap" metric="50"/>
+					<RelevantValue ref="close-vowel" metric="30"/>
+					<RelevantValue ref="mid-vowel" metric="15"/>
+					<RelevantValue ref="open-vowel" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="voice" weight="5" consonant="true">
+					<RelevantValue ref="voice+" metric="100"/>
+					<RelevantValue ref="voice-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="lateral" weight="5" consonant="true">
+					<RelevantValue ref="lateral+" metric="100"/>
+					<RelevantValue ref="lateral-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="aspirated" weight="2" consonant="true">
+					<RelevantValue ref="aspirated+" metric="100"/>
+					<RelevantValue ref="aspirated-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="place" weight="40" consonant="true">
+					<RelevantValue ref="bilabial" metric="100"/>
+					<RelevantValue ref="labiodental" metric="95"/>
+					<RelevantValue ref="dental" metric="90"/>
+					<RelevantValue ref="alveolar" metric="80"/>
+					<RelevantValue ref="retroflex" metric="75"/>
+					<RelevantValue ref="palato-alveolar" metric="70"/>
+					<RelevantValue ref="alveolo-palatal" metric="65"/>
+					<RelevantValue ref="palatal" metric="60"/>
+					<RelevantValue ref="velar" metric="50"/>
+					<RelevantValue ref="uvular" metric="40"/>
+					<RelevantValue ref="pharyngeal" metric="30"/>
+					<RelevantValue ref="epiglottal" metric="20"/>
+					<RelevantValue ref="glottal" metric="10"/>
+				</RelevantFeature>
+				<RelevantFeature ref="palatalized" weight="2" consonant="true">
+					<RelevantValue ref="palatalized+" metric="100"/>
+					<RelevantValue ref="palatalized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="labialized" weight="2" consonant="true">
+					<RelevantValue ref="labialized+" metric="100"/>
+					<RelevantValue ref="labialized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="velarized" weight="2" consonant="true">
+					<RelevantValue ref="velarized+" metric="100"/>
+					<RelevantValue ref="velarized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="pharyngealized" weight="2" consonant="true">
+					<RelevantValue ref="pharyngealized+" metric="100"/>
+					<RelevantValue ref="pharyngealized-" metric="0"/>
+				</RelevantFeature>
+			</RelevantFeatures>
 		</Aligner>
 	</Aligners>
 	<Senses />

@@ -78,7 +78,8 @@ namespace SIL.Cog.Views
 						Header = sense.Item1.Gloss,
 						CellTemplate = cellTemplate,
 						CellEditingTemplate = cellEditTemplate,
-						ClipboardContentBinding = new Binding(string.Format("Senses[{0}].StrRep", sense.Item2))
+						ClipboardContentBinding = new Binding(string.Format("Senses[{0}].StrRep", sense.Item2)),
+						SortMemberPath = string.Format("Senses[{0}].StrRep", sense.Item2)
 					};
 
 				_wordListsGrid.Columns.Add(column);

@@ -22,9 +22,9 @@ namespace SIL.Cog.Config
 			Debug.Assert(featSysElem != null);
 			foreach (XElement featureElem in featSysElem.Elements("Feature"))
 			{
-				var feat = new SymbolicFeature((string) featureElem.Attribute("id")) {Weight = double.Parse((string) featureElem.Attribute("weight"))};
+				var feat = new SymbolicFeature((string) featureElem.Attribute("id")) {Description = (string) featureElem.Attribute("name")};
 				foreach (XElement valueElem in featureElem.Elements("Value"))
-					feat.PossibleSymbols.Add(new FeatureSymbol((string) valueElem.Attribute("id")) {Weight = 100.0 * double.Parse((string) valueElem.Attribute("metric"))});
+					feat.PossibleSymbols.Add(new FeatureSymbol((string) valueElem.Attribute("id")) {Description = (string) valueElem.Attribute("name")});
 				featSys.Add(feat);
 			}
 			featSys.Freeze();
@@ -194,8 +194,8 @@ namespace SIL.Cog.Config
 		public static void Save(CogProject project, string configFilePath)
 		{
 			var root = new XElement("CogProject",
-				new XElement("FeatureSystem", project.FeatureSystem.Cast<SymbolicFeature>().Select(feature => new XElement("Feature", new XAttribute("id", feature.ID), new XAttribute("weight", feature.Weight),
-					feature.PossibleSymbols.Select(symbol => new XElement("Value", new XAttribute("id", symbol.ID), new XAttribute("metric", symbol.Weight / 100.0)))))),
+				new XElement("FeatureSystem", project.FeatureSystem.Cast<SymbolicFeature>().Select(feature => new XElement("Feature", new XAttribute("id", feature.ID), new XAttribute("name", feature.Description),
+					feature.PossibleSymbols.Select(symbol => new XElement("Value", new XAttribute("id", symbol.ID), new XAttribute("name", symbol.Description)))))),
 				new XElement("Segmentation",
 					new XElement("Vowels", new XAttribute("maxLength", project.Segmenter.MaxVowelLength), SaveSymbols(project.Segmenter.Vowels)),
 					new XElement("Consonants", new XAttribute("maxLength", project.Segmenter.MaxConsonantLength), SaveSymbols(project.Segmenter.Consonants)),

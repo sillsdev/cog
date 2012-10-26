@@ -25,16 +25,14 @@ namespace SIL.Cog.ViewModels
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
 			_progressService = progressService;
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks", new []
-				{
+
+			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
- 					new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense))
-				}));
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks", new []
-				{
+ 					new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense))));
+
+			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
 					new CommandViewModel("Import word lists", new RelayCommand(Import)),
-					new CommandViewModel("Run stemmer", new RelayCommand(RunStemmer))
-				}));
+					new CommandViewModel("Run stemmer", new RelayCommand(RunStemmer))));
 			_isEmpty = true;
 		}
 

@@ -1,18 +1,25 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SIL.Cog.ViewModels
 {
 	public class VarietySimilarityMatrixViewModel : VarietyViewModel
 	{
-		private readonly VarietyPairSimilarityMatrixViewModelCollection _varietyPairs; 
+		private readonly ReadOnlyCollection<VarietyPairSimilarityMatrixViewModel> _varietyPairs; 
 
-		public VarietySimilarityMatrixViewModel(ObservableCollection<Variety> varieties, Variety variety)
+		public VarietySimilarityMatrixViewModel(SimilarityMetric similarityMetric, IEnumerable<Variety> varieties, Variety variety)
 			: base(variety)
 		{
-			_varietyPairs = new VarietyPairSimilarityMatrixViewModelCollection(varieties, ModelVariety);
+			var varietyPairs = new List<VarietyPairSimilarityMatrixViewModel>();
+			foreach (Variety v in varieties)
+			{
+				VarietyPair vp;
+				varietyPairs.Add(variety.VarietyPairs.TryGetValue(v, out vp) ? new VarietyPairSimilarityMatrixViewModel(similarityMetric, v, vp) : new VarietyPairSimilarityMatrixViewModel(v));
+			}
+			_varietyPairs = new ReadOnlyCollection<VarietyPairSimilarityMatrixViewModel>(varietyPairs);
 		}
 
-		public ObservableCollection<VarietyPairSimilarityMatrixViewModel> VarietyPairs
+		public ReadOnlyCollection<VarietyPairSimilarityMatrixViewModel> VarietyPairs
 		{
 			get { return _varietyPairs; }
 		}

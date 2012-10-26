@@ -1,27 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using SIL.Cog.Controls;
 
 namespace SIL.Cog.Views
 {
 	/// <summary>
 	/// Interaction logic for AlineView.xaml
 	/// </summary>
-	public partial class AlineView : UserControl
+	public partial class AlineView
 	{
 		public AlineView()
 		{
 			InitializeComponent();
+		}
+
+		private void TreeListView_Loaded(object sender, RoutedEventArgs e)
+		{
+			var treeListView = (TreeListView) sender;
+			double w = treeListView.ActualWidth;
+			var sv = ViewUtilities.FindVisualChild<ScrollViewer>(treeListView);
+			if (sv.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+				w -= SystemParameters.VerticalScrollBarWidth;
+			double total = 0;
+			for (int i = 1; i < treeListView.Columns.Count; i++)
+				total += treeListView.Columns[i].ActualWidth;
+			treeListView.Columns[0].Width = w - total;
 		}
 	}
 }

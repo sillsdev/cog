@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using SIL.Cog.Aligners;
-using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -17,37 +16,40 @@ namespace SIL.Cog.Config
 			AlignerSettings settings = LoadSettings(project.FeatureSystem, elem);
 			XElement relevantFeaturesElem = elem.Element("RelevantFeatures");
 			Debug.Assert(relevantFeaturesElem != null);
-			var relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(GetFeatures(project.FeatureSystem, (string) relevantFeaturesElem.Attribute("vowelFeatures")));
-			var relevantConsFeatures = new IDBearerSet<SymbolicFeature>(GetFeatures(project.FeatureSystem, (string) relevantFeaturesElem.Attribute("consonantFeatures")));
 
-			return new Aline(spanFactory, relevantVowelFeatures, relevantConsFeatures, settings);
-		}
+			var relevantVowelFeatures = new List<SymbolicFeature>();
+			var relevantConsFeatures = new List<SymbolicFeature>();
+			var featureWeights = new Dictionary<SymbolicFeature, int>();
+			var valueMetrics = new Dictionary<FeatureSymbol, int>();
 
-		private IEnumerable<SymbolicFeature> GetFeatures(FeatureSystem featSys, string featuresStr)
-		{
-			return featuresStr.Split(' ').Select(id => (SymbolicFeature) featSys.GetFeature(id));
+			foreach (XElement featureElem in relevantFeaturesElem.Elements("RelevantFeature"))
+			{
+				var feature = project.FeatureSystem.GetFeature<SymbolicFeature>((string) featureElem.Attribute("ref"));
+				if ((string) featureElem.Attribute("vowel") == "true")
+					relevantVowelFeatures.Add(feature);
+				if ((string) featureElem.Attribute("consonant") == "true")
+					relevantConsFeatures.Add(feature);
+				featureWeights[feature] = int.Parse((string) featureElem.Attribute("weight"));
+				foreach (XElement valueElem in featureElem.Elements("RelevantValue"))
+				{
+					FeatureSymbol symbol = feature.PossibleSymbols[(string) valueElem.Attribute("ref")];
+					valueMetrics[symbol] = int.Parse((string) valueElem.Attribute("metric"));
+				}
+			}
+
+			return new Aline(spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
 		}
 
 		public override void Save(IAligner component, XElement elem)
 		{
 			var aline = (Aline) component;
 			SaveSettings(aline.Settings, elem);
-			elem.Add(new XElement("RelevantFeatures", new XAttribute("vowelFeatures", GetFeaturesString(aline.RelevantVowelFeatures)),
-				new XAttribute("consonantFeatures", GetFeaturesString(aline.RelevantConsonantFeatures))));
-		}
-
-		private string GetFeaturesString(IEnumerable<SymbolicFeature> features)
-		{
-			var sb = new StringBuilder();
-			bool first = true;
-			foreach (SymbolicFeature feature in features)
-			{
-				if (!first)
-					sb.Append(' ');
-				sb.Append(feature.ID);
-				first = false;
-			}
-			return sb.ToString();
+			elem.Add(new XElement("RelevantFeatures", aline.FeatureWeights.Select(kvp =>
+				new XElement("RelevantFeature", new XAttribute("ref", kvp.Key.ID), new XAttribute("weight", kvp.Value.ToString(CultureInfo.InvariantCulture)),
+					new XAttribute("vowel", aline.RelevantVowelFeatures.Contains(kvp.Key).ToString()),
+					new XAttribute("consonant", aline.RelevantConsonantFeatures.Contains(kvp.Key).ToString()),
+					kvp.Key.PossibleSymbols.Select(fs =>
+						new XElement("RelevantValue", new XAttribute("ref", fs.ID), new XAttribute("metric", aline.ValueMetrics[fs].ToString(CultureInfo.InvariantCulture))))))));
 		}
 	}
 }

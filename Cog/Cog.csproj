@@ -58,6 +58,9 @@
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -81,6 +84,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\CogGraphLayout.cs" />
+    <Compile Include="Controls\DendrogramLayout.cs" />
+    <Compile Include="Controls\HierarchicalGraphLayout.cs" />
+    <Compile Include="Controls\NetworkGraphHighlightAlgorithm.cs" />
+    <Compile Include="Controls\NetworkGraphHighlightAlgorithmFactory.cs" />
+    <Compile Include="Controls\NetworkGraphLayout.cs" />
+    <Compile Include="Controls\TabControlEx.cs" />
+    <Compile Include="Controls\TreeGridViewRowPresenter.cs" />
+    <Compile Include="Controls\TreeListView.cs" />
+    <Compile Include="Controls\TreeListViewItem.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
     <Compile Include="Converters\BooleanToCognateStringConverter.cs" />
     <Compile Include="Converters\BooleanToBrushConverter.cs" />
@@ -90,7 +103,9 @@
     <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
     <Compile Include="Converters\EnumMatchToBooleanConverter.cs" />
     <Compile Include="Converters\EnumMatchToVisibilityConverter.cs" />
+    <Compile Include="Converters\EqualityConverter.cs" />
     <Compile Include="Converters\HslColor.cs" />
+    <Compile Include="Converters\LevelToIndentConverter.cs" />
     <Compile Include="Converters\NumberLessThanConverter.cs" />
     <Compile Include="Converters\PercentageToGradientColorConverter.cs" />
     <Compile Include="Converters\PercentageToSpectrumColorConverter.cs" />
@@ -99,9 +114,11 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\WordsToInlinesConverter.cs" />
     <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\ExportGraphService.cs" />
     <Compile Include="Services\FileDialogResult.cs" />
     <Compile Include="Services\FileType.cs" />
     <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\IExportGraphService.cs" />
     <Compile Include="Services\IProgressService.cs" />
     <Compile Include="Services\IViewRegistrationService.cs" />
     <Compile Include="Services\IWindowViewModelMappings.cs" />
@@ -136,6 +153,7 @@
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
     <Compile Include="ViewModels\Notifications.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
+    <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
     <Compile Include="ViewModels\SegmentVarietyViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
@@ -144,6 +162,7 @@
     <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\SimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\SoundCorrespondenceLhsViewModel.cs" />
+    <Compile Include="ViewModels\TaskAreaGroupViewModel.cs" />
     <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ThresholdSimilarSegmentIdentifierViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
@@ -151,7 +170,6 @@
     <Compile Include="ViewModels\SoundCorrespondenceViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaViewModel.cs" />
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
-    <Compile Include="ViewModels\VarietyPairSimilarityMatrixViewModelCollection.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModel.cs" />
@@ -180,12 +198,9 @@
     <Compile Include="Views\HierarchicalGraphView.xaml.cs">
       <DependentUpon>HierarchicalGraphView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NetworkGraphHighlightAlgorithmFactory.cs" />
-    <Compile Include="Views\NetworkGraphLayout.cs" />
     <Compile Include="Views\NetworkGraphView.xaml.cs">
       <DependentUpon>NetworkGraphView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NetworkGraphHighlightAlgorithm.cs" />
     <Compile Include="Views\NewSimilarSegmentMappingDialog.xaml.cs">
       <DependentUpon>NewSimilarSegmentMappingDialog.xaml</DependentUpon>
     </Compile>
@@ -229,7 +244,9 @@
     <Compile Include="Views\SimilarSegmentMappingsView.xaml.cs">
       <DependentUpon>SimilarSegmentMappingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TabControlEx.cs" />
+    <Compile Include="Views\TaskAreaGroupView.xaml.cs">
+      <DependentUpon>TaskAreaGroupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TaskAreaView.xaml.cs">
       <DependentUpon>TaskAreaView.xaml</DependentUpon>
     </Compile>
@@ -259,7 +276,6 @@
     <Compile Include="Views\UnsupervisedAffixIdentifierView.xaml.cs">
       <DependentUpon>UnsupervisedAffixIdentifierView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HierarchicalGraphLayout.cs" />
     <Compile Include="Views\VarietyPairsView.xaml.cs">
       <DependentUpon>VarietyPairsView.xaml</DependentUpon>
     </Compile>
@@ -280,7 +296,7 @@
     <Compile Include="Views\WordListsView.xaml.cs">
       <DependentUpon>WordListsView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Theme\MainThemeStyles.xaml">
+    <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -357,6 +373,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SimilarSegmentMappingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TaskAreaGroupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -449,6 +469,7 @@
   <ItemGroup>
     <Resource Include="Cog.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

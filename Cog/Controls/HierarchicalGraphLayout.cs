@@ -1,10 +1,9 @@
-﻿using GraphSharp;
-using GraphSharp.Controls;
+using GraphSharp;
 using SIL.Cog.ViewModels;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Controls
 {
-	public class HierarchicalGraphLayout : GraphLayout<HierarchicalGraphVertex,
+	public class HierarchicalGraphLayout : CogGraphLayout<HierarchicalGraphVertex,
 		TypedEdge<HierarchicalGraphVertex>, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>>> 
 	{
 	}

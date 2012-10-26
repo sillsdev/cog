@@ -280,7 +280,7 @@
                     </DataGrid.GroupStyle>
                     <DataGrid.Columns>
                         <StaticResource ResourceKey="segmentColumn" />
-                        <DataGridTemplateColumn Header="Probability" Width="*">
+                        <DataGridTemplateColumn Header="Probability" Width="*" ClipboardContentBinding="{Binding Probability, StringFormat=p}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 using SIL.Cog.Aligners;
-using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -14,16 +11,20 @@ namespace SIL.Cog.ViewModels
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private string _mode;
 		private bool _disableExpansionCompression;
-		private ReadOnlyCollection<RelevantFeatureViewModel> _relevantConsFeatures;
-		private ReadOnlyCollection<RelevantFeatureViewModel> _relevantVowelFeatures;
+		private readonly ReadOnlyCollection<RelevantFeatureViewModel> _features;
 
 		public AlineViewModel(SpanFactory<ShapeNode> spanFactory, CogProject project, Aline aligner)
 			: base("Alignment", project)
 		{
 			_spanFactory = spanFactory;
-			_relevantConsFeatures = PopulateRelevantFeatures(project.FeatureSystem, aligner.RelevantConsonantFeatures);
-			_relevantVowelFeatures = PopulateRelevantFeatures(project.FeatureSystem, aligner.RelevantVowelFeatures);
-			project.PropertyChanged += ProjectPropertyChanged;
+			var features = new List<RelevantFeatureViewModel>();
+			foreach (KeyValuePair<SymbolicFeature, int> kvp in aligner.FeatureWeights)
+			{
+				var vm = new RelevantFeatureViewModel(kvp.Key, kvp.Value, aligner.RelevantVowelFeatures.Contains(kvp.Key), aligner.RelevantConsonantFeatures.Contains(kvp.Key), aligner.ValueMetrics);
+				vm.PropertyChanged += ChildPropertyChanged;
+				features.Add(vm);
+			}
+			_features = new ReadOnlyCollection<RelevantFeatureViewModel>(features);
 			switch (aligner.Settings.Mode)
 			{
 				case AlignerMode.Local:
@@ -40,37 +41,6 @@ namespace SIL.Cog.ViewModels
 					break;
 			}
 			_disableExpansionCompression = aligner.Settings.DisableExpansionCompression;
-		}
-
-		private ReadOnlyCollection<RelevantFeatureViewModel> PopulateRelevantFeatures(FeatureSystem featSys, IEnumerable<SymbolicFeature> selected)
-		{
-			var relevantFeatures = new List<RelevantFeatureViewModel>();
-			var selectedFeatures = new IDBearerSet<SymbolicFeature>(selected);
-			foreach (SymbolicFeature feature in featSys)
-			{
-				var vm = new RelevantFeatureViewModel(feature, selectedFeatures.Contains(feature));
-				vm.PropertyChanged += RelevantFeatureViewModel_PropertyChanged;
-				relevantFeatures.Add(vm);
-			}
-
-			return new ReadOnlyCollection<RelevantFeatureViewModel>(relevantFeatures);
-		}
-
-		private void RelevantFeatureViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			IsChanged = true;
-		}
-
-		private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			var project = (CogProject) sender;
-			switch (e.PropertyName)
-			{
-				case "FeatureSystem":
-					Set(() => RelevantConsonantFeatures, ref _relevantConsFeatures, PopulateRelevantFeatures(project.FeatureSystem, _relevantConsFeatures.Select(vm => vm.ModelFeature)));
-					Set(() => RelevantVowelFeatures, ref _relevantVowelFeatures, PopulateRelevantFeatures(project.FeatureSystem, _relevantVowelFeatures.Select(vm => vm.ModelFeature)));
-					break;
-			}
 		}
 
 		public string Mode
@@ -93,14 +63,9 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ReadOnlyCollection<RelevantFeatureViewModel> RelevantConsonantFeatures
+		public ReadOnlyCollection<RelevantFeatureViewModel> Features
 		{
-			get { return _relevantConsFeatures; }
-		}
-
-		public ReadOnlyCollection<RelevantFeatureViewModel> RelevantVowelFeatures
-		{
-			get { return _relevantVowelFeatures; }
+			get { return _features; }
 		}
 
 		public override void UpdateComponent()
@@ -122,7 +87,22 @@ namespace SIL.Cog.ViewModels
 					break;
 			}
 
-			Project.Aligners["primary"] = new Aline(_spanFactory, _relevantVowelFeatures.Select(f => f.ModelFeature), _relevantConsFeatures.Select(f => f.ModelFeature),
+			var relevantVowelFeatures = new List<SymbolicFeature>();
+			var relevantConsFeatures = new List<SymbolicFeature>();
+			var featureWeights = new Dictionary<SymbolicFeature, int>();
+			var valueMetrics = new Dictionary<FeatureSymbol, int>();
+			foreach (RelevantFeatureViewModel feature in _features)
+			{
+				if (feature.Vowel)
+					relevantVowelFeatures.Add(feature.ModelFeature);
+				if (feature.Consonant)
+					relevantConsFeatures.Add(feature.ModelFeature);
+				featureWeights[feature.ModelFeature] = feature.Weight;
+				foreach (RelevantValueViewModel value in feature.Values)
+					valueMetrics[value.ModelSymbol] = value.Metric;
+			}
+
+			Project.Aligners["primary"] = new Aline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new AlignerSettings {DisableExpansionCompression = _disableExpansionCompression, Mode = mode});
 		}
 	}

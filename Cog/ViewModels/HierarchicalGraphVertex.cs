@@ -3,9 +3,11 @@
 	public class HierarchicalGraphVertex : WrapperViewModel
 	{
 		private readonly Variety _variety;
+		private readonly double _similarityScore;
 
-		public HierarchicalGraphVertex()
+		public HierarchicalGraphVertex(double similarityScore)
 		{
+			_similarityScore = similarityScore;
 		}
 
 		public HierarchicalGraphVertex(Variety variety)
@@ -22,6 +24,11 @@
 					return "";
 				return _variety.Name;
 			}
+		}
+
+		public double SimilarityScore
+		{
+			get { return _similarityScore; }
 		}
 
 		public bool IsCluster

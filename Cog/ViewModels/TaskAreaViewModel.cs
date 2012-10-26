@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace SIL.Cog.ViewModels
 {
 	public class TaskAreaViewModel : CogViewModelBase
 	{
-		private readonly ReadOnlyCollection<CommandViewModel> _tasks;
+		private readonly ReadOnlyCollection<CommandViewModel> _commands;
 
-		public TaskAreaViewModel(string displayName, IEnumerable<CommandViewModel> tasks)
+		public TaskAreaViewModel(string displayName, params CommandViewModel[] commands)
 			: base(displayName)
 		{
-			_tasks = new ReadOnlyCollection<CommandViewModel>(tasks.ToArray());
+			_commands = new ReadOnlyCollection<CommandViewModel>(commands);
 		}
 
-		public ReadOnlyCollection<CommandViewModel> Tasks
+		public ReadOnlyCollection<CommandViewModel> Commands
 		{
-			get { return _tasks; }
+			get { return _commands; }
 		}
 	}
 }

@@ -28,16 +28,14 @@ namespace SIL.Cog.ViewModels
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
 			_progressService = progressService;
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks", new []
-				{
+
+			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
 					new CommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
-					new CommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety))
-				}));
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks", new []
-				{
-					new CommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer)) 
-				}));
+					new CommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety))));
+
+			TaskAreas.Add(new TaskAreaViewModel("Other tasks", 
+				new CommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
 		}
 
 		public override void Initialize(CogProject project)

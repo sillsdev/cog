@@ -8,16 +8,17 @@ namespace SIL.Cog
 	{
 		private readonly string _id;
 		private readonly string _desc;
-		private readonly HashSet<T> _dataObjects;
+		private readonly SimpleReadOnlyCollection<T> _dataObjects;
 		private readonly bool _noise;
+		private readonly double _height;
 
 		public Cluster(string id, IEnumerable<T> dataObjects)
-			: this(id, dataObjects, id)
+			: this(id, dataObjects, 0)
 		{
 		}
 
-		public Cluster(string id, IEnumerable<T> dataObjects, string desc)
-			: this(id, dataObjects, false, desc)
+		public Cluster(string id, IEnumerable<T> dataObjects, double height)
+			: this(id, dataObjects, height, false)
 		{
 		}
 
@@ -26,13 +27,34 @@ namespace SIL.Cog
 		{
 		}
 
+		public Cluster(string id, IEnumerable<T> dataObjects, string desc)
+			: this(id, dataObjects, false, desc)
+		{
+		}
+
 		public Cluster(string id, IEnumerable<T> dataObjects, bool noise, string desc)
+			: this(id, dataObjects, 0, noise, desc)
+		{
+		}
+
+		public Cluster(string id, IEnumerable<T> dataObjects, double height, bool noise)
+			: this(id, dataObjects, height, noise, id)
+		{
+		}
+
+		public Cluster(string id, IEnumerable<T> dataObjects, double height, string desc)
+			: this(id, dataObjects, height, false, desc)
+		{
+		}
+
+		public Cluster(string id, IEnumerable<T> dataObjects, double height, bool noise, string desc)
 			: base(begin => new Cluster<T>(null, Enumerable.Empty<T>()))
 		{
 			_id = id;
 			_desc = desc;
-			_dataObjects = new HashSet<T>(dataObjects);
+			_dataObjects = new SimpleReadOnlyCollection<T>(dataObjects.ToArray());
 			_noise = noise;
+			_height = height;
 		}
 
 		public string ID
@@ -45,19 +67,19 @@ namespace SIL.Cog
 			get { return _desc; }
 		}
 
-		public IEnumerable<T> DataObjects
+		public IReadOnlyCollection<T> DataObjects
 		{
 			get { return _dataObjects; }
-		}
-
-		public int DataObjectCount
-		{
-			get { return _dataObjects.Count; }
 		}
 
 		public bool Noise
 		{
 			get { return _noise; }
+		}
+
+		public double Height
+		{
+			get { return _height; }
 		}
 	}
 }

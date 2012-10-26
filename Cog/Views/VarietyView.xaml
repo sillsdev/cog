@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
              xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Services="clr-namespace:SIL.Cog.Services"
-             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:Converters="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
              Services:ViewRegistrationService.IsRegisteredView="True" DataContextChanged="VarietyView_DataContextChanged">
     <UserControl.Resources>
@@ -14,7 +13,7 @@
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
             <StackPanel>
                 <Grid>
-                    <DataGrid ItemsSource="{Binding Affixes}" Views:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentAffix}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
+                    <DataGrid ItemsSource="{Binding Affixes}" Views:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*" />
                             <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*" />
@@ -42,8 +41,8 @@
         </HeaderedContentControl>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.7*" />
-                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <HeaderedContentControl Grid.Column="0" Margin="0,10,10,0" Header="Words">
                 <Border BorderThickness="1" BorderBrush="{StaticResource DataGridBorderBrush}">
@@ -100,29 +99,31 @@
                 </Border>
             </HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0"  Grid.Column="1" Header="Segments">
-                <DataGrid Name="_segmentsDataGrid" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="Column"
-                          SelectionUnit="FullRow" SelectedItem="{Binding CurrentSegment}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Width="*" Header="Segment" FontSize="16" Binding="{Binding StrRep}" />
-                        <DataGridTemplateColumn Width="*" Header="Probability">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="1" Orientation="Horizontal">
-                                        <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
-                                            <Rectangle.Width>
-                                                <MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
-                                                    <Binding Mode="OneWay" Path="Probability" />
-                                                    <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}" Path="DataContext.Segments[0].Probability" />
-                                                </MultiBinding>
-                                            </Rectangle.Width>
-                                        </Rectangle>
-                                        <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+				<DataGrid Name="_segmentsDataGrid" AutoGenerateColumns="False" HeadersVisibility="Column"
+                        SelectionUnit="FullRow" SelectedItem="{Binding CurrentSegment}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Width="Auto" Header="Segment" FontSize="16" Binding="{Binding StrRep}" />
+						<DataGridTemplateColumn Width="Auto" Header="Probability" SortDirection="Descending" SortMemberPath="Probability" ClipboardContentBinding="{Binding Probability, StringFormat=p}">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Margin="1" Orientation="Horizontal">
+										<Rectangle Fill="{StaticResource TextBrush}" Margin="1">
+											<Rectangle.Width>
+												<MultiBinding Converter="{StaticResource probConverter}" ConverterParameter="80">
+													<Binding Mode="OneWay" Path="Probability" />
+													<Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}" Path="DataContext.Segments[0].Probability" />
+												</MultiBinding>
+											</Rectangle.Width>
+										</Rectangle>
+										<TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding Type}" />
+						<DataGridTextColumn Width="Auto" Header="Features" Binding="{Binding FeatureStructure}" />
+					</DataGrid.Columns>
+				</DataGrid>
             </HeaderedContentControl>
         </Grid>
     </DockPanel>

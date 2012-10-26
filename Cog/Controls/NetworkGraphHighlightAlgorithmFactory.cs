@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using GraphSharp.Algorithms.Highlight;
 using QuickGraph;
 using SIL.Cog.ViewModels;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Controls
 {
 	public class NetworkGraphHighlightAlgorithmFactory : IHighlightAlgorithmFactory<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>>
 	{

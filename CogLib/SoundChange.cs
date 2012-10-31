@@ -24,7 +24,7 @@ namespace SIL.Cog
 
 		public IReadOnlyCollection<NSegment> ObservedCorrespondences
 		{
-			get { return _probabilities.Keys.AsReadOnlyCollection(); }
+			get { return _probabilities.Keys.AsSimpleReadOnlyCollection(); }
 		}
 
 		public double this[NSegment correspondence]

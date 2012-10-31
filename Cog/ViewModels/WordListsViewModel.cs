@@ -32,6 +32,7 @@ namespace SIL.Cog.ViewModels
 
 			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
 					new CommandViewModel("Import word lists", new RelayCommand(Import)),
+					new CommandViewModel("Export word lists", new RelayCommand(Export)),
 					new CommandViewModel("Run stemmer", new RelayCommand(RunStemmer))));
 			_isEmpty = true;
 		}
@@ -60,6 +61,11 @@ namespace SIL.Cog.ViewModels
 		{
 			if (ViewModelUtilities.ImportWordLists(_dialogService, _project, this))
 				IsChanged = true;
+		}
+
+		private void Export()
+		{
+			ViewModelUtilities.ExportWordLists(_dialogService, _project, this);
 		}
 
 		private void RunStemmer()

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
@@ -33,7 +32,7 @@ namespace SIL.Cog.ViewModels
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)
-				_exportGraphService.ExportCurrentNetworkGraph(_graph, result.FileName);
+				_exportGraphService.ExportCurrentNetworkGraph(result.FileName);
 		}
 
 		public override void Initialize(CogProject project)
@@ -59,25 +58,9 @@ namespace SIL.Cog.ViewModels
 			switch (msg.Notification)
 			{
 				case Notifications.ComparisonPerformed:
-					GenerateGraph();
+					Graph = ViewModelUtilities.GenerateNetworkGraph(_project, _similarityMetric);
 					break;
 			}
-		}
-
-		private void GenerateGraph()
-		{
-			var graph = new BidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>();
-			var dict = new Dictionary<Variety, NetworkGraphVertex>();
-			foreach (Variety variety in _project.Varieties)
-			{
-				var vertex = new NetworkGraphVertex(variety);
-				graph.AddVertex(vertex);
-				dict[variety] = vertex;
-			}
-			foreach (VarietyPair pair in _project.VarietyPairs)
-				graph.AddEdge(new NetworkGraphEdge(dict[pair.Variety1], dict[pair.Variety2], pair, _similarityMetric));
-
-			Graph = graph;
 		}
 
 		public SimilarityMetric SimilarityMetric
@@ -86,7 +69,7 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
-					GenerateGraph();
+					Graph = ViewModelUtilities.GenerateNetworkGraph(_project, _similarityMetric);
 			}
 		}
 

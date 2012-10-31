@@ -29,11 +29,6 @@ namespace SIL.Cog.Views
 			textBox.SelectAll();
 		}
 
-		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			LoadColumns();
-		}
-
 		private void LoadColumns()
 		{
 			var vm = (WordListsViewModel) DataContext;
@@ -88,31 +83,13 @@ namespace SIL.Cog.Views
 
 		private void WordListsView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var oldVM = e.OldValue as WordListsViewModel;
-			if (oldVM != null)
-			{
-				oldVM.PropertyChanged -= ViewModel_PropertyChanged;
-				oldVM.PropertyChanging -= ViewModel_PropertyChanging;
-				oldVM.Senses.CollectionChanged -= Senses_CollectionChanged;
-			}
 			var vm = e.NewValue as WordListsViewModel;
 			if (vm != null)
 			{
 				LoadColumns();
 				vm.PropertyChanged += ViewModel_PropertyChanged;
-				vm.PropertyChanging += ViewModel_PropertyChanging;
 				vm.Senses.CollectionChanged += Senses_CollectionChanged;
-			}
-		}
-
-		private void ViewModel_PropertyChanging(object sender, PropertyChangingEventArgs e)
-		{
-			var vm = (WordListsViewModel) sender;
-			switch (e.PropertyName)
-			{
-				case "Senses":
-					vm.Senses.CollectionChanged -= Senses_CollectionChanged;
-					break;
+				vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			}
 		}
 
@@ -125,9 +102,22 @@ namespace SIL.Cog.Views
 					LoadColumns();
 					vm.Senses.CollectionChanged += Senses_CollectionChanged;
 					break;
+
+				case "Varieties":
+					_wordListsGrid.Items.Refresh();
+					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+					break;
 			}
 		}
 
+		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			LoadColumns();
+		}
 
+		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			_wordListsGrid.Items.Refresh();
+		}
 	}
 }

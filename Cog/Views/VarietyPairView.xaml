@@ -46,8 +46,8 @@
         </HeaderedContentControl>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.7*" />
-                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <ItemsControl Name="_wordPairsControl" Margin="0,0,10,0" Grid.Column="0" AlternationCount="2">
                 <ItemsControl.GroupStyle>

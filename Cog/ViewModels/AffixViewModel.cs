@@ -1,7 +1,16 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.ComponentModel;
+using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
+	public enum AffixViewModelType
+	{
+		[Description("Prefix")]
+		Prefix,
+		[Description("Suffix")]
+		Suffix
+	}
+
 	public class AffixViewModel : ViewModelBase
 	{
 		private readonly Affix _affix;
@@ -21,9 +30,9 @@ namespace SIL.Cog.ViewModels
 			get { return _affix.Category; }
 		}
 
-		public string Type
+		public AffixViewModelType Type
 		{
-			get { return _affix.Type == AffixType.Prefix ? "Prefix" : "Suffix"; }
+			get { return _affix.Type == AffixType.Prefix ? AffixViewModelType.Prefix : AffixViewModelType.Suffix; }
 		}
 
 		public Affix ModelAffix

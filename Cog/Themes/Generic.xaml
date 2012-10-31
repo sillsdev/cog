@@ -446,6 +446,13 @@
 		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
 	</Style>
 
+	<Style TargetType="ListBoxItem">
+		<Style.Resources>
+			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFFF0C2" />
+			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+		</Style.Resources>
+	</Style>
+
 	<Style TargetType="TextBox">
 		<Setter Property="Validation.ErrorTemplate">
 			<Setter.Value>

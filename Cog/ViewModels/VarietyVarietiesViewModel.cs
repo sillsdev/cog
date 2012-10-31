@@ -49,7 +49,7 @@ namespace SIL.Cog.ViewModels
 				Shape shape;
 				if (!_project.Segmenter.ToShape(vm.StrRep, out shape))
 					shape = _project.Segmenter.EmptyShape;
-				var affix = new Affix(vm.StrRep, vm.Type == "Prefix" ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
+				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
 				ModelVariety.Affixes.Add(affix);
 				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
 				IsChanged = true;

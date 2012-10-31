@@ -6,7 +6,7 @@
              xmlns:Controls="clr-namespace:SIL.Cog.Controls" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:Converters="clr-namespace:SIL.Cog.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="300">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">
@@ -21,29 +21,6 @@
                 <Setter Property="Margin" Value="0,0,0,5" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style TargetType="Border">
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
-                <Setter Property="Background" Value="White" />
-                <Setter Property="Margin" Value="0,0,0,5" />
-            </Style>
-            <Style TargetType="ItemsControl">
-                <Setter Property="Height" Value="70" />
-                <Setter Property="ItemTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <CheckBox Margin="3" Content="{Binding DisplayName}" IsChecked="{Binding IsSelected}" />
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="ItemsPanel">
-                    <Setter.Value>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
@@ -54,6 +31,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_modeComboBox}">Alignment mode:</Label>
         <ComboBox Grid.Column="1" Grid.Row="0" Name="_modeComboBox" SelectedValuePath="Content" SelectedValue="{Binding Mode}">
@@ -63,13 +42,8 @@
             <ComboBoxItem>Half-local</ComboBoxItem>
         </ComboBox>
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding DisableExpansionCompression}">Disable expansion/compression</CheckBox>
-        <Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0">Features:</Label>
-		<Controls:TreeListView Grid.ColumnSpan="2" Grid.Row="3" Height="200" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
-			<Controls:TreeListView.ItemContainerStyle>
-				<Style TargetType="Controls:TreeListViewItem">
-					<Setter Property="IsExpanded" Value="True" />
-				</Style>
-			</Controls:TreeListView.ItemContainerStyle>
+		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=_featuresTreeListView}">Features</Label>
+		<Controls:TreeListView x:Name="_featuresTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
 			<Controls:TreeListView.Columns>
 				<GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}" Width="Auto" />
 				<GridViewColumn Header="Weight" Width="Auto">
@@ -123,5 +97,35 @@
 				<HierarchicalDataTemplate ItemsSource="{Binding Values}" />
 			</Controls:TreeListView.ItemTemplate>
 		</Controls:TreeListView>
+		<Label Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=_naturalClassesDataGrid}">Natural classes</Label>
+		<StackPanel Grid.ColumnSpan="2" Grid.Row="5">
+			<Grid>
+				<DataGrid Name="_naturalClassesDataGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" Height="125"
+						  ItemsSource="{Binding NaturalClasses}" SelectedItem="{Binding CurrentNaturalClass}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" />
+						<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" />
+						<DataGridTextColumn Header="Features" Binding="{Binding FeatureStructure}" Width="Auto" />
+					</DataGrid.Columns>
+				</DataGrid>
+				<TextBlock Margin="3,23,3,0" Text="Click New to add a natural class">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding NaturalClasses.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+				</TextBlock>
+			</Grid>
+			<StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
+				<Button Margin="5,5,0,5" Width="70" Command="{Binding RemoveNaturalClassCommand}">Remove</Button>
+				<Button Margin="5,5,0,5" Width="70" Command="{Binding EditNaturalClassCommand}">Edit</Button>
+				<Button Margin="5,5,0,5" Width="70" Command="{Binding NewNaturalClassCommand}">New</Button>
+			</StackPanel>
+		</StackPanel>
     </Grid>
 </UserControl>

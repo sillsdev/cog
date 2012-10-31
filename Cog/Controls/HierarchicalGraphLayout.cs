@@ -4,7 +4,11 @@ using SIL.Cog.ViewModels;
 namespace SIL.Cog.Controls
 {
 	public class HierarchicalGraphLayout : CogGraphLayout<HierarchicalGraphVertex,
-		TypedEdge<HierarchicalGraphVertex>, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>>> 
+		HierarchicalGraphEdge, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>> 
 	{
+		public HierarchicalGraphLayout()
+		{
+			HighlightAlgorithmFactory = new HierarchicalGraphHighlightAlgorithmFactory();
+		}
 	}
 }

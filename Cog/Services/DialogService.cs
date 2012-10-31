@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Win32;
 
 namespace SIL.Cog.Services
 {
 	public class DialogService : IDialogService
 	{
-		private readonly IViewRegistrationService _viewRegistrationService;
 		private readonly IWindowViewModelMappings _windowViewModelMappings;
 
-		public DialogService(IViewRegistrationService viewRegistrationService, IWindowViewModelMappings windowViewModelMappings)
+		public DialogService(IWindowViewModelMappings windowViewModelMappings)
 		{
-			_viewRegistrationService = viewRegistrationService;
 			_windowViewModelMappings = windowViewModelMappings;
 		}
 
@@ -165,18 +164,34 @@ namespace SIL.Cog.Services
 		/// </summary>
 		private Window FindOwnerWindow(object viewModel)
 		{
-			FrameworkElement view = _viewRegistrationService.Views.SingleOrDefault(v => ReferenceEquals(v.DataContext, viewModel));
-			if (view == null)
-				throw new ArgumentException("viewModel is not referenced by any registered View.", "viewModel");
+			if (Application.Current.Windows.Count == 1)
+				return Application.Current.Windows[0];
 
-			// Get owner window
-			var owner = view as Window ?? Window.GetWindow(view);
+			foreach (Window window in Application.Current.Windows)
+			{
+				if (FindViewModelView(window, viewModel))
+					return window;
+			}
 
-			// Make sure owner window was found
-			if (owner == null)
-				throw new InvalidOperationException("View is not contained within a Window.");
+			return Application.Current.MainWindow;
+		}
 
-			return owner;
+		private bool FindViewModelView(DependencyObject obj, object viewModel)
+		{
+			// Search immediate children first (breadth-first)
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+			{
+				DependencyObject childObj = VisualTreeHelper.GetChild(obj, i);
+
+				var child = childObj as FrameworkElement;
+				if (child != null && child.DataContext == viewModel)
+					return true;
+
+				if (FindViewModelView(childObj, viewModel))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

@@ -25,9 +25,11 @@ namespace SIL.Cog.Config
 			foreach (XElement featureElem in relevantFeaturesElem.Elements("RelevantFeature"))
 			{
 				var feature = project.FeatureSystem.GetFeature<SymbolicFeature>((string) featureElem.Attribute("ref"));
-				if ((string) featureElem.Attribute("vowel") == "true")
+				var vowelStr = (string) featureElem.Attribute("vowel");
+				if (vowelStr != null && bool.Parse(vowelStr))
 					relevantVowelFeatures.Add(feature);
-				if ((string) featureElem.Attribute("consonant") == "true")
+				var consStr = (string) featureElem.Attribute("consonant");
+				if (consStr != null && bool.Parse(consStr))
 					relevantConsFeatures.Add(feature);
 				featureWeights[feature] = int.Parse((string) featureElem.Attribute("weight"));
 				foreach (XElement valueElem in featureElem.Elements("RelevantValue"))
@@ -46,8 +48,8 @@ namespace SIL.Cog.Config
 			SaveSettings(aline.Settings, elem);
 			elem.Add(new XElement("RelevantFeatures", aline.FeatureWeights.Select(kvp =>
 				new XElement("RelevantFeature", new XAttribute("ref", kvp.Key.ID), new XAttribute("weight", kvp.Value.ToString(CultureInfo.InvariantCulture)),
-					new XAttribute("vowel", aline.RelevantVowelFeatures.Contains(kvp.Key).ToString()),
-					new XAttribute("consonant", aline.RelevantConsonantFeatures.Contains(kvp.Key).ToString()),
+					new XAttribute("vowel", aline.RelevantVowelFeatures.Contains(kvp.Key)),
+					new XAttribute("consonant", aline.RelevantConsonantFeatures.Contains(kvp.Key)),
 					kvp.Key.PossibleSymbols.Select(fs =>
 						new XElement("RelevantValue", new XAttribute("ref", fs.ID), new XAttribute("metric", aline.ValueMetrics[fs].ToString(CultureInfo.InvariantCulture))))))));
 		}

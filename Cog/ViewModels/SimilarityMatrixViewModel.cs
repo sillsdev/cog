@@ -12,14 +12,9 @@ using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
-	public enum SimilarityMetric
-	{
-		Lexical,
-		Phonetic
-	}
-
 	public class SimilarityMatrixViewModel : WorkspaceViewModelBase
 	{
+		private readonly IDialogService _dialogService;
 		private readonly IProgressService _progressService; 
 		private CogProject _project;
 		private ReadOnlyCollection<VarietySimilarityMatrixViewModel> _varieties;
@@ -27,9 +22,10 @@ namespace SIL.Cog.ViewModels
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
 
-		public SimilarityMatrixViewModel(IProgressService progressService)
+		public SimilarityMatrixViewModel(IDialogService dialogService, IProgressService progressService)
 			: base("Similarity Matrix")
 		{
+			_dialogService = dialogService;
 			_progressService = progressService;
 			_modelVarieties = new List<Variety>();
 			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
@@ -37,6 +33,8 @@ namespace SIL.Cog.ViewModels
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
 				new CommandViewModel("Perform comparison", new RelayCommand(PerformComparison))));
+			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+				new CommandViewModel("Export this matrix", new RelayCommand(Export))));
 		}
 
 		public override void Initialize(CogProject project)
@@ -50,11 +48,13 @@ namespace SIL.Cog.ViewModels
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			ResetVarieties();
+			_project.VarietyPairs.Clear();
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			ResetVarieties();
+			_project.VarietyPairs.Clear();
 		}
 
 		private void ResetVarieties()
@@ -96,6 +96,12 @@ namespace SIL.Cog.ViewModels
 				pipeline.Cancel();
 				pipeline.WaitForComplete();
 			}
+		}
+
+		private void Export()
+		{
+			if (!_isEmpty)
+				ViewModelUtilities.ExportSimilarityMatrix(_dialogService, _project, this, _similarityMetric);
 		}
 
 		private void CreateSimilarityMatrix()

@@ -21,7 +21,11 @@ namespace SIL.Cog.Services
 				{typeof(EditSenseViewModel), typeof(EditSenseDialog)},
 				{typeof(RunStemmerViewModel), typeof(RunStemmerDialog)},
 				{typeof(ProgressViewModel), typeof(ProgressDialog)},
-				{typeof(NewSimilarSegmentMappingViewModel), typeof(NewSimilarSegmentMappingDialog)}
+				{typeof(NewSimilarSegmentMappingViewModel), typeof(NewSimilarSegmentMappingDialog)},
+				{typeof(ExportSimilarityMatrixViewModel), typeof(ExportSimilarityMatrixDialog)},
+				{typeof(ExportNetworkGraphViewModel), typeof(ExportNetworkGraphDialog)},
+				{typeof(ExportHierarchicalGraphViewModel), typeof(ExportHierarchicalGraphDialog)},
+				{typeof(EditNaturalClassViewModel), typeof(EditNaturalClassDialog)}
 			};
 		}
 

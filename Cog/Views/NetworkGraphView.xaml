@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-             xmlns:Controls="clr-namespace:SIL.Cog.Controls" xmlns:Services="clr-namespace:SIL.Cog.Services"
-             mc:Ignorable="d" Services:ViewRegistrationService.IsRegisteredView="True"
+             xmlns:Controls="clr-namespace:SIL.Cog.Controls" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
 

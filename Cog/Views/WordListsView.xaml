@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
-             xmlns:Services="clr-namespace:SIL.Cog.Services" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Style="{StaticResource ViewStyle}" Services:ViewRegistrationService.IsRegisteredView="True"
+             d:DesignHeight="300" d:DesignWidth="300" Style="{StaticResource ViewStyle}"
              DataContextChanged="WordListsView_DataContextChanged">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="boolConverter" />

@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Text;
-using GalaSoft.MvvmLight;
-using SIL.Machine.FeatureModel;
+﻿using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
@@ -29,48 +26,19 @@ namespace SIL.Cog.ViewModels
 			get { return _segment.Frequency; }
 		}
 
-		public string Type
+		public SoundType Type
 		{
 			get
 			{
 				if (_segment.Type == CogFeatureSystem.ConsonantType)
-					return "Consonant";
-				return "Vowel";
+					return SoundType.Consonant;
+				return SoundType.Vowel;
 			}
 		}
 
 		public string FeatureStructure
 		{
-			get
-			{
-				var sb = new StringBuilder();
-				sb.Append("[");
-				bool firstFeature = true;
-				foreach (SymbolicFeature feature in _segment.FeatureStruct.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
-				{
-					if (!firstFeature)
-						sb.Append(",");
-					sb.Append(feature.Description);
-					sb.Append(":");
-					SymbolicFeatureValue fv = _segment.FeatureStruct.GetValue(feature);
-					FeatureSymbol[] symbols = fv.Values.ToArray();
-					if (symbols.Length > 1)
-						sb.Append("{");
-					bool firstSymbol = true;
-					foreach (FeatureSymbol symbol in symbols)
-					{
-						if (!firstSymbol)
-							sb.Append(",");
-						sb.Append(symbol.Description);
-						firstSymbol = false;
-					}
-					if (symbols.Length > 1)
-						sb.Append("}");
-					firstFeature = false;
-				}
-				sb.Append("]");
-				return sb.ToString();
-			}
+			get { return ViewModelUtilities.GetFeatureStructureString(_segment.FeatureStruct); }
 		}
 
 		public Segment ModelSegment

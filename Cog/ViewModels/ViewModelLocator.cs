@@ -43,7 +43,6 @@ namespace SIL.Cog.ViewModels
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
             SimpleIoc.Default.Register<IWindowViewModelMappings, WindowViewModelMappings>();
-	        SimpleIoc.Default.Register<IViewRegistrationService>(() => ViewRegistrationService.Instance);
 			SimpleIoc.Default.Register<IDialogService, DialogService>();
 			SimpleIoc.Default.Register<IProgressService, ProgressService>();
 			SimpleIoc.Default.Register<SpanFactory<ShapeNode>, ShapeSpanFactory>();

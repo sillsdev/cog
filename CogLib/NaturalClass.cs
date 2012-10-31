@@ -6,7 +6,7 @@ namespace SIL.Cog
 	public class NaturalClass : NotifyPropertyChangedBase
 	{
 		private readonly FeatureStruct _fs;
-		private string _name;
+		private readonly string _name;
 
 		public NaturalClass(string name, FeatureStruct fs)
 		{
@@ -17,11 +17,6 @@ namespace SIL.Cog
 		public string Name
 		{
 			get { return _name; }
-			set
-			{
-				_name = value;
-				OnPropertyChanged("Name");
-			}
 		}
 
 		public FeatureSymbol Type

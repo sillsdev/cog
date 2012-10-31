@@ -30,9 +30,9 @@ namespace SIL.Cog.Clusterers
 				}
 			}
 
-			while (clusters.Count > 2)
+			while (true)
 			{
-				Dictionary<Cluster<T>, double> r = clusters.ToDictionary(c => c, c => clusters.Where(oc => oc != c).Sum(oc => distances[c][oc]));
+				Dictionary<Cluster<T>, double> r = clusters.ToDictionary(c => c, c => clusters.Where(oc => oc != c).Sum(oc => distances[c][oc] / (clusters.Count - 2)));
 				int minI = 0, minJ = 0;
 				double minDist = 0, minQ = double.MaxValue;
 				for (int i = 0; i < clusters.Count; i++)
@@ -40,7 +40,7 @@ namespace SIL.Cog.Clusterers
 					for (int j = i + 1; j < clusters.Count; j++)
 					{
 						double dist = distances[clusters[i]][clusters[j]];
-						double q = dist - ((r[clusters[i]] + r[clusters[j]]) / (clusters.Count - 2));
+						double q = dist - r[clusters[i]] - r[clusters[j]];
 						if (q < minQ)
 						{
 							minQ = q;
@@ -51,34 +51,40 @@ namespace SIL.Cog.Clusterers
 					}
 				}
 
-				Cluster<T> cluster1 = clusters[minI];
-				Cluster<T> cluster2 = clusters[minJ];
+				Cluster<T> iCluster = clusters[minI];
+				Cluster<T> jCluster = clusters[minJ];
 
+				var uCluster = new Cluster<T>(id++.ToString(CultureInfo.InvariantCulture), iCluster.DataObjects.Concat(jCluster.DataObjects));
+
+				double length1 = (minDist / 2) + ((r[iCluster] - r[jCluster]) / 2);
+				uCluster.Children.Add(iCluster, Math.Max(length1, 0));
+				uCluster.Children.Add(jCluster, Math.Max(minDist - length1, 0));
+
+				foreach (Cluster<T> kCluster in clusters.Where(c => c != iCluster && c != jCluster))
+				{
+					Dictionary<Cluster<T>, double> kDistances = distances[kCluster];
+					double dist = (kDistances[iCluster] + kDistances[jCluster] - minDist) / 2;
+					distances.GetValue(uCluster, () => new Dictionary<Cluster<T>, double>())[kCluster] = dist;
+					distances.GetValue(kCluster, () => new Dictionary<Cluster<T>, double>())[uCluster] = dist;
+					kDistances.Remove(iCluster);
+					kDistances.Remove(jCluster);
+				}
 				clusters.RemoveAt(minJ);
 				clusters.RemoveAt(minI);
+				clusters.Add(uCluster);
+				distances.Remove(iCluster);
+				distances.Remove(jCluster);
 
-				var newCluster = new Cluster<T>(id++.ToString(CultureInfo.InvariantCulture), cluster1.DataObjects.Concat(cluster2.DataObjects));
-				if (cluster1.DataObjects.Count > 1)
-					newCluster.Children.Add(cluster1);
-				if (cluster2.DataObjects.Count > 1)
-					newCluster.Children.Add(cluster2);
-
-				foreach (Cluster<T> c in clusters)
+				if (clusters.Count <= 2)
 				{
-					Dictionary<Cluster<T>, double> cDistances = distances[c];
-					double dist = (cDistances[cluster1] + cDistances[cluster2] - minDist) / 2;
-					distances.GetValue(newCluster, () => new Dictionary<Cluster<T>, double>())[c] = dist;
-					distances.GetValue(c, () => new Dictionary<Cluster<T>, double>())[newCluster] = dist;
-					cDistances.Remove(cluster1);
-					cDistances.Remove(cluster2);
+					var rootCluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusters.SelectMany(c => c.DataObjects));
+					foreach (Cluster<T> cluster in clusters)
+						rootCluster.Children.Add(cluster, minDist);
+					clusters.Clear();
+					clusters.Add(rootCluster);
+					break;
 				}
-				clusters.Add(newCluster);
-				distances.Remove(cluster1);
-				distances.Remove(cluster2);
 			}
-
-			//var rootCluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusters.SelectMany(c => c.DataObjects));
-			//rootCluster.Children.AddRange(clusters.Where(c => c.DataObjects.Count > 1));
 
 			return clusters;
 		}

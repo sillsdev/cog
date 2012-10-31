@@ -3,17 +3,18 @@
 	public class HierarchicalGraphVertex : WrapperViewModel
 	{
 		private readonly Variety _variety;
-		private readonly double _similarityScore;
+		private readonly double _depth;
 
-		public HierarchicalGraphVertex(double similarityScore)
+		public HierarchicalGraphVertex(double depth)
 		{
-			_similarityScore = similarityScore;
+			_depth = depth;
 		}
 
-		public HierarchicalGraphVertex(Variety variety)
+		public HierarchicalGraphVertex(Variety variety, double depth)
 			: base(variety)
 		{
 			_variety = variety;
+			_depth = depth;
 		}
 
 		public string Name
@@ -26,9 +27,9 @@
 			}
 		}
 
-		public double SimilarityScore
+		public double Depth
 		{
-			get { return _similarityScore; }
+			get { return _depth; }
 		}
 
 		public bool IsCluster

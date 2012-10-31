@@ -17,11 +17,5 @@ namespace SIL.Cog.Views
 			if (ViewUtilities.IsValid(this))
 				DialogResult = true;
 		}
-
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			_glossTextBox.Focus();
-			_glossTextBox.SelectAll();
-		}
 	}
 }

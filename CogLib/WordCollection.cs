@@ -44,7 +44,7 @@ namespace SIL.Cog
 			{
 				HashSet<Word> words;
 				if (_words.TryGetValue(sense, out words))
-					return words.AsReadOnlyCollection();
+					return words.AsSimpleReadOnlyCollection();
 				return _emptyWords;
 			}
 		}

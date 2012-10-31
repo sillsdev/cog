@@ -6,7 +6,7 @@ namespace SIL.Cog.ViewModels
 	public abstract class MasterViewModelBase : InitializableViewModelBase
 	{
 		private InitializableViewModelBase _currentView;
-		private readonly ReadOnlyCollection<InitializableViewModelBase> _views; 
+		private readonly ReadOnlyCollection<InitializableViewModelBase> _views;
 
 		protected MasterViewModelBase(string displayName, params InitializableViewModelBase[] views)
 			: base(displayName)

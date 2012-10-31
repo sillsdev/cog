@@ -47,7 +47,7 @@ namespace SIL.Cog.Controls
 			//semi-highlight the in-edges, and the neighbours on their other side
 			foreach (NetworkGraphEdge edge in Controller.Graph.InEdges(vertex))
 			{
-				if (edge.LexicalSimilarityScore < 0.7)
+				if (edge.SimilarityScore < 0.7)
 					continue;
 
 				Controller.SemiHighlightEdge(edge, null);
@@ -60,7 +60,7 @@ namespace SIL.Cog.Controls
 			//semi-highlight the out-edges
 			foreach (NetworkGraphEdge edge in Controller.Graph.OutEdges(vertex))
 			{
-				if (edge.LexicalSimilarityScore < 0.7)
+				if (edge.SimilarityScore < 0.7)
 					continue;
 
 				Controller.SemiHighlightEdge(edge, null);

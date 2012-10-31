@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
-             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Services="clr-namespace:SIL.Cog.Services"
-             xmlns:Converters="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
-             Services:ViewRegistrationService.IsRegisteredView="True" DataContextChanged="VarietyView_DataContextChanged">
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
+			 mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
+             DataContextChanged="VarietyView_DataContextChanged">
     <UserControl.Resources>
-        <Converters:ProbabilityToWidthConverter x:Key="probConverter" />
+        <cnvtrs:ProbabilityToWidthConverter x:Key="probConverter" />
+		<cnvtrs:EnumToFriendlyNameConverter x:Key="enumConverter" />
     </UserControl.Resources>
     <DockPanel>
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
@@ -16,7 +17,7 @@
                     <DataGrid ItemsSource="{Binding Affixes}" Views:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}" AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*" />
-                            <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*" />
+                            <DataGridTextColumn Header="Type" Binding="{Binding Type, Converter={StaticResource enumConverter}}" Width="*" />
                             <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -63,10 +64,10 @@
                                                                         <TextBlock.Style>
                                                                             <Style TargetType="TextBlock">
                                                                                 <Style.Triggers>
-                                                                                    <DataTrigger Binding="{Binding Category}" Value="{x:Null}">
+                                                                                    <DataTrigger Binding="{Binding Name.Category}" Value="{x:Null}">
                                                                                         <Setter Property="Visibility" Value="Collapsed" />
                                                                                     </DataTrigger>
-                                                                                    <DataTrigger Binding="{Binding Category}" Value="{x:Static System:String.Empty}">
+                                                                                    <DataTrigger Binding="{Binding Name.Category}" Value="{x:Static System:String.Empty}">
                                                                                         <Setter Property="Visibility" Value="Collapsed" />
                                                                                     </DataTrigger>
                                                                                 </Style.Triggers>
@@ -120,7 +121,7 @@
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
-						<DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding Type}" />
+						<DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding Type, Converter={StaticResource enumConverter}}" />
 						<DataGridTextColumn Width="Auto" Header="Features" Binding="{Binding FeatureStructure}" />
 					</DataGrid.Columns>
 				</DataGrid>

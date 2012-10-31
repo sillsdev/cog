@@ -1,6 +1,7 @@
 ﻿<Window x:Class="SIL.Cog.Views.NewAffixDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
+		xmlns:Views="clr-namespace:SIL.Cog.Views"
         Title="{Binding DisplayName}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=_affixTextBox}" SizeToContent="WidthAndHeight">
     <Grid Margin="10">
@@ -36,11 +37,9 @@
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_affixTextBox}">Affix:</Label>
         <TextBox Name="_affixTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding StrRep, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
         <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_typeComboBox}">Type:</Label>
-        <ComboBox Name="_typeComboBox" Grid.Column="1" Grid.Row="1" SelectedValuePath="Content" SelectedValue="{Binding Type}">
-            <ComboBoxItem>Prefix</ComboBoxItem>
-            <ComboBoxItem>Suffix</ComboBoxItem>
-        </ComboBox>
-        <Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=_categoryTextBox}">Category:</Label>
+		<ComboBox Name="_typeComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={Views:Enumeration {x:Type ViewModels:AffixViewModelType}}}"
+				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
+		<Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=_categoryTextBox}">Category:</Label>
         <TextBox Name="_categoryTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Category}" />
         <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Click="okButton_Click" IsDefault="True">OK</Button>

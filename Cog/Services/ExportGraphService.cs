@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Interop;
@@ -6,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using GraphSharp;
+using GraphSharp.Controls;
 using QuickGraph;
 using SIL.Cog.Controls;
 using SIL.Cog.ViewModels;
@@ -15,7 +17,7 @@ namespace SIL.Cog.Services
 {
 	public class ExportGraphService : IExportGraphService
 	{
-		public void ExportCurrentHierarchicalGraph(IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>> graph, HierarchicalGraphType type, string path)
+		public void ExportCurrentHierarchicalGraph(HierarchicalGraphType type, string path)
 		{
 			FrameworkElement graphLayout = null;
 			switch (type)
@@ -32,26 +34,58 @@ namespace SIL.Cog.Services
 				throw new InvalidOperationException();
 
 			SaveElement(graphLayout, path);
-
-			//var graphLayout = new HierarchicalGraphLayout
-			//    {
-			//        IsAnimationEnabled = false,
-			//        CreationTransition = null,
-			//        DestructionTransition = null,
-			//        LayoutAlgorithmType = "EfficientSugiyama",
-			//        OverlapRemovalAlgorithmType = "FSA",
-			//        Graph = graph,
-			//        Background = Brushes.White
-			//    };
-			//SaveElement(graphLayout, path);
 		}
 
-		public void ExportCurrentNetworkGraph(IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, string path)
+		public void ExportHierarchicalGraph(IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphType graphType, string path)
+		{
+			FrameworkElement graphLayout = null;
+			switch (graphType)
+			{
+				case HierarchicalGraphType.Dendrogram:
+					graphLayout = new DendrogramLayout {Graph = graph, Background = Brushes.White};
+					break;
+
+				case HierarchicalGraphType.Tree:
+					graphLayout = new HierarchicalGraphLayout
+						{
+							IsAnimationEnabled = false,
+							CreationTransition = null,
+							DestructionTransition = null,
+							LayoutAlgorithmType = "EfficientSugiyama",
+							OverlapRemovalAlgorithmType = "FSA",
+							Graph = graph,
+							Background = Brushes.White
+						};
+					graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["HierarchicalEdgeControlStyle"];
+					break;
+			}
+			Debug.Assert(graphLayout != null);
+			SaveElement(graphLayout, path);
+		}
+
+		public void ExportCurrentNetworkGraph(string path)
 		{
 			var graphLayout = ViewUtilities.FindVisualChild<NetworkGraphLayout>(Application.Current.MainWindow);
 			if (graphLayout == null)
 				throw new InvalidOperationException();
 
+			SaveElement(graphLayout, path);
+		}
+
+		public void ExportNetworkGraph(IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, string path)
+		{
+			var graphLayout = new NetworkGraphLayout
+				{
+					IsAnimationEnabled = false,
+					CreationTransition = null,
+					DestructionTransition = null,
+					LayoutAlgorithmType = "LinLog",
+					OverlapRemovalAlgorithmType = "FSA",
+					Graph = graph,
+					Background = Brushes.White
+				};
+			graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["NetworkEdgeControlStyle"];
+			graphLayout.Resources[typeof(VertexControl)] = Application.Current.Resources["NetworkVertexControlStyle"];
 			SaveElement(graphLayout, path);
 		}
 

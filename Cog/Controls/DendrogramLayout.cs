@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using GraphSharp;
@@ -15,9 +15,15 @@ namespace SIL.Cog.Controls
 	{
 		private Size _desiredSize;
 		private bool _relayoutOnVisible;
+		private readonly Dictionary<HierarchicalGraphVertex, Border> _varietyVertices;
+		private readonly Dictionary<HierarchicalGraphVertex, Line> _clusterVertices; 
+		private readonly Dictionary<HierarchicalGraphEdge, Line> _edges; 
 
 		public DendrogramLayout()
 		{
+			_varietyVertices = new Dictionary<HierarchicalGraphVertex, Border>();
+			_clusterVertices = new Dictionary<HierarchicalGraphVertex, Line>();
+			_edges = new Dictionary<HierarchicalGraphEdge, Line>();
 			IsVisibleChanged += DendrogramLayout_IsVisibleChanged;
 		}
 
@@ -31,7 +37,7 @@ namespace SIL.Cog.Controls
 		}
 
 		public static readonly DependencyProperty GraphProperty = DependencyProperty.Register("Graph",
-			typeof(IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>>), typeof(DendrogramLayout),
+			typeof(IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>), typeof(DendrogramLayout),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnGraphPropertyChanged));
 
 		private static void OnGraphPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
@@ -40,40 +46,16 @@ namespace SIL.Cog.Controls
 			dc.Relayout();
 		}
 
-		public IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>> Graph
+		public IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> Graph
 		{
-			get { return (IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>>) GetValue(GraphProperty); }
+			get { return (IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>) GetValue(GraphProperty); }
 			set { SetValue(GraphProperty, value); }
-		}
-
-		public static readonly DependencyProperty FixedNodeHeightProperty = DependencyProperty.Register("FixedNodeHeight",
-			typeof(bool), typeof(DendrogramLayout), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender, OnFixedNodeHeightPropertyChanged));
-
-		private static void OnFixedNodeHeightPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
-		{
-			var dc = (DendrogramLayout) depObj;
-			dc.Relayout();
-		}
-
-		public bool FixedNodeHeight
-		{
-			get { return (bool) GetValue(FixedNodeHeightProperty); }
-			set { SetValue(FixedNodeHeightProperty, value); }
-		}
-
-		private int GetDepth(HierarchicalGraphVertex vertex, int curDepth)
-		{
-			int maxDepth = curDepth;
-			foreach (TypedEdge<HierarchicalGraphVertex> edge in Graph.OutEdges(vertex))
-			{
-				int depth = GetDepth(edge.Target, curDepth + 1);
-				maxDepth = Math.Max(depth, maxDepth);
-			}
-			return maxDepth;
 		}
 
 		private void Relayout()
 		{
+			_varietyVertices.Clear();
+			_edges.Clear();
 			Children.Clear();
 			_desiredSize = new Size(0, 0);
 
@@ -86,215 +68,224 @@ namespace SIL.Cog.Controls
 			if (Graph == null || Graph.IsVerticesEmpty)
 				return;
 
-			var varieties = new List<Tuple<List<HierarchicalGraphVertex>, TextBlock>>();
+			var varietyTextBlocks = new List<TextBlock>();
 
 			double varietyNameWidth = 0;
 			double varietyNameHeight = 0;
-			var stack = new Stack<List<HierarchicalGraphVertex>>();
-			var vertexGroups = new List<List<HierarchicalGraphVertex>>();
-			var vertexGroupDict = new Dictionary<HierarchicalGraphVertex, List<HierarchicalGraphVertex>>();
 			foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
 			{
-				if (vertex.IsCluster)
+				if (!vertex.IsCluster)
 				{
-					if (Graph.InDegree(vertex) == 0)
-					{
-						var vertexGroup = new List<HierarchicalGraphVertex> {vertex};
-						stack.Push(vertexGroup);
-						vertexGroups.Add(vertexGroup);
-					}
-				}
-				else
-				{
-					var textBlock = new TextBlock {Text = vertex.Name, TextAlignment = TextAlignment.Right};
-					var vertexGroup = new List<HierarchicalGraphVertex> {vertex};
-					vertexGroups.Add(vertexGroup);
-					vertexGroupDict[vertex] = vertexGroup;
-					varieties.Add(Tuple.Create(vertexGroup, textBlock));
+					var textBlock = new TextBlock {Text = vertex.Name, TextAlignment = TextAlignment.Left, DataContext = vertex};
+					varietyTextBlocks.Add(textBlock);
 					var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
 					var text = new FormattedText(vertex.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, textBlock.FontSize, textBlock.Foreground);
+					textBlock.Width = text.Width;
 					varietyNameWidth = Math.Max(text.Width, varietyNameWidth);
 					varietyNameHeight = Math.Max(text.Height, varietyNameHeight);
 				}
 			}
 
-			while (stack.Count > 0)
+			const double originx = 3;
+
+			double maxDepth = 0;
+			//double offset = 0;
+
+			foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
+				maxDepth = Math.Max(vertex.Depth, maxDepth);
+			//double tickLabelHeight = 0;
+			//double tickLabelWidth = 0;
+			//var tickLabels = new List<TextBlock>();
+			//if (maxDepth < 0.25)
+			//{
+			//    offset = 0.25 - maxDepth;
+			//    maxDepth = 0.25;
+			//}
+			//else if (maxDepth < 0.5)
+			//{
+			//    offset = 0.5 - maxDepth;
+			//    maxDepth = 0.5;
+			//}
+			//else
+			//{
+			//    offset = 1.0 - maxDepth;
+			//    maxDepth = 1.0;
+			//}
+			//for (int i = 0; i < 6; i++)
+			//{
+			//    double depth = i * (maxDepth / 5);
+			//    var textBlock = new TextBlock {Text = string.Format("{0:p}", maxDepth - depth), TextAlignment = TextAlignment.Center};
+			//    var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
+			//    var text = new FormattedText(textBlock.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, textBlock.FontSize, textBlock.Foreground);
+			//    tickLabels.Add(textBlock);
+			//    tickLabelWidth = Math.Max(text.Width, tickLabelWidth);
+			//    tickLabelHeight = Math.Max(text.Height, tickLabelHeight);
+			//}
+
+			//originx += tickLabelWidth / 2;
+
+			//double totalHeight = tickLabelHeight + 12 + (varieties.Count * (varietyNameHeight + 5));
+			//double totalWidth = totalHeight * 1.5;
+			//_desiredSize = new Size(totalWidth, totalHeight);
+
+			//tickWidth = ((_desiredSize.Width - (varietyNameWidth + 10)) - originx) / 100;
+
+			//for (int i = 0; i < tickLabels.Count; i++)
+			//{
+			//    double depth = i * (maxDepth / 5);
+			//    tickLabels[i].Height = tickLabelHeight;
+			//    tickLabels[i].Width = tickLabelWidth;
+			//    double x = originx + (tickWidth * ((depth * 100) / maxDepth));
+			//    SetLeft(tickLabels[i], x - (tickLabels[i].Width / 2));
+			//    SetTop(tickLabels[i], 2);
+			//    Children.Add(tickLabels[i]);
+
+			//    var tickLine = new Line {Stroke = Brushes.Black, StrokeThickness = 1, X1 = x, Y1 = tickLabels[i].Height + 2, X2 = x, Y2 = tickLabels[i].Height + 7};
+			//    Children.Add(tickLine);
+			//}
+
+			//var line = new Line {Stroke = Brushes.Black, StrokeThickness = 1, X1 = originx, Y1 = tickLabelHeight + 7, X2 = _desiredSize.Width - (varietyNameWidth + 10), Y2 = tickLabelHeight + 7};
+			//Children.Add(line);
+
+			double textBlocky = 5;
+
+			var borderThickness = new Thickness(2);
+			double totalHeight = textBlocky + (varietyTextBlocks.Count * (varietyNameHeight + borderThickness.Top + borderThickness.Bottom + 5));
+			double totalWidth = totalHeight * 1.5;
+			_desiredSize = new Size(totalWidth, totalHeight);
+
+			double tickWidth = ((_desiredSize.Width - (varietyNameWidth + borderThickness.Left + borderThickness.Right + 5)) - originx) / 100;
+
+			var positions = new Dictionary<HierarchicalGraphVertex, Point>();
+			foreach (TextBlock varietyTextBlock in varietyTextBlocks)
 			{
-				List<HierarchicalGraphVertex> vertexGroup = stack.Pop();
-				foreach (HierarchicalGraphVertex vertex in vertexGroup.Where(v => !vertexGroupDict.ContainsKey(v)).ToArray())
-				{
-					foreach (TypedEdge<HierarchicalGraphVertex> edge in Graph.OutEdges(vertex))
-					{
-						if (!edge.Target.IsCluster)
-							continue;
-
-						if (!FixedNodeHeight && Math.Abs(edge.Target.SimilarityScore - vertex.SimilarityScore) < 0.001)
-						{
-							vertexGroup.Add(edge.Target);
-							stack.Push(vertexGroup);
-						}
-						else
-						{
-							var childGroup = new List<HierarchicalGraphVertex> {edge.Target};
-							vertexGroups.Add(childGroup);
-							stack.Push(childGroup);
-						}
-					}
-
-					vertexGroupDict[vertex] = vertexGroup;
-				}
+				var vertex = (HierarchicalGraphVertex) varietyTextBlock.DataContext;
+				varietyTextBlock.Height = varietyNameHeight;
+				//double x = originx + (tickWidth * (((offset + variety.Item1.Depth) * 100) / maxDepth));
+				double x = originx + (tickWidth * ((vertex.Depth * 100) / maxDepth));
+				var border = new Border {BorderThickness = borderThickness, BorderBrush = Brushes.Transparent, Child = varietyTextBlock};
+				border.MouseEnter += border_MouseEnter;
+				border.MouseLeave += border_MouseLeave;
+				SetLeft(border, x);
+				SetTop(border, textBlocky);
+				Children.Add(border);
+				_varietyVertices[vertex] = border;
+				positions[vertex] = new Point(x, textBlocky + ((varietyNameHeight + borderThickness.Top + borderThickness.Bottom) / 2));
+				textBlocky += varietyNameHeight + borderThickness.Top + borderThickness.Bottom + 5;
 			}
 
-			double textBlockx = varietyNameWidth + 6;
-
-			double originx = textBlockx + 3;
-
-			double maxDist = 0;
-			double textBlocky;
-			double tickWidth;
-			if (FixedNodeHeight)
+			while (positions.Count < Graph.VertexCount)
 			{
-				int maxDepth = 0;
 				foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
 				{
-					if (Graph.InDegree(vertex) == 0)
-						maxDepth = Math.Max(GetDepth(vertex, 0), maxDepth);
-				}
-				textBlocky = 5;
-				double totalHeight = 5 + (varieties.Count * (varietyNameHeight + 5));
-				double totalWidth = totalHeight * 1.5;
-				_desiredSize = new Size(totalWidth, totalHeight);
-				tickWidth = ((_desiredSize.Width - 10) - originx) / maxDepth;
-			}
-			else
-			{
-				foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
-				{
-					if (Graph.InDegree(vertex) == 0)
-						maxDist = Math.Max(vertex.SimilarityScore, maxDist);
-				}
-				double tickLabelHeight = 0;
-				double tickLabelWidth = 0;
-				var tickLabels = new List<TextBlock>();
-				if (maxDist < 0.25)
-					maxDist = 0.25;
-				else if (maxDist < 0.5)
-					maxDist = 0.5;
-				else
-					maxDist = 1.0;
-				for (int i = 0; i < 6; i++)
-				{
-					double score = i * (maxDist / 5);
-					var textBlock = new TextBlock {Text = string.Format("{0:p}", score), TextAlignment = TextAlignment.Center};
-					var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
-					var text = new FormattedText(textBlock.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, textBlock.FontSize, textBlock.Foreground);
-					tickLabels.Add(textBlock);
-					tickLabelWidth = Math.Max(text.Width, tickLabelWidth);
-					tickLabelHeight = Math.Max(text.Height, tickLabelHeight);
-				}
+					if (positions.ContainsKey(vertex))
+						continue;
 
-				double totalHeight = tickLabelHeight + 12 + (varieties.Count * (varietyNameHeight + 5));
-				double totalWidth = totalHeight * 1.5;
-				_desiredSize = new Size(totalWidth, totalHeight);
-
-				tickWidth = ((_desiredSize.Width - 10) - originx) / 100;
-
-				for (int i = 0; i < tickLabels.Count; i++)
-				{
-					double score = i * (maxDist / 5);
-					tickLabels[i].Height = tickLabelHeight;
-					tickLabels[i].Width = tickLabelWidth;
-					double x = originx + (tickWidth * ((score * 100) / maxDist));
-					SetLeft(tickLabels[i], x - (tickLabels[i].Width / 2));
-					SetTop(tickLabels[i], 2);
-					Children.Add(tickLabels[i]);
-
-					var tickLine = new Line {Stroke = Brushes.Black, StrokeThickness = 1, X1 = x, Y1 = tickLabels[i].Height + 2, X2 = x, Y2 = tickLabels[i].Height + 7};
-					Children.Add(tickLine);
-				}
-
-				var line = new Line {Stroke = Brushes.Black, StrokeThickness = 1, X1 = originx, Y1 = tickLabelHeight + 7, X2 = _desiredSize.Width - 10, Y2 = tickLabelHeight + 7};
-				Children.Add(line);
-
-				textBlocky = tickLabelHeight + 12;
-			}
-
-			var positions = new Dictionary<List<HierarchicalGraphVertex>, Point>();
-			foreach (Tuple<List<HierarchicalGraphVertex>, TextBlock> variety in varieties)
-			{
-				variety.Item2.Width = varietyNameWidth;
-				variety.Item2.Height = varietyNameHeight;
-				SetLeft(variety.Item2, 5);
-				SetTop(variety.Item2, textBlocky);
-				Children.Add(variety.Item2);
-				positions[variety.Item1] = new Point(textBlockx, textBlocky + (varietyNameHeight / 2));
-				textBlocky += varietyNameHeight + 5;
-			}
-
-			while (positions.Count < vertexGroups.Count)
-			{
-				foreach (List<HierarchicalGraphVertex> vertexGroup in vertexGroups.Where(vg => !positions.ContainsKey(vg)))
-				{
 					double miny = double.MaxValue;
 					double maxy = 0;
 					double minx = double.MaxValue;
 					double maxx = 0;
 					bool all = true;
-					var childGroups = new HashSet<List<HierarchicalGraphVertex>>();
-					foreach (HierarchicalGraphVertex vertex in vertexGroup)
+					foreach (TypedEdge<HierarchicalGraphVertex> edge in Graph.OutEdges(vertex))
 					{
-						foreach (TypedEdge<HierarchicalGraphVertex> edge in Graph.OutEdges(vertex))
+						Point p;
+						if (!positions.TryGetValue(edge.Target, out p))
 						{
-							List<HierarchicalGraphVertex> childGroup = vertexGroupDict[edge.Target];
-							if (childGroup == vertexGroup || childGroups.Contains(childGroup))
-								continue;
-
-							Point p;
-							if (!positions.TryGetValue(childGroup, out p))
-							{
-								all = false;
-								break;
-							}
-
-							childGroups.Add(childGroup);
-
-							miny = Math.Min(p.Y, miny);
-							maxy = Math.Max(p.Y, maxy);
-
-							minx = Math.Min(p.X, minx);
-							maxx = Math.Max(p.X, maxx);
+							all = false;
+							break;
 						}
 
-						if (!all)
-							break;
+						miny = Math.Min(p.Y, miny);
+						maxy = Math.Max(p.Y, maxy);
+
+						minx = Math.Min(p.X, minx);
+						maxx = Math.Max(p.X, maxx);
 					}
 
 					if (all)
 					{
-						double x = FixedNodeHeight ? maxx + tickWidth : originx + (tickWidth * ((vertexGroup[0].SimilarityScore * 100) / maxDist));
+						//double x = originx + (tickWidth * (((offset + vertex.Depth) * 100) / maxDepth));
+						double x = originx + (tickWidth * ((vertex.Depth * 100) / maxDepth));
 						double y = (maxy + miny) / 2;
 
-						foreach (List<HierarchicalGraphVertex> childGroup in childGroups)
+						var vertexLine = new Line {X1 = x, Y1 = miny - 1, X2 = x, Y2 = maxy + 1, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = vertex};
+						vertexLine.MouseEnter += vertexLine_MouseEnter;
+						vertexLine.MouseLeave += vertexLine_MouseLeave;
+						Children.Add(vertexLine);
+						_clusterVertices[vertex] = vertexLine;
+
+						foreach (HierarchicalGraphEdge edge in Graph.OutEdges(vertex))
 						{
-							Point p = positions[childGroup];
-
-							var segments = new PathSegmentCollection
-								{
-									new LineSegment(new Point(x - minx, p.Y - miny), true),
-									new LineSegment(new Point(x - minx, y - miny), Math.Abs(p.Y - miny) < double.Epsilon || Math.Abs(p.Y - maxy) < double.Epsilon)
-								};
-							var figures = new PathFigureCollection {new PathFigure {StartPoint = new Point(p.X - minx, p.Y - miny), Segments = segments}};
-							var geometry = new PathGeometry(figures);
-
-							var path = new Path {StrokeThickness = 1, Stroke = Brushes.Black, Data = geometry};
-							SetLeft(path, minx);
-							SetTop(path, miny);
-							Children.Add(path);
+							Point p = positions[edge.Target];
+							var edgeLine = new Line {X1 = p.X - 1, Y1 = p.Y, X2 = x + 1, Y2 = p.Y, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = edge, ToolTip = string.Format("{0:p}", edge.Length)};
+							edgeLine.MouseEnter += edgeLine_MouseEnter;
+							edgeLine.MouseLeave += edgeLine_OnMouseLeave;
+							Children.Add(edgeLine);
+							_edges[edge] = edgeLine;
 						}
 
-						positions[vertexGroup] = new Point(x, y);
+						positions[vertex] = new Point(x, y);
 					}
 				}
+			}
+		}
+
+		private void edgeLine_MouseEnter(object sender, MouseEventArgs e)
+		{
+			var line = (Line) sender;
+			line.Stroke = Brushes.Yellow;
+		}
+
+		private void edgeLine_OnMouseLeave(object sender, MouseEventArgs e)
+		{
+			var line = (Line) sender;
+			line.Stroke = Brushes.Black;
+		}
+
+		private void border_MouseEnter(object sender, MouseEventArgs e)
+		{
+			var border = (Border) sender;
+			border.BorderBrush = Brushes.Orange;
+		}
+
+		private void border_MouseLeave(object sender, MouseEventArgs e)
+		{
+			var border = (Border) sender;
+			border.BorderBrush = Brushes.Transparent;
+		}
+
+		private void vertexLine_MouseEnter(object sender, MouseEventArgs e)
+		{
+			var line = (Line) sender;
+			var vertex = (HierarchicalGraphVertex) line.DataContext;
+			HighlightSubtree(vertex, true);
+		}
+
+		private void vertexLine_MouseLeave(object sender, MouseEventArgs e)
+		{
+			var line = (Line) sender;
+			var vertex = (HierarchicalGraphVertex) line.DataContext;
+			HighlightSubtree(vertex, false);
+		}
+
+		private void HighlightSubtree(HierarchicalGraphVertex vertex, bool highlight)
+		{
+			if (vertex.IsCluster)
+			{
+				Line line = _clusterVertices[vertex];
+				line.Stroke = highlight ? Brushes.Blue : Brushes.Black;
+			}
+			else
+			{
+				Border border = _varietyVertices[vertex];
+				border.BorderBrush = highlight ? Brushes.Blue : Brushes.Transparent;
+			}
+
+			foreach (HierarchicalGraphEdge edge in Graph.OutEdges(vertex))
+			{
+				Line line = _edges[edge];
+				line.Stroke = highlight ? Brushes.Blue : Brushes.Black;
+				HighlightSubtree(edge.Target, highlight);
 			}
 		}
 

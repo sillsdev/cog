@@ -6,7 +6,9 @@ namespace SIL.Cog.Services
 {
 	public interface IExportGraphService
 	{
-		void ExportCurrentHierarchicalGraph(IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, TypedEdge<HierarchicalGraphVertex>> graph, HierarchicalGraphType type, string path);
-		void ExportCurrentNetworkGraph(IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, string path);
+		void ExportCurrentHierarchicalGraph(HierarchicalGraphType type, string path);
+		void ExportHierarchicalGraph(IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphType graphType, string path);
+		void ExportCurrentNetworkGraph(string path);
+		void ExportNetworkGraph(IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, string path);
 	}
 }

@@ -7,7 +7,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private string _strRep;
-		private string _type = "Prefix";
+		private AffixViewModelType _type;
 		private string _category;
 
 		public NewAffixViewModel(CogProject project)
@@ -19,19 +19,19 @@ namespace SIL.Cog.ViewModels
 		public string StrRep
 		{
 			get { return _strRep; }
-			set { Set("StrRep", ref _strRep, value); }
+			set { Set(() => StrRep, ref _strRep, value); }
 		}
 
-		public string Type
+		public AffixViewModelType Type
 		{
 			get { return _type; }
-			set { Set("Type", ref _type, value); }
+			set { Set(() => Type, ref _type, value); }
 		}
 
 		public string Category
 		{
 			get { return _category; }
-			set { Set("Category", ref _category, value); }
+			set { Set(() => Category, ref _category, value); }
 		}
 
 		public string this[string columnName]

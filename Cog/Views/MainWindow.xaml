@@ -1,9 +1,8 @@
 ﻿<Window x:Class="SIL.Cog.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Services="clr-namespace:SIL.Cog.Services"
-        xmlns:Views="clr-namespace:SIL.Cog.Views" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Views="clr-namespace:SIL.Cog.Views" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
         xmlns:Controls="clr-namespace:SIL.Cog.Controls" Title="{Binding DisplayName}" Height="768" Width="1024" DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Services:ViewRegistrationService.IsRegisteredView="True" Style="{StaticResource MainWindowStyle}" Closing="Window_Closing">
+        Style="{StaticResource MainWindowStyle}" Closing="Window_Closing">
     <Window.InputBindings>
         <KeyBinding Command="{Binding NewCommand}" Gesture="CTRL+N" />
         <KeyBinding Command="{Binding OpenCommand}" Gesture="CTRL+O" />
@@ -17,6 +16,12 @@
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
                 <MenuItem Header="_Import..." Command="{Binding ImportCommand}" />
+				<MenuItem Header="_Export">
+					<MenuItem Header="Word lists..." Command="{Binding ExportWordListsCommand}" />
+					<MenuItem Header="Similarity matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
+					<MenuItem Header="Hierarchical graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
+					<MenuItem Header="Network graph..." Command="{Binding ExportNetworkGraphCommand}" />
+				</MenuItem>
                 <MenuItem Header="E_xit" Click="Exit_Click" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem Header="_Edit">

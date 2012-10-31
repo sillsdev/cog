@@ -340,11 +340,20 @@
 			<DataTemplate DataType="{x:Type ViewModels:NetworkGraphVertex}">
 				<TextBlock Text="{Binding Name}" />
 			</DataTemplate>
+			
+			<Style x:Key="HierarchicalEdgeControlStyle" TargetType="gsc:EdgeControl">
+				<Style.Resources>
+					<ToolTip x:Key="toolTipContent">
+						<TextBlock Text="{Binding Length, StringFormat=p}" />
+					</ToolTip>
+				</Style.Resources>
+				<Setter Property="ToolTip" Value="{StaticResource toolTipContent}" />
+			</Style>
 
 			<Style x:Key="NetworkEdgeControlStyle" TargetType="gsc:EdgeControl">
 				<Style.Resources>
 					<ToolTip x:Key="toolTipContent">
-						<TextBlock Text="{Binding LexicalSimilarityScore, StringFormat=p}" />
+						<TextBlock Text="{Binding SimilarityScore, StringFormat=p}" />
 					</ToolTip>
 				</Style.Resources>
 				<Setter Property="Template">
@@ -387,7 +396,7 @@
 					</Trigger>
 					<DataTrigger Value="True">
 						<DataTrigger.Binding>
-							<Binding Path="LexicalSimilarityScore" Converter="{StaticResource numConverter}">
+							<Binding Path="SimilarityScore" Converter="{StaticResource numConverter}">
 								<Binding.ConverterParameter>
 									<sys:Double>0.7</sys:Double>
 								</Binding.ConverterParameter>

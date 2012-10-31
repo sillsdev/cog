@@ -38,15 +38,18 @@ namespace SIL.Cog.ViewModels
 			return _isDirty;
 		}
 
-		private void Apply()
+		public void Apply()
 		{
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
+			{
 				componentVM.UpdateComponent();
+				componentVM.AcceptChanges();
+			}
 			IsChanged = true;
 			_isDirty = false;
 		}
 
-		private void Reset()
+		public void Reset()
 		{
 			if (!_isDirty)
 				return;
@@ -70,6 +73,11 @@ namespace SIL.Cog.ViewModels
 						_isDirty = true;
 					break;
 			}
+		}
+
+		public bool IsDirty
+		{
+			get { return _isDirty; }
 		}
 
 		public ObservableCollection<ComponentSettingsViewModelBase> Components

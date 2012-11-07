@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using SIL.Collections;
 
 namespace SIL.Cog.Views
 {
@@ -22,6 +23,7 @@ namespace SIL.Cog.Views
 		///   A hack to find the data grid in the event handler of the tab control.
 		/// </summary>
 		private static readonly Dictionary<TabPanel, DataGrid> ControlMap = new Dictionary<TabPanel, DataGrid>();
+		private static readonly Dictionary<DataGrid, SimpleMonitor> Monitors = new Dictionary<DataGrid, SimpleMonitor>(); 
 
 		public static bool GetCommitOnLostFocus(DataGrid datagrid)
 		{
@@ -79,6 +81,8 @@ namespace SIL.Cog.Views
 				dataGrid.DataContextChanged += OnDataGridDataContextChanged;
 				dataGrid.IsVisibleChanged += OnDataGridIsVisibleChanged;
 				dataGrid.Loaded += OnDataGridLoaded;
+				dataGrid.CellEditEnding += OnDataGridCellEditEnding;
+				Monitors[dataGrid] = new SimpleMonitor();
 			}
 			else
 			{
@@ -93,6 +97,18 @@ namespace SIL.Cog.Views
 				dataGrid.DataContextChanged -= OnDataGridDataContextChanged;
 				dataGrid.IsVisibleChanged -= OnDataGridIsVisibleChanged;
 				dataGrid.Loaded -= OnDataGridLoaded;
+				dataGrid.CellEditEnding -= OnDataGridCellEditEnding;
+				Monitors.Remove(dataGrid);
+			}
+		}
+
+		private static void OnDataGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+		{
+			var dataGrid = (DataGrid) sender;
+			if (!Monitors[dataGrid].Busy && e.EditAction == DataGridEditAction.Commit)
+			{
+				using (Monitors[dataGrid].Enter())
+					CommitEdit(dataGrid);
 			}
 		}
 

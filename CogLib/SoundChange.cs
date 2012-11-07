@@ -8,13 +8,13 @@ namespace SIL.Cog
 	{
 		private readonly VarietyPair _varietyPair;
 		private readonly SoundChangeLhs _lhs;
-		private readonly Dictionary<NSegment, double> _probabilities;
+		private readonly Dictionary<Ngram, double> _probabilities;
 
 		internal SoundChange(VarietyPair varietyPair, SoundChangeLhs lhs)
 		{
 			_varietyPair = varietyPair;
 			_lhs = lhs;
-			_probabilities = new Dictionary<NSegment, double>();
+			_probabilities = new Dictionary<Ngram, double>();
 		}
 
 		public SoundChangeLhs Lhs
@@ -22,12 +22,12 @@ namespace SIL.Cog
 			get { return _lhs; }
 		}
 
-		public IReadOnlyCollection<NSegment> ObservedCorrespondences
+		public IReadOnlyCollection<Ngram> ObservedCorrespondences
 		{
 			get { return _probabilities.Keys.AsSimpleReadOnlyCollection(); }
 		}
 
-		public double this[NSegment correspondence]
+		public double this[Ngram correspondence]
 		{
 			get
 			{

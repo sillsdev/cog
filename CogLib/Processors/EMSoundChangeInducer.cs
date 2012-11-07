@@ -50,10 +50,10 @@ namespace SIL.Cog.Processors
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						var u = possibleLink.Item1.Type() == CogFeatureSystem.NullType ? new NSegment(Segment.Null)
-							: new NSegment(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.Segments[node]));
-						var v = possibleLink.Item2.Type() == CogFeatureSystem.NullType ? new NSegment(Segment.Null)
-							: new NSegment(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.Segments[node]));
+						var u = possibleLink.Item1.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
+							: new Ngram(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.Segments[node]));
+						var v = possibleLink.Item2.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
+							: new Ngram(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.Segments[node]));
 
 						NaturalClass leftEnv = aligner.NaturalClasses.FirstOrDefault(constraint =>
 							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
@@ -80,7 +80,7 @@ namespace SIL.Cog.Processors
 				ExpectedCount expectedCount;
 				if (expectedCounts.TryGetValue(change, out expectedCount))
 				{
-					foreach (NSegment correspondence in expectedCount.Correspondences)
+					foreach (Ngram correspondence in expectedCount.Correspondences)
 					{
 						double prob = (expectedCount.GetCorrespondenceCount(correspondence) + (1.0 / pair.SoundChanges.PossibleCorrespondenceCount)) / (expectedCount.Count + 1.0);
 						if (Math.Abs(prob - change[correspondence]) > 0.0001)
@@ -99,11 +99,11 @@ namespace SIL.Cog.Processors
 		private class ExpectedCount
 		{
 			private int _count;
-			private readonly Dictionary<NSegment, int> _correspondenceCounts;
+			private readonly Dictionary<Ngram, int> _correspondenceCounts;
 
 			public ExpectedCount()
 			{
-				_correspondenceCounts = new Dictionary<NSegment, int>();
+				_correspondenceCounts = new Dictionary<Ngram, int>();
 			}
 
 			public int Count
@@ -111,12 +111,12 @@ namespace SIL.Cog.Processors
 				get { return _count; }
 			}
 
-			public IEnumerable<NSegment> Correspondences
+			public IEnumerable<Ngram> Correspondences
 			{
 				get { return _correspondenceCounts.Keys; }
 			}
 
-			public int GetCorrespondenceCount(NSegment correspondence)
+			public int GetCorrespondenceCount(Ngram correspondence)
 			{
 				int count;
 				if (_correspondenceCounts.TryGetValue(correspondence, out count))
@@ -124,7 +124,7 @@ namespace SIL.Cog.Processors
 				return 0;
 			}
 
-			public void Increment(NSegment correspondence)
+			public void Increment(Ngram correspondence)
 			{
 				_correspondenceCounts.UpdateValue(correspondence, () => 0, count => count + 1);
 				_count++;

@@ -37,8 +37,8 @@ namespace SIL.Cog.ViewModels
 						}
 						else
 						{
-							var nseg1 = new NSegment(_varietyPair.Variety1.Segments[node.Annotation1.StrRep()]);
-							var nseg2 = new NSegment(_varietyPair.Variety2.Segments[node.Annotation2.StrRep()]);
+							var nseg1 = new Ngram(_varietyPair.Variety1.Segments[node.Annotation1.StrRep()]);
+							var nseg2 = new Ngram(_varietyPair.Variety2.Segments[node.Annotation2.StrRep()]);
 							SoundChangeLhs lhs = _currentCorrespondence.ModelSoundChange.Lhs;
 							node.IsSelected = nseg1.Equals(lhs.Target) && nseg2.Equals(_currentCorrespondence.ModelCorrespondence)
 								&& (lhs.LeftEnvironment == null || lhs.LeftEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetPrev(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct))

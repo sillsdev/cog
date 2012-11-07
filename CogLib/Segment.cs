@@ -6,6 +6,7 @@ namespace SIL.Cog
 	public class Segment : NotifyPropertyChangedBase
 	{
 		public static readonly Segment Null = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
+		public static readonly Segment Anchor = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value);
 
 		private readonly FeatureStruct _fs;
 		private double _probability;
@@ -16,7 +17,7 @@ namespace SIL.Cog
 			_fs = fs;
 		}
 
-		public string NormalizedStrRep
+		public string StrRep
 		{
 			get { return (string) _fs.GetValue(CogFeatureSystem.StrRep); }
 		}
@@ -53,7 +54,7 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			return NormalizedStrRep;
+			return StrRep;
 		}
 	}
 }

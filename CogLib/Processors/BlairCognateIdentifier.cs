@@ -78,10 +78,10 @@ namespace SIL.Cog.Processors
 				int totalCount = 0;
 				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> link in wordPair.Item2.AlignedAnnotations)
 				{
-					var u = link.Item1.Type() == CogFeatureSystem.NullType ? new NSegment(Segment.Null)
-						: new NSegment(wordPair.Item2.Shape1.GetNodes(link.Item1.Span).Select(node => varietyPair.Variety1.Segments[node]));
-					var v = link.Item2.Type() == CogFeatureSystem.NullType ? new NSegment(Segment.Null)
-						: new NSegment(wordPair.Item2.Shape2.GetNodes(link.Item2.Span).Select(node => varietyPair.Variety2.Segments[node]));
+					var u = link.Item1.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
+						: new Ngram(wordPair.Item2.Shape1.GetNodes(link.Item1.Span).Select(node => varietyPair.Variety1.Segments[node]));
+					var v = link.Item2.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
+						: new Ngram(wordPair.Item2.Shape2.GetNodes(link.Item2.Span).Select(node => varietyPair.Variety2.Segments[node]));
 					string uStr = link.Item1.StrRep();
 					string vStr = link.Item2.StrRep();
 					int cat = 3;
@@ -139,7 +139,7 @@ namespace SIL.Cog.Processors
 			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
 		}
 
-		private bool AreSegmentsSimilar(VarietyPair varietyPair, NSegment u, NSegment v)
+		private bool AreSegmentsSimilar(VarietyPair varietyPair, Ngram u, Ngram v)
 		{
 			foreach (Segment uSeg in u)
 			{

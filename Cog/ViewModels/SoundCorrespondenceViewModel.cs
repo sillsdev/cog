@@ -5,10 +5,10 @@ namespace SIL.Cog.ViewModels
 	public class SoundCorrespondenceViewModel : ViewModelBase
 	{
 		private readonly SoundChange _soundChange;
-		private readonly NSegment _correspondence;
+		private readonly Ngram _correspondence;
 		private readonly SoundCorrespondenceLhsViewModel _lhs;
 
-		public SoundCorrespondenceViewModel(SoundChange soundChange, NSegment correspondence)
+		public SoundCorrespondenceViewModel(SoundChange soundChange, Ngram correspondence)
 		{
 			_soundChange = soundChange;
 			_correspondence = correspondence;
@@ -35,7 +35,7 @@ namespace SIL.Cog.ViewModels
 			get { return _soundChange; }
 		}
 
-		public NSegment ModelCorrespondence
+		public Ngram ModelCorrespondence
 		{
 			get { return _correspondence; }
 		}

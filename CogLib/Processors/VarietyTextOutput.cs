@@ -23,7 +23,7 @@ namespace SIL.Cog.Processors
 			{
 				writer.WriteLine("Seg\tProb");
 				foreach (Segment seg in variety.Segments.OrderByDescending(s => s.Probability))
-					writer.WriteLine("{0}\t{1:0.0####}", seg.NormalizedStrRep, seg.Probability);
+					writer.WriteLine("{0}\t{1:0.0####}", seg.StrRep, seg.Probability);
 				writer.WriteLine();
 
 				if (variety.Affixes.Count > 0)

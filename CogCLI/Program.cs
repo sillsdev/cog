@@ -379,18 +379,18 @@ namespace SIL.Cog
 			Segment[] segmentArray = (from v in varieties
 									  from ph in v.Segments
 									  where ph.Type == type
-									  select ph).DistinctBy(ph => ph.NormalizedStrRep).ToArray();
+									  select ph).DistinctBy(ph => ph.StrRep).ToArray();
 			using (var writer = new StreamWriter(filePath))
 			{
 				writer.WriteLine("graph G {");
 				writer.WriteLine("  graph [overlap=\"scale\", splines=\"true\"];");
 				for (int i = 0; i < segmentArray.Length; i++)
 				{
-					string iStrRep = segmentArray[i].NormalizedStrRep;
+					string iStrRep = segmentArray[i].StrRep;
 					writer.WriteLine("  \"{0}\" [shape=\"circle\"];", iStrRep);
 					for (int j = i + 1; j < segmentArray.Length; j++)
 					{
-						string jStrRep = segmentArray[j].NormalizedStrRep;
+						string jStrRep = segmentArray[j].StrRep;
 						if (aline.Delta(segmentArray[i].FeatureStruct, segmentArray[j].FeatureStruct) <= threshold)
 							writer.WriteLine("  \"{0}\" -- \"{1}\"", iStrRep, jStrRep);
 					}
@@ -407,7 +407,7 @@ namespace SIL.Cog
 				foreach (string phoneme in (from v in varieties
 										    from ph in v.Segments
 										    where ph.Type == type
-										    select ph.NormalizedStrRep).Distinct())
+										    select ph.StrRep).Distinct())
 				{
 					writer.WriteLine(phoneme);
 				}

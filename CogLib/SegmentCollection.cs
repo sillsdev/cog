@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -24,12 +25,12 @@ namespace SIL.Cog
 		{
 			CheckReentrancy();
 			var segmentsAdded = new List<Segment>();
-			foreach (ShapeNode node in word.Shape)
+			foreach (ShapeNode node in word.Shape.Where(n => n.Type().IsOneOf(CogFeatureSystem.VowelType, CogFeatureSystem.ConsonantType)))
 			{
 				Segment segment;
 				if (!_segments.TryGetValue(node.StrRep(), out segment))
 				{
-					segment = new Segment(node.Annotation.FeatureStruct.DeepClone());
+					segment = new Segment(node.Annotation.FeatureStruct);
 					_segments[node.StrRep()] = segment;
 					segmentsAdded.Add(segment);
 				}
@@ -48,7 +49,7 @@ namespace SIL.Cog
 		{
 			CheckReentrancy();
 			var segmentsRemoved = new List<Segment>();
-			foreach (ShapeNode node in word.Shape)
+			foreach (ShapeNode node in word.Shape.Where(n => n.Type().IsOneOf(CogFeatureSystem.VowelType, CogFeatureSystem.ConsonantType)))
 			{
 				Segment segment = _segments[node.StrRep()];
 				segment.Frequency--;
@@ -88,7 +89,7 @@ namespace SIL.Cog
 
 		public bool Contains(Segment segment)
 		{
-			return _segments.ContainsKey(segment.NormalizedStrRep);
+			return _segments.ContainsKey(segment.StrRep);
 		}
 
 		public bool Contains(string strRep)

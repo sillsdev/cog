@@ -81,7 +81,11 @@
     <Compile Include="IProcessor.cs" />
     <Compile Include="IWordListsLoader.cs" />
     <Compile Include="NaturalClass.cs" />
-    <Compile Include="NSegment.cs" />
+    <Compile Include="Ngram.cs" />
+    <Compile Include="NgramModeling\INgramModelSmoother.cs" />
+    <Compile Include="NgramModeling\ModifiedKneserNeySmoother.cs" />
+    <Compile Include="NgramModeling\NgramModel.cs" />
+    <Compile Include="NgramModeling\WittenBellSmoother.cs" />
     <Compile Include="Processors\BlairCognateIdentifier.cs" />
     <Compile Include="Processors\EMSoundChangeInducer.cs" />
     <Compile Include="Processors\ListSimilarSegmentIdentifier.cs" />
@@ -107,6 +111,14 @@
     <Compile Include="Processors\UnsupervisedAffixIdentifier.cs" />
     <Compile Include="SoundChangeCollection.cs" />
     <Compile Include="SoundChangeLhs.cs" />
+    <Compile Include="Statistics\ConditionalFrequencyDistribution.cs" />
+    <Compile Include="Statistics\ConditionalProbabilityDistribution.cs" />
+    <Compile Include="Statistics\FrequencyDistribution.cs" />
+    <Compile Include="Statistics\IProbabilityDistribution.cs" />
+    <Compile Include="Statistics\LidstoneProbabilityDistribution.cs" />
+    <Compile Include="Statistics\MaxLikelihoodProbabilityDistribution.cs" />
+    <Compile Include="Statistics\SimpleGoodTuringProbabilityDistribution.cs" />
+    <Compile Include="Statistics\WittenBellProbabilityDistribution.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="SymbolCollection.cs" />
     <Compile Include="Variety.cs" />

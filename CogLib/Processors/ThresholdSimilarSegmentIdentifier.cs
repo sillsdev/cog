@@ -37,7 +37,7 @@ namespace SIL.Cog.Processors
 			{
 				foreach (Segment seg2 in varietyPair.Variety2.Segments)
 				{
-					if (seg1.NormalizedStrRep == seg2.NormalizedStrRep)
+					if (seg1.StrRep == seg2.StrRep)
 						continue;
 
 					if (seg1.Type == CogFeatureSystem.VowelType && seg2.Type == CogFeatureSystem.VowelType)

@@ -6,16 +6,16 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class NSegment : IReadOnlyList<Segment>, IEquatable<NSegment>
+	public class Ngram : IReadOnlyList<Segment>, IEquatable<Ngram>
 	{
 		private readonly Segment[] _segments; 
 
-		public NSegment(params Segment[] segs)
+		public Ngram(params Segment[] segs)
 		{
 			_segments = segs.ToArray();
 		}
 
-		public NSegment(IEnumerable<Segment> segs)
+		public Ngram(IEnumerable<Segment> segs)
 		{
 			_segments = segs.ToArray();
 		}
@@ -40,14 +40,14 @@ namespace SIL.Cog
 			get { return _segments[index]; }
 		}
 
-		public bool Equals(NSegment other)
+		public bool Equals(Ngram other)
 		{
 			return other != null && _segments.SequenceEqual(other._segments);
 		}
 
 		public override bool Equals(object obj)
 		{
-			var nsegment = obj as NSegment;
+			var nsegment = obj as Ngram;
 			return obj != null && Equals(nsegment);
 		}
 
@@ -58,7 +58,7 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			return string.Concat(_segments.Select(seg => seg.NormalizedStrRep));
+			return string.Concat(_segments.Select(seg => seg.StrRep));
 		}
 	}
 }

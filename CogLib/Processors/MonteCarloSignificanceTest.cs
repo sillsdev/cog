@@ -37,7 +37,7 @@ namespace SIL.Cog.Processors
 					foreach (SoundChange soundChange in varietyPair.SoundChanges)
 					{
 						SoundChange newSoundChange = randVarietyPair.SoundChanges.Add(soundChange.Lhs);
-						foreach (NSegment corr in soundChange.ObservedCorrespondences)
+						foreach (Ngram corr in soundChange.ObservedCorrespondences)
 							newSoundChange[corr] = soundChange[corr];
 					}
 				}

@@ -88,16 +88,16 @@ namespace SIL.Cog.Processors
 			foreach (Segment seg1 in varietyPair.Variety1.Segments)
 			{
 				Dictionary<string, HashSet<string>> similarSegments = seg1.Type == CogFeatureSystem.ConsonantType ? _similarConsonants : _similarVowels;
-				string str1 = seg1.NormalizedStrRep;
+				string str1 = seg1.StrRep;
 
 				HashSet<string> segments;
 				if (similarSegments.TryGetValue(str1, out segments))
 				{
 					foreach (Segment seg2 in varietyPair.Variety2.Segments)
 					{
-						if (seg1.Type == seg2.Type && seg1.NormalizedStrRep != seg2.NormalizedStrRep)
+						if (seg1.Type == seg2.Type && seg1.StrRep != seg2.StrRep)
 						{
-							string str2 = seg2.NormalizedStrRep;
+							string str2 = seg2.StrRep;
 							if (segments.Contains(str2))
 								varietyPair.AddSimilarSegment(seg1, seg2);
 						}
@@ -119,7 +119,7 @@ namespace SIL.Cog.Processors
 			{
 				foreach (Segment seg2 in varietyPair.Variety2.Segments.Where(s => s.Type == type))
 				{
-					if (segments.Contains(seg2.NormalizedStrRep))
+					if (segments.Contains(seg2.StrRep))
 						varietyPair.AddSimilarSegment(Segment.Null, seg2);
 				}
 			}

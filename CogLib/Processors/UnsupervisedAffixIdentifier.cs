@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using SIL.Cog.NgramModeling;
+using SIL.Cog.Statistics;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -47,6 +48,20 @@ namespace SIL.Cog.Processors
 			}
 		}
 
+		private Affix CreateAffix(Direction dir, Ngram ngram, string category, double score)
+		{
+			var shape = new Shape(_spanFactory,
+				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			foreach (Segment seg in ngram)
+			{
+				if (seg.Type != CogFeatureSystem.AnchorType)
+					shape.AddAfter(shape.GetLast(dir), seg.FeatureStruct, dir);
+			}
+			shape.Freeze();
+			return new Affix(string.Concat(shape.Select(n => n.StrRep())), dir == Direction.LeftToRight ? AffixType.Prefix : AffixType.Suffix,
+				shape, category == string.Empty ? null : category) {Score = score};
+		}
+
 		private static bool Filter(ShapeNode node)
 		{
 			return node.Annotation.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType);
@@ -66,211 +81,121 @@ namespace SIL.Cog.Processors
 					break;
 			}
 
-			var totalAffixFreqs = new Dictionary<int, FrequencyInfo>();
-			var totalNonaffixFreqs = new Dictionary<int, FrequencyInfo>();
+			IReadOnlyList<NgramModel> ngramModels = NgramModel.BuildAll(_maxAffixLength + 2, variety, dir);
+			var affixFreqDist = new ConditionalFrequencyDistribution<Tuple<int, string>, Ngram>();
+			var ngramFreqDist = new ConditionalFrequencyDistribution<Tuple<int, string>, Ngram>();
 
-			var totalAffixes = new Dictionary<int, FrequencyInfo>();
-			var totalNonaffixes = new Dictionary<int, FrequencyInfo>();
-
-			var affixes = new Dictionary<string, AffixInfo>();
-			var nonaffixes = new Dictionary<string, FrequencyInfo>();
-
+			var candidates = new HashSet<Ngram>();
+			var categories = new HashSet<string>();
 			foreach (Word word in variety.Words)
 			{
 				if (word.Shape.Count < 2)
 					continue;
 
-				var sb = new StringBuilder();
+				if (!string.IsNullOrEmpty(word.Sense.Category))
+					categories.Add(word.Sense.Category);
+
+				var affix = new Ngram(Segment.Anchor);
 				foreach (ShapeNode node in word.Shape.GetNodes(word.Shape.GetFirst(dir), word.Shape.GetLast(dir).GetPrev(dir), dir).Where(Filter).Take(_maxAffixLength))
 				{
-					sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, node.StrRep());
-					string affixStr = sb.ToString();
-					bool newAffix = !affixes.ContainsKey(affixStr);
-					AffixInfo affixInfo = affixes.GetValue(affixStr, () =>
-																		{
-																			var shape = new Shape(_spanFactory,
-																				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
-																			foreach (ShapeNode n in word.Shape.GetNodes(word.Shape.GetFirst(dir), node, dir).Where(Filter))
-																			{
-																				ShapeNode newNode = n.DeepClone();
-																				newNode.Annotation.FeatureStruct.RemoveValue(CogFeatureSystem.OriginalStrRep);
-																				shape.Add(newNode);
-																			}
-																			shape.Freeze();
-																			return new AffixInfo(shape);
-																		});
-					affixInfo.Increment(word.Sense.Category);
+					if (node == word.Shape.GetLast(dir, Filter))
+						break;
 
-					totalAffixFreqs.GetValue(affixInfo.Shape.Count, () => new FrequencyInfo()).Increment(word.Sense.Category);
-					if (newAffix)
-						totalAffixes.GetValue(affixInfo.Shape.Count, () => new FrequencyInfo()).Increment(word.Sense.Category);
+					Segment seg = variety.Segments[node];
+					affix = new Ngram(affix.Concat(seg));
+					candidates.Add(affix);
+					affixFreqDist[Tuple.Create(affix.Count, string.Empty)].Increment(affix);
+					ngramFreqDist[Tuple.Create(affix.Count, string.Empty)].Increment(affix);
+					if (!string.IsNullOrEmpty(word.Sense.Category))
+					{
+						affixFreqDist[Tuple.Create(affix.Count, word.Sense.Category)].Increment(affix);
+						ngramFreqDist[Tuple.Create(affix.Count, word.Sense.Category)].Increment(affix);
+					}	
+				}
+
+				var segs = word.Shape.GetNodes(dir).Where(Filter).Select(n => variety.Segments[n]);
+				var wordNgram = new Ngram(Segment.Null.ToEnumerable().Concat(segs));
+				if (wordNgram.Count <= _maxAffixLength + 1)
+				{
+					ngramFreqDist[Tuple.Create(wordNgram.Count, string.Empty)].Increment(wordNgram);
+					if (!string.IsNullOrEmpty(word.Sense.Category))
+						ngramFreqDist[Tuple.Create(wordNgram.Count, word.Sense.Category)].Increment(wordNgram);
 				}
 
 				foreach (ShapeNode node1 in word.Shape.GetFirst(dir).GetNext(dir).GetNodes(dir).Where(Filter))
 				{
-					int count = 0;
-					sb = new StringBuilder();
+					var nonaffix = new Ngram(Segment.Null);
 					foreach (ShapeNode node2 in node1.GetNodes(dir).Where(Filter).Take(_maxAffixLength))
 					{
-						sb.Insert(dir == Direction.LeftToRight ? sb.Length : 0, node2.StrRep());
-						count++;
-						string nonaffixStr = sb.ToString();
-						if (!nonaffixes.ContainsKey(nonaffixStr))
-							totalNonaffixes.GetValue(count, () => new FrequencyInfo()).Increment(word.Sense.Category);
-
-						nonaffixes.GetValue(nonaffixStr, () => new FrequencyInfo()).Increment(word.Sense.Category);
-						totalNonaffixFreqs.GetValue(count, () => new FrequencyInfo()).Increment(word.Sense.Category);
+						Segment seg = variety.Segments[node2];
+						nonaffix = new Ngram(nonaffix.Concat(seg));
+						ngramFreqDist[Tuple.Create(nonaffix.Count, string.Empty)].Increment(nonaffix);
+						if (!string.IsNullOrEmpty(word.Sense.Category))
+							ngramFreqDist[Tuple.Create(nonaffix.Count, word.Sense.Category)].Increment(nonaffix);
 					}
 				}
 			}
 
-			foreach (AffixInfo affix in affixes.Values)
+			var affixProbDist = new ConditionalProbabilityDistribution<Tuple<int, string>, Ngram>(affixFreqDist, fd => new SimpleGoodTuringProbabilityDistribution<Ngram>(fd, fd.ObservedSamples.Count + 1));
+			var nonaffixProbDist = new ConditionalProbabilityDistribution<Tuple<int, string>, Ngram>(ngramFreqDist, fd => new MaxLikelihoodProbabilityDistribution<Ngram>(fd));
+
+			var affixes = new List<Affix>();
+			foreach (Ngram candidate in candidates)
 			{
-				int freq = affix.Frequency;
-				if (affix.Categories.Count > 0)
+				string category = string.Empty;
+				if (categories.Count > 0)
 				{
-					string category = affix.Categories.MaxBy(c => affix.GetFrequency(c));
-					if (((double) affix.GetFrequency(category) / affix.Frequency) > 0.75)
-					{
-						affix.MainCategory = category;
-						freq = affix.GetFrequency(category);
-					}
+					category = categories.MaxBy(c => affixFreqDist[Tuple.Create(candidate.Count, c)][candidate]);
+					if (((double) affixFreqDist[Tuple.Create(candidate.Count, category)][candidate] / affixFreqDist[Tuple.Create(candidate.Count, string.Empty)][candidate]) <= 0.75)
+						category = string.Empty;
 				}
+				NgramModel higherOrderModel = ngramModels[candidate.Count];
+				double curveDrop = CosineSimilarity(variety.Segments.Select(seg => higherOrderModel.GetProbability(seg, candidate, category)),
+					variety.Segments.Select(seg => ngramModels[0].GetProbability(seg, new Ngram(), category)));
 
-				string affixStr = affix.ToString();
-				//var caffixes = (from c in variety.Segments
-				//                let ca = dir == Direction.LeftToRight ? affixStr + c.StrRep : c.StrRep + affixStr
-				//                where affixes.ContainsKey(ca)
-				//                orderby c.StrRep
-				//                select new { Affix = affixes[ca], Segment = c }).ToArray();
-				//var caffix = caffixes.Length == 0 ? null : caffixes.MaxBy(a => affix.MainCategory == null ? a.Affix.Frequency : a.Affix.GetFrequency(affix.MainCategory));
-				//affix.CurveDrop = (1.0 - ((double)(caffix == null ? 0 : affix.MainCategory == null ? caffix.Affix.Frequency : caffix.Affix.GetFrequency(affix.MainCategory)) / freq))
-				//    / (1.0 - (caffix == null ? 0 : caffix.Segment.Probability));
+				double affixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)].GetProbability(candidate);
+				double nonaffixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)].GetProbability(new Ngram(Segment.Null.ToEnumerable().Concat(candidate.Skip(1))));
+				double diff = affixProb - nonaffixProb;
+				diff = Math.Min(diff, 0.75);
+				diff = Math.Max(diff, -0.25);
+				double randomAdj = diff + 0.25;
+				//randomAdj = Math.Min(50, prob / nonaffixProb) / 50;
+				//int freq = curModel.GetFrequency(ngram, category);
+				//int nfreq = variety.Segments.Sum(seg => curModel.GetFrequency(new Ngram(seg.ToEnumerable().Concat(ngram.Skip(1)))));
+				//randomAdj = (double) freq / (freq + nfreq);
 
-				var observed = new List<int>();
-				int caffixTotalFreq = 0;
-				foreach (Segment seg in variety.Segments)
-				{
-					string caffixStr = dir == Direction.LeftToRight ? affixStr + seg.NormalizedStrRep : seg.NormalizedStrRep + affixStr;
-					AffixInfo ai;
-					if (affixes.TryGetValue(caffixStr, out ai))
-					{
-						int f = affix.MainCategory == null ? ai.Frequency : ai.GetFrequency(affix.MainCategory);
-						caffixTotalFreq += f;
-						observed.Add(f);
-					}
-					else
-						observed.Add(0);
-				}
-
-				//affix.CurveDrop = CosineSimilarity(observed, variety.Segments.Select(s => s.Probability * caffixTotalFreq).ToList());
-				affix.CurveDrop = CosineSimilarity(observed, Enumerable.Repeat((double) caffixTotalFreq / variety.Segments.Count, variety.Segments.Count).ToList());
-				//var probs = variety.Segments.Select(s => s.Probability).ToList();
-				//affix.CurveDrop = MultinomialTest(observed, probs);
-
-				//double pw = (double) (freq + 1) / (totalAffixFreqs[affix.Shape.Count] + totalAffixes[affix.Shape.Count]);
-
-				int nfreq = 0;
-				FrequencyInfo nonaffixInfo;
-				if (nonaffixes.TryGetValue(affixStr, out nonaffixInfo))
-					nfreq = affix.MainCategory == null ? nonaffixInfo.Frequency : nonaffixInfo.GetFrequency(affix.MainCategory);
-
-				//double npw = (double) (nfreq + 1) / (totalNonaffixFreqs[affix.Shape.Count] + totalNonaffixes[affix.Shape.Count]);
-
-				//affix.RandomAdjustment = pw / npw;
-
-				affix.RandomAdjustment = (double) (freq + 1) / (freq + nfreq + 2);
-
-				FrequencyInfo totalAffixFreqInfo = totalAffixFreqs[affix.Shape.Count];
-				double adjustedFreq = (double) freq / (affix.MainCategory == null ? totalAffixFreqInfo.Frequency : totalAffixFreqInfo.GetFrequency(affix.MainCategory));
+				double prob = affixProbDist[Tuple.Create(candidate.Count, category)].GetProbability(candidate);
 
 				const double alpha = 0.33;
 				const double beta = 0.33;
-				affix.Score = (alpha * affix.CurveDrop) + (beta * affix.RandomAdjustment) + ((1.0 - (alpha + beta)) * adjustedFreq);
-				//affix.Score = affix.CurveDrop * affix.RandomAdjustment * (affix.Shape.Count * (5 * Math.Log(freq)));
-				//affix.Score = affix.CurveDrop * affix.RandomAdjustment * ((affix.Shape.Count * freq) / 2.0);
-				//affix.Score = affix.CurveDrop * affix.RandomAdjustment * freq;
+				double score = (alpha * curveDrop) + (beta * randomAdj) + ((1.0 - (alpha + beta)) * prob);
+
+				if (score >= _threshold && (!_categoryRequired || !string.IsNullOrEmpty(category)))
+					affixes.Add(CreateAffix(dir, candidate, category, score));
 			}
 
-			foreach (AffixInfo affixInfo in affixes.Values.Where(p => p.Score >= _threshold && (!_categoryRequired || p.MainCategory != null)).OrderByDescending(p => p.Score))
+
+			foreach (Affix affix in affixes.OrderByDescending(a => a.Score))
 			{
-				string affixStr = affixInfo.ToString();
-				if (variety.Affixes.All(a => (a.Category != null && affixInfo.MainCategory != null && a.Category != affixInfo.MainCategory)
-					|| (dir == Direction.LeftToRight ? !affixStr.StartsWith(a.StrRep) : !affixStr.EndsWith(a.StrRep))))
+				string affixStr = affix.StrRep;
+				if (variety.Affixes.All(a => (a.Category != null && affix.Category != null && a.Category != affix.Category)
+					|| (type == AffixType.Prefix ? !affixStr.StartsWith(a.StrRep) : !affixStr.EndsWith(a.StrRep))))
 				{
-					variety.Affixes.Add(new Affix(affixStr, type, affixInfo.Shape, affixInfo.MainCategory) {Score = affixInfo.Score});
+					variety.Affixes.Add(affix);
 				}
 			}
 		}
 
-		private static double CosineSimilarity(IList<int> observed, IList<double> expected)
+		private static double CosineSimilarity(IEnumerable<double> observed, IEnumerable<double> expected)
 		{
-			double dot = observed.Zip(expected).Sum(tuple => tuple.Item1 * tuple.Item2);
-			double obsMag = Math.Sqrt(observed.Sum(o => o * o));
-			double expMag = Math.Sqrt(expected.Sum(o => o * o));
-			return dot / (obsMag * expMag);
-		}
-
-		private class FrequencyInfo
-		{
-			private int _frequency;
-			private readonly Dictionary<string, int> _categoryFrequencies;
-
-			public FrequencyInfo()
+			double dot = 0, obsTotal = 0, expTotal = 0;
+			foreach (Tuple<double, double> t in observed.Zip(expected))
 			{
-				_categoryFrequencies = new Dictionary<string, int>();
+				dot += t.Item1 * t.Item2;
+				obsTotal += t.Item1 * t.Item1;
+				expTotal += t.Item2 * t.Item2;
 			}
-
-			public int Frequency
-			{
-				get { return _frequency; }
-			}
-
-			public ICollection<string> Categories
-			{
-				get { return _categoryFrequencies.Keys; }
-			}
-
-			public void Increment(string category)
-			{
-				_frequency++;
-				if (!string.IsNullOrEmpty(category))
-					_categoryFrequencies.UpdateValue(category, () => 0, freq => freq + 1);
-			}
-
-			public int GetFrequency(string category)
-			{
-				int freq;
-				if (_categoryFrequencies.TryGetValue(category, out freq))
-					return freq;
-				return 0;
-			}
-		}
-
-		private class AffixInfo : FrequencyInfo
-		{
-			private readonly Shape _shape;
-
-			public AffixInfo(Shape shape)
-			{
-				_shape = shape;
-			}
-
-			public Shape Shape
-			{
-				get { return _shape; }
-			}
-
-			public double CurveDrop { get; set; }
-			public double RandomAdjustment { get; set; }
-			public double Score { get; set; }
-
-			public string MainCategory { get; set; }
-
-			public override string ToString()
-			{
-				return string.Concat(_shape.Select(node => node.StrRep()));
-			}
+			return dot / (Math.Sqrt(obsTotal) * Math.Sqrt(expTotal));
 		}
 	}
 }

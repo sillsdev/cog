@@ -103,7 +103,7 @@ namespace SIL.Cog.Aligners
 			int maxScore = GetMaxScore(p);
 			if (varietyPair.SoundChanges.Count > 0)
 			{
-				var target = new NSegment(varietyPair.Variety1.Segments[p]);
+				var target = new Ngram(varietyPair.Variety1.Segments[p]);
 				NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
 					constraint.FeatureStruct.IsUnifiable(p.GetPrev(AlignerResult.Filter).Annotation.FeatureStruct));
 				NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
@@ -124,7 +124,7 @@ namespace SIL.Cog.Aligners
 			int maxScore = GetMaxScore(q);
 			if (varietyPair.SoundChanges.Count > 0)
 			{
-				var corr = new NSegment(varietyPair.Variety2.Segments[q]);
+				var corr = new Ngram(varietyPair.Variety2.Segments[q]);
 
 				double prob = varietyPair.SoundChanges.Max(soundChange => soundChange[corr]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
@@ -142,26 +142,26 @@ namespace SIL.Cog.Aligners
 			if (varietyPair.SoundChanges.Count == 0)
 				return 0;
 
-			NSegment target;
+			Ngram target;
 			if (p1 == null && p2 == null)
 			{
-				target = new NSegment(Segment.Null);
+				target = new Ngram(Segment.Null);
 			}
 			else
 			{
 				Segment targetSegment = varietyPair.Variety1.Segments[p1];
-				target = p2 == null ? new NSegment(targetSegment) : new NSegment(targetSegment, varietyPair.Variety1.Segments[p2]);
+				target = p2 == null ? new Ngram(targetSegment) : new Ngram(targetSegment, varietyPair.Variety1.Segments[p2]);
 			}
 
-			NSegment corr;
+			Ngram corr;
 			if (q1 == null && q2 == null)
 			{
-				corr = new NSegment(Segment.Null);
+				corr = new Ngram(Segment.Null);
 			}
 			else
 			{
 				Segment corrSegment = varietyPair.Variety2.Segments[q1];
-				corr = q2 == null ? new NSegment(corrSegment) : new NSegment(corrSegment, varietyPair.Variety2.Segments[q2]);
+				corr = q2 == null ? new Ngram(corrSegment) : new Ngram(corrSegment, varietyPair.Variety2.Segments[q2]);
 			}
 
 			NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>

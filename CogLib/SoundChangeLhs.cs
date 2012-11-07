@@ -5,25 +5,25 @@ namespace SIL.Cog
 	public class SoundChangeLhs : IEquatable<SoundChangeLhs>
 	{
 		private readonly NaturalClass _leftEnv;
-		private readonly NSegment _target;
+		private readonly Ngram _target;
 		private readonly NaturalClass _rightEnv;
 
-		public SoundChangeLhs(NSegment target)
+		public SoundChangeLhs(Ngram target)
 			: this(null, target, null)
 		{
 		}
 
-		public SoundChangeLhs(NaturalClass leftEnv, NSegment target)
+		public SoundChangeLhs(NaturalClass leftEnv, Ngram target)
 			: this(leftEnv, target, null)
 		{
 		}
 
-		public SoundChangeLhs(NSegment target, NaturalClass rightEnv)
+		public SoundChangeLhs(Ngram target, NaturalClass rightEnv)
 			: this(null, target, rightEnv)
 		{
 		}
 
-		public SoundChangeLhs(NaturalClass leftEnv, NSegment target, NaturalClass rightEnv)
+		public SoundChangeLhs(NaturalClass leftEnv, Ngram target, NaturalClass rightEnv)
 		{
 			_leftEnv = leftEnv;
 			_target = target;
@@ -35,7 +35,7 @@ namespace SIL.Cog
 			get { return _leftEnv; }
 		}
 
-		public NSegment Target
+		public Ngram Target
 		{
 			get { return _target; }
 		}

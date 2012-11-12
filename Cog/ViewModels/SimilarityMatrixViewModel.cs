@@ -14,19 +14,19 @@ namespace SIL.Cog.ViewModels
 {
 	public class SimilarityMatrixViewModel : WorkspaceViewModelBase
 	{
-		private readonly IDialogService _dialogService;
-		private readonly IProgressService _progressService; 
+		private readonly IProgressService _progressService;
+		private readonly IExportService _exportService;
 		private CogProject _project;
 		private ReadOnlyCollection<VarietySimilarityMatrixViewModel> _varieties;
 		private readonly List<Variety> _modelVarieties;
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
 
-		public SimilarityMatrixViewModel(IDialogService dialogService, IProgressService progressService)
+		public SimilarityMatrixViewModel(IProgressService progressService, IExportService exportService)
 			: base("Similarity Matrix")
 		{
-			_dialogService = dialogService;
 			_progressService = progressService;
+			_exportService = exportService;
 			_modelVarieties = new List<Variety>();
 			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
@@ -101,7 +101,7 @@ namespace SIL.Cog.ViewModels
 		private void Export()
 		{
 			if (!_isEmpty)
-				ViewModelUtilities.ExportSimilarityMatrix(_dialogService, _project, this, _similarityMetric);
+				_exportService.ExportSimilarityMatrix(this, _project, _similarityMetric);
 		}
 
 		private void CreateSimilarityMatrix()

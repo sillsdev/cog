@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Linq;
 using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
 
@@ -36,7 +34,7 @@ namespace SIL.Cog.Views
 				return;
 
 			_wordListsGrid.Columns.Clear();
-			foreach (Tuple<SenseViewModel, int> sense in vm.Senses.Select((s, i) => Tuple.Create(s, i)).OrderBy(t => t.Item1.Gloss))
+			for (int i = 0; i < vm.Senses.Count; i++)
 			{
 				//var geometry = Geometry.Parse("M 0,1 C 1,0 2,2 3,1");
 				//var path = new Path {Stroke = Brushes.Red, StrokeThickness = 0.5, StrokeEndLineCap = PenLineCap.Square, StrokeStartLineCap = PenLineCap.Square, Data = geometry};
@@ -56,13 +54,13 @@ namespace SIL.Cog.Views
 				var textDecorations = new TextDecorationCollection {textDecoration};
 
 				var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-				var binding = new Binding(string.Format("Senses[{0}].Words", sense.Item2)) {Converter = new WordsToInlinesConverter(), ConverterParameter = textDecorations};
+				var binding = new Binding(string.Format("Senses[{0}].Words", i)) {Converter = new WordsToInlinesConverter(), ConverterParameter = textDecorations};
 				textBlockFactory.SetBinding(TextBlockBehaviors.InlinesListProperty, binding);
 				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
 				var cellTemplate = new DataTemplate {VisualTree = textBlockFactory};
 
 				var textBoxFactory = new FrameworkElementFactory(typeof(TextBox));
-				textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(string.Format("Senses[{0}].StrRep", sense.Item2)));
+				textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
 				textBoxFactory.SetValue(BorderThicknessProperty, new Thickness(0));
 				textBoxFactory.Name = "textBox";
 				var cellEditTemplate = new DataTemplate {VisualTree = textBoxFactory};
@@ -70,11 +68,11 @@ namespace SIL.Cog.Views
 
 				var column = new DataGridTemplateColumn
 					{
-						Header = sense.Item1.Gloss,
+						Header = vm.Senses[i].Gloss,
 						CellTemplate = cellTemplate,
 						CellEditingTemplate = cellEditTemplate,
-						ClipboardContentBinding = new Binding(string.Format("Senses[{0}].StrRep", sense.Item2)),
-						SortMemberPath = string.Format("Senses[{0}].StrRep", sense.Item2)
+						ClipboardContentBinding = new Binding(string.Format("Senses[{0}].StrRep", i)),
+						SortMemberPath = string.Format("Senses[{0}].StrRep", i)
 					};
 
 				_wordListsGrid.Columns.Add(column);

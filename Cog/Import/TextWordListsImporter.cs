@@ -3,11 +3,11 @@ using System.IO;
 using SIL.Collections;
 using SIL.Machine;
 
-namespace SIL.Cog.WordListsLoaders
+namespace SIL.Cog.Import
 {
-	public class TextLoader : IWordListsLoader
+	public class TextWordListsImporter : IWordListsImporter
 	{
-		public void Load(string path, CogProject project)
+		public void Import(string path, CogProject project)
 		{
 			using (var file = new StreamReader(path))
 			{

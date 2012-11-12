@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    targetNamespace="http://www.sil.org/CogProject"
+    elementFormDefault="qualified"
+    xmlns="http://www.sil.org/CogProject"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<xs:element name="FeatureValue">
+		<xs:complexType>
+			<xs:attribute name="feature" type="xs:string" use="required" />
+			<xs:attribute name="value" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SymbolCollection">
+		<xs:sequence>
+			<xs:element name="Symbol" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="FeatureValue" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+					<xs:attribute name="strRep" type="xs:string" use="required" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BaseSymbolCollection">
+		<xs:complexContent>
+			<xs:extension base="SymbolCollection">
+				<xs:attribute name="maxLength" type="xs:int" default="3" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AlignerBase" abstract="true">
+		<xs:sequence>
+			<xs:element name="Mode">
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:enumeration value="local" />
+						<xs:enumeration value="global" />
+						<xs:enumeration value="semi-global" />
+						<xs:enumeration value="half-local" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DisableExpansionCompression" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+			<xs:element name="NaturalClasses">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="NaturalClass" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="FeatureValue" minOccurs="0" maxOccurs="unbounded" />
+								</xs:sequence>
+								<xs:attribute name="Name" type="xs:string" use="required" />
+								<xs:attribute name="type">
+									<xs:simpleType>
+										<xs:restriction base="xs:token">
+											<xs:enumeration value="consonant" />
+											<xs:enumeration value="vowel" />
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:complexType name="ProjectProcessorBase" abstract="true">
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:complexType name="VarietyProcessorBase" abstract="true">
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:complexType name="VarietyPairProcessorBase" abstract="true">
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:element name="ApplicableAligner">
+		<xs:complexType>
+			<xs:attribute name="ref" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="Aline">
+		<xs:complexContent>
+			<xs:extension base="AlignerBase">
+				<xs:sequence>
+					<xs:element name="RelevantFeatures">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="RelevantFeature" minOccurs="0" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="RelevantValue" minOccurs="1" maxOccurs="unbounded">
+												<xs:complexType>
+													<xs:attribute name="ref" type="xs:string" use="required" />
+													<xs:attribute name="metric" type="xs:int" use="required" />
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attribute name="ref" type="xs:string" use="required" />
+										<xs:attribute name="vowel" type="xs:boolean" />
+										<xs:attribute name="consonant" type="xs:boolean" />
+										<xs:attribute name="weight" type="xs:int" use="required" />
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="UnsupervisedAffixIdentifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyProcessorBase">
+				<xs:sequence>
+					<xs:element name="AffixThreshold" type="xs:double" />
+					<xs:element name="MaxAffixLength" type="xs:int" />
+					<xs:element name="CategoryRequired" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EMSoundChangeInducer">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element name="AlignmentThreshold" type="xs:double" />
+					<xs:element ref="ApplicableAligner" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ThresholdSimilarSegmentIdentifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element name="VowelThreshold" type="xs:int" />
+					<xs:element name="ConsonantThreshold" type="xs:int" />
+					<xs:element ref="ApplicableAligner" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Mapping">
+		<xs:complexType>
+			<xs:attribute name="segment1" type="xs:string" use="required" />
+			<xs:attribute name="segment2" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ListSimilarSegmentIdentifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element name="SimilarVowels">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="Mapping" minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="SimilarConsonants">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="Mapping" minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="GenerateDiphthongs" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BlairCognateIdentifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element name="AlignmentThreshold" type="xs:double" />
+					<xs:element ref="ApplicableAligner" />
+					<xs:element name="IgnoreRegularInsertionDeletion" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="RegularConsonantsAreEqual" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:element name="CogProject">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FeatureSystem">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Feature" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Value" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="id" type="xs:string" use="required" />
+												<xs:attribute name="name" type="xs:string" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="id" type="xs:string" use="required" />
+									<xs:attribute name="name" type="xs:string" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Segmentation">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Vowels" type="BaseSymbolCollection" />
+							<xs:element name="Consonants" type="BaseSymbolCollection" />
+							<xs:element name="Modifiers" type="SymbolCollection" />
+							<xs:element name="Boundaries" type="SymbolCollection" />
+							<xs:element name="ToneLetters" type="SymbolCollection" />
+							<xs:element name="Joiners" type="SymbolCollection" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Aligners">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Aligner" type="AlignerBase" minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Senses">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Sense" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="id" type="xs:string" use="required" />
+									<xs:attribute name="gloss" type="xs:string" use="required" />
+									<xs:attribute name="category" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Varieties">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Variety" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Words">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Word" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Prefix" minOccurs="0" maxOccurs="1" type="xs:string" />
+																<xs:element name="Stem" type="xs:string" />
+																<xs:element name="Suffix" minOccurs="0" maxOccurs="1" type="xs:string" />
+															</xs:sequence>
+															<xs:attribute name="sense" type="xs:string" use="required" />
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Affixes">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Affix" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="type">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:token">
+																				<xs:enumeration value="prefix" />
+																				<xs:enumeration value="suffix" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required"  />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ProjectProcessors">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ProjectProcessor" type="ProjectProcessorBase" minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="VarietyProcessors">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="VarietyProcessor" type="VarietyProcessorBase" minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="VarietyPairProcessors">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="VarietyPairProcessor" type="VarietyPairProcessorBase" minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:key name="FeatureKey">
+			<xs:selector xpath="Feature" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="FeatureKeyRef" refer="FeatureKey">
+			<xs:selector xpath="FeatureValue" />
+			<xs:field xpath="@feature" />
+		</xs:keyref>
+		<xs:key name="ValueKey">
+			<xs:selector xpath="Value" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="ValueKeyRef" refer="ValueKey">
+			<xs:selector xpath="FeatureValue" />
+			<xs:field xpath="@value" />
+		</xs:keyref>
+		<xs:key name="SenseKey">
+			<xs:selector xpath="Sense" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="SenseKeyRef" refer="SenseKey">
+			<xs:selector xpath="Word" />
+			<xs:field xpath="@sense" />
+		</xs:keyref>
+		<xs:key name="AlignerKey">
+			<xs:selector xpath="Aligner" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="AlignerKeyRef" refer="AlignerKey">
+			<xs:selector xpath="ApplicableAligner" />
+			<xs:field xpath="@ref" />
+		</xs:keyref>
+		<xs:keyref name="RelevantFeatureKeyRef" refer="FeatureKey">
+			<xs:selector xpath="RelevantFeature" />
+			<xs:field xpath="@ref" />
+		</xs:keyref>
+		<xs:keyref name="RelevantValueKeyRef" refer="ValueKey">
+			<xs:selector xpath="RelevantValue" />
+			<xs:field xpath="@ref" />
+		</xs:keyref>
+	</xs:element>
+</xs:schema>

@@ -55,6 +55,7 @@ namespace SIL.Cog
 			HashSet<Word> senseWords = _words.GetValue(item.Sense, () => new HashSet<Word>());
 			if (senseWords.Add(item))
 			{
+				item.Variety = _variety;
 				_variety.Segments.WordAdded(item);
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
 			}
@@ -64,6 +65,8 @@ namespace SIL.Cog
 		{
 			CheckReentrancy();
 			int count = _words.Count;
+			foreach (Word word in this)
+				word.Variety = null;
 			_words.Clear();
 			_variety.Segments.WordsCleared();
 			if (count > 0)
@@ -92,6 +95,7 @@ namespace SIL.Cog
 			{
 				if (senseWords.Remove(item))
 				{
+					item.Variety = null;
 					if (senseWords.Count == 0)
 						_words.Remove(item.Sense);
 					_variety.Segments.WordRemoved(item);

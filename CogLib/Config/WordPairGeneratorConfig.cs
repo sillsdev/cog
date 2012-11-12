@@ -9,7 +9,7 @@ namespace SIL.Cog.Config
 	{
 		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
-			XElement alignerElem = elem.Element("ApplicableAligner");
+			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
 			return new WordPairGenerator(project, alignerID);
@@ -18,7 +18,7 @@ namespace SIL.Cog.Config
 		public void Save(IProcessor<VarietyPair> component, XElement elem)
 		{
 			var generator = (WordPairGenerator) component;
-			elem.Add(new XElement("ApplicableAligner", new XAttribute("ref", generator.AlignerID)));
+			elem.Add(new XElement(ConfigManager.Cog + "ApplicableAligner", new XAttribute("ref", generator.AlignerID)));
 		}
 	}
 }

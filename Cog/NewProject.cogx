@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CogProject>
+<CogProject xmlns="http://www.sil.org/CogProject"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -1152,7 +1153,7 @@
 		</Joiners>
 	</Segmentation>
 	<Aligners>
-		<Aligner id="primary" type="Aline">
+		<Aligner id="primary" xsi:type="Aline">
 			<Mode>local</Mode>
 			<DisableExpansionCompression>false</DisableExpansionCompression>
 			<NaturalClasses />
@@ -1252,23 +1253,23 @@
 	<Varieties />
 	<ProjectProcessors />
 	<VarietyProcessors>
-		<VarietyProcessor id="affixIdentifier" type="UnsupervisedAffixIdentifier">
+		<VarietyProcessor id="affixIdentifier" xsi:type="UnsupervisedAffixIdentifier">
 			<AffixThreshold>0.5</AffixThreshold>
 			<MaxAffixLength>5</MaxAffixLength>
 			<CategoryRequired>false</CategoryRequired>
 		</VarietyProcessor>
 	</VarietyProcessors>
 	<VarietyPairProcessors>
-		<VarietyPairProcessor id="soundChangeInducer" type="EMSoundChangeInducer">
+		<VarietyPairProcessor id="soundChangeInducer" xsi:type="EMSoundChangeInducer">
 			<AlignmentThreshold>0.3</AlignmentThreshold>
 			<ApplicableAligner ref="primary" />
 		</VarietyPairProcessor>
-		<VarietyPairProcessor id="similarSegmentIdentifier" type="ThresholdSimilarSegmentIdentifier">
+		<VarietyPairProcessor id="similarSegmentIdentifier" xsi:type="ThresholdSimilarSegmentIdentifier">
 			<VowelThreshold>500</VowelThreshold>
 			<ConsonantThreshold>600</ConsonantThreshold>
 			<ApplicableAligner ref="primary" />
 		</VarietyPairProcessor>
-		<VarietyPairProcessor id="cognateIdentifier" type="BlairCognateIdentifier">
+		<VarietyPairProcessor id="cognateIdentifier" xsi:type="BlairCognateIdentifier">
 			<AlignmentThreshold>0.3</AlignmentThreshold>
 			<ApplicableAligner ref="primary" />
 		</VarietyPairProcessor>

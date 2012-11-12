@@ -1,4 +1,5 @@
 ﻿using System;
+using SIL.Collections;
 
 namespace SIL.Cog.Statistics
 {
@@ -18,6 +19,11 @@ namespace SIL.Cog.Statistics
 			_gamma = gamma;
 			_binCount = binCount;
 			_divisor = _freqDist.SampleOutcomeCount + _binCount * gamma;
+		}
+
+		public IReadOnlyCollection<TSample> Samples
+		{
+			get { return _freqDist.ObservedSamples; }
 		}
 
 		public double GetProbability(TSample sample)

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Collections;
 
@@ -7,18 +8,18 @@ namespace SIL.Cog.ViewModels
 	public class VarietyPairViewModel : ViewModelBase
 	{
 		private readonly VarietyPair _varietyPair;
-		private readonly System.Collections.ObjectModel.ReadOnlyCollection<SoundCorrespondenceViewModel> _correspondences;
+		private readonly ReadOnlyCollection<SoundCorrespondenceViewModel> _correspondences;
 		private SoundCorrespondenceViewModel _currentCorrespondence;
-		private readonly System.Collections.ObjectModel.ReadOnlyCollection<WordPairViewModel> _wordPairs;
+		private readonly ReadOnlyCollection<WordPairViewModel> _wordPairs;
 		private readonly bool _areVarietiesInOrder;
 
 		public VarietyPairViewModel(CogProject project, VarietyPair varietyPair, bool areVarietiesInOrder)
 		{
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
-			_correspondences = new System.Collections.ObjectModel.ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.SelectMany(change => change.ObservedCorrespondences,
-				(change, segment) => new SoundCorrespondenceViewModel(change, segment)).ToList());
-			_wordPairs = new System.Collections.ObjectModel.ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
+			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.Conditions.SelectMany(lhs => _varietyPair.SoundChanges[lhs].Samples,
+				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs].GetProbability(segment))).ToList());
+			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
 		}
 
 		public SoundCorrespondenceViewModel CurrentCorrespondence
@@ -37,9 +38,9 @@ namespace SIL.Cog.ViewModels
 						}
 						else
 						{
-							var nseg1 = new Ngram(_varietyPair.Variety1.Segments[node.Annotation1.StrRep()]);
-							var nseg2 = new Ngram(_varietyPair.Variety2.Segments[node.Annotation2.StrRep()]);
-							SoundChangeLhs lhs = _currentCorrespondence.ModelSoundChange.Lhs;
+							Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
+							Ngram nseg2 = _varietyPair.Variety2.Segments[node.Annotation2];
+							SoundChangeLhs lhs = _currentCorrespondence.ModelSoundChangeLhs;
 							node.IsSelected = nseg1.Equals(lhs.Target) && nseg2.Equals(_currentCorrespondence.ModelCorrespondence)
 								&& (lhs.LeftEnvironment == null || lhs.LeftEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetPrev(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct))
 								&& (lhs.RightEnvironment == null || lhs.RightEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetNext(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct));
@@ -64,12 +65,12 @@ namespace SIL.Cog.ViewModels
 			get { return _varietyPair.PhoneticSimilarityScore; }
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<SoundCorrespondenceViewModel> Correspondences
+		public ReadOnlyCollection<SoundCorrespondenceViewModel> Correspondences
 		{
 			get { return _correspondences; }
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<WordPairViewModel> WordPairs
+		public ReadOnlyCollection<WordPairViewModel> WordPairs
 		{
 			get { return _wordPairs; }
 		}

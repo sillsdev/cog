@@ -38,6 +38,8 @@ namespace SIL.Cog
 			get { return _sense; }
 		}
 
+		public Variety Variety { get; internal set; }
+
 		public Annotation<ShapeNode> Prefix
 		{
 			get

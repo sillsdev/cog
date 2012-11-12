@@ -1,4 +1,6 @@
-﻿namespace SIL.Cog.Statistics
+﻿using SIL.Collections;
+
+namespace SIL.Cog.Statistics
 {
 	public class MaxLikelihoodProbabilityDistribution<TSample> : IProbabilityDistribution<TSample>
 	{
@@ -9,10 +11,13 @@
 			_freqDist = freqDist;
 		}
 
+		public IReadOnlyCollection<TSample> Samples
+		{
+			get { return _freqDist.ObservedSamples; }
+		}
+
 		public double GetProbability(TSample sample)
 		{
-			if (_freqDist.SampleOutcomeCount == 0)
-				return 0;
 			return (double) _freqDist[sample] / _freqDist.SampleOutcomeCount;
 		}
 

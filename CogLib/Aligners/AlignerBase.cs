@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -8,19 +9,27 @@ namespace SIL.Cog.Aligners
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly AlignerSettings _settings;
-		private readonly List<NaturalClass> _naturalClasses; 
 
 		protected AlignerBase(SpanFactory<ShapeNode> spanFactory, AlignerSettings settings)
 		{
 			_spanFactory = spanFactory;
 			_settings = settings;
-			_naturalClasses = _settings.NaturalClasses == null ? new List<NaturalClass>() : new List<NaturalClass>(_settings.NaturalClasses);
 			_settings.ReadOnly = true;
 		}
 
 		public IEnumerable<NaturalClass> NaturalClasses
 		{
-			get { return _naturalClasses; }
+			get
+			{
+				if (_settings.NaturalClasses == null)
+					return Enumerable.Empty<NaturalClass>();
+				return _settings.NaturalClasses;
+			}
+		}
+
+		public bool SupportsExpansionCompression
+		{
+			get { return !_settings.DisableExpansionCompression; }
 		}
 
 		public IAlignerResult Compute(VarietyPair varietyPair, Word word1, Word word2)

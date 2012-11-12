@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
 
@@ -51,16 +50,6 @@ namespace SIL.Cog
 			if (_lengths.TryGetValue(cluster, out length))
 				return length;
 			return 0;
-		}
-
-		public IEnumerable<Tuple<Cluster<T>, double>> GetLengths()
-		{
-			return GetLengths(Direction.LeftToRight);
-		}
-
-		public IEnumerable<Tuple<Cluster<T>, double>> GetLengths(Direction dir)
-		{
-			return this.GetNodes(dir).Select(c => Tuple.Create(c, GetLength(c)));
 		}
 	}
 }

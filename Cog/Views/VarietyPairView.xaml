@@ -251,7 +251,7 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type GroupItem}">
                                                 <StackPanel>
-                                                    <TextBlock Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource TextBrush}">
+                                                    <TextBlock Padding="2,0,2,0" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource TextBrush}">
                                                         <Run Text="{Binding Name.Target, Mode=OneWay}">
                                                             <Run.Foreground>
                                                                 <MultiBinding Converter="{StaticResource brushConverter}">

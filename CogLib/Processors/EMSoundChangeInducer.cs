@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using SIL.Cog.Statistics;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -33,14 +33,14 @@ namespace SIL.Cog.Processors
 			bool converged = false;
 			for (int i = 0; i < 15 && !converged; i++)
 			{
-				Dictionary<SoundChange, ExpectedCount> expectedCounts = E(varietyPair);
+				ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> expectedCounts = E(varietyPair);
 				converged = M(varietyPair, expectedCounts);
 			}
 		}
 
-		private Dictionary<SoundChange, ExpectedCount> E(VarietyPair pair)
+		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> E(VarietyPair pair)
 		{
-			var expectedCounts = new Dictionary<SoundChange, ExpectedCount>();
+			var expectedCounts = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
 			IAligner aligner = Project.Aligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
@@ -61,74 +61,53 @@ namespace SIL.Cog.Processors
 							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
 
 						var lhs = new SoundChangeLhs(leftEnv, u, rightEnv);
-						SoundChange change;
-						if (!pair.SoundChanges.TryGetValue(lhs, out change))
-							change = pair.SoundChanges.Add(lhs);
-						ExpectedCount expectedCount = expectedCounts.GetValue(change, () => new ExpectedCount());
-						expectedCount.Increment(v);
+						expectedCounts[lhs].Increment(v);
 					}
 				}
 			}
 			return expectedCounts;
 		}
 
-		private bool M(VarietyPair pair, Dictionary<SoundChange, ExpectedCount> expectedCounts)
+		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> expectedCounts)
 		{
+			IAligner aligner = Project.Aligners[_alignerID];
+			int segmentCount = pair.Variety2.Segments.Count;
+			int possCorrCount = aligner.SupportsExpansionCompression ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
+			var cpd = new ConditionalProbabilityDistribution<SoundChangeLhs, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
+
 			bool converged = true;
-			foreach (SoundChange change in pair.SoundChanges)
+			if (pair.SoundChanges == null || pair.SoundChanges.Conditions.Count != cpd.Conditions.Count)
 			{
-				ExpectedCount expectedCount;
-				if (expectedCounts.TryGetValue(change, out expectedCount))
+				converged = false;
+			}
+			else
+			{
+				foreach (SoundChangeLhs lhs in cpd.Conditions)
 				{
-					foreach (Ngram correspondence in expectedCount.Correspondences)
+					IProbabilityDistribution<Ngram> probDist = cpd[lhs];
+					IProbabilityDistribution<Ngram> oldProbDist;
+					if (!pair.SoundChanges.TryGetProbabilityDistribution(lhs, out oldProbDist) || probDist.Samples.Count != oldProbDist.Samples.Count)
 					{
-						double prob = (expectedCount.GetCorrespondenceCount(correspondence) + (1.0 / pair.SoundChanges.PossibleCorrespondenceCount)) / (expectedCount.Count + 1.0);
-						if (Math.Abs(prob - change[correspondence]) > 0.0001)
-							converged = false;
-						change[correspondence] = prob;
+						converged = false;
+						break;
 					}
-				}
-				else
-				{
-					change.Reset();
+
+					foreach (Ngram correspondence in probDist.Samples)
+					{
+						if (Math.Abs(probDist.GetProbability(correspondence) - oldProbDist.GetProbability(correspondence)) > 0.0001)
+						{
+							converged = false;
+							break;
+						}
+					}
+
+					if (!converged)
+						break;
 				}
 			}
+			pair.SoundChanges = cpd;
+			pair.DefaultCorrespondenceProbability = 1.0 / possCorrCount;
 			return converged;
-		}
-
-		private class ExpectedCount
-		{
-			private int _count;
-			private readonly Dictionary<Ngram, int> _correspondenceCounts;
-
-			public ExpectedCount()
-			{
-				_correspondenceCounts = new Dictionary<Ngram, int>();
-			}
-
-			public int Count
-			{
-				get { return _count; }
-			}
-
-			public IEnumerable<Ngram> Correspondences
-			{
-				get { return _correspondenceCounts.Keys; }
-			}
-
-			public int GetCorrespondenceCount(Ngram correspondence)
-			{
-				int count;
-				if (_correspondenceCounts.TryGetValue(correspondence, out count))
-					return count;
-				return 0;
-			}
-
-			public void Increment(Ngram correspondence)
-			{
-				_correspondenceCounts.UpdateValue(correspondence, () => 0, count => count + 1);
-				_count++;
-			}
 		}
 	}
 }

@@ -7,6 +7,7 @@ namespace SIL.Cog
 	public interface IAligner
 	{
 		IEnumerable<NaturalClass> NaturalClasses { get; }
+		bool SupportsExpansionCompression { get; }
 
 		IAlignerResult Compute(VarietyPair varietyPair, Word word1, Word word2);
 		IAlignerResult Compute(WordPair wordPair);

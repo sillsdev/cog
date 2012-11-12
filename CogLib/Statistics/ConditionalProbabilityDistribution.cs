@@ -5,7 +5,7 @@ using SIL.Collections;
 
 namespace SIL.Cog.Statistics
 {
-	public class ConditionalProbabilityDistribution<TCondition, TSample>
+	public class ConditionalProbabilityDistribution<TCondition, TSample> : IConditionalProbabilityDistribution<TCondition, TSample>
 	{
 		private readonly Dictionary<TCondition, IProbabilityDistribution<TSample>> _probDists; 
 

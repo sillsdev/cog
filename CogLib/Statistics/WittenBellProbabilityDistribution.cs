@@ -1,4 +1,5 @@
 ﻿using System;
+using SIL.Collections;
 
 namespace SIL.Cog.Statistics
 {
@@ -15,6 +16,11 @@ namespace SIL.Cog.Statistics
 			_freqDist = freqDist;
 			int z = binCount - _freqDist.ObservedSamples.Count;
 			_probZero = (double) _freqDist.ObservedSamples.Count / (z * (_freqDist.SampleOutcomeCount + _freqDist.ObservedSamples.Count));
+		}
+
+		public IReadOnlyCollection<TSample> Samples
+		{
+			get { return _freqDist.ObservedSamples; }
 		}
 
 		public double GetProbability(TSample sample)

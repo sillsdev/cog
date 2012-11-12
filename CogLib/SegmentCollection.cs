@@ -109,7 +109,20 @@ namespace SIL.Cog
 
 		public Segment this[ShapeNode node]
 		{
-			get { return _segments[node.StrRep()]; }
+			get
+			{
+				if (node.Type() == CogFeatureSystem.NullType)
+					return Segment.Null;
+				return _segments[node.StrRep()];
+			}
+		}
+
+		public Ngram this[Annotation<ShapeNode> ann]
+		{
+			get
+			{
+				return new Ngram(ann.Span.Start.GetNodes(ann.Span.End).Select(n => this[n]));
+			}
 		}
 
 		public int TotalFrequency

@@ -4,15 +4,17 @@ namespace SIL.Cog.ViewModels
 {
 	public class SoundCorrespondenceViewModel : ViewModelBase
 	{
-		private readonly SoundChange _soundChange;
+		private readonly SoundChangeLhs _modelLhs;
 		private readonly Ngram _correspondence;
 		private readonly SoundCorrespondenceLhsViewModel _lhs;
+		private readonly double _prob;
 
-		public SoundCorrespondenceViewModel(SoundChange soundChange, Ngram correspondence)
+		public SoundCorrespondenceViewModel(SoundChangeLhs lhs, Ngram correspondence, double probability)
 		{
-			_soundChange = soundChange;
+			_modelLhs = lhs;
 			_correspondence = correspondence;
-			_lhs = new SoundCorrespondenceLhsViewModel(soundChange.Lhs);
+			_lhs = new SoundCorrespondenceLhsViewModel(lhs);
+			_prob = probability;
 		}
 
 		public SoundCorrespondenceLhsViewModel Lhs
@@ -27,12 +29,12 @@ namespace SIL.Cog.ViewModels
 
 		public double Probability
 		{
-			get { return _soundChange[_correspondence]; }
+			get { return _prob; }
 		}
 
-		public SoundChange ModelSoundChange
+		public SoundChangeLhs ModelSoundChangeLhs
 		{
-			get { return _soundChange; }
+			get { return _modelLhs; }
 		}
 
 		public Ngram ModelCorrespondence

@@ -15,19 +15,20 @@
                 <MenuItem Header="_Open..." Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
-                <MenuItem Header="_Import..." Command="{Binding ImportCommand}" />
+                <MenuItem Header="_Import Word Lists..." Command="{Binding ImportCommand}" />
 				<MenuItem Header="_Export">
-					<MenuItem Header="Word lists..." Command="{Binding ExportWordListsCommand}" />
-					<MenuItem Header="Similarity matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
-					<MenuItem Header="Hierarchical graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
-					<MenuItem Header="Network graph..." Command="{Binding ExportNetworkGraphCommand}" />
+					<MenuItem Header="Word Lists..." Command="{Binding ExportWordListsCommand}" />
+					<MenuItem Header="Similarity Matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
+					<MenuItem Header="Cognate Sets..." Command="{Binding ExportCognateSetsCommand}" />
+					<MenuItem Header="Hierarchical Graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
+					<MenuItem Header="Network Graph..." Command="{Binding ExportNetworkGraphCommand}" />
 				</MenuItem>
                 <MenuItem Header="E_xit" Click="Exit_Click" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Command="Cut" />
-                <MenuItem Command="Copy" />
-                <MenuItem Command="Paste" />
+                <MenuItem Header="Cu_t" Command="Cut" />
+                <MenuItem Header="_Copy" Command="Copy" />
+                <MenuItem Header="_Paste" Command="Paste" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="About Cog" Click="AboutBox_Click" />

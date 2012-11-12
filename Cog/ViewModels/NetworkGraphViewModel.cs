@@ -11,14 +11,12 @@ namespace SIL.Cog.ViewModels
 		private IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> _graph;
 		private CogProject _project;
 		private SimilarityMetric _similarityMetric;
-		private readonly IDialogService _dialogService;
-		private readonly IExportGraphService _exportGraphService;
+		private readonly IExportService _exportService;
 
-		public NetworkGraphViewModel(IDialogService dialogService, IExportGraphService exportGraphService)
+		public NetworkGraphViewModel(IExportService exportService)
 			: base("Network Graph")
 		{
-			_dialogService = dialogService;
-			_exportGraphService = exportGraphService;
+			_exportService = exportService;
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 
 			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
@@ -30,9 +28,7 @@ namespace SIL.Cog.ViewModels
 
 		private void Export()
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", this, new FileType("PNG image", ".png"));
-			if (result.IsValid)
-				_exportGraphService.ExportCurrentNetworkGraph(result.FileName);
+			_exportService.ExportCurrentNetworkGraph(this);
 		}
 
 		public override void Initialize(CogProject project)

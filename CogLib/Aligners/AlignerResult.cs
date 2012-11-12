@@ -367,7 +367,7 @@ namespace SIL.Cog.Aligners
 
 		private double CalcNormalizedScore(Shape shape1, Shape shape2, int score)
 		{
-			return Math.Min(1.0, (double) score / Math.Max(CalcMaxScore1(shape1), CalcMaxScore2(shape2)));
+			return Math.Max(0.0, Math.Min(1.0, (double) score / Math.Max(CalcMaxScore1(shape1), CalcMaxScore2(shape2))));
 		}
 
 		private int CalcMaxScore1(Shape shape1)

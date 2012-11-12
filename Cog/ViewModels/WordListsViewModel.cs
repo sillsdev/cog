@@ -13,18 +13,22 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
+		private readonly IImportService _importService;
+		private readonly IExportService _exportService;
 		private readonly IProgressService _progressService;
 		private CogProject _project;
 		private ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
  		private ListViewModelCollection<ObservableCollection<Variety>, VarietyWordListsViewModel, Variety> _varieties;
 		private bool _isEmpty;
 
-		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService)
+		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService, IImportService importService, IExportService exportService)
 			: base("Word lists")
 		{
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
+			_importService = importService;
 			_progressService = progressService;
+			_exportService = exportService;
 
 			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
@@ -59,13 +63,13 @@ namespace SIL.Cog.ViewModels
 
 		private void Import()
 		{
-			if (ViewModelUtilities.ImportWordLists(_dialogService, _project, this))
+			if (_importService.ImportWordLists(this, _project))
 				IsChanged = true;
 		}
 
 		private void Export()
 		{
-			ViewModelUtilities.ExportWordLists(_dialogService, _project, this);
+			_exportService.ExportWordLists(this, _project);
 		}
 
 		private void RunStemmer()
@@ -89,8 +93,17 @@ namespace SIL.Cog.ViewModels
 						break;
 				}
 				Debug.Assert(processors != null);
-				var pipeline = new Pipeline<Variety>(processors);
-				_progressService.ShowProgress(this, () => pipeline.Process(_project.Varieties));
+				var pipeline = new MultiThreadedPipeline<Variety>(processors);
+
+				var progressVM = new ProgressViewModel(() => pipeline.Process(_project.Varieties)) {Text = "Stemming all varieties..."};
+				pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
+
+				if (!_progressService.ShowProgress(this, progressVM))
+				{
+					pipeline.Cancel();
+					pipeline.WaitForComplete();
+				}
+
 				IsChanged = true;
 			}
 		}

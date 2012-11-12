@@ -8,8 +8,9 @@ namespace SIL.Cog
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly WordPairCollection _wordPairs; 
-		private readonly SoundChangeCollection _soundChanges;
+		private IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> _soundChanges;
 		private readonly Dictionary<Segment, HashSet<Segment>> _similarSegments;
+		private double _defaultCorrProb;
 		private double _phoneticSimilarityScore;
 		private double _lexicalSimilarityScore;
 		private double _significance;
@@ -21,7 +22,6 @@ namespace SIL.Cog
 			_variety1 = variety1;
 			_variety2 = variety2;
 			_wordPairs = new WordPairCollection(this);
-			_soundChanges = new SoundChangeCollection(this);
 
 			_similarSegments = new Dictionary<Segment, HashSet<Segment>>();
 		}
@@ -101,9 +101,24 @@ namespace SIL.Cog
 			}
 		}
 
-		public SoundChangeCollection SoundChanges
+		public IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> SoundChanges
 		{
 			get { return _soundChanges; }
+			set
+			{
+				_soundChanges = value;
+				OnPropertyChanged("SoundChanges");
+			}
+		}
+
+		public double DefaultCorrespondenceProbability
+		{
+			get { return _defaultCorrProb; }
+			set
+			{
+				_defaultCorrProb = value;
+				OnPropertyChanged("DefaultCorrespondenceProbability");
+			}
 		}
 
 		public void AddSimilarSegment(Segment seg1, Segment seg2)

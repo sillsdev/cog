@@ -5,7 +5,6 @@ namespace SIL.Cog
 {
 	public class WordPair : NotifyPropertyChangedBase
 	{
-		private readonly VarietyPair _varietyPair;
 		private readonly Word _word1;
 		private readonly Word _word2;
 		private readonly ObservableCollection<string> _alignmentNotes;
@@ -13,18 +12,14 @@ namespace SIL.Cog
 		private bool _areCognatePredicted;
 		private double _phoneticSimilarityScore;
 
-		public WordPair(VarietyPair varietyPair, Word word1, Word word2)
+		public WordPair(Word word1, Word word2)
 		{
-			_varietyPair = varietyPair;
 			_word1 = word1;
 			_word2 = word2;
 			_alignmentNotes = new ObservableCollection<string>();
 		}
 
-		public VarietyPair VarietyPair
-		{
-			get { return _varietyPair; }
-		}
+		public VarietyPair VarietyPair { get; internal set; }
 
 		public Word Word1
 		{
@@ -34,6 +29,18 @@ namespace SIL.Cog
 		public Word Word2
 		{
 			get { return _word2; }
+		}
+
+		public Word GetWord(Variety v)
+		{
+			if (VarietyPair.Variety1 == v)
+				return _word1;
+			return _word2;
+		}
+
+		public Sense Sense
+		{
+			get { return _word1.Sense; }
 		}
 
 		public ObservableCollection<string> AlignmentNotes

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.Collections;
 
 namespace SIL.Cog.Statistics
 {
@@ -98,6 +99,11 @@ namespace SIL.Cog.Statistics
 		private double GetVariance(int r, int nr, int nr1)
 		{
 			return Math.Pow(r + 1, 2) * (nr1 / Math.Pow(nr, 2)) * (1.0 + (double) nr1 / nr);
+		}
+
+		public IReadOnlyCollection<TSample> Samples
+		{
+			get { return _freqDist.ObservedSamples; }
 		}
 
 		public double GetProbability(TSample sample)

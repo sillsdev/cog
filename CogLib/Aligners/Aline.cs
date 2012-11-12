@@ -101,7 +101,7 @@ namespace SIL.Cog.Aligners
 		public override int GetMaxScore1(VarietyPair varietyPair, ShapeNode p)
 		{
 			int maxScore = GetMaxScore(p);
-			if (varietyPair.SoundChanges.Count > 0)
+			if (varietyPair.SoundChanges != null)
 			{
 				var target = new Ngram(varietyPair.Variety1.Segments[p]);
 				NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
@@ -110,10 +110,10 @@ namespace SIL.Cog.Aligners
 					constraint.FeatureStruct.IsUnifiable(p.GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
 
 				var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
-				double prob = varietyPair.SoundChanges.DefaultCorrespondenceProbability;
-				SoundChange soundChange;
-				if (varietyPair.SoundChanges.TryGetValue(lhs, out soundChange) && soundChange.ObservedCorrespondences.Count > 0)
-					prob = soundChange.ObservedCorrespondences.Max(nseg => soundChange[nseg]);
+				double prob = varietyPair.DefaultCorrespondenceProbability;
+				IProbabilityDistribution<Ngram> probDist;
+				if (varietyPair.SoundChanges.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
+					prob = probDist.Samples.Max(nseg => probDist.GetProbability(nseg));
 				maxScore += (int) (MaxSoundChangeScore * prob);
 			}
 			return maxScore;
@@ -122,11 +122,11 @@ namespace SIL.Cog.Aligners
 		public override int GetMaxScore2(VarietyPair varietyPair, ShapeNode q)
 		{
 			int maxScore = GetMaxScore(q);
-			if (varietyPair.SoundChanges.Count > 0)
+			if (varietyPair.SoundChanges != null)
 			{
 				var corr = new Ngram(varietyPair.Variety2.Segments[q]);
 
-				double prob = varietyPair.SoundChanges.Max(soundChange => soundChange[corr]);
+				double prob = varietyPair.SoundChanges.Conditions.Max(lhs => varietyPair.SoundChanges[lhs].GetProbability(corr));
 				maxScore += (int) (MaxSoundChangeScore * prob);
 			}
 			return maxScore;
@@ -139,7 +139,7 @@ namespace SIL.Cog.Aligners
 
 		private int SoundChange(VarietyPair varietyPair, ShapeNode p1, ShapeNode p2, ShapeNode q1, ShapeNode q2)
 		{
-			if (varietyPair.SoundChanges.Count == 0)
+			if (varietyPair.SoundChanges == null)
 				return 0;
 
 			Ngram target;
@@ -170,9 +170,9 @@ namespace SIL.Cog.Aligners
 				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
 
 			var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
-			SoundChange soundChange;
-			double prob = varietyPair.SoundChanges.TryGetValue(lhs, out soundChange) ? soundChange[corr]
-				: varietyPair.SoundChanges.DefaultCorrespondenceProbability;
+			IProbabilityDistribution<Ngram> probDist;
+			double prob = varietyPair.SoundChanges.TryGetProbabilityDistribution(lhs, out probDist) ? probDist.GetProbability(corr)
+				: varietyPair.DefaultCorrespondenceProbability;
 			return (int) (MaxSoundChangeScore * prob);
 		}
 

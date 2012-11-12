@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -24,7 +23,7 @@ namespace SIL.Cog.ViewModels
 			_modelWords = new ObservableCollection<Word>(words);
 			_words = new ListViewModelCollection<ObservableCollection<Word>, WordViewModel, Word>(_modelWords, word => new WordViewModel(project, this, word));
 			_modelWords.CollectionChanged += ModelWordsChanged;
-			_strRep = _modelWords.Select(word => word.StrRep).ConcatStrings("/");
+			_strRep = string.Join("/", _modelWords.Select(word => word.StrRep));
 		}
 
 		public ObservableCollection<WordViewModel> Words
@@ -39,7 +38,7 @@ namespace SIL.Cog.ViewModels
 
 		private void ModelWordsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			Set("StrRep", ref _strRep, ModelWords.Select(word => word.StrRep).ConcatStrings("/"));
+			Set("StrRep", ref _strRep, string.Join("/", ModelWords.Select(word => word.StrRep)));
 		}
 
 		public string StrRep

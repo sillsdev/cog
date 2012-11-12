@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using SIL.Machine;
 
-namespace SIL.Cog.WordListsLoaders
+namespace SIL.Cog.Import
 {
-	public class WordSurvXmlLoader : IWordListsLoader
+	public class WordSurvWordListsImporter : IWordListsImporter
 	{
-		public void Load(string path, CogProject project)
+		public void Import(string path, CogProject project)
 		{
 			XElement root = XElement.Load(path);
 			var varieties = new Dictionary<string, Variety>();

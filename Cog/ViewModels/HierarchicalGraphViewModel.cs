@@ -29,15 +29,13 @@ namespace SIL.Cog.ViewModels
 		private HierarchicalGraphType _graphType;
 		private ClusteringMethod _clusteringMethod;
 		private IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> _graph;
-		private readonly IDialogService _dialogService;
-		private readonly IExportGraphService _exportGraphService;
+		private readonly IExportService _exportService;
 		private SimilarityMetric _similarityMetric;
 
-		public HierarchicalGraphViewModel(IDialogService dialogService, IExportGraphService exportGraphService)
+		public HierarchicalGraphViewModel(IExportService exportService)
 			: base("Hierarchical Graph")
 		{
-			_dialogService = dialogService;
-			_exportGraphService = exportGraphService;
+			_exportService = exportService;
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 
 			TaskAreas.Add(new TaskAreaGroupViewModel("Graph type",
@@ -56,9 +54,7 @@ namespace SIL.Cog.ViewModels
 
 		private void Export()
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export hierarchical graph", this, new FileType("PNG image", ".png"));
-			if (result.IsValid)
-				_exportGraphService.ExportCurrentHierarchicalGraph(_graphType, result.FileName);
+			_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
 		}
 
 		public override void Initialize(CogProject project)

@@ -14,7 +14,7 @@ namespace SIL.Cog.Config
 		protected AlignerSettings LoadSettings(FeatureSystem featSys, XElement elem)
 		{
 			var settings = new AlignerSettings();
-			var modeStr = (string) elem.Element("Mode");
+			var modeStr = (string) elem.Element(ConfigManager.Cog + "Mode");
 			if (modeStr != null)
 			{
 				switch (modeStr)
@@ -33,14 +33,14 @@ namespace SIL.Cog.Config
 						break;
 				}
 			}
-			var disableExpansionCompressionStr = (string) elem.Element("DisableExpansionCompression");
+			var disableExpansionCompressionStr = (string) elem.Element(ConfigManager.Cog + "DisableExpansionCompression");
 			if (disableExpansionCompressionStr != null)
 				settings.DisableExpansionCompression = bool.Parse(disableExpansionCompressionStr);
-			XElement naturalClassesElem = elem.Element("NaturalClasses");
+			XElement naturalClassesElem = elem.Element(ConfigManager.Cog + "NaturalClasses");
 			if (naturalClassesElem != null && naturalClassesElem.HasElements)
 			{
 				var naturalClasses = new List<NaturalClass>();
-				foreach (XElement ncElem in naturalClassesElem.Elements("NaturalClass"))
+				foreach (XElement ncElem in naturalClassesElem.Elements(ConfigManager.Cog + "NaturalClass"))
 				{
 					FeatureStruct fs = ConfigManager.LoadFeatureStruct(featSys, ncElem);
 					fs.AddValue(CogFeatureSystem.Type, ((string) ncElem.Attribute("type")) == "vowel" ? CogFeatureSystem.VowelType : CogFeatureSystem.ConsonantType);
@@ -71,11 +71,11 @@ namespace SIL.Cog.Config
 					modeStr = "half-local";
 					break;
 			}
-			elem.Add(new XElement("Mode", modeStr));
-			elem.Add(new XElement("DisableExpansionCompression", settings.DisableExpansionCompression));
+			elem.Add(new XElement(ConfigManager.Cog + "Mode", modeStr));
+			elem.Add(new XElement(ConfigManager.Cog + "DisableExpansionCompression", settings.DisableExpansionCompression));
 			if (settings.NaturalClasses != null)
 			{
-				elem.Add(new XElement("NaturalClasses", settings.NaturalClasses.Select(naturalClass => new XElement("NaturalClass", new XAttribute("name", naturalClass.Name),
+				elem.Add(new XElement(ConfigManager.Cog + "NaturalClasses", settings.NaturalClasses.Select(naturalClass => new XElement(ConfigManager.Cog + "NaturalClass", new XAttribute("name", naturalClass.Name),
 					new XAttribute("type", naturalClass.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), ConfigManager.CreateFeatureStruct(naturalClass.FeatureStruct)))));
 			}
 		}

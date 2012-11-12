@@ -33,11 +33,11 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Affix.cs" />
@@ -48,6 +48,7 @@
     <Compile Include="ClusterList.cs" />
     <Compile Include="Config\AlineConfig.cs" />
     <Compile Include="Config\BlairCognateIdentifierConfig.cs" />
+    <Compile Include="Config\ConfigException.cs" />
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\AlignerConfig.cs" />
     <Compile Include="Config\EMSoundChangeInducerConfig.cs" />
@@ -78,8 +79,9 @@
     <Compile Include="CogExtensions.cs" />
     <Compile Include="IAligner.cs" />
     <Compile Include="IAlignerResult.cs" />
+    <Compile Include="IConditionalProbabilityDistribution.cs" />
+    <Compile Include="IProbabilityDistribution.cs" />
     <Compile Include="IProcessor.cs" />
-    <Compile Include="IWordListsLoader.cs" />
     <Compile Include="NaturalClass.cs" />
     <Compile Include="Ngram.cs" />
     <Compile Include="NgramModeling\INgramModelSmoother.cs" />
@@ -106,15 +108,12 @@
     <Compile Include="SegmentCollection.cs" />
     <Compile Include="Segmenter.cs" />
     <Compile Include="Sense.cs" />
-    <Compile Include="SoundChange.cs" />
     <Compile Include="Processors\Stemmer.cs" />
     <Compile Include="Processors\UnsupervisedAffixIdentifier.cs" />
-    <Compile Include="SoundChangeCollection.cs" />
     <Compile Include="SoundChangeLhs.cs" />
     <Compile Include="Statistics\ConditionalFrequencyDistribution.cs" />
     <Compile Include="Statistics\ConditionalProbabilityDistribution.cs" />
     <Compile Include="Statistics\FrequencyDistribution.cs" />
-    <Compile Include="Statistics\IProbabilityDistribution.cs" />
     <Compile Include="Statistics\LidstoneProbabilityDistribution.cs" />
     <Compile Include="Statistics\MaxLikelihoodProbabilityDistribution.cs" />
     <Compile Include="Statistics\SimpleGoodTuringProbabilityDistribution.cs" />
@@ -127,8 +126,6 @@
     <Compile Include="VarietyVarietyPairCollection.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="WordCollection.cs" />
-    <Compile Include="WordListsLoaders\TextLoader.cs" />
-    <Compile Include="WordListsLoaders\WordSurvXmlLoader.cs" />
     <Compile Include="WordPair.cs" />
     <Compile Include="WordPairCollection.cs" />
   </ItemGroup>
@@ -142,7 +139,11 @@
       <Name>Machine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Config\CogProject.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

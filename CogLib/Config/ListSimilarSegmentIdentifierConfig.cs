@@ -11,15 +11,15 @@ namespace SIL.Cog.Config
 	{
 		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
-			XElement similarVowelsElem = elem.Element("SimilarVowels");
-			XElement similarConsElem = elem.Element("SimilarConsonants");
-			var genVowelsStr = (string) elem.Element("GenerateDiphthongs") ?? "false";
+			XElement similarVowelsElem = elem.Element(ConfigManager.Cog + "SimilarVowels");
+			XElement similarConsElem = elem.Element(ConfigManager.Cog + "SimilarConsonants");
+			var genVowelsStr = (string) elem.Element(ConfigManager.Cog + "GenerateDiphthongs") ?? "false";
 			return new ListSimilarSegmentIdentifier(ParseMappings(project.Segmenter, similarVowelsElem), ParseMappings(project.Segmenter, similarConsElem), bool.Parse(genVowelsStr));
 		}
 
 		private IEnumerable<Tuple<string, string>> ParseMappings(Segmenter segmenter, XElement elem)
 		{
-			foreach (XElement mappingElem in elem.Elements("Mapping"))
+			foreach (XElement mappingElem in elem.Elements(ConfigManager.Cog + "Mapping"))
 			{
 				string seg1Str, seg2Str;
 				if (GetNormalizedStrRep(segmenter, (string) mappingElem.Attribute("segment1"), out seg1Str) && GetNormalizedStrRep(segmenter, (string) mappingElem.Attribute("segment2"), out seg2Str))
@@ -42,14 +42,14 @@ namespace SIL.Cog.Config
 		public void Save(IProcessor<VarietyPair> component, XElement elem)
 		{
 			var identifier = (ListSimilarSegmentIdentifier) component;
-			elem.Add(new XElement("SimilarVowels", CreateMappings(identifier.VowelMappings)));
-			elem.Add(new XElement("SimilarConsonants", CreateMappings(identifier.ConsonantMappings)));
-			elem.Add(new XElement("GenerateDiphthongs", identifier.GenerateDiphthongs));
+			elem.Add(new XElement(ConfigManager.Cog + "SimilarVowels", CreateMappings(identifier.VowelMappings)));
+			elem.Add(new XElement(ConfigManager.Cog + "SimilarConsonants", CreateMappings(identifier.ConsonantMappings)));
+			elem.Add(new XElement(ConfigManager.Cog + "GenerateDiphthongs", identifier.GenerateDiphthongs));
 		}
 
 		private IEnumerable<XElement> CreateMappings(IEnumerable<Tuple<string, string>> mappings)
 		{
-			return mappings.Select(mapping => new XElement("Mapping", new XAttribute("segment1", mapping.Item1), new XAttribute("segment2", mapping.Item2)));
+			return mappings.Select(mapping => new XElement(ConfigManager.Cog + "Mapping", new XAttribute("segment1", mapping.Item1), new XAttribute("segment2", mapping.Item2)));
 		}
 	}
 }

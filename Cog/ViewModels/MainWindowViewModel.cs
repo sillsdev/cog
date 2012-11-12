@@ -1,9 +1,12 @@
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Config;
+using SIL.Cog.Properties;
 using SIL.Cog.Services;
 using SIL.Machine;
 
@@ -20,22 +23,24 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _importCommand;
 		private readonly ICommand _exportWordListsCommand;
 		private readonly ICommand _exportSimilarityMatrixCommand;
+		private readonly ICommand _exportCognateSetsCommand;
 		private readonly ICommand _exportHierarchicalGraphCommand;
 		private readonly ICommand _exportNetworkGraphCommand;
 		private readonly ICommand _exitCommand;
 
 		private readonly IDialogService _dialogService;
-		private readonly IExportGraphService _exportGraphService;
+		private readonly IImportService _importService;
+		private readonly IExportService _exportService;
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private CogProject _project;
-		private string _projectFilePath;
 
-		public MainWindowViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IExportGraphService exportGraphService,
+		public MainWindowViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService, IExportService exportService,
 			DataMasterViewModel dataMasterViewModel, ComparisonMasterViewModel comparisonMasterViewModel, VisualizationMasterViewModel visualizationMasterViewModel)
 			: base("Cog", dataMasterViewModel, comparisonMasterViewModel, visualizationMasterViewModel)
 		{
 			_dialogService = dialogService;
-			_exportGraphService = exportGraphService;
+			_importService = importService;
+			_exportService = exportService;
 
 			_spanFactory = spanFactory;
 
@@ -46,6 +51,7 @@ namespace SIL.Cog.ViewModels
 			_importCommand = new RelayCommand(Import);
 			_exportWordListsCommand = new RelayCommand(ExportWordLists, CanExportWordLists);
 			_exportSimilarityMatrixCommand = new RelayCommand(ExportSimilarityMatrix, CanExportSimilarityMatrix);
+			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
 			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
 			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
 			_exitCommand = new RelayCommand(Exit, CanExit);
@@ -57,7 +63,21 @@ namespace SIL.Cog.ViewModels
 
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
-			NewProject();
+			if (string.IsNullOrEmpty(ProjectFilePath) || !File.Exists(ProjectFilePath))
+			{
+				NewProject();
+			}
+			else
+			{
+				try
+				{
+					OpenProject(ProjectFilePath);
+				}
+				catch (ConfigException)
+				{
+					NewProject();
+				}
+			}
 		}
 
 		private void MainWindowViewModel_PropertyChanging(object sender, PropertyChangingEventArgs e)
@@ -112,7 +132,16 @@ namespace SIL.Cog.ViewModels
 			{
 				FileDialogResult result = _dialogService.ShowOpenFileDialog(this, CogProjectFileType);
 				if (result.IsValid)
-					OpenProject(result.FileName);
+				{
+					try
+					{
+						OpenProject(result.FileName);
+					}
+					catch (ConfigException)
+					{
+						_dialogService.ShowError(this, "The specified file is not a valid Cog configuration file.", "Cog");
+					}
+				}
 			}
 		}
 
@@ -126,7 +155,7 @@ namespace SIL.Cog.ViewModels
 			var childView = CurrentView as MasterViewModelBase;
 			if (childView != null)
 				CheckSettingsWorkspace(childView);
-			if (_projectFilePath == null)
+			if (string.IsNullOrEmpty(ProjectFilePath))
 			{
 				FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
 				if (result.IsValid)
@@ -134,7 +163,7 @@ namespace SIL.Cog.ViewModels
 			}
 			else
 			{
-				SaveProject(_projectFilePath);
+				SaveProject(ProjectFilePath);
 			}
 		}
 
@@ -150,7 +179,7 @@ namespace SIL.Cog.ViewModels
 
 		private void Import()
 		{
-			if (ViewModelUtilities.ImportWordLists(_dialogService, _project, this))
+			if (_importService.ImportWordLists(this, _project))
 				IsChanged = true;
 		}
 
@@ -161,7 +190,7 @@ namespace SIL.Cog.ViewModels
 
 		private void ExportWordLists()
 		{
-			ViewModelUtilities.ExportWordLists(_dialogService, _project, this);
+			_exportService.ExportWordLists(this, _project);
 		}
 
 		private bool CanExportSimilarityMatrix()
@@ -173,7 +202,17 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportSimilarityMatrixViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-				ViewModelUtilities.ExportSimilarityMatrix(_dialogService, _project, this, vm.SimilarityMetric);
+				_exportService.ExportSimilarityMatrix(this, _project, vm.SimilarityMetric);
+		}
+
+		private bool CanExportCognateSets()
+		{
+			return _project.VarietyPairs.Count > 0;
+		}
+
+		private void ExportCognateSets()
+		{
+			_exportService.ExportCognateSets(this, _project);
 		}
 
 		private bool CanExportHierarchicalGraph()
@@ -185,11 +224,7 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportHierarchicalGraphViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-			{
-				FileDialogResult result = _dialogService.ShowSaveFileDialog("Export hierarchical graph", this, new FileType("PNG image", ".png"));
-				if (result.IsValid)
-					_exportGraphService.ExportHierarchicalGraph(ViewModelUtilities.GenerateHierarchicalGraph(_project, vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType, result.FileName);
-			}
+				_exportService.ExportHierarchicalGraph(this, ViewModelUtilities.GenerateHierarchicalGraph(_project, vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
 		}
 
 		private bool CanExportNetworkGraph()
@@ -201,11 +236,7 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportNetworkGraphViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-			{
-				FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", this, new FileType("PNG image", ".png"));
-				if (result.IsValid)
-					_exportGraphService.ExportNetworkGraph(ViewModelUtilities.GenerateNetworkGraph(_project, vm.SimilarityMetric), result.FileName);
-			}
+				_exportService.ExportNetworkGraph(this, ViewModelUtilities.GenerateNetworkGraph(_project, vm.SimilarityMetric));
 		}
 
 		private bool CanExit()
@@ -237,6 +268,7 @@ namespace SIL.Cog.ViewModels
 
 		private void Exit()
 		{
+			Settings.Default.Save();
 		}
 
 		public ICommand NewCommand
@@ -274,6 +306,11 @@ namespace SIL.Cog.ViewModels
 			get { return _exportSimilarityMatrixCommand; }
 		}
 
+		public ICommand ExportCognateSetsCommand
+		{
+			get { return _exportCognateSetsCommand; }
+		}
+
 		public ICommand ExportHierarchicalGraphCommand
 		{
 			get { return _exportHierarchicalGraphCommand; }
@@ -289,29 +326,41 @@ namespace SIL.Cog.ViewModels
 			get { return _exitCommand; }
 		}
 
+		private string ProjectFilePath
+		{
+			get { return Settings.Default.LastProject; }
+			set { Settings.Default.LastProject = value; }
+		}
+
 		private void OpenProject(string path)
 		{
+			CogProject project = ConfigManager.Load(_spanFactory, path);
 			if (IsChanged)
 				AcceptChanges();
-			_projectFilePath = path;
-
-			CogProject project = ConfigManager.Load(_spanFactory, path);
+			ProjectFilePath = path;
 			_project = project;
+			DisplayName = string.Format("{0} - Cog", Path.GetFileNameWithoutExtension(path));
 			Initialize(project);
 			SwitchView(typeof(WordListsViewModel), null);
 		}
 
 		private void NewProject()
 		{
-			OpenProject("NewProject.cogx");
-			_projectFilePath = null;
+			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.NewProject.cogx");
+			CogProject project = ConfigManager.Load(_spanFactory, stream);
+			if (IsChanged)
+				AcceptChanges();
+			ProjectFilePath = null;
+			_project = project;
+			DisplayName = "New Project - Cog";
+			Initialize(project);
 			SwitchView(typeof(WordListsViewModel), null);
 		}
 
 		private void SaveProject(string path)
 		{
 			ConfigManager.Save(_project, path);
-			_projectFilePath = path;
+			ProjectFilePath = path;
 			AcceptChanges();
 		}
 	}

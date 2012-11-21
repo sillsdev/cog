@@ -57,28 +57,11 @@ namespace SIL.Cog.Converters
 				for (int i = 0; i < routeInformation.Length; i++)
 					segments[i] = new LineSegment(routeInformation[i], true);
 
-			Point pLast = hasRouteInfo ? routeInformation[routeInformation.Length - 1] : p1;
-			Vector v = pLast - p2;
-			v = v / v.Length * 5;
-			Vector n = new Vector(-v.Y, v.X) * 0.3;
-
-			segments[segments.Length - 1] = new LineSegment(p2 + v, true);
+			segments[segments.Length - 1] = new LineSegment(p2, true);
 
 			var pfc = new PathFigureCollection
 				{
-					new PathFigure(p1 - v, segments, false),
-					new PathFigure(p1,
-					    new PathSegment[]
-					        {
-					            new LineSegment(p1 - v - n, true),
-					            new LineSegment(p1 - v + n, true)
-					        }, true),
-					new PathFigure(p2,
-					    new PathSegment[]
-					        {
-					            new LineSegment(p2 + v - n, true),
-					            new LineSegment(p2 + v + n, true)
-					        }, true)
+					new PathFigure(p1, segments, false)
 				};
 
 			return pfc;

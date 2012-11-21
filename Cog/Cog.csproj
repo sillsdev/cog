@@ -69,8 +69,9 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph">
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -105,9 +106,16 @@
     <Compile Include="Controls\HierarchicalGraphHighlightAlgorithm.cs" />
     <Compile Include="Controls\HierarchicalGraphHighlightAlgorithmFactory.cs" />
     <Compile Include="Controls\HierarchicalGraphLayout.cs" />
+    <Compile Include="Controls\HierarchicalLayoutAlgorithmFactory.cs" />
     <Compile Include="Controls\NetworkGraphHighlightAlgorithm.cs" />
     <Compile Include="Controls\NetworkGraphHighlightAlgorithmFactory.cs" />
+    <Compile Include="Controls\NetworkGraphHighlightParameters.cs" />
     <Compile Include="Controls\NetworkGraphLayout.cs" />
+    <Compile Include="Controls\PercentageSlider.xaml.cs">
+      <DependentUpon>PercentageSlider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RadialTreeLayoutAlgorithm.cs" />
+    <Compile Include="Controls\RadialTreeLayoutParameters.cs" />
     <Compile Include="Controls\TabControlEx.cs" />
     <Compile Include="Controls\TreeGridViewRowPresenter.cs" />
     <Compile Include="Controls\TreeListView.cs" />
@@ -164,6 +172,8 @@
     <Compile Include="ViewModels\FeatureViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
+    <Compile Include="ViewModels\IAngledVertex.cs" />
+    <Compile Include="ViewModels\ILengthEdge.cs" />
     <Compile Include="ViewModels\NaturalClassViewModel.cs" />
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />
     <Compile Include="ViewModels\NetworkGraphVertex.cs" />
@@ -349,6 +359,10 @@
     <Compile Include="Views\WordListsView.xaml.cs">
       <DependentUpon>WordListsView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\PercentageSlider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

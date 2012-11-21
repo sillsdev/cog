@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using GraphSharp.Controls;
 using QuickGraph;
 
@@ -10,6 +11,8 @@ namespace SIL.Cog.Controls
 		{
 			GraphProperty.OverrideMetadata(typeof(CogGraphLayout<TVertex, TEdge, TGraph>), new FrameworkPropertyMetadata(OnGraphPropertyChanged));
 		}
+
+		public event EventHandler LayoutFinished;
 
 		private bool _relayoutOnVisible;
 
@@ -28,6 +31,13 @@ namespace SIL.Cog.Controls
 				gl.RemoveAllGraphElement();
 			else if (e.NewValue != null && !gl.IsVisible)
 				gl._relayoutOnVisible = true;
+		}
+
+		protected override void OnLayoutFinished()
+		{
+			base.OnLayoutFinished();
+			if (LayoutFinished != null)
+				LayoutFinished(this, new EventArgs());
 		}
 
 		private void CogGraphLayout_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

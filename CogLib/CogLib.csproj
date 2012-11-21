@@ -85,6 +85,7 @@
     <Compile Include="NaturalClass.cs" />
     <Compile Include="Ngram.cs" />
     <Compile Include="NgramModeling\INgramModelSmoother.cs" />
+    <Compile Include="NgramModeling\MaxLikelihoodSmoother.cs" />
     <Compile Include="NgramModeling\ModifiedKneserNeySmoother.cs" />
     <Compile Include="NgramModeling\NgramModel.cs" />
     <Compile Include="NgramModeling\WittenBellSmoother.cs" />

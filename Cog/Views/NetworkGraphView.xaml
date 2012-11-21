@@ -5,17 +5,38 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-             xmlns:Controls="clr-namespace:SIL.Cog.Controls" mc:Ignorable="d"
+             xmlns:c="clr-namespace:SIL.Cog.Controls"
+             xmlns:fdp="clr-namespace:GraphSharp.Algorithms.Layout.Simple.FDP;assembly=GraphSharp" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.Resources>
-
-    </UserControl.Resources>
-    <zoom:ZoomControl ZoomBoxOpacity="0.5">
-        <Controls:NetworkGraphLayout Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple">
-            <Controls:NetworkGraphLayout.Resources>
-				<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource NetworkEdgeControlStyle}" />
-				<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource NetworkVertexControlStyle}" />
-            </Controls:NetworkGraphLayout.Resources>
-        </Controls:NetworkGraphLayout>
-    </zoom:ZoomControl>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<zoom:ZoomControl Name="_zoomControl" Grid.Row="0" ZoomBoxOpacity="0.5">
+			<c:NetworkGraphLayout x:Name="_graphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple"
+								  SimilarityScoreFilter="{Binding ElementName=_filterSlider, Path=Value}" LayoutFinished="_graphLayout_OnLayoutFinished">
+				<c:NetworkGraphLayout.Resources>
+					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource NetworkEdgeControlStyle}" />
+					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource NetworkVertexControlStyle}" />
+				</c:NetworkGraphLayout.Resources>
+				<c:NetworkGraphLayout.LayoutParameters>
+					<fdp:LinLogLayoutParameters GravitationMultiplier="0" />
+				</c:NetworkGraphLayout.LayoutParameters>
+				<c:NetworkGraphLayout.HighlightParameters>
+					<c:NetworkGraphHighlightParameters />
+				</c:NetworkGraphLayout.HighlightParameters>
+			</c:NetworkGraphLayout>
+		</zoom:ZoomControl>
+		<Border Grid.Row="1" HorizontalAlignment="Center" Background="{StaticResource ControlPanelBackgroundBrush}" CornerRadius="5">
+			<Grid Margin="5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Label Target="{Binding ElementName=_filterSlider}" Grid.Column="0" Margin="0,0,3,0">Edge filter:</Label>
+				<c:PercentageSlider Grid.Column="1" x:Name="_filterSlider" Value="0.7" Width="250" />
+			</Grid>
+		</Border>
+	</Grid>
 </UserControl>

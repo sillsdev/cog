@@ -1,8 +1,9 @@
 ﻿using GraphSharp;
+using SIL.Cog.Controls;
 
 namespace SIL.Cog.ViewModels
 {
-	public class HierarchicalGraphEdge : TypedEdge<HierarchicalGraphVertex>
+	public class HierarchicalGraphEdge : TypedEdge<HierarchicalGraphVertex>, ILengthEdge<HierarchicalGraphVertex>
 	{
 		private readonly double _length;
 

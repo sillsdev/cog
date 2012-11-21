@@ -40,7 +40,7 @@ namespace SIL.Cog.Processors
 					IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChanges[lhs];
 					sb.AppendLine(lhs.ToString());
 					sb.AppendLine("Segment\tProb");
-					foreach (var correspondence in probDist.Samples.Select(corr => new {Segment = corr, Probability = probDist.GetProbability(corr)}).OrderByDescending(corr => corr.Probability))
+					foreach (var correspondence in probDist.Samples.Select(corr => new {Segment = corr, Probability = probDist[corr]}).OrderByDescending(corr => corr.Probability))
 					{
 						sb.AppendFormat("{0}\t{1:0.0####}", correspondence.Segment, correspondence.Probability);
 						sb.AppendLine();

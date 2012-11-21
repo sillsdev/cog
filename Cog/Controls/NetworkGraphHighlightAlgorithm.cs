@@ -4,10 +4,10 @@ using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Controls
 {
-	public class NetworkGraphHighlightAlgorithm : HighlightAlgorithmBase<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>, IHighlightParameters>
+	public class NetworkGraphHighlightAlgorithm : HighlightAlgorithmBase<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>, NetworkGraphHighlightParameters>
 	{
 		public NetworkGraphHighlightAlgorithm(IHighlightController<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>> controller,
-			IHighlightParameters parameters)
+			NetworkGraphHighlightParameters parameters)
 			: base(controller, parameters)
 		{
 		}
@@ -47,7 +47,7 @@ namespace SIL.Cog.Controls
 			//semi-highlight the in-edges, and the neighbours on their other side
 			foreach (NetworkGraphEdge edge in Controller.Graph.InEdges(vertex))
 			{
-				if (edge.SimilarityScore < 0.7)
+				if (edge.SimilarityScore < Parameters.SimilarityScoreFilter)
 					continue;
 
 				Controller.SemiHighlightEdge(edge, null);
@@ -60,7 +60,7 @@ namespace SIL.Cog.Controls
 			//semi-highlight the out-edges
 			foreach (NetworkGraphEdge edge in Controller.Graph.OutEdges(vertex))
 			{
-				if (edge.SimilarityScore < 0.7)
+				if (edge.SimilarityScore < Parameters.SimilarityScoreFilter)
 					continue;
 
 				Controller.SemiHighlightEdge(edge, null);

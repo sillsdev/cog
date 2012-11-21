@@ -45,24 +45,26 @@ namespace SIL.Cog.Controls
 			if (vertex == null || !Controller.Graph.ContainsVertex(vertex))
 				return false;
 
-			//semi-highlight the out-edges
-			HighlightSubtree(vertex);
+			foreach (HierarchicalGraphEdge edge in Controller.Graph.InEdges(vertex))
+			{
+				Controller.SemiHighlightEdge(edge, null);
+				if (edge.Source == vertex || Controller.IsHighlightedVertex(edge.Source))
+					continue;
 
-			Controller.HighlightVertex(vertex, "None");
-			return true;
-		}
+				Controller.SemiHighlightVertex(edge.Source, null);
+			}
 
-		private void HighlightSubtree(HierarchicalGraphVertex vertex)
-		{
 			foreach (HierarchicalGraphEdge edge in Controller.Graph.OutEdges(vertex))
 			{
-				Controller.SemiHighlightEdge(edge, "OutEdge");
+				Controller.SemiHighlightEdge(edge, null);
 				if (edge.Target == vertex || Controller.IsHighlightedVertex(edge.Target))
 					continue;
 
-				Controller.SemiHighlightVertex(edge.Target, "Target");
-				HighlightSubtree(edge.Target);
+				Controller.SemiHighlightVertex(edge.Target, null);
 			}
+
+			Controller.HighlightVertex(vertex, null);
+			return true;
 		}
 
 		public override bool OnVertexHighlightRemoving(HierarchicalGraphVertex vertex)
@@ -80,8 +82,8 @@ namespace SIL.Cog.Controls
 				return false;
 
 			Controller.HighlightEdge(edge, null);
-			Controller.SemiHighlightVertex(edge.Source, "Source");
-			Controller.SemiHighlightVertex(edge.Target, "Target");
+			Controller.SemiHighlightVertex(edge.Source, null);
+			Controller.SemiHighlightVertex(edge.Target, null);
 			return true;
 		}
 

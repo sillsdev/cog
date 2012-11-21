@@ -111,7 +111,7 @@ namespace SIL.Cog.Clusterers
 							if (cend - cstart + 1 < Optics.MinPoints)
 								continue;
 
-							var cluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusterOrder.Skip(cstart).Take(cend - cstart + 1).Select(oe => oe.DataObject));
+							var cluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusterOrder.Skip(cstart).Take(cend - cstart + 1).Select(oe => oe.DataObject).Intersect(unclassifed));
 							id++;
 							unclassifed.ExceptWith(cluster.DataObjects);
 

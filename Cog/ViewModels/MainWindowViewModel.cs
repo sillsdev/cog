@@ -335,24 +335,23 @@ namespace SIL.Cog.ViewModels
 		private void OpenProject(string path)
 		{
 			CogProject project = ConfigManager.Load(_spanFactory, path);
-			if (IsChanged)
-				AcceptChanges();
-			ProjectFilePath = path;
-			_project = project;
-			DisplayName = string.Format("{0} - Cog", Path.GetFileNameWithoutExtension(path));
-			Initialize(project);
-			SwitchView(typeof(WordListsViewModel), null);
+			SetupProject(path, Path.GetFileNameWithoutExtension(path), project);
 		}
 
 		private void NewProject()
 		{
 			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.NewProject.cogx");
 			CogProject project = ConfigManager.Load(_spanFactory, stream);
+			SetupProject(null, "New Project", project);
+		}
+
+		private void SetupProject(string path, string name, CogProject project)
+		{
 			if (IsChanged)
 				AcceptChanges();
-			ProjectFilePath = null;
+			ProjectFilePath = path;
 			_project = project;
-			DisplayName = "New Project - Cog";
+			DisplayName = string.Format("{0} - Cog", name);
 			Initialize(project);
 			SwitchView(typeof(WordListsViewModel), null);
 		}

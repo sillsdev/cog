@@ -13,7 +13,10 @@ namespace SIL.Cog
 		protected override void ClearItems()
 		{
 			foreach (VarietyPair vp in this)
+			{
 				vp.Variety1.VarietyPairs.VarietyPairsCleared();
+				vp.Variety2.VarietyPairs.VarietyPairsCleared();
+			}
 
 			base.ClearItems();
 		}

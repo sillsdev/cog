@@ -3,18 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels" xmlns:Views="clr-namespace:SIL.Cog.Views"
+             xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:v="clr-namespace:SIL.Cog.Views"
+             xmlns:c="clr-namespace:SIL.Cog.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="370">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">
                 <Setter Property="Margin" Value="0,3,5,5" />
                 <Setter Property="Padding" Value="0,0,0,5" />
-            </Style>
-            <Style TargetType="Slider">
-                <Setter Property="Margin" Value="0,0,0,5" />
-                <Setter Property="Width" Value="200" />
             </Style>
             <Style TargetType="CheckBox">
                 <Setter Property="Margin" Value="0,0,0,5" />
@@ -31,10 +28,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_thresholdSlider}">Alignment threshold:</Label>
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
-            <Slider Name="_thresholdSlider" HorizontalAlignment="Left" Minimum="0" Maximum="1" Value="{Binding AlignmentThreshold}" TickFrequency="0.01" IsSnapToTickEnabled="True" />
-            <TextBlock Text="{Binding ElementName=_thresholdSlider, Path=Value, StringFormat={}{0:0.##}}" />
-        </StackPanel>
+		<c:PercentageSlider HorizontalAlignment="Left" x:Name="_thresholdSlider" Grid.Column="1" Grid.Row="0" Value="{Binding AlignmentThreshold}" Width="250" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding IgnoreRegularInsertionDeletion}">Ignore regular insertions/deletions</CheckBox>
         <CheckBox Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding RegularConsonantsEqual}">Regular consonants are category 1</CheckBox>
         <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarSegments}" Header="{Binding DisplayName}">
@@ -51,11 +45,11 @@
                 <ComboBox Grid.Column="1" Grid.Row="0" Name="_typeComboBox" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding CurrentOption}" DisplayMemberPath="DisplayName" />
                 <ContentPresenter Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding CurrentOption}">
                     <ContentPresenter.Resources>
-                        <DataTemplate DataType="{x:Type ViewModels:ListSimilarSegmentIdentifierViewModel}">
-                            <Views:ListSimilarSegmentIdentifierView />
+                        <DataTemplate DataType="{x:Type vm:ListSimilarSegmentIdentifierViewModel}">
+                            <v:ListSimilarSegmentIdentifierView />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type ViewModels:ThresholdSimilarSegmentIdentifierViewModel}">
-                            <Views:ThresholdSimilarSegmentIdentifierView />
+                        <DataTemplate DataType="{x:Type vm:ThresholdSimilarSegmentIdentifierViewModel}">
+                            <v:ThresholdSimilarSegmentIdentifierView />
                         </DataTemplate>
                     </ContentPresenter.Resources>
                 </ContentPresenter>

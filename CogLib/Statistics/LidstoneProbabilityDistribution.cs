@@ -26,10 +26,13 @@ namespace SIL.Cog.Statistics
 			get { return _freqDist.ObservedSamples; }
 		}
 
-		public double GetProbability(TSample sample)
+		public double this[TSample sample]
 		{
-			int count = _freqDist[sample];
-			return (count + _gamma) / _divisor;
+			get
+			{
+				int count = _freqDist[sample];
+				return (count + _gamma) / _divisor;
+			}
 		}
 
 		public double Discount

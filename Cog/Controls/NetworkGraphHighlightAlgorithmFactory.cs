@@ -20,7 +20,7 @@ namespace SIL.Cog.Controls
 			switch (highlightMode)
 			{
 				case "Simple":
-					return new NetworkGraphHighlightAlgorithm(controller, parameters);
+					return new NetworkGraphHighlightAlgorithm(controller, parameters as NetworkGraphHighlightParameters);
 			}
 
 			return null;
@@ -28,7 +28,13 @@ namespace SIL.Cog.Controls
 
 		public IHighlightParameters CreateParameters(string highlightMode, IHighlightParameters oldParameters)
 		{
-			return new HighlightParameterBase();
+			switch (highlightMode)
+			{
+				case "Simple":
+					return oldParameters is NetworkGraphHighlightParameters ? (NetworkGraphHighlightParameters) oldParameters.Clone() : new NetworkGraphHighlightParameters();
+			}
+
+			return null;
 		}
 
 		public string GetHighlightMode(IHighlightAlgorithm<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>> algorithm)

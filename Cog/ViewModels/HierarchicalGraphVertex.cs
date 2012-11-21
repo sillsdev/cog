@@ -1,9 +1,12 @@
-﻿namespace SIL.Cog.ViewModels
+﻿using SIL.Cog.Controls;
+
+namespace SIL.Cog.ViewModels
 {
-	public class HierarchicalGraphVertex : WrapperViewModel
+	public class HierarchicalGraphVertex : WrapperViewModel, IAngledVertex
 	{
 		private readonly Variety _variety;
 		private readonly double _depth;
+		private double _angle;
 
 		public HierarchicalGraphVertex(double depth)
 		{
@@ -40,6 +43,12 @@
 		public override string ToString()
 		{
 			return Name;
+		}
+
+		public double Angle
+		{
+			get { return _angle; }
+			set { Set(() => Angle, ref _angle, value); }
 		}
 	}
 }

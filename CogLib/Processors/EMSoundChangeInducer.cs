@@ -94,7 +94,7 @@ namespace SIL.Cog.Processors
 
 					foreach (Ngram correspondence in probDist.Samples)
 					{
-						if (Math.Abs(probDist.GetProbability(correspondence) - oldProbDist.GetProbability(correspondence)) > 0.0001)
+						if (Math.Abs(probDist[correspondence] - oldProbDist[correspondence]) > 0.0001)
 						{
 							converged = false;
 							break;

@@ -75,7 +75,6 @@ namespace SIL.Cog.ViewModels
 		private static void GenerateVertices(HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphVertex vertex,
 			IEnumerable<Tuple<Cluster<Variety>, double>> children, IEnumerable<Variety> varieties)
 		{
-			var childVarieties = new HashSet<Variety>();
 			foreach (Tuple<Cluster<Variety>, double> child in children)
 			{
 				Cluster<Variety> childCluster = child.Item1;
@@ -93,10 +92,9 @@ namespace SIL.Cog.ViewModels
 					GenerateVertices(graph, newVertex, childCluster.Children.Select(c => Tuple.Create(c, childCluster.Children.GetLength(c))), childCluster.DataObjects);
 				}
 				graph.AddEdge(new HierarchicalGraphEdge(vertex, newVertex, EdgeTypes.Hierarchical, child.Item2));
-				childVarieties.UnionWith(childCluster.DataObjects);
 			}
 
-			foreach (Variety variety in varieties.Except(childVarieties))
+			foreach (Variety variety in varieties)
 			{
 				var vm = new HierarchicalGraphVertex(variety, 0);
 				graph.AddVertex(vm);

@@ -28,7 +28,8 @@ namespace SIL.Cog.ViewModels
 
 		private void Export()
 		{
-			_exportService.ExportCurrentNetworkGraph(this);
+			//_exportService.ExportCurrentNetworkGraph(this);
+			_exportService.ExportNetworkGraph(this, Graph);
 		}
 
 		public override void Initialize(CogProject project)

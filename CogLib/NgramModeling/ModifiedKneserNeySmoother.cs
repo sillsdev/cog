@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using SIL.Cog.Statistics;
 using SIL.Collections;
 
@@ -12,6 +11,7 @@ namespace SIL.Cog.NgramModeling
 		private readonly Dictionary<Tuple<Ngram, string>, Tuple<int, int, int>> _bigNs;
 		private ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> _cfd;
 		private NgramModel _lowerOrderModel;
+		private Direction _dir;
 
 		public ModifiedKneserNeySmoother()
 		{
@@ -19,9 +19,10 @@ namespace SIL.Cog.NgramModeling
 			_discounts = new Dictionary<string, Tuple<double, double, double>>();
 		}
 
-		public void Smooth(NgramModel model, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
+		public void Smooth(int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
 		{
 			_cfd = cfd;
+			_dir = dir;
 			var ns = new Dictionary<string, Tuple<int, int, int, int>>();
 			_bigNs.Clear();
 			foreach (Tuple<Ngram, string> cond in cfd.Conditions)
@@ -44,7 +45,7 @@ namespace SIL.Cog.NgramModeling
 						nGreater++;
 					}
 				}
-				ns.UpdateValue(cond.Item2, () => Tuple.Create(0, 0, 0, 0), n => Tuple.Create(n.Item1 + n1, n.Item2 + n2, n.Item3 + n3, n.Item4 + n4));
+				ns.UpdateValue(cond.Item2 ?? string.Empty, () => Tuple.Create(0, 0, 0, 0), n => Tuple.Create(n.Item1 + n1, n.Item2 + n2, n.Item3 + n3, n.Item4 + n4));
 				_bigNs[cond] = Tuple.Create(n1, n2, nGreater);
 			}
 
@@ -65,7 +66,8 @@ namespace SIL.Cog.NgramModeling
 				_discounts[kvp.Key] = Tuple.Create(d1, d2, d3);
 			}
 
-			_lowerOrderModel = model.NgramSize > 1 ? NgramModel.Build(model.NgramSize - 1, model.Variety, model.Direction, new ModifiedKneserNeySmoother()) : null;
+			if (ngramSize > 1)
+				_lowerOrderModel = new NgramModel(ngramSize - 1, variety, dir, new ModifiedKneserNeySmoother());
 		}
 
 		public double GetProbability(Segment seg, Ngram context, string category)
@@ -77,7 +79,7 @@ namespace SIL.Cog.NgramModeling
 			if (freqDist.SampleOutcomeCount > 0)
 			{
 				int count = freqDist[seg];
-				Tuple<double, double, double> discount = _discounts[category];
+				Tuple<double, double, double> discount = _discounts[category ?? string.Empty];
 				Tuple<int, int, int> bigN = _bigNs[Tuple.Create(context, category)];
 				double gamma = ((discount.Item1 * bigN.Item1) + (discount.Item2 * bigN.Item2) + (discount.Item3 * bigN.Item3)) / freqDist.SampleOutcomeCount;
 				double d = 0;
@@ -89,7 +91,7 @@ namespace SIL.Cog.NgramModeling
 					d = discount.Item3;
 
 				double prob = (count - d) / freqDist.SampleOutcomeCount;
-				return prob + (gamma * _lowerOrderModel.GetProbability(seg, new Ngram(context.Skip(1)), category));
+				return prob + (gamma * _lowerOrderModel.GetProbability(seg, context.SkipFirst(_dir), category));
 			}
 
 			return 0;

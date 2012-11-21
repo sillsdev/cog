@@ -120,17 +120,28 @@ namespace SIL.Cog.Services
 						break;
 
 					case HierarchicalGraphType.Tree:
+						//double minEdgeLen = double.MaxValue, maxEdgeLen = 0;
+						//foreach (HierarchicalGraphEdge edge in graph.Edges)
+						//{
+						//    minEdgeLen = Math.Min(minEdgeLen, edge.Length);
+						//    maxEdgeLen = Math.Max(maxEdgeLen, edge.Length);
+						//}
+						//double x = Math.Max(0, 0.2 - (maxEdgeLen - minEdgeLen));
+						//double minLen = ((40 * x) / 0.2) + 10;
+
 						graphLayout = new HierarchicalGraphLayout
 							{
 								IsAnimationEnabled = false,
 								CreationTransition = null,
 								DestructionTransition = null,
-								LayoutAlgorithmType = "EfficientSugiyama",
-								OverlapRemovalAlgorithmType = "FSA",
+								LayoutAlgorithmType = "RadialTree",
+								//LayoutParameters = new RadialTreeLayoutParameters {BranchLengthScaling = BranchLengthScaling.FixedMinimumLength, MinimumLength = minLen},
+								LayoutParameters = new RadialTreeLayoutParameters {BranchLengthScaling = BranchLengthScaling.MinimizeLabelOverlapMinimum},
 								Graph = graph,
 								Background = Brushes.White
 							};
-						graphLayout.Resources[typeof (EdgeControl)] = Application.Current.Resources["HierarchicalEdgeControlStyle"];
+						graphLayout.Resources[typeof(VertexControl)] = Application.Current.Resources["HierarchicalVertexControlStyle"];
+						graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["HierarchicalEdgeControlStyle"];
 						break;
 				}
 				Debug.Assert(graphLayout != null);

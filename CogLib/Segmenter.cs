@@ -192,8 +192,9 @@ namespace SIL.Cog
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
+			string nfdStr = str.Normalize(NormalizationForm.FormD);
 			int index = 0;
-			foreach (Match match in _regex.Matches(str.Normalize(NormalizationForm.FormD)))
+			foreach (Match match in _regex.Matches(nfdStr))
 			{
 				if (match.Index != index)
 					break;
@@ -247,7 +248,9 @@ namespace SIL.Cog
 							//sb.Append(joinerStr);
 							phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out strRep));
 							sb.Append(strRep);
-							phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
+							FeatureStruct joinerFs = _joiners[joinerStr].FeatureStruct;
+							if (joinerFs != null)
+								phonemeFS.PriorityUnion(joinerFs);
 						}
 					}
 					else if (consComp.Captures.Count > 1)
@@ -281,7 +284,7 @@ namespace SIL.Cog
 
 				index = match.Index + match.Length;
 
-				if (index == str.Length)
+				if (index == nfdStr.Length)
 				{
 					if (shape.Count == 0)
 						break;
@@ -295,8 +298,9 @@ namespace SIL.Cog
 
 		private FeatureStruct BuildFeatStruct(Match match, Capture capture, string baseGroupName, SymbolCollection bases, out string strRep)
 		{
-			string baseStr = match.Groups[baseGroupName].Captures.Cast<Capture>().Single(cap => capture.Index == cap.Index).Value;
-			FeatureStruct fs = bases[baseStr].FeatureStruct.DeepClone();
+			string baseStr = match.Groups[baseGroupName].Captures.Cast<Capture>().Single(cap => capture.Index == cap.Index).Value.ToLowerInvariant();
+			FeatureStruct baseFs = bases[baseStr].FeatureStruct;
+			FeatureStruct fs = baseFs != null ? baseFs.DeepClone() : new FeatureStruct();
 			var sb = new StringBuilder();
 			sb.Append(baseStr);
 			var modStrs = new List<string>();
@@ -304,7 +308,7 @@ namespace SIL.Cog
 			{
 				string modStr = modifier.Value;
 				Symbol modInfo = _modifiers[modStr];
-				if (!modInfo.FeatureStruct.IsEmpty)
+				if (modInfo.FeatureStruct != null && !modInfo.FeatureStruct.IsEmpty)
 				{
 					if (modInfo.Overwrite)
 						fs.PriorityUnion(modInfo.FeatureStruct);
@@ -336,26 +340,56 @@ namespace SIL.Cog
 
 		private string CreateRegexString()
 		{
-			string vowelBaseStr = string.Format("(?'vowelBase'{0})", CreateSymbolRegexString(_vowels));
-			string consBaseStr = string.Format("(?'consBase'{0})", CreateSymbolRegexString(_consonants));
-			string modStr = string.Format("(?'mod'{0})", CreateSymbolRegexString(_modifiers));
-			string ncJoinerStr = CreateSymbolRegexString(_joiners);
-			string joinerStr = string.Format("(?'joiner'{0})", ncJoinerStr);
-			string toneStr = string.Format("(?'tone'{0})", CreateSymbolRegexString(_toneLetters));
-			string bdryStr = string.Format("(?'bdry'{0})", CreateSymbolRegexString(_boundaries));
+			string modStr = CreateSymbolRegexString(_modifiers);
+			string joinerStr = CreateSymbolRegexString(_joiners);
 
-			string consCompStr = string.Format("(?'consComp'{0}{1}*)", consBaseStr, modStr);
-			string vowelCompStr = string.Format("(?'vowelComp'{0}{1}*)", vowelBaseStr, modStr);
+			var sb = new StringBuilder();
+			AppendBaseSymbolPattern(sb, "cons", _consonants, modStr, joinerStr, _maxConsonantLength);
+			AppendBaseSymbolPattern(sb, "vowel", _vowels, modStr, joinerStr, _maxVowelLength);
+			AppendSymbolPattern(sb, "tone", _toneLetters);
+			AppendSymbolPattern(sb, "bdry", _boundaries);
+			return sb.ToString();
+		}
 
-			return string.Format("(?'consSeg'{0}(?({2})(?:{3}{0})*|{0}{{0,{6}}}))|(?'vowelSeg'{1}(?({2})(?:{3}{1})*|{1}{{0,{7}}}))|{4}|{5}",
-				consCompStr, vowelCompStr, ncJoinerStr, joinerStr, toneStr, bdryStr, _maxConsonantLength, _maxVowelLength);
+		private static void AppendBaseSymbolPattern(StringBuilder sb, string name, SymbolCollection symbols, string modStr, string joinerStr, int maxLength)
+		{
+			if (symbols.Count > 0)
+			{
+				if (sb.Length > 0)
+					sb.Append("|");
+				string baseStr = string.Format("(?'{0}Base'{1})", name, CreateSymbolRegexString(symbols));
+				string compStr = !string.IsNullOrEmpty(modStr) ? string.Format("(?'{0}Comp'{1}(?'mod'{2})*)", name, baseStr, modStr) : string.Format("(?'{0}Comp'{1})", name, baseStr);
+				sb.AppendFormat("(?'{0}Seg'{1}", name, compStr);
+				if (!string.IsNullOrEmpty(joinerStr))
+				{
+					if (maxLength > 1)
+						sb.AppendFormat("(?({0})(?:(?'joiner'{0}){1})*|{1}{{0,{2}}})", joinerStr, compStr, maxLength - 1);
+					else
+						sb.AppendFormat("(?:(?'joiner'{0}){1})*", joinerStr, compStr);
+				}
+				else if (maxLength > 1)
+				{
+					sb.AppendFormat("(?:{0}{{0,{1}}})", compStr, maxLength - 1);
+				}
+				sb.Append(")");
+			}
+		}
+
+		private static void AppendSymbolPattern(StringBuilder sb, string name, SymbolCollection symbols)
+		{
+			if (symbols.Count > 0)
+			{
+				if (sb.Length > 0)
+					sb.Append("|");
+				sb.AppendFormat("(?'{0}'{1})", name, CreateSymbolRegexString(symbols));
+			}
 		}
 
 		private static string CreateSymbolRegexString(IEnumerable<Symbol> symbols)
 		{
 			var sb = new StringBuilder();
 			bool first = true;
-			foreach (Symbol symbol in symbols)
+			foreach (Symbol symbol in symbols.OrderByDescending(s => s.StrRep.Length))
 			{
 				if (!first)
 					sb.Append("|");

@@ -2,16 +2,16 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Views="clr-namespace:SIL.Cog.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <DataTemplate x:Key="blankTemplate" />
-        <BooleanToVisibilityConverter x:Key="boolConverter" />
-        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="inverseBoolConverter" />
+        <DataTemplate x:Key="BlankTemplate" />
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="InverseBoolConverter" />
     </UserControl.Resources>
     <Grid>
-        <TextBlock Margin="3,0,0,0"  FontSize="16" Visibility="{Binding IsValid, Converter={StaticResource inverseBoolConverter}}" Text="{Binding StrRep}">
+        <TextBlock Margin="3,0,0,0"  FontSize="16" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">
             <TextBlock.TextDecorations>
                 <TextDecorationCollection>
                     <TextDecoration Location="Underline" PenOffset="1">
@@ -26,8 +26,8 @@
                 </TextDecorationCollection>
             </TextBlock.TextDecorations>
         </TextBlock>
-        <ListBox BorderThickness="0" x:Name="_listBox" Visibility="{Binding IsValid, Converter={StaticResource boolConverter}}" SelectionChanged="_listBox_SelectionChanged"
-             Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" Views:ItemsControlDragDrop.DragDropTemplate="{StaticResource blankTemplate}" LostFocus="_listBox_LostFocus">
+        <ListBox BorderThickness="0" x:Name="_listBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
+             Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" v:ItemsControlDragDrop.DragDropTemplate="{StaticResource BlankTemplate}" LostFocus="_listBox_LostFocus">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />

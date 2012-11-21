@@ -54,7 +54,8 @@ namespace SIL.Cog.ViewModels
 
 		private void Export()
 		{
-			_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
+			//_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
+			_exportService.ExportHierarchicalGraph(this, Graph, _graphType);
 		}
 
 		public override void Initialize(CogProject project)

@@ -7,7 +7,7 @@ namespace SIL.Cog
 	public class ClusterList<T> : OrderedBidirList<Cluster<T>>
 	{
 		private readonly Dictionary<Cluster<T>, double> _lengths;
-		private readonly Cluster<T> _parent; 
+		private readonly Cluster<T> _parent;
 
 		internal ClusterList(Cluster<T> parent)
 			: base(EqualityComparer<Cluster<T>>.Default, begin => new Cluster<T>(null, Enumerable.Empty<T>()))

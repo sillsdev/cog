@@ -21,12 +21,22 @@ namespace SIL.Cog.Clusterers
 
 		private Cluster<T> CreateCluster(HashSet<int> processed, IList<ClusterOrderEntry<T>> clusterOrder, int startIndex, int endIndex, ref int id)
 		{
-			var cluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusterOrder.Skip(startIndex).Take(endIndex - startIndex).Select(oe => oe.DataObject));
+			string idStr = id.ToString(CultureInfo.InvariantCulture);
 			id++;
+			var subclusterDataObjects = new HashSet<T>();
+			var subclusters = new List<Cluster<T>>();
 			foreach (Cluster<T> subcluster in GetSubclusters(processed, clusterOrder, startIndex, endIndex, ref id))
-				cluster.Children.Add(subcluster);
+			{
+				subclusterDataObjects.UnionWith(subcluster.AllDataObjects);
+				subclusters.Add(subcluster);
+			}
+
 			for (int i = startIndex; i < endIndex; i++)
 				processed.Add(i);
+
+			var cluster = new Cluster<T>(idStr, clusterOrder.Skip(startIndex).Take(endIndex - startIndex).Select(oe => oe.DataObject).Except(subclusterDataObjects));
+			cluster.Children.AddRange(subclusters);
+
 			return cluster;
 		}
 

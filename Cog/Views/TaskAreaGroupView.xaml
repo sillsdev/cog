@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
-		<cnvtrs:EqualityConverter x:Key="equalConverter" />
+		<cnvtrs:EqualityConverter x:Key="EqualConverter" />
 	</UserControl.Resources>
 	<HeaderedContentControl Margin="8,20,8,0" Header="{Binding DisplayName}" Style="{StaticResource TaskAreaHeaderStyle}">
 		<ItemsControl ItemsSource="{Binding Commands}">
@@ -28,7 +28,7 @@
 					<DataTemplate.Triggers>
 						<DataTrigger Value="True">
 							<DataTrigger.Binding>
-								<MultiBinding Converter="{StaticResource equalConverter}">
+								<MultiBinding Converter="{StaticResource EqualConverter}">
 									<Binding Path="." />
 									<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="DataContext.CurrentCommand" />
 								</MultiBinding>

@@ -12,7 +12,7 @@ namespace SIL.Cog.Converters
 			if (number == null)
 				return Binding.DoNothing;
 
-			return number.CompareTo(parameter) <= 0;
+			return number.CompareTo(parameter) < 0;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

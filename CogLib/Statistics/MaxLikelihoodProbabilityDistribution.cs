@@ -16,9 +16,12 @@ namespace SIL.Cog.Statistics
 			get { return _freqDist.ObservedSamples; }
 		}
 
-		public double GetProbability(TSample sample)
+		public double this[TSample sample]
 		{
-			return (double) _freqDist[sample] / _freqDist.SampleOutcomeCount;
+			get
+			{
+				return (double) _freqDist[sample] / _freqDist.SampleOutcomeCount;
+			}
 		}
 
 		public FrequencyDistribution<TSample> FrequencyDistribution

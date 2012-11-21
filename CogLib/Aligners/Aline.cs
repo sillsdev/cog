@@ -9,12 +9,11 @@ namespace SIL.Cog.Aligners
 {
 	public class Aline : AlignerBase
 	{
-		public const int Precision = 100;
-		private const int MaxSoundChangeScore = 20 * Precision;
-		private const int MaxSubstitutionScore = 35 * Precision;
-		private const int MaxExpansionCompressionScore = 45 * Precision;
-		private const int IndelCost = 10 * Precision;
-		private const int VowelCost = 0 * Precision;
+		private const int MaxSoundChangeScore = 2000;
+		private const int MaxSubstitutionScore = 3500;
+		private const int MaxExpansionCompressionScore = 4500;
+		private const int IndelCost = 1000;
+		private const int VowelCost = 0;
 
 		private readonly IDBearerSet<SymbolicFeature> _relevantConsFeatures;
 		private readonly IDBearerSet<SymbolicFeature> _relevantVowelFeatures; 
@@ -113,7 +112,7 @@ namespace SIL.Cog.Aligners
 				double prob = varietyPair.DefaultCorrespondenceProbability;
 				IProbabilityDistribution<Ngram> probDist;
 				if (varietyPair.SoundChanges.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
-					prob = probDist.Samples.Max(nseg => probDist.GetProbability(nseg));
+					prob = probDist.Samples.Max(nseg => probDist[nseg]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
 			}
 			return maxScore;
@@ -126,7 +125,7 @@ namespace SIL.Cog.Aligners
 			{
 				var corr = new Ngram(varietyPair.Variety2.Segments[q]);
 
-				double prob = varietyPair.SoundChanges.Conditions.Max(lhs => varietyPair.SoundChanges[lhs].GetProbability(corr));
+				double prob = varietyPair.SoundChanges.Conditions.Max(lhs => varietyPair.SoundChanges[lhs][corr]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
 			}
 			return maxScore;
@@ -171,7 +170,7 @@ namespace SIL.Cog.Aligners
 
 			var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
 			IProbabilityDistribution<Ngram> probDist;
-			double prob = varietyPair.SoundChanges.TryGetProbabilityDistribution(lhs, out probDist) ? probDist.GetProbability(corr)
+			double prob = varietyPair.SoundChanges.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
 				: varietyPair.DefaultCorrespondenceProbability;
 			return (int) (MaxSoundChangeScore * prob);
 		}

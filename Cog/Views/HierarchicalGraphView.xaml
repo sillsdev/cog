@@ -4,21 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
-             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:Controls="clr-namespace:SIL.Cog.Controls"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:c="clr-namespace:SIL.Cog.Controls"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <cnvtrs:EnumMatchToVisibilityConverter x:Key="visConverter" />
+        <cnvtrs:EnumMatchToVisibilityConverter x:Key="VisConverter" />
     </UserControl.Resources>
-    <zoom:ZoomControl ZoomBoxOpacity="0.5">
+    <zoom:ZoomControl Name="_zoomControl" ZoomBoxOpacity="0.5">
         <Grid>
-            <Controls:DendrogramLayout Visibility="{Binding GraphType, Converter={StaticResource visConverter}, ConverterParameter=Dendrogram}" Graph="{Binding Graph}" Background="White" />
-			<Controls:HierarchicalGraphLayout Visibility="{Binding GraphType, Converter={StaticResource visConverter}, ConverterParameter=Tree}" Background="White"
-                                            Graph="{Binding Graph}" LayoutAlgorithmType="EfficientSugiyama" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple">
-				<Controls:HierarchicalGraphLayout.Resources>
+            <c:DendrogramLayout Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Dendrogram}" Graph="{Binding Graph}" Background="White" />
+			<c:HierarchicalGraphLayout x:Name="_graphLayout" Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Tree}" Background="White"
+									   Graph="{Binding Graph}" LayoutAlgorithmType="RadialTree" HighlightAlgorithmType="Simple" ScaleLabelsToZoom="{Binding ElementName=_zoomControl, Path=Zoom}"
+									   LayoutFinished="_graphLayout_OnLayoutFinished">
+				<c:HierarchicalGraphLayout.Resources>
 					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource HierarchicalEdgeControlStyle}" />
-				</Controls:HierarchicalGraphLayout.Resources>
-			</Controls:HierarchicalGraphLayout>
+					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource HierarchicalVertexControlStyle}" />
+				</c:HierarchicalGraphLayout.Resources>
+			</c:HierarchicalGraphLayout>
 		</Grid>
     </zoom:ZoomControl>
 </UserControl>

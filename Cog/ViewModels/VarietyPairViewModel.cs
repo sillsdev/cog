@@ -18,7 +18,7 @@ namespace SIL.Cog.ViewModels
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.Conditions.SelectMany(lhs => _varietyPair.SoundChanges[lhs].Samples,
-				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs].GetProbability(segment))).ToList());
+				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs][segment])).ToList());
 			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
 		}
 

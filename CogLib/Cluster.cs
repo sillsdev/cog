@@ -10,7 +10,27 @@ namespace SIL.Cog
 		private readonly string _desc;
 		private readonly SimpleReadOnlyCollection<T> _dataObjects;
 		private readonly bool _noise;
-		private ClusterList<T> _children; 
+		private ClusterList<T> _children;
+
+		public Cluster(string id)
+			: this(id, id)
+		{
+		}
+
+		public Cluster(string id, bool noise)
+			: this(id, noise, id)
+		{
+		}
+
+		public Cluster(string id, string desc)
+			: this(id, false, desc)
+		{
+		}
+
+		public Cluster(string id, bool noise, string desc)
+			: this(id, Enumerable.Empty<T>(), noise, desc)
+		{
+		}
 
 		public Cluster(string id, IEnumerable<T> dataObjects)
 			: this(id, dataObjects, id)
@@ -48,6 +68,17 @@ namespace SIL.Cog
 		public IReadOnlyCollection<T> DataObjects
 		{
 			get { return _dataObjects; }
+		}
+
+		public IEnumerable<T> AllDataObjects
+		{
+			get
+			{
+				if (IsLeaf)
+					return _dataObjects;
+
+				return _children.Aggregate((IEnumerable<T>) _dataObjects, (res, c) => res.Concat(c.AllDataObjects));
+			}
 		}
 
 		public bool Noise
@@ -107,6 +138,11 @@ namespace SIL.Cog
 		IBidirList<Cluster<T>> IBidirTreeNode<Cluster<T>>.Children
 		{
 			get { return Children; }
+		}
+
+		public override string ToString()
+		{
+			return _desc;
 		}
 	}
 }

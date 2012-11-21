@@ -43,7 +43,7 @@
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="DisableExpansionCompression" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-			<xs:element name="NaturalClasses">
+			<xs:element name="NaturalClasses" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="NaturalClass" minOccurs="0" maxOccurs="unbounded">
@@ -90,7 +90,7 @@
 					<xs:element name="RelevantFeatures">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="RelevantFeature" minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="RelevantFeature" minOccurs="1" maxOccurs="unbounded">
 									<xs:complexType>
 										<xs:sequence>
 											<xs:element name="RelevantValue" minOccurs="1" maxOccurs="unbounded">
@@ -155,14 +155,14 @@
 		<xs:complexContent>
 			<xs:extension base="VarietyPairProcessorBase">
 				<xs:sequence>
-					<xs:element name="SimilarVowels">
+					<xs:element name="SimilarVowels" minOccurs="0" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
 								<xs:element ref="Mapping" minOccurs="0" maxOccurs="unbounded" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-					<xs:element name="SimilarConsonants">
+					<xs:element name="SimilarConsonants" minOccurs="0" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
 								<xs:element ref="Mapping" minOccurs="0" maxOccurs="unbounded" />
@@ -196,7 +196,7 @@
 							<xs:element name="Feature" minOccurs="1" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="Value" minOccurs="0" maxOccurs="unbounded">
+										<xs:element name="Value" minOccurs="1" maxOccurs="unbounded">
 											<xs:complexType>
 												<xs:attribute name="id" type="xs:string" use="required" />
 												<xs:attribute name="name" type="xs:string" use="required" />

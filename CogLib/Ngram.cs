@@ -40,6 +40,82 @@ namespace SIL.Cog
 			get { return _segments[index]; }
 		}
 
+		public Segment First
+		{
+			get
+			{
+				if (_segments.Length == 0)
+					return null;
+				return _segments[0];
+			}
+		}
+
+		public Segment GetFirst(Direction dir)
+		{
+			if (_segments.Length == 0)
+				return null;
+
+			return dir == Direction.LeftToRight ? First : Last;
+		}
+
+		public Segment Last
+		{
+			get
+			{
+				if (_segments.Length == 0)
+					return null;
+				return _segments[_segments.Length - 1];
+			}
+		}
+
+		public Segment GetLast(Direction dir)
+		{
+			if (_segments.Length == 0)
+				return null;
+
+			return dir == Direction.LeftToRight ? Last : First;
+		}
+
+		public Ngram TakeAllExceptLast()
+		{
+			return TakeAllExceptLast(Direction.LeftToRight);
+		}
+
+		public Ngram TakeAllExceptLast(Direction dir)
+		{
+			return new Ngram(dir == Direction.LeftToRight ? _segments.Take(_segments.Length - 1) : _segments.Skip(1));
+		}
+
+		public Ngram SkipFirst()
+		{
+			return SkipFirst(Direction.LeftToRight);
+		}
+
+		public Ngram SkipFirst(Direction dir)
+		{
+			return new Ngram(dir == Direction.LeftToRight ? _segments.Skip(1) : _segments.Take(_segments.Length - 1));
+		}
+
+		public Ngram Concat(Segment seg)
+		{
+			return Concat(seg, Direction.LeftToRight);
+		}
+
+		public Ngram Concat(Segment seg, Direction dir)
+		{
+			return new Ngram(dir == Direction.LeftToRight ? _segments.Concat(seg) : seg.ToEnumerable().Concat(_segments));
+		}
+
+		public Ngram Concat(Ngram ngram)
+		{
+			return Concat(ngram, Direction.LeftToRight);
+		}
+
+		public Ngram Concat(Ngram ngram, Direction dir)
+		{
+			return new Ngram(dir == Direction.LeftToRight ? _segments.Concat(ngram) : ngram.Concat(_segments));
+		}
+
 		public bool Equals(Ngram other)
 		{
 			return other != null && _segments.SequenceEqual(other._segments);

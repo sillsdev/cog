@@ -17,8 +17,7 @@ namespace SIL.Cog.Clusterers
 
 		public IEnumerable<Cluster<T>> GenerateClusters(IEnumerable<T> dataObjects)
 		{
-			int id = 0;
-			var clusters = new List<Cluster<T>>(dataObjects.Select(obj => new Cluster<T>(id++.ToString(CultureInfo.InvariantCulture), obj.ToEnumerable())));
+			var clusters = new List<Cluster<T>>(dataObjects.Select(obj => new Cluster<T>(obj.ToString(), obj.ToEnumerable())));
 			var distances = new Dictionary<Cluster<T>, Dictionary<Cluster<T>, double>>();
 			for (int i = 0; i < clusters.Count; i++)
 			{
@@ -30,7 +29,8 @@ namespace SIL.Cog.Clusterers
 				}
 			}
 
-			while (true)
+			int id = 0;
+			while (clusters.Count > 2)
 			{
 				Dictionary<Cluster<T>, double> r = clusters.ToDictionary(c => c, c => clusters.Where(oc => oc != c).Sum(oc => distances[c][oc] / (clusters.Count - 2)));
 				int minI = 0, minJ = 0;
@@ -54,7 +54,7 @@ namespace SIL.Cog.Clusterers
 				Cluster<T> iCluster = clusters[minI];
 				Cluster<T> jCluster = clusters[minJ];
 
-				var uCluster = new Cluster<T>(id++.ToString(CultureInfo.InvariantCulture), iCluster.DataObjects.Concat(jCluster.DataObjects));
+				var uCluster = new Cluster<T>(id++.ToString(CultureInfo.InvariantCulture));
 
 				double length1 = (minDist / 2) + ((r[iCluster] - r[jCluster]) / 2);
 				uCluster.Children.Add(iCluster, Math.Max(length1, 0));
@@ -74,16 +74,12 @@ namespace SIL.Cog.Clusterers
 				clusters.Add(uCluster);
 				distances.Remove(iCluster);
 				distances.Remove(jCluster);
+			}
 
-				if (clusters.Count <= 2)
-				{
-					var rootCluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusters.SelectMany(c => c.DataObjects));
-					foreach (Cluster<T> cluster in clusters)
-						rootCluster.Children.Add(cluster, minDist);
-					clusters.Clear();
-					clusters.Add(rootCluster);
-					break;
-				}
+			if (clusters.Count == 2)
+			{
+				clusters[1].Children.Add(clusters[0], distances[clusters[0]][clusters[1]]);
+				clusters.RemoveAt(0);
 			}
 
 			return clusters;

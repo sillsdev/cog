@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Views="clr-namespace:SIL.Cog.Views"
-                    xmlns:Controls="clr-namespace:SIL.Cog.Controls" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:SIL.Cog.Views"
+                    xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters">
 	<cnvtrs:LevelToIndentConverter x:Key="LevelToIndentConverter"/>
 
 	<SolidColorBrush x:Key="TextBrush" Color="#FF10257F" />
@@ -51,7 +51,7 @@
 		<Setter Property="AlternatingRowBackground" Value="{StaticResource AlternatingRowBrush}" />
 		<Setter Property="HorizontalGridLinesBrush" Value="LightGray" />
 		<Setter Property="VerticalGridLinesBrush" Value="LightGray" />
-		<Setter Property="Views:DataGridBehaviors.SelectAllButtonStyle">
+		<Setter Property="v:DataGridBehaviors.SelectAllButtonStyle">
 			<Setter.Value>
 				<Style TargetType="Button">
 					<Setter Property="Command" Value="{x:Null}" />
@@ -199,7 +199,7 @@
 		</Style.Triggers>
 	</Style>
 
-	<Style x:Key="scroll">
+	<Style x:Key="Scroll">
 		<Setter Property="UIElement.Focusable" Value="False" />
 		<Setter Property="Control.Template">
 			<Setter.Value>
@@ -216,7 +216,7 @@
 						<DockPanel Margin="{TemplateBinding Padding}">
 							<ScrollViewer DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="false">
 								<GridViewHeaderRowPresenter Margin="0"
-															Columns="{Binding Path=Columns,RelativeSource={RelativeSource AncestorType={x:Type Controls:TreeListView}}}"
+															Columns="{Binding Path=Columns,RelativeSource={RelativeSource AncestorType={x:Type c:TreeListView}}}"
 															SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 							</ScrollViewer>
 							<ScrollContentPresenter Name="PART_ScrollContentPresenter"
@@ -242,7 +242,7 @@
 		</Setter>
 	</Style>
 
-	<Style TargetType="Controls:TreeListView">
+	<Style TargetType="c:TreeListView">
 		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
 		<Setter Property="Background" Value="White" />
 		<Setter Property="BorderThickness" Value="1" />
@@ -254,9 +254,9 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<!-- Style="{StaticResource scroll}"-->
-				<ControlTemplate TargetType="Controls:TreeListView">
+				<ControlTemplate TargetType="c:TreeListView">
 					<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Name="Bd" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-						<ScrollViewer Style="{StaticResource scroll}" Background="{TemplateBinding Background}" Focusable="false" CanContentScroll="false"
+						<ScrollViewer Style="{StaticResource Scroll}" Background="{TemplateBinding Background}" Focusable="false" CanContentScroll="false"
 									  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
 									  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" Padding="{TemplateBinding Padding}"
 									  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
@@ -274,7 +274,7 @@
 
 	</Style>
 
-	<Style TargetType="Controls:TreeListViewItem">
+	<Style TargetType="c:TreeListViewItem">
 		<Setter Property="FocusVisualStyle">
 			<Setter.Value>
 				<Style TargetType="IFrameworkInputElement">
@@ -299,7 +299,7 @@
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="Controls:TreeListViewItem">
+				<ControlTemplate TargetType="c:TreeListViewItem">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*"/>
@@ -315,13 +315,13 @@
 									<RowDefinition MaxHeight="11" />
 									<RowDefinition />
 								</Grid.RowDefinitions>
-								<Controls:TreeGridViewRowPresenter x:Name="PART_Header" Grid.RowSpan="2"
-																	FirstColumnIndent="{Binding Level,Converter={StaticResource LevelToIndentConverter},RelativeSource={RelativeSource AncestorType={x:Type Controls:TreeListViewItem}},ConverterParameter=16}"
+								<c:TreeGridViewRowPresenter x:Name="PART_Header" Grid.RowSpan="2"
+																	FirstColumnIndent="{Binding Level,Converter={StaticResource LevelToIndentConverter},RelativeSource={RelativeSource AncestorType={x:Type c:TreeListViewItem}},ConverterParameter=16}"
 																	Content="{TemplateBinding Header}" 
-																	Columns="{Binding Path=Columns,RelativeSource={RelativeSource AncestorType={x:Type Controls:TreeListView}}}">
-									<Controls:TreeGridViewRowPresenter.Expander>
+																	Columns="{Binding Path=Columns,RelativeSource={RelativeSource AncestorType={x:Type c:TreeListView}}}">
+									<c:TreeGridViewRowPresenter.Expander>
 										<Grid>
-											<ToggleButton Height="16" Width="16" ClickMode="Press" Name="Expander" IsChecked="{Binding Path=IsExpanded,RelativeSource={RelativeSource AncestorType={x:Type Controls:TreeListViewItem}}}">
+											<ToggleButton Height="16" Width="16" ClickMode="Press" Name="Expander" IsChecked="{Binding Path=IsExpanded,RelativeSource={RelativeSource AncestorType={x:Type c:TreeListViewItem}}}">
 												<ToggleButton.Style>
 													<Style TargetType="ToggleButton">
 														<Style.Resources>
@@ -365,8 +365,8 @@
 												</ToggleButton.Style>
 											</ToggleButton>
 										</Grid>
-									</Controls:TreeGridViewRowPresenter.Expander>
-								</Controls:TreeGridViewRowPresenter>
+									</c:TreeGridViewRowPresenter.Expander>
+								</c:TreeGridViewRowPresenter>
 							</Grid>
 						</Border>
 						<ItemsPresenter Grid.Row="1" Name="ItemsHost" />
@@ -469,9 +469,9 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="Views:TextBoxBehaviors.IsDirtyEnabled" Value="True" />
+		<Setter Property="v:TextBoxBehaviors.IsDirtyEnabled" Value="True" />
 		<Style.Triggers>
-			<Trigger Property="Views:TextBoxBehaviors.ShowErrorTemplate" Value="False">
+			<Trigger Property="v:TextBoxBehaviors.ShowErrorTemplate" Value="False">
 				<Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
 			</Trigger>
 		</Style.Triggers>

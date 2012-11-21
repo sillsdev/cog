@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Controls="clr-namespace:SIL.Cog.Controls" xmlns:ViewModels="clr-namespace:SIL.Cog.ViewModels"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:Views="clr-namespace:SIL.Cog.Views" mc:Ignorable="d" 
+             xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:v="clr-namespace:SIL.Cog.Views" mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300">
     <Grid>
         <Grid.Resources>
@@ -34,22 +34,22 @@
 			<RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_modeComboBox}">Alignment mode:</Label>
-		<ComboBox Grid.Column="1" Grid.Row="0" Name="_modeComboBox" ItemsSource="{Binding Source={Views:Enumeration {x:Type ViewModels:AlineMode}}}"
+		<ComboBox Grid.Column="1" Grid.Row="0" Name="_modeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
 				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Mode}" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding DisableExpansionCompression}">Disable expansion/compression</CheckBox>
 		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=_featuresTreeListView}">Features</Label>
-		<Controls:TreeListView x:Name="_featuresTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
-			<Controls:TreeListView.Columns>
+		<c:TreeListView x:Name="_featuresTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
+			<c:TreeListView.Columns>
 				<GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}" Width="Auto" />
 				<GridViewColumn Header="Weight" Width="Auto">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
 							<ContentPresenter Content="{Binding}">
 								<ContentPresenter.Resources>
-									<DataTemplate DataType="{x:Type ViewModels:RelevantFeatureViewModel}">
+									<DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
 										<xctk:IntegerUpDown Value="{Binding Weight, UpdateSourceTrigger=PropertyChanged}" />
 									</DataTemplate>
-									<DataTemplate DataType="{x:Type ViewModels:RelevantValueViewModel}">
+									<DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
 										<xctk:IntegerUpDown Value="{Binding Metric, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="100" />
 									</DataTemplate>
 								</ContentPresenter.Resources>
@@ -62,10 +62,10 @@
 						<DataTemplate>
 							<ContentPresenter Content="{Binding}">
 								<ContentPresenter.Resources>
-									<DataTemplate DataType="{x:Type ViewModels:RelevantFeatureViewModel}">
+									<DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
 										<CheckBox HorizontalAlignment="Center" IsChecked="{Binding Vowel}" />
 									</DataTemplate>
-									<DataTemplate DataType="{x:Type ViewModels:RelevantValueViewModel}">
+									<DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
 									</DataTemplate>
 								</ContentPresenter.Resources>
 							</ContentPresenter>
@@ -77,21 +77,21 @@
 						<DataTemplate>
 							<ContentPresenter Content="{Binding}">
 								<ContentPresenter.Resources>
-									<DataTemplate DataType="{x:Type ViewModels:RelevantFeatureViewModel}">
+									<DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
 										<CheckBox HorizontalAlignment="Center" IsChecked="{Binding Consonant}" />
 									</DataTemplate>
-									<DataTemplate DataType="{x:Type ViewModels:RelevantValueViewModel}">
+									<DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
 									</DataTemplate>
 								</ContentPresenter.Resources>
 							</ContentPresenter>
 						</DataTemplate>
 					</GridViewColumn.CellTemplate>
 				</GridViewColumn>
-			</Controls:TreeListView.Columns>
-			<Controls:TreeListView.ItemTemplate>
+			</c:TreeListView.Columns>
+			<c:TreeListView.ItemTemplate>
 				<HierarchicalDataTemplate ItemsSource="{Binding Values}" />
-			</Controls:TreeListView.ItemTemplate>
-		</Controls:TreeListView>
+			</c:TreeListView.ItemTemplate>
+		</c:TreeListView>
 		<Label Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=_naturalClassesDataGrid}">Natural classes</Label>
 		<StackPanel Grid.ColumnSpan="2" Grid.Row="5">
 			<Grid>

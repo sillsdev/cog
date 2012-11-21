@@ -22,7 +22,7 @@ namespace SIL.Cog
 
 		public Symbol(string strRep, FeatureStruct fs, bool overwrite)
 		{
-			_strRep = strRep;
+			_strRep = strRep.ToLowerInvariant();
 			_fs = fs;
 			_overwrite = overwrite;
 		}

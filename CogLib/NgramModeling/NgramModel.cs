@@ -9,40 +9,50 @@ namespace SIL.Cog.NgramModeling
 {
 	public class NgramModel
 	{
-		public static IReadOnlyList<NgramModel> BuildAll(int maxNgramSize, Variety variety)
+		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety)
 		{
-			return BuildAll(maxNgramSize, variety, Direction.LeftToRight);
+			return TrainAll(maxNgramSize, variety, Direction.LeftToRight);
 		}
 
-		public static IReadOnlyList<NgramModel> BuildAll(int maxNgramSize, Variety variety, Direction dir)
+		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety, Direction dir)
 		{
-			return BuildAll(maxNgramSize, variety, dir, new ModifiedKneserNeySmoother());
+			return TrainAll(maxNgramSize, variety, dir, () => new ModifiedKneserNeySmoother());
 		}
 
-		public static IReadOnlyList<NgramModel> BuildAll(int maxNgramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
+		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety, Func<INgramModelSmoother> smootherFactory)
 		{
-			var model = new NgramModel(maxNgramSize, variety, dir, smoother);
-			var list = new List<NgramModel>();
-			do
+			return TrainAll(maxNgramSize, variety, Direction.LeftToRight, smootherFactory);
+		}
+
+		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety, Direction dir, Func<INgramModelSmoother> smootherFactory)
+		{
+			var model = new NgramModel(maxNgramSize, variety, dir, smootherFactory());
+			var models = new NgramModel[maxNgramSize];
+			for (int i = maxNgramSize - 1; i >= 0; i--)
 			{
-				list.Insert(0, model);
-				model = model.Smoother.LowerOrderModel;
+				models[i] = model;
+				if (i > 0)
+					model = model.Smoother.LowerOrderModel ?? new NgramModel(i, variety, dir, smootherFactory());
 			}
-			while (model != null);
-			return list.AsReadOnlyList();
+			return models;
 		}
 
-		public static NgramModel Build(int ngramSize, Variety variety)
+		public static NgramModel Train(int ngramSize, Variety variety)
 		{
-			return Build(ngramSize, variety, Direction.LeftToRight);
+			return Train(ngramSize, variety, Direction.LeftToRight);
 		}
 
-		public static NgramModel Build(int ngramSize, Variety variety, Direction dir)
+		public static NgramModel Train(int ngramSize, Variety variety, Direction dir)
 		{
-			return Build(ngramSize, variety, dir, new ModifiedKneserNeySmoother());
+			return Train(ngramSize, variety, dir, new ModifiedKneserNeySmoother());
 		}
 
-		public static NgramModel Build(int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
+		public static NgramModel Train(int ngramSize, Variety variety, INgramModelSmoother smoother)
+		{
+			return Train(ngramSize, variety, Direction.LeftToRight, smoother);
+		}
+
+		public static NgramModel Train(int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
 		{
 			return new NgramModel(ngramSize, variety, dir, smoother);
 		}
@@ -50,47 +60,40 @@ namespace SIL.Cog.NgramModeling
 		private readonly int _ngramSize;
 		private readonly HashSet<Ngram> _ngrams;
 		private readonly HashSet<string> _categories; 
-		private readonly ConditionalFrequencyDistribution<string, Ngram> _ngramCfd;
-		private readonly ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> _cfd;
 		private readonly INgramModelSmoother _smoother;
 		private readonly Variety _variety;
 		private readonly Direction _dir;
 
-		private NgramModel(int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
+		internal NgramModel(int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
 		{
 			_ngramSize = ngramSize;
 			_variety = variety;
 			_dir = dir;
 			_smoother = smoother;
 			_ngrams = new HashSet<Ngram>();
-			_cfd = new ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment>();
-			_ngramCfd = new ConditionalFrequencyDistribution<string, Ngram>();
+			var cfd = new ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment>();
 			_categories = new HashSet<string>();
 			foreach (Word word in variety.Words)
 			{
 				if (!string.IsNullOrEmpty(word.Sense.Category))
 					_categories.Add(word.Sense.Category);
-				foreach (ShapeNode startNode in word.Shape.GetNodes(word.Span, dir).Where(Filter))
+				foreach (ShapeNode startNode in word.Shape.GetNodes(word.Span).Where(Filter))
 				{
-					var ngram = new Ngram(startNode.GetNodes(word.Shape.GetEnd(dir), dir).Where(Filter).Take(_ngramSize).Select(node => node.Type() == CogFeatureSystem.AnchorType ? Segment.Anchor : variety.Segments[node]));
+					var ngram = new Ngram(startNode.GetNodes(word.Shape.End).Where(Filter).Take(_ngramSize).Select(node => node.Type() == CogFeatureSystem.AnchorType ? Segment.Anchor : variety.Segments[node]));
 					if (ngram.Count != _ngramSize)
 						break;
 
 					_ngrams.Add(ngram);
-					_ngramCfd[string.Empty].Increment(ngram);
-					var context = new Ngram(ngram.Take(_ngramSize - 1));
-					var seg = ngram.Last();
-					_cfd[Tuple.Create(context, string.Empty)].Increment(seg);
+					Ngram context = ngram.TakeAllExceptLast(dir);
+					Segment seg = ngram.GetLast(dir);
+					cfd[Tuple.Create(context, (string) null)].Increment(seg);
 
 					if (!string.IsNullOrEmpty(word.Sense.Category))
-					{
-						_ngramCfd[word.Sense.Category].Increment(ngram);
-						_cfd[Tuple.Create(context, word.Sense.Category)].Increment(seg);
-					}
+						cfd[Tuple.Create(context, word.Sense.Category)].Increment(seg);
 				}
 			}
 
-			_smoother.Smooth(this, _cfd);
+			_smoother.Smooth(ngramSize, variety, dir, cfd);
 		}
 
 		public Direction Direction
@@ -100,22 +103,16 @@ namespace SIL.Cog.NgramModeling
 
 		public double GetProbability(Segment seg, Ngram context)
 		{
-			return GetProbability(seg, context, string.Empty);
+			if (context.Count != _ngramSize - 1)
+				throw new ArgumentException("The context size is not valid.", "context");
+			return GetProbability(seg, context, null);
 		}
 
 		public double GetProbability(Segment seg, Ngram context, string category)
 		{
+			if (context.Count != _ngramSize - 1)
+				throw new ArgumentException("The context size is not valid.", "context");
 			return _smoother.GetProbability(seg, context, category);
-		}
-
-		public int GetFrequency(Ngram ngram)
-		{
-			return GetFrequency(ngram, string.Empty);
-		}
-
-		public int GetFrequency(Ngram ngram, string category)
-		{
-			return _ngramCfd[category][ngram];
 		}
 
 		public IReadOnlyCollection<Ngram> Ngrams

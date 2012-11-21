@@ -1,4 +1,4 @@
-﻿<Window x:Class="SIL.Cog.Views.NewAffixDialog"
+﻿<Window x:Class="SIL.Cog.Views.EditAffixDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
 		xmlns:v="clr-namespace:SIL.Cog.Views"

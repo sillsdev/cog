@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:c="clr-namespace:SIL.Cog.Controls"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
     <Grid>
@@ -11,9 +12,8 @@
                 <Setter Property="Margin" Value="0,3,5,5" />
                 <Setter Property="Padding" Value="0,0,0,5" />
             </Style>
-            <Style TargetType="ComboBox">
+            <Style TargetType="xctk:IntegerUpDown">
                 <Setter Property="Margin" Value="0,0,0,5" />
-                <Setter Property="Width" Value="50" />
             </Style>
             <Style TargetType="CheckBox">
                 <Setter Property="Margin" Value="0,0,0,5" />
@@ -30,17 +30,8 @@
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_thresholdSlider}">Affix threshold:</Label>
 		<c:PercentageSlider HorizontalAlignment="Left" x:Name="_thresholdSlider" Grid.Column="1" Grid.Row="0" Value="{Binding Threshold}" Width="250" />
-        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_maxLengthComboBox}">Maximum affix length:</Label>
-        <ComboBox Name="_maxLengthComboBox" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Text="{Binding MaxAffixLength}">
-            <ComboBoxItem>1</ComboBoxItem>
-            <ComboBoxItem>2</ComboBoxItem>
-            <ComboBoxItem>3</ComboBoxItem>
-            <ComboBoxItem>4</ComboBoxItem>
-            <ComboBoxItem>5</ComboBoxItem>
-            <ComboBoxItem>6</ComboBoxItem>
-            <ComboBoxItem>7</ComboBoxItem>
-            <ComboBoxItem>8</ComboBoxItem>
-        </ComboBox>
+		<Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_maxLengthUpDown}">Maximum affix length:</Label>
+		<xctk:IntegerUpDown Name="_maxLengthUpDown" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Minimum="1" Maximum="8" Value="{Binding MaxAffixLength}" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding CategoryRequired}">Category required</CheckBox>
     </Grid>
 </UserControl>

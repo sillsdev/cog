@@ -17,7 +17,27 @@
                     <DataGrid ItemsSource="{Binding Affixes}" v:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}"
 							  AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*" />
+                            <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*">
+								<DataGridTextColumn.ElementStyle>
+									<Style TargetType="TextBlock">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding IsValid}" Value="False">
+												<Setter Property="TextDecorations">
+													<Setter.Value>
+														<TextDecorationCollection>
+															<TextDecoration Location="Underline" PenOffset="1">
+																<TextDecoration.Pen>
+																	<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
+																</TextDecoration.Pen>
+															</TextDecoration>
+														</TextDecorationCollection>
+													</Setter.Value>
+												</Setter>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</DataGridTextColumn.ElementStyle>
+							</DataGridTextColumn>
                             <DataGridTextColumn Header="Type" Binding="{Binding Type, Converter={StaticResource EnumConverter}}" Width="*" />
                             <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
                         </DataGrid.Columns>
@@ -36,8 +56,15 @@
                     </TextBlock>
                 </Grid>
                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
-                    <Button Margin="5,5,0,5" Width="70" Command="{Binding RemoveAffixCommand}">Remove</Button>
-                    <Button Margin="5,5,0,5" Width="70" Command="{Binding NewAffixCommand}">New</Button>
+					<StackPanel.Resources>
+						<Style TargetType="Button">
+							<Setter Property="Margin" Value="5,5,0,5" />
+							<Setter Property="Width" Value="70" />
+						</Style>
+					</StackPanel.Resources>
+                    <Button Command="{Binding RemoveAffixCommand}">Remove</Button>
+					<Button Command="{Binding EditAffixCommand}">Edit</Button>
+                    <Button Command="{Binding NewAffixCommand}">New</Button>
                 </StackPanel>
             </StackPanel>
         </HeaderedContentControl>

@@ -13,7 +13,7 @@ namespace SIL.Cog
 	{
 		private readonly string _strRep;
 		private readonly AffixType _type;
-		private readonly Shape _shape;
+		private Shape _shape;
 		private readonly string _category;
 		private double _score;
 
@@ -28,6 +28,11 @@ namespace SIL.Cog
 		public Shape Shape
 		{
 			get { return _shape; }
+			set
+			{
+				_shape = value;
+				OnPropertyChanged("Shape");
+			}
 		}
 
 		public AffixType Type

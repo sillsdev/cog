@@ -3,11 +3,11 @@
 namespace SIL.Cog.Views
 {
 	/// <summary>
-	/// Interaction logic for NewAffixDialog.xaml
+	/// Interaction logic for EditAffixDialog.xaml
 	/// </summary>
-	public partial class NewAffixDialog
+	public partial class EditAffixDialog
 	{
-		public NewAffixDialog()
+		public EditAffixDialog()
 		{
 			InitializeComponent();
 		}

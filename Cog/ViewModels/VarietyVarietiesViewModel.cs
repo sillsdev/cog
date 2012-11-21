@@ -18,6 +18,7 @@ namespace SIL.Cog.ViewModels
 		private SegmentVarietyViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
 		private readonly ICommand _newAffixCommand;
+		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
  
 		public VarietyVarietiesViewModel(IDialogService dialogService, CogProject project, Variety variety)
@@ -38,12 +39,13 @@ namespace SIL.Cog.ViewModels
 			if (_affixes.Count > 0)
 				_currentAffix = _affixes[0];
 			_newAffixCommand = new RelayCommand(NewAffix);
+			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
 		}
 
 		private void NewAffix()
 		{
-			var vm = new NewAffixViewModel(_project);
+			var vm = new EditAffixViewModel(_project);
 			if (_dialogService.ShowDialog(this, vm) == true)
 			{
 				Shape shape;
@@ -51,6 +53,27 @@ namespace SIL.Cog.ViewModels
 					shape = _project.Segmenter.EmptyShape;
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
 				ModelVariety.Affixes.Add(affix);
+				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
+				IsChanged = true;
+			}
+		}
+
+		private bool CanEditAffix()
+		{
+			return CurrentAffix != null;
+		}
+
+		private void EditAffix()
+		{
+			var vm = new EditAffixViewModel(_project, _currentAffix.ModelAffix);
+			if (_dialogService.ShowDialog(this, vm) == true)
+			{
+				Shape shape;
+				if (!_project.Segmenter.ToShape(vm.StrRep, out shape))
+					shape = _project.Segmenter.EmptyShape;
+				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
+				int index = ModelVariety.Affixes.IndexOf(_currentAffix.ModelAffix);
+				ModelVariety.Affixes[index] = affix;
 				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
 				IsChanged = true;
 			}
@@ -116,6 +139,11 @@ namespace SIL.Cog.ViewModels
 		public ICommand NewAffixCommand
 		{
 			get { return _newAffixCommand; }
+		}
+
+		public ICommand EditAffixCommand
+		{
+			get { return _editAffixCommand; }
 		}
 
 		public ICommand RemoveAffixCommand

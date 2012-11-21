@@ -197,12 +197,13 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MasterViewModelBase.cs" />
     <Compile Include="ViewModels\CogViewModelBase.cs" />
-    <Compile Include="ViewModels\NewAffixViewModel.cs" />
+    <Compile Include="ViewModels\EditAffixViewModel.cs" />
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
     <Compile Include="ViewModels\Notifications.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
+    <Compile Include="ViewModels\SegmenterViewModel.cs" />
     <Compile Include="ViewModels\SegmentVarietyViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
@@ -298,6 +299,9 @@
     <Compile Include="Views\RunStemmerDialog.xaml.cs">
       <DependentUpon>RunStemmerDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SegmenterView.xaml.cs">
+      <DependentUpon>SegmenterView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SensesView.xaml.cs">
       <DependentUpon>SensesView.xaml</DependentUpon>
     </Compile>
@@ -326,8 +330,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\NewAffixDialog.xaml.cs">
-      <DependentUpon>NewAffixDialog.xaml</DependentUpon>
+    <Compile Include="Views\EditAffixDialog.xaml.cs">
+      <DependentUpon>EditAffixDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TextBoxBehaviors.cs" />
     <Compile Include="Views\ThresholdCognateIdentifierView.xaml.cs">
@@ -431,7 +435,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\NewAffixDialog.xaml">
+    <Page Include="Views\EditAffixDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -444,6 +448,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RunStemmerDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SegmenterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

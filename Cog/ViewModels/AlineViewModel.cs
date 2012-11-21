@@ -130,8 +130,8 @@ namespace SIL.Cog.ViewModels
 			get { return _mode; }
 			set
 			{
-				Set(() => Mode, ref _mode, value);
-				IsChanged = true;
+				if (Set(() => Mode, ref _mode, value))
+					IsChanged = true;
 			}
 		}
 
@@ -140,8 +140,8 @@ namespace SIL.Cog.ViewModels
 			get { return _disableExpansionCompression; }
 			set
 			{
-				Set(() => DisableExpansionCompression, ref _disableExpansionCompression, value);
-				IsChanged = true;
+				if (Set(() => DisableExpansionCompression, ref _disableExpansionCompression, value))
+					IsChanged = true;
 			}
 		}
 

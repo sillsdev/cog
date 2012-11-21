@@ -37,7 +37,7 @@
     </UserControl.Resources>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Comparison Settings</TextBlock>
-        <ScrollViewer>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Grid.IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

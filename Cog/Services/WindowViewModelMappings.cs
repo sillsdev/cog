@@ -16,7 +16,7 @@ namespace SIL.Cog.Services
 		{
 			_mappings = new Dictionary<Type, Type>
 			{
-				{typeof(NewAffixViewModel), typeof(NewAffixDialog)},
+				{typeof(EditAffixViewModel), typeof(EditAffixDialog)},
 				{typeof(EditVarietyViewModel), typeof(EditVarietyDialog)},
 				{typeof(EditSenseViewModel), typeof(EditSenseDialog)},
 				{typeof(RunStemmerViewModel), typeof(RunStemmerDialog)},

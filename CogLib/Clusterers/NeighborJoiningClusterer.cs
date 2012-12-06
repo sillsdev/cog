@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using SIL.Collections;
 
@@ -17,29 +16,24 @@ namespace SIL.Cog.Clusterers
 
 		public IEnumerable<Cluster<T>> GenerateClusters(IEnumerable<T> dataObjects)
 		{
-			var clusters = new List<Cluster<T>>(dataObjects.Select(obj => new Cluster<T>(obj.ToString(), obj.ToEnumerable())));
-			var distances = new Dictionary<Cluster<T>, Dictionary<Cluster<T>, double>>();
+			var clusters = new List<Cluster<T>>(dataObjects.Select(obj => new Cluster<T>(obj.ToEnumerable()) {Description = obj.ToString()}));
+			var distances = new Dictionary<UnorderedTuple<Cluster<T>, Cluster<T>>, double>();
 			for (int i = 0; i < clusters.Count; i++)
 			{
 				for (int j = i + 1; j < clusters.Count; j++)
-				{
-					double dist = _getDistance(clusters[i].DataObjects.First(), clusters[j].DataObjects.First());
-					distances.GetValue(clusters[i], () => new Dictionary<Cluster<T>, double>())[clusters[j]] = dist;
-					distances.GetValue(clusters[j], () => new Dictionary<Cluster<T>, double>())[clusters[i]] = dist;
-				}
+					distances[UnorderedTuple.Create(clusters[i], clusters[j])] = _getDistance(clusters[i].DataObjects.First(), clusters[j].DataObjects.First());
 			}
 
-			int id = 0;
 			while (clusters.Count > 2)
 			{
-				Dictionary<Cluster<T>, double> r = clusters.ToDictionary(c => c, c => clusters.Where(oc => oc != c).Sum(oc => distances[c][oc] / (clusters.Count - 2)));
+				Dictionary<Cluster<T>, double> r = clusters.ToDictionary(c => c, c => clusters.Where(oc => oc != c).Sum(oc => distances[UnorderedTuple.Create(c, oc)] / (clusters.Count - 2)));
 				int minI = 0, minJ = 0;
 				double minDist = 0, minQ = double.MaxValue;
 				for (int i = 0; i < clusters.Count; i++)
 				{
 					for (int j = i + 1; j < clusters.Count; j++)
 					{
-						double dist = distances[clusters[i]][clusters[j]];
+						double dist = distances[UnorderedTuple.Create(clusters[i], clusters[j])];
 						double q = dist - r[clusters[i]] - r[clusters[j]];
 						if (q < minQ)
 						{
@@ -53,8 +47,9 @@ namespace SIL.Cog.Clusterers
 
 				Cluster<T> iCluster = clusters[minI];
 				Cluster<T> jCluster = clusters[minJ];
+				distances.Remove(UnorderedTuple.Create(iCluster, jCluster));
 
-				var uCluster = new Cluster<T>(id++.ToString(CultureInfo.InvariantCulture));
+				var uCluster = new Cluster<T>();
 
 				double length1 = (minDist / 2) + ((r[iCluster] - r[jCluster]) / 2);
 				uCluster.Children.Add(iCluster, Math.Max(length1, 0));
@@ -62,23 +57,20 @@ namespace SIL.Cog.Clusterers
 
 				foreach (Cluster<T> kCluster in clusters.Where(c => c != iCluster && c != jCluster))
 				{
-					Dictionary<Cluster<T>, double> kDistances = distances[kCluster];
-					double dist = (kDistances[iCluster] + kDistances[jCluster] - minDist) / 2;
-					distances.GetValue(uCluster, () => new Dictionary<Cluster<T>, double>())[kCluster] = dist;
-					distances.GetValue(kCluster, () => new Dictionary<Cluster<T>, double>())[uCluster] = dist;
-					kDistances.Remove(iCluster);
-					kDistances.Remove(jCluster);
+					UnorderedTuple<Cluster<T>, Cluster<T>> kiKey = UnorderedTuple.Create(kCluster, iCluster);
+					UnorderedTuple<Cluster<T>, Cluster<T>> kjKey = UnorderedTuple.Create(kCluster, jCluster);
+					distances[UnorderedTuple.Create(kCluster, uCluster)] = (distances[kiKey] + distances[kjKey] - minDist) / 2;
+					distances.Remove(kiKey);
+					distances.Remove(kjKey);
 				}
 				clusters.RemoveAt(minJ);
 				clusters.RemoveAt(minI);
 				clusters.Add(uCluster);
-				distances.Remove(iCluster);
-				distances.Remove(jCluster);
 			}
 
 			if (clusters.Count == 2)
 			{
-				clusters[1].Children.Add(clusters[0], distances[clusters[0]][clusters[1]]);
+				clusters[1].Children.Add(clusters[0], distances[UnorderedTuple.Create(clusters[0], clusters[1])]);
 				clusters.RemoveAt(0);
 			}
 

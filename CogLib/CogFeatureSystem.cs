@@ -22,7 +22,7 @@ namespace SIL.Cog
 		public static readonly StringFeature OriginalStrRep;
 		public static readonly StringFeature StrRep;
 
-		private static readonly CogFeatureSystem FeatureSystem;
+		public static readonly CogFeatureSystem Instance;
 
 		static CogFeatureSystem()
 		{
@@ -51,12 +51,7 @@ namespace SIL.Cog
 			OriginalStrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "OriginalStrRep"};
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};
 
-			FeatureSystem = new CogFeatureSystem();
-		}
-
-		public static CogFeatureSystem Instance
-		{
-			get { return FeatureSystem; }
+			Instance = new CogFeatureSystem();
 		}
 
 		private CogFeatureSystem()

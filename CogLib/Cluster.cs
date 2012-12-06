@@ -4,66 +4,29 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class Cluster<T> : OrderedBidirListNode<Cluster<T>>, IOrderedBidirTreeNode<Cluster<T>>, IIDBearer
+	public class Cluster<T> : OrderedBidirListNode<Cluster<T>>, IOrderedBidirTreeNode<Cluster<T>>
 	{
-		private readonly string _id;
-		private readonly string _desc;
 		private readonly SimpleReadOnlyCollection<T> _dataObjects;
 		private readonly bool _noise;
 		private ClusterList<T> _children;
 
-		public Cluster(string id)
-			: this(id, id)
+		public Cluster()
+			: this(Enumerable.Empty<T>())
 		{
 		}
 
-		public Cluster(string id, bool noise)
-			: this(id, noise, id)
+		public Cluster(IEnumerable<T> dataObjects)
+			: this(dataObjects, false)
 		{
 		}
 
-		public Cluster(string id, string desc)
-			: this(id, false, desc)
+		public Cluster(IEnumerable<T> dataObjects, bool noise)
 		{
-		}
-
-		public Cluster(string id, bool noise, string desc)
-			: this(id, Enumerable.Empty<T>(), noise, desc)
-		{
-		}
-
-		public Cluster(string id, IEnumerable<T> dataObjects)
-			: this(id, dataObjects, id)
-		{
-		}
-
-		public Cluster(string id, IEnumerable<T> dataObjects, bool noise)
-			: this(id, dataObjects, noise, id)
-		{
-		}
-
-		public Cluster(string id, IEnumerable<T> dataObjects, string desc)
-			: this(id, dataObjects, false, desc)
-		{
-		}
-
-		public Cluster(string id, IEnumerable<T> dataObjects, bool noise, string desc)
-		{
-			_id = id;
-			_desc = desc;
 			_dataObjects = new SimpleReadOnlyCollection<T>(dataObjects.ToArray());
 			_noise = noise;
 		}
 
-		public string ID
-		{
-			get { return _id; }
-		}
-
-		public string Description
-		{
-			get { return _desc; }
-		}
+		public string Description { get; set; }
 
 		public IReadOnlyCollection<T> DataObjects
 		{
@@ -142,7 +105,7 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
-			return _desc;
+			return Description;
 		}
 	}
 }

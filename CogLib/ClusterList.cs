@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using SIL.Collections;
 
 namespace SIL.Cog
@@ -10,7 +9,7 @@ namespace SIL.Cog
 		private readonly Cluster<T> _parent;
 
 		internal ClusterList(Cluster<T> parent)
-			: base(EqualityComparer<Cluster<T>>.Default, begin => new Cluster<T>(null, Enumerable.Empty<T>()))
+			: base(EqualityComparer<Cluster<T>>.Default, begin => new Cluster<T>())
 		{
 			_parent = parent;
 			_lengths = new Dictionary<Cluster<T>, double>();

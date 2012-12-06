@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace SIL.Cog.Clusterers
@@ -14,18 +13,15 @@ namespace SIL.Cog.Clusterers
 
 		public override IEnumerable<Cluster<T>> GenerateClusters(IList<ClusterOrderEntry<T>> clusterOrder)
 		{
-			int id = 0;
 			var processed = new HashSet<int>();
-			return GetSubclusters(processed, clusterOrder, 0, clusterOrder.Count, ref id);
+			return GetSubclusters(processed, clusterOrder, 0, clusterOrder.Count);
 		}
 
-		private Cluster<T> CreateCluster(HashSet<int> processed, IList<ClusterOrderEntry<T>> clusterOrder, int startIndex, int endIndex, ref int id)
+		private Cluster<T> CreateCluster(HashSet<int> processed, IList<ClusterOrderEntry<T>> clusterOrder, int startIndex, int endIndex)
 		{
-			string idStr = id.ToString(CultureInfo.InvariantCulture);
-			id++;
 			var subclusterDataObjects = new HashSet<T>();
 			var subclusters = new List<Cluster<T>>();
-			foreach (Cluster<T> subcluster in GetSubclusters(processed, clusterOrder, startIndex, endIndex, ref id))
+			foreach (Cluster<T> subcluster in GetSubclusters(processed, clusterOrder, startIndex, endIndex))
 			{
 				subclusterDataObjects.UnionWith(subcluster.AllDataObjects);
 				subclusters.Add(subcluster);
@@ -34,13 +30,13 @@ namespace SIL.Cog.Clusterers
 			for (int i = startIndex; i < endIndex; i++)
 				processed.Add(i);
 
-			var cluster = new Cluster<T>(idStr, clusterOrder.Skip(startIndex).Take(endIndex - startIndex).Select(oe => oe.DataObject).Except(subclusterDataObjects));
+			var cluster = new Cluster<T>(clusterOrder.Skip(startIndex).Take(endIndex - startIndex).Select(oe => oe.DataObject).Except(subclusterDataObjects));
 			cluster.Children.AddRange(subclusters);
 
 			return cluster;
 		}
 
-		private IEnumerable<Cluster<T>> GetSubclusters(HashSet<int> processed, IList<ClusterOrderEntry<T>> clusterOrder, int startIndex, int endIndex, ref int id)
+		private IEnumerable<Cluster<T>> GetSubclusters(HashSet<int> processed, IList<ClusterOrderEntry<T>> clusterOrder, int startIndex, int endIndex)
 		{
 			var subclusters = new List<Cluster<T>>();
 			int parentCount = endIndex - startIndex;
@@ -63,13 +59,13 @@ namespace SIL.Cog.Clusterers
 						{
 							if (reachOrder[j].Item2 != startIndex + 1 && IsValidCluster(parentCount, startIndex, reachOrder[j].Item2))
 							{
-								subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, reachOrder[j].Item2, ref id));
+								subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, reachOrder[j].Item2));
 								startIndex = reachOrder[j].Item2;
 							}
 						}
 						if (IsValidCluster(parentCount, startIndex, endIndex))
 						{
-							subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, endIndex, ref id));
+							subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, endIndex));
 							break;
 						}
 					}
@@ -85,7 +81,7 @@ namespace SIL.Cog.Clusterers
 						&& (clusterOrder[entry.Item2 - 1].Reachability / entry.Item2) < ((entry.Item2 / clusterOrder[endIndex].Reachability) * 0.75)
 						&& IsValidCluster(parentCount, startIndex, entry.Item2))
 					{
-						subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, entry.Item2, ref id));
+						subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, entry.Item2));
 						break;
 					}
 					endIndex = entry.Item2;
@@ -93,20 +89,20 @@ namespace SIL.Cog.Clusterers
 				else
 				{
 					if (IsValidCluster(parentCount, startIndex, entry.Item2))
-						subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, entry.Item2, ref id));
+						subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, entry.Item2));
 					startIndex = entry.Item2;
 					int j = i + 1;
 					for (; j < reachOrder.Length && Math.Abs(reachOrder[j].Item2 - entry.Item2) < 0.00001; j++)
 					{
 						if (reachOrder[j].Item2 != startIndex + 1 && IsValidCluster(parentCount, startIndex, reachOrder[j].Item2))
 						{
-							subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, reachOrder[j].Item2, ref id));
+							subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, reachOrder[j].Item2));
 							startIndex = reachOrder[j].Item2;
 						}
 					}
 					if (IsValidCluster(parentCount, startIndex, endIndex))
 					{
-						subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, endIndex, ref id));
+						subclusters.Add(CreateCluster(processed, clusterOrder, startIndex, endIndex));
 						break;
 					}
 				}

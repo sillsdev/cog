@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace SIL.Cog.Clusterers
@@ -37,15 +36,15 @@ namespace SIL.Cog.Clusterers
 				if (unclassified.Contains(pointPair.Key) && pointPair.Value.Item2.All(neighbor => pointPair.Value.Item1 <= pointInfos[neighbor].Item1))
 				{
 					if (currentCluster != null)
-						clusters.Add(new Cluster<T>(clusters.Count.ToString(CultureInfo.InvariantCulture), currentCluster));
+						clusters.Add(new Cluster<T>(currentCluster));
 					currentCluster = new HashSet<T>();
 					ExpandCluster(unclassified, pointInfos, currentCluster, pointPair.Key, pointPair.Value);
 					if (unclassified.Count == 0)
 						break;
 				}
 			}
-			clusters.Add(new Cluster<T>(clusters.Count.ToString(CultureInfo.InvariantCulture), currentCluster));
-			clusters.Add(new Cluster<T>("Noise", unclassified, true));
+			clusters.Add(new Cluster<T>(currentCluster));
+			clusters.Add(new Cluster<T>(unclassified, true));
 
 			return clusters;
 		}

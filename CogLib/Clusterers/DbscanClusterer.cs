@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace SIL.Cog.Clusterers
@@ -31,12 +30,12 @@ namespace SIL.Cog.Clusterers
 
 					if (ExpandCluster(processed, noise, currentCluster, dataObject))
 					{
-						clusters.Add(new Cluster<T>(clusters.Count.ToString(CultureInfo.InvariantCulture), currentCluster));
+						clusters.Add(new Cluster<T>(currentCluster));
 						currentCluster = null;
 					}
 				}
 			}
-			clusters.Add(new Cluster<T>("Noise", noise, true));
+			clusters.Add(new Cluster<T>(noise, true));
 
 			return clusters;
 		}

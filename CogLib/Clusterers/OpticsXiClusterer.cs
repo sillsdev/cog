@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using SIL.Collections;
 
@@ -18,7 +17,6 @@ namespace SIL.Cog.Clusterers
 
 		public override IEnumerable<Cluster<T>> GenerateClusters(IList<ClusterOrderEntry<T>> clusterOrder)
 		{
-			int id = 0;
 			double mib = 0.0;
 			var clusterIndices = new Dictionary<Cluster<T>, Tuple<int, int>>();
 			var curClusters = new HashSet<Cluster<T>>();
@@ -48,7 +46,7 @@ namespace SIL.Cog.Clusterers
 								break;
 						}
 						mib = clusterOrder[endSteep].Reachability;
-						var sda = new SteepArea(startSteep, endSteep, startVal, 0.0);
+						var sda = new SteepArea(startSteep, endSteep, startVal);
 						sdaSet.Add(sda);
 						continue;
 					}
@@ -111,8 +109,7 @@ namespace SIL.Cog.Clusterers
 							if (cend - cstart + 1 < Optics.MinPoints)
 								continue;
 
-							var cluster = new Cluster<T>(id.ToString(CultureInfo.InvariantCulture), clusterOrder.Skip(cstart).Take(cend - cstart + 1).Select(oe => oe.DataObject).Intersect(unclassifed));
-							id++;
+							var cluster = new Cluster<T>(clusterOrder.Skip(cstart).Take(cend - cstart + 1).Select(oe => oe.DataObject).Intersect(unclassifed));
 							unclassifed.ExceptWith(cluster.DataObjects);
 
 							var toRemove = new HashSet<Cluster<T>>();
@@ -139,7 +136,7 @@ namespace SIL.Cog.Clusterers
 			if (unclassifed.Count > 0)
 			{
 				Cluster<T> allCluster = double.IsPositiveInfinity(clusterOrder.Last().Reachability)
-					? new Cluster<T>("Noise", unclassifed, true) : new Cluster<T>("Clusters", unclassifed);
+					? new Cluster<T>(unclassifed, true) : new Cluster<T>(unclassifed);
 				foreach (Cluster<T> curCluster in curClusters)
 					allCluster.Children.Add(curCluster);
 				return allCluster.ToEnumerable();
@@ -222,12 +219,7 @@ namespace SIL.Cog.Clusterers
 			private readonly int _endIndex;
 			private readonly double _maximum;
 
-			public SteepArea(int startIndex, int endIndex, double maximum)
-				: this(startIndex, endIndex, maximum, 0.0)
-			{
-			}
-
-			public SteepArea(int startIndex, int endIndex, double maximum, double mib)
+			public SteepArea(int startIndex, int endIndex, double maximum, double mib = 0.0)
 			{
 				_startIndex = startIndex;
 				_endIndex = endIndex;

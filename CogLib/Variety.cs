@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using SIL.Collections;
 
 namespace SIL.Cog
@@ -8,7 +7,7 @@ namespace SIL.Cog
 		private readonly WordCollection _words;
 		private readonly SegmentCollection _segments;
 		private readonly VarietyVarietyPairCollection _varietyPairs;
-		private readonly ObservableCollection<Affix> _affixes;
+		private readonly BulkObservableCollection<Affix> _affixes;
 		private string _name;
 
 		public Variety(string name)
@@ -17,7 +16,7 @@ namespace SIL.Cog
 			_words = new WordCollection(this);
 			_segments = new SegmentCollection();
 			_varietyPairs = new VarietyVarietyPairCollection(this);
-			_affixes = new ObservableCollection<Affix>();
+			_affixes = new BulkObservableCollection<Affix>();
 		}
 
 		public string Name
@@ -45,7 +44,7 @@ namespace SIL.Cog
 			get { return _varietyPairs; }
 		}
 
-		public ObservableCollection<Affix> Affixes
+		public BulkObservableCollection<Affix> Affixes
 		{
 			get { return _affixes; }
 		}

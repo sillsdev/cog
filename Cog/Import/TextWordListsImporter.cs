@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.Import
@@ -28,27 +27,30 @@ namespace SIL.Cog.Import
 					senses.Add(new Sense(glosses[i].Trim(), categories.Length <= i ? null : categories[i].Trim()));
 				project.Senses.AddRange(senses);
 
-				while ((line = file.ReadLine()) != null)
+				using (project.Varieties.BulkUpdate())
 				{
-					string[] wordStrs = line.Split('\t');
-					var variety = new Variety(wordStrs[0].Trim());
-					for (int i = 1; i < wordStrs.Length; i++)
+					while ((line = file.ReadLine()) != null)
 					{
-						string wordStr = wordStrs[i].Trim();
-						if (!string.IsNullOrEmpty(wordStr))
+						string[] wordStrs = line.Split('\t');
+						var variety = new Variety(wordStrs[0].Trim());
+						for (int i = 1; i < wordStrs.Length; i++)
 						{
-							foreach (string w in wordStr.Split(','))
+							string wordStr = wordStrs[i].Trim();
+							if (!string.IsNullOrEmpty(wordStr))
 							{
-								string str = w.Trim();
-								Shape shape;
-								if (!project.Segmenter.ToShape(null, str, null, out shape))
-									shape = project.Segmenter.EmptyShape;
-								variety.Words.Add(new Word(str, shape, senses[i - 1]));
+								foreach (string w in wordStr.Split(','))
+								{
+									string str = w.Trim();
+									Shape shape;
+									if (!project.Segmenter.ToShape(null, str, null, out shape))
+										shape = project.Segmenter.EmptyShape;
+									variety.Words.Add(new Word(str, shape, senses[i - 1]));
+								}
 							}
 						}
-					}
 
-					project.Varieties.Add(variety);
+						project.Varieties.Add(variety);
+					}
 				}
 			}
 		}

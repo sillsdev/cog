@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -17,6 +18,7 @@ namespace SIL.Cog.ViewModels
 		private readonly ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix> _affixes;
 		private SegmentVarietyViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
+		private readonly ObservableCollection<WordViewModel> _selectedWords; 
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
@@ -34,13 +36,25 @@ namespace SIL.Cog.ViewModels
 					vm.PropertyChanged += ChildPropertyChanged;
 					return vm;
 				}, vm => vm.ModelWord);
+			_words.CollectionChanged += WordsChanged;
 
+			_selectedWords = new ObservableCollection<WordViewModel>();
 			_affixes = new ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix>(ModelVariety.Affixes, affix => new AffixViewModel(affix));
 			if (_affixes.Count > 0)
 				_currentAffix = _affixes[0];
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
+		}
+
+		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			_selectedWords.Clear();
+			foreach (WordViewModel word in _words)
+			{
+				if (word.Segments.Any(s => s.IsSelected))
+					_selectedWords.Add(word);
+			}
 		}
 
 		private void NewAffix()
@@ -116,10 +130,15 @@ namespace SIL.Cog.ViewModels
 			get { return _affixes; }
 		}
 
+		public ObservableCollection<WordViewModel> SelectedWords
+		{
+			get { return _selectedWords; }
+		}
+
 		public AffixViewModel CurrentAffix
 		{
 			get { return _currentAffix; }
-			set { Set("CurrentAffix", ref _currentAffix, value); }
+			set { Set(() => CurrentAffix, ref _currentAffix, value); }
 		}
 
 		public SegmentVarietyViewModel CurrentSegment
@@ -127,11 +146,20 @@ namespace SIL.Cog.ViewModels
 			get { return _currentSegment; }
 			set
 			{
-				Set("CurrentSegment", ref _currentSegment, value);
+				Set(() => CurrentSegment, ref _currentSegment, value);
+				_selectedWords.Clear();
 				foreach (WordViewModel word in _words)
 				{
+					bool selected = false;
 					foreach (WordSegmentViewModel segment in word.Segments)
+					{
 						segment.IsSelected = _currentSegment != null && segment.StrRep == _currentSegment.StrRep;
+						if (segment.IsSelected)
+							selected = true;
+					}
+
+					if (selected)
+						_selectedWords.Add(word);
 				}
 			}
 		}

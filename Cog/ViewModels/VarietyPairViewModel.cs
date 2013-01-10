@@ -12,6 +12,7 @@ namespace SIL.Cog.ViewModels
 		private SoundCorrespondenceViewModel _currentCorrespondence;
 		private readonly ReadOnlyCollection<WordPairViewModel> _wordPairs;
 		private readonly bool _areVarietiesInOrder;
+		private readonly ObservableCollection<WordPairViewModel> _selectedWordPairs; 
 
 		public VarietyPairViewModel(CogProject project, VarietyPair varietyPair, bool areVarietiesInOrder)
 		{
@@ -20,6 +21,7 @@ namespace SIL.Cog.ViewModels
 			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.Conditions.SelectMany(lhs => _varietyPair.SoundChanges[lhs].Samples,
 				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs][segment])).ToList());
 			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
+			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
 		}
 
 		public SoundCorrespondenceViewModel CurrentCorrespondence
@@ -28,8 +30,10 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				Set("CurrentCorrespondence", ref _currentCorrespondence, value);
+				_selectedWordPairs.Clear();
 				foreach (WordPairViewModel word in _wordPairs)
 				{
+					bool selected = false;
 					foreach (AlignedNodeViewModel node in word.AlignedNodes)
 					{
 						if (_currentCorrespondence == null)
@@ -44,8 +48,13 @@ namespace SIL.Cog.ViewModels
 							node.IsSelected = nseg1.Equals(lhs.Target) && nseg2.Equals(_currentCorrespondence.ModelCorrespondence)
 								&& (lhs.LeftEnvironment == null || lhs.LeftEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetPrev(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct))
 								&& (lhs.RightEnvironment == null || lhs.RightEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetNext(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct));
+							if (node.IsSelected)
+								selected = true;
 						}
 					}
+
+					if (selected)
+						_selectedWordPairs.Add(word);
 				}
 			}
 		}
@@ -73,6 +82,11 @@ namespace SIL.Cog.ViewModels
 		public ReadOnlyCollection<WordPairViewModel> WordPairs
 		{
 			get { return _wordPairs; }
+		}
+
+		public ObservableCollection<WordPairViewModel> SelectedWordPairs
+		{
+			get { return _selectedWordPairs; }
 		}
 
 		public VarietyPair ModelVarietyPair

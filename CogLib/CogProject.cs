@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using SIL.Collections;
 using SIL.Machine;
@@ -12,8 +11,8 @@ namespace SIL.Cog
 		private FeatureSystem _featSys;
 		private readonly Segmenter _segmenter;
 
-		private readonly ObservableCollection<Variety> _varieties;
-		private readonly ObservableCollection<Sense> _senses;
+		private readonly BulkObservableCollection<Variety> _varieties;
+		private readonly BulkObservableCollection<Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
 		private readonly ObservableDictionary<string, IAligner> _aligners; 
@@ -25,9 +24,10 @@ namespace SIL.Cog
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
 			_segmenter = new Segmenter(spanFactory);
-			_senses = new ObservableCollection<Sense>();
+			_senses = new BulkObservableCollection<Sense>();
 			_senses.CollectionChanged += SensesChanged;
-			_varieties = new ObservableCollection<Variety>();
+			_varieties = new BulkObservableCollection<Variety>();
+			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
 
 			_aligners = new ObservableDictionary<string, IAligner>();
@@ -42,25 +42,41 @@ namespace SIL.Cog
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Remove:
-					RemoveWords(e.OldItems);
-					break;
-
-				case NotifyCollectionChangedAction.Reset:
-					foreach (Variety variety in _varieties)
-						variety.Words.Clear();
-					break;
-
 				case NotifyCollectionChangedAction.Replace:
-					RemoveWords(e.OldItems);
+				case NotifyCollectionChangedAction.Reset:
+					if (_senses.Count > 0)
+					{
+						var senses = new HashSet<Sense>(_senses);
+						foreach (Variety variety in _varieties)
+							variety.Words.RemoveAll(w => !senses.Contains(w.Sense));
+					}
+					else
+					{
+						foreach (Variety variety in _varieties)
+							variety.Words.Clear();
+					}
 					break;
 			}
 		}
 
-		private void RemoveWords(IList senses)
+		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			foreach (Variety variety in _varieties)
-				foreach (Sense sense in senses)
-					variety.Words.RemoveAll(sense);
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Remove:
+				case NotifyCollectionChangedAction.Replace:
+				case NotifyCollectionChangedAction.Reset:
+					if (_varieties.Count > 0)
+					{
+						var varieties = new HashSet<Variety>(_varieties);
+						_varietyPairs.RemoveAll(vp => !varieties.Contains(vp.Variety1) || !varieties.Contains(vp.Variety2));
+					}
+					else
+					{
+						_varietyPairs.Clear();
+					}
+					break;
+			}
 		}
 
 		public FeatureSystem FeatureSystem
@@ -78,17 +94,17 @@ namespace SIL.Cog
 			get { return _segmenter; }
 		}
 
-		public ObservableCollection<Sense> Senses
+		public BulkObservableCollection<Sense> Senses
 		{
 			get { return _senses; }
 		}
 
-		public ObservableCollection<Variety> Varieties
+		public BulkObservableCollection<Variety> Varieties
 		{
 			get { return _varieties; }
 		}
 
-		public ObservableCollection<VarietyPair> VarietyPairs
+		public BulkObservableCollection<VarietyPair> VarietyPairs
 		{
 			get { return _varietyPairs; }
 		}

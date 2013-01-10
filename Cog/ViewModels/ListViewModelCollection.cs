@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight.Threading;
 
@@ -25,8 +26,24 @@ namespace SIL.Cog.ViewModels
 					switch (e.Action)
 					{
 						case NotifyCollectionChangedAction.Add:
-							for (int i = 0; i < e.NewItems.Count; i++)
-								Insert(e.NewStartingIndex + i, _viewModelFactory((TModel)e.NewItems[i]));
+							if (e.NewItems.Count == 1)
+							{
+								Insert(e.NewStartingIndex, _viewModelFactory((TModel) e.NewItems[0]));
+							}
+							else
+							{
+								var added = new List<TViewModel>();
+								for (int i = 0; i < e.NewItems.Count; i++)
+								{
+									var vm = _viewModelFactory((TModel) e.NewItems[i]);
+									Items.Insert(e.NewStartingIndex + i, vm);
+									added.Add(vm);
+								}
+
+								OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+								OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+								OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+							}
 							break;
 
 						case NotifyCollectionChangedAction.Move:
@@ -59,12 +76,13 @@ namespace SIL.Cog.ViewModels
 							goto case NotifyCollectionChangedAction.Add;
 
 						case NotifyCollectionChangedAction.Reset:
-							Clear();
-							if (e.NewItems != null)
-							{
-								foreach (TModel obj in e.NewItems)
-									Add(_viewModelFactory(obj));
-							}
+							Items.Clear();
+							var coll = (TCollection) sender;
+							foreach (TModel obj in coll)
+								Items.Add(_viewModelFactory(obj));
+							OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+							OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+							OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 							break;
 					}
 				});

@@ -121,7 +121,6 @@
     <Compile Include="Controls\TreeListView.cs" />
     <Compile Include="Controls\TreeListViewItem.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
-    <Compile Include="Converters\BooleanToCognateStringConverter.cs" />
     <Compile Include="Converters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
@@ -138,6 +137,7 @@
     <Compile Include="Converters\PercentageToSpectrumColorConverter.cs" />
     <Compile Include="Converters\ProbabilityToWidthConverter.cs" />
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\ItemsControlScrollbarMarkerPositionConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\WordsToInlinesConverter.cs" />
     <Compile Include="Export\CognateSetsExporterBase.cs" />
@@ -357,6 +357,9 @@
       <DependentUpon>VarietyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OverrideCursor.cs" />
+    <Compile Include="Views\WordPairView.xaml.cs">
+      <DependentUpon>WordPairView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WordView.xaml.cs">
       <DependentUpon>WordView.xaml</DependentUpon>
     </Compile>
@@ -500,6 +503,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\VarietyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WordPairView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

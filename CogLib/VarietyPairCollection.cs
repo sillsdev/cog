@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class VarietyPairCollection : ObservableCollection<VarietyPair>
+	public class VarietyPairCollection : BulkObservableCollection<VarietyPair>
 	{
 		protected override void InsertItem(int index, VarietyPair item)
 		{

@@ -7,7 +7,7 @@ using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
-	public class UnorderedViewModelCollection<TCollection, TViewModel, TModel> : KeyedObservableCollection<TModel, TViewModel> where TCollection : IEnumerable<TModel>, INotifyCollectionChanged
+	public class UnorderedViewModelCollection<TCollection, TViewModel, TModel> : KeyedBulkObservableCollection<TModel, TViewModel> where TCollection : IEnumerable<TModel>, INotifyCollectionChanged
 	{
 		private readonly Func<TModel, TViewModel> _viewModelFactory;
 

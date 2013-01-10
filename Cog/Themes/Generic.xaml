@@ -6,7 +6,7 @@
 	<SolidColorBrush x:Key="TextBrush" Color="#FF10257F" />
 	<SolidColorBrush x:Key="DataGridHeaderBrush" Color="#FFCFDDF0" />
 	<SolidColorBrush x:Key="DataGridBorderBrush" Color="#FF88B0E4" />
-	<SolidColorBrush x:Key="DataGridSelectedBrush" Color="#FFFFF0C2" />
+	<SolidColorBrush x:Key="DataGridSelectedBrush" Color="#FFFCE8AA" />
 	<SolidColorBrush x:Key="AlternatingRowBrush" Color="#FFF6FAFD" />
 
 	<Style TargetType="HeaderedContentControl">

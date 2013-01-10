@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
-using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Shapes;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -24,16 +26,26 @@ namespace SIL.Cog.Views
 
 			var wordsSource = new ListCollectionView(vm.Words);
 			wordsSource.GroupDescriptions.Add(new PropertyGroupDescription("Sense"));
-			_wordsControl.ItemsSource = wordsSource;
+			WordsControl.ItemsSource = wordsSource;
 			wordsSource.SortDescriptions.Add(new SortDescription("Sense.Gloss", ListSortDirection.Ascending));
 			wordsSource.Refresh();
 
 			var segmentsSource = new ListCollectionView(vm.Segments);
-			_segmentsDataGrid.ItemsSource = segmentsSource;
+			SegmentsDataGrid.ItemsSource = segmentsSource;
 			segmentsSource.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
 			segmentsSource.Refresh();
-			_segmentsDataGrid.SelectedIndex = 0;
-			_segmentsDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
+			SegmentsDataGrid.SelectedIndex = 0;
+			SegmentsDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
+		}
+
+		private void MarkerClicked(object sender, MouseButtonEventArgs e)
+		{
+			var rect = (Rectangle) sender;
+			var word = (WordViewModel) rect.DataContext;
+
+			var cp = (ContentPresenter) WordsControl.ItemContainerGenerator.ContainerFromItem(word);
+			var point = cp.TransformToAncestor(WordsControl).Transform(new Point());
+			ScrollViewer.ScrollToVerticalOffset((point.Y + (cp.ActualHeight / 2)) - (ScrollViewer.ActualHeight / 2));
 		}
 	}
 }

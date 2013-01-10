@@ -5,7 +5,7 @@ using SIL.Machine;
 
 namespace SIL.Cog
 {
-	public class Word : NotifyPropertyChangedBase, IData<ShapeNode>
+	public class Word : NotifyPropertyChangedBase, IData<ShapeNode>, IDeepCloneable<Word>
 	{
 		private readonly string _strRep;
 		private Shape _shape;
@@ -16,6 +16,14 @@ namespace SIL.Cog
 			_strRep = strRep;
 			_shape = shape;
 			_sense = sense;
+		}
+
+		private Word(Word word)
+		{
+			_strRep = word._strRep;
+			_shape = word._shape.DeepClone();
+			_shape.Freeze();
+			_sense = word._sense;
 		}
 
 		public string StrRep
@@ -72,6 +80,11 @@ namespace SIL.Cog
 		public AnnotationList<ShapeNode> Annotations
 		{
 			get { return _shape.Annotations; }
+		}
+
+		public Word DeepClone()
+		{
+			return new Word(this);
 		}
 
 		public override string ToString()

@@ -51,8 +51,26 @@ namespace SIL.Cog.Clusterers
 				var uCluster = new Cluster<T>();
 				double height = minDist / 2;
 				heights[uCluster] = height;
-				uCluster.Children.Add(iCluster, height - heights[iCluster]);
-				uCluster.Children.Add(jCluster, height - heights[jCluster]);
+				double iLen = height - heights[iCluster];
+				if (iLen <= 0 && !iCluster.IsLeaf)
+				{
+					foreach (var iChild in iCluster.Children.Select(c => new {Node = c, Len = iCluster.Children.GetLength(c)}).ToArray())
+						uCluster.Children.Add(iChild.Node, iChild.Len);
+				}
+				else
+				{
+					uCluster.Children.Add(iCluster, Math.Max(iLen, 0));
+				}
+				double jLen = height - heights[jCluster];
+				if (jLen <= 0 && !jCluster.IsLeaf)
+				{
+					foreach (var jChild in jCluster.Children.Select(c => new {Node = c, Len = jCluster.Children.GetLength(c)}).ToArray())
+						uCluster.Children.Add(jChild.Node, jChild.Len);
+				}
+				else
+				{
+					uCluster.Children.Add(jCluster, Math.Max(jLen, 0));
+				}
 
 				int iCount = iCluster.AllDataObjects.Count();
 				int jCount = jCluster.AllDataObjects.Count();

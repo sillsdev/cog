@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
+using SIL.Cog.Statistics;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -18,9 +19,32 @@ namespace SIL.Cog.ViewModels
 		{
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
-			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.Conditions.SelectMany(lhs => _varietyPair.SoundChanges[lhs].Samples,
-				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs][segment])).ToList());
+
 			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
+
+			var cfd = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
+			foreach (WordPairViewModel wordPair in _wordPairs)
+			{
+				foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
+				{
+					Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
+					Ngram nseg2 = _varietyPair.Variety2.Segments[node.Annotation2];
+					foreach (SoundChangeLhs lhs in _varietyPair.SoundChanges.Conditions)
+					{
+						if (nseg1.Equals(lhs.Target)
+						    && (lhs.LeftEnvironment == null || lhs.LeftEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetPrev(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct))
+						    && (lhs.RightEnvironment == null || lhs.RightEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetNext(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct)))
+						{
+							cfd[lhs].Increment(nseg2);
+							break;
+						}
+					}
+				}
+			}
+
+			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.Conditions.SelectMany(lhs => _varietyPair.SoundChanges[lhs].Samples,
+				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs][segment], cfd[lhs][segment])).ToList());
+
 			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
 		}
 

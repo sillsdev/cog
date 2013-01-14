@@ -9,8 +9,48 @@
             <DataGrid ItemsSource="{Binding Mappings}" v:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentMapping}"
 					  AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Segment 1" Binding="{Binding Item1}" Width="*" />
-                    <DataGridTextColumn Header="Segment 2" Binding="{Binding Item2}" Width="*" />
+                    <DataGridTextColumn Header="Segment 1" Binding="{Binding Segment1}" Width="*">
+						<DataGridTextColumn.ElementStyle>
+							<Style TargetType="TextBlock">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsSegment1Valid}" Value="False">
+										<Setter Property="TextDecorations">
+											<Setter.Value>
+												<TextDecorationCollection>
+													<TextDecoration Location="Underline" PenOffset="1">
+														<TextDecoration.Pen>
+															<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
+														</TextDecoration.Pen>
+													</TextDecoration>
+												</TextDecorationCollection>
+											</Setter.Value>
+										</Setter>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</DataGridTextColumn.ElementStyle>
+					</DataGridTextColumn>
+                    <DataGridTextColumn Header="Segment 2" Binding="{Binding Segment2}" Width="*">
+						<DataGridTextColumn.ElementStyle>
+							<Style TargetType="TextBlock">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsSegment2Valid}" Value="False">
+										<Setter Property="TextDecorations">
+											<Setter.Value>
+												<TextDecorationCollection>
+													<TextDecoration Location="Underline" PenOffset="1">
+														<TextDecoration.Pen>
+															<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
+														</TextDecoration.Pen>
+													</TextDecoration>
+												</TextDecorationCollection>
+											</Setter.Value>
+										</Setter>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</DataGridTextColumn.ElementStyle>
+					</DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <TextBlock Margin="3,23,3,0" Text="Click New to add a mapping">
@@ -27,8 +67,15 @@
             </TextBlock>
         </Grid>
         <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
-            <Button Margin="5,5,0,5" Width="70" Command="{Binding RemoveCommand}">Remove</Button>
-            <Button Margin="5,5,0,5" Width="70" Command="{Binding NewCommand}">New</Button>
+			<StackPanel.Resources>
+				<Style TargetType="Button">
+					<Setter Property="Margin" Value="5,5,0,5" />
+					<Setter Property="Width" Value="70" />
+				</Style>
+			</StackPanel.Resources>
+			<Button Command="{Binding ImportCommand}">Import</Button>
+            <Button Command="{Binding RemoveCommand}">Remove</Button>
+            <Button Command="{Binding NewCommand}">New</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>

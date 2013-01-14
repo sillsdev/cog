@@ -11,16 +11,16 @@ namespace SIL.Cog.ViewModels
 		private bool _regularConsEqual;
 		private readonly ComponentOptionsViewModel _similarSegments;
 
-		public BlairCognateIdentifierViewModel(IDialogService dialogService, CogProject project)
+		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project)
 			: base("Blair", project)
 		{
 			_alignmentThreshold = 0.3;
 			_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 0,
-				new ThresholdSimilarSegmentIdentifierViewModel(Project), new ListSimilarSegmentIdentifierViewModel(dialogService, Project));
+				new ThresholdSimilarSegmentIdentifierViewModel(Project), new ListSimilarSegmentIdentifierViewModel(dialogService, importService, Project));
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
 		}
 
-		public BlairCognateIdentifierViewModel(IDialogService dialogService, CogProject project, BlairCognateIdentifier cognateIdentifier)
+		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project, BlairCognateIdentifier cognateIdentifier)
 			: base("Blair", project)
 		{
 			_alignmentThreshold = cognateIdentifier.AlignmentThreshold;
@@ -32,13 +32,13 @@ namespace SIL.Cog.ViewModels
 			{
 				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 0,
 					new ThresholdSimilarSegmentIdentifierViewModel(Project, (ThresholdSimilarSegmentIdentifier) similarSegments),
-					new ListSimilarSegmentIdentifierViewModel(dialogService, Project));
+					new ListSimilarSegmentIdentifierViewModel(dialogService, importService, Project));
 			}
 			else if (similarSegments is ListSimilarSegmentIdentifier)
 			{
 				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 1,
 					new ThresholdSimilarSegmentIdentifierViewModel(Project),
-					new ListSimilarSegmentIdentifierViewModel(dialogService, Project, (ListSimilarSegmentIdentifier) similarSegments));
+					new ListSimilarSegmentIdentifierViewModel(dialogService, importService, Project, (ListSimilarSegmentIdentifier) similarSegments));
 			}
 			Debug.Assert(_similarSegments != null);
 			_similarSegments.PropertyChanged += ChildPropertyChanged;

@@ -71,5 +71,31 @@ namespace SIL.Cog.Views
 		{
 			e.Accepted = !((WordPairViewModel) e.Item).AreCognate;
 		}
+
+		private void CorrespondenceDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+		{
+			var lcv = (ListCollectionView) CollectionViewSource.GetDefaultView(CorrespondenceDataGrid.ItemsSource);
+			lcv.SortDescriptions.Clear();
+			lcv.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
+
+			ListSortDirection direction = e.Column.SortDirection != ListSortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending;
+
+			e.Column.SortDirection = direction;
+			string path = null;
+			switch ((string) e.Column.Header)
+			{
+				case "Segment":
+					path = "Correspondence";
+					break;
+				case "Probability":
+					path = "Probability";
+					break;
+				case "Frequency":
+					path = "Frequency";
+					break;
+			}
+			lcv.SortDescriptions.Add(new SortDescription(path, direction));
+			e.Handled = true;
+		}
 	}
 }

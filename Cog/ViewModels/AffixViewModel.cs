@@ -11,7 +11,7 @@ namespace SIL.Cog.ViewModels
 		Suffix
 	}
 
-	public class AffixViewModel : ViewModelBase, IDataErrorInfo
+	public class AffixViewModel : ViewModelBase
 	{
 		private readonly Affix _affix;
 		private bool _isValid;
@@ -53,31 +53,10 @@ namespace SIL.Cog.ViewModels
 			get { return _affix; }
 		}
 
-		public string this[string columnName]
-		{
-			get
-			{
-				switch (columnName)
-				{
-					case "StrRep":
-						if (_affix.Shape.Count == 0)
-							return "The affix contains invalid segments";
-						break;
-				}
-
-				return null;
-			}
-		}
-
 		public bool IsValid
 		{
 			get { return _isValid; }
 			set { Set(() => IsValid, ref _isValid, value); }
-		}
-
-		public string Error
-		{
-			get { return null; }
 		}
 	}
 }

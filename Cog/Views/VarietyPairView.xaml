@@ -162,7 +162,7 @@
 			</HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound changes">
                 <DataGrid Name="CorrespondenceDataGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" HorizontalScrollBarVisibility="Disabled"
-                          AlternatingRowBackground="White" IsReadOnly="True" CanUserSortColumns="False" SelectedItem="{Binding CurrentCorrespondence}">
+                          AlternatingRowBackground="White" IsReadOnly="True" SelectedItem="{Binding CurrentCorrespondence}" Sorting="CorrespondenceDataGrid_Sorting">
                     <DataGrid.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.ContainerStyle>
@@ -200,7 +200,7 @@
                     </DataGrid.GroupStyle>
                     <DataGrid.Columns>
                         <StaticResource ResourceKey="SegmentColumn" />
-                        <DataGridTemplateColumn Header="Probability" Width="*" ClipboardContentBinding="{Binding Probability, StringFormat=p}">
+                        <DataGridTemplateColumn Header="Probability" Width="*" ClipboardContentBinding="{Binding Probability, StringFormat=p}" SortDirection="Descending" SortMemberPath="Probability">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -217,6 +217,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+						<DataGridTextColumn Header="Frequency" Width="Auto" Binding="{Binding Frequency}" />
                     </DataGrid.Columns>
                     <!--DataGrid.CellStyle>
                         <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">

@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
+using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Processors
 {
-	public class ListSimilarSegmentIdentifier : IProcessor<VarietyPair>
+	public class ListSimilarSegmentIdentifier : ProcessorBase<VarietyPair>
 	{
 		private readonly List<Tuple<string, string>> _vowelMappings;
 		private readonly List<Tuple<string, string>> _consMappings;
@@ -15,7 +16,8 @@ namespace SIL.Cog.Processors
 		private readonly Dictionary<string, HashSet<string>> _similarVowels;
 		private readonly Dictionary<string, HashSet<string>> _similarConsonants;
 
-		public ListSimilarSegmentIdentifier(IEnumerable<Tuple<string, string>> vowelMappings, IEnumerable<Tuple<string, string>> consMappings, bool generateDiphthongs)
+		public ListSimilarSegmentIdentifier(CogProject project, IEnumerable<Tuple<string, string>> vowelMappings, IEnumerable<Tuple<string, string>> consMappings, bool generateDiphthongs)
+			: base(project)
 		{
 			_vowelMappings = new List<Tuple<string, string>>(vowelMappings);
 			_consMappings = new List<Tuple<string, string>>(consMappings);
@@ -76,14 +78,30 @@ namespace SIL.Cog.Processors
 		{
 			foreach (Tuple<string, string> mapping in mappings)
 			{
-				HashSet<string> segments = similarSegments.GetValue(mapping.Item1, () => new HashSet<string>());
-				segments.Add(mapping.Item2);
-				segments = similarSegments.GetValue(mapping.Item2, () => new HashSet<string>());
-				segments.Add(mapping.Item1);
+				string str1, str2;
+				if (GetNormalizedStrRep(mapping.Item1, out str1) && GetNormalizedStrRep(mapping.Item2, out str2))
+				{
+					HashSet<string> segments = similarSegments.GetValue(str1, () => new HashSet<string>());
+					segments.Add(str2);
+					segments = similarSegments.GetValue(str2, () => new HashSet<string>());
+					segments.Add(str1);
+				}
 			}
 		}
 
-		public void Process(VarietyPair varietyPair)
+		private bool GetNormalizedStrRep(string str, out string normalizedStr)
+		{
+			Shape shape;
+			if (Project.Segmenter.ToShape(str, out shape) && shape.Count == 1)
+			{
+				normalizedStr = shape.First.StrRep();
+				return true;
+			}
+			normalizedStr = null;
+			return false;
+		}
+
+		public override void Process(VarietyPair varietyPair)
 		{
 			foreach (Segment seg1 in varietyPair.Variety1.Segments)
 			{

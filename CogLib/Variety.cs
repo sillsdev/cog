@@ -48,5 +48,10 @@ namespace SIL.Cog
 		{
 			get { return _affixes; }
 		}
+
+		public override string ToString()
+		{
+			return _name;
+		}
 	}
 }

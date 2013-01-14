@@ -1,4 +1,6 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
 using SIL.Cog.Processors;
 using SIL.Cog.Services;
 
@@ -10,12 +12,12 @@ namespace SIL.Cog.ViewModels
 		private readonly SimilarSegmentMappingsViewModel _vowelMappings;
 		private bool _generateDiphthongs;
 
-		public ListSimilarSegmentIdentifierViewModel(IDialogService dialogService, CogProject project)
+		public ListSimilarSegmentIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project)
 			: base("List", project)
 		{
-			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, project);
+			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, importService, project);
 			_consMappings.Mappings.CollectionChanged += MappingsChanged;
-			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, project);
+			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, importService, project);
 			_vowelMappings.Mappings.CollectionChanged += MappingsChanged;
 			_generateDiphthongs = true;
 		}
@@ -25,12 +27,12 @@ namespace SIL.Cog.ViewModels
 			IsChanged = true;
 		}
 		
-		public ListSimilarSegmentIdentifierViewModel(IDialogService dialogService, CogProject project, ListSimilarSegmentIdentifier similarSegmentIdentifier)
+		public ListSimilarSegmentIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project, ListSimilarSegmentIdentifier similarSegmentIdentifier)
 			: base("List", project)
 		{
-			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, project, similarSegmentIdentifier.ConsonantMappings);
+			_consMappings = new SimilarSegmentMappingsViewModel(dialogService, importService, project, similarSegmentIdentifier.ConsonantMappings);
 			_consMappings.Mappings.CollectionChanged += MappingsChanged;
-			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, project, similarSegmentIdentifier.VowelMappings);
+			_vowelMappings = new SimilarSegmentMappingsViewModel(dialogService, importService, project, similarSegmentIdentifier.VowelMappings);
 			_vowelMappings.Mappings.CollectionChanged += MappingsChanged;
 			_generateDiphthongs = similarSegmentIdentifier.GenerateDiphthongs;
 		}
@@ -57,7 +59,9 @@ namespace SIL.Cog.ViewModels
 
 		public override void UpdateComponent()
 		{
-			Project.VarietyPairProcessors["similarSegmentIdentifier"] = new ListSimilarSegmentIdentifier(_vowelMappings.Mappings, _consMappings.Mappings, _generateDiphthongs);
+			Project.VarietyPairProcessors["similarSegmentIdentifier"] = new ListSimilarSegmentIdentifier(Project,
+				_vowelMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)),
+				_consMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), _generateDiphthongs);
 		}
 	}
 }

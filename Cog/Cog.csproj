@@ -148,7 +148,9 @@
     <Compile Include="Export\TextCognateSetsExporter.cs" />
     <Compile Include="Export\TextSimilarityMatrixExporter.cs" />
     <Compile Include="Export\TextWordListsExporter.cs" />
+    <Compile Include="Import\ISimilarSegmentsImporter.cs" />
     <Compile Include="Import\IWordListsImporter.cs" />
+    <Compile Include="Import\TextSimilarSegmentsImporter.cs" />
     <Compile Include="Import\TextWordListsImporter.cs" />
     <Compile Include="Import\WordSurvWordListsImporter.cs" />
     <Compile Include="Services\DialogService.cs" />
@@ -211,6 +213,7 @@
     <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMetric.cs" />
     <Compile Include="ViewModels\SimilarSegmentMappingsViewModel.cs" />
+    <Compile Include="ViewModels\SimilarSegmentMappingViewModel.cs" />
     <Compile Include="ViewModels\SoundCorrespondenceLhsViewModel.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
     <Compile Include="ViewModels\TaskAreaGroupViewModel.cs" />

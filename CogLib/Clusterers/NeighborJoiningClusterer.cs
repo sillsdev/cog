@@ -51,9 +51,26 @@ namespace SIL.Cog.Clusterers
 
 				var uCluster = new Cluster<T>();
 
-				double length1 = (minDist / 2) + ((r[iCluster] - r[jCluster]) / 2);
-				uCluster.Children.Add(iCluster, Math.Max(length1, 0));
-				uCluster.Children.Add(jCluster, Math.Max(minDist - length1, 0));
+				double iLen = (minDist / 2) + ((r[iCluster] - r[jCluster]) / 2);
+				if (iLen <= 0 && !iCluster.IsLeaf)
+				{
+					foreach (var iChild in iCluster.Children.Select(c => new {Node = c, Len = iCluster.Children.GetLength(c)}).ToArray())
+						uCluster.Children.Add(iChild.Node, iChild.Len);
+				}
+				else
+				{
+					uCluster.Children.Add(iCluster, Math.Max(iLen, 0));
+				}
+				double jLen = minDist - iLen;
+				if (jLen <= 0 && !jCluster.IsLeaf)
+				{
+					foreach (var jChild in jCluster.Children.Select(c => new {Node = c, Len = jCluster.Children.GetLength(c)}).ToArray())
+						uCluster.Children.Add(jChild.Node, jChild.Len);
+				}
+				else
+				{
+					uCluster.Children.Add(jCluster, Math.Max(jLen, 0));
+				}
 
 				foreach (Cluster<T> kCluster in clusters.Where(c => c != iCluster && c != jCluster))
 				{

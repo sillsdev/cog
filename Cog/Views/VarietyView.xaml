@@ -182,6 +182,7 @@
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
+						<DataGridTextColumn Width="Auto" Header="Frequency" Binding="{Binding Frequency}" />
 						<DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding Type, Converter={StaticResource EnumConverter}}" />
 						<DataGridTextColumn Width="Auto" Header="Features" Binding="{Binding FeatureStructure}" />
 					</DataGrid.Columns>

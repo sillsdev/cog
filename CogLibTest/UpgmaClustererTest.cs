@@ -24,22 +24,22 @@ namespace CogLibTest
 
 			var root = new Cluster<char>("4") {Children =
 				{
-					{new Cluster<char>("F", new[] {'F'}), 4},
+					{new Cluster<char>(new[] {'F'}) {Description = "F"}, 4},
 					{new Cluster<char>("3") {Children =
 						{
 							{new Cluster<char>("1") {Children =
 								{
-									{new Cluster<char>("C", new[] {'C'}), 2},
+									{new Cluster<char>(new[] {'C'}) {Description = "C"}, 2},
 									{new Cluster<char>("0") {Children =
 										{
-											{new Cluster<char>("A", new[] {'A'}), 1},
-											{new Cluster<char>("B", new[] {'B'}), 1}
+											{new Cluster<char>(new[] {'A'}) {Description = "A"}, 1},
+											{new Cluster<char>(new[] {'B'}) {Description = "B"}, 1}
 										}}, 1}
 								}}, 1},
 							{new Cluster<char>("2") {Children =
 								{
-									{new Cluster<char>("D", new[] {'D'}), 2},
-									{new Cluster<char>("E", new[] {'E'}), 2}
+									{new Cluster<char>(new[] {'D'}) {Description = "D"}, 2},
+									{new Cluster<char>(new[] {'E'}) {Description = "E"}, 2}
 								}}, 1}
 						}}, 1}
 				}};
@@ -61,7 +61,7 @@ namespace CogLibTest
 			var upgma = new UpgmaClusterer<char>((o1, o2) => 0);
 			Cluster<char>[] clusters = upgma.GenerateClusters(new[] {'A'}).ToArray();
 			Assert.That(clusters.Length, Is.EqualTo(1));
-			AssertClustersEqual(clusters[0], new Cluster<char>("A", new[] {'A'}));
+			AssertClustersEqual(clusters[0], new Cluster<char>(new[] {'A'}) {Description = "A"});
 		}
 
 		[Test]
@@ -72,8 +72,8 @@ namespace CogLibTest
 			Assert.That(clusters.Length, Is.EqualTo(1));
 			AssertClustersEqual(clusters[0], new Cluster<char>("0") {Children =
 				{
-					{new Cluster<char>("A", new[] {'A'}), 0.5},
-					{new Cluster<char>("B", new[] {'B'}), 0.5}
+					{new Cluster<char>(new[] {'A'}) {Description = "A"}, 0.5},
+					{new Cluster<char>(new[] {'B'}) {Description = "B"}, 0.5}
 				}});
 		}
 	}

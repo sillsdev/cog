@@ -23,16 +23,16 @@ namespace CogLibTest
 
 			var root = new Cluster<char>("2") {Children =
 				{
-					{new Cluster<char>("C", new[] {'C'}), 1.0},
+					{new Cluster<char>(new[] {'C'}) {Description = "C"}, 1.0},
 					{new Cluster<char>("0") {Children =
 						{
-							{new Cluster<char>("D", new[] {'D'}), 0.5},
-							{new Cluster<char>("E", new[] {'E'}), 0.5}
+							{new Cluster<char>(new[] {'D'}) {Description = "D"}, 0.5},
+							{new Cluster<char>(new[] {'E'}) {Description = "E"}, 0.5}
 						}}, 1.5},
 					{new Cluster<char>("1") {Children =
 						{
-							{new Cluster<char>("A", new[] {'A'}), 0.5},
-							{new Cluster<char>("B", new[] {'B'}), 0.5}
+							{new Cluster<char>(new[] {'A'}) {Description = "A"}, 0.5},
+							{new Cluster<char>(new[] {'B'}) {Description = "B"}, 0.5}
 						}}, 0.5}
 				}};
 			Assert.That(clusters.Length, Is.EqualTo(1));
@@ -53,7 +53,7 @@ namespace CogLibTest
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => 0);
 			Cluster<char>[] clusters = nj.GenerateClusters(new[] {'A'}).ToArray();
 			Assert.That(clusters.Length, Is.EqualTo(1));
-			AssertClustersEqual(clusters[0], new Cluster<char>("A", new[] {'A'}));
+			AssertClustersEqual(clusters[0], new Cluster<char>(new[] {'A'}) {Description = "A"});
 		}
 
 		[Test]
@@ -62,7 +62,7 @@ namespace CogLibTest
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => 1);
 			Cluster<char>[] clusters = nj.GenerateClusters(new[] {'A', 'B'}).ToArray();
 			Assert.That(clusters.Length, Is.EqualTo(1));
-			AssertClustersEqual(clusters[0], new Cluster<char>("B", new[] {'B'}) {Children = {{new Cluster<char>("A", new[] {'A'}), 1.0}}});
+			AssertClustersEqual(clusters[0], new Cluster<char>(new[] {'B'}) {Description = "B", Children = {{new Cluster<char>(new[] {'A'}) {Description = "A"}, 1.0}}});
 		}
 	}
 }

@@ -26,27 +26,18 @@ namespace SIL.Cog
 
 		static CogFeatureSystem()
 		{
-			Type = new SymbolicFeature(Guid.NewGuid().ToString()) {Description = "Type"};
 			AnchorType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "anchor"};
-			Type.PossibleSymbols.Add(AnchorType);
 			VowelType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "vowel"};
-			Type.PossibleSymbols.Add(VowelType);
 			ConsonantType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "consonant"};
-			Type.PossibleSymbols.Add(ConsonantType);
 			ToneLetterType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "toneLetter"};
-			Type.PossibleSymbols.Add(ToneLetterType);
 			BoundaryType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "boundary"};
-			Type.PossibleSymbols.Add(BoundaryType);
 			NullType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "null"};
-			Type.PossibleSymbols.Add(NullType);
 			StemType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "stem"};
-			Type.PossibleSymbols.Add(StemType);
 			PrefixType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "prefix"};
-			Type.PossibleSymbols.Add(PrefixType);
 			SuffixType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "suffix"};
-			Type.PossibleSymbols.Add(SuffixType);
 			ClusterType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "cluster"};
-			Type.PossibleSymbols.Add(ClusterType);
+
+			Type = new SymbolicFeature(Guid.NewGuid().ToString(), AnchorType, VowelType, ConsonantType, ToneLetterType, BoundaryType, NullType, StemType, PrefixType, SuffixType, ClusterType) {Description = "Type"};
 
 			OriginalStrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "OriginalStrRep"};
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};

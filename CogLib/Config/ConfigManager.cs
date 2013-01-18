@@ -92,9 +92,8 @@ namespace SIL.Cog.Config
 			Debug.Assert(featSysElem != null);
 			foreach (XElement featureElem in featSysElem.Elements(Cog + "Feature"))
 			{
-				var feat = new SymbolicFeature((string) featureElem.Attribute("id")) {Description = (string) featureElem.Attribute("name")};
-				foreach (XElement valueElem in featureElem.Elements(Cog + "Value"))
-					feat.PossibleSymbols.Add(new FeatureSymbol((string) valueElem.Attribute("id")) {Description = (string) valueElem.Attribute("name")});
+				var feat = new SymbolicFeature((string) featureElem.Attribute("id"), featureElem.Elements(Cog + "Value")
+					.Select(e => new FeatureSymbol((string) e.Attribute("id"), (string) e.Attribute("name")))) {Description = (string) featureElem.Attribute("name")};
 				featSys.Add(feat);
 			}
 			featSys.Freeze();

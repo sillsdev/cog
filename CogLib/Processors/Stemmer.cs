@@ -48,7 +48,7 @@ namespace SIL.Cog.Processors
 				ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
 			}
 
-			var matcherSettings = new MatcherSettings<ShapeNode> {FastCompile = true, Direction = dir, Filter = ann => ann.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)};
+			var matcherSettings = new MatcherSettings<ShapeNode> {Direction = dir, Filter = ann => ann.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)};
 			var rule = new PatternRule<Word, ShapeNode>(_spanFactory, ruleSpec, matcherSettings);
 
 			foreach (Word word in words.Where(w => w.Shape.Count > 0))

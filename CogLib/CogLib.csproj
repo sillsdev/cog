@@ -12,6 +12,7 @@
     <AssemblyName>SIL.Cog</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -131,11 +132,11 @@
     <Compile Include="WordPairCollection.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Collections\Collections.csproj">
+    <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
       <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
       <Name>Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Machine\Machine.csproj">
+    <ProjectReference Include="..\lib\Machine\Machine\Machine.csproj">
       <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
       <Name>Machine</Name>
     </ProjectReference>

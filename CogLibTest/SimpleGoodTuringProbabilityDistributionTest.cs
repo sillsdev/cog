@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using SIL.Cog.Statistics;
 
-namespace CogLibTest
+namespace SIL.Cog.Test
 {
 	[TestFixture]
 	public class SimpleGoodTuringProbabilityDistributionTest

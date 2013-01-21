@@ -8,10 +8,13 @@
     <ProjectGuid>{4CC70FC7-89DB-4D3D-8D7E-D6185D9DEEF2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CogLibTest</RootNamespace>
+    <RootNamespace>SIL.Cog.Test</RootNamespace>
     <AssemblyName>CogLibTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,9 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Program Files (x86)\NUnit 2.5.10\bin\net-2.0\framework\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,16 +59,20 @@
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
       <Name>CogLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Collections\Collections.csproj">
+    <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
       <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
       <Name>Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Machine\Machine.csproj">
+    <ProjectReference Include="..\lib\Machine\Machine\Machine.csproj">
       <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
       <Name>Machine</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

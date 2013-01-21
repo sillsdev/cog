@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using SIL.Cog;
 using SIL.Cog.Clusterers;
 
-namespace CogLibTest
+namespace SIL.Cog.Test
 {
 	public class UpgmaClustererTest : ClustererTestBase
 	{

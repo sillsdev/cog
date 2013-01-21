@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using SIL.Cog;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
-namespace CogLibTest
+namespace SIL.Cog.Test
 {
 	[TestFixture]
 	public class SegmenterTest

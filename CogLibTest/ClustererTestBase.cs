@@ -1,9 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using SIL.Cog;
 using SIL.Collections;
 
-namespace CogLibTest
+namespace SIL.Cog.Test
 {
 	[TestFixture]
 	public abstract class ClustererTestBase

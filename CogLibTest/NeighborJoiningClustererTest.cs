@@ -20,15 +20,15 @@ namespace SIL.Cog.Test
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => matrix[o1 - 'A', o2 - 'A']);
 			Cluster<char>[] clusters = nj.GenerateClusters(new[] {'A', 'B', 'C', 'D', 'E'}).ToArray();
 
-			var root = new Cluster<char>("2") {Children =
+			var root = new Cluster<char> {Children =
 				{
 					{new Cluster<char>(new[] {'C'}) {Description = "C"}, 1.0},
-					{new Cluster<char>("0") {Children =
+					{new Cluster<char> {Children =
 						{
 							{new Cluster<char>(new[] {'D'}) {Description = "D"}, 0.5},
 							{new Cluster<char>(new[] {'E'}) {Description = "E"}, 0.5}
 						}}, 1.5},
-					{new Cluster<char>("1") {Children =
+					{new Cluster<char> {Children =
 						{
 							{new Cluster<char>(new[] {'A'}) {Description = "A"}, 0.5},
 							{new Cluster<char>(new[] {'B'}) {Description = "B"}, 0.5}

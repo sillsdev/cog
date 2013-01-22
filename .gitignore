@@ -32,4 +32,4 @@ _ReSharper*/
 *.DotSettings
 *- Copy*
 packages/*
-packages/repositories.config
+!packages/repositories.config

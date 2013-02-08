@@ -27,13 +27,13 @@ namespace SIL.Cog.ViewModels
 			ComponentSettingsViewModelBase cognateIdentifierVM = null;
 			if (cognateIdentifier is BlairCognateIdentifier)
 			{
-				cognateIdentifierVM = new ComponentOptionsViewModel("Cognate identification", "Method", Project, 0,
+				cognateIdentifierVM = new ComponentOptionsViewModel("Likely cognate identification", "Method", Project, 0,
 					new BlairCognateIdentifierViewModel(_dialogService, _importService, Project, (BlairCognateIdentifier) cognateIdentifier),
 					new ThresholdCognateIdentifierViewModel(Project));
 			}
 			else if (cognateIdentifier is ThresholdCognateIdentifier)
 			{
-				cognateIdentifierVM = new ComponentOptionsViewModel("Cognate identification", "Method", Project, 1,
+				cognateIdentifierVM = new ComponentOptionsViewModel("Likely cognate identification", "Method", Project, 1,
 					new BlairCognateIdentifierViewModel(_dialogService, _importService, Project),
 					new ThresholdCognateIdentifierViewModel(Project, (ThresholdCognateIdentifier) cognateIdentifier));
 			}

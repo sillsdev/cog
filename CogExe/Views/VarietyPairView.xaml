@@ -56,7 +56,7 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
-			<HeaderedContentControl Grid.Column="0" Grid.Row="0" Margin="0,10,10,0" Header="Cognates">
+			<HeaderedContentControl Grid.Column="0" Grid.Row="0" Margin="0,10,10,0" Header="Likely cognates">
 				<Border BorderThickness="1" BorderBrush="{StaticResource DataGridBorderBrush}">
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -108,7 +108,7 @@
 					</Grid>
 				</Border>
 			</HeaderedContentControl>
-			<HeaderedContentControl Grid.Column="0" Grid.Row="1" Margin="0,10,10,0" Header="Non-cognates">
+			<HeaderedContentControl Grid.Column="0" Grid.Row="1" Margin="0,10,10,0" Header="Likely non-cognates">
 				<Border BorderThickness="1" BorderBrush="{StaticResource DataGridBorderBrush}">
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -160,7 +160,7 @@
 					</Grid>
 				</Border>
 			</HeaderedContentControl>
-            <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound changes">
+            <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound correspondences">
                 <DataGrid Name="CorrespondenceDataGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" HorizontalScrollBarVisibility="Disabled"
                           AlternatingRowBackground="White" IsReadOnly="True" SelectedItem="{Binding CurrentCorrespondence}" Sorting="CorrespondenceDataGrid_Sorting">
                     <DataGrid.GroupStyle>

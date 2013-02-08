@@ -44,6 +44,12 @@ namespace SIL.Cog.ViewModels
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
 		}
 
+		public override void AcceptChanges()
+		{
+			base.AcceptChanges();
+			_similarSegments.AcceptChanges();
+		}
+
 		public double AlignmentThreshold
 		{
 			get { return _alignmentThreshold; }

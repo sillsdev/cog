@@ -167,7 +167,7 @@ namespace SIL.Cog.Services
 			return false;
 		}
 
-		public bool ExportNetworkGraph(object ownerViewModel, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph)
+		public bool ExportNetworkGraph(object ownerViewModel, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, double scoreFilter)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)
@@ -180,7 +180,8 @@ namespace SIL.Cog.Services
 						LayoutAlgorithmType = "LinLog",
 						OverlapRemovalAlgorithmType = "FSA",
 						Graph = graph,
-						Background = Brushes.White
+						Background = Brushes.White,
+						SimilarityScoreFilter = scoreFilter
 					};
 				graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["NetworkEdgeControlStyle"];
 				graphLayout.Resources[typeof(VertexControl)] = Application.Current.Resources["NetworkVertexControlStyle"];

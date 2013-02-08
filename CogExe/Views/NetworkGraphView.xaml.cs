@@ -12,9 +12,9 @@ namespace SIL.Cog.Views
 			InitializeComponent();
 		}
 
-		private void _graphLayout_OnLayoutFinished(object sender, EventArgs e)
+		private void GraphLayout_OnLayoutFinished(object sender, EventArgs e)
 		{
-			_zoomControl.ZoomToFill();
+			ZoomControl.ZoomToFill();
 		}
 	}
 }

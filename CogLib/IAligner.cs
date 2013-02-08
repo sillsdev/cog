@@ -12,7 +12,7 @@ namespace SIL.Cog
 		IAlignerResult Compute(VarietyPair varietyPair, Word word1, Word word2);
 		IAlignerResult Compute(WordPair wordPair);
 
-		int SigmaInsertion(VarietyPair varietyPair, ShapeNode q);
+		int SigmaInsertion(VarietyPair varietyPair, ShapeNode p, ShapeNode q);
 		int SigmaDeletion(VarietyPair varietyPair, ShapeNode p);
 		int SigmaSubstitution(VarietyPair varietyPair, ShapeNode p, ShapeNode q);
 		int SigmaExpansion(VarietyPair varietyPair, ShapeNode p, ShapeNode q1, ShapeNode q2);

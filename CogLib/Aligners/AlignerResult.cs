@@ -161,10 +161,11 @@ namespace SIL.Cog.Aligners
 					node1 = node1.GetNext(Filter);
 				}
 
+				node1 = start1.GetPrev(Filter);
 				node2 = start2;
 				for (int j = 1; j < _sim.GetLength(1); j++)
 				{
-					_sim[0, j] = _sim[0, j - 1] + _aligner.SigmaInsertion(_varietyPair, node2);
+					_sim[0, j] = _sim[0, j - 1] + _aligner.SigmaInsertion(_varietyPair, node1, node2);
 					node2 = node2.GetNext(Filter);
 				}
 			}
@@ -176,7 +177,7 @@ namespace SIL.Cog.Aligners
 				for (int j = 1; j < _sim.GetLength(1); j++)
 				{
 					int m1 = _sim[i - 1, j] + _aligner.SigmaDeletion(_varietyPair, node1);
-					int m2 = _sim[i, j - 1] + _aligner.SigmaInsertion(_varietyPair, node2);
+					int m2 = _sim[i, j - 1] + _aligner.SigmaInsertion(_varietyPair, node1, node2);
 					int m3 = _sim[i - 1, j - 1] + _aligner.SigmaSubstitution(_varietyPair, node1, node2);
 					int m4 = _aligner.Settings.DisableExpansionCompression || j - 2 < 0 ? int.MinValue : _sim[i - 1, j - 2] + _aligner.SigmaExpansion(_varietyPair, node1, node2.GetPrev(Filter), node2);
 					int m5 = _aligner.Settings.DisableExpansionCompression || i - 2 < 0 ? int.MinValue : _sim[i - 2, j - 1] + _aligner.SigmaCompression(_varietyPair, node1.GetPrev(Filter), node1, node2);
@@ -252,7 +253,7 @@ namespace SIL.Cog.Aligners
 
 				if (j != 0)
 				{
-					opScore = _aligner.SigmaInsertion(_varietyPair, node2);
+					opScore = _aligner.SigmaInsertion(_varietyPair, node1, node2);
 					if (i == 0 || _sim[i, j - 1] + opScore + score >= threshold)
 					{
 						foreach (Tuple<Shape, Shape, ShapeNode, ShapeNode, int> alignment in Retrieve(node1, node2.GetPrev(Filter), i, j - 1, score + opScore, threshold, all))

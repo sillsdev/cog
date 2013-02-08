@@ -56,9 +56,9 @@ namespace SIL.Cog.Aligners
 			get { return _valueMetrics.AsReadOnlyDictionary(); }
 		}
 
-		public override int SigmaInsertion(VarietyPair varietyPair, ShapeNode q)
+		public override int SigmaInsertion(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
 		{
-			return -IndelCost + SoundChange(varietyPair, null, null, q, null);
+			return -IndelCost + SoundChange(varietyPair, null, p, q, null);
 		}
 
 		public override int SigmaDeletion(VarietyPair varietyPair, ShapeNode p)
@@ -142,7 +142,7 @@ namespace SIL.Cog.Aligners
 				return 0;
 
 			Ngram target;
-			if (p1 == null && p2 == null)
+			if (p1 == null)
 			{
 				target = new Ngram(Segment.Null);
 			}
@@ -164,7 +164,7 @@ namespace SIL.Cog.Aligners
 			}
 
 			NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable(p1.GetPrev(AlignerResult.Filter).Annotation.FeatureStruct));
+				constraint.FeatureStruct.IsUnifiable((p1 == null ? p2 : p1.GetPrev(AlignerResult.Filter)).Annotation.FeatureStruct));
 			NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
 				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
 

@@ -12,6 +12,7 @@ namespace SIL.Cog.ViewModels
 		private CogProject _project;
 		private SimilarityMetric _similarityMetric;
 		private readonly IExportService _exportService;
+		private double _similarityScoreFilter;
 
 		public NetworkGraphViewModel(IExportService exportService)
 			: base("Network Graph")
@@ -24,12 +25,12 @@ namespace SIL.Cog.ViewModels
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
 				new CommandViewModel("Export this graph", new RelayCommand(Export))));
+			_similarityScoreFilter = 0.7;
 		}
 
 		private void Export()
 		{
-			//_exportService.ExportCurrentNetworkGraph(this);
-			_exportService.ExportNetworkGraph(this, Graph);
+			_exportService.ExportCurrentNetworkGraph(this);
 		}
 
 		public override void Initialize(CogProject project)
@@ -68,6 +69,12 @@ namespace SIL.Cog.ViewModels
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
 					Graph = ViewModelUtilities.GenerateNetworkGraph(_project, _similarityMetric);
 			}
+		}
+
+		public double SimilarityScoreFilter
+		{
+			get { return _similarityScoreFilter; }
+			set { Set(() => SimilarityScoreFilter, ref _similarityScoreFilter, value); }
 		}
 
 		public IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> Graph

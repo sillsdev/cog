@@ -236,7 +236,7 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportNetworkGraphViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-				_exportService.ExportNetworkGraph(this, ViewModelUtilities.GenerateNetworkGraph(_project, vm.SimilarityMetric));
+				_exportService.ExportNetworkGraph(this, ViewModelUtilities.GenerateNetworkGraph(_project, vm.SimilarityMetric), vm.SimilarityScoreFilter);
 		}
 
 		private bool CanExit()

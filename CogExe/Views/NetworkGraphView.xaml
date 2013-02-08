@@ -13,9 +13,9 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<zoom:ZoomControl Name="_zoomControl" Grid.Row="0" ZoomBoxOpacity="0.5">
-			<c:NetworkGraphLayout x:Name="_graphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple"
-								  SimilarityScoreFilter="{Binding ElementName=_filterSlider, Path=Value}" LayoutFinished="_graphLayout_OnLayoutFinished">
+		<zoom:ZoomControl Name="ZoomControl" Grid.Row="0" ZoomBoxOpacity="0.5">
+			<c:NetworkGraphLayout x:Name="GraphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple"
+								  SimilarityScoreFilter="{Binding SimilarityScoreFilter}" LayoutFinished="GraphLayout_OnLayoutFinished" Background="White">
 				<c:NetworkGraphLayout.Resources>
 					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource NetworkEdgeControlStyle}" />
 					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource NetworkVertexControlStyle}" />
@@ -34,8 +34,8 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<Label Target="{Binding ElementName=_filterSlider}" Grid.Column="0" Margin="0,0,3,0">Edge filter:</Label>
-				<c:PercentageSlider Grid.Column="1" x:Name="_filterSlider" Value="0.7" Width="250" />
+				<Label Target="{Binding ElementName=FilterSlider}" Grid.Column="0" Margin="0,0,3,0">Edge filter:</Label>
+				<c:PercentageSlider Grid.Column="1" x:Name="FilterSlider" Value="{Binding SimilarityScoreFilter}" Width="250" />
 			</Grid>
 		</Border>
 	</Grid>

@@ -52,7 +52,7 @@ namespace SIL.Cog.Aligners
 			get { return _settings; }
 		}
 
-		public abstract int SigmaInsertion(VarietyPair varietyPair, ShapeNode q);
+		public abstract int SigmaInsertion(VarietyPair varietyPair, ShapeNode p, ShapeNode q);
 
 		public abstract int SigmaDeletion(VarietyPair varietyPair, ShapeNode p);
 

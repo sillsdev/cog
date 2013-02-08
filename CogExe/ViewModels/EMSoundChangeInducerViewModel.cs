@@ -7,7 +7,7 @@ namespace SIL.Cog.ViewModels
 		private double _alignmentThreshold;
 
 		public EMSoundChangeInducerViewModel(CogProject project, EMSoundChangeInducer soundChangeInducer)
-			: base("Sound change induction", project)
+			: base("Sound correspondence induction", project)
 		{
 			_alignmentThreshold = soundChangeInducer.AlignmentThreshold;
 		}

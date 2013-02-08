@@ -3,6 +3,7 @@ using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Statistics;
 using SIL.Collections;
+using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
@@ -13,32 +14,26 @@ namespace SIL.Cog.ViewModels
 		private SoundCorrespondenceViewModel _currentCorrespondence;
 		private readonly ReadOnlyCollection<WordPairViewModel> _wordPairs;
 		private readonly bool _areVarietiesInOrder;
-		private readonly ObservableCollection<WordPairViewModel> _selectedWordPairs; 
+		private readonly ObservableCollection<WordPairViewModel> _selectedWordPairs;
+		private readonly CogProject _project;
 
 		public VarietyPairViewModel(CogProject project, VarietyPair varietyPair, bool areVarietiesInOrder)
 		{
+			_project = project;
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
 			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
 
+			IAligner aligner = _project.Aligners["primary"];
 			var cfd = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
 			foreach (WordPairViewModel wordPair in _wordPairs)
 			{
 				foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
 				{
-					Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
-					Ngram nseg2 = _varietyPair.Variety2.Segments[node.Annotation2];
-					foreach (SoundChangeLhs lhs in _varietyPair.SoundChanges.Conditions)
-					{
-						if (nseg1.Equals(lhs.Target)
-						    && (lhs.LeftEnvironment == null || lhs.LeftEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetPrev(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct))
-						    && (lhs.RightEnvironment == null || lhs.RightEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetNext(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct)))
-						{
-							cfd[lhs].Increment(nseg2);
-							break;
-						}
-					}
+					SoundChangeLhs lhs = GetLhs(node);
+					Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
+					cfd[lhs].Increment(corr);
 				}
 			}
 
@@ -66,12 +61,9 @@ namespace SIL.Cog.ViewModels
 						}
 						else
 						{
-							Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
-							Ngram nseg2 = _varietyPair.Variety2.Segments[node.Annotation2];
-							SoundChangeLhs lhs = _currentCorrespondence.ModelSoundChangeLhs;
-							node.IsSelected = nseg1.Equals(lhs.Target) && nseg2.Equals(_currentCorrespondence.ModelCorrespondence)
-								&& (lhs.LeftEnvironment == null || lhs.LeftEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetPrev(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct))
-								&& (lhs.RightEnvironment == null || lhs.RightEnvironment.FeatureStruct.IsUnifiable(node.Annotation1.GetNext(a => a.Type() != CogFeatureSystem.NullType).FeatureStruct));
+							SoundChangeLhs lhs = GetLhs(node);
+							Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
+							node.IsSelected = lhs.Equals(_currentCorrespondence.ModelSoundChangeLhs) && corr.Equals(_currentCorrespondence.ModelCorrespondence);
 							if (node.IsSelected)
 								selected = true;
 						}
@@ -81,6 +73,17 @@ namespace SIL.Cog.ViewModels
 						_selectedWordPairs.Add(word);
 				}
 			}
+		}
+
+		private SoundChangeLhs GetLhs(AlignedNodeViewModel node)
+		{
+			IAligner aligner = _project.Aligners["primary"];
+			Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
+			ShapeNode leftCtxt = node.Annotation1.Span.Start.GetPrev(n => n.Type().IsOneOf(CogFeatureSystem.AnchorType, CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType));
+			NaturalClass leftEnv = aligner.NaturalClasses.FirstOrDefault(constraint => constraint.FeatureStruct.IsUnifiable(leftCtxt.Annotation.FeatureStruct));
+			ShapeNode rightCtxt = node.Annotation1.Span.End.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.AnchorType, CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType));
+			NaturalClass rightEnv = aligner.NaturalClasses.FirstOrDefault(constraint => constraint.FeatureStruct.IsUnifiable(rightCtxt.Annotation.FeatureStruct));
+			return new SoundChangeLhs(leftEnv, nseg1, rightEnv);
 		}
 
 		public bool AreVarietiesInOrder

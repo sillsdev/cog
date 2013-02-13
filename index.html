@@ -1,69 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Cog - Home</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<link href="img/favicon.png" rel="shortcut icon">
+		<!-- Le styles -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+	</head>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Cog : Cog is a tool for comparing languages using lexicostatistics and comparative linguistics techniques. It can be used to automate much of the process of comparing word lists from different language varieties." />
+	<body>
+		<div class="wrapper">
+			<div class="navbar navbar-static-top">
+				<div class="navbar-inner">
+					<div class="container">
+						<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="brand" href="index.html">Cog</a>
+						<div class="nav-collapse collapse">
+							<ul class="nav">
+								<li class="active"><a href="index.html">Home</a></li>
+								<li><a href="downloads.html">Downloads</a></li>
+								<li><a href="mailto:damien_daspit@sil.org">Contact</a></li>
+							</ul>
+						</div><!--/.nav-collapse -->
+					</div>
+				</div>
+			</div>
+			<div class="container main-area">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Cog</title>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/sillsdev/Cog">View on GitHub</a>
-
-          <h1 id="project_title">Cog</h1>
-          <h2 id="project_tagline">Cog is a tool for comparing languages using lexicostatistics and comparative linguistics techniques. It can be used to automate much of the process of comparing word lists from different language varieties.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/sillsdev/Cog/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/sillsdev/Cog/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h2>Features</h2>
-
-<ul>
-<li>IPA-based segmentation: automatically splits words in to segments</li>
-<li>Stem identification: identifies prefixes and suffixes so that they can be ignored during
-comparison</li>
-<li>Word alignment: aligns segments between word pairs</li>
-<li>Sound correspondence identification: automatically identifies sound correspondences and the
-environments in which they occur</li>
-<li>Cognate identification: provides various methods for identifying cognates</li>
-<li>Lexical/phonetic similarity: calculates lexical/phonetic similarity for multiple language
-varieties</li>
-<li>Visualization: generates similarity matrices, hierarchical graphs (UPGMA, Neighbor-joining), and
-network graphs</li>
-</ul><h2>Experimentation</h2>
-
-<p>The goal of Cog is to provide a framework for experimenting with different techniques for language
-variety comparison. It is intended to be used iteratively: run a comparison, analyze the results,
-refine the process, run the comparison again, and so on. Most steps in the process can be tailored.
-It currently only supports a few comparison techniques, but we hope to include many more in the
-future.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Cog maintained by <a href="https://github.com/sillsdev">sillsdev</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+				<!-- Main hero unit for a primary marketing message or call to action -->
+				<div class="hero-unit">
+					<img id="appicon" src="img/appicon.png" class="pull-left"/>
+					<h1>Cog</h1>
+					<p>A tool for comparing languages using lexicostatistics and comparative linguistics techniques. It can be used to automate much of the process of comparing word lists from different language varieties.</p>
+					<p><a href="downloads/CogInstaller-0.1-alpha.msi" class="btn btn-primary btn-large">Download</a></p>
+					<ul class="masthead-links">
+						<li>Version 0.1 (alpha)</li>
+						<li><a href="https://github.com/sillsdev/cog">GitHub Project</a></li>
+					</ul>
+				</div>
+				<!-- Example row of columns -->
+				<div class="row">
+					<div class="span4">
+						<h2>Experiment</h2>
+						<p>The goal of Cog is to provide a framework for experimenting with different techniques for language variety comparison. It is intended to be used iteratively: run a comparison, analyze the results, refine the process,
+						run the comparison again, and so on. Most steps in the process can be tailored. It currently only supports a few comparison techniques, but we hope to include many more in the future.</p>
+					</div>
+					<div class="span4">
+						<h2>Analyze quickly</h2>
+						<p>Cog allows you to quickly produce results by automating many of the steps of the word list comparison process:</p>
+						<ul>
+							<li>IPA-based segmentation: automatically splits words in to segments</li>
+							<li>Stem identification: identifies prefixes and suffixes so that they can be ignored during
+							comparison</li>
+							<li>Word alignment: aligns segments between word pairs</li>
+							<li>Sound correspondence identification: automatically identifies sound correspondences and the
+							environments in which they occur</li>
+							<li>Cognate identification: provides various methods for identifying cognates</li>
+							<li>Lexical/phonetic similarity: calculates lexical/phonetic similarity for multiple language
+							varieties</li>
+						</ul>
+					</div>
+					<div class="span4">
+						<h2>Visualize</h2>
+						<p>Cog allows you to visualize your results from many different perspectives. Cog will automatically generate the following types of graphs and charts:</p>
+						<ul>
+							<li>Radial trees</li>
+							<li>Dendrograms</li>
+							<li>Network graphs</li>
+							<li>Similarity matrices</li>
+						</ul>
+					</div>
+				</div>
+			</div> <!-- /container -->
+			<div class="push"></div>
+		</div>
+		<footer class="footer">
+			<p>&copy; SIL International, Inc. 2013. Code licensed under <a href="http://www.gnu.org/licenses/lgpl-2.1.html">LGPL v2.1</a>.</p>
+		</footer>
+		<!-- Le javascript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
 </html>

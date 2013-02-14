@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -62,6 +63,10 @@ namespace SIL.Cog.ViewModels
 			PropertyChanging += MainWindowViewModel_PropertyChanging;
 
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
+
+			string[] args = Environment.GetCommandLineArgs();
+			if (args.Length > 1)
+				ProjectFilePath = args[1];
 
 			if (string.IsNullOrEmpty(ProjectFilePath) || !File.Exists(ProjectFilePath))
 			{

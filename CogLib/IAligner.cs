@@ -6,7 +6,7 @@ namespace SIL.Cog
 {
 	public interface IAligner
 	{
-		IEnumerable<NaturalClass> NaturalClasses { get; }
+		IEnumerable<SoundClass> ContextualSoundClasses { get; }
 		bool SupportsExpansionCompression { get; }
 
 		IAlignerResult Compute(VarietyPair varietyPair, Word word1, Word word2);

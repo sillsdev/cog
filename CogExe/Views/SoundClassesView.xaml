@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="SIL.Cog.Views.SoundClassesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:c="clr-namespace:SIL.Cog.Controls"
+             mc:Ignorable="d" DataContextChanged="SoundClassesView_OnDataContextChanged"
+             d:DesignHeight="200" d:DesignWidth="400">
+	<StackPanel>
+		<Grid>
+			<DataGrid Name="SoundClassesGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" Height="125"
+						ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding CurrentSoundClass}" IsReadOnly="True">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" />
+					<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" />
+					<DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
+				</DataGrid.Columns>
+			</DataGrid>
+			<TextBlock Margin="3,23,3,0" Text="Click New to add a sound class">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SoundClasses.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+			</TextBlock>
+		</Grid>
+		<Border Background="{StaticResource ControlPanelBackgroundBrush}">
+			<Border.Resources>
+				<Style TargetType="c:DropDownButton" BasedOn="{StaticResource ToolbarDropDownButtonStyle}">
+					<Setter Property="Margin" Value="0,3,5,3" />
+					<Setter Property="Padding" Value="3" />
+				</Style>
+				<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+					<Setter Property="Margin" Value="0,3,5,3" />
+					<Setter Property="Padding" Value="3" />
+				</Style>
+			</Border.Resources>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+				<Button Command="{Binding MoveSoundClassUpCommand}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\Images\up-icon.png" />
+						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Move Up</TextBlock>
+					</StackPanel>
+				</Button>
+				<Button Command="{Binding MoveSoundClassDownCommand}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\Images\down-icon.png" />
+						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Move Down</TextBlock>
+					</StackPanel>
+				</Button>
+				<c:DropDownButton>
+					<c:DropDownButton.Content>
+						<StackPanel Orientation="Horizontal">
+							<Image Source="..\Images\add-icon.png" />
+							<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+						</StackPanel>
+					</c:DropDownButton.Content>
+					<c:DropDownButton.DropDown>
+						<ContextMenu>
+							<MenuItem Header="Natural Class" Command="{Binding NewNaturalClassCommand}" />
+							<MenuItem Header="Unnatural Class" Command="{Binding NewUnnaturalClassCommand}" />
+						</ContextMenu>
+					</c:DropDownButton.DropDown>
+				</c:DropDownButton>
+				<Button Command="{Binding EditSoundClassCommand}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\Images\edit-icon.png" />
+						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
+					</StackPanel>
+				</Button>
+				<Button Command="{Binding RemoveSoundClassCommand}">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="..\Images\delete-icon.png" />
+						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Border>
+	</StackPanel>
+</UserControl>

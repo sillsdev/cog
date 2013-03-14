@@ -249,7 +249,7 @@ namespace SIL.Cog.Config
 			}
 		}
 
-		public static FeatureStruct LoadFeatureStruct(FeatureSystem featSys, XElement elem)
+		private static FeatureStruct LoadFeatureStruct(FeatureSystem featSys, XElement elem)
 		{
 			var fs = new FeatureStruct();
 			foreach (XElement featureValueElem in elem.Elements(Cog + "FeatureValue"))
@@ -347,11 +347,53 @@ namespace SIL.Cog.Config
 			return affixElem;
 		}
 
-		internal static IEnumerable<XElement> CreateFeatureStruct(FeatureStruct fs)
+		private static IEnumerable<XElement> CreateFeatureStruct(FeatureStruct fs)
 		{
 			return from feature in fs.Features.Cast<SymbolicFeature>()
 				   where feature != CogFeatureSystem.Type
 				   select new XElement(Cog + "FeatureValue", new XAttribute("feature", feature.ID), new XAttribute("value", ((FeatureSymbol) fs.GetValue(feature)).ID));
+		}
+
+		internal static IEnumerable<SoundClass> LoadSoundClasses(Segmenter segmenter, FeatureSystem featSys, XElement elem)
+		{
+			foreach (XElement scElem in elem.Elements())
+			{
+				var name = (string) scElem.Attribute("name");
+				if (scElem.Name == Cog + "NaturalClass")
+				{
+					FeatureStruct fs = LoadFeatureStruct(featSys, scElem);
+					fs.AddValue(CogFeatureSystem.Type, ((string) scElem.Attribute("type")) == "vowel" ? CogFeatureSystem.VowelType : CogFeatureSystem.ConsonantType);
+					yield return new NaturalClass(name, fs);
+				}
+				else if (scElem.Name == Cog + "UnnaturalClass")
+				{
+					IEnumerable<string> segments = scElem.Elements(Cog + "Segment").Select(segElem => (string) segElem);
+					var ignoreModifiersStr = (string) scElem.Attribute("ignoreModifiers");
+					yield return new UnnaturalClass(segmenter, name, segments, !string.IsNullOrEmpty(ignoreModifiersStr) && bool.Parse(ignoreModifiersStr));
+				}
+			}
+		}
+
+		internal static IEnumerable<XElement> SaveSoundClasses(IEnumerable<SoundClass> soundClasses)
+		{
+			foreach (SoundClass sc in soundClasses)
+			{
+				var nc = sc as NaturalClass;
+				if (nc != null)
+				{
+					yield return new XElement(Cog + "NaturalClass", new XAttribute("name", nc.Name),
+						new XAttribute("type", nc.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), CreateFeatureStruct(nc.FeatureStruct));
+				}
+				else
+				{
+					var unc = sc as UnnaturalClass;
+					if (unc != null)
+					{
+						yield return new XElement(Cog + "UnnaturalClass", new XAttribute("name", unc.Name), new XAttribute("ignoreModifiers", unc.IgnoreModifiers),
+							unc.Segments.Select(s => new XElement(Cog + "Segment", s)));
+					}
+				}
+			}
 		}
 
 		private static XElement SaveComponent<T>(string elemName, string id, T component)

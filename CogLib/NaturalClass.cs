@@ -1,22 +1,17 @@
-using SIL.Collections;
+using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
-	public class NaturalClass : NotifyPropertyChangedBase
+	public class NaturalClass : SoundClass
 	{
 		private readonly FeatureStruct _fs;
-		private readonly string _name;
 
 		public NaturalClass(string name, FeatureStruct fs)
+			: base(name)
 		{
-			_name = name;
 			_fs = fs;
-		}
-
-		public string Name
-		{
-			get { return _name; }
+			_fs.Freeze();
 		}
 
 		public FeatureSymbol Type
@@ -27,6 +22,11 @@ namespace SIL.Cog
 		public FeatureStruct FeatureStruct
 		{
 			get { return _fs; }
+		}
+
+		public override bool Matches(Annotation<ShapeNode> ann)
+		{
+			return _fs.Subsumes(ann.FeatureStruct);
 		}
 	}
 }

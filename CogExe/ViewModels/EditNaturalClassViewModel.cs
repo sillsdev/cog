@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -8,11 +7,9 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
 {
-	public class EditNaturalClassViewModel : CogViewModelBase, IDataErrorInfo
+	public class EditNaturalClassViewModel : EditSoundClassViewModel
 	{
-		private string _name;
 		private SoundType _type;
-		private readonly HashSet<string> _naturalClassNames;
 		private readonly ObservableCollection<FeatureViewModel> _availableFeatures;
 		private readonly ObservableCollection<FeatureViewModel> _selectedFeatures;
 		private FeatureViewModel _currentSelectedFeature;
@@ -20,18 +17,20 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _addCommand;
 		private readonly ICommand _removeCommand;
 
-		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<NaturalClass> naturalClasses)
-			: this("New Natural Class")
+		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<SoundClass> soundClasses)
+			: base("New Natural Class", soundClasses)
 		{
 			_availableFeatures = new ObservableCollection<FeatureViewModel>(featSys.OfType<SymbolicFeature>().Select(f => new FeatureViewModel(f)));
 			_selectedFeatures = new ObservableCollection<FeatureViewModel>();
-			_naturalClassNames = new HashSet<string>(naturalClasses.Select(nc => nc.Name));
+
+			_addCommand = new RelayCommand(AddFeature, CanAddFeature);
+			_removeCommand = new RelayCommand(RemoveFeature, CanRemoveFeature);
 		}
 
-		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<NaturalClass> naturalClasses, NaturalClass naturalClass)
-			: this("Edit Natural Class")
+		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<SoundClass> soundClasses, NaturalClass naturalClass)
+			: base("Edit Natural Class", soundClasses, naturalClass)
 		{
-			_name = naturalClass.Name;
+			_type = naturalClass.Type == CogFeatureSystem.ConsonantType ? SoundType.Consonant : SoundType.Vowel;
 			_availableFeatures = new ObservableCollection<FeatureViewModel>();
 			_selectedFeatures = new ObservableCollection<FeatureViewModel>();
 			foreach (SymbolicFeature feature in featSys.OfType<SymbolicFeature>())
@@ -42,12 +41,7 @@ namespace SIL.Cog.ViewModels
 				else
 					_availableFeatures.Add(new FeatureViewModel(feature));
 			}
-			_naturalClassNames = new HashSet<string>(naturalClasses.Where(nc => nc != naturalClass).Select(nc => nc.Name));
-		}
 
-		private EditNaturalClassViewModel(string displayName)
-			: base(displayName)
-		{
 			_addCommand = new RelayCommand(AddFeature, CanAddFeature);
 			_removeCommand = new RelayCommand(RemoveFeature, CanRemoveFeature);
 		}
@@ -78,12 +72,6 @@ namespace SIL.Cog.ViewModels
 			_selectedFeatures.Remove(feature);
 			_availableFeatures.Add(feature);
 			CurrentAvailableFeature = feature;
-		}
-
-		public string Name
-		{
-			get { return _name; }
-			set { Set(() => Name, ref _name, value); }
 		}
 
 		public SoundType Type
@@ -122,29 +110,6 @@ namespace SIL.Cog.ViewModels
 		public ICommand RemoveCommand
 		{
 			get { return _removeCommand; }
-		}
-
-		public string this[string columnName]
-		{
-			get
-			{
-				switch (columnName)
-				{
-					case "Name":
-						if (string.IsNullOrEmpty(_name))
-							return "Please enter a name";
-						if (_naturalClassNames.Contains(_name))
-							return "A natural class with that name already exists";
-						break;
-				}
-
-				return null;
-			}
-		}
-
-		public string Error
-		{
-			get { return null; }
 		}
 	}
 }

@@ -5,7 +5,7 @@
     x:Uid="idAboutBox"
     Style="{DynamicResource AboutDialogStyle}" WindowStartupLocation="CenterOwner">
     <Window.Resources>
-        <Image x:Key="aboutLogo" Source="AboutLogo.png" />
+        <Image x:Key="aboutLogo" Source="..\Images\AboutLogo.png" />
         <Style x:Key="AboutDialogStyle" TargetType="Window">
             <Setter Property="Height" Value="Auto" />
             <Setter Property="Width" Value="500" />

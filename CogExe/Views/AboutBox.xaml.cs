@@ -11,7 +11,7 @@ namespace SIL.Cog.Views
 	/// <summary>
 	/// Interaction logic for AboutBox.xaml
 	/// </summary>
-	public partial class AboutBox : Window
+	public partial class AboutBox
 	{
 		/// <summary>
 		/// Default constructor is protected so callers must use one with a parent.
@@ -28,7 +28,7 @@ namespace SIL.Cog.Views
 		public AboutBox(Window parent)
 			: this()
 		{
-			this.Owner = parent;
+			Owner = parent;
 		}
 
 		/// <summary>

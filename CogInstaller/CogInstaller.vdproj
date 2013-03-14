@@ -15,36 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_191144F3BCEF21071E0E1E8E9478F32D"
-        "OwnerKey" = "8:_FE6D7EF3A010C2597B6E0B992A9C93FC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_191144F3BCEF21071E0E1E8E9478F32D"
-        "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_191144F3BCEF21071E0E1E8E9478F32D"
-        "OwnerKey" = "8:_266A90E0A9A204569B8CC75C2C7356CD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_266A90E0A9A204569B8CC75C2C7356CD"
-        "OwnerKey" = "8:_FE6D7EF3A010C2597B6E0B992A9C93FC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_266A90E0A9A204569B8CC75C2C7356CD"
-        "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2A2AE4FEECCD99306B813DBE686A38D5"
         "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
         "MsmSig" = "8:_UNDEFINED"
@@ -93,13 +63,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_63A35E0729273339037AF72BFCBAE047"
+        "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_A5FCF3A0C4B944DEA4967C3B9B1E3999"
+        "MsmKey" = "8:_91B0EDD771F56DDE7F2DCA48C674E745"
+        "OwnerKey" = "8:_63A35E0729273339037AF72BFCBAE047"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_91B0EDD771F56DDE7F2DCA48C674E745"
+        "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -141,32 +123,32 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FE6D7EF3A010C2597B6E0B992A9C93FC"
+        "MsmKey" = "8:_FBA4504AA35D4CC0A6EFC69B1C5D47C5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FDA023724AAD4F552C72BDDCED737DEB"
+        "OwnerKey" = "8:_63A35E0729273339037AF72BFCBAE047"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FDA023724AAD4F552C72BDDCED737DEB"
         "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_FDA023724AAD4F552C72BDDCED737DEB"
+        "OwnerKey" = "8:_91B0EDD771F56DDE7F2DCA48C674E745"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FE6D7EF3A010C2597B6E0B992A9C93FC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_266A90E0A9A204569B8CC75C2C7356CD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_191144F3BCEF21071E0E1E8E9478F32D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -221,6 +203,24 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C648EE8E1B951C6A254615F8E29F7C3B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_63A35E0729273339037AF72BFCBAE047"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_91B0EDD771F56DDE7F2DCA48C674E745"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FDA023724AAD4F552C72BDDCED737DEB"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -328,68 +328,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_191144F3BCEF21071E0E1E8E9478F32D"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_191144F3BCEF21071E0E1E8E9478F32D"
-                    {
-                    "Name" = "8:SIL.Collections.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SIL.Collections.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_266A90E0A9A204569B8CC75C2C7356CD"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_266A90E0A9A204569B8CC75C2C7356CD"
-                    {
-                    "Name" = "8:SIL.Machine.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SIL.Machine.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2A2AE4FEECCD99306B813DBE686A38D5"
             {
             "AssemblyRegister" = "3:1"
@@ -545,10 +483,21 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A5FCF3A0C4B944DEA4967C3B9B1E3999"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_63A35E0729273339037AF72BFCBAE047"
             {
-            "SourcePath" = "8:..\\CogExe\\Cog.ico"
-            "TargetName" = "8:Cog.ico"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SIL.Cog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_63A35E0729273339037AF72BFCBAE047"
+                    {
+                    "Name" = "8:SIL.Cog.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SIL.Cog.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
             "Condition" = "8:"
@@ -562,7 +511,38 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_91B0EDD771F56DDE7F2DCA48C674E745"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_91B0EDD771F56DDE7F2DCA48C674E745"
+                    {
+                    "Name" = "8:SIL.Machine.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SIL.Machine.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AB0A0D523FFDE5572F1904545A79C6D5"
@@ -689,20 +669,40 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FE6D7EF3A010C2597B6E0B992A9C93FC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FBA4504AA35D4CC0A6EFC69B1C5D47C5"
+            {
+            "SourcePath" = "8:..\\CogExe\\Images\\Cog.ico"
+            "TargetName" = "8:Cog.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FDA023724AAD4F552C72BDDCED737DEB"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SIL.Cog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_FE6D7EF3A010C2597B6E0B992A9C93FC"
+                    "_FDA023724AAD4F552C72BDDCED737DEB"
                     {
-                    "Name" = "8:SIL.Cog.dll"
+                    "Name" = "8:SIL.Collections.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:SIL.Cog.dll"
+            "SourcePath" = "8:SIL.Collections.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
@@ -729,7 +729,7 @@
             "Description" = "8:Cog Project"
             "Extensions" = "8:cogx"
             "MIME" = "8:"
-            "Icon" = "8:_A5FCF3A0C4B944DEA4967C3B9B1E3999"
+            "Icon" = "8:_FBA4504AA35D4CC0A6EFC69B1C5D47C5"
             "IconIndex" = "3:0"
                 "Command"
                 {
@@ -811,7 +811,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Cog"
         "ProductCode" = "8:{62A8C4AD-C4B3-49C0-ADDA-13721D7C9F16}"
-        "PackageCode" = "8:{DF8063F0-6AAD-42B3-AE23-FBE8F04354E0}"
+        "PackageCode" = "8:{182E905B-6486-4CA3-B687-C9264DA4210A}"
         "UpgradeCode" = "8:{DCE6931C-A5F0-4EA8-89C1-18CE3A4FDB02}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -828,7 +828,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_A5FCF3A0C4B944DEA4967C3B9B1E3999"
+        "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -942,7 +942,7 @@
             "Target" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
             "Folder" = "8:_A5EDD084FC90401E820D8444CFBD31A5"
             "WorkingFolder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
-            "Icon" = "8:_A5FCF3A0C4B944DEA4967C3B9B1E3999"
+            "Icon" = "8:_FBA4504AA35D4CC0A6EFC69B1C5D47C5"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_F22E349A85674734B06B2E062E38506C"
@@ -956,7 +956,7 @@
             "Target" = "8:_A2020B76C7D4489A96A9F2FFFC2EEB89"
             "Folder" = "8:_CCDD69E2911B4B11B4E2E627CC72CE62"
             "WorkingFolder" = "8:_113AB1FF0AD345BF9367440A54A9B711"
-            "Icon" = "8:_A5FCF3A0C4B944DEA4967C3B9B1E3999"
+            "Icon" = "8:_FBA4504AA35D4CC0A6EFC69B1C5D47C5"
             "Feature" = "8:"
             }
         }
@@ -1360,7 +1360,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A2020B76C7D4489A96A9F2FFFC2EEB89"
             {
-            "SourcePath" = "8:..\\CogExe\\obj\\x86\\Release\\Cog.exe"
+            "SourcePath" = "8:..\\CogExe\\obj\\x86\\Debug\\Cog.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_113AB1FF0AD345BF9367440A54A9B711"

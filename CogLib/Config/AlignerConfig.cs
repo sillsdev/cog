@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using SIL.Cog.Aligners;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -11,7 +9,7 @@ namespace SIL.Cog.Config
 	{
 		public abstract IAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem);
 
-		protected AlignerSettings LoadSettings(FeatureSystem featSys, XElement elem)
+		protected AlignerSettings LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem)
 		{
 			var settings = new AlignerSettings();
 			var modeStr = (string) elem.Element(ConfigManager.Cog + "Mode");
@@ -36,18 +34,9 @@ namespace SIL.Cog.Config
 			var disableExpansionCompressionStr = (string) elem.Element(ConfigManager.Cog + "DisableExpansionCompression");
 			if (disableExpansionCompressionStr != null)
 				settings.DisableExpansionCompression = bool.Parse(disableExpansionCompressionStr);
-			XElement naturalClassesElem = elem.Element(ConfigManager.Cog + "NaturalClasses");
-			if (naturalClassesElem != null && naturalClassesElem.HasElements)
-			{
-				var naturalClasses = new List<NaturalClass>();
-				foreach (XElement ncElem in naturalClassesElem.Elements(ConfigManager.Cog + "NaturalClass"))
-				{
-					FeatureStruct fs = ConfigManager.LoadFeatureStruct(featSys, ncElem);
-					fs.AddValue(CogFeatureSystem.Type, ((string) ncElem.Attribute("type")) == "vowel" ? CogFeatureSystem.VowelType : CogFeatureSystem.ConsonantType);
-					naturalClasses.Add(new NaturalClass((string) ncElem.Attribute("name"), fs));
-				}
-				settings.NaturalClasses = naturalClasses;
-			}
+			XElement soundClassesElem = elem.Element(ConfigManager.Cog + "ContextualSoundClasses");
+			if (soundClassesElem != null && soundClassesElem.HasElements)
+				settings.ContextualSoundClasses = ConfigManager.LoadSoundClasses(segmenter, featSys, soundClassesElem);
 			return settings;
 		}
 
@@ -73,10 +62,9 @@ namespace SIL.Cog.Config
 			}
 			elem.Add(new XElement(ConfigManager.Cog + "Mode", modeStr));
 			elem.Add(new XElement(ConfigManager.Cog + "DisableExpansionCompression", settings.DisableExpansionCompression));
-			if (settings.NaturalClasses != null)
+			if (settings.ContextualSoundClasses != null)
 			{
-				elem.Add(new XElement(ConfigManager.Cog + "NaturalClasses", settings.NaturalClasses.Select(naturalClass => new XElement(ConfigManager.Cog + "NaturalClass", new XAttribute("name", naturalClass.Name),
-					new XAttribute("type", naturalClass.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), ConfigManager.CreateFeatureStruct(naturalClass.FeatureStruct)))));
+				elem.Add(new XElement(ConfigManager.Cog + "ContextualSoundClasses", ConfigManager.SaveSoundClasses(settings.ContextualSoundClasses)));
 			}
 		}
 	}

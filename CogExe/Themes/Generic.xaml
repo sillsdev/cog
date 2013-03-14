@@ -7,6 +7,8 @@
 	<SolidColorBrush x:Key="DataGridHeaderBrush" Color="#FFCFDDF0" />
 	<SolidColorBrush x:Key="DataGridBorderBrush" Color="#FF88B0E4" />
 	<SolidColorBrush x:Key="DataGridSelectedBrush" Color="#FFFCE8AA" />
+	<SolidColorBrush x:Key="DataGridMouseOverBrush" Color="#FFFFF8E2" />
+	<SolidColorBrush x:Key="DataGridSelectedInactiveBrush" Color="#FFDDDDDD" />
 	<SolidColorBrush x:Key="AlternatingRowBrush" Color="#FFF6FAFD" />
 
 	<Style TargetType="HeaderedContentControl">
@@ -183,19 +185,83 @@
 
 	<Style TargetType="DataGridCell">
 		<Style.Triggers>
+			<Trigger Property="IsMouseOver" Value="True" >
+				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+			</Trigger>
 			<Trigger Property="IsSelected" Value="True">
 				<Setter Property="Foreground" Value="Black" />
 				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />
 				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
 			</Trigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="Cell" />
+					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource Self}}" Value="False" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+			</MultiDataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Binding="{Binding Path=(v:UIElementBehaviors.IsFocusWithin), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="False" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+			</MultiDataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="Cell" />
+					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="Foreground" Value="Black" />
+				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+			</MultiDataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="Foreground" Value="Black" />
+				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+			</MultiDataTrigger>
 		</Style.Triggers>
 	</Style>
 
 	<Style TargetType="DataGridRow">
+		<Setter Property="v:UIElementBehaviors.EnableIsFocusWithin" Value="True" />
 		<Style.Triggers>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+			</MultiDataTrigger>
 			<Trigger Property="IsSelected" Value="True">
 				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
 			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsSelected" Value="True" />
+					<Condition Property="v:UIElementBehaviors.IsFocusWithin" Value="False" />
+				</MultiTrigger.Conditions>
+				<Setter Property="Background" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+			</MultiTrigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsSelected" Value="True" />
+					<Condition Property="IsMouseOver" Value="True" />
+				</MultiTrigger.Conditions>
+				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
 
@@ -380,8 +446,8 @@
 						</Trigger>
 
 						<Trigger Property="IsMouseOver" SourceName="item" Value="True" >
-							<Setter Property="Background" TargetName="item" Value="#FFFFF8E2" />
-							<Setter Property="BorderBrush" TargetName="item" Value="#FFFFF8E2" />
+							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridMouseOverBrush}" />
+							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource DataGridMouseOverBrush}" />
 						</Trigger>
 						<Trigger Property="TreeViewItem.IsSelected" Value="True">
 							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridSelectedBrush}" />
@@ -392,8 +458,8 @@
 								<Condition Property="TreeViewItem.IsSelected" Value="True" />
 								<Condition Property="TreeViewItem.IsSelectionActive" Value="False" />
 							</MultiTrigger.Conditions>
-							<Setter Property="Background" TargetName="item" Value="#FFDDDDDD" />
-							<Setter Property="BorderBrush" TargetName="item" Value="#FFDDDDDD" />
+							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource DataGridSelectedInactiveBrush}" />
 						</MultiTrigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
@@ -448,7 +514,7 @@
 
 	<Style TargetType="ListBoxItem">
 		<Style.Resources>
-			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFFF0C2" />
+			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFCE8AA" />
 			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
 		</Style.Resources>
 	</Style>

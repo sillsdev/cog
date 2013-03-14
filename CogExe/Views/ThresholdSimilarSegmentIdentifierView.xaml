@@ -25,9 +25,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_vowelThresholdUpDown}">Vowel threshold:</Label>
-        <xctk:IntegerUpDown Grid.Column="1" Grid.Row="0" Name="_vowelThresholdUpDown" Value="{Binding VowelThreshold, UpdateSourceTrigger=PropertyChanged}" Increment="100"  />
-        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_consThresholdUpDown}">Consonant threshold:</Label>
-        <xctk:IntegerUpDown Grid.Column="1" Grid.Row="1" Name="_consThresholdUpDown" Value="{Binding ConsonantThreshold, UpdateSourceTrigger=PropertyChanged}" Increment="100" />
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=VowelThresholdUpDown}">Vowel threshold:</Label>
+        <xctk:IntegerUpDown Grid.Column="1" Grid.Row="0" Name="VowelThresholdUpDown" Value="{Binding VowelThreshold, UpdateSourceTrigger=PropertyChanged}" Increment="100"  />
+        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=ConsThresholdUpDown}">Consonant threshold:</Label>
+        <xctk:IntegerUpDown Grid.Column="1" Grid.Row="1" Name="ConsThresholdUpDown" Value="{Binding ConsonantThreshold, UpdateSourceTrigger=PropertyChanged}" Increment="100" />
     </Grid>
 </UserControl>

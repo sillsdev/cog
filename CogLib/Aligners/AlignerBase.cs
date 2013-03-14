@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -17,14 +16,9 @@ namespace SIL.Cog.Aligners
 			_settings.ReadOnly = true;
 		}
 
-		public IEnumerable<NaturalClass> NaturalClasses
+		public IEnumerable<SoundClass> ContextualSoundClasses
 		{
-			get
-			{
-				if (_settings.NaturalClasses == null)
-					return Enumerable.Empty<NaturalClass>();
-				return _settings.NaturalClasses;
-			}
+			get { return _settings.ContextualSoundClasses; }
 		}
 
 		public bool SupportsExpansionCompression

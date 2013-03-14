@@ -52,6 +52,7 @@
     <Compile Include="Config\ConfigException.cs" />
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\AlignerConfig.cs" />
+    <Compile Include="Config\DolgopolskyCognateIdentifierConfig.cs" />
     <Compile Include="Config\EMSoundChangeInducerConfig.cs" />
     <Compile Include="Config\IComponentConfig.cs" />
     <Compile Include="Config\ListSimilarSegmentIdentifierConfig.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="NgramModeling\NgramModel.cs" />
     <Compile Include="NgramModeling\WittenBellSmoother.cs" />
     <Compile Include="Processors\BlairCognateIdentifier.cs" />
+    <Compile Include="Processors\DolgopolskyCognateIdentifier.cs" />
     <Compile Include="Processors\EMSoundChangeInducer.cs" />
     <Compile Include="Processors\ListSimilarSegmentIdentifier.cs" />
     <Compile Include="Processors\MonteCarloSignificanceTest.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Processors\Stemmer.cs" />
     <Compile Include="Processors\UnsupervisedAffixIdentifier.cs" />
     <Compile Include="SoundChangeLhs.cs" />
+    <Compile Include="SoundClass.cs" />
     <Compile Include="Statistics\ConditionalFrequencyDistribution.cs" />
     <Compile Include="Statistics\ConditionalProbabilityDistribution.cs" />
     <Compile Include="Statistics\FrequencyDistribution.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="Statistics\WittenBellProbabilityDistribution.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="SymbolCollection.cs" />
+    <Compile Include="UnnaturalClass.cs" />
     <Compile Include="Variety.cs" />
     <Compile Include="VarietyPair.cs" />
     <Compile Include="VarietyPairCollection.cs" />

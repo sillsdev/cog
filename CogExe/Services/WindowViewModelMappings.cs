@@ -25,7 +25,9 @@ namespace SIL.Cog.Services
 				{typeof(ExportSimilarityMatrixViewModel), typeof(ExportSimilarityMatrixDialog)},
 				{typeof(ExportNetworkGraphViewModel), typeof(ExportNetworkGraphDialog)},
 				{typeof(ExportHierarchicalGraphViewModel), typeof(ExportHierarchicalGraphDialog)},
-				{typeof(EditNaturalClassViewModel), typeof(EditNaturalClassDialog)}
+				{typeof(EditNaturalClassViewModel), typeof(EditNaturalClassDialog)},
+				{typeof(EditUnnaturalClassViewModel), typeof(EditUnnaturalClassDialog)},
+				{typeof(AddUnnaturalClassSegmentViewModel), typeof(AddUnnaturalClassSegmentDialog)}
 			};
 		}
 

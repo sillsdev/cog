@@ -34,7 +34,10 @@
         <DataTemplate DataType="{x:Type vm:ThresholdCognateIdentifierViewModel}">
             <v:ThresholdCognateIdentifierView />
         </DataTemplate>
-    </UserControl.Resources>
+		<DataTemplate DataType="{x:Type vm:DolgopolskyCognateIdentifierViewModel}">
+			<v:DolgopolskyCognateIdentifierView />
+		</DataTemplate>
+	</UserControl.Resources>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Comparison Settings</TextBlock>
         <ScrollViewer VerticalScrollBarVisibility="Auto">

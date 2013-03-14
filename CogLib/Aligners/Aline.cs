@@ -103,10 +103,10 @@ namespace SIL.Cog.Aligners
 			if (varietyPair.SoundChanges != null)
 			{
 				var target = new Ngram(varietyPair.Variety1.Segments[p]);
-				NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
-					constraint.FeatureStruct.IsUnifiable(p.GetPrev(AlignerResult.Filter).Annotation.FeatureStruct));
-				NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
-					constraint.FeatureStruct.IsUnifiable(p.GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
+				SoundClass leftEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
+					constraint.Matches(p.GetPrev(AlignerResult.Filter).Annotation));
+				SoundClass rightEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
+					constraint.Matches(p.GetNext(AlignerResult.Filter).Annotation));
 
 				var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
 				double prob = varietyPair.DefaultCorrespondenceProbability;
@@ -163,10 +163,10 @@ namespace SIL.Cog.Aligners
 				corr = q2 == null ? new Ngram(corrSegment) : new Ngram(corrSegment, varietyPair.Variety2.Segments[q2]);
 			}
 
-			NaturalClass leftEnv = NaturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable((p1 == null ? p2 : p1.GetPrev(AlignerResult.Filter)).Annotation.FeatureStruct));
-			NaturalClass rightEnv = NaturalClasses.FirstOrDefault(constraint =>
-				constraint.FeatureStruct.IsUnifiable((p2 ?? p1).GetNext(AlignerResult.Filter).Annotation.FeatureStruct));
+			SoundClass leftEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
+				constraint.Matches((p1 == null ? p2 : p1.GetPrev(AlignerResult.Filter)).Annotation));
+			SoundClass rightEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
+				constraint.Matches((p2 ?? p1).GetNext(AlignerResult.Filter).Annotation));
 
 			var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
 			IProbabilityDistribution<Ngram> probDist;

@@ -13,7 +13,7 @@ namespace SIL.Cog.Config
 	{
 		public override IAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
-			AlignerSettings settings = LoadSettings(project.FeatureSystem, elem);
+			AlignerSettings settings = LoadSettings(project.Segmenter, project.FeatureSystem, elem);
 			XElement relevantFeaturesElem = elem.Element(ConfigManager.Cog + "RelevantFeatures");
 			Debug.Assert(relevantFeaturesElem != null);
 

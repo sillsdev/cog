@@ -33,12 +33,12 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_modeComboBox}">Alignment mode:</Label>
-		<ComboBox Grid.Column="1" Grid.Row="0" Name="_modeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ModeComboBox}">Alignment mode:</Label>
+		<ComboBox Grid.Column="1" Grid.Row="0" Name="ModeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
 				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Mode}" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding DisableExpansionCompression}">Disable expansion/compression</CheckBox>
-		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=_featuresTreeListView}">Features</Label>
-		<c:TreeListView x:Name="_featuresTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
+		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=FeaturesTreeListView}">Features</Label>
+		<c:TreeListView x:Name="FeaturesTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
 			<c:TreeListView.Columns>
 				<GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}" Width="Auto" />
 				<GridViewColumn Header="Weight" Width="Auto">
@@ -92,35 +92,7 @@
 				<HierarchicalDataTemplate ItemsSource="{Binding Values}" />
 			</c:TreeListView.ItemTemplate>
 		</c:TreeListView>
-		<Label Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=_naturalClassesDataGrid}">Natural classes</Label>
-		<StackPanel Grid.ColumnSpan="2" Grid.Row="5">
-			<Grid>
-				<DataGrid Name="_naturalClassesDataGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" Height="125"
-						  ItemsSource="{Binding NaturalClasses}" SelectedItem="{Binding CurrentNaturalClass}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" />
-						<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" />
-						<DataGridTextColumn Header="Features" Binding="{Binding FeatureStructure}" Width="Auto" />
-					</DataGrid.Columns>
-				</DataGrid>
-				<TextBlock Margin="3,23,3,0" Text="Click New to add a natural class">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding NaturalClasses.Count}" Value="0">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-				</TextBlock>
-			</Grid>
-			<StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
-				<Button Margin="5,5,0,5" Width="70" Command="{Binding RemoveNaturalClassCommand}">Remove</Button>
-				<Button Margin="5,5,0,5" Width="70" Command="{Binding EditNaturalClassCommand}">Edit</Button>
-				<Button Margin="5,5,0,5" Width="70" Command="{Binding NewNaturalClassCommand}">New</Button>
-			</StackPanel>
-		</StackPanel>
+		<Label Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0">Contextual sound classes</Label>
+		<v:SoundClassesView Grid.ColumnSpan="2" Grid.Row="5" DataContext="{Binding SoundClasses}" />
     </Grid>
 </UserControl>

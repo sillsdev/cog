@@ -11,6 +11,31 @@
 			<xs:attribute name="value" type="xs:string" use="required" />
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="NaturalClass">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FeatureValue" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:enumeration value="consonant" />
+						<xs:enumeration value="vowel" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UnnaturalClass">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Segment" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required" />
+			<xs:attribute name="ignoreModifiers" type="xs:boolean" use="optional" default="false" />
+		</xs:complexType>
+	</xs:element>
 	<xs:complexType name="SymbolCollection">
 		<xs:sequence>
 			<xs:element name="Symbol" minOccurs="0" maxOccurs="unbounded">
@@ -43,25 +68,13 @@
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="DisableExpansionCompression" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-			<xs:element name="NaturalClasses" minOccurs="0" maxOccurs="1">
+			<xs:element name="ContextualSoundClasses" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="NaturalClass" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element ref="FeatureValue" minOccurs="0" maxOccurs="unbounded" />
-								</xs:sequence>
-								<xs:attribute name="Name" type="xs:string" use="required" />
-								<xs:attribute name="type">
-									<xs:simpleType>
-										<xs:restriction base="xs:token">
-											<xs:enumeration value="consonant" />
-											<xs:enumeration value="vowel" />
-										</xs:restriction>
-									</xs:simpleType>
-								</xs:attribute>
-							</xs:complexType>
-						</xs:element>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element ref="NaturalClass" />
+							<xs:element ref="UnnaturalClass" />
+						</xs:choice>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -182,6 +195,26 @@
 					<xs:element ref="ApplicableAligner" />
 					<xs:element name="IgnoreRegularInsertionDeletion" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 					<xs:element name="RegularConsonantsAreEqual" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DolgopolskyCognateIdentifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element name="SoundClasses">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:choice minOccurs="1" maxOccurs="unbounded">
+									<xs:element ref="NaturalClass" />
+									<xs:element ref="UnnaturalClass" />
+								</xs:choice>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="InitialEquivalenceThreshold" type="xs:int" />
+					<xs:element ref="ApplicableAligner" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>

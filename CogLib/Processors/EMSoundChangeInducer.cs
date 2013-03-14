@@ -55,10 +55,10 @@ namespace SIL.Cog.Processors
 						var v = possibleLink.Item2.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
 							: new Ngram(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.Segments[node]));
 
-						NaturalClass leftEnv = aligner.NaturalClasses.FirstOrDefault(constraint =>
-							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
-						NaturalClass rightEnv = aligner.NaturalClasses.FirstOrDefault(constraint =>
-							constraint.FeatureStruct.IsUnifiable(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation.FeatureStruct));
+						SoundClass leftEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint =>
+							constraint.Matches(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation));
+						SoundClass rightEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint =>
+							constraint.Matches(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation));
 
 						var lhs = new SoundChangeLhs(leftEnv, u, rightEnv);
 						expectedCounts[lhs].Increment(v);

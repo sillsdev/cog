@@ -33,7 +33,7 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
-			_wordListsGrid.Columns.Clear();
+			WordListsGrid.Columns.Clear();
 			for (int i = 0; i < vm.Senses.Count; i++)
 			{
 				//var geometry = Geometry.Parse("M 0,1 C 1,0 2,2 3,1");
@@ -75,7 +75,7 @@ namespace SIL.Cog.Views
 						SortMemberPath = string.Format("Senses[{0}].StrRep", i)
 					};
 
-				_wordListsGrid.Columns.Add(column);
+				WordListsGrid.Columns.Add(column);
 			}
 		}
 
@@ -102,7 +102,7 @@ namespace SIL.Cog.Views
 					break;
 
 				case "Varieties":
-					_wordListsGrid.Items.Refresh();
+					WordListsGrid.Items.Refresh();
 					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 					break;
 			}
@@ -115,7 +115,7 @@ namespace SIL.Cog.Views
 
 		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			_wordListsGrid.Items.Refresh();
+			WordListsGrid.Items.Refresh();
 		}
 	}
 }

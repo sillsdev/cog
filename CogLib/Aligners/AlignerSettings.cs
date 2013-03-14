@@ -16,7 +16,7 @@ namespace SIL.Cog.Aligners
 	{
 		private AlignerMode _mode;
 		private bool _disableExpansionCompression;
-		private NaturalClass[] _naturalClasses;
+		private SoundClass[] _contextualSoundClasses;
 
 		internal bool ReadOnly { get; set; }
 
@@ -40,13 +40,18 @@ namespace SIL.Cog.Aligners
 			}
 		}
 
-		public IEnumerable<NaturalClass> NaturalClasses
+		public IEnumerable<SoundClass> ContextualSoundClasses
 		{
-			get { return _naturalClasses; }
+			get
+			{
+				if (_contextualSoundClasses == null)
+					return Enumerable.Empty<SoundClass>();
+				return _contextualSoundClasses;
+			}
 			set
 			{
 				CheckReadOnly();
-				_naturalClasses = value == null ? null : value.ToArray();
+				_contextualSoundClasses = value == null ? null : value.ToArray();
 			}
 		}
 

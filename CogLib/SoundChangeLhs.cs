@@ -4,33 +4,33 @@ namespace SIL.Cog
 {
 	public class SoundChangeLhs : IEquatable<SoundChangeLhs>
 	{
-		private readonly NaturalClass _leftEnv;
+		private readonly SoundClass _leftEnv;
 		private readonly Ngram _target;
-		private readonly NaturalClass _rightEnv;
+		private readonly SoundClass _rightEnv;
 
 		public SoundChangeLhs(Ngram target)
 			: this(null, target, null)
 		{
 		}
 
-		public SoundChangeLhs(NaturalClass leftEnv, Ngram target)
+		public SoundChangeLhs(SoundClass leftEnv, Ngram target)
 			: this(leftEnv, target, null)
 		{
 		}
 
-		public SoundChangeLhs(Ngram target, NaturalClass rightEnv)
+		public SoundChangeLhs(Ngram target, SoundClass rightEnv)
 			: this(null, target, rightEnv)
 		{
 		}
 
-		public SoundChangeLhs(NaturalClass leftEnv, Ngram target, NaturalClass rightEnv)
+		public SoundChangeLhs(SoundClass leftEnv, Ngram target, SoundClass rightEnv)
 		{
 			_leftEnv = leftEnv;
 			_target = target;
 			_rightEnv = rightEnv;
 		}
 
-		public NaturalClass LeftEnvironment
+		public SoundClass LeftEnvironment
 		{
 			get { return _leftEnv; }
 		}
@@ -40,7 +40,7 @@ namespace SIL.Cog
 			get { return _target; }
 		}
 
-		public NaturalClass RightEnvironment
+		public SoundClass RightEnvironment
 		{
 			get { return _rightEnv; }
 		}
@@ -73,12 +73,11 @@ namespace SIL.Cog
 			string targetStr = _target.ToString();
 			if (_leftEnv != null && _rightEnv != null)
 				return string.Format("{0} -> ? / [{1}] _ [{2}]", targetStr, _leftEnv.Name, _rightEnv.Name);
-			if (_leftEnv == null && _rightEnv == null)
-				return string.Format("{0} -> ?", targetStr);
-			if (_leftEnv == null)
+			if (_leftEnv != null && _rightEnv == null)
+				return string.Format("{0} -> ? / [{1}] _", targetStr, _leftEnv.Name);
+			if (_leftEnv == null && _rightEnv != null)
 				return string.Format("{0} -> ? / _ [{1}]", targetStr, _rightEnv.Name);
-
-			return string.Format("{0} -> ? / [{1}] _", targetStr, _leftEnv.Name);
+			return string.Format("{0} -> ?", targetStr);
 		}
 	}
 }

@@ -29,13 +29,22 @@ namespace SIL.Cog.ViewModels
 			{
 				cognateIdentifierVM = new ComponentOptionsViewModel("Likely cognate identification", "Method", Project, 0,
 					new BlairCognateIdentifierViewModel(_dialogService, _importService, Project, (BlairCognateIdentifier) cognateIdentifier),
-					new ThresholdCognateIdentifierViewModel(Project));
+					new ThresholdCognateIdentifierViewModel(Project),
+					new DolgopolskyCognateIdentifierViewModel(_dialogService, Project));
 			}
 			else if (cognateIdentifier is ThresholdCognateIdentifier)
 			{
 				cognateIdentifierVM = new ComponentOptionsViewModel("Likely cognate identification", "Method", Project, 1,
 					new BlairCognateIdentifierViewModel(_dialogService, _importService, Project),
-					new ThresholdCognateIdentifierViewModel(Project, (ThresholdCognateIdentifier) cognateIdentifier));
+					new ThresholdCognateIdentifierViewModel(Project, (ThresholdCognateIdentifier) cognateIdentifier),
+					new DolgopolskyCognateIdentifierViewModel(_dialogService, Project));
+			}
+			else if (cognateIdentifier is DolgopolskyCognateIdentifier)
+			{
+				cognateIdentifierVM = new ComponentOptionsViewModel("Likely cognate identification", "Method", Project, 2,
+					new BlairCognateIdentifierViewModel(_dialogService, _importService, Project),
+					new ThresholdCognateIdentifierViewModel(Project),
+					new DolgopolskyCognateIdentifierViewModel(_dialogService, Project, (DolgopolskyCognateIdentifier) cognateIdentifier));
 			}
 			Debug.Assert(cognateIdentifierVM != null);
 			Components.Add(cognateIdentifierVM);

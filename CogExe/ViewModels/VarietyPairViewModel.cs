@@ -25,7 +25,6 @@ namespace SIL.Cog.ViewModels
 
 			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
 
-			IAligner aligner = _project.Aligners["primary"];
 			var cfd = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
 			foreach (WordPairViewModel wordPair in _wordPairs)
 			{
@@ -80,9 +79,9 @@ namespace SIL.Cog.ViewModels
 			IAligner aligner = _project.Aligners["primary"];
 			Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
 			ShapeNode leftCtxt = node.Annotation1.Span.Start.GetPrev(n => n.Type().IsOneOf(CogFeatureSystem.AnchorType, CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType));
-			NaturalClass leftEnv = aligner.NaturalClasses.FirstOrDefault(constraint => constraint.FeatureStruct.IsUnifiable(leftCtxt.Annotation.FeatureStruct));
+			SoundClass leftEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint => constraint.Matches(leftCtxt.Annotation));
 			ShapeNode rightCtxt = node.Annotation1.Span.End.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.AnchorType, CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType));
-			NaturalClass rightEnv = aligner.NaturalClasses.FirstOrDefault(constraint => constraint.FeatureStruct.IsUnifiable(rightCtxt.Annotation.FeatureStruct));
+			SoundClass rightEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint => constraint.Matches(rightCtxt.Annotation));
 			return new SoundChangeLhs(leftEnv, nseg1, rightEnv);
 		}
 

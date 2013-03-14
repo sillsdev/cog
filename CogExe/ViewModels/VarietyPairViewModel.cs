@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
-using SIL.Cog.Statistics;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -25,19 +24,8 @@ namespace SIL.Cog.ViewModels
 
 			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
 
-			var cfd = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
-			foreach (WordPairViewModel wordPair in _wordPairs)
-			{
-				foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
-				{
-					SoundChangeLhs lhs = GetLhs(node);
-					Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
-					cfd[lhs].Increment(corr);
-				}
-			}
-
-			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChanges.Conditions.SelectMany(lhs => _varietyPair.SoundChanges[lhs].Samples,
-				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChanges[lhs][segment], cfd[lhs][segment])).ToList());
+			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
+				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeCounts[lhs][segment])).ToList());
 
 			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
 		}
@@ -49,10 +37,10 @@ namespace SIL.Cog.ViewModels
 			{
 				Set("CurrentCorrespondence", ref _currentCorrespondence, value);
 				_selectedWordPairs.Clear();
-				foreach (WordPairViewModel word in _wordPairs)
+				foreach (WordPairViewModel wordPair in _wordPairs.Where(wp => wp.AreCognate))
 				{
 					bool selected = false;
-					foreach (AlignedNodeViewModel node in word.AlignedNodes)
+					foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
 					{
 						if (_currentCorrespondence == null)
 						{
@@ -69,7 +57,7 @@ namespace SIL.Cog.ViewModels
 					}
 
 					if (selected)
-						_selectedWordPairs.Add(word);
+						_selectedWordPairs.Add(wordPair);
 				}
 			}
 		}

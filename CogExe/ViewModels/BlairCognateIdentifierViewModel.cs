@@ -6,7 +6,6 @@ namespace SIL.Cog.ViewModels
 {
 	public class BlairCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
-		private double _alignmentThreshold;
 		private bool _ignoreRegularInsertionDeletion;
 		private bool _regularConsEqual;
 		private readonly ComponentOptionsViewModel _similarSegments;
@@ -14,7 +13,6 @@ namespace SIL.Cog.ViewModels
 		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project)
 			: base("Blair", project)
 		{
-			_alignmentThreshold = 0.3;
 			_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 0,
 				new ThresholdSimilarSegmentIdentifierViewModel(Project), new ListSimilarSegmentIdentifierViewModel(dialogService, importService, Project));
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
@@ -23,7 +21,6 @@ namespace SIL.Cog.ViewModels
 		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project, BlairCognateIdentifier cognateIdentifier)
 			: base("Blair", project)
 		{
-			_alignmentThreshold = cognateIdentifier.AlignmentThreshold;
 			_ignoreRegularInsertionDeletion = cognateIdentifier.IgnoreRegularInsertionDeletion;
 			_regularConsEqual = cognateIdentifier.RegularConsonantEqual;
 
@@ -48,16 +45,6 @@ namespace SIL.Cog.ViewModels
 		{
 			base.AcceptChanges();
 			_similarSegments.AcceptChanges();
-		}
-
-		public double AlignmentThreshold
-		{
-			get { return _alignmentThreshold; }
-			set
-			{
-				Set(() => AlignmentThreshold, ref _alignmentThreshold, value);
-				IsChanged = true;
-			}
 		}
 
 		public bool IgnoreRegularInsertionDeletion
@@ -88,7 +75,7 @@ namespace SIL.Cog.ViewModels
 		public override void UpdateComponent()
 		{
 			_similarSegments.UpdateComponent();
-			Project.VarietyPairProcessors["cognateIdentifier"] = new BlairCognateIdentifier(Project, _alignmentThreshold,
+			Project.VarietyPairProcessors["cognateIdentifier"] = new BlairCognateIdentifier(Project,
 				_ignoreRegularInsertionDeletion, _regularConsEqual, "primary");
 		}
 	}

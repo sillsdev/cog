@@ -4,27 +4,27 @@ namespace SIL.Cog.ViewModels
 {
 	public class EMSoundChangeInducerViewModel : ComponentSettingsViewModelBase
 	{
-		private double _alignmentThreshold;
+		private double _initialAlignmentThreshold;
 
 		public EMSoundChangeInducerViewModel(CogProject project, EMSoundChangeInducer soundChangeInducer)
 			: base("Sound correspondence induction", project)
 		{
-			_alignmentThreshold = soundChangeInducer.AlignmentThreshold;
+			_initialAlignmentThreshold = soundChangeInducer.InitialAlignmentThreshold;
 		}
 
-		public double AlignmentThreshold
+		public double InitialAlignmentThreshold
 		{
-			get { return _alignmentThreshold; }
+			get { return _initialAlignmentThreshold; }
 			set
 			{
-				Set(() => AlignmentThreshold, ref _alignmentThreshold, value);
+				Set(() => InitialAlignmentThreshold, ref _initialAlignmentThreshold, value);
 				IsChanged = true;
 			}
 		}
 
 		public override void UpdateComponent()
 		{
-			Project.VarietyPairProcessors["soundChangeInducer"] = new EMSoundChangeInducer(Project, _alignmentThreshold, "primary");
+			Project.VarietyPairProcessors["soundChangeInducer"] = new EMSoundChangeInducer(Project, _initialAlignmentThreshold, "primary", "cognateIdentifier");
 		}
 	}
 }

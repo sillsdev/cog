@@ -141,8 +141,13 @@
 		<xs:complexContent>
 			<xs:extension base="VarietyPairProcessorBase">
 				<xs:sequence>
-					<xs:element name="AlignmentThreshold" type="xs:double" />
+					<xs:element name="InitialAlignmentThreshold" type="xs:double" />
 					<xs:element ref="ApplicableAligner" />
+					<xs:element name="CognateIdentifier">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:string" use="required" />
+						</xs:complexType>
+					</xs:element>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -191,7 +196,6 @@
 		<xs:complexContent>
 			<xs:extension base="VarietyPairProcessorBase">
 				<xs:sequence>
-					<xs:element name="AlignmentThreshold" type="xs:double" />
 					<xs:element ref="ApplicableAligner" />
 					<xs:element name="IgnoreRegularInsertionDeletion" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 					<xs:element name="RegularConsonantsAreEqual" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -379,6 +383,14 @@
 		</xs:key>
 		<xs:keyref name="AlignerKeyRef" refer="AlignerKey">
 			<xs:selector xpath="ApplicableAligner" />
+			<xs:field xpath="@ref" />
+		</xs:keyref>
+		<xs:key name="CognateIdentifierKey">
+			<xs:selector xpath="VarietyPairProcessor" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:keyref name="CognateIdentifierKeyRef" refer="CognateIdentifierKey">
+			<xs:selector xpath="CognateIdentifier" />
 			<xs:field xpath="@ref" />
 		</xs:keyref>
 		<xs:keyref name="RelevantFeatureKeyRef" refer="FeatureKey">

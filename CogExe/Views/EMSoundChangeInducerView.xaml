@@ -16,7 +16,7 @@
             <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Target="{Binding ElementName=_thresholdSlider}">Alignment threshold:</Label>
-		<c:PercentageSlider HorizontalAlignment="Left" x:Name="_thresholdSlider" Grid.Column="1" Value="{Binding AlignmentThreshold}" Width="250" />
+        <Label Grid.Column="0" Target="{Binding ElementName=ThresholdSlider}">Initial alignment threshold:</Label>
+		<c:PercentageSlider HorizontalAlignment="Left" x:Name="ThresholdSlider" Grid.Column="1" Value="{Binding InitialAlignmentThreshold}" Width="250" />
     </Grid>
 </UserControl>

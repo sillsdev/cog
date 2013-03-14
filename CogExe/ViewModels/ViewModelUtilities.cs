@@ -6,6 +6,7 @@ using System.Text;
 using GraphSharp;
 using QuickGraph;
 using SIL.Cog.Clusterers;
+using SIL.Cog.Processors;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
@@ -147,6 +148,16 @@ namespace SIL.Cog.ViewModels
 			}
 			sb.Append("]");
 			return sb.ToString();
+		}
+
+		public static IEnumerable<IProcessor<VarietyPair>> GetVarietyPairProcessors(CogProject project)
+		{
+			var processors = new List<IProcessor<VarietyPair>> {new WordPairGenerator(project, "primary")};
+			IProcessor<VarietyPair> similarSegmentIdentifier;
+			if (project.VarietyPairProcessors.TryGetValue("similarSegmentIdentifier", out similarSegmentIdentifier))
+				processors.Add(similarSegmentIdentifier);
+			processors.Add(project.VarietyPairProcessors["soundChangeInducer"]);
+			return processors;
 		}
 	}
 }

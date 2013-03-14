@@ -74,14 +74,8 @@ namespace SIL.Cog.ViewModels
 			ResetVarieties();
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);
-			var processors = new []
-				{
-					new WordPairGenerator(_project, "primary"),
-					_project.VarietyPairProcessors["soundChangeInducer"],
-					_project.VarietyPairProcessors["similarSegmentIdentifier"],
-					_project.VarietyPairProcessors["cognateIdentifier"]
-				};
-			var pipeline = new MultiThreadedPipeline<VarietyPair>(processors);
+
+			var pipeline = new MultiThreadedPipeline<VarietyPair>(ViewModelUtilities.GetVarietyPairProcessors(_project));
 
 			var progressVM = new ProgressViewModel(() => pipeline.Process(_project.VarietyPairs)) {Text = "Comparing all variety pairs..."};
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;

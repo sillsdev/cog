@@ -8,24 +8,31 @@ namespace SIL.Cog.Processors
 {
 	public class EMSoundChangeInducer : ProcessorBase<VarietyPair>
 	{
-		private readonly double _alignmentThreshold;
+		private readonly double _initialAlignmentThreshold;
 		private readonly string _alignerID;
+		private readonly string _cognateIdentifierID;
 
-		public EMSoundChangeInducer(CogProject project, double alignmentThreshold, string alignerID)
+		public EMSoundChangeInducer(CogProject project, double initialAlignmentThreshold, string alignerID, string cognateIdentifierID)
 			: base(project)
 		{
-			_alignmentThreshold = alignmentThreshold;
+			_initialAlignmentThreshold = initialAlignmentThreshold;
 			_alignerID = alignerID;
+			_cognateIdentifierID = cognateIdentifierID;
 		}
 
-		public double AlignmentThreshold
+		public double InitialAlignmentThreshold
 		{
-			get { return _alignmentThreshold; }
+			get { return _initialAlignmentThreshold; }
 		}
 
 		public string AlignerID
 		{
 			get { return _alignerID; }
+		}
+
+		public string CognateIdentifierID
+		{
+			get { return _cognateIdentifierID; }
 		}
 
 		public override void Process(VarietyPair varietyPair)
@@ -40,13 +47,19 @@ namespace SIL.Cog.Processors
 
 		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> E(VarietyPair pair)
 		{
+			if (pair.SoundChangeProbabilityDistribution != null)
+			{
+				IProcessor<VarietyPair> cognateIdentifier = Project.VarietyPairProcessors[_cognateIdentifierID];
+				cognateIdentifier.Process(pair);
+			}
+
 			var expectedCounts = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
 			IAligner aligner = Project.Aligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
 				IAlignerResult alignerResult = aligner.Compute(wordPair);
 				Alignment alignment = alignerResult.GetAlignments().First();
-				if (alignment.Score >= _alignmentThreshold)
+				if ((pair.SoundChangeProbabilityDistribution == null && alignment.Score >= _initialAlignmentThreshold) || (pair.SoundChangeProbabilityDistribution != null && wordPair.AreCognatePredicted))
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
@@ -76,7 +89,7 @@ namespace SIL.Cog.Processors
 			var cpd = new ConditionalProbabilityDistribution<SoundChangeLhs, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
 
 			bool converged = true;
-			if (pair.SoundChanges == null || pair.SoundChanges.Conditions.Count != cpd.Conditions.Count)
+			if (pair.SoundChangeProbabilityDistribution == null || pair.SoundChangeProbabilityDistribution.Conditions.Count != cpd.Conditions.Count)
 			{
 				converged = false;
 			}
@@ -86,7 +99,7 @@ namespace SIL.Cog.Processors
 				{
 					IProbabilityDistribution<Ngram> probDist = cpd[lhs];
 					IProbabilityDistribution<Ngram> oldProbDist;
-					if (!pair.SoundChanges.TryGetProbabilityDistribution(lhs, out oldProbDist) || probDist.Samples.Count != oldProbDist.Samples.Count)
+					if (!pair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out oldProbDist) || probDist.Samples.Count != oldProbDist.Samples.Count)
 					{
 						converged = false;
 						break;
@@ -105,8 +118,14 @@ namespace SIL.Cog.Processors
 						break;
 				}
 			}
-			pair.SoundChanges = cpd;
-			pair.DefaultCorrespondenceProbability = 1.0 / possCorrCount;
+
+			if (!converged)
+			{
+				pair.SoundChangeCounts = expectedCounts;
+				pair.SoundChangeProbabilityDistribution = cpd;
+				pair.DefaultCorrespondenceProbability = 1.0 / possCorrCount;
+			}
+
 			return converged;
 		}
 	}

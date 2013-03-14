@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SIL.Cog.Statistics;
 using SIL.Collections;
 
 namespace SIL.Cog
@@ -8,7 +9,8 @@ namespace SIL.Cog
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly WordPairCollection _wordPairs; 
-		private IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> _soundChanges;
+		private IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> _soundChangeProbabilityDistribution;
+		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> _soundChangeCounts;
 		private readonly Dictionary<Segment, HashSet<Segment>> _similarSegments;
 		private double _defaultCorrProb;
 		private double _phoneticSimilarityScore;
@@ -101,13 +103,23 @@ namespace SIL.Cog
 			}
 		}
 
-		public IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> SoundChanges
+		public IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> SoundChangeProbabilityDistribution
 		{
-			get { return _soundChanges; }
+			get { return _soundChangeProbabilityDistribution; }
 			set
 			{
-				_soundChanges = value;
-				OnPropertyChanged("SoundChanges");
+				_soundChangeProbabilityDistribution = value;
+				OnPropertyChanged("SoundChangeProbabilityDistribution");
+			}
+		}
+
+		public ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> SoundChangeCounts
+		{
+			get { return _soundChangeCounts; }
+			set
+			{
+				_soundChangeCounts = value;
+				OnPropertyChanged("SoundChangeCounts");
 			}
 		}
 

@@ -47,14 +47,8 @@ namespace SIL.Cog.ViewModels
 
 			var pair = new VarietyPair(_currentVariety1.ModelVariety, _currentVariety2.ModelVariety);
 			_project.VarietyPairs.Add(pair);
-			var processors = new []
-				{
-					new WordPairGenerator(_project, "primary"),
-					_project.VarietyPairProcessors["soundChangeInducer"],
-					_project.VarietyPairProcessors["similarSegmentIdentifier"],
-					_project.VarietyPairProcessors["cognateIdentifier"]
-				};
-			var pipeline = new Pipeline<VarietyPair>(processors);
+
+			var pipeline = new Pipeline<VarietyPair>(ViewModelUtilities.GetVarietyPairProcessors(_project));
 			_progressService.ShowProgress(this, () => pipeline.Process(pair.ToEnumerable()));
 			SetCurrentVarietyPair();
 		}

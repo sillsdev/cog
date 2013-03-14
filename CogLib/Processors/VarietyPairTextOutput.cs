@@ -35,9 +35,9 @@ namespace SIL.Cog.Processors
 				writer.WriteLine();
 
 				var sb = new StringBuilder();
-				foreach (SoundChangeLhs lhs in varietyPair.SoundChanges.Conditions)
+				foreach (SoundChangeLhs lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
 				{
-					IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChanges[lhs];
+					IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
 					sb.AppendLine(lhs.ToString());
 					sb.AppendLine("Segment\tProb");
 					foreach (var correspondence in probDist.Samples.Select(corr => new {Segment = corr, Probability = probDist[corr]}).OrderByDescending(corr => corr.Probability))

@@ -25,13 +25,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_thresholdSlider}">Alignment threshold:</Label>
-		<c:PercentageSlider HorizontalAlignment="Left" x:Name="_thresholdSlider" Grid.Column="1" Grid.Row="0" Value="{Binding AlignmentThreshold}" Width="250" />
-        <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding IgnoreRegularInsertionDeletion}">Ignore regular insertions/deletions</CheckBox>
-        <CheckBox Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding RegularConsonantsEqual}">Regular consonants are category 1</CheckBox>
-        <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarSegments}" Header="{Binding DisplayName}">
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="0" IsChecked="{Binding IgnoreRegularInsertionDeletion}">Ignore regular insertions/deletions</CheckBox>
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding RegularConsonantsEqual}">Regular consonants are category 1</CheckBox>
+        <GroupBox Grid.Row="2" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarSegments}" Header="{Binding DisplayName}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
@@ -41,8 +38,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_typeComboBox}" Margin="0,3,5,5" Padding="0,0,0,5" Content="{Binding OptionDisplayName}" ContentStringFormat="{}{0}:" />
-                <ComboBox Grid.Column="1" Grid.Row="0" Name="_typeComboBox" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding CurrentOption}" DisplayMemberPath="DisplayName" />
+                <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=TypeComboBox}" Margin="0,3,5,5" Padding="0,0,0,5" Content="{Binding OptionDisplayName}" ContentStringFormat="{}{0}:" />
+                <ComboBox Grid.Column="1" Grid.Row="0" Name="TypeComboBox" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding CurrentOption}" DisplayMemberPath="DisplayName" />
                 <ContentPresenter Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding CurrentOption}">
                     <ContentPresenter.Resources>
                         <DataTemplate DataType="{x:Type vm:ListSimilarSegmentIdentifierViewModel}">

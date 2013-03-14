@@ -185,10 +185,22 @@
 
 	<Style TargetType="DataGridCell">
 		<Style.Triggers>
-			<Trigger Property="IsMouseOver" Value="True" >
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="Cell" />
+					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+				</MultiDataTrigger.Conditions>
 				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
 				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
-			</Trigger>
+			</MultiDataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+			</MultiDataTrigger>
 			<Trigger Property="IsSelected" Value="True">
 				<Setter Property="Foreground" Value="Black" />
 				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />

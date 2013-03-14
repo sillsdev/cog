@@ -61,6 +61,7 @@ namespace SIL.Cog.ViewModels
 
 		public override void UpdateComponent()
 		{
+			Project.VarietyPairProcessors.Remove("similarSegmentIdentifier");
 			Project.VarietyPairProcessors["cognateIdentifier"] = new DolgopolskyCognateIdentifier(Project, _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass),
 				_initialEquivalenceThreshold, "primary");
 		}

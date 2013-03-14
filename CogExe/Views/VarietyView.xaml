@@ -56,17 +56,34 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Background="{StaticResource ControlPanelBackgroundBrush}">
-					<StackPanel.Resources>
-						<Style TargetType="Button">
-							<Setter Property="Margin" Value="5,5,0,5" />
-							<Setter Property="Width" Value="70" />
+				<Border Background="{StaticResource ControlPanelBackgroundBrush}">
+					<Border.Resources>
+						<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+							<Setter Property="Margin" Value="0,3,5,3" />
+							<Setter Property="Padding" Value="3" />
 						</Style>
-					</StackPanel.Resources>
-                    <Button Command="{Binding RemoveAffixCommand}">Remove</Button>
-					<Button Command="{Binding EditAffixCommand}">Edit</Button>
-                    <Button Command="{Binding NewAffixCommand}">New</Button>
-                </StackPanel>
+					</Border.Resources>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+						<Button Command="{Binding NewAffixCommand}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="..\Images\add-icon.png" />
+								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+							</StackPanel>
+						</Button>
+						<Button Command="{Binding EditAffixCommand}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="..\Images\edit-icon.png" />
+								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
+							</StackPanel>
+						</Button>
+						<Button Command="{Binding RemoveAffixCommand}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="..\Images\delete-icon.png" />
+								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
+							</StackPanel>
+						</Button>
+					</StackPanel>
+				</Border>
             </StackPanel>
         </HeaderedContentControl>
         <Grid>

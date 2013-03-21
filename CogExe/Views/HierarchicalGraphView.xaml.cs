@@ -14,7 +14,7 @@ namespace SIL.Cog.Views
 
 		private void _graphLayout_OnLayoutFinished(object sender, EventArgs e)
 		{
-			_zoomControl.ZoomToFill();
+			ZoomControl.ZoomToFill();
 		}
 	}
 }

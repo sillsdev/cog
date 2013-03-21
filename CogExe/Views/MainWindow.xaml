@@ -101,7 +101,10 @@
                                             <DataTemplate DataType="{x:Type vm:NetworkGraphViewModel}">
                                                 <v:NetworkGraphView />
                                             </DataTemplate>
-                                        </ContentPresenter.Resources>
+											<DataTemplate DataType="{x:Type vm:GeographicalViewModel}">
+												<v:GeographicalView />
+											</DataTemplate>
+										</ContentPresenter.Resources>
                                     </ContentPresenter>
                                 </DockPanel>
                             </DataTemplate>

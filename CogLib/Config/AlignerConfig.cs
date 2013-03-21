@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Linq;
+using System.Xml.Linq;
 using SIL.Cog.Aligners;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -62,7 +63,7 @@ namespace SIL.Cog.Config
 			}
 			elem.Add(new XElement(ConfigManager.Cog + "Mode", modeStr));
 			elem.Add(new XElement(ConfigManager.Cog + "DisableExpansionCompression", settings.DisableExpansionCompression));
-			if (settings.ContextualSoundClasses != null)
+			if (settings.ContextualSoundClasses.Any())
 			{
 				elem.Add(new XElement(ConfigManager.Cog + "ContextualSoundClasses", ConfigManager.SaveSoundClasses(settings.ContextualSoundClasses)));
 			}

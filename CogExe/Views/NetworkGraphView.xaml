@@ -3,17 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:c="clr-namespace:SIL.Cog.Controls"
              xmlns:fdp="clr-namespace:GraphSharp.Algorithms.Layout.Simple.FDP;assembly=GraphSharp" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<zoom:ZoomControl Name="ZoomControl" Grid.Row="0" ZoomBoxOpacity="0.5">
+		<c:ZoomControl x:Name="ZoomControl" ZoomBoxOpacity="0.25">
 			<c:NetworkGraphLayout x:Name="GraphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple"
 								  SimilarityScoreFilter="{Binding SimilarityScoreFilter}" LayoutFinished="GraphLayout_OnLayoutFinished" Background="White">
 				<c:NetworkGraphLayout.Resources>
@@ -27,8 +22,8 @@
 					<c:NetworkGraphHighlightParameters />
 				</c:NetworkGraphLayout.HighlightParameters>
 			</c:NetworkGraphLayout>
-		</zoom:ZoomControl>
-		<Border Grid.Row="1" HorizontalAlignment="Center" Background="{StaticResource ControlPanelBackgroundBrush}" CornerRadius="5">
+		</c:ZoomControl>
+		<Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="{StaticResource OverlayBackgroundBrush}" CornerRadius="5" Margin="10">
 			<Grid Margin="5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />

@@ -3,8 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-			 xmlns:extbehaviour="clr-namespace:WPFExtensions.AttachedBehaviours;assembly=WPFExtensions"
-             xmlns:c="clr-namespace:SIL.Cog.Controls"
+             xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:v="clr-namespace:SIL.Cog.Views"
              mc:Ignorable="d" StartupUri="Views\MainWindow.xaml"
              x:Class="SIL.Cog.App">
     <Application.Resources>
@@ -50,6 +49,10 @@
 			<SolidColorBrush x:Key="ContextMenuBackgroundBrush" Color="#FFD2E8FD" />
 			<SolidColorBrush x:Key="ContextMenuBorderBrush" Color="#FFA9B4BF" />
 			<SolidColorBrush x:Key="ContextMenuHighlightedBrush" Color="#FF98C0EB" />
+			<LinearGradientBrush x:Key="OverlayControlPanelBackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+				<GradientStop Color="#8896BFEB" Offset="1"/>
+				<GradientStop Color="#88B5D2F0" Offset="0"/>
+			</LinearGradientBrush>
 			
 			<Style x:Key="MainWindowStyle" TargetType="Window">
 				<Setter Property="Background" Value="{StaticResource MainWindowBrush}" />
@@ -399,7 +402,7 @@
 						</ControlTemplate>
 					</Setter.Value>
 				</Setter>
-				<Setter Property="extbehaviour:DragBehaviour.IsDragEnabled" Value="False" />
+				<Setter Property="v:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
 				<!--Setter Property="BorderThickness" Value="0" /-->
 				<Style.Triggers>
 					<DataTrigger Binding="{Binding IsCluster}" Value="True">
@@ -465,7 +468,7 @@
 			
 			<Style x:Key="NetworkVertexControlStyle" TargetType="gsc:VertexControl">
 				<Setter Property="Foreground" Value="Black" />
-				<Setter Property="extbehaviour:DragBehaviour.IsDragEnabled" Value="False" />
+				<Setter Property="v:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
 				<Style.Triggers>
 					<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
 						<Setter Property="BorderBrush" Value="Orange" />

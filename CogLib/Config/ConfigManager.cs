@@ -158,55 +158,74 @@ namespace SIL.Cog.Config
 			{
 				var variety = new Variety((string) varietyElem.Attribute("name"));
 				XElement wordsElem = varietyElem.Element(Cog + "Words");
-				Debug.Assert(wordsElem != null);
-				foreach (XElement wordElem in wordsElem.Elements(Cog + "Word"))
+				if (wordsElem != null)
 				{
-					Sense sense;
-					if (senses.TryGetValue((string) wordElem.Attribute("sense"), out sense))
+					foreach (XElement wordElem in wordsElem.Elements(Cog + "Word"))
 					{
-						var sb = new StringBuilder();
-						string prefix = null;
-						XElement prefixElem = wordElem.Element(Cog + "Prefix");
-						if (prefixElem != null)
+						Sense sense;
+						if (senses.TryGetValue((string) wordElem.Attribute("sense"), out sense))
 						{
-							prefix = ((string) prefixElem).Trim();
-							sb.Append(prefix);
+							var sb = new StringBuilder();
+							string prefix = null;
+							XElement prefixElem = wordElem.Element(Cog + "Prefix");
+							if (prefixElem != null)
+							{
+								prefix = ((string) prefixElem).Trim();
+								sb.Append(prefix);
+							}
+							var stem = ((string) wordElem.Element(Cog + "Stem")).Trim();
+							sb.Append(stem);
+							string suffix = null;
+							XElement suffixElem = wordElem.Element(Cog + "Suffix");
+							if (suffixElem != null)
+							{
+								suffix = ((string) suffixElem).Trim();
+								sb.Append(suffix);
+							}
+							Shape shape;
+							if (!project.Segmenter.ToShape(prefix, stem, suffix, out shape))
+								shape = project.Segmenter.EmptyShape;
+							variety.Words.Add(new Word(sb.ToString(), shape, sense));
 						}
-						var stem = ((string) wordElem.Element(Cog + "Stem")).Trim();
-						sb.Append(stem);
-						string suffix = null;
-						XElement suffixElem = wordElem.Element(Cog + "Suffix");
-						if (suffixElem != null)
-						{
-							suffix = ((string) suffixElem).Trim();
-							sb.Append(suffix);
-						}
-						Shape shape;
-						if (!project.Segmenter.ToShape(prefix, stem, suffix, out shape))
-							shape = project.Segmenter.EmptyShape;
-						variety.Words.Add(new Word(sb.ToString(), shape, sense));
 					}
 				}
 				XElement affixesElem = varietyElem.Element(Cog + "Affixes");
-				Debug.Assert(affixesElem != null);
-				foreach (XElement affixElem in affixesElem.Elements(Cog + "Affix"))
+				if (affixesElem != null)
 				{
-					var type = AffixType.Prefix;
-					switch ((string) affixElem.Attribute("type"))
+					foreach (XElement affixElem in affixesElem.Elements(Cog + "Affix"))
 					{
-						case "prefix":
-							type = AffixType.Prefix;
-							break;
-						case "suffix":
-							type = AffixType.Suffix;
-							break;
-					}
+						var type = AffixType.Prefix;
+						switch ((string) affixElem.Attribute("type"))
+						{
+							case "prefix":
+								type = AffixType.Prefix;
+								break;
+							case "suffix":
+								type = AffixType.Suffix;
+								break;
+						}
 
-					var affixStr = ((string) affixElem).Trim();
-					Shape shape;
-					if (!project.Segmenter.ToShape(affixStr, out shape))
-						shape = project.Segmenter.EmptyShape;
-					variety.Affixes.Add(new Affix(affixStr, type, shape, (string) affixElem.Attribute("category")));
+						var affixStr = ((string) affixElem).Trim();
+						Shape shape;
+						if (!project.Segmenter.ToShape(affixStr, out shape))
+							shape = project.Segmenter.EmptyShape;
+						variety.Affixes.Add(new Affix(affixStr, type, shape, (string) affixElem.Attribute("category")));
+					}
+				}
+				XElement regionsElem = varietyElem.Element(Cog + "Regions");
+				if (regionsElem != null)
+				{
+					foreach (XElement regionElem in regionsElem.Elements(Cog + "Region"))
+					{
+						var region = new GeographicRegion {Description = (string) regionElem.Element(Cog + "Description")};
+						foreach (XElement coordinateElem in regionElem.Elements(Cog + "Coordinates").Elements(Cog + "Coordinate"))
+						{
+							double latitude = double.Parse((string) coordinateElem.Element(Cog + "Latitude"));
+							double longitude = double.Parse((string) coordinateElem.Element(Cog + "Longitude"));
+							region.Coordinates.Add(new GeographicCoordinate(latitude, longitude));
+						}
+						variety.Regions.Add(region);
+					}
 				}
 				project.Varieties.Add(variety);
 			}
@@ -290,15 +309,25 @@ namespace SIL.Cog.Config
 			root.Add(sensesElem);
 
 			root.Add(new XElement(Cog + "Varieties",
-				project.Varieties.Select(variety => new XElement(Cog + "Variety", new XAttribute("name", variety.Name),
-					new XElement(Cog + "Words", variety.Words.Select(word => SaveWord(word, senseIds[word.Sense]))),
-					new XElement(Cog + "Affixes", variety.Affixes.Select(SaveAffix))))));
+				project.Varieties.Select(variety => SaveVariety(senseIds, variety))));
 
 			root.Add(new XElement(Cog + "ProjectProcessors", project.ProjectProcessors.Select(kvp => SaveComponent("ProjectProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement(Cog + "VarietyProcessors", project.VarietyProcessors.Select(kvp => SaveComponent("VarietyProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement(Cog + "VarietyPairProcessors", project.VarietyPairProcessors.Select(kvp => SaveComponent("VarietyPairProcessor", kvp.Key, kvp.Value))));
 
 			root.Save(configFilePath);
+		}
+
+		private static XElement SaveVariety(Dictionary<Sense, string> senseIds, Variety variety)
+		{
+			var varietyElem = new XElement(Cog + "Variety", new XAttribute("name", variety.Name));
+			if (variety.Words.Count > 0)
+				varietyElem.Add(new XElement(Cog + "Words", variety.Words.Select(word => SaveWord(word, senseIds[word.Sense]))));
+			if (variety.Affixes.Count > 0)
+				varietyElem.Add(new XElement(Cog + "Affixes", variety.Affixes.Select(SaveAffix)));
+			if (variety.Regions.Count > 0)
+				varietyElem.Add(new XElement(Cog + "Regions", variety.Regions.Select(SaveRegion)));
+			return varietyElem;
 		}
 
 		private static IEnumerable<XElement> SaveSymbols(IEnumerable<Symbol> symbols)
@@ -345,6 +374,16 @@ namespace SIL.Cog.Config
 				affixElem.Add(new XAttribute("category", affix.Category));
 			affixElem.Add(affix.StrRep);
 			return affixElem;
+		}
+
+		private static XElement SaveRegion(GeographicRegion region)
+		{
+			var regionElem = new XElement(Cog + "Region");
+			if (!string.IsNullOrEmpty(region.Description))
+				regionElem.Add(new XElement(Cog + "Description", region.Description));
+			regionElem.Add(new XElement(Cog + "Coordinates",
+					region.Coordinates.Select(coord => new XElement(Cog + "Coordinate", new XElement(Cog + "Latitude", coord.Latitude), new XElement(Cog + "Longitude", coord.Longitude)))));
+			return regionElem;
 		}
 
 		private static IEnumerable<XElement> CreateFeatureStruct(FeatureStruct fs)

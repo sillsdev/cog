@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClustererTestBase.cs" />
+    <Compile Include="FlatUpgmaClustererTest.cs" />
     <Compile Include="NeighborJoiningClustererTest.cs" />
     <Compile Include="NgramModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

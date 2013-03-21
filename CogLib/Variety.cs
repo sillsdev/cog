@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using SIL.Collections;
 
 namespace SIL.Cog
@@ -9,6 +10,7 @@ namespace SIL.Cog
 		private readonly VarietyVarietyPairCollection _varietyPairs;
 		private readonly BulkObservableCollection<Affix> _affixes;
 		private string _name;
+		private readonly ObservableCollection<GeographicRegion> _regions; 
 
 		public Variety(string name)
 		{
@@ -17,6 +19,7 @@ namespace SIL.Cog
 			_segments = new SegmentCollection();
 			_varietyPairs = new VarietyVarietyPairCollection(this);
 			_affixes = new BulkObservableCollection<Affix>();
+			_regions = new ObservableCollection<GeographicRegion>();
 		}
 
 		public string Name
@@ -47,6 +50,11 @@ namespace SIL.Cog
 		public BulkObservableCollection<Affix> Affixes
 		{
 			get { return _affixes; }
+		}
+
+		public ObservableCollection<GeographicRegion> Regions
+		{
+			get { return _regions; }
 		}
 
 		public override string ToString()

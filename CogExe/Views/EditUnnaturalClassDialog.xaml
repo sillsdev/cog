@@ -44,10 +44,10 @@
 						</Style>
 					</Border.Resources>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-						<Button Command="{Binding NewSegmentCommand}">
+						<Button Command="{Binding AddSegmentCommand}">
 							<StackPanel Orientation="Horizontal">
 								<Image Source="..\Images\add-icon.png" />
-								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Add</TextBlock>
 							</StackPanel>
 						</Button>
 						<Button Command="{Binding RemoveSegmentCommand}">

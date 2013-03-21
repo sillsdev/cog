@@ -62,6 +62,7 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<ComparisonSettingsViewModel>();
 			SimpleIoc.Default.Register<HierarchicalGraphViewModel>();
 			SimpleIoc.Default.Register<NetworkGraphViewModel>();
+			SimpleIoc.Default.Register<GeographicalViewModel>();
         }
 
         public MainWindowViewModel Main

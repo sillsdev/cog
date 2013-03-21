@@ -62,11 +62,19 @@
     <Reference Include="GalaSoft.MvvmLight.WPF4">
       <HintPath>..\packages\MvvmLightLibs.4.1.26.1\lib\net40\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
-    <Reference Include="GraphSharp">
-      <HintPath>..\lib\GraphSharp.1.1.0.0\GraphSharp.dll</HintPath>
+    <Reference Include="GMap.NET.Core, Version=1.7.0.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\GMap.NET\GMap.NET.Core.dll</HintPath>
     </Reference>
-    <Reference Include="GraphSharp.Controls">
-      <HintPath>..\lib\GraphSharp.1.1.0.0\GraphSharp.Controls.dll</HintPath>
+    <Reference Include="GMap.NET.WindowsPresentation, Version=1.7.0.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\GMap.NET\GMap.NET.WindowsPresentation.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphSharp, Version=1.0.2.0, Culture=neutral, PublicKeyToken=f9c24778325a6b82, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphSharp.Controls, Version=1.1.0.0, Culture=neutral, PublicKeyToken=f9c24778325a6b82, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\MvvmLightLibs.4.1.26.1\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -90,8 +98,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPFExtensions">
-      <HintPath>..\lib\WPFExtensions.1.0.0\WPFExtensions.dll</HintPath>
+    <Reference Include="WPFExtensions, Version=1.0.3437.34043, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
     </Reference>
     <Reference Include="WPFToolkit.Extended">
       <HintPath>..\packages\Extended.Wpf.Toolkit.1.8.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
@@ -103,6 +112,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controls\CogGraphLayout.cs" />
+    <Compile Include="Controls\ContentSizeChangedEventArgs.cs" />
     <Compile Include="Controls\DendrogramLayout.cs" />
     <Compile Include="Controls\DropDownButton.cs" />
     <Compile Include="Controls\HierarchicalGraphHighlightAlgorithm.cs" />
@@ -122,17 +132,22 @@
     <Compile Include="Controls\TreeGridViewRowPresenter.cs" />
     <Compile Include="Controls\TreeListView.cs" />
     <Compile Include="Controls\TreeListViewItem.cs" />
+    <Compile Include="Controls\ZoomContentPresenter.cs" />
+    <Compile Include="Controls\ZoomControl.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
     <Compile Include="Converters\BooleanToBrushConverter.cs" />
+    <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
+    <Compile Include="Converters\DoubleToLog10Converter.cs" />
     <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
     <Compile Include="Converters\EnumMatchToBooleanConverter.cs" />
     <Compile Include="Converters\EnumMatchToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToFriendlyNameConverter.cs" />
     <Compile Include="Converters\EqualityConverter.cs" />
     <Compile Include="Converters\HslColor.cs" />
+    <Compile Include="Converters\IndexToColorConverter.cs" />
     <Compile Include="Converters\LevelToIndentConverter.cs" />
     <Compile Include="Converters\NumberLessThanConverter.cs" />
     <Compile Include="Converters\PercentageToGradientColorConverter.cs" />
@@ -182,6 +197,8 @@
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\IAngledVertex.cs" />
     <Compile Include="ViewModels\ILengthEdge.cs" />
+    <Compile Include="ViewModels\GeographicalViewModel.cs" />
+    <Compile Include="ViewModels\EditRegionViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />
@@ -233,6 +250,7 @@
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairViewModel.cs" />
+    <Compile Include="ViewModels\VarietyRegionViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModel.cs" />
     <Compile Include="ViewModels\SwitchViewMessage.cs" />
     <Compile Include="ViewModels\DataMasterViewModel.cs" />
@@ -262,6 +280,7 @@
     <Compile Include="Views\DolgopolskyCognateIdentifierView.xaml.cs">
       <DependentUpon>DolgopolskyCognateIdentifierView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FrameworkElementBehaviors.cs" />
     <Compile Include="Views\EditNaturalClassDialog.xaml.cs">
       <DependentUpon>EditNaturalClassDialog.xaml</DependentUpon>
     </Compile>
@@ -281,6 +300,16 @@
     <Compile Include="Views\HierarchicalGraphView.xaml.cs">
       <DependentUpon>HierarchicalGraphView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IntermediateRegionMarker.cs" />
+    <Compile Include="Views\GeographicalView.xaml.cs">
+      <DependentUpon>GeographicalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditRegionDialog.xaml.cs">
+      <DependentUpon>EditRegionDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RegionHitMarker.cs" />
+    <Compile Include="Views\RegionMarker.cs" />
+    <Compile Include="Views\RegionPointMarker.cs" />
     <Compile Include="Views\SoundClassesView.xaml.cs">
       <DependentUpon>SoundClassesView.xaml</DependentUpon>
     </Compile>
@@ -372,6 +401,9 @@
     <Compile Include="Views\VarietyPairView.xaml.cs">
       <DependentUpon>VarietyPairView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\VarietyRegionView.xaml.cs">
+      <DependentUpon>VarietyRegionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ViewUtilities.cs" />
     <Compile Include="Views\VarietiesView.xaml.cs">
       <DependentUpon>VarietiesView.xaml</DependentUpon>
@@ -430,6 +462,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HierarchicalGraphView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GeographicalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditRegionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -541,6 +581,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\VarietyRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\VarietyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -646,6 +690,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\down-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\cursor_arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\polygon-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

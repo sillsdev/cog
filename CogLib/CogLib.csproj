@@ -44,6 +44,7 @@
     <Compile Include="Affix.cs" />
     <Compile Include="Alignment.cs" />
     <Compile Include="Cluster.cs" />
+    <Compile Include="Clusterers\FlatUpgmaClusterer.cs" />
     <Compile Include="Clusterers\NeighborJoiningClusterer.cs" />
     <Compile Include="Clusterers\UpgmaClusterer.cs" />
     <Compile Include="ClusterList.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="Config\UnsupervisedAffixIdentifierConfig.cs" />
     <Compile Include="Config\VarietyPairGeneratorConfig.cs" />
     <Compile Include="Config\WordPairGeneratorConfig.cs" />
+    <Compile Include="GeographicCoordinate.cs" />
+    <Compile Include="GeographicRegion.cs" />
     <Compile Include="IClusterer.cs" />
     <Compile Include="Clusterers\ClusterOrderEntry.cs" />
     <Compile Include="Clusterers\DbscanClusterer.cs" />

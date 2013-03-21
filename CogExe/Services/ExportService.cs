@@ -7,6 +7,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using GMap.NET.WindowsPresentation;
 using GraphSharp;
 using GraphSharp.Controls;
 using QuickGraph;
@@ -189,6 +190,24 @@ namespace SIL.Cog.Services
 				return true;
 			}
 
+			return false;
+		}
+
+		public bool ExportCurrentMap(object ownerViewModel)
+		{
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export map", ownerViewModel, new FileType("PNG image", ".png"));
+			if (result.IsValid)
+			{
+				var mapControl = ViewUtilities.FindVisualChild<GMapControl>(Application.Current.MainWindow);
+				if (mapControl == null)
+					throw new InvalidOperationException();
+
+				var encoder = new PngBitmapEncoder();
+				encoder.Frames.Add(BitmapFrame.Create((BitmapSource) mapControl.ToImageSource()));
+				using (var file = File.Create(result.FileName))
+					encoder.Save(file);
+				return true;
+			}
 			return false;
 		}
 

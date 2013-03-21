@@ -14,5 +14,6 @@ namespace SIL.Cog.Services
 		bool ExportHierarchicalGraph(object ownerViewModel, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphType graphType);
 		bool ExportCurrentNetworkGraph(object ownerViewModel);
 		bool ExportNetworkGraph(object ownerViewModel, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, double scoreFilter);
+		bool ExportCurrentMap(object ownerViewModel);
 	}
 }

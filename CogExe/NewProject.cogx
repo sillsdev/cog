@@ -1156,7 +1156,6 @@
 		<Aligner id="primary" xsi:type="Aline">
 			<Mode>local</Mode>
 			<DisableExpansionCompression>false</DisableExpansionCompression>
-			<NaturalClasses />
 			<RelevantFeatures>
 				<RelevantFeature ref="height" weight="10" vowel="true">
 					<RelevantValue ref="close" metric="100"/>
@@ -1261,8 +1260,9 @@
 	</VarietyProcessors>
 	<VarietyPairProcessors>
 		<VarietyPairProcessor id="soundChangeInducer" xsi:type="EMSoundChangeInducer">
-			<AlignmentThreshold>0.3</AlignmentThreshold>
+			<InitialAlignmentThreshold>0.3</InitialAlignmentThreshold>
 			<ApplicableAligner ref="primary" />
+			<CognateIdentifier ref="cognateIdentifier" />
 		</VarietyPairProcessor>
 		<VarietyPairProcessor id="similarSegmentIdentifier" xsi:type="ThresholdSimilarSegmentIdentifier">
 			<VowelThreshold>500</VowelThreshold>
@@ -1270,7 +1270,6 @@
 			<ApplicableAligner ref="primary" />
 		</VarietyPairProcessor>
 		<VarietyPairProcessor id="cognateIdentifier" xsi:type="BlairCognateIdentifier">
-			<AlignmentThreshold>0.3</AlignmentThreshold>
 			<ApplicableAligner ref="primary" />
 		</VarietyPairProcessor>
 	</VarietyPairProcessors>

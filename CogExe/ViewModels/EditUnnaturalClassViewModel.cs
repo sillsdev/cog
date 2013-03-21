@@ -13,7 +13,7 @@ namespace SIL.Cog.ViewModels
 		private readonly CogProject _project;
 		private readonly ObservableCollection<string> _segments;
 		private string _currentSegment;
-		private readonly ICommand _newSegmentCommand;
+		private readonly ICommand _addSegmentCommand;
 		private readonly ICommand _removeSegmentCommand;
 
 		public EditUnnaturalClassViewModel(IDialogService dialogService, CogProject project, IEnumerable<SoundClass> soundClasses)
@@ -22,7 +22,7 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_project = project;
 			_segments = new ObservableCollection<string>();
-			_newSegmentCommand = new RelayCommand(NewSegment);
+			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}
 
@@ -33,11 +33,11 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			_ignoreModifiers = unnaturalClass.IgnoreModifiers;
 			_segments = new ObservableCollection<string>(unnaturalClass.Segments);
-			_newSegmentCommand = new RelayCommand(NewSegment);
+			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}
 
-		private void NewSegment()
+		private void AddSegment()
 		{
 			var vm = new AddUnnaturalClassSegmentViewModel(_project);
 			if (_dialogService.ShowDialog(this, vm) == true)
@@ -79,9 +79,9 @@ namespace SIL.Cog.ViewModels
 			get { return _segments; }
 		}
 
-		public ICommand NewSegmentCommand
+		public ICommand AddSegmentCommand
 		{
-			get { return _newSegmentCommand; }
+			get { return _addSegmentCommand; }
 		}
 
 		public ICommand RemoveSegmentCommand

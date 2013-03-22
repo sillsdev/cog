@@ -209,7 +209,21 @@ namespace SIL.Cog.Views
 			}
 			else
 			{
+				if (_currentPointIndex == 0)
+					Position = pll;
 				Polygon[_currentPointIndex] = pll;
+				if (_regionMidpoints.Count == _regionPoints.Count)
+				{
+					for (int i = _currentPointIndex - 1; i <= _currentPointIndex; i++)
+					{
+						int curIndex = i;
+						if (curIndex == -1)
+							curIndex = _regionPoints.Count - 1;
+						GPoint curPoint = Map.FromLatLngToLocal(_regionPoints[curIndex].Position);
+						GPoint nextPoint = Map.FromLatLngToLocal(i == _regionPoints.Count - 1 ? _regionPoints[0].Position : _regionPoints[i + 1].Position);
+						_regionMidpoints[curIndex].Position = Map.FromLocalToLatLng((int) (nextPoint.X + curPoint.X) / 2, (int) (nextPoint.Y + curPoint.Y) / 2);
+					}
+				}
 			}
 			_regionPoints[_currentPointIndex].Position = pll;
 			RegeneratePolygonShape(Map);

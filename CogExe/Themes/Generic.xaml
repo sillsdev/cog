@@ -190,7 +190,7 @@
 		<Style.Triggers>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="Cell" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="Cell" />
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
 				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
@@ -198,7 +198,7 @@
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="FullRow" />
 					<Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="True" />
 				</MultiDataTrigger.Conditions>
 				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
@@ -211,7 +211,7 @@
 			</Trigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="Cell" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="Cell" />
 					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 					<Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource Self}}" Value="False" />
 				</MultiDataTrigger.Conditions>
@@ -220,7 +220,7 @@
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="FullRow" />
 					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 					<Condition Binding="{Binding Path=(v:UIElementBehaviors.IsFocusWithin), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="False" />
 				</MultiDataTrigger.Conditions>
@@ -229,7 +229,7 @@
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="Cell" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="Cell" />
 					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
@@ -239,7 +239,7 @@
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="FullRow" />
 					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="True" />
 				</MultiDataTrigger.Conditions>
@@ -255,7 +255,7 @@
 		<Style.Triggers>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
-					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" Value="FullRow" />
+					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="FullRow" />
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
 				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />

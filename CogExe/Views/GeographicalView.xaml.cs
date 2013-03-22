@@ -135,8 +135,8 @@ namespace SIL.Cog.Views
 			int yOffset = 0;
 			if (p.Y - 5 < 0)
 				yOffset = (int) -(p.Y - 5);
-			else if (p.Y + 165 > MapControl.ActualHeight)
-				yOffset = (int) (MapControl.ActualHeight - (p.Y + 165));
+			else if (p.Y + 175 > MapControl.ActualHeight)
+				yOffset = (int) (MapControl.ActualHeight - (p.Y + 175));
 
 			if (xOffset != 0 || yOffset != 0)
 				MapControl.Offset(xOffset, yOffset);
@@ -171,7 +171,7 @@ namespace SIL.Cog.Views
 			double cx = areaTerm * xSum;
 			double cy = areaTerm * ySum;
 
-			return new Point(cx - 80, cy - 160);
+			return new Point(cx - 80, cy - 170);
 		}
 
 		private void RemoveRegions(IEnumerable<VarietyRegionViewModel> regions)

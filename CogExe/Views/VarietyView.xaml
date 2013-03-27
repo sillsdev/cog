@@ -179,7 +179,7 @@
             </HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Header="Segments">
 				<DataGrid Name="SegmentsDataGrid" AutoGenerateColumns="False" HeadersVisibility="Column"
-                        SelectionUnit="FullRow" SelectedItem="{Binding CurrentSegment}">
+                        SelectionUnit="FullRow" SelectedItem="{Binding CurrentSegment}" IsReadOnly="True">
 					<DataGrid.Columns>
 						<DataGridTextColumn Width="Auto" Header="Segment" FontSize="16" Binding="{Binding StrRep}" />
 						<DataGridTemplateColumn Width="Auto" Header="Probability" SortDirection="Descending" SortMemberPath="Probability" ClipboardContentBinding="{Binding Probability, StringFormat=p}">

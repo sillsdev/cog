@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -38,10 +39,13 @@ namespace SIL.Cog.Views
 					{
 						SoundClassesGrid.ScrollIntoView(SoundClassesGrid.SelectedItem);
 						var row = (DataGridRow) SoundClassesGrid.ItemContainerGenerator.ContainerFromIndex(SoundClassesGrid.SelectedIndex);
-						row.Focusable = true;
-						row.Focus();
+						if (row != null)
+						{
+							row.Focusable = true;
+							row.Focus();
+						}
 					}
-				}));
+				}), DispatcherPriority.ApplicationIdle);
 		}
 	}
 }

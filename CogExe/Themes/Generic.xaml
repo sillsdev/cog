@@ -1,12 +1,16 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:v="clr-namespace:SIL.Cog.Views"
-                    xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters">
+                    xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
+                    xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid">
 	<cnvtrs:LevelToIndentConverter x:Key="LevelToIndentConverter"/>
 	<cnvtrs:DoubleToLog10Converter x:Key="Log10Converter"/>
 	<cnvtrs:EnumMatchToBooleanConverter x:Key="EnumConverter" />
-
+	<xcdg:ThicknessConverter x:Key="ThicknessConverter" />
+	<cnvtrs:EqualityConverter x:Key="EqualityConverter" />
+	
 	<SolidColorBrush x:Key="TextBrush" Color="#FF10257F" />
 	<SolidColorBrush x:Key="DataGridHeaderBrush" Color="#FFCFDDF0" />
+	<SolidColorBrush x:Key="DataGridHeaderSelectedBrush" Color="#FFBBCFE9" />
 	<SolidColorBrush x:Key="DataGridBorderBrush" Color="#FF88B0E4" />
 	<SolidColorBrush x:Key="DataGridSelectedBrush" Color="#FFFCE8AA" />
 	<SolidColorBrush x:Key="DataGridMouseOverBrush" Color="#FFFFF8E2" />
@@ -251,7 +255,6 @@
 	</Style>
 
 	<Style TargetType="DataGridRow">
-		<Setter Property="v:UIElementBehaviors.EnableIsFocusWithin" Value="True" />
 		<Style.Triggers>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
@@ -321,6 +324,252 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+	</Style>
+
+	<Style TargetType="xcdg:DataGridControl">
+		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="Background" Value="White" />
+	</Style>
+	
+	<Style TargetType="xcdg:TableView">
+		<Setter Property="HorizontalGridLineBrush" Value="LightGray" />
+		<Setter Property="VerticalGridLineBrush" Value="LightGray" />
+		<Setter Property="IsAlternatingRowStyleEnabled" Value="True" />
+		<Setter Property="VerticalGridLineThickness" Value="1" />
+		<Setter Property="HorizontalGridLineThickness" Value="1" />
+	</Style>
+	
+	<Style TargetType="xcdg:ColumnManagerRow">
+		<Setter Property="xcdg:RowSelector.Visible" Value="True" />
+		<Setter Property="BorderThickness" Value="0" />
+	</Style>
+	
+	<Style TargetType="xcdg:ColumnManagerCell">
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
+		<Setter Property="Padding" Value="8,2,8,2" />
+		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderThickness" Value="0,0,1,1" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="xcdg:ColumnManagerCell">
+					<Grid>
+						<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="12" />
+								</Grid.ColumnDefinitions>
+								<ContentPresenter Grid.Column="0" Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Content="{TemplateBinding Content}" />
+								<Polygon Name="UpArrow" Style="{StaticResource DataGrid_ArrowStyle}" Margin="0,0,0,2" Points="0,0 8,0 4,-6 0,0" />
+								<Polygon Name="DownArrow" Margin="0,0,0,1" Style="{StaticResource DataGrid_ArrowStyle}" Points="0,0 8,0 4,5 0,0" />
+							</Grid>
+						</Border>
+						<Thumb x:Name="PART_ColumnResizerThumbLeft" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="-4,0,0,0" HorizontalAlignment="Left" />
+						<Thumb x:Name="PART_ColumnResizerThumb" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="0,0,-4,0" HorizontalAlignment="Right" />
+					</Grid>
+					<ControlTemplate.Triggers>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}" Value="Ascending">
+							<Setter TargetName="UpArrow" Property="Visibility" Value="Visible" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}" Value="Descending">
+							<Setter TargetName="DownArrow" Property="Visibility" Value="Visible" />
+						</DataTrigger>
+						<DataTrigger Value="True">
+							<DataTrigger.Binding>
+								<MultiBinding Converter="{StaticResource EqualityConverter}">
+									<Binding RelativeSource="{RelativeSource Self}" Path="ParentColumn" />
+									<Binding RelativeSource="{RelativeSource Self}" Path="ParentColumn.DataGridControl.CurrentColumn" />
+								</MultiBinding>
+							</DataTrigger.Binding>
+							<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
+						</DataTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="xcdg:RowSelector">
+		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
+		<Setter Property="Padding" Value="8,2,8,2" />
+		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderThickness" Value="0,0,1,1" />
+		<Setter Property="HorizontalContentAlignment" Value="Left" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="xcdg:RowSelector">
+					<Grid>
+						<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+                                                      BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+							<ContentPresenter Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                        ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                        Content="{TemplateBinding Content}" />
+						</Border>
+						<Thumb x:Name="PART_RowResizerThumb" Style="{StaticResource DataGrid_RowHeaderThumbStyle}" Margin="0,0,0,-4" VerticalAlignment="Bottom" />
+					</Grid>
+					<ControlTemplate.Triggers>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsCurrent}" Value="True">
+							<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
+						</DataTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+	<Style TargetType="xcdg:RowSelectorPane">
+		<Setter Property="Background" Value="White" />
+		<Setter Property="Margin" Value="0" />
+	</Style>
+	
+	<Style TargetType="xcdg:DataRow">
+		<Setter Property="SelectionBackground" Value="{StaticResource DataGridSelectedBrush}" />
+		<Setter Property="InactiveSelectionBackground" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+		<Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).HorizontalGridLineThickness, Converter={StaticResource ThicknessConverter},ConverterParameter='Bottom'}" />
+		<Style.Triggers>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).IsAlternatingRowStyleEnabled}" Value="True" />
+					<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridVirtualizingPanel.ItemIndex), Converter={x:Static xcdg:IndexToOddConverter.Singleton}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				
+				<Setter Property="Background" Value="{StaticResource AlternatingRowBrush}" />
+			</MultiDataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style TargetType="xcdg:DataCell">
+		<Setter Property="SelectionBackground" Value="{StaticResource DataGridSelectedBrush}" />
+		<Setter Property="InactiveSelectionBackground" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+		<Setter Property="CurrentBackground" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="xcdg:Cell">
+					<Grid>
+						<Border x:Name="rootBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+								Padding="{TemplateBinding Padding}">
+							<xcdg:CellContentPresenter x:Name="PART_CellContentPresenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+													   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+						</Border>
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<!-- When changing the appearance (e.g., background/foreground) of the Cell to reflect specific
+						states (e.g., IsCurrent), it is recommended to apply the changes directly to the template
+						elements because we want those modifications to be effective even when a value has been
+						explicitly set to these properties on the TemplatedParent. Also, when someone queries
+						the value of these properties on the TemplatedParent, we don't want to return the
+						intermediate, state-specific values. -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).SelectionUnit}" Value="Cell" />
+							</MultiDataTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+						</MultiDataTrigger>
+
+						<!-- When the Cell is Current, we want to change its background/foreground to the appropriate brushes.
+						We do this only when the cell does not have a validation error because we must give priority
+						to the CellErrorStyle (if present).-->
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsCurrent" Value="True" />
+								<Condition Property="HasValidationError" Value="False" />
+							</MultiTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentBackground}" />
+							<Setter TargetName="rootBorder" Property="TextElement.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentForeground}" />
+						</MultiTrigger>
+
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsCurrent" Value="True" />
+								<Condition Property="HasValidationError" Value="True" />
+								<Condition Property="CellErrorStyle" Value="{x:Null}" />
+							</MultiTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentBackground}" />
+							<Setter TargetName="rootBorder" Property="TextElement.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentForeground}" />
+						</MultiTrigger>
+
+						<!-- When the Cell is Selected, we want to change its background/foreground to the appropriate brushes. -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).IsKeyboardFocusWithin}" Value="True" />
+							</MultiDataTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=SelectionBackground}" />
+							<Setter TargetName="rootBorder" Property="TextElement.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=SelectionForeground}" />
+						</MultiDataTrigger>
+
+						<!-- When the Cell is Selected but the parent DataGridControl is not focused, we want to change
+						the Cell's background/foreground to the appropriate brushes. -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).IsKeyboardFocusWithin}" Value="False" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).HideSelection}" Value="False" />
+							</MultiDataTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=InactiveSelectionBackground}" />
+							<Setter TargetName="rootBorder" Property="TextElement.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=InactiveSelectionForeground}" />
+						</MultiDataTrigger>
+
+						<!-- When the Cell's content is Null and the row is not being edited, we want to ensure that the row/cell
+						will preserve a minimum height based on the current font size for the row/cell. To do this, we override
+						the ContentPresenter's content binding and replace it with an empty string (""), the textbox generated 
+						this way will then size to the default text's height. When the trigger is not active anymore, default binding
+						is restored automatically. -->
+
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Visible}" Value="False">
+							<Setter Property="Visibility" Value="Collapsed" />
+						</DataTrigger>
+
+						<!-- When the Cell is Selected but the parent DataGridControl is not focused, we want to change
+						the Cell's background to the appropriate brushes. -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsCurrent}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).IsKeyboardFocusWithin}" Value="False" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).HideSelection}" Value="False" />
+							</MultiDataTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentBackground}" />
+						</MultiDataTrigger>
+
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" Value="True" />
+							</MultiDataTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=SelectionBackground}" />
+							<Setter TargetName="rootBorder" Property="TextElement.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=SelectionForeground}" />
+						</MultiDataTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="xcdg:GroupLevelIndicatorPane">
+		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowVerticalBorder" Value="False" />
+		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowIndicators" Value="False" />
+	</Style>
+	
+	<Style TargetType="xcdg:HierarchicalGroupByControl">
+		<Setter Property="AllowGroupingModification" Value="False" />
+		<Setter Property="Visibility" Value="Collapsed" />
 	</Style>
 
 	<Style TargetType="c:TreeListView">

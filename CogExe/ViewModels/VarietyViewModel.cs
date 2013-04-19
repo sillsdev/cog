@@ -5,6 +5,7 @@
 		private readonly Variety _variety;
 
 		public VarietyViewModel(Variety variety)
+			: base(variety, variety.Name)
 		{
 			_variety = variety;
 		}
@@ -17,7 +18,11 @@
 		public string Name
 		{
 			get { return _variety.Name; }
-			set { _variety.Name = value; }
+			set
+			{
+				_variety.Name = value;
+				DisplayName = value;
+			}
 		}
 	}
 }

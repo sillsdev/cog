@@ -102,6 +102,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.Toolkit">
       <HintPath>..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
@@ -395,6 +398,7 @@
       <DependentUpon>ThresholdSimilarSegmentIdentifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UIElementBehaviors.cs" />
+    <Compile Include="Views\UnicodeCsvClipboardExporter.cs" />
     <Compile Include="Views\UnsupervisedAffixIdentifierView.xaml.cs">
       <DependentUpon>UnsupervisedAffixIdentifierView.xaml</DependentUpon>
     </Compile>

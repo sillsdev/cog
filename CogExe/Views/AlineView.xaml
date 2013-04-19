@@ -34,7 +34,7 @@
 			<RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ModeComboBox}">Alignment mode:</Label>
-		<ComboBox Grid.Column="1" Grid.Row="0" Name="ModeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
+		<ComboBox Grid.Column="1" Grid.Row="0" Width="150" Name="ModeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
 				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Mode}" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding DisableExpansionCompression}">Disable expansion/compression</CheckBox>
 		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=FeaturesTreeListView}">Features</Label>

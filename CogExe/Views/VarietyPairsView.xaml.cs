@@ -1,27 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
 {
 	/// <summary>
 	/// Interaction logic for VarietyPairsView.xaml
 	/// </summary>
-	public partial class VarietyPairsView : UserControl
+	public partial class VarietyPairsView
 	{
 		public VarietyPairsView()
 		{
 			InitializeComponent();
+		}
+
+		private void VarietyPairsView_OnLoaded(object sender, RoutedEventArgs e)
+		{
+			var vm = (VarietyPairsViewModel) DataContext;
+			vm.PropertyChanged += ViewModel_PropertyChanged;
+			SetupVarieties(vm);
+		}
+
+		private void SetupVarieties(VarietyPairsViewModel vm)
+		{
+			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+			AddVarieties(vm.Varieties);
+			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties1ComboBox, variety => variety.Name);
+			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties2ComboBox, variety => variety.Name);
+		}
+
+		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Varieties")
+			{
+				var vm = (VarietyPairsViewModel) DataContext;
+				SetupVarieties(vm);
+			}
+		}
+
+		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddVarieties(e.NewItems.Cast<VarietyViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					RemoveVarieties(e.OldItems.Cast<VarietyViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Replace:
+					RemoveVarieties(e.OldItems.Cast<VarietyViewModel>());
+					AddVarieties(e.NewItems.Cast<VarietyViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Reset:
+					AddVarieties((IEnumerable<VarietyViewModel>) sender);
+					break;
+			}
+			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties1ComboBox, variety => variety.Name);
+			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties2ComboBox, variety => variety.Name);
+		}
+
+		private void AddVarieties(IEnumerable<VarietyViewModel> varieties)
+		{
+			foreach (VarietyViewModel variety in varieties)
+				variety.PropertyChanged += variety_PropertyChanged;
+		}
+
+		private void RemoveVarieties(IEnumerable<VarietyViewModel> varieties)
+		{
+			foreach (VarietyViewModel variety in varieties)
+				variety.PropertyChanged -= variety_PropertyChanged;
+		}
+
+		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Name")
+			{
+				ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(Varieties1ComboBox, variety => variety.Name);
+				ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(Varieties2ComboBox, variety => variety.Name);
+			}
 		}
 	}
 }

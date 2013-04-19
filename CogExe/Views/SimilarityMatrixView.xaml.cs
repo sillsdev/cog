@@ -37,13 +37,13 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
-			_simMatrixGrid.Columns.Clear();
+			SimMatrixGrid.Columns.Clear();
 
 			double width = 0.0;
 			foreach (VarietySimilarityMatrixViewModel variety in vm.Varieties)
 			{
-				var typeface = new Typeface(_simMatrixGrid.FontFamily, _simMatrixGrid.FontStyle, _simMatrixGrid.FontWeight, _simMatrixGrid.FontStretch);
-				var text = new FormattedText(variety.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, _simMatrixGrid.FontSize, _simMatrixGrid.Foreground);
+				var typeface = new Typeface(SimMatrixGrid.FontFamily, SimMatrixGrid.FontStyle, SimMatrixGrid.FontWeight, SimMatrixGrid.FontStretch);
+				var text = new FormattedText(variety.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, SimMatrixGrid.FontSize, SimMatrixGrid.Foreground);
 				width = Math.Max(text.Width, width);
 			}
 
@@ -85,7 +85,7 @@ namespace SIL.Cog.Views
 
 				var column = new DataGridTemplateColumn {HeaderTemplate = headerTemplate, CellTemplate = cellTemplate, Width = new DataGridLength(30)};
 
-				_simMatrixGrid.Columns.Add(column);
+				SimMatrixGrid.Columns.Add(column);
 			}
 		}
 

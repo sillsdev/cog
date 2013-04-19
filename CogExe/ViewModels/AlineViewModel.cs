@@ -12,14 +12,14 @@ namespace SIL.Cog.ViewModels
 {
 	public enum AlineMode
 	{
-		[Description("Local")]
+		[Description("Partial (local)")]
 		Local,
-		[Description("Global")]
+		[Description("Full (global)")]
 		Global,
-		[Description("Semi-global")]
-		SemiGlobal,
-		[Description("Half-local")]
-		HalfLocal
+		[Description("Beginning (half-local)")]
+		HalfLocal,
+		[Description("Hybrid (semi-global)")]
+		SemiGlobal
 	}
 
 	public class AlineViewModel : ComponentSettingsViewModelBase

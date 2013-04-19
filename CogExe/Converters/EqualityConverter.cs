@@ -11,7 +11,10 @@ namespace SIL.Cog.Converters
 			if (values == null || values.Length == 0) return false;
 
 			for (int i = 1; i < values.Length; i++)
-				if (!values[i].Equals(values[0])) return false;
+			{
+				if (values[0] == null && values[i] != null) return false;
+				if (values[i] == null || !values[i].Equals(values[0])) return false;
+			}
 
 			return true;
 		}

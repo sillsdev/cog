@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
 		xmlns:v="clr-namespace:SIL.Cog.Views"
         Title="{Binding DisplayName}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-		SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=_similarityMetricComboBox}">
+		SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=SimilarityMetricComboBox}">
     <Grid Margin="10">
 		<Grid.Resources>
 			<Style TargetType="Label">
@@ -28,8 +28,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_similarityMetricComboBox}">Similarity metric:</Label>
-		<ComboBox Name="_similarityMetricComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SimilarityMetric}}}"
+		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=SimilarityMetricComboBox}">Similarity metric:</Label>
+		<ComboBox Name="SimilarityMetricComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SimilarityMetric}}}"
 				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding SimilarityMetric}" />
 		<StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button IsDefault="True" Click="exportButton_Click">Export</Button>

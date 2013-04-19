@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
 		xmlns:v="clr-namespace:SIL.Cog.Views"
         Title="{Binding DisplayName}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-        FocusManager.FocusedElement="{Binding ElementName=_affixTextBox}" SizeToContent="WidthAndHeight">
+        FocusManager.FocusedElement="{Binding ElementName=AffixTextBox}" SizeToContent="WidthAndHeight">
     <Grid Margin="10">
         <Grid.Resources>
             <Style TargetType="Label">
@@ -14,7 +14,7 @@
                 <Setter Property="Margin" Value="0,0,0,5" />
                 <Setter Property="Width" Value="200" />
             </Style>
-            <Style TargetType="ComboBox">
+			<Style TargetType="ComboBox">
                 <Setter Property="Margin" Value="0,0,0,5" />
                 <Setter Property="Width" Value="200" />
             </Style>
@@ -34,13 +34,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_affixTextBox}">Affix:</Label>
-        <TextBox Name="_affixTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding StrRep, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
-        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_typeComboBox}">Type:</Label>
-		<ComboBox Name="_typeComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AffixViewModelType}}}"
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=AffixTextBox}">Affix:</Label>
+        <TextBox Name="AffixTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding StrRep, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
+        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=TypeComboBox}">Type:</Label>
+		<ComboBox Name="TypeComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AffixViewModelType}}}"
 				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
-		<Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=_categoryTextBox}">Category:</Label>
-        <TextBox Name="_categoryTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Category}" />
+		<Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=CategoryTextBox}">Category:</Label>
+        <TextBox Name="CategoryTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Category}" />
         <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Click="okButton_Click" IsDefault="True">OK</Button>
             <Button IsCancel="True">Cancel</Button>

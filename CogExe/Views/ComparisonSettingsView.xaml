@@ -17,8 +17,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_typeComboBox}" Margin="0,3,5,5" Padding="0,0,0,5" Content="{Binding OptionDisplayName}" ContentStringFormat="{}{0}:" />
-                <ComboBox Grid.Column="1" Grid.Row="0" Name="_typeComboBox" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding CurrentOption}" DisplayMemberPath="DisplayName" />
+                <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=TypeComboBox}" Margin="0,3,5,5" Padding="0,0,0,5" Content="{Binding OptionDisplayName}" ContentStringFormat="{}{0}:" />
+				<ComboBox Grid.Column="1" Grid.Row="0" Name="TypeComboBox" Width="150" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding CurrentOption}" DisplayMemberPath="DisplayName" />
                 <ContentPresenter Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding CurrentOption}" />
             </Grid>
         </DataTemplate>

@@ -48,7 +48,7 @@ namespace SIL.Cog.Views
 			if (element is ComboBoxItem)
 			{
 				// Since ComboBoxItem.Parent is null, we must pass through ItemsPresenter in order to get the parent ComboBox
-				var parentItemsPresenter = FindParentControl<ItemsPresenter>(element as ComboBoxItem);
+				var parentItemsPresenter = ViewUtilities.FindVisualAncestor<ItemsPresenter>(element as ComboBoxItem);
 				var combobox = parentItemsPresenter.TemplatedParent as ComboBox;
 				childElement = combobox;
 			}
@@ -57,7 +57,7 @@ namespace SIL.Cog.Views
 				childElement = element;
 			}
 
-			var parentDatagrid = FindParentControl<DataGrid>(childElement);
+			var parentDatagrid = ViewUtilities.FindVisualAncestor<DataGrid>(childElement);
 			return parentDatagrid;
 		}
 
@@ -125,7 +125,7 @@ namespace SIL.Cog.Views
 
 		private static TabPanel FindTabPanel(DataGrid dataGrid)
 		{
-			var parentTabControl = FindParentControl<TabControl>(dataGrid);
+			var parentTabControl = ViewUtilities.FindVisualAncestor<TabControl>(dataGrid);
 			if (parentTabControl != null)
 				return GetTabPanel(parentTabControl);
 			return null;
@@ -173,30 +173,6 @@ namespace SIL.Cog.Views
 		{
 			var dataGrid = ControlMap[(TabPanel) sender];
 			CommitEdit(dataGrid);
-		}
-
-		private static T FindParentControl<T>(DependencyObject outerDepObj) where T : DependencyObject
-		{
-			var dObj = VisualTreeHelper.GetParent(outerDepObj);
-			if (dObj == null)
-			{
-				return null;
-			}
-
-			if (dObj is T)
-			{
-				return dObj as T;
-			}
-
-			while ((dObj = VisualTreeHelper.GetParent(dObj)) != null)
-			{
-				if (dObj is T)
-				{
-					return dObj as T;
-				}
-			}
-
-			return null;
 		}
 
 		public static readonly DependencyProperty SelectAllButtonStyleProperty =

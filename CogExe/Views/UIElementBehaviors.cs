@@ -4,41 +4,10 @@ namespace SIL.Cog.Views
 {
 	public static class UIElementBehaviors
 	{
-		public static readonly DependencyProperty EnableIsFocusWithinProperty =
-			DependencyProperty.RegisterAttached("EnableIsFocusWithin",
-												typeof (bool),
-												typeof (UIElementBehaviors),
-												new UIPropertyMetadata(false, OnEnableIsFocusWithinChanged));
-
-		public static bool GetEnableIsFocusWithin(DependencyObject obj)
+		static UIElementBehaviors()
 		{
-			return (bool) obj.GetValue(EnableIsFocusWithinProperty);
-		}
-
-		public static void SetEnableIsFocusWithin(DependencyObject obj, bool value)
-		{
-			obj.SetValue(EnableIsFocusWithinProperty, value);
-		}
-
-		private static void OnEnableIsFocusWithinChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var elem = d as UIElement;
-			if (elem == null)
-				return;
-
-			if (!(e.NewValue is bool))
-				return;
-
-			if ((bool) e.NewValue)
-			{
-				elem.GotFocus += elem_GotFocus;
-				elem.LostFocus += elem_LostFocus;
-			}
-			else
-			{
-				elem.GotFocus -= elem_GotFocus;
-				elem.LostFocus -= elem_LostFocus;
-			}
+			EventManager.RegisterClassHandler(typeof (UIElement), UIElement.GotFocusEvent, new RoutedEventHandler(elem_GotFocus), true);
+			EventManager.RegisterClassHandler(typeof (UIElement), UIElement.LostFocusEvent, new RoutedEventHandler(elem_LostFocus), true);
 		}
 
 		private static void elem_GotFocus(object sender, RoutedEventArgs e)

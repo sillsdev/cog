@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -43,6 +45,20 @@ namespace SIL.Cog.Views
 			}
 
 			return null;
+		}
+
+		public static void SetComboBoxWidthToFit<T>(ComboBox comboBox, Func<T, string> stringAccessor)
+		{
+			double maxWidth = 0;
+			foreach (T item in comboBox.ItemsSource)
+			{
+				string str = stringAccessor(item);
+				var formattedText = new FormattedText(str, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+					new Typeface(comboBox.FontFamily, comboBox.FontStyle, comboBox.FontWeight, comboBox.FontStretch), comboBox.FontSize, comboBox.Foreground);
+				if (formattedText.Width > maxWidth)
+					maxWidth = formattedText.Width;
+			}
+			comboBox.Width = maxWidth + 25;
 		}
 	}
 }

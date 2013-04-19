@@ -1,11 +1,15 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
+using Xceed.Wpf.DataGrid;
+using Xceed.Wpf.DataGrid.Views;
 
 namespace SIL.Cog.Views
 {
@@ -17,14 +21,20 @@ namespace SIL.Cog.Views
 		public WordListsView()
 		{
 			InitializeComponent();
+			WordListsGrid.ClipboardExporters.Clear();
+			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
 		}
 
-		private void _wordListsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+		private void WordListsView_OnLoaded(object sender, RoutedEventArgs e)
 		{
-			var presenter = (ContentPresenter) e.EditingElement;
-			var textBox = (TextBox) presenter.ContentTemplate.FindName("textBox", presenter);
-			textBox.Focus();
-			textBox.SelectAll();
+			var vm = (WordListsViewModel) DataContext;
+			LoadColumns();
+			LoadCollectionView();
+			SizeRowSelectorPaneToFit();
+			vm.PropertyChanged += ViewModel_PropertyChanged;
+			vm.Senses.CollectionChanged += Senses_CollectionChanged;
+			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+			SelectFirstCell();
 		}
 
 		private void LoadColumns()
@@ -54,41 +64,71 @@ namespace SIL.Cog.Views
 				var textDecorations = new TextDecorationCollection {textDecoration};
 
 				var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-				var binding = new Binding(string.Format("Senses[{0}].Words", i)) {Converter = new WordsToInlinesConverter(), ConverterParameter = textDecorations};
-				textBlockFactory.SetBinding(TextBlockBehaviors.InlinesListProperty, binding);
+				var textBinding = new Binding(string.Format("Senses[{0}].Words", i)) {Converter = new WordsToInlinesConverter(), ConverterParameter = textDecorations};
+				textBlockFactory.SetBinding(TextBlockBehaviors.InlinesListProperty, textBinding);
 				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
-				var cellTemplate = new DataTemplate {VisualTree = textBlockFactory};
+				textBlockFactory.SetValue(TextBlock.FontSizeProperty, 16.0);
+				textBlockFactory.SetBinding(FrameworkElement.TagProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
+				textBlockFactory.Name = "textBlock";
+				var cellTemplate = new DataTemplate
+					{
+						VisualTree = textBlockFactory,
+						Triggers =
+							{
+								new Trigger {SourceName = "textBlock", Property = TextBlockBehaviors.IsTextTrimmedProperty, Value = true, Setters =
+									{
+										new Setter(FrameworkElement.ToolTipProperty, new Binding(string.Format("Senses[{0}].StrRep", i)), "textBlock")
+									}}
+							}
+					};
 
 				var textBoxFactory = new FrameworkElementFactory(typeof(TextBox));
 				textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
 				textBoxFactory.SetValue(BorderThicknessProperty, new Thickness(0));
+				textBoxFactory.SetValue(Control.FontSizeProperty, 16.0);
 				textBoxFactory.Name = "textBox";
 				var cellEditTemplate = new DataTemplate {VisualTree = textBoxFactory};
 
-
-				var column = new DataGridTemplateColumn
+				var c = new Column
 					{
-						Header = vm.Senses[i].Gloss,
-						CellTemplate = cellTemplate,
-						CellEditingTemplate = cellEditTemplate,
-						ClipboardContentBinding = new Binding(string.Format("Senses[{0}].StrRep", i)),
-						SortMemberPath = string.Format("Senses[{0}].StrRep", i)
+						FieldName = vm.Senses[i].Gloss,
+						Title = vm.Senses[i].Gloss,
+						DisplayMemberBindingInfo = new DataGridBindingInfo { Path = new PropertyPath(".") },
+						CellContentTemplate = cellTemplate,
+						CellEditor = new CellEditor { EditTemplate = cellEditTemplate },
+						Width = new ColumnWidth(100)
 					};
 
-				WordListsGrid.Columns.Add(column);
+				WordListsGrid.Columns.Add(c);
 			}
 		}
 
-		private void WordListsView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void SizeRowSelectorPaneToFit()
 		{
-			var vm = e.NewValue as WordListsViewModel;
-			if (vm != null)
+			var vm = (WordListsViewModel) DataContext;
+			if (vm == null)
+				return;
+
+			var textBrush = (Brush) Application.Current.FindResource("TextBrush");
+			double maxWidth = 0;
+			foreach (VarietyWordListsViewModel variety in vm.Varieties)
 			{
-				LoadColumns();
-				vm.PropertyChanged += ViewModel_PropertyChanged;
-				vm.Senses.CollectionChanged += Senses_CollectionChanged;
-				vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+				var formattedText = new FormattedText(variety.Name, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+					new Typeface(WordListsGrid.FontFamily, WordListsGrid.FontStyle, WordListsGrid.FontWeight, WordListsGrid.FontStretch), WordListsGrid.FontSize, textBrush);
+				if (formattedText.Width > maxWidth)
+					maxWidth = formattedText.Width;
+				variety.PropertyChanged -= variety_PropertyChanged;
+				variety.PropertyChanged += variety_PropertyChanged;
 			}
+
+			var tableView = (TableView) WordListsGrid.View;
+			tableView.RowSelectorPaneWidth = maxWidth + 16;
+		}
+
+		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Name")
+				SizeRowSelectorPaneToFit();
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -102,10 +142,31 @@ namespace SIL.Cog.Views
 					break;
 
 				case "Varieties":
-					WordListsGrid.Items.Refresh();
+					LoadCollectionView();
+					SizeRowSelectorPaneToFit();
 					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+					WordListsGrid.Dispatcher.BeginInvoke(new Action(SelectFirstCell));
 					break;
 			}
+		}
+
+		private void SelectFirstCell()
+		{
+			if (WordListsGrid.Items.Count > 0)
+				WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(0, 0));
+			WordListsGrid.Focus();
+		}
+
+		private void LoadCollectionView()
+		{
+			var vm = (WordListsViewModel) DataContext;
+			if (vm == null)
+				return;
+
+			var source = new DataGridCollectionView(vm.Varieties, typeof(VarietyWordListsViewModel), false, false);
+			for (int i = 0; i < vm.Senses.Count; i++)
+				source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}].StrRep", i), typeof(string)));
+			WordListsGrid.ItemsSource = source;
 		}
 
 		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -116,6 +177,7 @@ namespace SIL.Cog.Views
 		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			WordListsGrid.Items.Refresh();
+			SizeRowSelectorPaneToFit();
 		}
 	}
 }

@@ -33,7 +33,8 @@ namespace SIL.Cog.Controls
 			CountLeaves(_root);
 
 			double denom = 2 * Math.Tan(Math.PI / _leafCounts[_root]);
-			double minSlope = Parameters.MinimumLength / VisitedGraph.Edges.Min(e => e is ILengthEdge<TVertex> ? ((ILengthEdge<TVertex>) e).Length : 1);
+			double minLen = VisitedGraph.Edges.Where(e => !(e is ILengthEdge<TVertex>) || ((ILengthEdge<TVertex>) e).Length > 0).Min(e => e is ILengthEdge<TVertex> ? ((ILengthEdge<TVertex>) e).Length : 1);
+			double minSlope = Parameters.MinimumLength / minLen;
 			switch (Parameters.BranchLengthScaling)
 			{
 				case BranchLengthScaling.MinimizeLabelOverlapAverage:
@@ -46,6 +47,8 @@ namespace SIL.Cog.Controls
 						var lengthEdge = edge as ILengthEdge<TVertex>;
 						if (lengthEdge != null)
 							x = lengthEdge.Length;
+						if (x <= 0.0)
+							continue;
 						double y = sz.Height / denom;
 						double slope = y / x;
 						_slope = first ? slope : (_slope + slope) / 2;
@@ -64,6 +67,8 @@ namespace SIL.Cog.Controls
 						var lengthEdge = edge as ILengthEdge<TVertex>;
 						if (lengthEdge != null)
 							x = lengthEdge.Length;
+						if (x <= 0.0)
+							continue;
 						double y = sz.Height / denom;
 						_slope = Math.Min(_slope, y / x);
 					}

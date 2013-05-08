@@ -1,4 +1,4 @@
-﻿using SIL.Cog.Processors;
+﻿using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Machine;
 

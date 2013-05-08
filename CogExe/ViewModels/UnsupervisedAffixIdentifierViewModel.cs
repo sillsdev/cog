@@ -1,9 +1,9 @@
-﻿using SIL.Cog.Processors;
+﻿using SIL.Cog.Components;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase
+	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase 
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private double _threshold;
@@ -49,9 +49,11 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
-			Project.VarietyProcessors["affixIdentifier"] = new UnsupervisedAffixIdentifier(_spanFactory, _threshold, _maxAffixLength, _categoryRequired);
+			var affixIdentifier = new UnsupervisedAffixIdentifier(_spanFactory, _threshold, _maxAffixLength, _categoryRequired);
+			Project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
+			return affixIdentifier;
 		}
 	}
 }

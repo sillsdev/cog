@@ -210,7 +210,7 @@
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />
     <Compile Include="ViewModels\NetworkGraphVertex.cs" />
     <Compile Include="ViewModels\NetworkGraphViewModel.cs" />
-    <Compile Include="ViewModels\NewSimilarSegmentMappingViewModel.cs" />
+    <Compile Include="ViewModels\NewSegmentMappingViewModel.cs" />
     <Compile Include="ViewModels\AffixViewModel.cs" />
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\AlineViewModel.cs" />
@@ -223,7 +223,7 @@
     <Compile Include="ViewModels\DataSettingsViewModel.cs" />
     <Compile Include="ViewModels\EditSenseViewModel.cs" />
     <Compile Include="ViewModels\EMSoundChangeInducerViewModel.cs" />
-    <Compile Include="ViewModels\ListSimilarSegmentIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\ListSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\RelevantFeatureViewModel.cs" />
     <Compile Include="ViewModels\InitializableViewModelBase.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -242,13 +242,13 @@
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />
     <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMetric.cs" />
-    <Compile Include="ViewModels\SimilarSegmentMappingsViewModel.cs" />
-    <Compile Include="ViewModels\SimilarSegmentMappingViewModel.cs" />
+    <Compile Include="ViewModels\SegmentMappingsViewModel.cs" />
+    <Compile Include="ViewModels\SegmentMappingViewModel.cs" />
     <Compile Include="ViewModels\SoundCorrespondenceLhsViewModel.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
     <Compile Include="ViewModels\TaskAreaGroupViewModel.cs" />
     <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
-    <Compile Include="ViewModels\ThresholdSimilarSegmentIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\ThresholdSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
     <Compile Include="ViewModels\UnorderedViewModelCollection.cs" />
     <Compile Include="ViewModels\SoundCorrespondenceViewModel.cs" />
@@ -322,8 +322,8 @@
     <Compile Include="Views\NetworkGraphView.xaml.cs">
       <DependentUpon>NetworkGraphView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NewSimilarSegmentMappingDialog.xaml.cs">
-      <DependentUpon>NewSimilarSegmentMappingDialog.xaml</DependentUpon>
+    <Compile Include="Views\NewSegmentMappingDialog.xaml.cs">
+      <DependentUpon>NewSegmentMappingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\AlineView.xaml.cs">
       <DependentUpon>AlineView.xaml</DependentUpon>
@@ -365,8 +365,8 @@
     <Compile Include="Views\SimilarityMatrixView.xaml.cs">
       <DependentUpon>SimilarityMatrixView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SimilarSegmentMappingsView.xaml.cs">
-      <DependentUpon>SimilarSegmentMappingsView.xaml</DependentUpon>
+    <Compile Include="Views\SegmentMappingsView.xaml.cs">
+      <DependentUpon>SegmentMappingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TaskAreaGroupView.xaml.cs">
       <DependentUpon>TaskAreaGroupView.xaml</DependentUpon>
@@ -488,7 +488,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NewSimilarSegmentMappingDialog.xaml">
+    <Page Include="Views\NewSegmentMappingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -552,7 +552,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SimilarSegmentMappingsView.xaml">
+    <Page Include="Views\SegmentMappingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -628,7 +628,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
-    <EmbeddedResource Include="NewProject.cogx" />
+    <EmbeddedResource Include="NewProject.cogx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

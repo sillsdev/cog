@@ -1,19 +1,22 @@
-using SIL.Collections;
+using System;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
-	public class Segment : NotifyPropertyChangedBase
+	public class Segment : IEquatable<Segment>
 	{
 		public static readonly Segment Null = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 		public static readonly Segment Anchor = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value);
 
 		private readonly FeatureStruct _fs;
-		private double _probability;
-		private int _frequency;
 
 		public Segment(FeatureStruct fs)
 		{
+			if (!fs.IsFrozen)
+			{
+				fs = fs.DeepClone();
+				fs.Freeze();
+			}
 			_fs = fs;
 		}
 
@@ -32,24 +35,20 @@ namespace SIL.Cog
 			get { return _fs; }
 		}
 
-		public double Probability
+		public bool Equals(Segment other)
 		{
-			get { return _probability; }
-			internal set
-			{
-				_probability = value;
-				OnPropertyChanged("Probability");
-			}
+			return other != null && _fs.ValueEquals(other._fs);
 		}
 
-		public int Frequency
+		public override bool Equals(object obj)
 		{
-			get { return _frequency; }
-			internal set
-			{
-				_frequency = value;
-				OnPropertyChanged("Frequency");
-			}
+			var seg = obj as Segment;
+			return seg != null && Equals(seg);
+		}
+
+		public override int GetHashCode()
+		{
+			return _fs.GetFrozenHashCode();
 		}
 
 		public override string ToString()

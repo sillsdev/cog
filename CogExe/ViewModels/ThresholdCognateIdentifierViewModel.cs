@@ -1,4 +1,4 @@
-﻿using SIL.Cog.Processors;
+﻿using SIL.Cog.Components;
 
 namespace SIL.Cog.ViewModels
 {
@@ -28,10 +28,11 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
-			Project.VarietyPairProcessors.Remove("similarSegmentIdentifier");
-			Project.VarietyPairProcessors["cognateIdentifier"] = new ThresholdCognateIdentifier(Project, _threshold, "primary");
+			var cognateIdentifier = new ThresholdCognateIdentifier(Project, _threshold, "primary");
+			Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			return cognateIdentifier;
 		}
 	}
 }

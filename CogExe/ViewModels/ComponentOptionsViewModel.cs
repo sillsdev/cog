@@ -44,9 +44,9 @@ namespace SIL.Cog.ViewModels
 			get { return _options; }
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
-			_currentOption.UpdateComponent();
+			return _currentOption.UpdateComponent();
 		}
 	}
 }

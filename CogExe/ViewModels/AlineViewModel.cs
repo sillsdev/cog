@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using SIL.Cog.Aligners;
+using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -104,7 +104,7 @@ namespace SIL.Cog.ViewModels
 				relevantFeature.AcceptChanges();
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
 			var mode = AlignerMode.Local;
 			switch (_mode)
@@ -138,8 +138,10 @@ namespace SIL.Cog.ViewModels
 					valueMetrics[value.ModelSymbol] = value.Metric;
 			}
 
-			Project.Aligners["primary"] = new Aline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
+			var aligner = new Aline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new AlignerSettings {DisableExpansionCompression = _disableExpansionCompression, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass)});
+			Project.Aligners["primary"] = aligner;
+			return aligner;
 		}
 	}
 }

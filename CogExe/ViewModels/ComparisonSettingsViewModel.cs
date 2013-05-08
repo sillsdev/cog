@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
-using SIL.Cog.Aligners;
-using SIL.Cog.Processors;
+using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Machine;
 

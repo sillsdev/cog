@@ -28,7 +28,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_dialogService = dialogService;
-			_segments = new UnorderedViewModelCollection<SegmentCollection, SegmentVarietyViewModel, Segment>(variety.Segments, segment => new SegmentVarietyViewModel(segment), vm => vm.ModelSegment);
+			_segments = new UnorderedViewModelCollection<SegmentCollection, SegmentVarietyViewModel, Segment>(variety.Segments, segment => new SegmentVarietyViewModel(variety, segment), vm => vm.ModelSegment);
 			_senses = new UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
 			_words = new UnorderedViewModelCollection<WordCollection, WordViewModel, Word>(variety.Words, word =>
 				{

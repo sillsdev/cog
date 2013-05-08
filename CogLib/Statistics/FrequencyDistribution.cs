@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SIL.Collections;
 
 namespace SIL.Cog.Statistics
@@ -32,6 +33,34 @@ namespace SIL.Cog.Statistics
 			_sampleOutcomeCount += count;
 		}
 
+		public void Decrement(TSample sample)
+		{
+			Decrement(sample, 1);
+		}
+
+		public void Decrement(TSample sample, int count)
+		{
+			if (count == 0)
+				return;
+
+			int curCount;
+			if (_sampleCounts.TryGetValue(sample, out curCount))
+			{
+				if (curCount < count)
+					throw new ArgumentException("The specified sample cannot be decremented.", "sample");
+				int newCount = curCount - count;
+				if (newCount == 0)
+					_sampleCounts.Remove(sample);
+				else
+					_sampleCounts[sample] = newCount;
+			}
+			else
+			{
+				throw new ArgumentException("The specified sample cannot be decremented.", "sample");
+			}
+			_sampleOutcomeCount -= count;
+		}
+
 		public int this[TSample sample]
 		{
 			get
@@ -46,6 +75,12 @@ namespace SIL.Cog.Statistics
 		public int SampleOutcomeCount
 		{
 			get { return _sampleOutcomeCount; }
+		}
+
+		public void Reset()
+		{
+			_sampleCounts.Clear();
+			_sampleOutcomeCount = 0;
 		}
 	}
 }

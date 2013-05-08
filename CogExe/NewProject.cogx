@@ -1264,13 +1264,21 @@
 			<ApplicableAligner ref="primary" />
 			<CognateIdentifier ref="cognateIdentifier" />
 		</VarietyPairProcessor>
-		<VarietyPairProcessor id="similarSegmentIdentifier" xsi:type="ThresholdSimilarSegmentIdentifier">
-			<VowelThreshold>500</VowelThreshold>
-			<ConsonantThreshold>600</ConsonantThreshold>
-			<ApplicableAligner ref="primary" />
-		</VarietyPairProcessor>
 		<VarietyPairProcessor id="cognateIdentifier" xsi:type="BlairCognateIdentifier">
 			<ApplicableAligner ref="primary" />
+			<IgnoredCorrespondences xsi:type="ListSegmentMappings">
+				<Mappings />
+			</IgnoredCorrespondences>
+			<SimilarSegments xsi:type="TypeSegmentMappings">
+				<VowelMappings xsi:type="ThresholdSegmentMappings">
+					<Threshold>500</Threshold>
+					<ApplicableAligner ref="primary" />
+				</VowelMappings>
+				<ConsonantMappings xsi:type="ThresholdSegmentMappings">
+					<Threshold>600</Threshold>
+					<ApplicableAligner ref="primary" />
+				</ConsonantMappings>
+			</SimilarSegments>
 		</VarietyPairProcessor>
 	</VarietyPairProcessors>
 </CogProject>

@@ -4,10 +4,12 @@ namespace SIL.Cog.ViewModels
 {
 	public class SegmentVarietyViewModel : ViewModelBase
 	{
+		private readonly Variety _variety;
 		private readonly Segment _segment;
 
-		public SegmentVarietyViewModel(Segment segment)
+		public SegmentVarietyViewModel(Variety variety, Segment segment)
 		{
+			_variety = variety;
 			_segment = segment;
 		}
 
@@ -18,12 +20,12 @@ namespace SIL.Cog.ViewModels
 
 		public double Probability
 		{
-			get { return _segment.Probability; }
+			get { return _variety.SegmentProbabilityDistribution[_segment]; }
 		}
 
 		public int Frequency
 		{
-			get { return _segment.Frequency; }
+			get { return _variety.SegmentFrequencyDistribution[_segment]; }
 		}
 
 		public SoundType Type

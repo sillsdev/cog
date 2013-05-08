@@ -1,4 +1,4 @@
-﻿using SIL.Cog.Processors;
+﻿using SIL.Cog.Components;
 
 namespace SIL.Cog.ViewModels
 {
@@ -22,9 +22,11 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
-			Project.VarietyPairProcessors["soundChangeInducer"] = new EMSoundChangeInducer(Project, _initialAlignmentThreshold, "primary", "cognateIdentifier");
+			var soundChangeInducer = new EMSoundChangeInducer(Project, _initialAlignmentThreshold, "primary", "cognateIdentifier");
+			Project.VarietyPairProcessors["soundChangeInducer"] = soundChangeInducer;
+			return soundChangeInducer;
 		}
 	}
 }

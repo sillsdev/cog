@@ -37,14 +37,15 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
 			if (Project.Segmenter.MaxConsonantLength == _maxConsonantLength && Project.Segmenter.MaxVowelLength == _maxVowelLength)
-				return;
+				return Project.Segmenter;
 
 			Project.Segmenter.MaxConsonantLength = _maxConsonantLength;
 			Project.Segmenter.MaxVowelLength = _maxVowelLength;
 			_progressService.ShowProgress(this, UpdateAllShapes);
+			return Project.Segmenter;
 		}
 
 		private void UpdateAllShapes()

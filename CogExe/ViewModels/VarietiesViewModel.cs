@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
-using SIL.Cog.Processors;
+using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;
 using SIL.Machine;

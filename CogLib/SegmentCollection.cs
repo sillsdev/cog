@@ -12,12 +12,13 @@ namespace SIL.Cog
 	{
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+		private readonly Variety _variety;
 		private readonly SimpleMonitor _reentrancyMonitor = new SimpleMonitor();
 		private readonly Dictionary<string, Segment> _segments;
-		private int _totalFreq;
 
-		internal SegmentCollection()
+		internal SegmentCollection(Variety variety)
 		{
+			_variety = variety;
 			_segments = new Dictionary<string, Segment>();
 		}
 
@@ -34,12 +35,8 @@ namespace SIL.Cog
 					_segments[node.StrRep()] = segment;
 					segmentsAdded.Add(segment);
 				}
-				segment.Frequency++;
-				_totalFreq++;
+				_variety.SegmentFrequencyDistribution.Increment(segment);
 			}
-
-			foreach (Segment segment in _segments.Values)
-				segment.Probability = (double) segment.Frequency / _totalFreq;
 
 			if (segmentsAdded.Count > 0)
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, segmentsAdded));
@@ -52,17 +49,13 @@ namespace SIL.Cog
 			foreach (ShapeNode node in word.Shape.Where(n => n.Type().IsOneOf(CogFeatureSystem.VowelType, CogFeatureSystem.ConsonantType)))
 			{
 				Segment segment = _segments[node.StrRep()];
-				segment.Frequency--;
-				_totalFreq--;
-				if (segment.Frequency == 0)
+				_variety.SegmentFrequencyDistribution.Decrement(segment);
+				if (_variety.SegmentFrequencyDistribution[segment] == 0)
 				{
 					_segments.Remove(node.StrRep());
 					segmentsRemoved.Add(segment);
 				}
 			}
-
-			foreach (Segment segment in _segments.Values)
-				segment.Probability = (double) segment.Frequency / _totalFreq;
 
 			if (segmentsRemoved.Count > 0)
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, segmentsRemoved));
@@ -72,7 +65,7 @@ namespace SIL.Cog
 		{
 			int count = _segments.Count;
 			_segments.Clear();
-			_totalFreq = 0;
+			_variety.SegmentFrequencyDistribution.Reset();
 			if (count > 0)
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
@@ -123,11 +116,6 @@ namespace SIL.Cog
 			{
 				return new Ngram(ann.Span.Start.GetNodes(ann.Span.End).Select(n => this[n]));
 			}
-		}
-
-		public int TotalFrequency
-		{
-			get { return _totalFreq; }
 		}
 
 		public int Count

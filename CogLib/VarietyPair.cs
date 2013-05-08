@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using SIL.Cog.Statistics;
 using SIL.Collections;
 
@@ -10,8 +9,7 @@ namespace SIL.Cog
 		private readonly Variety _variety2;
 		private readonly WordPairCollection _wordPairs; 
 		private IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> _soundChangeProbabilityDistribution;
-		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> _soundChangeCounts;
-		private readonly Dictionary<Segment, HashSet<Segment>> _similarSegments;
+		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> _soundFreqDist;
 		private double _defaultCorrProb;
 		private double _phoneticSimilarityScore;
 		private double _lexicalSimilarityScore;
@@ -24,8 +22,6 @@ namespace SIL.Cog
 			_variety1 = variety1;
 			_variety2 = variety2;
 			_wordPairs = new WordPairCollection(this);
-
-			_similarSegments = new Dictionary<Segment, HashSet<Segment>>();
 		}
 
 		public Variety Variety1
@@ -113,13 +109,13 @@ namespace SIL.Cog
 			}
 		}
 
-		public ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> SoundChangeCounts
+		public ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> SoundChangeFrequencyDistribution
 		{
-			get { return _soundChangeCounts; }
+			get { return _soundFreqDist; }
 			set
 			{
-				_soundChangeCounts = value;
-				OnPropertyChanged("SoundChangeCounts");
+				_soundFreqDist = value;
+				OnPropertyChanged("SoundChangeFrequencyDistribution");
 			}
 		}
 
@@ -131,21 +127,6 @@ namespace SIL.Cog
 				_defaultCorrProb = value;
 				OnPropertyChanged("DefaultCorrespondenceProbability");
 			}
-		}
-
-		public void AddSimilarSegment(Segment seg1, Segment seg2)
-		{
-			HashSet<Segment> segments = _similarSegments.GetValue(seg1, () => new HashSet<Segment>());
-			segments.Add(seg2);
-		}
-
-		public IReadOnlySet<Segment> GetSimilarSegments(Segment seg)
-		{
-			HashSet<Segment> segments;
-			if (_similarSegments.TryGetValue(seg, out  segments))
-				return segments.AsReadOnlySet();
-
-			return new ReadOnlySet<Segment>(new HashSet<Segment>());
 		}
 	}
 }

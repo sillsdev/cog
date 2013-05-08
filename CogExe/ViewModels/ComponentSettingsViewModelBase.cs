@@ -15,6 +15,6 @@
 			get { return _project; }
 		}
 
-		public abstract void UpdateComponent();
+		public abstract object UpdateComponent();
 	}
 }

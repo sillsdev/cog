@@ -248,14 +248,19 @@ namespace SIL.Cog.Config
 			return project;
 		}
 
-		private static void LoadComponent<T>(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem, IDictionary<string, T> components)
+		internal static T LoadComponent<T>(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
 			var typeStr = (string) elem.Attribute(Xsi + "type");
-			Type type = Type.GetType(string.Format("SIL.Cog.Config.{0}Config", typeStr));
+			Type type = Type.GetType(string.Format("SIL.Cog.Config.Components.{0}Config", typeStr));
 			Debug.Assert(type != null);
 			var config = (IComponentConfig<T>) Activator.CreateInstance(type);
+			return config.Load(spanFactory, project, elem);
+		}
+
+		private static void LoadComponent<T>(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem, IDictionary<string, T> components)
+		{
 			var id = (string) elem.Attribute("id");
-			components[id] = config.Load(spanFactory, project, elem);
+			components[id] = LoadComponent<T>(spanFactory, project, elem);
 		}
 
 		private static void ParseSymbols(FeatureSystem featSys, XElement elem, ICollection<Symbol> symbols)
@@ -435,13 +440,20 @@ namespace SIL.Cog.Config
 			}
 		}
 
-		private static XElement SaveComponent<T>(string elemName, string id, T component)
+		internal static XElement SaveComponent<T>(string elemName, T component)
 		{
-			var elem = new XElement(Cog + elemName, new XAttribute("id", id), new XAttribute(Xsi + "type", component.GetType().Name));
-			Type type = Type.GetType(string.Format("SIL.Cog.Config.{0}Config", component.GetType().Name));
+			var elem = new XElement(Cog + elemName, new XAttribute(Xsi + "type", component.GetType().Name));
+			Type type = Type.GetType(string.Format("SIL.Cog.Config.Components.{0}Config", component.GetType().Name));
 			Debug.Assert(type != null);
 			var config = (IComponentConfig<T>) Activator.CreateInstance(type);
 			config.Save(component, elem);
+			return elem;
+		}
+
+		private static XElement SaveComponent<T>(string elemName, string id, T component)
+		{
+			XElement elem = SaveComponent(elemName, component);
+			elem.Add(new XAttribute("id", id));
 			return elem;
 		}
 	}

@@ -90,6 +90,7 @@
 	<xs:complexType name="VarietyPairProcessorBase" abstract="true">
 		<xs:attribute name="id" type="xs:string" use="required" />
 	</xs:complexType>
+	<xs:complexType name="SegmentMappingsBase" abstract="true" />
 	<xs:element name="ApplicableAligner">
 		<xs:complexType>
 			<xs:attribute name="ref" type="xs:string" use="required" />
@@ -152,42 +153,43 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="ThresholdSimilarSegmentIdentifier">
+	<xs:complexType name="TypeSegmentMappings">
 		<xs:complexContent>
-			<xs:extension base="VarietyPairProcessorBase">
+			<xs:extension base="SegmentMappingsBase">
 				<xs:sequence>
-					<xs:element name="VowelThreshold" type="xs:int" />
-					<xs:element name="ConsonantThreshold" type="xs:int" />
-					<xs:element ref="ApplicableAligner" />
+					<xs:element name="VowelMappings" type="SegmentMappingsBase" />
+					<xs:element name="ConsonantMappings" type="SegmentMappingsBase" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="Mapping">
-		<xs:complexType>
-			<xs:attribute name="segment1" type="xs:string" use="required" />
-			<xs:attribute name="segment2" type="xs:string" use="required" />
-		</xs:complexType>
-	</xs:element>
-	<xs:complexType name="ListSimilarSegmentIdentifier">
+	<xs:complexType name="ListSegmentMappings">
 		<xs:complexContent>
-			<xs:extension base="VarietyPairProcessorBase">
+			<xs:extension base="SegmentMappingsBase">
 				<xs:sequence>
-					<xs:element name="SimilarVowels" minOccurs="0" maxOccurs="1">
+					<xs:element name="Mappings">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element ref="Mapping" minOccurs="0" maxOccurs="unbounded" />
+								<xs:element name="Mapping" minOccurs="0" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:attribute name="segment1" type="xs:string" use="required" />
+										<xs:attribute name="segment2" type="xs:string" use="required" />
+									</xs:complexType>
+								</xs:element>
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-					<xs:element name="SimilarConsonants" minOccurs="0" maxOccurs="1">
-						<xs:complexType>
-							<xs:sequence>
-								<xs:element ref="Mapping" minOccurs="0" maxOccurs="unbounded" />
-							</xs:sequence>
-						</xs:complexType>
-					</xs:element>
-					<xs:element name="GenerateDiphthongs" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="GenerateDigraphs" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ThresholdSegmentMappings">
+		<xs:complexContent>
+			<xs:extension base="SegmentMappingsBase">
+				<xs:sequence>
+					<xs:element name="Threshold" type="xs:int" />
+					<xs:element ref="ApplicableAligner" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -199,6 +201,8 @@
 					<xs:element ref="ApplicableAligner" />
 					<xs:element name="IgnoreRegularInsertionDeletion" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 					<xs:element name="RegularConsonantsAreEqual" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="IgnoredCorrespondences" type="SegmentMappingsBase" />
+					<xs:element name="SimilarSegments" type="SegmentMappingsBase" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>

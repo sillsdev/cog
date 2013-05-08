@@ -6,7 +6,7 @@ using System.Text;
 using GraphSharp;
 using QuickGraph;
 using SIL.Cog.Clusterers;
-using SIL.Cog.Processors;
+using SIL.Cog.Components;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels

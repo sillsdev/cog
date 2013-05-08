@@ -1,6 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
-using SIL.Cog.Processors;
+using SIL.Cog.Components;
 using SIL.Cog.Services;
 
 namespace SIL.Cog.ViewModels
@@ -59,11 +59,12 @@ namespace SIL.Cog.ViewModels
 			get { return _soundClasses; }
 		}
 
-		public override void UpdateComponent()
+		public override object UpdateComponent()
 		{
-			Project.VarietyPairProcessors.Remove("similarSegmentIdentifier");
-			Project.VarietyPairProcessors["cognateIdentifier"] = new DolgopolskyCognateIdentifier(Project, _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass),
+			var cognateIdentifier = new DolgopolskyCognateIdentifier(Project, _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass),
 				_initialEquivalenceThreshold, "primary");
+			Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			return cognateIdentifier;
 		}
 	}
 }

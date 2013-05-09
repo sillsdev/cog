@@ -3,7 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-             xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:v="clr-namespace:SIL.Cog.Views"
+             xmlns:c="clr-namespace:SIL.Cog.Controls"
+             xmlns:b="clr-namespace:SIL.Cog.Behaviors"
              mc:Ignorable="d" StartupUri="Views\MainWindow.xaml"
              x:Class="SIL.Cog.App">
     <Application.Resources>
@@ -402,7 +403,7 @@
 						</ControlTemplate>
 					</Setter.Value>
 				</Setter>
-				<Setter Property="v:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
+				<Setter Property="b:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
 				<!--Setter Property="BorderThickness" Value="0" /-->
 				<Style.Triggers>
 					<DataTrigger Binding="{Binding IsCluster}" Value="True">
@@ -468,7 +469,7 @@
 			
 			<Style x:Key="NetworkVertexControlStyle" TargetType="gsc:VertexControl">
 				<Setter Property="Foreground" Value="Black" />
-				<Setter Property="v:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
+				<Setter Property="b:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
 				<Style.Triggers>
 					<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
 						<Setter Property="BorderBrush" Value="Orange" />

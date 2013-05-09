@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Windows;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Behaviors
 {
 	public static class FrameworkElementBehaviors
 	{

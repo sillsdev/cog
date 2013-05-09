@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using SIL.Cog.Behaviors;
 using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
 using Xceed.Wpf.DataGrid;

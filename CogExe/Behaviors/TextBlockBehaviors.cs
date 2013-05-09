@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Behaviors
 {
 	public static class TextBlockBehaviors
 	{

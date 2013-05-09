@@ -13,20 +13,7 @@
 	<StackPanel>
 		<TextBlock FontSize="14" Foreground="{StaticResource TextBrush}">
 			<TextBlock Text="{Binding Sense.Gloss}" />
-			<TextBlock Text="{Binding Sense.Category, StringFormat={}({0})}">
-				<TextBlock.Style>
-					<Style TargetType="TextBlock">
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Sense.Category}" Value="{x:Null}">
-								<Setter Property="Visibility" Value="Collapsed" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Sense.Category}" Value="{x:Static s:String.Empty}">
-								<Setter Property="Visibility" Value="Collapsed" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</TextBlock.Style>
-			</TextBlock>
+			<TextBlock Text="{Binding Sense.Category, StringFormat={}({0}), TargetNullValue={x:Static s:String.Empty}}" />
 		</TextBlock>
 		<StackPanel Orientation="Horizontal" Grid.IsSharedSizeScope="True">
 			<Grid>

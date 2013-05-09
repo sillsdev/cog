@@ -11,10 +11,10 @@ namespace SIL.Cog.ViewModels
 		private readonly VarietyPair _varietyPair;
 		private readonly ReadOnlyCollection<SoundCorrespondenceViewModel> _correspondences;
 		private SoundCorrespondenceViewModel _currentCorrespondence;
-		private readonly ReadOnlyCollection<WordPairViewModel> _wordPairs;
 		private readonly bool _areVarietiesInOrder;
-		private readonly ObservableCollection<WordPairViewModel> _selectedWordPairs;
 		private readonly CogProject _project;
+		private readonly WordPairsViewModel _cognates;
+		private readonly WordPairsViewModel _noncognates;
 
 		public VarietyPairViewModel(CogProject project, VarietyPair varietyPair, bool areVarietiesInOrder)
 		{
@@ -22,12 +22,11 @@ namespace SIL.Cog.ViewModels
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
-			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(_varietyPair.WordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
+			_cognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));
+			_noncognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted));
 
 			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
 				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
-
-			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
 		}
 
 		public SoundCorrespondenceViewModel CurrentCorrespondence
@@ -36,29 +35,35 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				Set("CurrentCorrespondence", ref _currentCorrespondence, value);
-				_selectedWordPairs.Clear();
-				foreach (WordPairViewModel wordPair in _wordPairs.Where(wp => wp.AreCognate))
-				{
-					bool selected = false;
-					foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
-					{
-						if (_currentCorrespondence == null)
-						{
-							node.IsSelected = false;
-						}
-						else
-						{
-							SoundChangeLhs lhs = GetLhs(node);
-							Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
-							node.IsSelected = lhs.Equals(_currentCorrespondence.ModelSoundChangeLhs) && corr.Equals(_currentCorrespondence.ModelCorrespondence);
-							if (node.IsSelected)
-								selected = true;
-						}
-					}
+				UpdateSelectedCorrespondenceWordPairs(_cognates);
+				UpdateSelectedCorrespondenceWordPairs(_noncognates);
+			}
+		}
 
-					if (selected)
-						_selectedWordPairs.Add(wordPair);
+		private void UpdateSelectedCorrespondenceWordPairs(WordPairsViewModel wordPairs)
+		{
+			wordPairs.SelectedCorrespondenceWordPairs.Clear();
+			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
+			{
+				bool selected = false;
+				foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
+				{
+					if (_currentCorrespondence == null)
+					{
+						node.IsSelected = false;
+					}
+					else
+					{
+						SoundChangeLhs lhs = GetLhs(node);
+						Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
+						node.IsSelected = lhs.Equals(_currentCorrespondence.ModelSoundChangeLhs) && corr.Equals(_currentCorrespondence.ModelCorrespondence);
+						if (node.IsSelected)
+							selected = true;
+					}
 				}
+
+				if (selected)
+					wordPairs.SelectedCorrespondenceWordPairs.Add(wordPair);
 			}
 		}
 
@@ -93,14 +98,14 @@ namespace SIL.Cog.ViewModels
 			get { return _correspondences; }
 		}
 
-		public ReadOnlyCollection<WordPairViewModel> WordPairs
+		public WordPairsViewModel Cognates
 		{
-			get { return _wordPairs; }
+			get { return _cognates; }
 		}
 
-		public ObservableCollection<WordPairViewModel> SelectedWordPairs
+		public WordPairsViewModel Noncognates
 		{
-			get { return _selectedWordPairs; }
+			get { return _noncognates; }
 		}
 
 		public VarietyPair ModelVarietyPair

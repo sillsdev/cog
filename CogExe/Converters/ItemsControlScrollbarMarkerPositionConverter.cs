@@ -15,7 +15,7 @@ namespace SIL.Cog.Converters
 			var itemsControl = (ItemsControl) values[1];
 			var sv = (ScrollViewer) values[2];
 
-			var cp = (ContentPresenter) itemsControl.ItemContainerGenerator.ContainerFromItem(item);
+			var cp = (FrameworkElement) itemsControl.ItemContainerGenerator.ContainerFromItem(item);
 			if (cp == null)
 				return Binding.DoNothing;
 			var point = cp.TransformToAncestor(itemsControl).Transform(new Point());

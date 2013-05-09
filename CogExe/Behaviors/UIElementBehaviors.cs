@@ -1,6 +1,6 @@
-﻿using System.Windows;
+using System.Windows;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Behaviors
 {
 	public static class UIElementBehaviors
 	{

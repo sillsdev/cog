@@ -124,7 +124,7 @@ namespace SIL.Cog
 					first = false;
 				}
 				sb.Append("|");
-				if (suffix1.Length > 0)
+				if (suffix1.Length > 0 || suffix2.Length > 0)
 				{
 					sb.Append(" ");
 					sb.Append(PadString(suffix1, suffix2, ""));
@@ -145,7 +145,7 @@ namespace SIL.Cog
 					first = false;
 				}
 				sb.Append("|");
-				if (suffix2.Length > 0)
+				if (suffix1.Length > 0 || suffix2.Length > 0)
 				{
 					sb.Append(" ");
 					sb.Append(PadString(suffix2, suffix1, ""));
@@ -160,7 +160,7 @@ namespace SIL.Cog
 						sb.Append(" ");
 					}
 
-					sb.Append("|");
+					sb.Append(" ");
 					first = true;
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>, string> tuple in stemAnn1.Children.Zip(stemAnn2.Children, notesList))
 					{
@@ -169,8 +169,8 @@ namespace SIL.Cog
 						sb.Append(PadString(tuple.Item3, tuple.Item1.StrRep(), tuple.Item2.StrRep()));
 						first = false;
 					}
-					sb.Append("|");
-					if (suffix2.Length > 0)
+					sb.Append(" ");
+					if (suffix1.Length > 0 || suffix2.Length > 0)
 					{
 						sb.Append(" ");
 						sb.Append(PadString("", suffix1, suffix2));

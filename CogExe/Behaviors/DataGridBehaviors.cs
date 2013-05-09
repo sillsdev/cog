@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
@@ -6,9 +6,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using SIL.Cog.Views;
 using SIL.Collections;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Behaviors
 {
 	public static class DataGridBehaviors
 	{

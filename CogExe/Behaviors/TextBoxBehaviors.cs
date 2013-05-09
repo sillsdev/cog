@@ -1,9 +1,9 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Behaviors
 {
 	public static class TextBoxBehaviors
 	{

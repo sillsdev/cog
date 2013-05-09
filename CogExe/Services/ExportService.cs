@@ -23,6 +23,7 @@ namespace SIL.Cog.Services
 		private static readonly Dictionary<FileType, IWordListsExporter> WordListsExporters;
 		private static readonly Dictionary<FileType, ISimilarityMatrixExporter> SimilarityMatrixExporters;
 		private static readonly Dictionary<FileType, ICognateSetsExporter> CognateSetsExporters;
+		private static readonly Dictionary<FileType, IVarietyPairExporter> VarietyPairExporters; 
 		static ExportService()
 		{
 			WordListsExporters = new Dictionary<FileType, IWordListsExporter>
@@ -39,6 +40,10 @@ namespace SIL.Cog.Services
 				{
 					{new FileType("Tab-delimited Text", ".txt"), new TextCognateSetsExporter()},
 					{new FileType("NEXUS", ".nex"), new NexusCognateSetsExporter()}
+				};
+			VarietyPairExporters = new Dictionary<FileType, IVarietyPairExporter>
+				{
+					{new FileType("Unicode Text", ".txt"), new TextVarietyPairExporter()}
 				};
 		}
 
@@ -79,7 +84,17 @@ namespace SIL.Cog.Services
 				CognateSetsExporters[result.SelectedFileType].Export(result.FileName, project);
 				return true;
 			}
+			return false;
+		}
 
+		public bool ExportVarietyPair(object ownerViewModel, CogProject project, VarietyPair varietyPair)
+		{
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export variety pair", VarietyPairExporters.Keys);
+			if (result.IsValid)
+			{
+				VarietyPairExporters[result.SelectedFileType].Export(result.FileName, project, varietyPair);
+				return true;
+			}
 			return false;
 		}
 
@@ -240,5 +255,7 @@ namespace SIL.Cog.Services
 			using (var file = File.Create(path))
 				encoder.Save(file);
 		}
+
+
 	}
 }

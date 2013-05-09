@@ -26,15 +26,19 @@ namespace SIL.Cog.ViewModels
 		private VarietyViewModel _currentVariety2;
 		private VarietyPairViewModel _currentVarietyPair;
 		private CurrentVarietyPairState _currentVarietyPairState;
+		private readonly IExportService _exportService;
 
-		public VarietyPairsViewModel(IProgressService progressService)
+		public VarietyPairsViewModel(IProgressService progressService, IExportService exportService)
 			: base("Variety Pairs")
 		{
 			_progressService = progressService;
+			_exportService = exportService;
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaViewModel("Common tasks", 
 				new CommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison))));
+			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+				new CommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
 		}
 
 		private void PerformComparison()
@@ -51,6 +55,14 @@ namespace SIL.Cog.ViewModels
 			var pipeline = new Pipeline<VarietyPair>(ViewModelUtilities.GetVarietyPairProcessors(_project));
 			_progressService.ShowProgress(this, () => pipeline.Process(pair.ToEnumerable()));
 			SetCurrentVarietyPair();
+		}
+
+		private void ExportVarietyPair()
+		{
+			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected)
+				return;
+
+			_exportService.ExportVarietyPair(this, _project, _currentVarietyPair.ModelVarietyPair);
 		}
 
 		private void HandleNotificationMessage(NotificationMessage msg)

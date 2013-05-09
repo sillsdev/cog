@@ -39,7 +39,7 @@ namespace SIL.Cog.Export
 					FrequencyDistribution<Ngram> freqDist = varietyPair.SoundChangeFrequencyDistribution[lhs];
 					writer.WriteLine(lhs.ToString());
 					foreach (var correspondence in freqDist.ObservedSamples.Select(corr => new {Segment = corr, Probability = probDist[corr], Frequency = freqDist[corr]}).OrderByDescending(corr => corr.Probability))
-						writer.WriteLine("{0}, {1:p}, {2}", correspondence.Segment, correspondence.Probability, correspondence.Frequency);
+						writer.WriteLine("{0}: {1:p}, {2}", correspondence.Segment, correspondence.Probability, correspondence.Frequency);
 					first = false;
 				}
 			}

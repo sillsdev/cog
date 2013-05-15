@@ -60,7 +60,7 @@ namespace SIL.Cog.ViewModels
 		private void Import()
 		{
 			IEnumerable<Tuple<string, string>> mappings;
-			if (_importService.ImportSimilarSegments(this, out mappings))
+			if (_importService.ImportSegmentMappings(this, out mappings))
 			{
 				_mappings.Clear();
 				foreach (Tuple<string, string> mapping in mappings)

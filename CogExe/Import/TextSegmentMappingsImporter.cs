@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SIL.Cog.Import
 {
-	public class TextSimilarSegmentsImporter : ISimilarSegmentsImporter
+	public class TextSegmentMappingsImporter : ISegmentMappingsImporter
 	{
 		public IEnumerable<Tuple<string, string>> Import(string path)
 		{

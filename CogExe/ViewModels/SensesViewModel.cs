@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 			: base("Senses")
 		{
 			_dialogService = dialogService;
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
 				new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
 				new CommandViewModel("Edit selected sense", new RelayCommand(EditSelectedSense)), 
 				new CommandViewModel("Remove selected sense", new RelayCommand(RemoveCurrentSense))));

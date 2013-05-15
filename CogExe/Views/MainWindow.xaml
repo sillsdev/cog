@@ -15,7 +15,10 @@
                 <MenuItem Header="_Open..." Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
-                <MenuItem Header="_Import Word Lists..." Command="{Binding ImportCommand}" />
+				<MenuItem Header="_Import">
+					<MenuItem Header="Word Lists..." Command="{Binding ImportWordListsCommand}" />
+					<MenuItem Header="Regions..." Command="{Binding ImportGeographicRegionsCommand}" />
+				</MenuItem>
 				<MenuItem Header="_Export">
 					<MenuItem Header="Word Lists..." Command="{Binding ExportWordListsCommand}" />
 					<MenuItem Header="Similarity Matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
@@ -63,16 +66,16 @@
                                     <Border Width="140" BorderThickness="0,0,1,0" BorderBrush="{StaticResource TaskAreaBorderBrush}" Background="{StaticResource TaskAreaBackgroundBrush}">
                                         <ItemsControl ItemsSource="{Binding TaskAreas}">
 											<ItemsControl.Resources>
-												<DataTemplate DataType="{x:Type vm:TaskAreaGroupViewModel}">
-													<v:TaskAreaGroupView />
+												<DataTemplate DataType="{x:Type vm:TaskAreaCommandGroupViewModel}">
+													<v:TaskAreaCommandGroupView />
 												</DataTemplate>
-												<DataTemplate DataType="{x:Type vm:TaskAreaViewModel}">
-													<v:TaskAreaView />
+												<DataTemplate DataType="{x:Type vm:TaskAreaCommandsViewModel}">
+													<v:TaskAreaCommandsView />
 												</DataTemplate>
 											</ItemsControl.Resources>
                                         </ItemsControl>
                                     </Border>
-                                    <ContentPresenter Margin="10,5,10,10" DockPanel.Dock="Right" Content="{Binding}">
+                                    <ContentPresenter Margin="10" DockPanel.Dock="Right" Content="{Binding}">
                                         <ContentPresenter.Resources>
                                             <DataTemplate DataType="{x:Type vm:WordListsViewModel}">
                                                 <v:WordListsView />

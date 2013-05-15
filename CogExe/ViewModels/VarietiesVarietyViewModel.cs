@@ -8,7 +8,7 @@ using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietyVarietiesViewModel : VarietyViewModel
+	public class VarietiesVarietyViewModel : VarietyViewModel
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
@@ -23,7 +23,7 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
  
-		public VarietyVarietiesViewModel(IDialogService dialogService, CogProject project, Variety variety)
+		public VarietiesVarietyViewModel(IDialogService dialogService, CogProject project, Variety variety)
 			: base(variety)
 		{
 			_project = project;

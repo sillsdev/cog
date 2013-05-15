@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IProgressService _progressService;
 		private readonly IExportService _exportService;
 		private CogProject _project;
-		private ReadOnlyCollection<VarietySimilarityMatrixViewModel> _varieties;
+		private ReadOnlyCollection<SimilarityMatrixVarietyViewModel> _varieties;
 		private readonly List<Variety> _modelVarieties;
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
@@ -28,12 +28,12 @@ namespace SIL.Cog.ViewModels
 			_progressService = progressService;
 			_exportService = exportService;
 			_modelVarieties = new List<Variety>();
-			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
 				new CommandViewModel("Perform comparison", new RelayCommand(PerformComparison))));
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
 				new CommandViewModel("Export this matrix", new RelayCommand(Export))));
 		}
 
@@ -62,7 +62,7 @@ namespace SIL.Cog.ViewModels
 			if (IsEmpty)
 				return;
 			_modelVarieties.Clear();
-			Set("Varieties", ref _varieties, new ReadOnlyCollection<VarietySimilarityMatrixViewModel>(new VarietySimilarityMatrixViewModel[0]));
+			Set("Varieties", ref _varieties, new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]));
 			IsEmpty = true;
 		}
 
@@ -75,7 +75,7 @@ namespace SIL.Cog.ViewModels
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);
 
-			var pipeline = new MultiThreadedPipeline<VarietyPair>(ViewModelUtilities.GetVarietyPairProcessors(_project));
+			var pipeline = new MultiThreadedPipeline<VarietyPair>(_project.GetVarietyPairProcessors());
 
 			var progressVM = new ProgressViewModel(() => pipeline.Process(_project.VarietyPairs)) {Text = "Comparing all variety pairs..."};
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
@@ -115,8 +115,8 @@ namespace SIL.Cog.ViewModels
 					return Tuple.Create(pair.GetOtherVariety(variety), 1.0 - score);
 				}).Concat(Tuple.Create(variety, 0.0)), 2);
 			_modelVarieties.AddRange(optics.ClusterOrder(_project.Varieties).Select(oe => oe.DataObject));
-			VarietySimilarityMatrixViewModel[] vms = _modelVarieties.Select(v => new VarietySimilarityMatrixViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
-			Set("Varieties", ref _varieties, new ReadOnlyCollection<VarietySimilarityMatrixViewModel>(vms));
+			SimilarityMatrixVarietyViewModel[] vms = _modelVarieties.Select(v => new SimilarityMatrixVarietyViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
+			Set("Varieties", ref _varieties, new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(vms));
 			IsEmpty = false;
 		}
 
@@ -139,7 +139,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public ReadOnlyCollection<VarietySimilarityMatrixViewModel> Varieties
+		public ReadOnlyCollection<SimilarityMatrixVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}

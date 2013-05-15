@@ -11,7 +11,7 @@
 		<cnvtrs:BooleanToBrushConverter x:Key="BrushConverter" />
 	</UserControl.Resources>
 	<StackPanel>
-		<TextBlock FontSize="14" Foreground="{StaticResource TextBrush}">
+		<TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
 			<TextBlock Text="{Binding Sense.Gloss}" />
 			<TextBlock Text="{Binding Sense.Category, StringFormat={}({0}), TargetNullValue={x:Static s:String.Empty}}" />
 		</TextBlock>
@@ -97,8 +97,8 @@
 						</Grid>
 						<DataTemplate.Triggers>
 							<DataTrigger Binding="{Binding IsSelected}" Value="True">
-								<Setter TargetName="strRep1TextBlock" Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
-								<Setter TargetName="strRep2TextBlock" Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+								<Setter TargetName="strRep1TextBlock" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+								<Setter TargetName="strRep2TextBlock" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 							</DataTrigger>
 						</DataTemplate.Triggers>
 					</DataTemplate>

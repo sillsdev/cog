@@ -46,11 +46,12 @@ namespace SIL.Cog.Behaviors
 		{
 			UIElement childElement; // element from which to start the tree navigation, looking for a Datagrid parent
 
-			if (element is ComboBoxItem)
+			var comboBoxItem = element as ComboBoxItem;
+			if (comboBoxItem != null)
 			{
 				// Since ComboBoxItem.Parent is null, we must pass through ItemsPresenter in order to get the parent ComboBox
-				var parentItemsPresenter = ViewUtilities.FindVisualAncestor<ItemsPresenter>(element as ComboBoxItem);
-				var combobox = parentItemsPresenter.TemplatedParent as ComboBox;
+				var parentItemsPresenter = comboBoxItem.FindVisualAncestor<ItemsPresenter>();
+				var combobox = (ComboBox) parentItemsPresenter.TemplatedParent;
 				childElement = combobox;
 			}
 			else
@@ -58,7 +59,7 @@ namespace SIL.Cog.Behaviors
 				childElement = element;
 			}
 
-			var parentDatagrid = ViewUtilities.FindVisualAncestor<DataGrid>(childElement);
+			var parentDatagrid = childElement.FindVisualAncestor<DataGrid>();
 			return parentDatagrid;
 		}
 
@@ -126,7 +127,7 @@ namespace SIL.Cog.Behaviors
 
 		private static TabPanel FindTabPanel(DataGrid dataGrid)
 		{
-			var parentTabControl = ViewUtilities.FindVisualAncestor<TabControl>(dataGrid);
+			var parentTabControl = dataGrid.FindVisualAncestor<TabControl>();
 			if (parentTabControl != null)
 				return GetTabPanel(parentTabControl);
 			return null;

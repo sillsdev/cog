@@ -7,15 +7,16 @@
 	<cnvtrs:EnumMatchToBooleanConverter x:Key="EnumConverter" />
 	<xcdg:ThicknessConverter x:Key="ThicknessConverter" />
 	<cnvtrs:EqualityConverter x:Key="EqualityConverter" />
-	
-	<SolidColorBrush x:Key="TextBrush" Color="#FF10257F" />
+
+	<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFCE8AA" />
+	<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+	<SolidColorBrush x:Key="ListBorderBrush" Color="#FF88B0E4" />
+	<SolidColorBrush x:Key="HeaderTextBrush" Color="#FF10257F" />
+	<SolidColorBrush x:Key="AlternatingRowBrush" Color="#FFF6FAFD" />
+	<SolidColorBrush x:Key="ListMouseOverBrush" Color="#FFFFF8E2" />
+
 	<SolidColorBrush x:Key="DataGridHeaderBrush" Color="#FFCFDDF0" />
 	<SolidColorBrush x:Key="DataGridHeaderSelectedBrush" Color="#FFBBCFE9" />
-	<SolidColorBrush x:Key="DataGridBorderBrush" Color="#FF88B0E4" />
-	<SolidColorBrush x:Key="DataGridSelectedBrush" Color="#FFFCE8AA" />
-	<SolidColorBrush x:Key="DataGridMouseOverBrush" Color="#FFFFF8E2" />
-	<SolidColorBrush x:Key="DataGridSelectedInactiveBrush" Color="#FFDDDDDD" />
-	<SolidColorBrush x:Key="AlternatingRowBrush" Color="#FFF6FAFD" />
 	<SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#88D0D0D0" />
 
 	<Style TargetType="HeaderedContentControl">
@@ -37,7 +38,7 @@
 			<Setter.Value>
 				<DataTemplate>
 					<Border BorderBrush="Silver" BorderThickness="0,0,0,1" Margin="0,0,0,5">
-						<TextBlock Foreground="{StaticResource TextBrush}" FontWeight="Bold" Text="{TemplateBinding ContentControl.Content}" />
+						<TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold" Text="{TemplateBinding ContentControl.Content}" />
 					</Border>
 				</DataTemplate>
 			</Setter.Value>
@@ -45,7 +46,7 @@
 	</Style>
 
 	<Style TargetType="Hyperlink">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
 		<Style.Triggers>
 			<Trigger Property="IsMouseOver" Value="true">
 				<Setter Property="Foreground" Value="Blue" />
@@ -54,7 +55,7 @@
 	</Style>
 
 	<Style TargetType="DataGrid">
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="Background" Value="White" />
 		<Setter Property="RowBackground" Value="White" />
 		<Setter Property="AlternatingRowBackground" Value="{StaticResource AlternatingRowBrush}" />
@@ -68,7 +69,7 @@
 					<Setter Property="Template">
 						<Setter.Value>
 							<ControlTemplate TargetType="Button">
-								<Border x:Name="Border" BorderBrush="{StaticResource DataGridBorderBrush}" BorderThickness="0,0,1,1" Background="{StaticResource DataGridHeaderBrush}" VerticalAlignment="Stretch" />
+								<Border x:Name="Border" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="0,0,1,1" Background="{StaticResource DataGridHeaderBrush}" VerticalAlignment="Stretch" />
 							</ControlTemplate>
 						</Setter.Value>
 					</Setter>
@@ -122,10 +123,10 @@
 	</Style>
 
 	<Style TargetType="DataGridColumnHeader">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
 		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
 		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="BorderThickness" Value="0,0,1,1" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -166,10 +167,10 @@
 	</Style>
 
 	<Style TargetType="DataGridRowHeader">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
 		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
 		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="BorderThickness" Value="0,0,1,1" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -197,21 +198,21 @@
 					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="Cell" />
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+				<Setter Property="BorderBrush" Value="{StaticResource ListMouseOverBrush}" />
+				<Setter Property="Background" Value="{StaticResource ListMouseOverBrush}" />
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
 					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="FullRow" />
 					<Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="True" />
 				</MultiDataTrigger.Conditions>
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridMouseOverBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+				<Setter Property="BorderBrush" Value="{StaticResource ListMouseOverBrush}" />
+				<Setter Property="Background" Value="{StaticResource ListMouseOverBrush}" />
 			</MultiDataTrigger>
 			<Trigger Property="IsSelected" Value="True">
 				<Setter Property="Foreground" Value="Black" />
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 			</Trigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
@@ -219,8 +220,8 @@
 					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 					<Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource Self}}" Value="False" />
 				</MultiDataTrigger.Conditions>
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedInactiveBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
@@ -228,8 +229,8 @@
 					<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 					<Condition Binding="{Binding Path=(b:UIElementBehaviors.IsFocusWithin), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="False" />
 				</MultiDataTrigger.Conditions>
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedInactiveBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
@@ -238,8 +239,8 @@
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
 				<Setter Property="Foreground" Value="Black" />
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 			</MultiDataTrigger>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
@@ -248,8 +249,8 @@
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Value="True" />
 				</MultiDataTrigger.Conditions>
 				<Setter Property="Foreground" Value="Black" />
-				<Setter Property="BorderBrush" Value="{StaticResource DataGridSelectedBrush}" />
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 			</MultiDataTrigger>
 		</Style.Triggers>
 	</Style>
@@ -261,24 +262,24 @@
 					<Condition Binding="{Binding SelectionUnit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, FallbackValue=Cell}" Value="FullRow" />
 					<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
-				<Setter Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+				<Setter Property="Background" Value="{StaticResource ListMouseOverBrush}" />
 			</MultiDataTrigger>
 			<Trigger Property="IsSelected" Value="True">
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 			</Trigger>
 			<MultiTrigger>
 				<MultiTrigger.Conditions>
 					<Condition Property="IsSelected" Value="True" />
 					<Condition Property="b:UIElementBehaviors.IsFocusWithin" Value="False" />
 				</MultiTrigger.Conditions>
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 			</MultiTrigger>
 			<MultiTrigger>
 				<MultiTrigger.Conditions>
 					<Condition Property="IsSelected" Value="True" />
 					<Condition Property="IsMouseOver" Value="True" />
 				</MultiTrigger.Conditions>
-				<Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
@@ -327,7 +328,7 @@
 	</Style>
 
 	<Style TargetType="xcdg:DataGridControl">
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="Background" Value="White" />
 	</Style>
 	
@@ -345,10 +346,10 @@
 	</Style>
 	
 	<Style TargetType="xcdg:ColumnManagerCell">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
 		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
 		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="BorderThickness" Value="0,0,1,1" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -395,10 +396,10 @@
 	</Style>
 
 	<Style TargetType="xcdg:RowSelector">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
 		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
 		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="BorderThickness" Value="0,0,1,1" />
 		<Setter Property="HorizontalContentAlignment" Value="Left" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
@@ -431,8 +432,8 @@
 	</Style>
 	
 	<Style TargetType="xcdg:DataRow">
-		<Setter Property="SelectionBackground" Value="{StaticResource DataGridSelectedBrush}" />
-		<Setter Property="InactiveSelectionBackground" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+		<Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+		<Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).HorizontalGridLineThickness, Converter={StaticResource ThicknessConverter},ConverterParameter='Bottom'}" />
 		<Style.Triggers>
 			<MultiDataTrigger>
@@ -447,9 +448,9 @@
 	</Style>
 
 	<Style TargetType="xcdg:DataCell">
-		<Setter Property="SelectionBackground" Value="{StaticResource DataGridSelectedBrush}" />
-		<Setter Property="InactiveSelectionBackground" Value="{StaticResource DataGridSelectedInactiveBrush}" />
-		<Setter Property="CurrentBackground" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+		<Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+		<Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="CurrentBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="xcdg:Cell">
@@ -474,7 +475,7 @@
 								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).SelectionUnit}" Value="Cell" />
 							</MultiDataTrigger.Conditions>
 
-							<Setter TargetName="rootBorder" Property="Background" Value="{StaticResource DataGridMouseOverBrush}" />
+							<Setter TargetName="rootBorder" Property="Background" Value="{StaticResource ListMouseOverBrush}" />
 						</MultiDataTrigger>
 
 						<!-- When the Cell is Current, we want to change its background/foreground to the appropriate brushes.
@@ -573,7 +574,7 @@
 	</Style>
 
 	<Style TargetType="c:TreeListView">
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="Background" Value="White" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="Foreground" Value="#FF042271" />
@@ -621,6 +622,7 @@
 				</Style>
 			</Setter.Value>
 		</Setter>
+		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
 		<Setter Property="Background" Value="#00FFFFFF" />
 		<Setter Property="BorderBrush" Value="#00FFFFFF" />
 		<Setter Property="BorderThickness" Value="1" />
@@ -710,31 +712,31 @@
 						</Trigger>
 
 						<Trigger Property="IsMouseOver" SourceName="item" Value="True" >
-							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridMouseOverBrush}" />
-							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource DataGridMouseOverBrush}" />
+							<Setter Property="Background" TargetName="item" Value="{StaticResource ListMouseOverBrush}" />
+							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource ListMouseOverBrush}" />
 						</Trigger>
 						<Trigger Property="TreeViewItem.IsSelected" Value="True">
-							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridSelectedBrush}" />
-							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource DataGridSelectedBrush}" />
+							<Setter Property="Background" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+							<Setter Property="BorderBrush" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 						</Trigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
 								<Condition Property="TreeViewItem.IsSelected" Value="True" />
 								<Condition Property="TreeViewItem.IsSelectionActive" Value="False" />
 							</MultiTrigger.Conditions>
-							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridSelectedInactiveBrush}" />
-							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource DataGridSelectedInactiveBrush}" />
+							<Setter Property="Background" TargetName="item" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+							<Setter Property="BorderBrush" TargetName="item" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 						</MultiTrigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
 								<Condition Property="IsSelected" Value="True" />
 								<Condition Property="IsMouseOver" Value="True" />
 							</MultiTrigger.Conditions>
-							<Setter Property="Background" TargetName="item" Value="{StaticResource DataGridSelectedBrush}" />
-							<Setter Property="BorderBrush" TargetName="item" Value="{StaticResource DataGridSelectedBrush}" />
+							<Setter Property="Background" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+							<Setter Property="BorderBrush" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 						</MultiTrigger>
 						<Trigger Property="IsEnabled" Value="False">
-							<Setter Property="TextElement.Foreground" TargetName="item" Value="{DynamicResource SystemColors.GrayTextBrushKey}" />
+							<Setter Property="TextElement.Foreground" TargetName="item" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -743,10 +745,10 @@
 	</Style>
 
 	<Style TargetType="GridViewColumnHeader">
-		<Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
 		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
 		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="BorderThickness" Value="0,0,1,1" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -773,14 +775,7 @@
 	</Style>
 
 	<Style TargetType="ListBox">
-		<Setter Property="BorderBrush" Value="{StaticResource DataGridBorderBrush}" />
-	</Style>
-
-	<Style TargetType="ListBoxItem">
-		<Style.Resources>
-			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFCE8AA" />
-			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-		</Style.Resources>
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 	</Style>
 
 	<Style TargetType="TextBox">
@@ -813,20 +808,20 @@
 				<ControlTemplate TargetType="c:ZoomControl">
 					<Grid>
 						<Border BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                ClipToBounds="{TemplateBinding ClipToBounds}">
+								BorderThickness="{TemplateBinding BorderThickness}"
+								Background="{TemplateBinding Background}"
+								ClipToBounds="{TemplateBinding ClipToBounds}">
 							<c:ZoomContentPresenter x:Name="PART_Presenter" ClipToBounds="False" />
 						</Border>
 						<Canvas>
 
 							<!-- Controls -->
 							<Border Padding="5"
-                                    CornerRadius="5"
-                                    Background="{StaticResource OverlayBackgroundBrush}"
-                                    Canvas.Left="10"
-                                    Canvas.Top="10"
-                                    ToolTipService.InitialShowDelay="0">
+									CornerRadius="5"
+									Background="{StaticResource OverlayBackgroundBrush}"
+									Canvas.Left="10"
+									Canvas.Top="10"
+									ToolTipService.InitialShowDelay="0">
 								<Border.ToolTip>
 									<StackPanel Orientation="Vertical">
 										<TextBlock><Run FontWeight="Bold">Wheel:</Run> Zoom In / Out</TextBlock>
@@ -841,34 +836,25 @@
 												<Setter.Value>
 													<ControlTemplate TargetType="{x:Type RadioButton}">
 														<Border x:Name="border"
-                                                                BorderBrush="Black"
-                                                                Background="Silver"
-                                                                BorderThickness="1"
-                                                                CornerRadius="5"
-                                                                Width="40"
-                                                                Height="40"
-                                                                Margin="2"
-                                                                HorizontalAlignment="Center"
-                                                                VerticalAlignment="Center">
-															<ContentPresenter HorizontalAlignment="Center"
-                                                                              VerticalAlignment="Center" />
+																BorderBrush="Black"
+																Background="Silver"
+																BorderThickness="1"
+																CornerRadius="5"
+																Width="40"
+																Height="40"
+																Margin="2"
+																HorizontalAlignment="Center"
+																VerticalAlignment="Center">
+															<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
 														</Border>
 
 														<ControlTemplate.Triggers>
-															<Trigger Property="IsMouseOver"
-                                                                     Value="True">
-																<Setter TargetName="border"
-                                                                        Property="Background"
-                                                                        Value="WhiteSmoke" />
+															<Trigger Property="IsMouseOver" Value="True">
+																<Setter TargetName="border" Property="Background" Value="WhiteSmoke" />
 															</Trigger>
-															<Trigger Property="IsChecked"
-                                                                     Value="True">
-																<Setter TargetName="border"
-                                                                        Property="Background"
-                                                                        Value="DarkGray" />
-																<Setter TargetName="border"
-                                                                        Property="TextBlock.FontWeight"
-                                                                        Value="Bold" />
+															<Trigger Property="IsChecked" Value="True">
+																<Setter TargetName="border" Property="Background" Value="DarkGray" />
+																<Setter TargetName="border" Property="TextBlock.FontWeight" Value="Bold" />
 															</Trigger>
 														</ControlTemplate.Triggers>
 													</ControlTemplate>
@@ -877,72 +863,65 @@
 										</Style>
 									</StackPanel.Resources>
 									<Slider Height="150"
-                                            Minimum="{TemplateBinding MinZoom,Converter={StaticResource Log10Converter}}"
-                                            Maximum="{TemplateBinding MaxZoom,Converter={StaticResource Log10Converter}}"
-                                            Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Zoom,Mode=TwoWay,Converter={StaticResource Log10Converter}}"
-                                            HorizontalAlignment="Center"
-                                            Ticks="0.1, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2"
-                                            AutoToolTipPlacement="BottomRight"
-                                            AutoToolTipPrecision="1"
-                                            TickPlacement="BottomRight"
-                                            TickFrequency="1"
-                                            LargeChange="1"
-                                            SmallChange="0.1"
-                                            Orientation="Vertical" />
+											Minimum="{TemplateBinding MinZoom,Converter={StaticResource Log10Converter}}"
+											Maximum="{TemplateBinding MaxZoom,Converter={StaticResource Log10Converter}}"
+											Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Zoom,Mode=TwoWay,Converter={StaticResource Log10Converter}}"
+											HorizontalAlignment="Center"
+											Ticks="0.1, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2"
+											AutoToolTipPlacement="BottomRight"
+											AutoToolTipPrecision="1"
+											TickPlacement="BottomRight"
+											TickFrequency="1"
+											LargeChange="1"
+											SmallChange="0.1"
+											Orientation="Vertical" />
 									<TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Zoom,StringFormat='{}{0:F2}x'}"
-                                               HorizontalAlignment="Center"
-                                               FontWeight="Bold" />
+												HorizontalAlignment="Center"
+												FontWeight="Bold" />
 									<RadioButton Content="1:1"
-                                                 IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumConverter},ConverterParameter=Original}" />
+													IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumConverter},ConverterParameter=Original}" />
 									<RadioButton Content="Fill"
-                                                 IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumConverter},ConverterParameter=Fill}" />
+													IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumConverter},ConverterParameter=Fill}" />
 								</StackPanel>
 							</Border>
 
 							<!-- ZoomBox -->
 							<Border BorderBrush="{TemplateBinding ZoomBoxBorderBrush}"
-                                    BorderThickness="{TemplateBinding ZoomBoxBorderThickness}"
-                                    Canvas.Left="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.X}"
-                                    Canvas.Top="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.Y}"
-                                    Opacity="{TemplateBinding ZoomBoxOpacity}"
-                                    Background="{TemplateBinding ZoomBoxBackground}"
-                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.Width}"
-                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.Height}" />
+									BorderThickness="{TemplateBinding ZoomBoxBorderThickness}"
+									Canvas.Left="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.X}"
+									Canvas.Top="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.Y}"
+									Opacity="{TemplateBinding ZoomBoxOpacity}"
+									Background="{TemplateBinding ZoomBoxBackground}"
+									Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.Width}"
+									Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ZoomBox.Height}" />
 						</Canvas>
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="Background"
-                Value="White" />
+		<Setter Property="Background" Value="White" />
 		<Setter Property="ZoomBoxBackground">
 			<Setter.Value>
-				<LinearGradientBrush StartPoint="0.0, 0.0"
-                                     EndPoint="1.0, 1.0">
-					<GradientStop Color="Silver"
-                                  Offset="0.0" />
-					<GradientStop Color="DarkGray"
-                                  Offset="1.0" />
+				<LinearGradientBrush StartPoint="0.0, 0.0" EndPoint="1.0, 1.0">
+					<GradientStop Color="Silver" Offset="0.0" />
+					<GradientStop Color="DarkGray" Offset="1.0" />
 				</LinearGradientBrush>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="ZoomBoxBorderBrush"
-                Value="Black" />
-		<Setter Property="ZoomBoxBorderThickness"
-                Value="1" />
-		<Setter Property="ClipToBounds"
-                Value="True" />
+		<Setter Property="ZoomBoxBorderBrush" Value="Black" />
+		<Setter Property="ZoomBoxBorderThickness" Value="1" />
+		<Setter Property="ClipToBounds" Value="True" />
 		<Style.Triggers>
-			<Trigger Property="ModifierMode"
-                     Value="Pan">
-				<Setter Property="Cursor"
-                        Value="SizeAll" />
+			<Trigger Property="ModifierMode" Value="Pan">
+				<Setter Property="Cursor" Value="SizeAll" />
 			</Trigger>
-			<Trigger Property="ModifierMode"
-                     Value="ZoomBox">
-				<Setter Property="Cursor"
-                        Value="Hand" />
+			<Trigger Property="ModifierMode" Value="ZoomBox">
+				<Setter Property="Cursor" Value="Hand" />
 			</Trigger>
 		</Style.Triggers>
+	</Style>
+	
+	<Style TargetType="TreeView">
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 	</Style>
 </ResourceDictionary>

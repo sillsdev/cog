@@ -110,9 +110,9 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
-			var textBrush = (Brush) Application.Current.FindResource("TextBrush");
+			var textBrush = (Brush) Application.Current.FindResource("HeaderTextBrush");
 			double maxWidth = 0;
-			foreach (VarietyWordListsViewModel variety in vm.Varieties)
+			foreach (WordListsVarietyViewModel variety in vm.Varieties)
 			{
 				var formattedText = new FormattedText(variety.Name, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
 					new Typeface(WordListsGrid.FontFamily, WordListsGrid.FontStyle, WordListsGrid.FontWeight, WordListsGrid.FontStretch), WordListsGrid.FontSize, textBrush);
@@ -164,7 +164,7 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
-			var source = new DataGridCollectionView(vm.Varieties, typeof(VarietyWordListsViewModel), false, false);
+			var source = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
 			for (int i = 0; i < vm.Senses.Count; i++)
 				source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}].StrRep", i), typeof(string)));
 			WordListsGrid.ItemsSource = source;

@@ -38,16 +38,16 @@ namespace SIL.Cog.ViewModels
 			_exportService = exportService;
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 
-			TaskAreas.Add(new TaskAreaGroupViewModel("Graph type",
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
 			    new CommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),
 			    new CommandViewModel("Tree", new RelayCommand(() => GraphType = HierarchicalGraphType.Tree))));
-			TaskAreas.Add(new TaskAreaGroupViewModel("Clustering method",
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Clustering method",
 				new CommandViewModel("UPGMA", new RelayCommand(() => ClusteringMethod = ClusteringMethod.Upgma)),
 				new CommandViewModel("Neighbor-joining", new RelayCommand(() => ClusteringMethod = ClusteringMethod.NeighborJoining))));
-			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
 				new CommandViewModel("Export this graph", new RelayCommand(Export))));
 			_graphType = HierarchicalGraphType.Dendrogram;
 		}
@@ -81,7 +81,7 @@ namespace SIL.Cog.ViewModels
 			switch (msg.Notification)
 			{
 				case Notifications.ComparisonPerformed:
-					Graph = ViewModelUtilities.GenerateHierarchicalGraph(_project, _clusteringMethod, _similarityMetric);
+					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
 					break;
 			}
 		}
@@ -98,7 +98,7 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				if (Set(() => ClusteringMethod, ref _clusteringMethod, value))
-					Graph = ViewModelUtilities.GenerateHierarchicalGraph(_project, _clusteringMethod, _similarityMetric);
+					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
-					Graph = ViewModelUtilities.GenerateHierarchicalGraph(_project, _clusteringMethod, _similarityMetric);
+					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
 			}
 		}
 

@@ -93,7 +93,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <HeaderedContentControl Grid.Column="0" Margin="0,10,10,0" Header="Words">
-                <Border BorderThickness="1" BorderBrush="{StaticResource DataGridBorderBrush}">
+                <Border BorderThickness="1" BorderBrush="{StaticResource ListBorderBrush}">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
@@ -110,7 +110,7 @@
 														<ControlTemplate TargetType="{x:Type GroupItem}">
 															<Border x:Name="row" Padding="0,5,0,5">
 																<StackPanel>
-																	<TextBlock FontSize="14" Foreground="{StaticResource TextBrush}">
+																	<TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
                                                                     <TextBlock Text="{Binding Name.Gloss}" />
                                                                     <TextBlock Text="{Binding Name.Category, StringFormat={}({0})}">
                                                                         <TextBlock.Style>
@@ -152,7 +152,7 @@
 						<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedWords}">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Rectangle Fill="{StaticResource DataGridSelectedBrush}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />
+									<Rectangle Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 							<ItemsControl.ItemContainerStyle>
@@ -187,7 +187,7 @@
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
 									<StackPanel Margin="1" Orientation="Horizontal">
-										<Rectangle Fill="{StaticResource TextBrush}" Margin="1">
+										<Rectangle Fill="{StaticResource HeaderTextBrush}" Margin="1">
 											<Rectangle.Width>
 												<MultiBinding Converter="{StaticResource ProbConverter}" ConverterParameter="80">
 													<Binding Mode="OneWay" Path="Probability" />

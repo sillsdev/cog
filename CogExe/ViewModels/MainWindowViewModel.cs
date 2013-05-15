@@ -21,7 +21,8 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _openCommand;
 		private readonly ICommand _saveCommand;
 		private readonly ICommand _saveAsCommand;
-		private readonly ICommand _importCommand;
+		private readonly ICommand _importWordListsCommand;
+		private readonly ICommand _importGeographicRegionsCommand; 
 		private readonly ICommand _exportWordListsCommand;
 		private readonly ICommand _exportSimilarityMatrixCommand;
 		private readonly ICommand _exportCognateSetsCommand;
@@ -49,7 +50,8 @@ namespace SIL.Cog.ViewModels
 			_openCommand = new RelayCommand(Open);
 			_saveCommand = new RelayCommand(Save, CanSave);
 			_saveAsCommand = new RelayCommand(SaveAs);
-			_importCommand = new RelayCommand(Import);
+			_importWordListsCommand = new RelayCommand(ImportWordLists);
+			_importGeographicRegionsCommand = new RelayCommand(ImportGeographicRegions);
 			_exportWordListsCommand = new RelayCommand(ExportWordLists, CanExportWordLists);
 			_exportSimilarityMatrixCommand = new RelayCommand(ExportSimilarityMatrix, CanExportSimilarityMatrix);
 			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
@@ -182,10 +184,15 @@ namespace SIL.Cog.ViewModels
 				SaveProject(result.FileName);
 		}
 
-		private void Import()
+		private void ImportWordLists()
 		{
 			if (_importService.ImportWordLists(this, _project))
 				IsChanged = true;
+		}
+
+		private void ImportGeographicRegions()
+		{
+			_importService.ImportGeographicRegions(this, _project);
 		}
 
 		private bool CanExportWordLists()
@@ -229,7 +236,7 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportHierarchicalGraphViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-				_exportService.ExportHierarchicalGraph(this, ViewModelUtilities.GenerateHierarchicalGraph(_project, vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
+				_exportService.ExportHierarchicalGraph(this, _project.GenerateHierarchicalGraph(vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
 		}
 
 		private bool CanExportNetworkGraph()
@@ -241,7 +248,7 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportNetworkGraphViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-				_exportService.ExportNetworkGraph(this, ViewModelUtilities.GenerateNetworkGraph(_project, vm.SimilarityMetric), vm.SimilarityScoreFilter);
+				_exportService.ExportNetworkGraph(this, _project.GenerateNetworkGraph(vm.SimilarityMetric), vm.SimilarityScoreFilter);
 		}
 
 		private bool CanExit()
@@ -296,9 +303,14 @@ namespace SIL.Cog.ViewModels
 			get { return _saveAsCommand; }
 		}
 
-		public ICommand ImportCommand
+		public ICommand ImportWordListsCommand
 		{
-			get { return _importCommand; }
+			get { return _importWordListsCommand; }
+		}
+
+		public ICommand ImportGeographicRegionsCommand
+		{
+			get { return _importGeographicRegionsCommand; }
 		}
 
 		public ICommand ExportWordListsCommand

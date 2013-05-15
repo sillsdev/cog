@@ -1,10 +1,10 @@
 ﻿namespace SIL.Cog.ViewModels
 {
-	public class TaskAreaGroupViewModel : TaskAreaViewModel
+	public class TaskAreaCommandGroupViewModel : TaskAreaCommandsViewModel
 	{
 		private CogViewModelBase _currentCommand;
 
-		public TaskAreaGroupViewModel(string displayName, params CommandViewModel[] commands)
+		public TaskAreaCommandGroupViewModel(string displayName, params CommandViewModel[] commands)
 			: base(displayName, commands)
 		{
 			if (Commands.Count > 0)

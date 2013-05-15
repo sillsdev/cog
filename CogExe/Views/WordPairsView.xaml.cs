@@ -63,5 +63,10 @@ namespace SIL.Cog.Views
 		{
 			WordPairsListBox.SelectAll();
 		}
+
+		private void WordPairsListBox_OnLostFocus(object sender, RoutedEventArgs e)
+		{
+			WordPairsListBox.SelectedItems.Clear();
+		}
 	}
 }

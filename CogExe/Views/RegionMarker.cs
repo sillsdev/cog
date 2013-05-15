@@ -23,9 +23,9 @@ namespace SIL.Cog.Views
 		private readonly List<RegionPointMarker> _regionMidpoints;
 		private int _currentPointIndex;
 		private bool _isMidpoint;
-		private readonly VarietyRegionViewModel _region;
+		private readonly GeographicalRegionViewModel _region;
 
-		public RegionMarker(VarietyRegionViewModel region)
+		public RegionMarker(GeographicalRegionViewModel region)
 			: base(new PointLatLng())
 		{
 			_region = region;
@@ -65,7 +65,7 @@ namespace SIL.Cog.Views
 					geometry.Freeze();
 
 					var fillBrush = new SolidColorBrush();
-					BindingOperations.SetBinding(fillBrush, SolidColorBrush.ColorProperty, new Binding("ClusterIndex") {Converter = new IndexToColorConverter(), ConverterParameter = Colors.CornflowerBlue});
+					BindingOperations.SetBinding(fillBrush, SolidColorBrush.ColorProperty, new Binding("Variety.ClusterIndex") {Converter = new IndexToColorConverter(), ConverterParameter = Colors.CornflowerBlue});
 					var strokeBrush = new SolidColorBrush();
 					BindingOperations.SetBinding(strokeBrush, SolidColorBrush.ColorProperty, new Binding("Color") {Source = fillBrush, Converter = new ColorBrightnessConverter(), ConverterParameter = -0.15});
 					// Create a path to draw a geometry with.
@@ -78,7 +78,8 @@ namespace SIL.Cog.Views
 							StrokeThickness = 3,
 							Opacity = 0.5,
 							IsHitTestVisible = true,
-							DataContext = _region
+							DataContext = _region,
+							Visibility = Shape == null ? Visibility.Visible : Shape.Visibility
 						};
 					Shape = path;
 					Shape.MouseEnter += Shape_MouseEnter;
@@ -93,7 +94,7 @@ namespace SIL.Cog.Views
 
 		public bool IsSelectable { get; set; }
 
-		public VarietyRegionViewModel Region
+		public GeographicalRegionViewModel Region
 		{
 			get { return _region; }
 		}
@@ -116,8 +117,14 @@ namespace SIL.Cog.Views
 				_regionHitMarker.RegeneratePolygonShape(Map);
 				_regionHitMarker.Shape.MouseLeave += Region_MouseLeave;
 				_regionHitMarker.Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
+				Map.OnMapZoomChanged += Map_OnMapZoomChanged;
 				Map.Markers.Add(_regionHitMarker);
 			}
+		}
+
+		private void Map_OnMapZoomChanged()
+		{
+			CleanupSelection();
 		}
 
 		private void Region_MouseLeave(object sender, MouseEventArgs e)
@@ -132,7 +139,7 @@ namespace SIL.Cog.Views
 			       && _regionPoints.All(pm => !pm.Shape.IsMouseOver) && _regionMidpoints.All(pm => !pm.Shape.IsMouseOver);
 		}
 
-		private void CleanupSelection()
+		public void CleanupSelection()
 		{
 			foreach (RegionPointMarker pm in _regionPoints)
 				pm.Dispose();
@@ -146,6 +153,7 @@ namespace SIL.Cog.Views
 				_regionHitMarker.Dispose();
 				_regionHitMarker = null;
 			}
+			Map.OnMapZoomChanged -= Map_OnMapZoomChanged;
 		}
 
 		private void CreateMidpoint(int index, PointLatLng p1, PointLatLng p2)

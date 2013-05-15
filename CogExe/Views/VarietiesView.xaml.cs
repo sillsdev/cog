@@ -28,7 +28,7 @@ namespace SIL.Cog.Views
 		{
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
-			ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(VarietiesComboBox, variety => variety.Name);
+			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -45,41 +45,41 @@ namespace SIL.Cog.Views
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					AddVarieties(e.NewItems.Cast<VarietyVarietiesViewModel>());
+					AddVarieties(e.NewItems.Cast<VarietiesVarietyViewModel>());
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					RemoveVarieties(e.OldItems.Cast<VarietyVarietiesViewModel>());
+					RemoveVarieties(e.OldItems.Cast<VarietiesVarietyViewModel>());
 					break;
 
 				case NotifyCollectionChangedAction.Replace:
-					RemoveVarieties(e.OldItems.Cast<VarietyVarietiesViewModel>());
-					AddVarieties(e.NewItems.Cast<VarietyVarietiesViewModel>());
+					RemoveVarieties(e.OldItems.Cast<VarietiesVarietyViewModel>());
+					AddVarieties(e.NewItems.Cast<VarietiesVarietyViewModel>());
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
-					AddVarieties((IEnumerable<VarietyVarietiesViewModel>) sender);
+					AddVarieties((IEnumerable<VarietiesVarietyViewModel>) sender);
 					break;
 			}
-			ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(VarietiesComboBox, variety => variety.Name);
+			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 		}
 
-		private void AddVarieties(IEnumerable<VarietyVarietiesViewModel> varieties)
+		private void AddVarieties(IEnumerable<VarietiesVarietyViewModel> varieties)
 		{
-			foreach (VarietyVarietiesViewModel variety in varieties)
+			foreach (VarietiesVarietyViewModel variety in varieties)
 				variety.PropertyChanged += variety_PropertyChanged;
 		}
 
-		private void RemoveVarieties(IEnumerable<VarietyVarietiesViewModel> varieties)
+		private void RemoveVarieties(IEnumerable<VarietiesVarietyViewModel> varieties)
 		{
-			foreach (VarietyVarietiesViewModel variety in varieties)
+			foreach (VarietiesVarietyViewModel variety in varieties)
 				variety.PropertyChanged -= variety_PropertyChanged;
 		}
 
 		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "Name")
-				ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(VarietiesComboBox, variety => variety.Name);
+				VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 		}
 	}
 }

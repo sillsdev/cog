@@ -14,7 +14,7 @@ namespace SIL.Cog.Views
 
 		private void okButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (ViewUtilities.IsValid(this))
+			if (this.Validate())
 				DialogResult = true;
 		}
 	}

@@ -9,14 +9,14 @@
 	<UserControl.Resources>
 		<cnvtrs:ItemsControlScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
 	</UserControl.Resources>
-	<Border BorderThickness="1" BorderBrush="{StaticResource DataGridBorderBrush}">
+	<Border BorderThickness="1" BorderBrush="{StaticResource ListBorderBrush}">
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="18" />
 			</Grid.ColumnDefinitions>
 			<ScrollViewer Grid.Column="0" Name="ScrollViewer">
-				<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2">
+				<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
 					<ListBox.CommandBindings>
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
 						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
@@ -70,7 +70,7 @@
 			<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedCorrespondenceWordPairs}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<Rectangle Fill="{StaticResource DataGridSelectedBrush}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />
+						<Rectangle Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 				<ItemsControl.ItemContainerStyle>

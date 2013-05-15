@@ -40,7 +40,7 @@ namespace SIL.Cog.Views
 			SimMatrixGrid.Columns.Clear();
 
 			double width = 0.0;
-			foreach (VarietySimilarityMatrixViewModel variety in vm.Varieties)
+			foreach (SimilarityMatrixVarietyViewModel variety in vm.Varieties)
 			{
 				var typeface = new Typeface(SimMatrixGrid.FontFamily, SimMatrixGrid.FontStyle, SimMatrixGrid.FontWeight, SimMatrixGrid.FontStretch);
 				var text = new FormattedText(variety.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, SimMatrixGrid.FontSize, SimMatrixGrid.Foreground);

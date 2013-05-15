@@ -40,7 +40,7 @@ namespace SIL.Cog.ViewModels
 
 		public string FeatureStructure
 		{
-			get { return ViewModelUtilities.GetFeatureStructureString(_segment.FeatureStruct); }
+			get { return _segment.FeatureStruct.GetString(); }
 		}
 
 		public Segment ModelSegment

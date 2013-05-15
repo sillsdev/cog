@@ -36,7 +36,7 @@ namespace SIL.Cog.ViewModels
 			{
 				var nc = _soundClass as NaturalClass;
 				if (nc != null)
-					return ViewModelUtilities.GetFeatureStructureString(nc.FeatureStruct);
+					return nc.FeatureStruct.GetString();
 				var unc = _soundClass as UnnaturalClass;
 				if (unc != null)
 					return string.Join(", ", unc.Segments);

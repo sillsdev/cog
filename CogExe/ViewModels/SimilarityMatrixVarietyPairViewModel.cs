@@ -5,19 +5,19 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietyPairSimilarityMatrixViewModel : ViewModelBase
+	public class SimilarityMatrixVarietyPairViewModel : ViewModelBase
 	{
 		private readonly VarietyPair _varietyPair;
 		private readonly Variety _otherVariety;
 		private readonly ICommand _switchToVarietyPairCommand;
 		private readonly SimilarityMetric _similarityMetric;
 
-		public VarietyPairSimilarityMatrixViewModel(Variety otherVariety)
+		public SimilarityMatrixVarietyPairViewModel(Variety otherVariety)
 		{
 			_otherVariety = otherVariety;
 		}
 
-		public VarietyPairSimilarityMatrixViewModel(SimilarityMetric similarityMetric, Variety otherVariety, VarietyPair varietyPair)
+		public SimilarityMatrixVarietyPairViewModel(SimilarityMetric similarityMetric, Variety otherVariety, VarietyPair varietyPair)
 		{
 			_varietyPair = varietyPair;
 			_otherVariety = otherVariety;

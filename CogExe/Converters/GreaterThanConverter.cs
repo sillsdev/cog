@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace SIL.Cog.Converters
 {
-	public class IndexToColorConverter : IValueConverter
+	public class GreaterThanConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var index = (int) value;
-			if (index == -1)
-				return Colors.Transparent;
+			var number = value as IComparable;
+			if (number == null)
+				return Binding.DoNothing;
 
-			var seed = (Color) parameter;
-			HslColor hsl = HslColor.FromColor(seed);
-			for (int i = 0; i < index; i++)
-			{
-				hsl.H += 0.618033988749895;
-				hsl.H %= 1;
-			}
-
-			return hsl.ToColor();
+			return number.CompareTo(parameter) > 0;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

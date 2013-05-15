@@ -38,9 +38,9 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource TextBrush}">Lexical:</TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource HeaderTextBrush}">Lexical:</TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding LexicalSimilarityScore, StringFormat=p}" />
-                <TextBlock Grid.Column="0" Grid.Row="1" Foreground="{StaticResource TextBrush}">Phonetic:</TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="1" Foreground="{StaticResource HeaderTextBrush}">Phonetic:</TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PhoneticSimilarityScore, StringFormat=p}" />
             </Grid>
         </HeaderedContentControl>
@@ -70,7 +70,7 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type GroupItem}">
                                                 <StackPanel>
-                                                    <TextBlock Padding="2,0,2,0" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource TextBrush}">
+                                                    <TextBlock Padding="2,0,2,0" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
                                                         <Run Text="{Binding Name.Target, Mode=OneWay}">
                                                             <Run.Foreground>
                                                                 <MultiBinding Converter="{StaticResource BrushConverter}">
@@ -80,8 +80,8 @@
                                                                 </MultiBinding>
                                                             </Run.Foreground>
                                                         </Run>
-                                                        <Run Foreground="{StaticResource TextBrush}"> -> ?</Run>
-                                                        <Run Text="{Binding Name.Environment, Mode=OneWay}" Foreground="{StaticResource TextBrush}" />
+                                                        <Run Foreground="{StaticResource HeaderTextBrush}"> -> ?</Run>
+                                                        <Run Text="{Binding Name.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
                                                     </TextBlock>
                                                     <ItemsPresenter />
                                                 </StackPanel>
@@ -103,7 +103,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Rectangle Fill="{StaticResource TextBrush}" Margin="1">
+                                        <Rectangle Fill="{StaticResource HeaderTextBrush}" Margin="1">
                                             <Rectangle.Width>
                                                 <MultiBinding Converter="{StaticResource ProbConverter}" ConverterParameter="80">
                                                     <Binding Mode="OneWay" Path="Probability" />

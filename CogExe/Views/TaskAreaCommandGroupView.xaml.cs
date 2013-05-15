@@ -5,11 +5,11 @@ using SIL.Cog.ViewModels;
 namespace SIL.Cog.Views
 {
 	/// <summary>
-	/// Interaction logic for TaskAreaGroupView.xaml
+	/// Interaction logic for TaskAreaCommandGroupView.xaml
 	/// </summary>
-	public partial class TaskAreaGroupView
+	public partial class TaskAreaCommandGroupView
 	{
-		public TaskAreaGroupView()
+		public TaskAreaCommandGroupView()
 		{
 			InitializeComponent();
 		}
@@ -19,7 +19,7 @@ namespace SIL.Cog.Views
 			var hyperlink = (Hyperlink) sender;
 			var command = (CommandViewModel) hyperlink.DataContext;
 
-			var vm = (TaskAreaGroupViewModel) DataContext;
+			var vm = (TaskAreaCommandGroupViewModel) DataContext;
 			vm.CurrentCommand = command;
 		}
 	}

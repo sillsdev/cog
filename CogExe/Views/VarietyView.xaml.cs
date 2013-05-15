@@ -20,7 +20,7 @@ namespace SIL.Cog.Views
 
 		private void VarietyView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var vm = DataContext as VarietyVarietiesViewModel;
+			var vm = DataContext as VarietiesVarietyViewModel;
 			if (vm == null)
 				return;
 

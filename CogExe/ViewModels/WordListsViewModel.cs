@@ -18,7 +18,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IProgressService _progressService;
 		private CogProject _project;
 		private ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
- 		private ListViewModelCollection<ObservableCollection<Variety>, VarietyWordListsViewModel, Variety> _varieties;
+ 		private ListViewModelCollection<ObservableCollection<Variety>, WordListsVarietyViewModel, Variety> _varieties;
 		private bool _isEmpty;
 
 		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService, IImportService importService, IExportService exportService)
@@ -30,11 +30,11 @@ namespace SIL.Cog.ViewModels
 			_progressService = progressService;
 			_exportService = exportService;
 
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
  					new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense))));
 
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
 					new CommandViewModel("Import word lists", new RelayCommand(Import)),
 					new CommandViewModel("Export word lists", new RelayCommand(Export)),
 					new CommandViewModel("Run stemmer", new RelayCommand(RunStemmer))));
@@ -119,7 +119,7 @@ namespace SIL.Cog.ViewModels
 			get { return _senses; }
 		}
 
-		public ObservableCollection<VarietyWordListsViewModel> Varieties
+		public ObservableCollection<WordListsVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}
@@ -128,9 +128,9 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Set("Senses", ref _senses, new ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(project.Senses, sense => new SenseViewModel(sense)));
-			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, VarietyWordListsViewModel, Variety>(project.Varieties, variety =>
+			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, WordListsVarietyViewModel, Variety>(project.Varieties, variety =>
 				{
-					var vm = new VarietyWordListsViewModel(project, variety);
+					var vm = new WordListsVarietyViewModel(project, variety);
 					vm.PropertyChanged += ChildPropertyChanged;
 					return vm;
 				}));

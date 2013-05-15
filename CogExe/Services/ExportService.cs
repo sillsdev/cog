@@ -107,10 +107,10 @@ namespace SIL.Cog.Services
 				switch (type)
 				{
 					case HierarchicalGraphType.Tree:
-						graphLayout = ViewUtilities.FindVisualChild<HierarchicalGraphLayout>(Application.Current.MainWindow);
+						graphLayout = Application.Current.MainWindow.FindVisualChild<HierarchicalGraphLayout>();
 						break;
 					case HierarchicalGraphType.Dendrogram:
-						graphLayout = ViewUtilities.FindVisualChild<DendrogramLayout>(Application.Current.MainWindow);
+						graphLayout = Application.Current.MainWindow.FindVisualChild<DendrogramLayout>();
 						break;
 				}
 
@@ -173,7 +173,7 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var graphLayout = ViewUtilities.FindVisualChild<NetworkGraphLayout>(Application.Current.MainWindow);
+				var graphLayout = Application.Current.MainWindow.FindVisualChild<NetworkGraphLayout>();
 				if (graphLayout == null)
 					throw new InvalidOperationException();
 
@@ -213,7 +213,7 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export map", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var mapControl = ViewUtilities.FindVisualChild<GMapControl>(Application.Current.MainWindow);
+				var mapControl = Application.Current.MainWindow.FindVisualChild<GMapControl>();
 				if (mapControl == null)
 					throw new InvalidOperationException();
 

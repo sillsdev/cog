@@ -11,9 +11,9 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
 {
-	public static class ViewModelUtilities
+	public static class ViewModelExtensions
 	{
-		public static IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> GenerateHierarchicalGraph(CogProject project, ClusteringMethod clusteringMethod,
+		public static IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> GenerateHierarchicalGraph(this CogProject project, ClusteringMethod clusteringMethod,
 			SimilarityMetric similarityMetric)
 		{
 			IEnumerable<Cluster<Variety>> clusters = null;
@@ -103,7 +103,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public static IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> GenerateNetworkGraph(CogProject project, SimilarityMetric similarityMetric)
+		public static IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> GenerateNetworkGraph(this CogProject project, SimilarityMetric similarityMetric)
 		{
 			var graph = new BidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>();
 			var dict = new Dictionary<Variety, NetworkGraphVertex>();
@@ -119,7 +119,7 @@ namespace SIL.Cog.ViewModels
 			return graph;
 		}
 
-		public static string GetFeatureStructureString(FeatureStruct fs)
+		public static string GetString(this FeatureStruct fs)
 		{
 			var sb = new StringBuilder();
 			sb.Append("[");
@@ -150,7 +150,7 @@ namespace SIL.Cog.ViewModels
 			return sb.ToString();
 		}
 
-		public static IEnumerable<IProcessor<VarietyPair>> GetVarietyPairProcessors(CogProject project)
+		public static IEnumerable<IProcessor<VarietyPair>> GetVarietyPairProcessors(this CogProject project)
 		{
 			var processors = new List<IProcessor<VarietyPair>> {new WordPairGenerator(project, "primary")};
 			IProcessor<VarietyPair> similarSegmentIdentifier;

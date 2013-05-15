@@ -17,8 +17,8 @@ namespace SIL.Cog.ViewModels
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
 		private readonly IProgressService _progressService;
-		private ListViewModelCollection<ObservableCollection<Variety>, VarietyVarietiesViewModel, Variety> _varieties;
-		private VarietyVarietiesViewModel _currentVariety;
+		private ListViewModelCollection<ObservableCollection<Variety>, VarietiesVarietyViewModel, Variety> _varieties;
+		private VarietiesVarietyViewModel _currentVariety;
 		private CogProject _project;
 		private bool _isVarietySelected;
 
@@ -29,12 +29,12 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_progressService = progressService;
 
-			TaskAreas.Add(new TaskAreaViewModel("Common tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
 					new CommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
 					new CommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety))));
 
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks", 
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks", 
 				new CommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
 		}
 
@@ -43,10 +43,10 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			if (_varieties != null)
 				_varieties.CollectionChanged -= VarietiesChanged;
-			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, VarietyVarietiesViewModel, Variety>(_project.Varieties,
+			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, VarietiesVarietyViewModel, Variety>(_project.Varieties,
 				variety =>
 					{
-						var vm = new VarietyVarietiesViewModel(_dialogService, _project, variety);
+						var vm = new VarietiesVarietyViewModel(_dialogService, _project, variety);
 						vm.PropertyChanged += ChildPropertyChanged;
 						return vm;
 					}));
@@ -134,12 +134,12 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ObservableCollection<VarietyVarietiesViewModel> Varieties
+		public ObservableCollection<VarietiesVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}
 
-		public VarietyVarietiesViewModel CurrentVariety
+		public VarietiesVarietyViewModel CurrentVariety
 		{
 			get { return _currentVariety; }
 			set

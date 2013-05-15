@@ -7,17 +7,17 @@ using System.Windows.Media;
 
 namespace SIL.Cog.Views
 {
-	public static class ViewUtilities
+	public static class ViewExtensions
 	{
-		public static bool IsValid(DependencyObject dp)
+		public static bool Validate(this DependencyObject dp)
 		{
 		   return !Validation.GetHasError(dp) &&
 				LogicalTreeHelper.GetChildren(dp)
 				.OfType<DependencyObject>()
-				.All(IsValid);
+				.All(Validate);
 		}
 
-		public static T FindVisualAncestor<T>(DependencyObject child) where T : DependencyObject
+		public static T FindVisualAncestor<T>(this DependencyObject child) where T : DependencyObject
 		{
 			DependencyObject parentObj = VisualTreeHelper.GetParent(child);
 			if (parentObj == null)
@@ -28,7 +28,7 @@ namespace SIL.Cog.Views
 			return FindVisualAncestor<T>(parentObj);
 		}
 
-		public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+		public static T FindVisualChild<T>(this DependencyObject obj) where T : DependencyObject
 		{
 			// Search immediate children first (breadth-first)
 			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
@@ -47,7 +47,7 @@ namespace SIL.Cog.Views
 			return null;
 		}
 
-		public static void SetComboBoxWidthToFit<T>(ComboBox comboBox, Func<T, string> stringAccessor)
+		public static void SetWidthToFit<T>(this ComboBox comboBox, Func<T, string> stringAccessor)
 		{
 			double maxWidth = 0;
 			foreach (T item in comboBox.ItemsSource)

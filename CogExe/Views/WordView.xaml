@@ -26,7 +26,7 @@
                 </TextDecorationCollection>
             </TextBlock.TextDecorations>
         </TextBlock>
-        <ListBox BorderThickness="0" x:Name="_listBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
+        <ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
              Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" v:ItemsControlDragDrop.DragDropTemplate="{StaticResource BlankTemplate}" LostFocus="_listBox_LostFocus">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -41,12 +41,34 @@
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Padding" Value="3" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Background" Value="{StaticResource DataGridSelectedBrush}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="ListBoxItem">
+								<Border Name="Bd"
+										Background="{TemplateBinding Background}"
+										BorderBrush="{TemplateBinding BorderBrush}"
+										BorderThickness="{TemplateBinding BorderThickness}"
+										Padding="{TemplateBinding Padding}"
+										SnapsToDevicePixels="true">
+									<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+													  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+													  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger Property="IsSelected" Value="True">
+										<Setter TargetName="Bd" Property="Background" Value="#FF3399FF" />
+										<Setter Property="Foreground" Value="White" />
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsSelected}" Value="True">
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
     </Grid>

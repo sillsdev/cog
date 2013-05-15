@@ -8,38 +8,43 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Clusterers;
 using SIL.Cog.Services;
-using SIL.Collections;
-using GalaSoft.MvvmLight.Threading;
 
 namespace SIL.Cog.ViewModels
 {
 	public class GeographicalViewModel : WorkspaceViewModelBase
 	{
 		private readonly IDialogService _dialogService;
+		private readonly IImportService _importService;
 		private readonly IExportService _exportService;
 		private CogProject _project;
-		private ObservableCollection<VarietyRegionViewModel> _regions;
 		private readonly ICommand _newRegionCommand;
 		private readonly List<Cluster<Variety>> _currentClusters;
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
+		private ListViewModelCollection<ObservableCollection<Variety>, GeographicalVarietyViewModel, Variety> _varieties;
 
-		public GeographicalViewModel(IDialogService dialogService, IExportService exportService)
+		public GeographicalViewModel(IDialogService dialogService, IImportService importService, IExportService exportService)
 			: base("Geographical")
 		{
 			_dialogService = dialogService;
+			_importService = importService;
 			_exportService = exportService;
 			_newRegionCommand = new RelayCommand<IEnumerable<Tuple<double, double>>>(AddNewRegion);
-			_regions = new ObservableCollection<VarietyRegionViewModel>();
 			_currentClusters = new List<Cluster<Variety>>();
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 			_similarityScoreThreshold = 0.7;
 
-			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
+				new CommandViewModel("Import regions", new RelayCommand(ImportRegions)),
 				new CommandViewModel("Export this map", new RelayCommand(Export))));
+		}
+
+		private void ImportRegions()
+		{
+			_importService.ImportGeographicRegions(this, _project);
 		}
 
 		private void Export()
@@ -86,141 +91,67 @@ namespace SIL.Cog.ViewModels
 			var clusterer = new FlatUpgmaClusterer<Variety>(getDistance, 1.0 - _similarityScoreThreshold);
 			int index = 0;
 			_currentClusters.Clear();
-			_currentClusters.AddRange(clusterer.GenerateClusters(_regions.Select(vm => vm.ModelVariety).Distinct()).OrderByDescending(c => c.DataObjects.Count));
+			_currentClusters.AddRange(clusterer.GenerateClusters(_varieties.Where(v => v.Regions.Count > 0).Select(v => v.ModelVariety)).OrderByDescending(c => c.DataObjects.Count));
 			foreach (Cluster<Variety> cluster in _currentClusters)
 			{
-				var varieties = new HashSet<Variety>(cluster.DataObjects);
-				foreach (VarietyRegionViewModel region in _regions.Where(r => varieties.Contains(r.ModelVariety)))
-					region.ClusterIndex = index;
+				var clusterVarieties = new HashSet<Variety>(cluster.DataObjects);
+				foreach (GeographicalVarietyViewModel variety in _varieties.Where(v => clusterVarieties.Contains(v.ModelVariety)))
+					variety.ClusterIndex = index;
 				index++;
 			}
 		}
 
 		private void ResetClusters()
 		{
-			if (_currentClusters.Count > 0)
+			_currentClusters.Clear();
+			int index = 0;
+			foreach (GeographicalVarietyViewModel variety in _varieties.Where(v => v.Regions.Count > 0))
 			{
-				_currentClusters.Clear();
-				foreach (VarietyRegionViewModel region in _regions)
-					region.ClusterIndex = 0;
+				variety.ClusterIndex = index;
+				index++;
 			}
 		}
 
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Set(() => Regions, ref _regions, new ObservableCollection<VarietyRegionViewModel>());
-			AddVarieties(_project.Varieties);
+			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, GeographicalVarietyViewModel, Variety>(project.Varieties,
+				variety =>
+					{
+						var newVariety = new GeographicalVarietyViewModel(_dialogService, project, variety);
+						newVariety.Regions.CollectionChanged += (sender, e) => RegionsChanged(newVariety);
+						newVariety.PropertyChanged += ChildPropertyChanged;
+						return newVariety;
+					}));
+			ResetClusters();
 			project.Varieties.CollectionChanged += VarietiesChanged;
 		}
 
-		private void RegionsChanged(Variety variety, NotifyCollectionChangedEventArgs e)
+		private void RegionsChanged(GeographicalVarietyViewModel variety)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					switch (e.Action)
-					{
-						case NotifyCollectionChangedAction.Add:
-							AddRegions(variety, e.NewItems.Cast<GeographicRegion>());
-							break;
-
-						case NotifyCollectionChangedAction.Remove:
-							RemoveRegions(e.OldItems.Cast<GeographicRegion>());
-							break;
-
-						case NotifyCollectionChangedAction.Replace:
-							RemoveRegions(e.OldItems.Cast<GeographicRegion>());
-							AddRegions(variety, e.NewItems.Cast<GeographicRegion>());
-							break;
-
-						case NotifyCollectionChangedAction.Reset:
-							_regions.RemoveAll(vm => vm.ModelVariety == variety);
-							AddRegions(variety, variety.Regions);
-							break;
-					}
-					IsChanged = true;
-				});
-		}
-
-		private void AddRegions(Variety variety, IEnumerable<GeographicRegion> regions)
-		{
-			bool recluster = false;
-			foreach (GeographicRegion region in regions)
+			if (variety.ClusterIndex == -1 || (variety.ClusterIndex != -1 && variety.Regions.Count == 0))
 			{
-				int clusterIndex = _currentClusters.Count == 0 ? 0 : _currentClusters.FindIndex(c => c.DataObjects.Contains(variety));
-				if (clusterIndex == -1)
-				{
-					recluster = true;
-					clusterIndex = 0;
-				}
-				var regionVM = new VarietyRegionViewModel(_dialogService, _project, variety, region) {ClusterIndex = clusterIndex};
-				regionVM.PropertyChanged += ChildPropertyChanged;
-				_regions.Add(regionVM);
+				if (_project.VarietyPairs.Count == 0)
+					ResetClusters();
+				else
+					ClusterVarieties();
 			}
-
-			if (recluster)
-				ClusterVarieties();
-		}
-
-		private void RemoveRegions(IEnumerable<GeographicRegion> regions)
-		{
-			var oldRegions = new HashSet<GeographicRegion>(regions);
-			_regions.RemoveAll(vm => oldRegions.Contains(vm.ModelRegion));
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					switch (e.Action)
-					{
-						case NotifyCollectionChangedAction.Add:
-							AddVarieties(e.NewItems.Cast<Variety>());
-							break;
-
-						case NotifyCollectionChangedAction.Remove:
-							RemoveVarieties(e.OldItems.Cast<Variety>());
-							break;
-
-						case NotifyCollectionChangedAction.Replace:
-							RemoveVarieties(e.OldItems.Cast<Variety>());
-							AddVarieties(e.NewItems.Cast<Variety>());
-							break;
-
-						case NotifyCollectionChangedAction.Reset:
-							Set(() => Regions, ref _regions, new ObservableCollection<VarietyRegionViewModel>());
-							AddVarieties(_project.Varieties);
-							break;
-					}
-				});
-		}
-
-		private void AddVarieties(IEnumerable<Variety> varieties)
-		{
 			ResetClusters();
-			foreach (Variety variety in varieties)
-			{
-				AddRegions(variety, variety.Regions);
-				Variety v = variety;
-				variety.Regions.CollectionChanged += (sender, args) => RegionsChanged(v, args);
-			}
-		}
-
-		private void RemoveVarieties(IEnumerable<Variety> varieties)
-		{
-			var oldVarieties = new HashSet<Variety>(varieties);
-			_regions.RemoveAll(vm => oldVarieties.Contains(vm.ModelVariety));
 		}
 
 		public override void AcceptChanges()
 		{
 			base.AcceptChanges();
-			ChildrenAcceptChanges(_regions);
+			ChildrenAcceptChanges(_varieties);
 		}
 
-		public ObservableCollection<VarietyRegionViewModel> Regions
+		public ObservableCollection<GeographicalVarietyViewModel> Varieties
 		{
-			get { return _regions; }
+			get { return _varieties; }
 		}
 
 		public SimilarityMetric SimilarityMetric

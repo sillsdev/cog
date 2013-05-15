@@ -18,7 +18,7 @@ namespace SIL.Cog.Views
 		{
 			var treeListView = (TreeListView) sender;
 			double w = treeListView.ActualWidth;
-			var sv = ViewUtilities.FindVisualChild<ScrollViewer>(treeListView);
+			var sv = treeListView.FindVisualChild<ScrollViewer>();
 			if (sv.ComputedVerticalScrollBarVisibility == Visibility.Visible)
 				w -= SystemParameters.VerticalScrollBarWidth;
 			double total = 0;

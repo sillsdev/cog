@@ -28,8 +28,8 @@ namespace SIL.Cog.Views
 		{
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
-			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties1ComboBox, variety => variety.Name);
-			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties2ComboBox, variety => variety.Name);
+			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
+			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -62,8 +62,8 @@ namespace SIL.Cog.Views
 					AddVarieties((IEnumerable<VarietyViewModel>) sender);
 					break;
 			}
-			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties1ComboBox, variety => variety.Name);
-			ViewUtilities.SetComboBoxWidthToFit<VarietyViewModel>(Varieties2ComboBox, variety => variety.Name);
+			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
+			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 		}
 
 		private void AddVarieties(IEnumerable<VarietyViewModel> varieties)
@@ -82,8 +82,8 @@ namespace SIL.Cog.Views
 		{
 			if (e.PropertyName == "Name")
 			{
-				ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(Varieties1ComboBox, variety => variety.Name);
-				ViewUtilities.SetComboBoxWidthToFit<VarietyVarietiesViewModel>(Varieties2ComboBox, variety => variety.Name);
+				Varieties1ComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
+				Varieties2ComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 			}
 		}
 	}

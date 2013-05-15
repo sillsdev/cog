@@ -2,11 +2,11 @@
 
 namespace SIL.Cog.ViewModels
 {
-	public class TaskAreaViewModel : CogViewModelBase
+	public class TaskAreaCommandsViewModel : CogViewModelBase
 	{
 		private readonly ReadOnlyCollection<CommandViewModel> _commands;
 
-		public TaskAreaViewModel(string displayName, params CommandViewModel[] commands)
+		public TaskAreaCommandsViewModel(string displayName, params CommandViewModel[] commands)
 			: base(displayName)
 		{
 			_commands = new ReadOnlyCollection<CommandViewModel>(commands);

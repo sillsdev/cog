@@ -17,8 +17,8 @@ namespace SIL.Cog.Views
 		public WordView()
 		{
 			InitializeComponent();
-			_drag = new ItemsControlDrag(_listBox, CanDrag);
-			_drop = new ItemsControlDrop(_listBox, CanDrop);
+			_drag = new ItemsControlDrag(ListBox, CanDrag);
+			_drop = new ItemsControlDrop(ListBox, CanDrop);
 		}
 
 		private bool CanDrag(FrameworkElement itemContainer)
@@ -28,22 +28,22 @@ namespace SIL.Cog.Views
 
 		private bool CanDrop(object draggedItem, int index)
 		{
-			var segs = (IList<WordSegmentViewModel>) _listBox.ItemsSource;
+			var segs = (IList<WordSegmentViewModel>) ListBox.ItemsSource;
 			return (index == segs.Count || !segs[index].IsBoundary) && (index == 0 || !segs[index - 1].IsBoundary);
 		}
 
 		private void _listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var vm = (WordSegmentViewModel) _listBox.SelectedItem;
+			var vm = (WordSegmentViewModel) ListBox.SelectedItem;
 			if (vm == null || vm.IsBoundary)
 				_prevSelectedItem = vm;
 			else
-				_listBox.SelectedItem = _prevSelectedItem;
+				ListBox.SelectedItem = _prevSelectedItem;
 		}
 
 		private void _listBox_LostFocus(object sender, RoutedEventArgs e)
 		{
-			_listBox.SelectedItem = null;
+			ListBox.SelectedItem = null;
 		}
 	}
 }

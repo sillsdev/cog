@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -37,9 +39,9 @@ namespace SIL.Cog.Views
 			MapControl.IgnoreMarkerOnMouseWheel = true;
 		}
 
-		private void MapView_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void GeographicalView_OnLoaded(object sender, RoutedEventArgs e)
 		{
-			var vm = e.NewValue as GeographicalViewModel;
+			var vm = DataContext as GeographicalViewModel;
 			if (vm != null)
 			{
 				ResetRegions(vm);
@@ -52,7 +54,7 @@ namespace SIL.Cog.Views
 			var vm = (GeographicalViewModel) sender;
 			switch (e.PropertyName)
 			{
-				case "Regions":
+				case "Varieties":
 					ResetRegions(vm);
 					break;
 			}
@@ -62,14 +64,20 @@ namespace SIL.Cog.Views
 		{
 			foreach (RegionMarker rm in MapControl.Markers.OfType<RegionMarker>().ToArray())
 				rm.Dispose();
-			AddRegions(vm.Regions);
-			vm.Regions.CollectionChanged += RegionsChanged;
-			Dispatcher.BeginInvoke(new Action(GoHome));
+			vm.Varieties.CollectionChanged += VarietiesChanged;
+			foreach (GeographicalVarietyViewModel variety in vm.Varieties)
+			{
+				AddRegions(variety.Regions);
+				GeographicalVarietyViewModel v = variety;
+				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
+				SetVarietyChecked(variety, variety.Regions.Count > 0);
+			}
+			GoHome();
 		}
 
 		private void GoHome()
 		{
-			if (ZoomAndCenterRegions())
+			if (ZoomAndCenterRegions(MapControl.Markers.OfType<RegionMarker>()))
 			{
 				HomeButton.IsChecked = true;
 			}
@@ -81,33 +89,91 @@ namespace SIL.Cog.Views
 			}
 		}
 
-		private void RegionsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					AddRegions(e.NewItems.Cast<VarietyRegionViewModel>());
+					AddVarieties(e.NewItems.Cast<GeographicalVarietyViewModel>());
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					RemoveRegions(e.OldItems.Cast<VarietyRegionViewModel>());
+					RemoveVarieties(e.OldItems.Cast<GeographicalVarietyViewModel>());
 					break;
 
 				case NotifyCollectionChangedAction.Replace:
-					RemoveRegions(e.OldItems.Cast<VarietyRegionViewModel>());
-					AddRegions(e.NewItems.Cast<VarietyRegionViewModel>());
+					RemoveVarieties(e.OldItems.Cast<GeographicalVarietyViewModel>());
+					AddVarieties(e.NewItems.Cast<GeographicalVarietyViewModel>());
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
 					MapControl.Markers.Clear();
-					AddRegions((IEnumerable<VarietyRegionViewModel>) sender);
+					AddVarieties((IEnumerable<GeographicalVarietyViewModel>) sender);
 					break;
 			}
 		}
 
-		private void AddRegions(IEnumerable<VarietyRegionViewModel> regions)
+		private void AddVarieties(IEnumerable<GeographicalVarietyViewModel> varieties)
 		{
-			foreach (VarietyRegionViewModel region in regions)
+			foreach (GeographicalVarietyViewModel variety in varieties)
+			{
+				AddRegions(variety.Regions);
+				GeographicalVarietyViewModel v = variety;
+				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
+			}
+		}
+
+		private void RemoveVarieties(IEnumerable<GeographicalVarietyViewModel> varieties)
+		{
+			RemoveRegions(varieties.SelectMany(v => v.Regions));
+		}
+
+		private void RegionsChanged(GeographicalVarietyViewModel variety, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddRegions(e.NewItems.Cast<GeographicalRegionViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					RemoveRegions(e.OldItems.Cast<GeographicalRegionViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Replace:
+					RemoveRegions(e.OldItems.Cast<GeographicalRegionViewModel>());
+					AddRegions(e.NewItems.Cast<GeographicalRegionViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Reset:
+					foreach (RegionMarker rm in MapControl.Markers.OfType<RegionMarker>().Where(rm => rm.Region.Variety == variety).ToArray())
+						rm.Dispose();
+					AddRegions(variety.Regions);
+					break;
+			}
+
+			if (variety.Regions.Count > 0)
+			{
+				int oldCount = variety.Regions.Count - (e.NewItems != null ? e.NewItems.Count : 0) + (e.OldItems != null ? e.OldItems.Count : 0);
+				if (oldCount == 0)
+					SetVarietyChecked(variety, true);
+			}
+			else
+			{
+				SetVarietyChecked(variety, false);
+			}
+		}
+
+		private void SetVarietyChecked(GeographicalVarietyViewModel variety, bool check)
+		{
+			var varietyItem = (TreeViewItem) RegionsTreeView.ItemContainerGenerator.ContainerFromItem(variety);
+			var checkBox = varietyItem.FindVisualChild<CheckBox>();
+			checkBox.IsChecked = check;
+		}
+
+		private void AddRegions(IEnumerable<GeographicalRegionViewModel> regions)
+		{
+			foreach (GeographicalRegionViewModel region in regions)
 			{
 				var marker = new RegionMarker(region) {IsSelectable = _currentTool == Tool.Select};
 				marker.Click += Region_Click;
@@ -117,29 +183,75 @@ namespace SIL.Cog.Views
 			}
 		}
 
+		private void RemoveRegions(IEnumerable<GeographicalRegionViewModel> regions)
+		{
+			var regionSet = new HashSet<GeographicalRegionViewModel>(regions);
+			foreach (RegionMarker rm in MapControl.Markers.OfType<RegionMarker>().Where(rm => regionSet.Contains(rm.Region)).ToArray())
+				rm.Dispose();
+		}
+
 		private void Region_Click(object sender, EventArgs e)
+		{
+			var rm = (RegionMarker) sender;
+			SelectRegionMarker(rm);
+		}
+
+		private void SelectRegionMarker(RegionMarker rm)
 		{
 			ClosePopup();
 
-			var rm = (RegionMarker) sender;
-			Point p = CalculatePopupPosition(rm);
+			Point centerPoint = CalculateCenter(rm);
+			Point p = CalculatePopupPosition(centerPoint);
 			_popup = new GMapMarker(MapControl.FromLocalToLatLng((int) p.X, (int) p.Y)) {Tag = rm, Shape = new VarietyRegionView {DataContext = rm.Region}, ZIndex = 100};
 			MapControl.Markers.Add(_popup);
 
 			int xOffset = 0;
 			if (p.X - 5 < 0)
-				xOffset = (int) -(p.X - 5);
+			    xOffset = (int) -(p.X - 5);
 			else if (p.X + 205 > MapControl.ActualWidth)
-				xOffset = (int) (MapControl.ActualWidth - (p.X + 205));
+			    xOffset = (int) (MapControl.ActualWidth - (p.X + 205));
 
 			int yOffset = 0;
 			if (p.Y - 5 < 0)
-				yOffset = (int) -(p.Y - 5);
+			    yOffset = (int) -(p.Y - 5);
 			else if (p.Y + 175 > MapControl.ActualHeight)
-				yOffset = (int) (MapControl.ActualHeight - (p.Y + 175));
+			    yOffset = (int) (MapControl.ActualHeight - (p.Y + 175));
 
 			if (xOffset != 0 || yOffset != 0)
-				MapControl.Offset(xOffset, yOffset);
+			    MapControl.Offset(xOffset, yOffset);
+
+			SelectTreeRegion(rm.Region);
+		}
+
+		private void SelectTreeRegion(GeographicalRegionViewModel region)
+		{
+			SetSelectedTreeRegion(RegionsTreeView, region);
+		}
+
+		private bool SetSelectedTreeRegion(ItemsControl parent, GeographicalRegionViewModel region)
+		{
+			if (parent == null || region == null)
+				return false;
+ 
+			var childNode = parent.ItemContainerGenerator.ContainerFromItem(region) as TreeViewItem;
+ 
+			if (childNode != null)
+			{
+				childNode.Focus();
+				return childNode.IsSelected = true;
+			}
+ 
+			if (parent.Items.Count > 0)
+			{
+				foreach (object childItem in parent.Items)
+				{
+					var childControl = (ItemsControl) parent.ItemContainerGenerator.ContainerFromItem(childItem);
+					if (SetSelectedTreeRegion(childControl, region))
+						return true;
+				}
+			}
+ 
+			return false;
 		}
 
 		private void ClosePopup()
@@ -151,7 +263,7 @@ namespace SIL.Cog.Views
 			}
 		}
 
-		private Point CalculatePopupPosition(RegionMarker rm)
+		private Point CalculateCenter(RegionMarker rm)
 		{
 			long areaSum = 0;
 			long xSum = 0;
@@ -170,15 +282,12 @@ namespace SIL.Cog.Views
 
 			double cx = areaTerm * xSum;
 			double cy = areaTerm * ySum;
-
-			return new Point(cx - 80, cy - 170);
+			return new Point(cx, cy);
 		}
 
-		private void RemoveRegions(IEnumerable<VarietyRegionViewModel> regions)
+		private Point CalculatePopupPosition(Point center)
 		{
-			var regionSet = new HashSet<VarietyRegionViewModel>(regions);
-			foreach (RegionMarker rm in MapControl.Markers.OfType<RegionMarker>().Where(rm => regionSet.Contains(rm.Region)).ToArray())
-				rm.Dispose();
+			return new Point(center.X - 80, center.Y - 170);
 		}
 
 		private void SearchButton_OnClick(object sender, RoutedEventArgs e)
@@ -331,19 +440,27 @@ namespace SIL.Cog.Views
 			HomeButton.IsChecked = false;
 			if (_popup != null)
 			{
-				Point p = CalculatePopupPosition((RegionMarker) _popup.Tag);
+				Point p = CalculatePopupPosition(CalculateCenter((RegionMarker) _popup.Tag));
 				_popup.Position = MapControl.FromLocalToLatLng((int) p.X, (int) p.Y);
 			}
 		}
 
-		private bool ZoomAndCenterRegions()
+		private bool ZoomAndCenterRegions(IEnumerable<RegionMarker> regionMarkers)
+		{
+			RectLatLng rect;
+			if (GetRectangle(regionMarkers, out rect))
+				return MapControl.SetZoomToFitRect(rect);
+			return false;
+		}
+
+		private bool GetRectangle(IEnumerable<RegionMarker> regionMarkers, out RectLatLng rect)
 		{
 			double left = double.MaxValue;
 			double top = double.MinValue;
 			double right = double.MinValue;
 			double bottom = double.MaxValue;
 
-			foreach (PointLatLng p in MapControl.Markers.OfType<RegionMarker>().SelectMany(rm => rm.Polygon))
+			foreach (PointLatLng p in regionMarkers.SelectMany(rm => rm.Polygon))
 			{
 				// left
 				if (p.Lng < left)
@@ -364,10 +481,11 @@ namespace SIL.Cog.Views
 
 			if (left != double.MaxValue && right != double.MinValue && top != double.MinValue && bottom != double.MaxValue)
 			{
-				var rect = RectLatLng.FromLTRB(left, top, right, bottom);
-				return MapControl.SetZoomToFitRect(rect);
+				rect = RectLatLng.FromLTRB(left, top, right, bottom);
+				return true;
 			}
 
+			rect = new RectLatLng();
 			return false;
 		}
 
@@ -375,6 +493,104 @@ namespace SIL.Cog.Views
 		{
 			if (!MapControl.IsDragging)
 				ClosePopup();
+		}
+
+		private void RegionsTreeView_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			object selectedItem = RegionsTreeView.SelectedItem;
+			var region = selectedItem as GeographicalRegionViewModel;
+			if (region != null)
+			{
+				RegionMarker marker = MapControl.Markers.OfType<RegionMarker>().First(rm => rm.Region == region);
+				if (marker.Shape.IsVisible && (_popup == null || _popup.Tag != marker))
+				{
+					ZoomAndCenterRegions(new[] {marker});
+					SelectRegionMarker(marker);
+				}
+			}
+			else
+			{
+				var variety = selectedItem as GeographicalVarietyViewModel;
+				if (variety != null)
+				{
+					ClosePopup();
+					ZoomAndCenterRegions(MapControl.Markers.OfType<RegionMarker>().Where(rm => rm.Shape.IsVisible && rm.Region.Variety == variety));
+				}
+			}
+		}
+
+		private void CheckBox_OnClick(object sender, RoutedEventArgs e)
+		{
+			var checkBox = (CheckBox) sender;
+			object vm = checkBox.DataContext;
+			var variety = vm as GeographicalVarietyViewModel;
+			if (variety != null)
+			{
+				if (!checkBox.IsChecked.HasValue)
+					checkBox.IsChecked = false;
+
+				foreach (RegionMarker marker in MapControl.Markers.OfType<RegionMarker>().Where(rm => rm.Region.Variety == variety))
+					marker.Shape.Visibility = checkBox.IsChecked.Value ? Visibility.Visible : Visibility.Hidden;
+				var item = checkBox.FindVisualAncestor<TreeViewItem>();
+				foreach (GeographicalRegionViewModel child in item.Items)
+				{
+					var childItem = item.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
+					if (childItem != null)
+					{
+						var childCheckBox = childItem.FindVisualChild<CheckBox>();
+						childCheckBox.IsChecked = checkBox.IsChecked;
+						SetRegionVisibility(child, checkBox.IsChecked != null && (bool) checkBox.IsChecked);
+					}
+				}
+			}
+			else
+			{
+				var region = vm as GeographicalRegionViewModel;
+				if (region != null)
+				{
+					Debug.Assert(checkBox.IsChecked.HasValue);
+					SetRegionVisibility(region, (bool) checkBox.IsChecked);
+					var item = checkBox.FindVisualAncestor<TreeViewItem>();
+					var parentItem = item.FindVisualAncestor<TreeViewItem>();
+					bool? check = null;
+					foreach (GeographicalRegionViewModel child in parentItem.Items)
+					{
+						var childItem = parentItem.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
+						if (childItem != null)
+						{
+							var childCheckBox = childItem.FindVisualChild<CheckBox>();
+							if (!check.HasValue)
+							{
+								check = childCheckBox.IsChecked;
+							}
+							else if (check != childCheckBox.IsChecked)
+							{
+								check = null;
+								break;
+							}
+						}
+					}
+					var parentCheckBox = parentItem.FindVisualChild<CheckBox>();
+					parentCheckBox.IsChecked = check;
+				}
+			}
+		}
+
+		private void SetRegionVisibility(GeographicalRegionViewModel region, bool isVisible)
+		{
+			var marker = MapControl.Markers.OfType<RegionMarker>().FirstOrDefault(rm => rm.Region == region);
+			if (marker != null)
+			{
+				marker.Shape.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+				if (_popup != null && !isVisible && _popup.Tag == marker)
+					ClosePopup();
+			}
+		}
+
+		private void TreeViewItem_OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var item = (TreeViewItem) sender;
+			item.IsSelected = true;
 		}
 	}
 }

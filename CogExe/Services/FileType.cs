@@ -1,48 +1,40 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SIL.Cog.Services
 {
-    /// <summary>
-    /// Represents a file type.
-    /// </summary>
 	public class FileType
 	{
         private readonly string _description;
-        private readonly string _fileExtension;
+        private readonly List<string> _fileExtensions;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileType"/> class.
-        /// </summary>
-        /// <param name="description">The description of the file type.</param>
-        /// <param name="fileExtension">The file extension. This string has to start with a '.' point.</param>
-        /// <exception cref="ArgumentException">description is null or an empty string.</exception>
-        /// <exception cref="ArgumentException">fileExtension is null, an empty string or doesn't start with a '.' point character.</exception>
-        public FileType(string description, string fileExtension)
+        public FileType(string description, params string[] fileExtensions)
         {
-            if (string.IsNullOrEmpty(description)) { throw new ArgumentException("The argument description must not be null or empty."); }
-            if (string.IsNullOrEmpty(fileExtension)) { throw new ArgumentException("The argument fileExtension must not be null or empty."); }
-            if (fileExtension[0] != '.') { throw new ArgumentException("The argument fileExtension must start with the '.' character."); }
+            if (string.IsNullOrEmpty(description))
+				throw new ArgumentException("The description must not be null or empty.", "description");
+            if (fileExtensions.Length == 0)
+				throw new ArgumentException("A file extension must be specified.", "fileExtensions");
 
             _description = description;
-            _fileExtension = fileExtension;
+			_fileExtensions = new List<string>();
+			foreach (string ext in fileExtensions)
+			{
+				if (string.IsNullOrEmpty(ext))
+					throw new ArgumentException("A file extension cannot be empty.", "fileExtensions");
+				if (ext[0] != '.')
+					throw new ArgumentException("A file extension must start with the '.' character.", "fileExtensions");
+				_fileExtensions.Add(ext);
+			}
         }
 
-
-		/// <summary>
-		/// Gets the description of the file type.
-		/// </summary>
 		public string Description
 		{
 			get { return _description; }
 		}
 
-		/// <summary>
-		/// Gets the file extension. This string starts with a '.' point.
-		/// </summary>
-		public string FileExtension
+		public IEnumerable<string> FileExtensions
 		{
-			get { return _fileExtension; }
+			get { return _fileExtensions; }
 		}
 	}
 }

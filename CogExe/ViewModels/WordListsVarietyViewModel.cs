@@ -5,12 +5,12 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietyWordListsViewModel : VarietyViewModel
+	public class WordListsVarietyViewModel : VarietyViewModel
 	{
 		private readonly VarietySenseViewModelCollection _senses;
 		private readonly ICommand _switchToVarietyCommand;
  
-		public VarietyWordListsViewModel(CogProject project, Variety variety)
+		public WordListsVarietyViewModel(CogProject project, Variety variety)
 			: base(variety)
 		{
 			_senses = new VarietySenseViewModelCollection(project.Senses,

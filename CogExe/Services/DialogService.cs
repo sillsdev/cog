@@ -121,7 +121,7 @@ namespace SIL.Cog.Services
             foreach (FileType fileType in fileTypes)
             {
                 if (!String.IsNullOrEmpty(filter)) { filter += "|"; }
-                filter += fileType.Description + "|*" + fileType.FileExtension;
+                filter += fileType.Description + "|" + string.Join(";", fileType.FileExtensions.Select(ext => string.Format("*{0}", ext)));
             }
             return filter;
         }

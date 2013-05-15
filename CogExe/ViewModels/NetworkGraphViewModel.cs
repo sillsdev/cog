@@ -20,10 +20,10 @@ namespace SIL.Cog.ViewModels
 			_exportService = exportService;
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 
-			TaskAreas.Add(new TaskAreaGroupViewModel("Similarity metric",
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaViewModel("Other tasks",
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
 				new CommandViewModel("Export this graph", new RelayCommand(Export))));
 			_similarityScoreFilter = 0.7;
 		}
@@ -56,7 +56,7 @@ namespace SIL.Cog.ViewModels
 			switch (msg.Notification)
 			{
 				case Notifications.ComparisonPerformed:
-					Graph = ViewModelUtilities.GenerateNetworkGraph(_project, _similarityMetric);
+					Graph = _project.GenerateNetworkGraph(_similarityMetric);
 					break;
 			}
 		}
@@ -67,7 +67,7 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
-					Graph = ViewModelUtilities.GenerateNetworkGraph(_project, _similarityMetric);
+					Graph = _project.GenerateNetworkGraph(_similarityMetric);
 			}
 		}
 

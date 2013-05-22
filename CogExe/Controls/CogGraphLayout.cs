@@ -2,6 +2,7 @@
 using System.Windows;
 using GraphSharp.Controls;
 using QuickGraph;
+using SIL.Cog.GraphAlgorithms;
 
 namespace SIL.Cog.Controls
 {
@@ -18,6 +19,9 @@ namespace SIL.Cog.Controls
 
 		public CogGraphLayout()
 		{
+			LayoutAlgorithmFactory = new CogLayoutAlgorithmFactory<TVertex, TEdge, TGraph>();
+			HighlightAlgorithmFactory = new CogHighlightAlgorithmFactory<TVertex, TEdge, TGraph>();
+
 			IsVisibleChanged += CogGraphLayout_IsVisibleChanged;
 			
 			CreationTransition = new FadeTransition(0, 1, 1);

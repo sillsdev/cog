@@ -1,4 +1,4 @@
-namespace SIL.Cog.ViewModels
+namespace SIL.Cog.GraphAlgorithms
 {
 	public interface IAngledVertex
 	{

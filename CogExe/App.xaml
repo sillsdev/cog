@@ -422,7 +422,7 @@
 			<Style x:Key="NetworkEdgeControlStyle" TargetType="gsc:EdgeControl">
 				<Style.Resources>
 					<ToolTip x:Key="ToolTipContent">
-						<TextBlock Text="{Binding SimilarityScore, StringFormat=p}" />
+						<TextBlock Text="{Binding Weight, StringFormat=p}" />
 					</ToolTip>
 				</Style.Resources>
 				<Setter Property="Template">

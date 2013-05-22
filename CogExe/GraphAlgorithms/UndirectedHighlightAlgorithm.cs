@@ -1,13 +1,15 @@
+using GraphSharp;
 using GraphSharp.Algorithms.Highlight;
 using QuickGraph;
-using SIL.Cog.ViewModels;
 
-namespace SIL.Cog.Controls
+namespace SIL.Cog.GraphAlgorithms
 {
-	public class NetworkGraphHighlightAlgorithm : HighlightAlgorithmBase<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>, NetworkGraphHighlightParameters>
+	public class UndirectedHighlightAlgorithm<TVertex, TEdge, TGraph> : HighlightAlgorithmBase<TVertex, TEdge, TGraph, UndirectedHighlightParameters>
+		where TVertex : class
+		where TEdge : IEdge<TVertex>
+		where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
 	{
-		public NetworkGraphHighlightAlgorithm(IHighlightController<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>> controller,
-			NetworkGraphHighlightParameters parameters)
+		public UndirectedHighlightAlgorithm(IHighlightController<TVertex, TEdge, TGraph> controller, UndirectedHighlightParameters parameters)
 			: base(controller, parameters)
 		{
 		}
@@ -37,7 +39,7 @@ namespace SIL.Cog.Controls
 			ClearAllHighlights();
 		}
 
-		public override bool OnVertexHighlighting(NetworkGraphVertex vertex)
+		public override bool OnVertexHighlighting(TVertex vertex)
 		{
 			ClearAllHighlights();
 
@@ -45,9 +47,10 @@ namespace SIL.Cog.Controls
 				return false;
 
 			//semi-highlight the in-edges, and the neighbours on their other side
-			foreach (NetworkGraphEdge edge in Controller.Graph.InEdges(vertex))
+			foreach (TEdge edge in Controller.Graph.InEdges(vertex))
 			{
-				if (edge.SimilarityScore < Parameters.SimilarityScoreFilter)
+				var weightedEdge = edge as WeightedEdge<TVertex>;
+				if (weightedEdge != null && weightedEdge.Weight < Parameters.WeightFilter)
 					continue;
 
 				Controller.SemiHighlightEdge(edge, null);
@@ -58,9 +61,10 @@ namespace SIL.Cog.Controls
 			}
 
 			//semi-highlight the out-edges
-			foreach (NetworkGraphEdge edge in Controller.Graph.OutEdges(vertex))
+			foreach (TEdge edge in Controller.Graph.OutEdges(vertex))
 			{
-				if (edge.SimilarityScore < Parameters.SimilarityScoreFilter)
+				var weightedEdge = edge as WeightedEdge<TVertex>;
+				if (weightedEdge != null && weightedEdge.Weight < Parameters.WeightFilter)
 					continue;
 
 				Controller.SemiHighlightEdge(edge, null);
@@ -73,13 +77,13 @@ namespace SIL.Cog.Controls
 			return true;
 		}
 
-		public override bool OnVertexHighlightRemoving(NetworkGraphVertex vertex)
+		public override bool OnVertexHighlightRemoving(TVertex vertex)
 		{
 			ClearAllHighlights();
 			return true;
 		}
 
-		public override bool OnEdgeHighlighting(NetworkGraphEdge edge)
+		public override bool OnEdgeHighlighting(TEdge edge)
 		{
 			ClearAllHighlights();
 
@@ -93,7 +97,7 @@ namespace SIL.Cog.Controls
 			return true;
 		}
 
-		public override bool OnEdgeHighlightRemoving(NetworkGraphEdge edge)
+		public override bool OnEdgeHighlightRemoving(TEdge edge)
 		{
 			ClearAllHighlights();
 			return true;

@@ -1,6 +1,6 @@
 using QuickGraph;
 
-namespace SIL.Cog.ViewModels
+namespace SIL.Cog.GraphAlgorithms
 {
 	public interface ILengthEdge<TVertex> : IEdge<TVertex>
 	{

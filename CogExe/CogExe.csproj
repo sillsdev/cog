@@ -81,6 +81,12 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.2.5.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics.IO">
+      <HintPath>..\packages\MathNet.Numerics.2.5.0\lib\net40\MathNet.Numerics.IO.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -91,6 +97,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -129,19 +136,11 @@
     <Compile Include="Controls\ContentSizeChangedEventArgs.cs" />
     <Compile Include="Controls\DendrogramLayout.cs" />
     <Compile Include="Controls\DropDownButton.cs" />
-    <Compile Include="Controls\HierarchicalGraphHighlightAlgorithm.cs" />
-    <Compile Include="Controls\HierarchicalGraphHighlightAlgorithmFactory.cs" />
     <Compile Include="Controls\HierarchicalGraphLayout.cs" />
-    <Compile Include="Controls\HierarchicalLayoutAlgorithmFactory.cs" />
-    <Compile Include="Controls\NetworkGraphHighlightAlgorithm.cs" />
-    <Compile Include="Controls\NetworkGraphHighlightAlgorithmFactory.cs" />
-    <Compile Include="Controls\NetworkGraphHighlightParameters.cs" />
     <Compile Include="Controls\NetworkGraphLayout.cs" />
     <Compile Include="Controls\PercentageSlider.xaml.cs">
       <DependentUpon>PercentageSlider.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\RadialTreeLayoutAlgorithm.cs" />
-    <Compile Include="Controls\RadialTreeLayoutParameters.cs" />
     <Compile Include="Controls\TabControlEx.cs" />
     <Compile Include="Controls\TreeGridViewRowPresenter.cs" />
     <Compile Include="Controls\TreeListView.cs" />
@@ -182,6 +181,17 @@
     <Compile Include="Export\TextSimilarityMatrixExporter.cs" />
     <Compile Include="Export\TextVarietyPairExporter.cs" />
     <Compile Include="Export\TextWordListsExporter.cs" />
+    <Compile Include="GraphAlgorithms\HierarchicalHighlightAlgorithm.cs" />
+    <Compile Include="GraphAlgorithms\CogHighlightAlgorithmFactory.cs" />
+    <Compile Include="GraphAlgorithms\IAngledVertex.cs" />
+    <Compile Include="GraphAlgorithms\ILengthEdge.cs" />
+    <Compile Include="GraphAlgorithms\UndirectedHighlightAlgorithm.cs" />
+    <Compile Include="GraphAlgorithms\UndirectedHighlightParameters.cs" />
+    <Compile Include="GraphAlgorithms\CogLayoutAlgorithmFactory.cs" />
+    <Compile Include="GraphAlgorithms\RadialTreeLayoutAlgorithm.cs" />
+    <Compile Include="GraphAlgorithms\RadialTreeLayoutParameters.cs" />
+    <Compile Include="GraphAlgorithms\StressMajorizationLayoutAlgorithm.cs" />
+    <Compile Include="GraphAlgorithms\StressMajorizationLayoutParameters.cs" />
     <Compile Include="Import\KmlGeographicRegionsImporter.cs" />
     <Compile Include="Import\IGeographicRegionsImporter.cs" />
     <Compile Include="Import\ISegmentMappingsImporter.cs" />
@@ -215,8 +225,6 @@
     <Compile Include="ViewModels\GeographicalVarietyViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
-    <Compile Include="ViewModels\IAngledVertex.cs" />
-    <Compile Include="ViewModels\ILengthEdge.cs" />
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
@@ -250,7 +258,7 @@
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
     <Compile Include="ViewModels\SegmenterViewModel.cs" />
-    <Compile Include="ViewModels\SegmentVarietyViewModel.cs" />
+    <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />

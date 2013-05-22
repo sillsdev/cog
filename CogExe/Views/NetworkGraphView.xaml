@@ -5,22 +5,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:c="clr-namespace:SIL.Cog.Controls"
-             xmlns:fdp="clr-namespace:GraphSharp.Algorithms.Layout.Simple.FDP;assembly=GraphSharp" mc:Ignorable="d"
+             xmlns:or="clr-namespace:GraphSharp.Algorithms.OverlapRemoval;assembly=GraphSharp"
+             xmlns:ga="clr-namespace:SIL.Cog.GraphAlgorithms"
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<Grid>
 		<c:ZoomControl x:Name="ZoomControl" ZoomBoxOpacity="0.25">
-			<c:NetworkGraphLayout x:Name="GraphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="LinLog" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Simple"
-								  SimilarityScoreFilter="{Binding SimilarityScoreFilter}" LayoutFinished="GraphLayout_OnLayoutFinished" Background="White">
+			<c:NetworkGraphLayout x:Name="GraphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="StressMajorization" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Undirected"
+								  WeightFilter="{Binding SimilarityScoreFilter}" LayoutFinished="GraphLayout_OnLayoutFinished" Background="White">
 				<c:NetworkGraphLayout.Resources>
 					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource NetworkEdgeControlStyle}" />
 					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource NetworkVertexControlStyle}" />
 				</c:NetworkGraphLayout.Resources>
 				<c:NetworkGraphLayout.LayoutParameters>
-					<fdp:LinLogLayoutParameters GravitationMultiplier="0" />
+					<ga:StressMajorizationLayoutParameters WeightAdjustment="1.0" />
 				</c:NetworkGraphLayout.LayoutParameters>
 				<c:NetworkGraphLayout.HighlightParameters>
-					<c:NetworkGraphHighlightParameters />
+					<ga:UndirectedHighlightParameters />
 				</c:NetworkGraphLayout.HighlightParameters>
+				<c:NetworkGraphLayout.OverlapRemovalParameters>
+					<or:OverlapRemovalParameters HorizontalGap="2" VerticalGap="2" />
+				</c:NetworkGraphLayout.OverlapRemovalParameters>
 			</c:NetworkGraphLayout>
 		</c:ZoomControl>
 		<Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="{StaticResource OverlayBackgroundBrush}" CornerRadius="5" Margin="10">

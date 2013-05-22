@@ -9,10 +9,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using GMap.NET.WindowsPresentation;
 using GraphSharp;
+using GraphSharp.Algorithms.OverlapRemoval;
 using GraphSharp.Controls;
 using QuickGraph;
 using SIL.Cog.Controls;
 using SIL.Cog.Export;
+using SIL.Cog.GraphAlgorithms;
 using SIL.Cog.ViewModels;
 using SIL.Cog.Views;
 
@@ -193,11 +195,13 @@ namespace SIL.Cog.Services
 						IsAnimationEnabled = false,
 						CreationTransition = null,
 						DestructionTransition = null,
-						LayoutAlgorithmType = "LinLog",
+						LayoutAlgorithmType = "StressMajorization",
+						LayoutParameters = new StressMajorizationLayoutParameters {WeightAdjustment = 1.0},
 						OverlapRemovalAlgorithmType = "FSA",
+						OverlapRemovalParameters = new OverlapRemovalParameters {HorizontalGap = 2, VerticalGap = 2},
 						Graph = graph,
 						Background = Brushes.White,
-						SimilarityScoreFilter = scoreFilter
+						WeightFilter = scoreFilter
 					};
 				graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["NetworkEdgeControlStyle"];
 				graphLayout.Resources[typeof(VertexControl)] = Application.Current.Resources["NetworkVertexControlStyle"];

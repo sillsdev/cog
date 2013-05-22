@@ -1,6 +1,6 @@
-﻿using GraphSharp.Algorithms.Layout;
+using GraphSharp.Algorithms.Layout;
 
-namespace SIL.Cog.Controls
+namespace SIL.Cog.GraphAlgorithms
 {
 	public enum BranchLengthScaling
 	{

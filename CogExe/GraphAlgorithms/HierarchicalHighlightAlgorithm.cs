@@ -1,14 +1,14 @@
-﻿using GraphSharp;
 using GraphSharp.Algorithms.Highlight;
-using SIL.Cog.ViewModels;
+using QuickGraph;
 
-namespace SIL.Cog.Controls
+namespace SIL.Cog.GraphAlgorithms
 {
-	public class HierarchicalGraphHighlightAlgorithm : HighlightAlgorithmBase<HierarchicalGraphVertex, HierarchicalGraphEdge,
-		IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>, IHighlightParameters>
+	public class HierarchicalHighlightAlgorithm<TVertex, TEdge, TGraph> : HighlightAlgorithmBase<TVertex, TEdge, TGraph, IHighlightParameters>
+		where TVertex : class
+		where TEdge : IEdge<TVertex>
+		where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
 	{
-		public HierarchicalGraphHighlightAlgorithm(IHighlightController<HierarchicalGraphVertex, HierarchicalGraphEdge, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>> controller,
-			IHighlightParameters parameters)
+		public HierarchicalHighlightAlgorithm(IHighlightController<TVertex, TEdge, TGraph> controller, IHighlightParameters parameters)
 			: base(controller, parameters)
 		{
 		}
@@ -38,14 +38,14 @@ namespace SIL.Cog.Controls
 			ClearAllHighlights();
 		}
 
-		public override bool OnVertexHighlighting(HierarchicalGraphVertex vertex)
+		public override bool OnVertexHighlighting(TVertex vertex)
 		{
 			ClearAllHighlights();
 
 			if (vertex == null || !Controller.Graph.ContainsVertex(vertex))
 				return false;
 
-			foreach (HierarchicalGraphEdge edge in Controller.Graph.InEdges(vertex))
+			foreach (TEdge edge in Controller.Graph.InEdges(vertex))
 			{
 				Controller.SemiHighlightEdge(edge, null);
 				if (edge.Source == vertex || Controller.IsHighlightedVertex(edge.Source))
@@ -54,7 +54,7 @@ namespace SIL.Cog.Controls
 				Controller.SemiHighlightVertex(edge.Source, null);
 			}
 
-			foreach (HierarchicalGraphEdge edge in Controller.Graph.OutEdges(vertex))
+			foreach (TEdge edge in Controller.Graph.OutEdges(vertex))
 			{
 				Controller.SemiHighlightEdge(edge, null);
 				if (edge.Target == vertex || Controller.IsHighlightedVertex(edge.Target))
@@ -67,13 +67,13 @@ namespace SIL.Cog.Controls
 			return true;
 		}
 
-		public override bool OnVertexHighlightRemoving(HierarchicalGraphVertex vertex)
+		public override bool OnVertexHighlightRemoving(TVertex vertex)
 		{
 			ClearAllHighlights();
 			return true;
 		}
 
-		public override bool OnEdgeHighlighting(HierarchicalGraphEdge edge)
+		public override bool OnEdgeHighlighting(TEdge edge)
 		{
 			ClearAllHighlights();
 
@@ -87,7 +87,7 @@ namespace SIL.Cog.Controls
 			return true;
 		}
 
-		public override bool OnEdgeHighlightRemoving(HierarchicalGraphEdge edge)
+		public override bool OnEdgeHighlightRemoving(TEdge edge)
 		{
 			ClearAllHighlights();
 			return true;

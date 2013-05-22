@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
+using System.Linq;
 using GraphSharp.Algorithms.Layout;
 using QuickGraph;
-using SIL.Cog.ViewModels;
 
-namespace SIL.Cog.Controls
+namespace SIL.Cog.GraphAlgorithms
 {
 	public class RadialTreeLayoutAlgorithm<TVertex, TEdge, TGraph> : DefaultParameterizedLayoutAlgorithmBase<TVertex, TEdge, TGraph, RadialTreeLayoutParameters>
 		where TVertex : class

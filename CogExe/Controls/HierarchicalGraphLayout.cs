@@ -8,12 +8,6 @@ namespace SIL.Cog.Controls
 	public class HierarchicalGraphLayout : CogGraphLayout<HierarchicalGraphVertex,
 		HierarchicalGraphEdge, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>>
 	{
-		public HierarchicalGraphLayout()
-		{
-			LayoutAlgorithmFactory = new HierarchicalLayoutAlgorithmFactory();
-			HighlightAlgorithmFactory = new HierarchicalGraphHighlightAlgorithmFactory();
-		}
-
 		public static readonly DependencyProperty ScaleLabelsToZoomProperty = DependencyProperty.Register("ScaleLabelsToZoom", typeof(double),
 			typeof(HierarchicalGraphLayout), new UIPropertyMetadata(0.0, ScaleLabelsToZoomPropertyChanged));
 

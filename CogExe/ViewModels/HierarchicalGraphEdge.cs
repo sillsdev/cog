@@ -1,5 +1,6 @@
 ﻿using GraphSharp;
 using SIL.Cog.Controls;
+using SIL.Cog.GraphAlgorithms;
 
 namespace SIL.Cog.ViewModels
 {

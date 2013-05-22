@@ -13,7 +13,7 @@
         <Grid>
             <c:DendrogramLayout Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Dendrogram}" Graph="{Binding Graph}" Background="White" />
 			<c:HierarchicalGraphLayout x:Name="GraphLayout" Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Tree}" Background="White"
-									   Graph="{Binding Graph}" LayoutAlgorithmType="RadialTree" HighlightAlgorithmType="Simple" ScaleLabelsToZoom="{Binding ElementName=ZoomControl, Path=Zoom}"
+									   Graph="{Binding Graph}" LayoutAlgorithmType="RadialTree" HighlightAlgorithmType="Hierarchical" ScaleLabelsToZoom="{Binding ElementName=ZoomControl, Path=Zoom}"
 									   LayoutFinished="_graphLayout_OnLayoutFinished">
 				<c:HierarchicalGraphLayout.Resources>
 					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource HierarchicalEdgeControlStyle}" />

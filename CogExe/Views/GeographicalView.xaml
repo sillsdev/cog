@@ -41,7 +41,7 @@
 										<SolidColorBrush Color="{Binding ClusterIndex, Converter={StaticResource IndexConverter}, ConverterParameter={x:Static Colors.CornflowerBlue}}" />
 									</Ellipse.Fill>
 								</Ellipse>
-								<Image Source="../Images/world.png" />
+								<Image Opacity="0.7" Source="../Images/world.png" />
 							</Grid>
 							<TextBlock Margin="3,0,0,0" Text="{Binding Name}" />
 						</StackPanel>

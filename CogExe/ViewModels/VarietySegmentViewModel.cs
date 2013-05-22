@@ -2,12 +2,12 @@
 
 namespace SIL.Cog.ViewModels
 {
-	public class SegmentVarietyViewModel : ViewModelBase
+	public class VarietySegmentViewModel : ViewModelBase
 	{
 		private readonly Variety _variety;
 		private readonly Segment _segment;
 
-		public SegmentVarietyViewModel(Variety variety, Segment segment)
+		public VarietySegmentViewModel(Variety variety, Segment segment)
 		{
 			_variety = variety;
 			_segment = segment;

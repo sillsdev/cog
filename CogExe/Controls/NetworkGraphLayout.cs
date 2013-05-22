@@ -1,39 +1,35 @@
 using System.Windows;
 using GraphSharp.Controls;
 using QuickGraph;
+using SIL.Cog.GraphAlgorithms;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Controls
 {
 	public class NetworkGraphLayout : CogGraphLayout<NetworkGraphVertex, NetworkGraphEdge, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>>
 	{
-		public NetworkGraphLayout()
-		{
-			HighlightAlgorithmFactory = new NetworkGraphHighlightAlgorithmFactory();
-		}
+		public static readonly DependencyProperty WeightFilterProperty = DependencyProperty.Register("WeightFilter", typeof(double),
+			typeof(NetworkGraphLayout), new UIPropertyMetadata(0.0, WeightFilterPropertyChanged));
 
-		public static readonly DependencyProperty SimilarityScoreFilterProperty = DependencyProperty.Register("SimilarityScoreFilter", typeof(double),
-			typeof(NetworkGraphLayout), new UIPropertyMetadata(0.0, SimilarityScoreFilterPropertyChanged));
-
-		private static void SimilarityScoreFilterPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		private static void WeightFilterPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
 		{
 			var graphLayout = (NetworkGraphLayout) depObj;
-			graphLayout.FilterBySimilarityScore();
+			graphLayout.FilterByWeight();
 		}
 
-		public double SimilarityScoreFilter
+		public double WeightFilter
 		{
-			get { return (double) GetValue(SimilarityScoreFilterProperty); }
-			set { SetValue(SimilarityScoreFilterProperty, value); }
+			get { return (double) GetValue(WeightFilterProperty); }
+			set { SetValue(WeightFilterProperty, value); }
 		}
 
 		protected override void OnLayoutFinished()
 		{
 			base.OnLayoutFinished();
-			FilterBySimilarityScore();
+			FilterByWeight();
 		}
 
-		private void FilterBySimilarityScore()
+		private void FilterByWeight()
 		{
 			if (Graph == null)
 				return;
@@ -41,12 +37,12 @@ namespace SIL.Cog.Controls
 			foreach (NetworkGraphEdge edge in Graph.Edges)
 			{
 				EdgeControl edgeControl = GetEdgeControl(edge);
-				edgeControl.Visibility = edge.SimilarityScore < SimilarityScoreFilter ? Visibility.Hidden : Visibility.Visible;
+				edgeControl.Visibility = edge.Weight < WeightFilter ? Visibility.Hidden : Visibility.Visible;
 			}
 
-			var parameters = HighlightParameters as NetworkGraphHighlightParameters;
+			var parameters = HighlightParameters as UndirectedHighlightParameters;
 			if (parameters != null)
-				parameters.SimilarityScoreFilter = SimilarityScoreFilter;
+				parameters.WeightFilter = WeightFilter;
 		}
 	}
 }

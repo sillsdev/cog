@@ -12,11 +12,11 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly UnorderedViewModelCollection<SegmentCollection, SegmentVarietyViewModel, Segment> _segments;
+		private readonly UnorderedViewModelCollection<SegmentCollection, VarietySegmentViewModel, Segment> _segments;
 		private readonly UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
 		private readonly UnorderedViewModelCollection<WordCollection, WordViewModel, Word> _words; 
 		private readonly ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix> _affixes;
-		private SegmentVarietyViewModel _currentSegment;
+		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
 		private readonly ObservableCollection<WordViewModel> _selectedWords; 
 		private readonly ICommand _newAffixCommand;
@@ -28,7 +28,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_dialogService = dialogService;
-			_segments = new UnorderedViewModelCollection<SegmentCollection, SegmentVarietyViewModel, Segment>(variety.Segments, segment => new SegmentVarietyViewModel(variety, segment), vm => vm.ModelSegment);
+			_segments = new UnorderedViewModelCollection<SegmentCollection, VarietySegmentViewModel, Segment>(variety.Segments, segment => new VarietySegmentViewModel(variety, segment), vm => vm.ModelSegment);
 			_senses = new UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
 			_words = new UnorderedViewModelCollection<WordCollection, WordViewModel, Word>(variety.Words, word =>
 				{
@@ -110,7 +110,7 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_words);
 		}
 
-		public ObservableCollection<SegmentVarietyViewModel> Segments
+		public ObservableCollection<VarietySegmentViewModel> Segments
 		{
 			get { return _segments; }
 		}
@@ -141,7 +141,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => CurrentAffix, ref _currentAffix, value); }
 		}
 
-		public SegmentVarietyViewModel CurrentSegment
+		public VarietySegmentViewModel CurrentSegment
 		{
 			get { return _currentSegment; }
 			set

@@ -69,7 +69,7 @@ namespace SIL.Cog.Components
 							: new Ngram(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.Segments[node]));
 
 						SoundClass leftEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint =>
-							constraint.Matches(possibleLink.Item1.Span.Start.GetPrev(node => CogExtensions.Type((Annotation<ShapeNode>) node.Annotation) != CogFeatureSystem.NullType).Annotation));
+							constraint.Matches(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation));
 						SoundClass rightEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint =>
 							constraint.Matches(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation));
 

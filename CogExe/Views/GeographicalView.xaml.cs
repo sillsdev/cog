@@ -70,7 +70,6 @@ namespace SIL.Cog.Views
 				AddRegions(variety.Regions);
 				GeographicalVarietyViewModel v = variety;
 				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
-				SetVarietyChecked(variety, variety.Regions.Count > 0);
 			}
 			GoHome();
 		}
@@ -591,6 +590,13 @@ namespace SIL.Cog.Views
 		{
 			var item = (TreeViewItem) sender;
 			item.IsSelected = true;
+		}
+
+		private void CheckBox_OnLoaded(object sender, RoutedEventArgs e)
+		{
+			var checkBox = (CheckBox) sender;
+			var variety = (GeographicalVarietyViewModel) checkBox.DataContext;
+			SetVarietyChecked(variety, variety.Regions.Count > 0);
 		}
 	}
 }

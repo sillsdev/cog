@@ -66,7 +66,7 @@ namespace SIL.Cog.ViewModels
 			get { return _similarityMetric; }
 			set
 			{
-				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
+				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
 					Graph = _project.GenerateNetworkGraph(_similarityMetric);
 			}
 		}

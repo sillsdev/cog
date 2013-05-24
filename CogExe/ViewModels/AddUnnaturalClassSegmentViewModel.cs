@@ -27,10 +27,10 @@ namespace SIL.Cog.ViewModels
 				switch (columnName)
 				{
 					case "Segment":
-						string seg = _segment == null ? null : _segment.Trim('#');
-						if (string.IsNullOrEmpty(seg))
+						if (string.IsNullOrEmpty(_segment))
 							return "Please specify a segment";
-						if (seg != "-")
+						string seg = _segment.Trim('#');
+						if (seg.Length > 0 && seg != "-")
 						{
 							Shape shape;
 							if (!_project.Segmenter.ToShape(seg, out shape))

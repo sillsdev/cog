@@ -20,15 +20,43 @@ namespace SIL.Cog
 			_normalizedSegments = new HashSet<string>();
 			foreach (string segment in _segments)
 			{
-				Shape shape;
-				if (_segmenter.ToShape(segment, out shape) && shape.Count == 1)
+				if (segment == "#")
 				{
-					string strRep = shape.First.StrRep();
-					if (_ignoreModifiers)
-						strRep = StripModifiers(strRep);
-					_normalizedSegments.Add(strRep);
+					_normalizedSegments.Add(segment);
+				}
+				else if (segment.StartsWith("#"))
+				{
+					string normalized;
+					if (Normalize(segment.Remove(0, 1), out normalized))
+						_normalizedSegments.Add("#" + normalized);
+				}
+				else if (segment.EndsWith("#"))
+				{
+					string normalized;
+					if (Normalize(segment.Remove(segment.Length - 1, 1), out normalized))
+						_normalizedSegments.Add(normalized + "#");
+				}
+				else
+				{
+					string normalized;
+					if (Normalize(segment, out normalized))
+						_normalizedSegments.Add(normalized);
 				}
 			}
+		}
+
+		private bool Normalize(string segment, out string normalizedSegment)
+		{
+			Shape shape;
+			if (_segmenter.ToShape(segment, out shape) && shape.Count == 1)
+			{
+				normalizedSegment = shape.First.StrRep();
+				if (_ignoreModifiers)
+					normalizedSegment = StripModifiers(normalizedSegment);
+				return true;
+			}
+			normalizedSegment = null;
+			return false;
 		}
 
 		public IEnumerable<string> Segments
@@ -47,10 +75,10 @@ namespace SIL.Cog
 			if (_ignoreModifiers)
 				strRep = StripModifiers(strRep);
 
-			if (ann.Span.Start.Prev.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("#{0}", strRep)))
+			if (ann.Span.Start.Prev != null && ann.Span.Start.Prev.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("#{0}", strRep)))
 				return true;
 
-			if (ann.Span.End.Next.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("{0}#", strRep)))
+			if (ann.Span.End.Next != null && ann.Span.End.Next.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("{0}#", strRep)))
 				return true;
 
 			return _normalizedSegments.Contains(strRep);

@@ -51,7 +51,7 @@ namespace SIL.Cog.Components
 		private Affix CreateAffix(Ngram ngram, string category, double score)
 		{
 			var shape = new Shape(_spanFactory,
-				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 			foreach (Segment seg in ngram)
 			{
 				if (seg.Type != CogFeatureSystem.AnchorType)

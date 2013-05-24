@@ -64,7 +64,7 @@ namespace SIL.Cog.Components
 		{
 			Annotation<ShapeNode> stemAnn = match.Input.Stem;
 
-			var newShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			var newShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 
 			ShapeNode startNode = null;
 			ShapeNode endNode = null;

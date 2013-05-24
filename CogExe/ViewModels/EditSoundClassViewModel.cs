@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace SIL.Cog.ViewModels
 {
-	public class EditSoundClassViewModel : CogViewModelBase, IDataErrorInfo
+	public abstract class EditSoundClassViewModel : CogViewModelBase, IDataErrorInfo
 	{
 		private string _name;
 		private readonly HashSet<string> _soundClassNames;
 
-		public EditSoundClassViewModel(string displayName, IEnumerable<SoundClass> soundClasses)
+		protected EditSoundClassViewModel(string displayName, IEnumerable<SoundClass> soundClasses)
 			: base(displayName)
 		{
 			_soundClassNames = new HashSet<string>(soundClasses.Select(nc => nc.Name));
 		}
 
-		public EditSoundClassViewModel(string displayName, IEnumerable<SoundClass> soundClasses, SoundClass soundClass)
+		protected EditSoundClassViewModel(string displayName, IEnumerable<SoundClass> soundClasses, SoundClass soundClass)
 			: base(displayName)
 		{
 			_name = soundClass.Name;

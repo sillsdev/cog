@@ -346,7 +346,7 @@ namespace SIL.Cog.Components
 
 		private Shape CreateEmptyShape()
 		{
-			var shape = new Shape(_aligner.SpanFactory, begin => new ShapeNode(_aligner.SpanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			var shape = new Shape(_aligner.SpanFactory, begin => new ShapeNode(_aligner.SpanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 			return shape;
 		}
 

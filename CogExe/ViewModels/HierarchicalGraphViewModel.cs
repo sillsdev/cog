@@ -55,7 +55,6 @@ namespace SIL.Cog.ViewModels
 		private void Export()
 		{
 			_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
-			//_exportService.ExportHierarchicalGraph(this, Graph, _graphType);
 		}
 
 		public override void Initialize(CogProject project)
@@ -97,7 +96,7 @@ namespace SIL.Cog.ViewModels
 			get { return _clusteringMethod; }
 			set
 			{
-				if (Set(() => ClusteringMethod, ref _clusteringMethod, value))
+				if (Set(() => ClusteringMethod, ref _clusteringMethod, value) && _graph != null)
 					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
 			}
 		}
@@ -107,7 +106,7 @@ namespace SIL.Cog.ViewModels
 			get { return _similarityMetric; }
 			set
 			{
-				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
+				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
 					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
 			}
 		}

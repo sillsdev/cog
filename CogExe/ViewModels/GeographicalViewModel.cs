@@ -131,7 +131,7 @@ namespace SIL.Cog.ViewModels
 		{
 			if (variety.ClusterIndex == -1 || (variety.ClusterIndex != -1 && variety.Regions.Count == 0))
 			{
-				if (_project.VarietyPairs.Count == 0)
+				if (_currentClusters.Count == 0)
 					ResetClusters();
 				else
 					ClusterVarieties();
@@ -159,7 +159,7 @@ namespace SIL.Cog.ViewModels
 			get { return _similarityMetric; }
 			set
 			{
-				if (Set(() => SimilarityMetric, ref _similarityMetric, value))
+				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _currentClusters.Count > 0)
 					ClusterVarieties();
 			}
 		}
@@ -169,8 +169,8 @@ namespace SIL.Cog.ViewModels
 			get { return _similarityScoreThreshold; }
 			set
 			{
-				Set(() => SimilarityScoreThreshold, ref _similarityScoreThreshold, value);
-				ClusterVarieties();
+				if (Set(() => SimilarityScoreThreshold, ref _similarityScoreThreshold, value) && _currentClusters.Count > 0)
+					ClusterVarieties();
 			}
 		}
 

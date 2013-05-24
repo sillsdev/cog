@@ -42,7 +42,7 @@ namespace SIL.Cog
 			_boundaries = new SymbolCollection();
 			_boundaries.CollectionChanged += SymbolCollectionChanged;
 
-			_emptyShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			_emptyShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 			_emptyShape.Freeze();
 		}
 
@@ -122,7 +122,7 @@ namespace SIL.Cog
 				return true;
 			}
 
-			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 
 			ShapeNode start = shape.Begin;
 			if (!string.IsNullOrEmpty(prefix))
@@ -175,7 +175,7 @@ namespace SIL.Cog
 				return true;
 			}
 
-			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
+			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 
 			if (SegmentString(shape, str))
 			{

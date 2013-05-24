@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+	<Bundle Name="Cog" Version="$(var.VersionNumber)" Manufacturer="SIL International, Inc." IconSourceFile="Cog.ico" UpgradeCode="2ab535dc-7f5c-4eab-9459-1c21baf907ed">
+		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+			<bal:WixStandardBootstrapperApplication ThemeFile="RtfTheme.xml" LocalizationFile="RtfTheme.wxl" LicenseFile="License SIL Lang Dev SW.rtf" LogoFile="logo.png" />
+		</BootstrapperApplicationRef>
+
+		<Variable Name="ShortVersion" Value="$(var.VersionNumber)" />
+		<Variable Name="InstallFolder" Type="string" Value="[ProgramFiles6432Folder]SIL\Cog" />
+		<Variable Name="ProgramMenuCheckbox" Type="numeric" Value="1" />
+		<Variable Name="DesktopCheckbox" Type="numeric" Value="1" />
+		
+		<Chain>
+			<PackageGroupRef Id="NetFx40ClientWeb"/>
+			<MsiPackage InstallCondition="NOT VersionNT64" SourceFile="$(var.Setup32.TargetPath)" Visible="no">
+				<MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]"/>
+				<MsiProperty Name="PROGRAMMENUSHORTCUT" Value="[ProgramMenuCheckbox]" />
+				<MsiProperty Name="DESKTOPSHORTCUT" Value="[DesktopCheckbox]" />
+			</MsiPackage>
+			<MsiPackage InstallCondition="VersionNT64" SourceFile="$(var.Setup64.TargetPath)" Visible="no">
+				<MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]"/>
+				<MsiProperty Name="PROGRAMMENUSHORTCUT" Value="[ProgramMenuCheckbox]" />
+				<MsiProperty Name="DESKTOPSHORTCUT" Value="[DesktopCheckbox]" />
+			</MsiPackage>
+		</Chain>
+	</Bundle>
+</Wix>

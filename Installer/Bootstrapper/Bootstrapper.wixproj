@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.7</ProductVersion>
+    <ProjectGuid>{b397abc0-dbf2-464d-9a3b-14e6d2eb7a72}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>CogSetup</OutputName>
+    <OutputType>Bundle</OutputType>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Bundle.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixBalExtension">
+      <HintPath>$(WixExtDir)\WixBalExtension.dll</HintPath>
+      <Name>WixBalExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Setup32\Setup32.wixproj">
+      <Name>Setup32</Name>
+      <Project>{d5725b23-0281-49e8-a9cf-7cf69ba94032}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Setup64\Setup64.wixproj">
+      <Name>Setup64</Name>
+      <Project>{855ae745-848e-4212-90ea-1bfe313f027d}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="RtfTheme.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RtfTheme.wxl" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <Target Name="BeforeBuild">
+    <!-- Read the version from the to-be-installed .exe -->
+    <GetAssemblyIdentity AssemblyFiles="..\..\CogExe\bin\$(Configuration)\Cog.exe">
+      <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
+    </GetAssemblyIdentity>
+    <!-- Create the MSBuild property $(VersionNumber) -->
+    <CreateProperty Value="%(AsmInfo.Version)">
+      <Output TaskParameter="Value" PropertyName="VersionNumber" />
+    </CreateProperty>
+	<CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
+		<Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+	</CreateProperty>
+    <!-- Create the WiX preprocessor variable $(var.VersionNumber) -->
+    <CreateProperty Value="$(DefineConstants);VersionNumber=$(ShortVersionNumber)">
+      <Output TaskParameter="Value" PropertyName="DefineConstants" />
+    </CreateProperty>
+    <!-- Update the MSBuild properties $(TargetName), etc. -->
+    <CreateProperty Value="Cog-$(ShortVersionNumber)-Setup">
+      <Output TaskParameter="Value" PropertyName="TargetName" />
+    </CreateProperty>
+    <CreateProperty Value="$(TargetName)$(TargetExt)">
+      <Output TaskParameter="Value" PropertyName="TargetFileName" />
+    </CreateProperty>
+    <CreateProperty Value="$(TargetName)$(TargetPdbExt)">
+      <Output TaskParameter="Value" PropertyName="TargetPdbName" />
+    </CreateProperty>
+    <CreateProperty Value="$(TargetDir)$(TargetFileName)">
+      <Output TaskParameter="Value" PropertyName="TargetPath" />
+    </CreateProperty>
+    <CreateProperty Value="$(TargetPdbDir)$(TargetPdbName)">
+      <Output TaskParameter="Value" PropertyName="TargetPdbPath" />
+    </CreateProperty>
+    <!-- Update the MSBuild property from which candle.exe args are derived -->
+    <CreateProperty Value="&#xD;&#xA;			Configuration=$(ConfigurationName);&#xD;&#xA;			OutDir=$(OutDir);&#xD;&#xA;			Platform=$(PlatformName);&#xD;&#xA;			ProjectDir=$(ProjectDir);&#xD;&#xA;			ProjectExt=$(ProjectExt);&#xD;&#xA;			ProjectFileName=$(ProjectFileName);&#xD;&#xA;			ProjectName=$(ProjectName);&#xD;&#xA;			ProjectPath=$(ProjectPath);&#xD;&#xA;			TargetDir=$(TargetDir);&#xD;&#xA;			TargetExt=$(TargetExt);&#xD;&#xA;			TargetFileName=$(TargetFileName);&#xD;&#xA;			TargetName=$(TargetName);&#xD;&#xA;			TargetPath=$(TargetPath);&#xD;&#xA;		">
+      <Output TaskParameter="Value" PropertyName="ProjectDefineConstants" />
+    </CreateProperty>
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

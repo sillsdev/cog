@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<?if $(var.Platform) = x64 ?>
+		<?define ProductName = "Cog (64-bit)" ?>
+		<?define Win64 = "yes" ?>
+		<?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+		<?define ProductUpgradeCode = "A529971E-2352-413F-A23D-523809377D40" ?>
+	<?else ?>
+		<?define ProductName = "Cog (32-bit)" ?>
+		<?define Win64 = "no" ?>
+		<?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+		<?define ProductUpgradeCode = "DCE6931C-A5F0-4EA8-89C1-18CE3A4FDB02" ?>
+	<?endif ?>
+	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="$(var.VersionNumber)" Manufacturer="SIL International, Inc." UpgradeCode="$(var.ProductUpgradeCode)">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="Complete" Level="1">
+			<ComponentGroupRef Id="RequiredComponents" />
+			<ComponentRef Id="ProgramMenuShortcut" />
+			<ComponentRef Id="DesktopShortcut" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.PlatformProgramFilesFolder)">
+				<Directory Id="SILFolder" Name="SIL">
+					<Directory Id="INSTALLFOLDER" Name="Cog" />
+				</Directory>
+			</Directory>
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="AppProgramMenuFolder" Name="Cog" />
+			</Directory>
+			<Directory Id="DesktopFolder" />
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="RequiredComponents" Directory="INSTALLFOLDER">
+			<!-- Cog -->
+			<Component Id="Cog.exe" Win64="$(var.Win64)">
+				<File Id="Cog.exe" Name="Cog.exe" Source="$(var.CogExe.TargetPath)" KeyPath="yes" />
+				<ProgId Id="Cog.Project" Description="Cog Project" Icon="Cog.exe" IconIndex="0">
+					<Extension Id="cogx">
+						<Verb Id="open" TargetFile="Cog.exe" Argument="&quot;%1&quot;"/>
+					</Extension>
+				</ProgId>
+			</Component>
+			<Component Id="SIL.Cog.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.dll" Name="SIL.Cog.dll" Source="$(var.CogExe.TargetDir)SIL.Cog.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- Machine -->
+			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Machine.dll" Name="SIL.Machine.dll" Source="$(var.CogExe.TargetDir)\SIL.Machine.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="SIL.Collections.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Collections.dll" Name="SIL.Collections.dll" Source="$(var.CogExe.TargetDir)\SIL.Collections.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- MVVM Light -->
+			<Component Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Win64="$(var.Win64)">
+				<File Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Name="GalaSoft.MvvmLight.Extras.WPF4.dll" Source="$(var.CogExe.TargetDir)\GalaSoft.MvvmLight.Extras.WPF4.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="GalaSoft.MvvmLight.WPF4.dll" Win64="$(var.Win64)">
+				<File Id="GalaSoft.MvvmLight.WPF4.dll" Name="GalaSoft.MvvmLight.WPF4.dll" Source="$(var.CogExe.TargetDir)\GalaSoft.MvvmLight.WPF4.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="Microsoft.Practices.ServiceLocation.dll" Win64="$(var.Win64)">
+				<File Id="Microsoft.Practices.ServiceLocation.dll" Name="Microsoft.Practices.ServiceLocation.dll" Source="$(var.CogExe.TargetDir)\Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="System.Windows.Interactivity.dll" Win64="$(var.Win64)">
+				<File Id="System.Windows.Interactivity.dll" Name="System.Windows.Interactivity.dll" Source="$(var.CogExe.TargetDir)\System.Windows.Interactivity.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- GMap.NET -->
+			<Component Id="GMap.NET.Core.dll" Win64="$(var.Win64)">
+				<File Id="GMap.NET.Core.dll" Name="GMap.NET.Core.dll" Source="$(var.CogExe.TargetDir)\GMap.NET.Core.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="GMap.NET.WindowsPresentation.dll" Win64="$(var.Win64)">
+				<File Id="GMap.NET.WindowsPresentation.dll" Name="GMap.NET.WindowsPresentation.dll" Source="$(var.CogExe.TargetDir)\GMap.NET.WindowsPresentation.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- Graph# -->
+			<Component Id="GraphSharp.Controls.dll" Win64="$(var.Win64)">
+				<File Id="GraphSharp.Controls.dll" Name="GraphSharp.Controls.dll" Source="$(var.CogExe.TargetDir)\GraphSharp.Controls.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="GraphSharp.dll" Win64="$(var.Win64)">
+				<File Id="GraphSharp.dll" Name="GraphSharp.dll" Source="$(var.CogExe.TargetDir)\GraphSharp.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="WPFExtensions.dll" Win64="$(var.Win64)">
+				<File Id="WPFExtensions.dll" Name="WPFExtensions.dll" Source="$(var.CogExe.TargetDir)\WPFExtensions.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- DotNetZip -->
+			<Component Id="Ionic.Zip.Reduced.dll" Win64="$(var.Win64)">
+				<File Id="Ionic.Zip.Reduced.dll" Name="Ionic.Zip.Reduced.dll" Source="$(var.CogExe.TargetDir)\Ionic.Zip.Reduced.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- Math.NET Numerics -->
+			<Component Id="MathNet.Numerics.dll" Win64="$(var.Win64)">
+				<File Id="MathNet.Numerics.dll" Name="MathNet.Numerics.dll" Source="$(var.CogExe.TargetDir)\MathNet.Numerics.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="MathNet.Numerics.IO.dll" Win64="$(var.Win64)">
+				<File Id="MathNet.Numerics.IO.dll" Name="MathNet.Numerics.IO.dll" Source="$(var.CogExe.TargetDir)\MathNet.Numerics.IO.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- QuickGraph -->
+			<Component Id="QuickGraph.dll" Win64="$(var.Win64)">
+				<File Id="QuickGraph.dll" Name="QuickGraph.dll" Source="$(var.CogExe.TargetDir)\QuickGraph.dll" KeyPath="yes" />
+			</Component>
+
+			<!-- Extended WPF Toolkit -->
+			<Component Id="Xceed.Wpf.DataGrid.dll" Win64="$(var.Win64)">
+				<File Id="Xceed.Wpf.DataGrid.dll" Name="Xceed.Wpf.DataGrid.dll" Source="$(var.CogExe.TargetDir)\Xceed.Wpf.DataGrid.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="Xceed.Wpf.Toolkit.dll" Win64="$(var.Win64)">
+				<File Id="Xceed.Wpf.Toolkit.dll" Name="Xceed.Wpf.Toolkit.dll" Source="$(var.CogExe.TargetDir)\Xceed.Wpf.Toolkit.dll" KeyPath="yes" />
+			</Component>
+		</ComponentGroup>
+		<Component Id="ProgramMenuShortcut" Directory="AppProgramMenuFolder" Guid="F34CBDA4-7885-49C8-8256-71148666888E" Win64="$(var.Win64)">
+			<Condition>PROGRAMMENUSHORTCUT = "1"</Condition>
+			<Shortcut Id="ProgramMenuShortcut" Name="Cog" Target="[INSTALLFOLDER]Cog.exe" />
+			<RemoveFolder Id="AppProgramMenuFolder" On="uninstall" />
+			<RegistryValue Root="HKCU" Key="Software\SIL\Cog" Type="string" Value="" KeyPath="yes" />
+		</Component>
+		<Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="CC4DBF72-8CD4-4732-9261-15F2E1058981" Win64="$(var.Win64)">
+			<Condition>DESKTOPSHORTCUT = "1"</Condition>
+			<Shortcut Id="DesktopShortcut" Name="Cog" Target="[INSTALLFOLDER]Cog.exe" />
+			<RegistryValue Root="HKCU" Key="Software\SIL\Cog" Type="string" Value="" KeyPath="yes" />
+		</Component>
+	</Fragment>
+</Wix>

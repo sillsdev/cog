@@ -50,7 +50,7 @@ namespace SIL.Cog.Components
 			return GetAlignments((int) (scoreMargin * _bestScore), true);
 		}
 
-		internal static bool Filter(ShapeNode node)
+		private static bool Filter(ShapeNode node)
 		{
 			return node.Annotation.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType);
 		}

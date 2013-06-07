@@ -102,13 +102,7 @@ namespace SIL.Cog.Components
 			int maxScore = GetMaxScore(p);
 			if (varietyPair.SoundChangeProbabilityDistribution != null)
 			{
-				var target = new Ngram(varietyPair.Variety1.Segments[p]);
-				SoundClass leftEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
-					constraint.Matches(p.GetPrev(AlignerResult.Filter).Annotation));
-				SoundClass rightEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
-					constraint.Matches(p.GetNext(AlignerResult.Filter).Annotation));
-
-				var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
+				SoundContext lhs = p.Sound(varietyPair.Variety1, ContextualSoundClasses);
 				double prob = varietyPair.DefaultCorrespondenceProbability;
 				IProbabilityDistribution<Ngram> probDist;
 				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
@@ -123,7 +117,7 @@ namespace SIL.Cog.Components
 			int maxScore = GetMaxScore(q);
 			if (varietyPair.SoundChangeProbabilityDistribution != null)
 			{
-				var corr = new Ngram(varietyPair.Variety2.Segments[q]);
+				Ngram corr = q.Ngram(varietyPair.Variety2);
 
 				double prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
@@ -163,12 +157,20 @@ namespace SIL.Cog.Components
 				corr = q2 == null ? new Ngram(corrSegment) : new Ngram(corrSegment, varietyPair.Variety2.Segments[q2]);
 			}
 
-			SoundClass leftEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
-				constraint.Matches((p1 == null ? p2 : p1.GetPrev(AlignerResult.Filter)).Annotation));
-			SoundClass rightEnv = ContextualSoundClasses.FirstOrDefault(constraint =>
-				constraint.Matches((p2 ?? p1).GetNext(AlignerResult.Filter).Annotation));
+			SoundClass leftEnv = null, rightEnv = null;
+			Annotation<ShapeNode> prev = (p1 == null ? p2 : p1.GetPrev(n => n.Type() != CogFeatureSystem.NullType)).Annotation;
+			Annotation<ShapeNode> next = (p2 ?? p1).GetNext(n => n.Type() != CogFeatureSystem.NullType).Annotation;
+			foreach (SoundClass soundClass in ContextualSoundClasses)
+			{
+				if (leftEnv == null && soundClass.Matches(prev))
+					leftEnv = soundClass;
+				if (rightEnv == null && soundClass.Matches(next))
+					rightEnv = soundClass;
+				if (leftEnv != null && rightEnv != null)
+					break;
+			}
 
-			var lhs = new SoundChangeLhs(leftEnv, target, rightEnv);
+			var lhs = new SoundContext(leftEnv, target, rightEnv);
 			IProbabilityDistribution<Ngram> probDist;
 			double prob = varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
 				: varietyPair.DefaultCorrespondenceProbability;

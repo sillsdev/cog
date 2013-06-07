@@ -61,7 +61,7 @@
                             </DataTemplate>
                         </TabControl.ItemTemplate>
                         <TabControl.ContentTemplate>
-                            <DataTemplate>
+                            <DataTemplate DataType="{x:Type vm:WorkspaceViewModelBase}">
                                 <DockPanel Background="{StaticResource ViewBackgroundBrush}">
                                     <Border Width="140" BorderThickness="0,0,1,0" BorderBrush="{StaticResource TaskAreaBorderBrush}" Background="{StaticResource TaskAreaBackgroundBrush}">
                                         <ItemsControl ItemsSource="{Binding TaskAreas}">
@@ -71,6 +71,9 @@
 												</DataTemplate>
 												<DataTemplate DataType="{x:Type vm:TaskAreaCommandsViewModel}">
 													<v:TaskAreaCommandsView />
+												</DataTemplate>
+												<DataTemplate DataType="{x:Type vm:TaskAreaIntegerViewModel}">
+													<v:TaskAreaIntegerView />
 												</DataTemplate>
 											</ItemsControl.Resources>
                                         </ItemsControl>
@@ -106,6 +109,9 @@
                                             </DataTemplate>
 											<DataTemplate DataType="{x:Type vm:GeographicalViewModel}">
 												<v:GeographicalView />
+											</DataTemplate>
+											<DataTemplate DataType="{x:Type vm:SimilarSegmentsViewModel}">
+												<v:SimilarSegmentsView />
 											</DataTemplate>
 										</ContentPresenter.Resources>
                                     </ContentPresenter>

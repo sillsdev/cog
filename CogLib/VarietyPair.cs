@@ -8,8 +8,8 @@ namespace SIL.Cog
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly WordPairCollection _wordPairs; 
-		private IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> _soundChangeProbabilityDistribution;
-		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> _soundFreqDist;
+		private IConditionalProbabilityDistribution<SoundContext, Ngram> _soundChangeProbabilityDistribution;
+		private ConditionalFrequencyDistribution<SoundContext, Ngram> _soundFreqDist;
 		private double _defaultCorrProb;
 		private double _phoneticSimilarityScore;
 		private double _lexicalSimilarityScore;
@@ -99,7 +99,7 @@ namespace SIL.Cog
 			}
 		}
 
-		public IConditionalProbabilityDistribution<SoundChangeLhs, Ngram> SoundChangeProbabilityDistribution
+		public IConditionalProbabilityDistribution<SoundContext, Ngram> SoundChangeProbabilityDistribution
 		{
 			get { return _soundChangeProbabilityDistribution; }
 			set
@@ -109,7 +109,7 @@ namespace SIL.Cog
 			}
 		}
 
-		public ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> SoundChangeFrequencyDistribution
+		public ConditionalFrequencyDistribution<SoundContext, Ngram> SoundChangeFrequencyDistribution
 		{
 			get { return _soundFreqDist; }
 			set

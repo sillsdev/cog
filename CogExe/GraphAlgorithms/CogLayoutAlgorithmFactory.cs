@@ -14,7 +14,15 @@ namespace SIL.Cog.GraphAlgorithms
 		where TEdge : IEdge<TVertex>
 		where TGraph : class, IBidirectionalGraph<TVertex, TEdge>
 	{
-		private static readonly HashSet<string> Algorithms = new HashSet<string> {"StressMajorization", "LinLog", "RadialTree", "Tree", "EfficientSugiyama"};
+		private static readonly Dictionary<string, Tuple<bool, bool>> Algorithms = new Dictionary<string, Tuple<bool, bool>>
+			{
+				{"StressMajorization", Tuple.Create(false, true)},
+				{"LinLog", Tuple.Create(false, true)},
+				{"RadialTree", Tuple.Create(false, false)},
+				{"Tree", Tuple.Create(true, false)},
+				{"EfficientSugiyama", Tuple.Create(false, false)},
+				{"Grid", Tuple.Create(true, false)}
+			};
 
 		public ILayoutAlgorithm<TVertex, TEdge, TGraph> CreateAlgorithm(string newAlgorithmType, ILayoutContext<TVertex, TEdge, TGraph> context, ILayoutParameters parameters)
 		{
@@ -34,6 +42,8 @@ namespace SIL.Cog.GraphAlgorithms
 						return new SimpleTreeLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as SimpleTreeLayoutParameters);
 					case "EfficientSugiyama":
 						return new EfficientSugiyamaLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, parameters as EfficientSugiyamaLayoutParameters, context.Sizes);
+					case "Grid":
+						return new GridLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions, context.Sizes, parameters as GridLayoutParameters);
 				}
 			}
 
@@ -54,13 +64,15 @@ namespace SIL.Cog.GraphAlgorithms
 					return oldParameters.CreateNewParameter<SimpleTreeLayoutParameters>();
 				case "EfficientSugiyama":
 					return oldParameters.CreateNewParameter<EfficientSugiyamaLayoutParameters>();
+				case "Grid":
+					return oldParameters.CreateNewParameter<GridLayoutParameters>();
 			}
 			return null;
 		}
 
 		public bool IsValidAlgorithm(string algorithmType)
 		{
-			return Algorithms.Contains(algorithmType);
+			return Algorithms.ContainsKey(algorithmType);
 		}
 
 		public string GetAlgorithmType(ILayoutAlgorithm<TVertex, TEdge, TGraph> algorithm)
@@ -78,17 +90,17 @@ namespace SIL.Cog.GraphAlgorithms
 
 		public bool NeedEdgeRouting(string algorithmType)
 		{
-			return (algorithmType != "EfficientSugiyama") && (algorithmType != "RadialTree");
+			return Algorithms[algorithmType].Item1;
 		}
 
 		public bool NeedOverlapRemoval(string algorithmType)
 		{
-			return (algorithmType != "EfficientSugiyama") && (algorithmType != "RadialTree") && (algorithmType != "Tree");
+			return Algorithms[algorithmType].Item2;
 		}
 
 		public IEnumerable<string> AlgorithmTypes
 		{
-			get { return Algorithms; }
+			get { return Algorithms.Keys; }
 		}
 	}
 }

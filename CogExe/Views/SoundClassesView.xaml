@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:c="clr-namespace:SIL.Cog.Controls"
+             xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" DataContextChanged="SoundClassesView_OnDataContextChanged"
-             d:DesignHeight="200" d:DesignWidth="400">
+             d:DesignHeight="200" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SoundClassesViewModel}">
 	<StackPanel>
 		<Grid>
 			<DataGrid Name="SoundClassesGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" Height="125"

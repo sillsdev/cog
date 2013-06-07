@@ -16,7 +16,14 @@
 									   Graph="{Binding Graph}" LayoutAlgorithmType="RadialTree" HighlightAlgorithmType="Hierarchical" ScaleLabelsToZoom="{Binding ElementName=ZoomControl, Path=Zoom}"
 									   LayoutFinished="_graphLayout_OnLayoutFinished">
 				<c:HierarchicalGraphLayout.Resources>
-					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource HierarchicalEdgeControlStyle}" />
+					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource HierarchicalEdgeControlStyle}">
+						<Style.Resources>
+							<ToolTip x:Key="ToolTipContent">
+								<TextBlock Text="{Binding Length, StringFormat=p}" />
+							</ToolTip>
+						</Style.Resources>
+						<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
+					</Style>
 					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource HierarchicalVertexControlStyle}" />
 				</c:HierarchicalGraphLayout.Resources>
 			</c:HierarchicalGraphLayout>

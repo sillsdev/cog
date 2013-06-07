@@ -129,7 +129,7 @@ namespace SIL.Cog.ViewModels
 				Debug.Assert(processors != null);
 				var pipeline = new Pipeline<Variety>(processors);
 
-				_progressService.ShowProgress(this, () => pipeline.Process(_currentVariety.ModelVariety.ToEnumerable()));
+				_progressService.ShowProgress(() => pipeline.Process(_currentVariety.ModelVariety.ToEnumerable()));
 				IsChanged = true;
 			}
 		}

@@ -3,8 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-             xmlns:c="clr-namespace:SIL.Cog.Controls"
-             xmlns:b="clr-namespace:SIL.Cog.Behaviors"
+             xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:v="clr-namespace:SIL.Cog.Views"
              mc:Ignorable="d" StartupUri="Views\MainWindow.xaml"
              x:Class="SIL.Cog.App">
     <Application.Resources>
@@ -17,7 +16,6 @@
 
 			<cnvtrs:ContentToPathConverter x:Key="Content2PathConverter"/>
 			<cnvtrs:ContentToMarginConverter x:Key="Content2MarginConverter"/>
-			<cnvtrs:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
 
 			<SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FF315599" />
 			<SolidColorBrush x:Key="TabBackgroundBrush" Color="#FF7388B0" />
@@ -144,7 +142,7 @@
 				</Setter>
 			</Style>
 
-			<Style x:Key="SettingsAreaStyle" BasedOn="{StaticResource {x:Type HeaderedContentControl}}" TargetType="HeaderedContentControl">
+			<Style x:Key="SettingsAreaStyle" TargetType="HeaderedContentControl">
 				<Setter Property="HeaderTemplate">
 					<Setter.Value>
 						<DataTemplate>
@@ -170,15 +168,7 @@
 			</Style>
 
 			<Style x:Key="TaskAreaHeaderStyle" TargetType="HeaderedContentControl" BasedOn="{StaticResource {x:Type HeaderedContentControl}}">
-				<Setter Property="HeaderTemplate">
-					<Setter.Value>
-						<DataTemplate>
-							<Border BorderBrush="{StaticResource TaskAreaHeaderLineBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,5">
-								<TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold" Text="{TemplateBinding ContentControl.Content}" />
-							</Border>
-						</DataTemplate>
-					</Setter.Value>
-				</Setter>
+				<Setter Property="BorderBrush" Value="{StaticResource TaskAreaHeaderLineBrush}" />
 			</Style>
 
 			<Style x:Key="TaskAreaHyperlinkStyle" TargetType="Hyperlink" BasedOn="{StaticResource {x:Type Hyperlink}}">
@@ -336,54 +326,18 @@
 			<DataTemplate DataType="{x:Type vm:NetworkGraphVertex}">
 				<TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" />
 			</DataTemplate>
+
+			<DataTemplate DataType="{x:Type v:GlobalSegmentGridVertex}">
+				<TextBlock FontSize="14" Text="{Binding GlobalSegment.StrRep}" LineHeight="14" LineStackingStrategy="BlockLineHeight" />
+			</DataTemplate>
 			
+			<DataTemplate DataType="{x:Type v:HeaderGridVertex}">
+				<TextBlock FontSize="14" Text="{Binding Name}" />
+			</DataTemplate>
+
 			<Style x:Key="HierarchicalEdgeControlStyle" TargetType="gsc:EdgeControl">
-				<Style.Resources>
-					<ToolTip x:Key="ToolTipContent">
-						<TextBlock Text="{Binding Length, StringFormat=p}" />
-					</ToolTip>
-				</Style.Resources>
-				<Setter Property="Template">
-					<Setter.Value>
-						<ControlTemplate TargetType="{x:Type gsc:EdgeControl}">
-							<Path Stroke="{TemplateBinding Foreground}"
-                                      StrokeThickness="{TemplateBinding StrokeThickness}"
-                                      MinWidth="1"
-                                      MinHeight="1"
-                                      ToolTip="{TemplateBinding ToolTip}"
-                                      x:Name="edgePath">
-								<Path.Data>
-									<PathGeometry>
-										<PathGeometry.Figures>
-											<MultiBinding Converter="{StaticResource RouteToPathConverter}">
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(gsc:GraphCanvas.X)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(gsc:GraphCanvas.Y)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualWidth" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualHeight" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(gsc:GraphCanvas.X)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(gsc:GraphCanvas.Y)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualWidth" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualHeight" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="RoutePoints" />
-											</MultiBinding>
-										</PathGeometry.Figures>
-									</PathGeometry>
-								</Path.Data>
-							</Path>
-						</ControlTemplate>
-					</Setter.Value>
-				</Setter>
-				<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
 				<Setter Property="Foreground" Value="Black" />
 				<Setter Property="Opacity" Value="1" />
-				<Style.Triggers>
-					<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
-						<Setter Property="Foreground" Value="Blue" />
-					</Trigger>
-					<Trigger Property="gsc:GraphElementBehaviour.IsSemiHighlighted" Value="True">
-						<Setter Property="Foreground" Value="Red" />
-					</Trigger>
-				</Style.Triggers>
 			</Style>
 
 			<Style x:Key="HierarchicalVertexControlStyle" TargetType="gsc:VertexControl">
@@ -402,82 +356,10 @@
 						</ControlTemplate>
 					</Setter.Value>
 				</Setter>
-				<Setter Property="b:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
-				<!--Setter Property="BorderThickness" Value="0" /-->
 				<Style.Triggers>
 					<DataTrigger Binding="{Binding IsCluster}" Value="True">
 						<Setter Property="Visibility" Value="Collapsed" />
 					</DataTrigger>
-					<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
-						<Setter Property="BorderBrush" Value="Orange" />
-						<Setter Property="BorderThickness" Value="2" />
-					</Trigger>
-					<Trigger Property="gsc:GraphElementBehaviour.IsSemiHighlighted" Value="True">
-						<Setter Property="BorderBrush" Value="Blue" />
-						<Setter Property="BorderThickness" Value="2" />
-					</Trigger>
-				</Style.Triggers>
-			</Style>
-
-			<Style x:Key="NetworkEdgeControlStyle" TargetType="gsc:EdgeControl">
-				<Style.Resources>
-					<ToolTip x:Key="ToolTipContent">
-						<TextBlock Text="{Binding Weight, StringFormat=p}" />
-					</ToolTip>
-				</Style.Resources>
-				<Setter Property="Template">
-					<Setter.Value>
-						<ControlTemplate TargetType="{x:Type gsc:EdgeControl}">
-							<Path Stroke="{TemplateBinding Foreground}"
-                                      StrokeThickness="{TemplateBinding StrokeThickness}"
-                                      MinWidth="1"
-                                      MinHeight="1"
-                                      ToolTip="{TemplateBinding ToolTip}"
-                                      x:Name="edgePath">
-								<Path.Data>
-									<PathGeometry>
-										<PathGeometry.Figures>
-											<MultiBinding Converter="{StaticResource RouteToPathConverter}">
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(gsc:GraphCanvas.X)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(gsc:GraphCanvas.Y)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualWidth" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualHeight" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(gsc:GraphCanvas.X)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(gsc:GraphCanvas.Y)" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualWidth" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualHeight" />
-												<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="RoutePoints" />
-											</MultiBinding>
-										</PathGeometry.Figures>
-									</PathGeometry>
-								</Path.Data>
-							</Path>
-						</ControlTemplate>
-					</Setter.Value>
-				</Setter>
-				<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
-				<Style.Triggers>
-					<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
-						<Setter Property="Foreground" Value="Blue" />
-					</Trigger>
-					<Trigger Property="gsc:GraphElementBehaviour.IsSemiHighlighted" Value="True">
-						<Setter Property="Foreground" Value="Red" />
-					</Trigger>
-				</Style.Triggers>
-			</Style>
-			
-			<Style x:Key="NetworkVertexControlStyle" TargetType="gsc:VertexControl">
-				<Setter Property="Foreground" Value="Black" />
-				<Setter Property="b:FrameworkElementBehaviors.IsDragEnabled" Value="False" />
-				<Style.Triggers>
-					<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
-						<Setter Property="BorderBrush" Value="Orange" />
-						<Setter Property="BorderThickness" Value="2" />
-					</Trigger>
-					<Trigger Property="gsc:GraphElementBehaviour.IsSemiHighlighted" Value="True">
-						<Setter Property="BorderBrush" Value="Red" />
-						<Setter Property="BorderThickness" Value="2" />
-					</Trigger>
 				</Style.Triggers>
 			</Style>
 

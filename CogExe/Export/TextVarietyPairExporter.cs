@@ -31,7 +31,7 @@ namespace SIL.Cog.Export
 				writer.WriteLine("Sound correspondences");
 				writer.WriteLine("---------------------");
 				bool first = true;
-				foreach (SoundChangeLhs lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
+				foreach (SoundContext lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
 				{
 					if (!first)
 						writer.WriteLine();

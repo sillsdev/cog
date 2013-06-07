@@ -35,7 +35,7 @@ namespace SIL.Cog.Components
 				writer.WriteLine();
 
 				var sb = new StringBuilder();
-				foreach (SoundChangeLhs lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
+				foreach (SoundContext lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
 				{
 					IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
 					sb.AppendLine(lhs.ToString());

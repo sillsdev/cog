@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
-             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" DataContextChanged="WordPairsView_OnDataContextChanged"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairsViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:ItemsControlScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
 	</UserControl.Resources>
@@ -67,7 +67,7 @@
 					</ListBox.ItemTemplate>
 				</ListBox>
 			</ScrollViewer>
-			<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedCorrespondenceWordPairs}">
+			<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedChangeWordPairs}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<Rectangle Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />

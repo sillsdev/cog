@@ -3,12 +3,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
-             xmlns:v="clr-namespace:SIL.Cog.Views"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
+             xmlns:v="clr-namespace:SIL.Cog.Views" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairViewModel}">
 	<UserControl.Resources>
-		<cnvtrs:BooleanToBrushConverter x:Key="BrushConverter" />
+		<Style x:Key="Node1TextBlockStyle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="16" />
+			<Setter Property="Padding" Value="3" />
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:WordPairView}}}" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:WordPairView}}}" Value="False">
+					<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="Node2TextBlockStyle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="16" />
+			<Setter Property="Padding" Value="3" />
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:WordPairView}}}" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:WordPairView}}}" Value="False">
+					<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="OtherTextBlockStyle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="16" />
+			<Setter Property="Padding" Value="3" />
+		</Style>
 	</UserControl.Resources>
 	<StackPanel>
 		<TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
@@ -17,12 +44,6 @@
 		</TextBlock>
 		<StackPanel Orientation="Horizontal" Grid.IsSharedSizeScope="True">
 			<Grid>
-				<Grid.Resources>
-					<Style TargetType="TextBlock">
-						<Setter Property="FontSize" Value="16" />
-						<Setter Property="Padding" Value="3" />
-					</Style>
-				</Grid.Resources>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
@@ -32,28 +53,12 @@
 					<RowDefinition SharedSizeGroup="strRep2" />
 					<RowDefinition SharedSizeGroup="note" />
 				</Grid.RowDefinitions>
-				<TextBlock Grid.Column="0" Grid.Row="0" Padding="0,3,3,3" Text="{Binding PrefixNode.StrRep1}">
-					<TextBlock.Foreground>
-						<MultiBinding Converter="{StaticResource BrushConverter}">
-							<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}" Path="DataContext.AreVarietiesInOrder" />
-							<Binding Source="{StaticResource Variety1Brush}" />
-							<Binding Source="{StaticResource Variety2Brush}" />
-						</MultiBinding>
-					</TextBlock.Foreground>
-				</TextBlock>
-				<TextBlock Grid.Column="0" Grid.Row="1" Padding="0,3,3,3" Text="{Binding PrefixNode.StrRep2}">
-					<TextBlock.Foreground>
-						<MultiBinding Converter="{StaticResource BrushConverter}">
-							<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}" Path="DataContext.AreVarietiesInOrder" />
-							<Binding Source="{StaticResource Variety2Brush}" />
-							<Binding Source="{StaticResource Variety1Brush}" />
-						</MultiBinding>
-					</TextBlock.Foreground>
-				</TextBlock>
-				<TextBlock Grid.Column="0" Grid.Row="2" Padding="0,3,3,3" Text="{Binding PrefixNode.Note}" />
-				<TextBlock Grid.Column="1" Grid.Row="0">|</TextBlock>
-				<TextBlock Grid.Column="1" Grid.Row="1">|</TextBlock>
-				<TextBlock Grid.Column="1" Grid.Row="2" />
+				<TextBlock Grid.Column="0" Grid.Row="0" Padding="0,3,3,3" Text="{Binding PrefixNode.StrRep1}" Style="{StaticResource Node1TextBlockStyle}" />
+				<TextBlock Grid.Column="0" Grid.Row="1" Padding="0,3,3,3" Text="{Binding PrefixNode.StrRep2}" Style="{StaticResource Node2TextBlockStyle}" />
+				<TextBlock Grid.Column="0" Grid.Row="2" Padding="0,3,3,3" Text="{Binding PrefixNode.Note}" Style="{StaticResource OtherTextBlockStyle}" />
+				<TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="1" Grid.Row="2" Style="{StaticResource OtherTextBlockStyle}" />
 			</Grid>
 			<ItemsControl ItemsSource="{Binding AlignedNodes}">
 				<ItemsControl.ItemsPanel>
@@ -62,38 +67,16 @@
 					</ItemsPanelTemplate>
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
-					<DataTemplate>
+					<DataTemplate DataType="vm:AlignedNodeViewModel">
 						<Grid>
-							<Grid.Resources>
-								<Style TargetType="TextBlock">
-									<Setter Property="FontSize" Value="16" />
-									<Setter Property="Padding" Value="3" />
-								</Style>
-							</Grid.Resources>
 							<Grid.RowDefinitions>
 								<RowDefinition SharedSizeGroup="strRep1" />
 								<RowDefinition SharedSizeGroup="strRep2" />
 								<RowDefinition SharedSizeGroup="note" />
 							</Grid.RowDefinitions>
-							<TextBlock Name="strRep1TextBlock" Grid.Row="0" Text="{Binding StrRep1}">
-								<TextBlock.Foreground>
-									<MultiBinding Converter="{StaticResource BrushConverter}">
-										<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}" Path="DataContext.AreVarietiesInOrder" />
-										<Binding Source="{StaticResource Variety1Brush}" />
-										<Binding Source="{StaticResource Variety2Brush}" />
-									</MultiBinding>
-								</TextBlock.Foreground>
-							</TextBlock>
-							<TextBlock Name="strRep2TextBlock" Grid.Row="1" Text="{Binding StrRep2}">
-								<TextBlock.Foreground>
-									<MultiBinding Converter="{StaticResource BrushConverter}">
-										<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}" Path="DataContext.AreVarietiesInOrder" />
-										<Binding Source="{StaticResource Variety2Brush}" />
-										<Binding Source="{StaticResource Variety1Brush}" />
-									</MultiBinding>
-								</TextBlock.Foreground>
-							</TextBlock>
-							<TextBlock Grid.Row="2" Text="{Binding Note}" />
+							<TextBlock Name="strRep1TextBlock" Grid.Row="0" Text="{Binding StrRep1}" Style="{StaticResource Node1TextBlockStyle}" />
+							<TextBlock Name="strRep2TextBlock" Grid.Row="1" Text="{Binding StrRep2}" Style="{StaticResource Node2TextBlockStyle}" />
+							<TextBlock Grid.Row="2" Text="{Binding Note}" Style="{StaticResource OtherTextBlockStyle}" />
 						</Grid>
 						<DataTemplate.Triggers>
 							<DataTrigger Binding="{Binding IsSelected}" Value="True">
@@ -105,12 +88,6 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 			<Grid>
-				<Grid.Resources>
-					<Style TargetType="TextBlock">
-						<Setter Property="FontSize" Value="16" />
-						<Setter Property="Padding" Value="3" />
-					</Style>
-				</Grid.Resources>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
@@ -120,28 +97,12 @@
 					<RowDefinition SharedSizeGroup="strRep2" />
 					<RowDefinition SharedSizeGroup="note" />
 				</Grid.RowDefinitions>
-				<TextBlock Grid.Column="0" Grid.Row="0">|</TextBlock>
-				<TextBlock Grid.Column="0" Grid.Row="1">|</TextBlock>
-				<TextBlock Grid.Column="0" Grid.Row="2" />
-				<TextBlock Grid.Column="1" Grid.Row="0" Padding="3,3,0,3" Text="{Binding SuffixNode.StrRep1}">
-					<TextBlock.Foreground>
-						<MultiBinding Converter="{StaticResource BrushConverter}">
-							<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}" Path="DataContext.AreVarietiesInOrder" />
-							<Binding Source="{StaticResource Variety1Brush}" />
-							<Binding Source="{StaticResource Variety2Brush}" />
-						</MultiBinding>
-					</TextBlock.Foreground>
-				</TextBlock>
-				<TextBlock Grid.Column="1" Grid.Row="1" Padding="3,3,0,3" Text="{Binding SuffixNode.StrRep2}">
-					<TextBlock.Foreground>
-						<MultiBinding Converter="{StaticResource BrushConverter}">
-							<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}" Path="DataContext.AreVarietiesInOrder" />
-							<Binding Source="{StaticResource Variety2Brush}" />
-							<Binding Source="{StaticResource Variety1Brush}" />
-						</MultiBinding>
-					</TextBlock.Foreground>
-				</TextBlock>
-				<TextBlock Grid.Column="1" Grid.Row="2" Padding="3,3,0,3" Text="{Binding SuffixNode.Note}" />
+				<TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource OtherTextBlockStyle}" />
+				<TextBlock Grid.Column="1" Grid.Row="0" Padding="3,3,0,3" Text="{Binding SuffixNode.StrRep1}" Style="{StaticResource Node1TextBlockStyle}" />
+				<TextBlock Grid.Column="1" Grid.Row="1" Padding="3,3,0,3" Text="{Binding SuffixNode.StrRep2}" Style="{StaticResource Node2TextBlockStyle}" />
+				<TextBlock Grid.Column="1" Grid.Row="2" Padding="3,3,0,3" Text="{Binding SuffixNode.Note}" Style="{StaticResource OtherTextBlockStyle}" />
 			</Grid>
 		</StackPanel>
 		<TextBlock Margin="3,0,0,0">

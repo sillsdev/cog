@@ -71,6 +71,7 @@ namespace SIL.Cog.ViewModels
 			if (_project.Varieties.Count == 0 || _project.Senses.Count == 0)
 				return;
 
+			Messenger.Default.Send(new NotificationMessage(Notifications.PerformingComparison));
 			ResetVarieties();
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);

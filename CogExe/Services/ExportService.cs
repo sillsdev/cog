@@ -203,8 +203,6 @@ namespace SIL.Cog.Services
 						Background = Brushes.White,
 						WeightFilter = scoreFilter
 					};
-				graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["NetworkEdgeControlStyle"];
-				graphLayout.Resources[typeof(VertexControl)] = Application.Current.Resources["NetworkVertexControlStyle"];
 				SaveElement(graphLayout, result.FileName);
 				return true;
 			}

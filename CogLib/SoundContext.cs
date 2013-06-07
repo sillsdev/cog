@@ -2,28 +2,28 @@
 
 namespace SIL.Cog
 {
-	public class SoundChangeLhs : IEquatable<SoundChangeLhs>
+	public class SoundContext : IEquatable<SoundContext>
 	{
 		private readonly SoundClass _leftEnv;
 		private readonly Ngram _target;
 		private readonly SoundClass _rightEnv;
 
-		public SoundChangeLhs(Ngram target)
+		public SoundContext(Ngram target)
 			: this(null, target, null)
 		{
 		}
 
-		public SoundChangeLhs(SoundClass leftEnv, Ngram target)
+		public SoundContext(SoundClass leftEnv, Ngram target)
 			: this(leftEnv, target, null)
 		{
 		}
 
-		public SoundChangeLhs(Ngram target, SoundClass rightEnv)
+		public SoundContext(Ngram target, SoundClass rightEnv)
 			: this(null, target, rightEnv)
 		{
 		}
 
-		public SoundChangeLhs(SoundClass leftEnv, Ngram target, SoundClass rightEnv)
+		public SoundContext(SoundClass leftEnv, Ngram target, SoundClass rightEnv)
 		{
 			_leftEnv = leftEnv;
 			_target = target;
@@ -45,7 +45,7 @@ namespace SIL.Cog
 			get { return _rightEnv; }
 		}
 
-		public bool Equals(SoundChangeLhs other)
+		public bool Equals(SoundContext other)
 		{
 			if (other == null)
 				return false;
@@ -55,7 +55,7 @@ namespace SIL.Cog
 
 		public override bool Equals(object obj)
 		{
-			var lhs = obj as SoundChangeLhs;
+			var lhs = obj as SoundContext;
 			return obj != null && Equals(lhs);
 		}
 

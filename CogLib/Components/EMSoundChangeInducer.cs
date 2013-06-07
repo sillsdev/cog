@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using SIL.Cog.Statistics;
-using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.Components
@@ -37,15 +36,15 @@ namespace SIL.Cog.Components
 
 		public override void Process(VarietyPair varietyPair)
 		{
-			bool converged = false;
-			for (int i = 0; i < 15 && !converged; i++)
+			for (int i = 0; i < 15; i++)
 			{
-				ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> expectedCounts = E(varietyPair);
-				converged = M(varietyPair, expectedCounts);
+				ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts = E(varietyPair);
+				if (M(varietyPair, expectedCounts))
+					break;
 			}
 		}
 
-		private ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> E(VarietyPair pair)
+		private ConditionalFrequencyDistribution<SoundContext, Ngram> E(VarietyPair pair)
 		{
 			if (pair.SoundChangeProbabilityDistribution != null)
 			{
@@ -53,7 +52,7 @@ namespace SIL.Cog.Components
 				cognateIdentifier.Process(pair);
 			}
 
-			var expectedCounts = new ConditionalFrequencyDistribution<SoundChangeLhs, Ngram>();
+			var expectedCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
 			IAligner aligner = Project.Aligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
@@ -63,30 +62,21 @@ namespace SIL.Cog.Components
 				{
 					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
 					{
-						var u = possibleLink.Item1.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
-							: new Ngram(alignment.Shape1.GetNodes(possibleLink.Item1.Span).Select(node => pair.Variety1.Segments[node]));
-						var v = possibleLink.Item2.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
-							: new Ngram(alignment.Shape2.GetNodes(possibleLink.Item2.Span).Select(node => pair.Variety2.Segments[node]));
-
-						SoundClass leftEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint =>
-							constraint.Matches(possibleLink.Item1.Span.Start.GetPrev(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation));
-						SoundClass rightEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint =>
-							constraint.Matches(possibleLink.Item1.Span.End.GetNext(node => node.Annotation.Type() != CogFeatureSystem.NullType).Annotation));
-
-						var lhs = new SoundChangeLhs(leftEnv, u, rightEnv);
-						expectedCounts[lhs].Increment(v);
+						SoundContext lhs = possibleLink.Item1.Sound(pair.Variety1, aligner.ContextualSoundClasses);
+						Ngram corr = possibleLink.Item2.Ngram(pair.Variety2);
+						expectedCounts[lhs].Increment(corr);
 					}
 				}
 			}
 			return expectedCounts;
 		}
 
-		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundChangeLhs, Ngram> expectedCounts)
+		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts)
 		{
 			IAligner aligner = Project.Aligners[_alignerID];
 			int segmentCount = pair.Variety2.Segments.Count;
 			int possCorrCount = aligner.SupportsExpansionCompression ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
-			var cpd = new ConditionalProbabilityDistribution<SoundChangeLhs, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
+			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
 
 			bool converged = true;
 			if (pair.SoundChangeProbabilityDistribution == null || pair.SoundChangeProbabilityDistribution.Conditions.Count != cpd.Conditions.Count)
@@ -95,7 +85,7 @@ namespace SIL.Cog.Components
 			}
 			else
 			{
-				foreach (SoundChangeLhs lhs in cpd.Conditions)
+				foreach (SoundContext lhs in cpd.Conditions)
 				{
 					IProbabilityDistribution<Ngram> probDist = cpd[lhs];
 					IProbabilityDistribution<Ngram> oldProbDist;

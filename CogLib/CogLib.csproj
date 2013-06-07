@@ -123,7 +123,7 @@
     <Compile Include="SegmentCollection.cs" />
     <Compile Include="Segmenter.cs" />
     <Compile Include="Sense.cs" />
-    <Compile Include="SoundChangeLhs.cs" />
+    <Compile Include="SoundContext.cs" />
     <Compile Include="SoundClass.cs" />
     <Compile Include="Statistics\ConditionalFrequencyDistribution.cs" />
     <Compile Include="Statistics\ConditionalProbabilityDistribution.cs" />

@@ -6,16 +6,22 @@
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:c="clr-namespace:SIL.Cog.Controls"
              xmlns:or="clr-namespace:GraphSharp.Algorithms.OverlapRemoval;assembly=GraphSharp"
-             xmlns:ga="clr-namespace:SIL.Cog.GraphAlgorithms"
+             xmlns:ga="clr-namespace:SIL.Cog.GraphAlgorithms" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:NetworkGraphViewModel}">
 	<Grid>
 		<c:ZoomControl x:Name="ZoomControl" ZoomBoxOpacity="0.25">
 			<c:NetworkGraphLayout x:Name="GraphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="StressMajorization" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Undirected"
 								  WeightFilter="{Binding SimilarityScoreFilter}" LayoutFinished="GraphLayout_OnLayoutFinished" Background="White">
 				<c:NetworkGraphLayout.Resources>
-					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource NetworkEdgeControlStyle}" />
-					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource NetworkVertexControlStyle}" />
+					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource {x:Type gsc:EdgeControl}}">
+						<Style.Resources>
+							<ToolTip x:Key="ToolTipContent">
+								<TextBlock Text="{Binding Weight, StringFormat=p}" />
+							</ToolTip>
+						</Style.Resources>
+						<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
+					</Style>
 				</c:NetworkGraphLayout.Resources>
 				<c:NetworkGraphLayout.LayoutParameters>
 					<ga:StressMajorizationLayoutParameters WeightAdjustment="1.0" />

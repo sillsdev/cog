@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:v="clr-namespace:SIL.Cog.Views" mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:AlineViewModel}">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">

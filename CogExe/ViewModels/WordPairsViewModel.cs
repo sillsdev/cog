@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -10,18 +11,35 @@ namespace SIL.Cog.ViewModels
 {
 	public class WordPairsViewModel : ViewModelBase
 	{
-		private readonly ReadOnlyCollection<WordPairViewModel> _wordPairs;
+		private readonly ObservableCollection<WordPairViewModel> _wordPairs;
 		private readonly ObservableCollection<WordPairViewModel> _selectedWordPairs;
-		private readonly ObservableCollection<WordPairViewModel> _selectedCorrespondenceWordPairs;
+		private readonly ObservableCollection<WordPairViewModel> _selectedChangeWordPairs;
 
-		public WordPairsViewModel(CogProject project, IEnumerable<WordPair> wordPairs)
+		public WordPairsViewModel(CogProject project, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
+			: this(wordPairs.Select(pair => new WordPairViewModel(project, pair, areVarietiesInOrder)))
 		{
-			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(wordPairs.Select(pair => new WordPairViewModel(project, pair)).ToList());
-			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
-			_selectedCorrespondenceWordPairs = new ObservableCollection<WordPairViewModel>();
 		}
 
-		public ReadOnlyCollection<WordPairViewModel> WordPairs
+		public WordPairsViewModel()
+			: this(Enumerable.Empty<WordPairViewModel>())
+		{
+		}
+
+		private WordPairsViewModel(IEnumerable<WordPairViewModel> wordPairs)
+		{
+			_wordPairs = new ObservableCollection<WordPairViewModel>(wordPairs);
+			_wordPairs.CollectionChanged += _wordPairs_CollectionChanged;
+			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
+			_selectedChangeWordPairs = new ObservableCollection<WordPairViewModel>();
+		}
+
+		private void _wordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			_selectedWordPairs.Clear();
+			_selectedChangeWordPairs.Clear();
+		}
+
+		public ObservableCollection<WordPairViewModel> WordPairs
 		{
 			get { return _wordPairs; }
 		}
@@ -31,9 +49,9 @@ namespace SIL.Cog.ViewModels
 			get { return _selectedWordPairs; }
 		}
 
-		public ObservableCollection<WordPairViewModel> SelectedCorrespondenceWordPairs
+		public ObservableCollection<WordPairViewModel> SelectedChangeWordPairs
 		{
-			get { return _selectedCorrespondenceWordPairs; }
+			get { return _selectedChangeWordPairs; }
 		}
 
 		public string SelectedWordPairsText

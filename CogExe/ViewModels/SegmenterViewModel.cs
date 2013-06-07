@@ -44,7 +44,7 @@ namespace SIL.Cog.ViewModels
 
 			Project.Segmenter.MaxConsonantLength = _maxConsonantLength;
 			Project.Segmenter.MaxVowelLength = _maxVowelLength;
-			_progressService.ShowProgress(this, UpdateAllShapes);
+			_progressService.ShowProgress(UpdateAllShapes);
 			return Project.Segmenter;
 		}
 

@@ -1,16 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
-using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
 	public class VarietyPairViewModel : ViewModelBase
 	{
 		private readonly VarietyPair _varietyPair;
-		private readonly ReadOnlyCollection<SoundCorrespondenceViewModel> _correspondences;
-		private SoundCorrespondenceViewModel _currentCorrespondence;
+		private readonly ReadOnlyCollection<SoundChangeViewModel> _soundChanges;
+		private SoundChangeViewModel _currentSoundChange;
 		private readonly bool _areVarietiesInOrder;
 		private readonly CogProject _project;
 		private readonly WordPairsViewModel _cognates;
@@ -22,60 +20,55 @@ namespace SIL.Cog.ViewModels
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
-			_cognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));
-			_noncognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted));
+			_cognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted), areVarietiesInOrder);
+			_noncognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted), areVarietiesInOrder);
 
-			_correspondences = new ReadOnlyCollection<SoundCorrespondenceViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
-				(lhs, segment) => new SoundCorrespondenceViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
+			_soundChanges = new ReadOnlyCollection<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
+				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
 		}
 
-		public SoundCorrespondenceViewModel CurrentCorrespondence
+		public SoundChangeViewModel CurrentSoundChange
 		{
-			get { return _currentCorrespondence; }
+			get { return _currentSoundChange; }
 			set
 			{
-				Set("CurrentCorrespondence", ref _currentCorrespondence, value);
-				UpdateSelectedCorrespondenceWordPairs(_cognates);
-				UpdateSelectedCorrespondenceWordPairs(_noncognates);
+				Set(() => CurrentSoundChange, ref _currentSoundChange, value);
+				UpdateSelectedChangeWordPairs(_cognates);
+				UpdateSelectedChangeWordPairs(_noncognates);
 			}
 		}
 
-		private void UpdateSelectedCorrespondenceWordPairs(WordPairsViewModel wordPairs)
+		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
-			wordPairs.SelectedCorrespondenceWordPairs.Clear();
+			wordPairs.SelectedChangeWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{
 				bool selected = false;
 				foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
 				{
-					if (_currentCorrespondence == null)
+					if (_currentSoundChange == null)
 					{
 						node.IsSelected = false;
 					}
 					else
 					{
-						SoundChangeLhs lhs = GetLhs(node);
+						SoundContext lhs = GetLhs(node);
 						Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
-						node.IsSelected = lhs.Equals(_currentCorrespondence.ModelSoundChangeLhs) && corr.Equals(_currentCorrespondence.ModelCorrespondence);
+						node.IsSelected = lhs.Equals(_currentSoundChange.ModelSoundChangeLhs) && corr.Equals(_currentSoundChange.ModelCorrespondence);
 						if (node.IsSelected)
 							selected = true;
 					}
 				}
 
 				if (selected)
-					wordPairs.SelectedCorrespondenceWordPairs.Add(wordPair);
+					wordPairs.SelectedChangeWordPairs.Add(wordPair);
 			}
 		}
 
-		private SoundChangeLhs GetLhs(AlignedNodeViewModel node)
+		private SoundContext GetLhs(AlignedNodeViewModel node)
 		{
 			IAligner aligner = _project.Aligners["primary"];
-			Ngram nseg1 = _varietyPair.Variety1.Segments[node.Annotation1];
-			ShapeNode leftCtxt = node.Annotation1.Span.Start.GetPrev(n => n.Type().IsOneOf(CogFeatureSystem.AnchorType, CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType));
-			SoundClass leftEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint => constraint.Matches(leftCtxt.Annotation));
-			ShapeNode rightCtxt = node.Annotation1.Span.End.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.AnchorType, CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType));
-			SoundClass rightEnv = aligner.ContextualSoundClasses.FirstOrDefault(constraint => constraint.Matches(rightCtxt.Annotation));
-			return new SoundChangeLhs(leftEnv, nseg1, rightEnv);
+			return node.Annotation1.Sound(_varietyPair.Variety1, aligner.ContextualSoundClasses);
 		}
 
 		public bool AreVarietiesInOrder
@@ -93,9 +86,9 @@ namespace SIL.Cog.ViewModels
 			get { return _varietyPair.PhoneticSimilarityScore; }
 		}
 
-		public ReadOnlyCollection<SoundCorrespondenceViewModel> Correspondences
+		public ReadOnlyCollection<SoundChangeViewModel> SoundChanges
 		{
-			get { return _correspondences; }
+			get { return _soundChanges; }
 		}
 
 		public WordPairsViewModel Cognates

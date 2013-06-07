@@ -19,7 +19,7 @@ namespace SIL.Cog.Services
 			return _dialogService.ShowDialog(ownerViewModel, progressViewModel) == true;
 		}
 
-		public void ShowProgress(object ownerViewModel, Action action)
+		public void ShowProgress(Action action)
 		{
 			using (new OverrideCursor(Cursors.Wait))
 				action();

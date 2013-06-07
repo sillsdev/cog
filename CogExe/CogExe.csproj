@@ -130,19 +130,25 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\DataGridBehaviors.cs" />
-    <Compile Include="Behaviors\FrameworkElementBehaviors.cs" />
     <Compile Include="Behaviors\TextBlockBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaviors.cs" />
     <Compile Include="Behaviors\UIElementBehaviors.cs" />
+    <Compile Include="Controls\Block.xaml.cs">
+      <DependentUpon>Block.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CogGraphLayout.cs" />
     <Compile Include="Controls\ContentSizeChangedEventArgs.cs" />
     <Compile Include="Controls\DendrogramLayout.cs" />
     <Compile Include="Controls\DropDownButton.cs" />
     <Compile Include="Controls\HierarchicalGraphLayout.cs" />
+    <Compile Include="Controls\LoadingAnimation.xaml.cs">
+      <DependentUpon>LoadingAnimation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NetworkGraphLayout.cs" />
     <Compile Include="Controls\PercentageSlider.xaml.cs">
       <DependentUpon>PercentageSlider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SimilarSegmentsGraphLayout.cs" />
     <Compile Include="Controls\TabControlEx.cs" />
     <Compile Include="Controls\TreeGridViewRowPresenter.cs" />
     <Compile Include="Controls\TreeListView.cs" />
@@ -150,7 +156,6 @@
     <Compile Include="Controls\ZoomContentPresenter.cs" />
     <Compile Include="Controls\ZoomControl.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
-    <Compile Include="Converters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
@@ -167,6 +172,7 @@
     <Compile Include="Converters\LevelToIndentConverter.cs" />
     <Compile Include="Converters\LessThanConverter.cs" />
     <Compile Include="Converters\PercentageToGradientColorConverter.cs" />
+    <Compile Include="Converters\PercentageToStrokeThicknessConverter.cs" />
     <Compile Include="Converters\PercentageToSpectrumColorConverter.cs" />
     <Compile Include="Converters\ProbabilityToWidthConverter.cs" />
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
@@ -183,10 +189,20 @@
     <Compile Include="Export\TextSimilarityMatrixExporter.cs" />
     <Compile Include="Export\TextVarietyPairExporter.cs" />
     <Compile Include="Export\TextWordListsExporter.cs" />
+    <Compile Include="GraphAlgorithms\CogEdgeRoutingAlgorithmFactory.cs" />
+    <Compile Include="GraphAlgorithms\GridLayoutAlgorithm.cs" />
+    <Compile Include="GraphAlgorithms\GridLayoutParameters.cs" />
+    <Compile Include="GraphAlgorithms\GridVertex.cs" />
     <Compile Include="GraphAlgorithms\HierarchicalHighlightAlgorithm.cs" />
     <Compile Include="GraphAlgorithms\CogHighlightAlgorithmFactory.cs" />
     <Compile Include="GraphAlgorithms\IAngledVertex.cs" />
+    <Compile Include="GraphAlgorithms\IGridVertex.cs" />
     <Compile Include="GraphAlgorithms\ILengthEdge.cs" />
+    <Compile Include="GraphAlgorithms\Obstacle.cs" />
+    <Compile Include="GraphAlgorithms\Point2D.cs" />
+    <Compile Include="GraphAlgorithms\RotationTreeNode.cs" />
+    <Compile Include="GraphAlgorithms\ObstacleSegment.cs" />
+    <Compile Include="GraphAlgorithms\BundleEdgeRoutingParameters.cs" />
     <Compile Include="GraphAlgorithms\UndirectedHighlightAlgorithm.cs" />
     <Compile Include="GraphAlgorithms\UndirectedHighlightParameters.cs" />
     <Compile Include="GraphAlgorithms\CogLayoutAlgorithmFactory.cs" />
@@ -194,6 +210,8 @@
     <Compile Include="GraphAlgorithms\RadialTreeLayoutParameters.cs" />
     <Compile Include="GraphAlgorithms\StressMajorizationLayoutAlgorithm.cs" />
     <Compile Include="GraphAlgorithms\StressMajorizationLayoutParameters.cs" />
+    <Compile Include="GraphAlgorithms\VisibilityGraph.cs" />
+    <Compile Include="GraphAlgorithms\BundleEdgeRoutingAlgorithm.cs" />
     <Compile Include="Import\KmlGeographicRegionsImporter.cs" />
     <Compile Include="Import\IGeographicRegionsImporter.cs" />
     <Compile Include="Import\ISegmentMappingsImporter.cs" />
@@ -215,6 +233,7 @@
     <Compile Include="Services\ServiceExtensions.cs" />
     <Compile Include="Services\WindowViewModelMappings.cs" />
     <Compile Include="ViewModels\AddUnnaturalClassSegmentViewModel.cs" />
+    <Compile Include="ViewModels\ConsonantGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\DolgopolskyCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\EditNaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditSoundClassViewModel.cs" />
@@ -225,10 +244,13 @@
     <Compile Include="ViewModels\FeatureValueViewModel.cs" />
     <Compile Include="ViewModels\FeatureViewModel.cs" />
     <Compile Include="ViewModels\GeographicalVarietyViewModel.cs" />
+    <Compile Include="ViewModels\GlobalCorrespondenceViewModel.cs" />
+    <Compile Include="ViewModels\GlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
+    <Compile Include="ViewModels\SimilarSegmentsViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />
@@ -260,6 +282,7 @@
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
     <Compile Include="ViewModels\SegmenterViewModel.cs" />
+    <Compile Include="ViewModels\TaskAreaIntegerViewModel.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
@@ -268,14 +291,14 @@
     <Compile Include="ViewModels\SimilarityMetric.cs" />
     <Compile Include="ViewModels\SegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\SegmentMappingViewModel.cs" />
-    <Compile Include="ViewModels\SoundCorrespondenceLhsViewModel.cs" />
+    <Compile Include="ViewModels\SoundChangeLhsViewModel.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
     <Compile Include="ViewModels\TaskAreaCommandGroupViewModel.cs" />
     <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ThresholdSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
     <Compile Include="ViewModels\UnorderedViewModelCollection.cs" />
-    <Compile Include="ViewModels\SoundCorrespondenceViewModel.cs" />
+    <Compile Include="ViewModels\SoundChangeViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaCommandsViewModel.cs" />
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
@@ -289,6 +312,7 @@
     <Compile Include="ViewModels\SimilarityMatrixVarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietiesVarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
+    <Compile Include="ViewModels\VowelGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\ListViewModelCollection.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
@@ -327,6 +351,9 @@
     <Compile Include="Views\ExportSimilarityMatrixDialog.xaml.cs">
       <DependentUpon>ExportSimilarityMatrixDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GlobalCorrespondenceGridEdge.cs" />
+    <Compile Include="Views\GlobalSegmentGridVertex.cs" />
+    <Compile Include="Views\HeaderGridVertex.cs" />
     <Compile Include="Views\HierarchicalGraphView.xaml.cs">
       <DependentUpon>HierarchicalGraphView.xaml</DependentUpon>
     </Compile>
@@ -340,6 +367,9 @@
     <Compile Include="Views\RegionHitMarker.cs" />
     <Compile Include="Views\RegionMarker.cs" />
     <Compile Include="Views\RegionPointMarker.cs" />
+    <Compile Include="Views\SimilarSegmentsView.xaml.cs">
+      <DependentUpon>SimilarSegmentsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SoundClassesView.xaml.cs">
       <DependentUpon>SoundClassesView.xaml</DependentUpon>
     </Compile>
@@ -412,6 +442,9 @@
     <Compile Include="Views\EditAffixDialog.xaml.cs">
       <DependentUpon>EditAffixDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TaskAreaIntegerView.xaml.cs">
+      <DependentUpon>TaskAreaIntegerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ThresholdCognateIdentifierView.xaml.cs">
       <DependentUpon>ThresholdCognateIdentifierView.xaml</DependentUpon>
     </Compile>
@@ -451,6 +484,14 @@
     <Compile Include="Views\WordListsView.xaml.cs">
       <DependentUpon>WordListsView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\Block.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\LoadingAnimation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\PercentageSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -502,6 +543,10 @@
     <Page Include="Views\EditRegionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SimilarSegmentsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SoundClassesView.xaml">
       <SubType>Designer</SubType>
@@ -584,6 +629,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TaskAreaCommandsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TaskAreaIntegerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

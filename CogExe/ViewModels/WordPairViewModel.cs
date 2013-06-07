@@ -16,12 +16,18 @@ namespace SIL.Cog.ViewModels
 		private readonly ReadOnlyCollection<AlignedNodeViewModel> _alignedNodes;
 		private readonly AlignedNodeViewModel _suffixNode;
 		private readonly SenseViewModel _sense;
+		private readonly VarietyViewModel _variety1;
+		private readonly VarietyViewModel _variety2;
+		private readonly bool _areVarietiesInOrder;
 
-		public WordPairViewModel(CogProject project, WordPair wordPair)
+		public WordPairViewModel(CogProject project, WordPair wordPair, bool areVarietiesInOrder)
 		{
 			_project = project;
 			_wordPair = wordPair;
+			_areVarietiesInOrder = areVarietiesInOrder;
 			_sense = new SenseViewModel(_wordPair.Word1.Sense);
+			_variety1 = new VarietyViewModel(_wordPair.VarietyPair.Variety1);
+			_variety2 = new VarietyViewModel(_wordPair.VarietyPair.Variety2);
 
 			IAligner aligner = _project.Aligners["primary"];
 			IAlignerResult results = aligner.Compute(_wordPair);
@@ -40,6 +46,21 @@ namespace SIL.Cog.ViewModels
 			_suffixNode = new AlignedNodeViewModel(alignment.Suffix1, alignment.Suffix2);
 
 			_alignedNodes = new ReadOnlyCollection<AlignedNodeViewModel>(nodes);
+		}
+
+		public bool AreVarietiesInOrder
+		{
+			get { return _areVarietiesInOrder; }
+		}
+
+		public VarietyViewModel Variety1
+		{
+			get { return _variety1; }
+		}
+
+		public VarietyViewModel Variety2
+		{
+			get { return _variety2; }
 		}
 
 		public SenseViewModel Sense
@@ -70,6 +91,11 @@ namespace SIL.Cog.ViewModels
 		public bool AreCognate
 		{
 			get { return _wordPair.AreCognatePredicted; }
+		}
+
+		public WordPair ModelWordPair
+		{
+			get { return _wordPair; }
 		}
 	}
 }

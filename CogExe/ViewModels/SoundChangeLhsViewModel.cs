@@ -3,11 +3,11 @@ using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public class SoundCorrespondenceLhsViewModel : ViewModelBase, IEquatable<SoundCorrespondenceLhsViewModel>
+	public class SoundChangeLhsViewModel : ViewModelBase, IEquatable<SoundChangeLhsViewModel>
 	{
-		private readonly SoundChangeLhs _lhs;
+		private readonly SoundContext _lhs;
 
-		public SoundCorrespondenceLhsViewModel(SoundChangeLhs lhs)
+		public SoundChangeLhsViewModel(SoundContext lhs)
 		{
 			_lhs = lhs;
 		}
@@ -31,7 +31,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public bool Equals(SoundCorrespondenceLhsViewModel other)
+		public bool Equals(SoundChangeLhsViewModel other)
 		{
 			if (other == null)
 				return false;
@@ -41,7 +41,7 @@ namespace SIL.Cog.ViewModels
 
 		public override bool Equals(object obj)
 		{
-			var lhs = obj as SoundCorrespondenceLhsViewModel;
+			var lhs = obj as SoundChangeLhsViewModel;
 			return obj != null && Equals(lhs);
 		}
 

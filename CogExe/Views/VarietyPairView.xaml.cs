@@ -22,7 +22,7 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
-			var correspondenceSource = new ListCollectionView(vm.Correspondences);
+			var correspondenceSource = new ListCollectionView(vm.SoundChanges);
 			correspondenceSource.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
 			CorrespondenceDataGrid.ItemsSource = correspondenceSource;
 			correspondenceSource.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));

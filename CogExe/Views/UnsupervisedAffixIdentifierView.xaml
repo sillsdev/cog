@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:c="clr-namespace:SIL.Cog.Controls"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600">
+             d:DesignHeight="400" d:DesignWidth="600" d:DataContext="{d:DesignInstance vm:UnsupervisedAffixIdentifierViewModel}">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">
@@ -28,10 +28,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=_thresholdSlider}">Affix threshold:</Label>
-		<c:PercentageSlider HorizontalAlignment="Left" x:Name="_thresholdSlider" Grid.Column="1" Grid.Row="0" Value="{Binding Threshold}" Width="250" />
-		<Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=_maxLengthUpDown}">Maximum affix length:</Label>
-		<xctk:IntegerUpDown Name="_maxLengthUpDown" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Minimum="1" Maximum="8" Value="{Binding MaxAffixLength}" />
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ThresholdSlider}">Affix threshold:</Label>
+		<c:PercentageSlider HorizontalAlignment="Left" x:Name="ThresholdSlider" Grid.Column="1" Grid.Row="0" Value="{Binding Threshold}" Width="250" />
+		<Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=MaxLengthUpDown}">Maximum affix length:</Label>
+		<xctk:IntegerUpDown Name="MaxLengthUpDown" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Minimum="1" Maximum="8" Value="{Binding MaxAffixLength}" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding CategoryRequired}">Category required</CheckBox>
     </Grid>
 </UserControl>

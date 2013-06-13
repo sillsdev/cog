@@ -468,8 +468,8 @@
     <Compile Include="Views\VarietyPairView.xaml.cs">
       <DependentUpon>VarietyPairView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\VarietyRegionView.xaml.cs">
-      <DependentUpon>VarietyRegionView.xaml</DependentUpon>
+    <Compile Include="Views\GeographicalRegionView.xaml.cs">
+      <DependentUpon>GeographicalRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewExtensions.cs" />
     <Compile Include="Views\VarietiesView.xaml.cs">
@@ -667,7 +667,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\VarietyRegionView.xaml">
+    <Page Include="Views\GeographicalRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

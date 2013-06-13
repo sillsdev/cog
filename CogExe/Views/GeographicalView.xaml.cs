@@ -201,7 +201,7 @@ namespace SIL.Cog.Views
 
 			Point centerPoint = CalculateCenter(rm);
 			Point p = CalculatePopupPosition(centerPoint);
-			_popup = new GMapMarker(MapControl.FromLocalToLatLng((int) p.X, (int) p.Y)) {Tag = rm, Shape = new VarietyRegionView {DataContext = rm.Region}, ZIndex = 100};
+			_popup = new GMapMarker(MapControl.FromLocalToLatLng((int) p.X, (int) p.Y)) {Tag = rm, Shape = new GeographicalRegionView {DataContext = rm.Region}, ZIndex = 100};
 			MapControl.Markers.Add(_popup);
 
 			int xOffset = 0;

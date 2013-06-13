@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:c="clr-namespace:SIL.Cog.Controls"
+             xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:ThresholdCognateIdentifierViewModel}">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">
@@ -16,7 +17,7 @@
             <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Target="{Binding ElementName=_thresholdSlider}">Threshold:</Label>
-		<c:PercentageSlider HorizontalAlignment="Left" x:Name="_thresholdSlider" Grid.Column="1" Value="{Binding Threshold}" Width="250" />
+        <Label Grid.Column="0" Target="{Binding ElementName=ThresholdSlider}">Threshold:</Label>
+		<c:PercentageSlider HorizontalAlignment="Left" x:Name="ThresholdSlider" Grid.Column="1" Value="{Binding Threshold}" Width="250" />
     </Grid>
 </UserControl>

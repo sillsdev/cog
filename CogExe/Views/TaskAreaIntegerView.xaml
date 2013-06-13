@@ -6,7 +6,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:TaskAreaIntegerViewModel}">
+             d:DesignHeight="80" d:DesignWidth="150" d:DataContext="{d:DesignInstance vm:TaskAreaIntegerViewModel}">
 	<HeaderedContentControl Margin="8,20,8,0" Header="{Binding DisplayName}" Style="{StaticResource TaskAreaHeaderStyle}">
 		<xctk:IntegerUpDown Minimum="0" Increment="10" Height="25" Value="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
 	</HeaderedContentControl>

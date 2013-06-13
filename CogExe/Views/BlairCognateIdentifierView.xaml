@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:v="clr-namespace:SIL.Cog.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="370">
+             d:DesignHeight="300" d:DesignWidth="370" d:DataContext="{d:DesignInstance vm:BlairCognateIdentifierViewModel}">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">

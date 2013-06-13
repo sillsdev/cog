@@ -40,8 +40,8 @@ namespace SIL.Cog.ViewModels
 		private CogProject _project;
 
 		public MainWindowViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService, IExportService exportService,
-			DataMasterViewModel dataMasterViewModel, ComparisonMasterViewModel comparisonMasterViewModel, VisualizationMasterViewModel visualizationMasterViewModel)
-			: base("Cog", dataMasterViewModel, comparisonMasterViewModel, visualizationMasterViewModel)
+			InputMasterViewModel inputMasterViewModel, CompareMasterViewModel compareMasterViewModel, AnalyzeMasterViewModel analyzeMasterViewModel)
+			: base("Cog", inputMasterViewModel, compareMasterViewModel, analyzeMasterViewModel)
 		{
 			_dialogService = dialogService;
 			_importService = importService;

@@ -50,16 +50,16 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<IImportService, ImportService>();
 
             SimpleIoc.Default.Register<MainWindowViewModel>();
-			SimpleIoc.Default.Register<DataMasterViewModel>();
-			SimpleIoc.Default.Register<ComparisonMasterViewModel>();
-			SimpleIoc.Default.Register<VisualizationMasterViewModel>();
+			SimpleIoc.Default.Register<InputMasterViewModel>();
+			SimpleIoc.Default.Register<CompareMasterViewModel>();
+			SimpleIoc.Default.Register<AnalyzeMasterViewModel>();
 			SimpleIoc.Default.Register<WordListsViewModel>();
 			SimpleIoc.Default.Register<VarietiesViewModel>();
 			SimpleIoc.Default.Register<SensesViewModel>();
-			SimpleIoc.Default.Register<DataSettingsViewModel>();
+			SimpleIoc.Default.Register<InputSettingsViewModel>();
 			SimpleIoc.Default.Register<SimilarityMatrixViewModel>();
 			SimpleIoc.Default.Register<VarietyPairsViewModel>();
-			SimpleIoc.Default.Register<ComparisonSettingsViewModel>();
+			SimpleIoc.Default.Register<CompareSettingsViewModel>();
 			SimpleIoc.Default.Register<HierarchicalGraphViewModel>();
 			SimpleIoc.Default.Register<NetworkGraphViewModel>();
 			SimpleIoc.Default.Register<GeographicalViewModel>();

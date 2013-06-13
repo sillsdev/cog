@@ -4,12 +4,12 @@ using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class DataSettingsViewModel : SettingsWorkspaceViewModelBase
+	public class InputSettingsViewModel : SettingsWorkspaceViewModelBase
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly IProgressService _progressService;
 
-		public DataSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IProgressService progressService)
+		public InputSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IProgressService progressService)
 		{
 			_spanFactory = spanFactory;
 			_progressService = progressService;

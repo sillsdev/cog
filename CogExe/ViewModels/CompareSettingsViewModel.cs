@@ -5,13 +5,13 @@ using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class ComparisonSettingsViewModel : SettingsWorkspaceViewModelBase
+	public class CompareSettingsViewModel : SettingsWorkspaceViewModelBase
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 
-		public ComparisonSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService)
+		public CompareSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService)
 		{
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;

@@ -89,8 +89,8 @@
                                             <DataTemplate DataType="{x:Type vm:SensesViewModel}">
                                                 <v:SensesView />
                                             </DataTemplate>
-                                            <DataTemplate DataType="{x:Type vm:DataSettingsViewModel}">
-                                                <v:DataSettingsView />
+                                            <DataTemplate DataType="{x:Type vm:InputSettingsViewModel}">
+                                                <v:InputSettingsView />
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type vm:SimilarityMatrixViewModel}">
                                                 <v:SimilarityMatrixView />
@@ -98,8 +98,8 @@
                                             <DataTemplate DataType="{x:Type vm:VarietyPairsViewModel}">
                                                 <v:VarietyPairsView />
                                             </DataTemplate>
-                                            <DataTemplate DataType="{x:Type vm:ComparisonSettingsViewModel}">
-                                                <v:ComparisonSettingsView />
+                                            <DataTemplate DataType="{x:Type vm:CompareSettingsViewModel}">
+                                                <v:CompareSettingsView />
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type vm:HierarchicalGraphViewModel}">
                                                 <v:HierarchicalGraphView />

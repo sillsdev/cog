@@ -266,11 +266,11 @@
     <Compile Include="ViewModels\AlineViewModel.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\CommandViewModel.cs" />
-    <Compile Include="ViewModels\ComparisonMasterViewModel.cs" />
-    <Compile Include="ViewModels\ComparisonSettingsViewModel.cs" />
+    <Compile Include="ViewModels\CompareMasterViewModel.cs" />
+    <Compile Include="ViewModels\CompareSettingsViewModel.cs" />
     <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
     <Compile Include="ViewModels\ComponentSettingsViewModelBase.cs" />
-    <Compile Include="ViewModels\DataSettingsViewModel.cs" />
+    <Compile Include="ViewModels\InputSettingsViewModel.cs" />
     <Compile Include="ViewModels\EditSenseViewModel.cs" />
     <Compile Include="ViewModels\EMSoundChangeInducerViewModel.cs" />
     <Compile Include="ViewModels\ListSimilarSegmentMappingsViewModel.cs" />
@@ -312,7 +312,7 @@
     <Compile Include="ViewModels\GeographicalRegionViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModel.cs" />
     <Compile Include="ViewModels\SwitchViewMessage.cs" />
-    <Compile Include="ViewModels\DataMasterViewModel.cs" />
+    <Compile Include="ViewModels\InputMasterViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixVarietyViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixVarietyPairViewModel.cs" />
@@ -322,7 +322,7 @@
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
-    <Compile Include="ViewModels\VisualizationMasterViewModel.cs" />
+    <Compile Include="ViewModels\AnalyzeMasterViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />
     <Compile Include="ViewModels\WordPairSurrogate.cs" />
     <Compile Include="ViewModels\WordPairsViewModel.cs" />
@@ -392,11 +392,11 @@
     <Compile Include="Views\BlairCognateIdentifierView.xaml.cs">
       <DependentUpon>BlairCognateIdentifierView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ComparisonSettingsView.xaml.cs">
-      <DependentUpon>ComparisonSettingsView.xaml</DependentUpon>
+    <Compile Include="Views\CompareSettingsView.xaml.cs">
+      <DependentUpon>CompareSettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataSettingsView.xaml.cs">
-      <DependentUpon>DataSettingsView.xaml</DependentUpon>
+    <Compile Include="Views\InputSettingsView.xaml.cs">
+      <DependentUpon>InputSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditSenseDialog.xaml.cs">
       <DependentUpon>EditSenseDialog.xaml</DependentUpon>
@@ -575,11 +575,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ComparisonSettingsView.xaml">
+    <Page Include="Views\CompareSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\DataSettingsView.xaml">
+    <Page Include="Views\InputSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

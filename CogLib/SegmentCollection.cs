@@ -97,7 +97,12 @@ namespace SIL.Cog
 
 		public Segment this[string strRep]
 		{
-			get { return _segments[strRep]; }
+			get
+			{
+				if (strRep == "-")
+					return Segment.Null;
+				return _segments[strRep];
+			}
 		}
 
 		public Segment this[ShapeNode node]

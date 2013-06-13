@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -21,12 +22,13 @@ namespace SIL.Cog.Views
 		{
 			var vm = (VarietyPairsViewModel) DataContext;
 			vm.PropertyChanged += ViewModel_PropertyChanged;
-			SetupVarieties(vm);
+			SetupVarieties();
 		}
 
-		private void SetupVarieties(VarietyPairsViewModel vm)
+		private void SetupVarieties()
 		{
-			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+			var vm = (VarietyPairsViewModel) DataContext;
+			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
 			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
@@ -34,10 +36,11 @@ namespace SIL.Cog.Views
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "Varieties")
+			switch (e.PropertyName)
 			{
-				var vm = (VarietyPairsViewModel) DataContext;
-				SetupVarieties(vm);
+				case "Varieties":
+					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
+					break;
 			}
 		}
 

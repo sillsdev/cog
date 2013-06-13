@@ -6,7 +6,7 @@
                     xmlns:ab="clr-namespace:WPFExtensions.AttachedBehaviours;assembly=WPFExtensions">
 	<cnvtrs:LevelToIndentConverter x:Key="LevelToIndentConverter"/>
 	<cnvtrs:DoubleToLog10Converter x:Key="Log10Converter"/>
-	<cnvtrs:EnumMatchToBooleanConverter x:Key="EnumConverter" />
+	<cnvtrs:EnumMatchToBooleanConverter x:Key="EnumMatchConverter" />
 	<xcdg:ThicknessConverter x:Key="ThicknessConverter" />
 	<cnvtrs:EqualityConverter x:Key="EqualityConverter" />
 	<cnvtrs:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
@@ -878,9 +878,9 @@
 												HorizontalAlignment="Center"
 												FontWeight="Bold" />
 									<RadioButton Content="1:1"
-													IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumConverter},ConverterParameter=Original}" />
+													IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumMatchConverter},ConverterParameter=Original}" />
 									<RadioButton Content="Fill"
-													IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumConverter},ConverterParameter=Fill}" />
+													IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EnumMatchConverter},ConverterParameter=Fill}" />
 								</StackPanel>
 							</Border>
 

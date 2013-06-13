@@ -64,12 +64,12 @@ namespace SIL.Cog.Views
 		{
 			foreach (RegionMarker rm in MapControl.Markers.OfType<RegionMarker>().ToArray())
 				rm.Dispose();
-			vm.Varieties.CollectionChanged += VarietiesChanged;
+			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += VarietiesChanged;
 			foreach (GeographicalVarietyViewModel variety in vm.Varieties)
 			{
 				AddRegions(variety.Regions);
 				GeographicalVarietyViewModel v = variety;
-				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
+				((INotifyCollectionChanged) variety.Regions).CollectionChanged += (sender, e) => RegionsChanged(v, e);
 			}
 			GoHome();
 		}
@@ -118,7 +118,7 @@ namespace SIL.Cog.Views
 			{
 				AddRegions(variety.Regions);
 				GeographicalVarietyViewModel v = variety;
-				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
+				((INotifyCollectionChanged) variety.Regions).CollectionChanged += (sender, e) => RegionsChanged(v, e);
 			}
 		}
 

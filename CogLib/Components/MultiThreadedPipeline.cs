@@ -66,6 +66,11 @@ namespace SIL.Cog.Components
 				}, token);
 		}
 
+		public bool WaitForComplete(int timeout)
+		{
+			return _task.Wait(timeout);
+		}
+
 		public void WaitForComplete()
 		{
 			_task.Wait();

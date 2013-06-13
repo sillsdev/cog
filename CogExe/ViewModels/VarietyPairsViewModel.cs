@@ -21,7 +21,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private CogProject _project;
 		private readonly IProgressService _progressService;
-		private ListViewModelCollection<ObservableCollection<Variety>, VarietyViewModel, Variety> _varieties;
+		private ReadOnlyMirroredCollection<Variety, VarietyViewModel> _varieties;
 		private VarietyViewModel _currentVariety1;
 		private VarietyViewModel _currentVariety2;
 		private VarietyPairViewModel _currentVarietyPair;
@@ -79,9 +79,9 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_project.VarietyPairs.CollectionChanged += VarietyPairsChanged;
-			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, VarietyViewModel, Variety>(_project.Varieties, variety => new VarietyViewModel(variety)));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, VarietyViewModel>(_project.Varieties, variety => new VarietyViewModel(variety)));
 			ResetCurrentVarietyPair();
-			_varieties.CollectionChanged += VarietiesChanged;
+			((INotifyCollectionChanged) _varieties).CollectionChanged += VarietiesChanged;
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -119,7 +119,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ObservableCollection<VarietyViewModel> Varieties
+		public ReadOnlyObservableCollection<VarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}
@@ -174,26 +174,23 @@ namespace SIL.Cog.ViewModels
 
 		private void SetCurrentVarietyPair()
 		{
-			_progressService.ShowProgress(() =>
+			VarietyPairViewModel vm = null;
+			var state = CurrentVarietyPairState.NotSelected;
+			if (_currentVariety1 != null && _currentVariety2 != null && _currentVariety1 != _currentVariety2)
+			{
+				VarietyPair pair;
+				if (_currentVariety1.ModelVariety.VarietyPairs.TryGetValue(_currentVariety2.ModelVariety, out pair))
 				{
-					VarietyPairViewModel vm = null;
-					var state = CurrentVarietyPairState.NotSelected;
-					if (_currentVariety1 != null && _currentVariety2 != null && _currentVariety1 != _currentVariety2)
-					{
-						VarietyPair pair;
-						if (_currentVariety1.ModelVariety.VarietyPairs.TryGetValue(_currentVariety2.ModelVariety, out pair))
-						{
-							vm = new VarietyPairViewModel(_project, pair, _currentVariety1.ModelVariety == pair.Variety1);
-							state = CurrentVarietyPairState.SelectedAndCompared;
-						}
-						else
-						{
-							state = CurrentVarietyPairState.SelectedAndNotCompared;
-						}
-					}
-					Set("CurrentVarietyPair", ref _currentVarietyPair, vm);
-					CurrentVarietyPairState = state;
-				});
+					vm = new VarietyPairViewModel(_project, pair, _currentVariety1.ModelVariety == pair.Variety1);
+					state = CurrentVarietyPairState.SelectedAndCompared;
+				}
+				else
+				{
+					state = CurrentVarietyPairState.SelectedAndNotCompared;
+				}
+			}
+			Set("CurrentVarietyPair", ref _currentVarietyPair, vm);
+			CurrentVarietyPairState = state;
 		}
 
 		public override bool SwitchView(Type viewType, object model)

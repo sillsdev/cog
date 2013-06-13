@@ -1,6 +1,6 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -18,18 +18,22 @@ namespace SIL.Cog.Views
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			var vm = (ProgressViewModel) DataContext;
+			vm.PropertyChanged += vm_PropertyChanged;
 			vm.Execute();
 		}
 
-		private void _progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		private void vm_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (_progressBar.Value >= _progressBar.Maximum)
+			switch (e.PropertyName)
 			{
-				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-					{
-						if (IsLoaded)
-							DialogResult = true;
-					}));
+				case "Executing":
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							var vm = (ProgressViewModel) DataContext;
+							if (IsLoaded && !vm.Executing)
+								DialogResult = !vm.Canceled;
+						});
+					break;
 			}
 		}
 	}

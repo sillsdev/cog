@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
@@ -13,7 +14,7 @@ namespace SIL.Cog.ViewModels
 		private readonly CogProject _project;
 		private readonly GeographicalVarietyViewModel _variety;
 		private readonly GeographicRegion _region;
-		private readonly ListViewModelCollection<ObservableCollection<GeographicCoordinate>, Tuple<double, double>, GeographicCoordinate> _coordinates;
+		private readonly ObservableCollection<Tuple<double, double>> _coordinates;
 		private readonly ICommand _editCommand;
 		private readonly ICommand _removeCommand;
 
@@ -24,8 +25,7 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			_variety = variety;
 			_region = region;
-			_coordinates = new ListViewModelCollection<ObservableCollection<GeographicCoordinate>, Tuple<double, double>, GeographicCoordinate>(_region.Coordinates,
-				coord => Tuple.Create(coord.Latitude, coord.Longitude));
+			_coordinates = new ObservableCollection<Tuple<double, double>>(_region.Coordinates.Select(coord => Tuple.Create(coord.Latitude, coord.Longitude)));
 			_coordinates.CollectionChanged += CoordinatesChanged;
 			_editCommand = new RelayCommand(EditRegion);
 			_removeCommand = new RelayCommand(RemoveRegion);
@@ -33,6 +33,30 @@ namespace SIL.Cog.ViewModels
 
 		private void CoordinatesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					var newCoord = (Tuple<double, double>) e.NewItems[0];
+					_region.Coordinates.Insert(e.NewStartingIndex, new GeographicCoordinate(newCoord.Item1, newCoord.Item2));
+					break;
+
+				case NotifyCollectionChangedAction.Replace:
+					var replCoord = (Tuple<double, double>) e.NewItems[0];
+					_region.Coordinates[e.NewStartingIndex] = new GeographicCoordinate(replCoord.Item1, replCoord.Item2);
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					_region.Coordinates.RemoveAt(e.OldStartingIndex);
+					break;
+
+				case NotifyCollectionChangedAction.Move:
+					_region.Coordinates.Move(e.OldStartingIndex, e.NewStartingIndex);
+					break;
+
+				case NotifyCollectionChangedAction.Reset:
+					_region.Coordinates.Clear();
+					break;
+			}
 			IsChanged = true;
 		}
 
@@ -69,11 +93,7 @@ namespace SIL.Cog.ViewModels
 		public string Description
 		{
 			get { return _region.Description; }
-			set
-			{
-				_region.Description = value;
-				IsChanged = true;
-			}
+			set { _region.Description = value; }
 		}
 
 		public ICommand EditCommand

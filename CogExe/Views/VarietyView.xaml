@@ -4,19 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
-             xmlns:b="clr-namespace:SIL.Cog.Behaviors"
+             xmlns:b="clr-namespace:SIL.Cog.Behaviors" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
-             DataContextChanged="VarietyView_DataContextChanged">
+             DataContextChanged="VarietyView_DataContextChanged" d:DataContext="{d:DesignInstance vm:VarietiesVarietyViewModel}">
     <UserControl.Resources>
         <cnvtrs:ProbabilityToWidthConverter x:Key="ProbConverter" />
 		<cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
 		<cnvtrs:ItemsControlScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
+		<cnvtrs:ConcurrentCollectionConverter x:Key="ConcurrentConverter" />
     </UserControl.Resources>
     <DockPanel>
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
             <StackPanel>
                 <Grid>
-                    <DataGrid ItemsSource="{Binding Affixes}" b:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}"
+                    <DataGrid ItemsSource="{Binding Affixes, Converter={StaticResource ConcurrentConverter}}" b:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}"
 							  AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*">

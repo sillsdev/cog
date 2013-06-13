@@ -26,7 +26,7 @@ namespace SIL.Cog.Views
 
 		private void SetupVarieties(VarietiesViewModel vm)
 		{
-			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
 			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 		}

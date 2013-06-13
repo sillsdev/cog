@@ -1,17 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using SIL.Cog.Services;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public class GeographicalVarietyViewModel : VarietyViewModel
 	{
-		private readonly ListViewModelCollection<ObservableCollection<GeographicRegion>, GeographicalRegionViewModel, GeographicRegion> _regions;
+		private readonly ReadOnlyMirroredCollection<GeographicRegion, GeographicalRegionViewModel> _regions;
 		private int _clusterIndex;
 
 		public GeographicalVarietyViewModel(IDialogService dialogService, CogProject project, Variety variety)
 			: base(variety)
 		{
-			_regions = new ListViewModelCollection<ObservableCollection<GeographicRegion>, GeographicalRegionViewModel, GeographicRegion>(variety.Regions,
+			_regions = new ReadOnlyMirroredCollection<GeographicRegion, GeographicalRegionViewModel>(variety.Regions,
 				region =>
 					{
 						var newRegion = new GeographicalRegionViewModel(dialogService, project, this, region);
@@ -21,7 +22,7 @@ namespace SIL.Cog.ViewModels
 			_clusterIndex = -1;
 		}
 
-		public ObservableCollection<GeographicalRegionViewModel> Regions
+		public ReadOnlyObservableCollection<GeographicalRegionViewModel> Regions
 		{
 			get { return _regions; }
 		}

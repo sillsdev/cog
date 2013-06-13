@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -15,7 +16,7 @@ namespace SIL.Cog.ViewModels
 		private readonly UnorderedViewModelCollection<SegmentCollection, VarietySegmentViewModel, Segment> _segments;
 		private readonly UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
 		private readonly UnorderedViewModelCollection<WordCollection, WordViewModel, Word> _words; 
-		private readonly ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix> _affixes;
+		private readonly ReadOnlyMirroredCollection<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
 		private readonly ObservableCollection<WordViewModel> _selectedWords; 
@@ -39,7 +40,7 @@ namespace SIL.Cog.ViewModels
 			_words.CollectionChanged += WordsChanged;
 
 			_selectedWords = new ObservableCollection<WordViewModel>();
-			_affixes = new ListViewModelCollection<ObservableCollection<Affix>, AffixViewModel, Affix>(ModelVariety.Affixes, affix => new AffixViewModel(affix));
+			_affixes = new ReadOnlyMirroredCollection<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix));
 			if (_affixes.Count > 0)
 				_currentAffix = _affixes[0];
 			_newAffixCommand = new RelayCommand(NewAffix);
@@ -125,7 +126,7 @@ namespace SIL.Cog.ViewModels
 			get { return _words; }
 		}
 
-		public ObservableCollection<AffixViewModel> Affixes
+		public ReadOnlyObservableCollection<AffixViewModel> Affixes
 		{
 			get { return _affixes; }
 		}

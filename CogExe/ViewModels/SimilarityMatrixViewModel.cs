@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Clusterers;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
@@ -43,6 +44,8 @@ namespace SIL.Cog.ViewModels
 			ResetVarieties();
 			_project.Varieties.CollectionChanged += VarietiesChanged;
 			_project.Senses.CollectionChanged += SensesChanged;
+			if (_project.VarietyPairs.Count > 0)
+				CreateSimilarityMatrix();
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -78,19 +81,28 @@ namespace SIL.Cog.ViewModels
 
 			var pipeline = new MultiThreadedPipeline<VarietyPair>(_project.GetVarietyPairProcessors());
 
-			var progressVM = new ProgressViewModel(() => pipeline.Process(_project.VarietyPairs)) {Text = "Comparing all variety pairs..."};
+			var progressVM = new ProgressViewModel(vm =>
+				{
+					vm.Text = "Comparing all variety pairs...";
+					pipeline.Process(_project.VarietyPairs);
+					while (!pipeline.WaitForComplete(500))
+					{
+						if (vm.Canceled)
+						{
+							pipeline.Cancel();
+							pipeline.WaitForComplete();
+							break;
+						}
+					}
+					if (vm.Canceled)
+						return;
+					vm.Text = "Analyzing results...";
+					CreateSimilarityMatrix();
+					Messenger.Default.Send(new NotificationMessage(Notifications.ComparisonPerformed));
+				});
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
-			if (_progressService.ShowProgress(this, progressVM))
-			{
-				CreateSimilarityMatrix();
-				Messenger.Default.Send(new NotificationMessage(Notifications.ComparisonPerformed));
-			}
-			else
-			{
-				pipeline.Cancel();
-				pipeline.WaitForComplete();
-			}
+			_progressService.ShowProgress(this, progressVM);
 		}
 
 		private void Export()

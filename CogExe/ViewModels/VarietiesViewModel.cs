@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
 		private readonly IProgressService _progressService;
-		private ListViewModelCollection<ObservableCollection<Variety>, VarietiesVarietyViewModel, Variety> _varieties;
+		private ReadOnlyMirroredCollection<Variety, VarietiesVarietyViewModel> _varieties;
 		private VarietiesVarietyViewModel _currentVariety;
 		private CogProject _project;
 		private bool _isVarietySelected;
@@ -42,15 +42,15 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			if (_varieties != null)
-				_varieties.CollectionChanged -= VarietiesChanged;
-			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, VarietiesVarietyViewModel, Variety>(_project.Varieties,
+				((INotifyCollectionChanged) _varieties).CollectionChanged -= VarietiesChanged;
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, VarietiesVarietyViewModel>(_project.Varieties,
 				variety =>
 					{
 						var vm = new VarietiesVarietyViewModel(_dialogService, _project, variety);
 						vm.PropertyChanged += ChildPropertyChanged;
 						return vm;
 					}));
-			_varieties.CollectionChanged += VarietiesChanged;
+			((INotifyCollectionChanged) _varieties).CollectionChanged += VarietiesChanged;
 			CurrentVariety = _varieties.Count > 0 ? _varieties[0] : null;
 		}
 
@@ -134,7 +134,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ObservableCollection<VarietiesVarietyViewModel> Varieties
+		public ReadOnlyObservableCollection<VarietiesVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}

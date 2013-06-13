@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Clusterers;
 using SIL.Cog.Services;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -21,7 +22,7 @@ namespace SIL.Cog.ViewModels
 		private readonly List<Cluster<Variety>> _currentClusters;
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
-		private ListViewModelCollection<ObservableCollection<Variety>, GeographicalVarietyViewModel, Variety> _varieties;
+		private ReadOnlyMirroredCollection<Variety, GeographicalVarietyViewModel> _varieties;
 
 		public GeographicalViewModel(IDialogService dialogService, IImportService importService, IExportService exportService)
 			: base("Geographical")
@@ -115,15 +116,18 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, GeographicalVarietyViewModel, Variety>(project.Varieties,
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, GeographicalVarietyViewModel>(project.Varieties,
 				variety =>
 					{
 						var newVariety = new GeographicalVarietyViewModel(_dialogService, project, variety);
-						newVariety.Regions.CollectionChanged += (sender, e) => RegionsChanged(newVariety);
+						((INotifyCollectionChanged) newVariety.Regions).CollectionChanged += (sender, e) => RegionsChanged(newVariety);
 						newVariety.PropertyChanged += ChildPropertyChanged;
 						return newVariety;
 					}));
-			ResetClusters();
+			if (_project.VarietyPairs.Count > 0)
+				ClusterVarieties();
+			else
+				ResetClusters();
 			project.Varieties.CollectionChanged += VarietiesChanged;
 		}
 
@@ -149,7 +153,7 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_varieties);
 		}
 
-		public ObservableCollection<GeographicalVarietyViewModel> Varieties
+		public ReadOnlyObservableCollection<GeographicalVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}

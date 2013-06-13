@@ -36,9 +36,10 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Graph = null;
+			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateNetworkGraph(_similarityMetric) : null;
 			_project.Varieties.CollectionChanged += VarietiesChanged;
 			_project.Senses.CollectionChanged += SensesChanged;
+
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)

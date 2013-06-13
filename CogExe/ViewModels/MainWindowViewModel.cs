@@ -1,11 +1,14 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using ProtoBuf;
 using SIL.Cog.Config;
 using SIL.Cog.Properties;
 using SIL.Cog.Services;
@@ -65,6 +68,7 @@ namespace SIL.Cog.ViewModels
 			PropertyChanging += MainWindowViewModel_PropertyChanging;
 
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
+			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 
 			string[] args = Environment.GetCommandLineArgs();
 			if (args.Length > 1)
@@ -125,6 +129,44 @@ namespace SIL.Cog.ViewModels
 		private void HandleSwitchView(SwitchViewMessage message)
 		{
 			SwitchView(message.ViewModelType, message.Model);
+		}
+
+		private void HandleNotificationMessage(NotificationMessage msg)
+		{
+			switch (msg.Notification)
+			{
+				case Notifications.ComparisonPerformed:
+					if (ProjectFilePath == null)
+						return;
+
+					string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
+					Directory.CreateDirectory(path);
+					string name = Path.GetFileNameWithoutExtension(ProjectFilePath);
+					Debug.Assert(name != null);
+					string cacheFileName = Path.Combine(path, name + ".cache");
+					using (FileStream fs = File.Create(cacheFileName))
+					{
+						Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
+
+						foreach (VarietyPair vp in _project.VarietyPairs)
+						{
+							var surrogate = new VarietyPairSurrogate(vp);
+							Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
+						}
+					}
+					break;
+			}
+		}
+
+		private string CalcProjectHash()
+		{
+			using (var md5 = MD5.Create())
+			{
+				using (FileStream fs = File.OpenRead(ProjectFilePath))
+				{
+					return BitConverter.ToString(md5.ComputeHash(fs)).Replace("-","").ToLower();
+				}
+			}
 		}
 
 		private void New()
@@ -368,6 +410,30 @@ namespace SIL.Cog.ViewModels
 				AcceptChanges();
 			ProjectFilePath = path;
 			_project = project;
+			if (ProjectFilePath != null)
+			{
+				string cogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
+				string cacheFileName = Path.Combine(cogPath, name + ".cache");
+				if (File.Exists(cacheFileName))
+				{
+					bool delete = false;
+					using (FileStream fs = File.OpenRead(cacheFileName))
+					{
+						var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
+						if (hash == CalcProjectHash())
+						{
+							_project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
+								.Select(surrogate => surrogate.ToVarietyPair(_project)));
+						}
+						else
+						{
+							delete = true;
+						}
+					}
+					if (delete)
+						File.Delete(cacheFileName);
+				}
+			}
 			DisplayName = string.Format("{0} - Cog", name);
 			Initialize(project);
 			SwitchView(typeof(WordListsViewModel), null);

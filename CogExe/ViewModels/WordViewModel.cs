@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -31,19 +30,16 @@ namespace SIL.Cog.ViewModels
 
 		private void WordPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					switch (e.PropertyName)
-					{
-						case "Shape":
-							if (_monitor.Busy)
-								return;
-							_segments.CollectionChanged -= SegmentsChanged;
-							_segments.Clear();
-							LoadSegments();
-							break;
-					}
-				});
+			switch (e.PropertyName)
+			{
+				case "Shape":
+					if (_monitor.Busy)
+						return;
+					_segments.CollectionChanged -= SegmentsChanged;
+					_segments.Clear();
+					LoadSegments();
+					break;
+			}
 		}
 
 		private void LoadSegments()

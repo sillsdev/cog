@@ -33,8 +33,8 @@ namespace SIL.Cog.Views
 			LoadCollectionView();
 			SizeRowSelectorPaneToFit();
 			vm.PropertyChanged += ViewModel_PropertyChanged;
-			vm.Senses.CollectionChanged += Senses_CollectionChanged;
-			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+			((INotifyCollectionChanged) vm.Senses).CollectionChanged += Senses_CollectionChanged;
+			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += Varieties_CollectionChanged;
 			SelectFirstCell();
 		}
 
@@ -139,13 +139,13 @@ namespace SIL.Cog.Views
 			{
 				case "Senses":
 					LoadColumns();
-					vm.Senses.CollectionChanged += Senses_CollectionChanged;
+					((INotifyCollectionChanged) vm.Senses).CollectionChanged += Senses_CollectionChanged;
 					break;
 
 				case "Varieties":
 					LoadCollectionView();
 					SizeRowSelectorPaneToFit();
-					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+					((INotifyCollectionChanged) vm.Varieties).CollectionChanged += Varieties_CollectionChanged;
 					WordListsGrid.Dispatcher.BeginInvoke(new Action(SelectFirstCell));
 					break;
 			}

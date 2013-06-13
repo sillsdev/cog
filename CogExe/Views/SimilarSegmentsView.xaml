@@ -8,12 +8,12 @@
              xmlns:ga="clr-namespace:SIL.Cog.GraphAlgorithms" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              mc:Ignorable="d" Loaded="SimilarSegmentsView_OnLoaded"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SimilarSegmentsViewModel}">
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolConverter" />
-		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="ThicknessConverter" />
+		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
+		<cnvtrs:ConcurrentCollectionConverter x:Key="ConcurrentConverter" />
 	</UserControl.Resources>
 	<DockPanel>
 		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similar segments</TextBlock>
@@ -37,7 +37,7 @@
 									<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
 									<Setter Property="StrokeThickness">
 										<Setter.Value>
-											<MultiBinding Converter="{StaticResource ThicknessConverter}">
+											<MultiBinding Converter="{StaticResource StrokeThicknessConverter}">
 												<Binding Path="GlobalCorrespondence.NormalizedFrequency" />
 												<Binding>
 													<Binding.Source>
@@ -73,7 +73,8 @@
 				</Grid>
 			</StackPanel>
 			<HeaderedContentControl Grid.Row="1" Header="Observed word pairs">
-				<ListBox ItemsSource="{Binding WordPairs.WordPairs}" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
+				<ListBox ItemsSource="{Binding WordPairs.WordPairs, Converter={StaticResource ConcurrentConverter}}" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2"
+						 LostFocus="WordPairsListBox_OnLostFocus">
 					<ListBox.CommandBindings>
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
 						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />

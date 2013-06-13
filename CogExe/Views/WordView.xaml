@@ -10,6 +10,7 @@
         <DataTemplate x:Key="BlankTemplate" />
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="InverseBoolConverter" />
+		<cnvtrs:ConcurrentCollectionConverter x:Key="ConcurrentConverter" />
     </UserControl.Resources>
     <Grid>
         <TextBlock Margin="3,0,0,0"  FontSize="16" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">
@@ -28,7 +29,8 @@
             </TextBlock.TextDecorations>
         </TextBlock>
         <ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
-             Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" v:ItemsControlDragDrop.DragDropTemplate="{StaticResource BlankTemplate}" LostFocus="_listBox_LostFocus">
+				 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments, Converter={StaticResource ConcurrentConverter}}"
+				 v:ItemsControlDragDrop.DragDropTemplate="{StaticResource BlankTemplate}" LostFocus="_listBox_LostFocus">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />

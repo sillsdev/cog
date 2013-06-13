@@ -60,7 +60,7 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Graph = null;
+			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric) : null;
 			_project.Varieties.CollectionChanged += VarietiesChanged;
 			_project.Senses.CollectionChanged += SensesChanged;
 		}

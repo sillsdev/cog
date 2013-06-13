@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -9,7 +10,7 @@ namespace SIL.Cog.ViewModels
 	public class VarietySenseViewModel : SenseViewModel
 	{
 		private readonly ObservableCollection<Word> _modelWords;
-		private readonly ListViewModelCollection<ObservableCollection<Word>, WordViewModel, Word> _words;
+		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
 		private readonly CogProject _project;
 		private string _strRep;
 		private readonly Variety _variety;
@@ -21,12 +22,12 @@ namespace SIL.Cog.ViewModels
 			_variety = variety;
 
 			_modelWords = new ObservableCollection<Word>(words);
-			_words = new ListViewModelCollection<ObservableCollection<Word>, WordViewModel, Word>(_modelWords, word => new WordViewModel(project, this, word));
+			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, this, word));
 			_modelWords.CollectionChanged += ModelWordsChanged;
 			_strRep = string.Join("/", _modelWords.Select(word => word.StrRep));
 		}
 
-		public ObservableCollection<WordViewModel> Words
+		public ReadOnlyObservableCollection<WordViewModel> Words
 		{
 			get { return _words; }
 		}

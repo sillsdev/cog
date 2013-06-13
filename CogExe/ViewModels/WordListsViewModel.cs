@@ -5,6 +5,7 @@ using System.Diagnostics;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -17,8 +18,8 @@ namespace SIL.Cog.ViewModels
 		private readonly IExportService _exportService;
 		private readonly IProgressService _progressService;
 		private CogProject _project;
-		private ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
- 		private ListViewModelCollection<ObservableCollection<Variety>, WordListsVarietyViewModel, Variety> _varieties;
+		private ReadOnlyMirroredCollection<Sense, SenseViewModel> _senses;
+ 		private ReadOnlyMirroredCollection<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 
 		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService, IImportService importService, IExportService exportService)
@@ -95,15 +96,22 @@ namespace SIL.Cog.ViewModels
 				Debug.Assert(processors != null);
 				var pipeline = new MultiThreadedPipeline<Variety>(processors);
 
-				var progressVM = new ProgressViewModel(() => pipeline.Process(_project.Varieties)) {Text = "Stemming all varieties..."};
+				var progressVM = new ProgressViewModel(pvm =>
+					{
+						pvm.Text = "Stemming all varieties...";
+						pipeline.Process(_project.Varieties);
+						while (!pipeline.WaitForComplete(100))
+						{
+							if (pvm.Canceled)
+							{
+								pipeline.Cancel();
+								pipeline.WaitForComplete();
+							}
+						}
+					});
 				pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
-				if (!_progressService.ShowProgress(this, progressVM))
-				{
-					pipeline.Cancel();
-					pipeline.WaitForComplete();
-				}
-
+				_progressService.ShowProgress(this, progressVM);
 				IsChanged = true;
 			}
 		}
@@ -114,12 +122,12 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public ObservableCollection<SenseViewModel> Senses
+		public ReadOnlyObservableCollection<SenseViewModel> Senses
 		{
 			get { return _senses; }
 		}
 
-		public ObservableCollection<WordListsVarietyViewModel> Varieties
+		public ReadOnlyObservableCollection<WordListsVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}
@@ -127,8 +135,8 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Set("Senses", ref _senses, new ListViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(project.Senses, sense => new SenseViewModel(sense)));
-			Set("Varieties", ref _varieties, new ListViewModelCollection<ObservableCollection<Variety>, WordListsVarietyViewModel, Variety>(project.Varieties, variety =>
+			Set("Senses", ref _senses, new ReadOnlyMirroredCollection<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense)));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, WordListsVarietyViewModel>(project.Varieties, variety =>
 				{
 					var vm = new WordListsVarietyViewModel(project, variety);
 					vm.PropertyChanged += ChildPropertyChanged;

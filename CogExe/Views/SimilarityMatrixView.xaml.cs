@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
 
@@ -94,7 +95,7 @@ namespace SIL.Cog.Views
 			switch (e.PropertyName)
 			{
 				case "Varieties":
-					LoadColumns();
+					DispatcherHelper.CheckBeginInvokeOnUI(LoadColumns);
 					break;
 			}
 		}

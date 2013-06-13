@@ -29,7 +29,7 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_senses);
 		}
 
-		public ObservableCollection<VarietySenseViewModel> Senses
+		public ReadOnlyObservableCollection<VarietySenseViewModel> Senses
 		{
 			get { return _senses; }
 		}

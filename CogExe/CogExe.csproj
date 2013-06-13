@@ -93,6 +93,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.640\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
@@ -156,6 +159,7 @@
     <Compile Include="Controls\ZoomContentPresenter.cs" />
     <Compile Include="Controls\ZoomControl.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
+    <Compile Include="Converters\ConcurrentCollectionConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
@@ -282,7 +286,9 @@
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
     <Compile Include="ViewModels\SegmenterViewModel.cs" />
+    <Compile Include="ViewModels\SoundContextSurrogate.cs" />
     <Compile Include="ViewModels\TaskAreaIntegerViewModel.cs" />
+    <Compile Include="ViewModels\VarietyPairSurrogate.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
@@ -314,11 +320,11 @@
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\VowelGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
-    <Compile Include="ViewModels\ListViewModelCollection.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\VisualizationMasterViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />
+    <Compile Include="ViewModels\WordPairSurrogate.cs" />
     <Compile Include="ViewModels\WordPairsViewModel.cs" />
     <Compile Include="ViewModels\WordPairViewModel.cs" />
     <Compile Include="ViewModels\WordSegmentViewModel.cs" />
@@ -332,6 +338,7 @@
     <Compile Include="Views\AddUnnaturalClassSegmentDialog.xaml.cs">
       <DependentUpon>AddUnnaturalClassSegmentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ConcurrentCollection.cs" />
     <Compile Include="Views\DolgopolskyCognateIdentifierView.xaml.cs">
       <DependentUpon>DolgopolskyCognateIdentifierView.xaml</DependentUpon>
     </Compile>

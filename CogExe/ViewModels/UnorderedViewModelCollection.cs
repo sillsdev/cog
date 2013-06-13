@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -20,25 +19,22 @@ namespace SIL.Cog.ViewModels
 
 		private void SourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					switch (e.Action)
-					{
-						case NotifyCollectionChangedAction.Add:
-							foreach (TModel model in e.NewItems)
-								Add(_viewModelFactory(model));
-							break;
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach (TModel model in e.NewItems)
+						Add(_viewModelFactory(model));
+					break;
 
-						case NotifyCollectionChangedAction.Remove:
-							foreach (TModel model in e.OldItems)
-								Remove(model);
-							break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach (TModel model in e.OldItems)
+						Remove(model);
+					break;
 
-						case NotifyCollectionChangedAction.Reset:
-							Clear();
-							break;
-					}
-				});
+				case NotifyCollectionChangedAction.Reset:
+					Clear();
+					break;
+			}
 		}
 
 

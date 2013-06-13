@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+using GalaSoft.MvvmLight.Threading;
 using GraphSharp.Controls;
 using QuickGraph;
 using SIL.Cog.GraphAlgorithms;
@@ -56,7 +57,7 @@ namespace SIL.Cog.Views
 
 		private void GlobalCorrespondences_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			SetGraph();
+			DispatcherHelper.CheckBeginInvokeOnUI(SetGraph);
 		}
 
 		private void SetGraph()

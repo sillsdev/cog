@@ -33,8 +33,7 @@
 		private readonly ConsonantManner _manner;
 		private readonly bool _voice;
 
-		public ConsonantGlobalSegmentViewModel(string strRep, ConsonantPlace place, ConsonantManner manner, bool voice)
-			: base(strRep)
+		public ConsonantGlobalSegmentViewModel(ConsonantPlace place, ConsonantManner manner, bool voice)
 		{
 			_place = place;
 			_manner = manner;

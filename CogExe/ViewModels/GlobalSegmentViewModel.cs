@@ -1,19 +1,26 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Collections.Generic;
+using System.Linq;
+using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
 	public abstract class GlobalSegmentViewModel : ViewModelBase
 	{
-		private readonly string _strRep;
+		private readonly HashSet<string> _strReps; 
 
-		protected GlobalSegmentViewModel(string strRep)
+		protected GlobalSegmentViewModel()
 		{
-			_strRep = strRep;
+			_strReps = new HashSet<string>();
 		}
 
 		public string StrRep
 		{
-			get { return _strRep; }
+			get { return string.Join(",", _strReps.OrderBy(s => s)); }
+		}
+
+		public ISet<string> StrReps
+		{
+			get { return _strReps; }
 		}
 	}
 }

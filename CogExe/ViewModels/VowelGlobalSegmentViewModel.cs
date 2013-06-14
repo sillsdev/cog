@@ -26,8 +26,7 @@
 		private readonly VowelBackness _backness;
 		private readonly bool _round;
 
-		public VowelGlobalSegmentViewModel(string strRep, VowelHeight height, VowelBackness backness, bool round)
-			: base(strRep)
+		public VowelGlobalSegmentViewModel(VowelHeight height, VowelBackness backness, bool round)
 		{
 			_height = height;
 			_backness = backness;

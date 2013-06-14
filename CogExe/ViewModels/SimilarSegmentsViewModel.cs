@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text;
 using System.Linq;
 using System.Threading;
 using GalaSoft.MvvmLight.Command;
@@ -94,7 +93,7 @@ namespace SIL.Cog.ViewModels
 				new CommandViewModel("Medial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.MedialConsonants)),
 				new CommandViewModel("Final consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.FinalConsonants)),
 				new CommandViewModel("Vowels", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Vowels))));
-			_correspondenceFilter = new TaskAreaIntegerViewModel("Correspondence filter");
+			_correspondenceFilter = new TaskAreaIntegerViewModel("Frequency threshold");
 			_correspondenceFilter.PropertyChanging += _correspondenceFilter_PropertyChanging;
 			_correspondenceFilter.PropertyChanged += _correspondenceFilter_PropertyChanged;
 			TaskAreas.Add(_correspondenceFilter);
@@ -107,7 +106,7 @@ namespace SIL.Cog.ViewModels
 
 			var correspondenceType = (SoundCorrespondenceType) e.Argument;
 
-			var segs = new Dictionary<object, Dictionary<string, SegmentInfo>>();
+			var segs = new Dictionary<object, GlobalSegmentViewModel>();
 			var corrs = new Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo>();
 			int maxFreq = 0;
 			foreach (WordPair wp in _project.VarietyPairs.SelectMany(vp => vp.WordPairs).Where(wp => wp.AreCognatePredicted))
@@ -154,11 +153,11 @@ namespace SIL.Cog.ViewModels
 			if (_generateCorrespondencesWorker.CancellationPending)
 				e.Cancel = true;
 			else
-				e.Result = Tuple.Create(segs.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Values.MaxBy(si => si.Frequency).GlobalSegment), corrs, maxFreq);
+				e.Result = Tuple.Create(segs, corrs, maxFreq);
 			_workCompleteEvent.Set();
 		}
 
-		private static int AddConsonantCorrespondence(WordPairViewModel wp, Dictionary<object, Dictionary<string, SegmentInfo>> segs,
+		private static int AddConsonantCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
 			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, AlignedNodeViewModel node)
 		{
 			int freq = 0;
@@ -184,10 +183,9 @@ namespace SIL.Cog.ViewModels
 			return freq;
 		}
 
-		private static bool GetConsonant(Dictionary<object, Dictionary<string, SegmentInfo>> consonants, Segment consonant, out object key)
+		private static bool GetConsonant(Dictionary<object, GlobalSegmentViewModel> consonants, Segment consonant, out object key)
 		{
-			string strRep = RemoveDiacritics(consonant.StrRep);
-			if (strRep.Length > 1)
+			if (BaseCharCount(consonant.StrRep) > 1)
 			{
 				key = null;
 				return false;
@@ -235,13 +233,12 @@ namespace SIL.Cog.ViewModels
 			bool voice = voiceSymbol.ID == "voice+";
 
 			key = Tuple.Create(place, manner, voice);
-			Dictionary<string, SegmentInfo> segInfos = consonants.GetValue(key, () => new Dictionary<string, SegmentInfo>());
-			SegmentInfo si = segInfos.GetValue(strRep, () => new SegmentInfo(new ConsonantGlobalSegmentViewModel(strRep, place, manner, voice)));
-			si.Frequency++;
+			GlobalSegmentViewModel seg = consonants.GetValue(key, () => new ConsonantGlobalSegmentViewModel(place, manner, voice));
+			seg.StrReps.Add(consonant.StrRep);
 			return true;
 		}
 
-		private static int AddVowelCorrespondence(WordPairViewModel wp, Dictionary<object, Dictionary<string, SegmentInfo>> segs,
+		private static int AddVowelCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
 			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, AlignedNodeViewModel node)
 		{
 			int freq = 0;
@@ -267,10 +264,9 @@ namespace SIL.Cog.ViewModels
 			return freq;
 		}
 
-		private static bool GetVowel(Dictionary<object, Dictionary<string, SegmentInfo>> vowels, Segment vowel, out object key)
+		private static bool GetVowel(Dictionary<object, GlobalSegmentViewModel> vowels, Segment vowel, out object key)
 		{
-			string strRep = RemoveDiacritics(vowel.StrRep);
-			if (strRep.Length > 1)
+			if (BaseCharCount(vowel.StrRep) > 1)
 			{
 				key = null;
 				return false;
@@ -285,15 +281,14 @@ namespace SIL.Cog.ViewModels
 			bool round = roundSymbol.ID == "round+";
 
 			key = Tuple.Create(height, backness, round);
-			Dictionary<string, SegmentInfo> segInfos = vowels.GetValue(key, () => new Dictionary<string, SegmentInfo>());
-			SegmentInfo si = segInfos.GetValue(strRep, () => new SegmentInfo(new VowelGlobalSegmentViewModel(strRep, height, backness, round)));
-			si.Frequency++;
+			GlobalSegmentViewModel seg = vowels.GetValue(key, () => new VowelGlobalSegmentViewModel(height, backness, round));
+			seg.StrReps.Add(vowel.StrRep);
 			return true;
 		}
 
-		private static string RemoveDiacritics(string str)
+		private static int BaseCharCount(string str)
 		{
-			var sb = new StringBuilder();
+			int count = 0;
 			foreach (char c in str)
 			{
 				switch (CharUnicodeInfo.GetUnicodeCategory(c))
@@ -304,11 +299,11 @@ namespace SIL.Cog.ViewModels
 						break;
 
 					default:
-						sb.Append(c);
+						count++;
 						break;
 				}
 			}
-			return sb.ToString();
+			return count;
 		}
 
 		private void GenerateCorrespondencesAsyncFinished(object sender, RunWorkerCompletedEventArgs e)
@@ -384,11 +379,10 @@ namespace SIL.Cog.ViewModels
 						{
 							foreach (AlignedNodeViewModel an in wp.AlignedNodes)
 							{
-								string strRep1 = RemoveDiacritics(an.StrRep1);
-								string strRep2 = RemoveDiacritics(an.StrRep2);
-								an.IsSelected = strRep1 != strRep2
-									&& (strRep1 == _selectedCorrespondence.Segment1.StrRep || strRep1 == _selectedCorrespondence.Segment2.StrRep)
-								    && (strRep2 == _selectedCorrespondence.Segment1.StrRep || strRep2 == _selectedCorrespondence.Segment2.StrRep);
+								an.IsSelected = ((_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep1) && !_selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep1))
+									|| (!_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep1) && _selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep1)))
+								    && ((_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep2) && !_selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep2))
+									|| (!_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep2) && _selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep2)));
 							}
 							_wordPairs.WordPairs.Add(wp);
 						}
@@ -475,23 +469,6 @@ namespace SIL.Cog.ViewModels
 						SelectedCorrespondence = null;
 					break;
 			}
-		}
-
-		private class SegmentInfo
-		{
-			private readonly GlobalSegmentViewModel _globalSegment;
-
-			public SegmentInfo(GlobalSegmentViewModel globalSegment)
-			{
-				_globalSegment = globalSegment;
-			}
-
-			public GlobalSegmentViewModel GlobalSegment
-			{
-				get { return _globalSegment; }
-			}
-
-			public int Frequency { get; set; }
 		}
 
 		private class CorrespondenceInfo

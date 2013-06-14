@@ -479,6 +479,7 @@
       <DependentUpon>VarietyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OverrideCursor.cs" />
+    <Compile Include="Views\WindowPlacement.cs" />
     <Compile Include="Views\WordPairsView.xaml.cs">
       <DependentUpon>WordPairsView.xaml</DependentUpon>
     </Compile>

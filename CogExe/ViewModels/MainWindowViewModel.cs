@@ -31,7 +31,6 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _exportCognateSetsCommand;
 		private readonly ICommand _exportHierarchicalGraphCommand;
 		private readonly ICommand _exportNetworkGraphCommand;
-		private readonly ICommand _exitCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
@@ -60,7 +59,6 @@ namespace SIL.Cog.ViewModels
 			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
 			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
 			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
-			_exitCommand = new RelayCommand(Exit, CanExit);
 
 			foreach (MasterViewModelBase childView in Views.OfType<MasterViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
@@ -293,7 +291,7 @@ namespace SIL.Cog.ViewModels
 				_exportService.ExportNetworkGraph(this, _project.GenerateNetworkGraph(vm.SimilarityMetric), vm.SimilarityScoreFilter);
 		}
 
-		private bool CanExit()
+		public bool CanExit()
 		{
 			if (CanCloseProject())
 			{
@@ -318,11 +316,6 @@ namespace SIL.Cog.ViewModels
 					return false;
 			}
 			return true;
-		}
-
-		private void Exit()
-		{
-			Settings.Default.Save();
 		}
 
 		public ICommand NewCommand
@@ -378,11 +371,6 @@ namespace SIL.Cog.ViewModels
 		public ICommand ExportNetworkGraphCommand
 		{
 			get { return _exportNetworkGraphCommand; }
-		}
-
-		public ICommand ExitCommand
-		{
-			get { return _exitCommand; }
 		}
 
 		private string ProjectFilePath

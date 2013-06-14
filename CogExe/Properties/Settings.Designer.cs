@@ -34,5 +34,17 @@ namespace SIL.Cog.Properties {
                 this["LastProject"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WindowPlacement {
+            get {
+                return ((string)(this["WindowPlacement"]));
+            }
+            set {
+                this["WindowPlacement"] = value;
+            }
+        }
     }
 }

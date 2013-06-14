@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.Windows;
+using SIL.Cog.Properties;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -22,9 +24,10 @@ namespace SIL.Cog.Views
 		private void Window_Closing(object sender, CancelEventArgs e)
 		{
 			var vm = (MainWindowViewModel) DataContext;
-			if (vm.ExitCommand.CanExecute(null))
+			if (vm.CanExit())
 			{
-				vm.ExitCommand.Execute(null);
+				Settings.Default.WindowPlacement = WindowPlacement.GetPlacement(this);
+				Settings.Default.Save();
 			}
 			else
 			{
@@ -36,6 +39,12 @@ namespace SIL.Cog.Views
 		{
 			var aboutBox = new AboutBox(this);
 			aboutBox.ShowDialog();
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+			WindowPlacement.SetPlacement(this, Settings.Default.WindowPlacement);
 		}
 	}
 }

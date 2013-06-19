@@ -46,14 +46,15 @@
     </Compile>
     <Compile Include="Affix.cs" />
     <Compile Include="Alignment.cs" />
+    <Compile Include="AlignmentCell.cs" />
     <Compile Include="Cluster.cs" />
     <Compile Include="Clusterers\FlatUpgmaClusterer.cs" />
     <Compile Include="Clusterers\NeighborJoiningClusterer.cs" />
     <Compile Include="Clusterers\UpgmaClusterer.cs" />
     <Compile Include="ClusterList.cs" />
-    <Compile Include="Components\AlignerBase.cs" />
-    <Compile Include="Components\AlignerResult.cs" />
-    <Compile Include="Components\AlignerSettings.cs" />
+    <Compile Include="Components\WordPairAlignerBase.cs" />
+    <Compile Include="Components\WordPairAlignerResult.cs" />
+    <Compile Include="Components\WordPairAlignerSettings.cs" />
     <Compile Include="Components\Aline.cs" />
     <Compile Include="Components\BlairCognateIdentifier.cs" />
     <Compile Include="Components\DolgopolskyCognateIdentifier.cs" />
@@ -71,8 +72,6 @@
     <Compile Include="Components\TypeSegmentMappings.cs" />
     <Compile Include="Components\UnsupervisedAffixIdentifier.cs" />
     <Compile Include="Components\VarietyPairGenerator.cs" />
-    <Compile Include="Components\VarietyPairTextOutput.cs" />
-    <Compile Include="Components\VarietyTextOutput.cs" />
     <Compile Include="Components\WordPairGenerator.cs" />
     <Compile Include="Config\Components\AlignerConfig.cs" />
     <Compile Include="Config\Components\AlineConfig.cs" />
@@ -105,8 +104,8 @@
     <Compile Include="CogFeatureSystem.cs" />
     <Compile Include="CogProject.cs" />
     <Compile Include="CogExtensions.cs" />
-    <Compile Include="IAligner.cs" />
-    <Compile Include="IAlignerResult.cs" />
+    <Compile Include="IWordPairAligner.cs" />
+    <Compile Include="IWordPairAlignerResult.cs" />
     <Compile Include="IConditionalProbabilityDistribution.cs" />
     <Compile Include="IProbabilityDistribution.cs" />
     <Compile Include="IProcessor.cs" />
@@ -123,6 +122,8 @@
     <Compile Include="SegmentCollection.cs" />
     <Compile Include="Segmenter.cs" />
     <Compile Include="Sense.cs" />
+    <Compile Include="SequenceAlignment\IPairwiseAlignmentScorer.cs" />
+    <Compile Include="SequenceAlignment\PairwiseAlignmentAlgorithm.cs" />
     <Compile Include="SoundContext.cs" />
     <Compile Include="SoundClass.cs" />
     <Compile Include="Statistics\ConditionalFrequencyDistribution.cs" />

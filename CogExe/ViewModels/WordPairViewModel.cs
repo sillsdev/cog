@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
@@ -14,6 +13,7 @@ namespace SIL.Cog.ViewModels
 
 		private readonly AlignedNodeViewModel _prefixNode;
 		private readonly ReadOnlyCollection<AlignedNodeViewModel> _alignedNodes;
+		private readonly Alignment<ShapeNode> _alignment; 
 		private readonly AlignedNodeViewModel _suffixNode;
 		private readonly SenseViewModel _sense;
 		private readonly VarietyViewModel _variety1;
@@ -29,21 +29,21 @@ namespace SIL.Cog.ViewModels
 			_variety1 = new VarietyViewModel(_wordPair.VarietyPair.Variety1);
 			_variety2 = new VarietyViewModel(_wordPair.VarietyPair.Variety2);
 
-			IAligner aligner = _project.Aligners["primary"];
-			IAlignerResult results = aligner.Compute(_wordPair);
-			Alignment alignment = results.GetAlignments().First();
-			_prefixNode = new AlignedNodeViewModel(alignment.Prefix1, alignment.Prefix2);
+			IWordPairAligner aligner = _project.Aligners["primary"];
+			IWordPairAlignerResult results = aligner.Compute(_wordPair);
+			_alignment = results.GetAlignments().First();
+			_prefixNode = new AlignedNodeViewModel(_alignment.Prefixes[0], _alignment.Prefixes[1]);
 			var nodes = new List<AlignedNodeViewModel>();
 			int i = 0;
-			foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> a in alignment.AlignedAnnotations)
+			for (int column = 0; column < _alignment.ColumnCount; column++)
 			{
 				string note = null;
 				if (i < _wordPair.AlignmentNotes.Count)
 					note = _wordPair.AlignmentNotes[i];
-				nodes.Add(new AlignedNodeViewModel(a.Item1, a.Item2, note));
+				nodes.Add(new AlignedNodeViewModel(column, _alignment[0, column], _alignment[1, column], note));
 				i++;
 			}
-			_suffixNode = new AlignedNodeViewModel(alignment.Suffix1, alignment.Suffix2);
+			_suffixNode = new AlignedNodeViewModel(_alignment.Suffixes[0], _alignment.Suffixes[1]);
 
 			_alignedNodes = new ReadOnlyCollection<AlignedNodeViewModel>(nodes);
 		}
@@ -96,6 +96,11 @@ namespace SIL.Cog.ViewModels
 		public WordPair ModelWordPair
 		{
 			get { return _wordPair; }
+		}
+
+		public Alignment<ShapeNode> ModelAlignment
+		{
+			get { return _alignment; }
 		}
 	}
 }

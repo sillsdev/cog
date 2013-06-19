@@ -15,7 +15,7 @@ namespace SIL.Cog
 		private readonly KeyedBulkObservableCollection<string, Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
-		private readonly ObservableDictionary<string, IAligner> _aligners; 
+		private readonly ObservableDictionary<string, IWordPairAligner> _aligners; 
 
 		private readonly ObservableDictionary<string, IProcessor<CogProject>> _projectProcessors; 
 		private readonly ObservableDictionary<string, IProcessor<Variety>> _varietyProcessors;
@@ -30,7 +30,7 @@ namespace SIL.Cog
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
 
-			_aligners = new ObservableDictionary<string, IAligner>();
+			_aligners = new ObservableDictionary<string, IWordPairAligner>();
 
 			_projectProcessors = new ObservableDictionary<string, IProcessor<CogProject>>();
 			_varietyProcessors = new ObservableDictionary<string, IProcessor<Variety>>();
@@ -109,7 +109,7 @@ namespace SIL.Cog
 			get { return _varietyPairs; }
 		}
 
-		public ObservableDictionary<string, IAligner> Aligners
+		public ObservableDictionary<string, IWordPairAligner> Aligners
 		{
 			get { return _aligners; }
 		}

@@ -134,25 +134,29 @@ namespace SIL.Cog.ViewModels
 			switch (msg.Notification)
 			{
 				case Notifications.ComparisonPerformed:
-					if (ProjectFilePath == null)
+					if (ProjectFilePath == null || IsChanged)
 						return;
-
-					string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
-					Directory.CreateDirectory(path);
-					string name = Path.GetFileNameWithoutExtension(ProjectFilePath);
-					Debug.Assert(name != null);
-					string cacheFileName = Path.Combine(path, name + ".cache");
-					using (FileStream fs = File.Create(cacheFileName))
-					{
-						Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
-
-						foreach (VarietyPair vp in _project.VarietyPairs)
-						{
-							var surrogate = new VarietyPairSurrogate(vp);
-							Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
-						}
-					}
+					SaveComparisonCache();
 					break;
+			}
+		}
+
+		private void SaveComparisonCache()
+		{
+			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
+			Directory.CreateDirectory(path);
+			string name = Path.GetFileNameWithoutExtension(ProjectFilePath);
+			Debug.Assert(name != null);
+			string cacheFileName = Path.Combine(path, name + ".cache");
+			using (FileStream fs = File.Create(cacheFileName))
+			{
+				Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
+
+				foreach (VarietyPair vp in _project.VarietyPairs)
+				{
+					var surrogate = new VarietyPairSurrogate(vp);
+					Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
+				}
 			}
 		}
 
@@ -431,6 +435,7 @@ namespace SIL.Cog.ViewModels
 		{
 			ConfigManager.Save(_project, path);
 			ProjectFilePath = path;
+			SaveComparisonCache();
 			AcceptChanges();
 		}
 	}

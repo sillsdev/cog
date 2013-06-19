@@ -46,6 +46,7 @@ namespace SIL.Cog.ViewModels
 			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected)
 				return;
 
+			Messenger.Default.Send(new NotificationMessage(Notifications.PerformingComparison));
 			if (_currentVarietyPair != null)
 				_project.VarietyPairs.Remove(_currentVarietyPair.ModelVarietyPair);
 
@@ -53,8 +54,11 @@ namespace SIL.Cog.ViewModels
 			_project.VarietyPairs.Add(pair);
 
 			var pipeline = new Pipeline<VarietyPair>(_project.GetVarietyPairProcessors());
-			_progressService.ShowProgress(() => pipeline.Process(pair.ToEnumerable()));
-			SetCurrentVarietyPair();
+			_progressService.ShowProgress(() =>
+				{
+					pipeline.Process(pair.ToEnumerable());
+					Messenger.Default.Send(new NotificationMessage(Notifications.ComparisonPerformed));
+				});
 		}
 
 		private void ExportVarietyPair()
@@ -113,8 +117,7 @@ namespace SIL.Cog.ViewModels
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
-					Set("CurrentVarietyPair", ref _currentVarietyPair, null);
-					CurrentVarietyPairState = CurrentVarietyPairState.NotSelected;
+					ResetCurrentVarietyPair();
 					break;
 			}
 		}

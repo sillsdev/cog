@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using SIL.Cog.Components;
+using SIL.Cog.SequenceAlignment;
 using SIL.Cog.Services;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -26,7 +27,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private AlineMode _mode;
-		private bool _disableExpansionCompression;
+		private bool _expansionCompressionEnabled;
 		private readonly ReadOnlyCollection<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
 
@@ -44,20 +45,20 @@ namespace SIL.Cog.ViewModels
 			_features = new ReadOnlyCollection<RelevantFeatureViewModel>(features);
 			switch (aligner.Settings.Mode)
 			{
-				case AlignerMode.Local:
+				case AlignmentMode.Local:
 					_mode = AlineMode.Local;
 					break;
-				case AlignerMode.Global:
+				case AlignmentMode.Global:
 					_mode = AlineMode.Global;
 					break;
-				case AlignerMode.SemiGlobal:
+				case AlignmentMode.SemiGlobal:
 					_mode = AlineMode.SemiGlobal;
 					break;
-				case AlignerMode.HalfLocal:
+				case AlignmentMode.HalfLocal:
 					_mode = AlineMode.HalfLocal;
 					break;
 			}
-			_disableExpansionCompression = aligner.Settings.DisableExpansionCompression;
+			_expansionCompressionEnabled = aligner.Settings.ExpansionCompressionEnabled;
 			_soundClasses = new SoundClassesViewModel(dialogService, project, aligner.ContextualSoundClasses);
 			_soundClasses.SoundClasses.CollectionChanged += NaturalClassesChanged;
 		}
@@ -77,12 +78,12 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public bool DisableExpansionCompression
+		public bool ExpansionCompressionEnabled
 		{
-			get { return _disableExpansionCompression; }
+			get { return _expansionCompressionEnabled; }
 			set
 			{
-				if (Set(() => DisableExpansionCompression, ref _disableExpansionCompression, value))
+				if (Set(() => ExpansionCompressionEnabled, ref _expansionCompressionEnabled, value))
 					IsChanged = true;
 			}
 		}
@@ -106,20 +107,20 @@ namespace SIL.Cog.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var mode = AlignerMode.Local;
+			var mode = AlignmentMode.Local;
 			switch (_mode)
 			{
 				case AlineMode.Local:
-					mode = AlignerMode.Local;
+					mode = AlignmentMode.Local;
 					break;
 				case AlineMode.Global:
-					mode = AlignerMode.Global;
+					mode = AlignmentMode.Global;
 					break;
 				case AlineMode.SemiGlobal:
-					mode = AlignerMode.SemiGlobal;
+					mode = AlignmentMode.SemiGlobal;
 					break;
 				case AlineMode.HalfLocal:
-					mode = AlignerMode.HalfLocal;
+					mode = AlignmentMode.HalfLocal;
 					break;
 			}
 
@@ -139,7 +140,7 @@ namespace SIL.Cog.ViewModels
 			}
 
 			var aligner = new Aline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
-				new AlignerSettings {DisableExpansionCompression = _disableExpansionCompression, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass)});
+				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass)});
 			Project.Aligners["primary"] = aligner;
 			return aligner;
 		}

@@ -1155,7 +1155,7 @@
 	<Aligners>
 		<Aligner id="primary" xsi:type="Aline">
 			<Mode>local</Mode>
-			<DisableExpansionCompression>false</DisableExpansionCompression>
+			<ExpansionCompressionEnabled>false</ExpansionCompressionEnabled>
 			<RelevantFeatures>
 				<RelevantFeature ref="height" weight="10" vowel="true">
 					<RelevantValue ref="close" metric="100"/>

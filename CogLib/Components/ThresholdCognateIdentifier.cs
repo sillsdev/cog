@@ -1,3 +1,5 @@
+using SIL.Machine;
+
 namespace SIL.Cog.Components
 {
 	public class ThresholdCognateIdentifier : ProcessorBase<VarietyPair>
@@ -26,15 +28,15 @@ namespace SIL.Cog.Components
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
-			IAligner aligner = Project.Aligners[_alignerID];
+			IWordPairAligner aligner = Project.Aligners[_alignerID];
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
-				IAlignerResult alignerResult = aligner.Compute(wordPair);
+				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
 				int alignmentCount = 0;
 				double totalAlignmentScore = 0.0;
-				foreach (Alignment alignment in alignerResult.GetAlignments())
+				foreach (Alignment<ShapeNode> alignment in alignerResult.GetAlignments())
 				{
-					totalAlignmentScore += alignment.Score;
+					totalAlignmentScore += alignment.NormalizedScore;
 					alignmentCount++;
 				}
 				wordPair.PhoneticSimilarityScore = totalAlignmentScore / alignmentCount;

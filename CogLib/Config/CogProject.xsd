@@ -55,7 +55,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="AlignerBase" abstract="true">
+	<xs:complexType name="WordPairAlignerBase" abstract="true">
 		<xs:sequence>
 			<xs:element name="Mode">
 				<xs:simpleType>
@@ -67,7 +67,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="DisableExpansionCompression" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+			<xs:element name="ExpansionCompressionEnabled" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 			<xs:element name="ContextualSoundClasses" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
@@ -99,7 +99,7 @@
 
 	<xs:complexType name="Aline">
 		<xs:complexContent>
-			<xs:extension base="AlignerBase">
+			<xs:extension base="WordPairAlignerBase">
 				<xs:sequence>
 					<xs:element name="RelevantFeatures">
 						<xs:complexType>
@@ -266,7 +266,7 @@
 				<xs:element name="Aligners">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Aligner" type="AlignerBase" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element name="Aligner" type="WordPairAlignerBase" minOccurs="0" maxOccurs="unbounded" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>

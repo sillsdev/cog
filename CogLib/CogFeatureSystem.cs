@@ -17,7 +17,6 @@ namespace SIL.Cog
 		public static readonly FeatureSymbol PrefixType;
 		public static readonly FeatureSymbol SuffixType;
 		public static readonly FeatureSymbol StemType;
-		public static readonly FeatureSymbol ClusterType;
 
 		public static readonly StringFeature OriginalStrRep;
 		public static readonly StringFeature StrRep;
@@ -35,9 +34,8 @@ namespace SIL.Cog
 			StemType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "stem"};
 			PrefixType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "prefix"};
 			SuffixType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "suffix"};
-			ClusterType = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "cluster"};
 
-			Type = new SymbolicFeature(Guid.NewGuid().ToString(), AnchorType, VowelType, ConsonantType, ToneLetterType, BoundaryType, NullType, StemType, PrefixType, SuffixType, ClusterType) {Description = "Type"};
+			Type = new SymbolicFeature(Guid.NewGuid().ToString(), AnchorType, VowelType, ConsonantType, ToneLetterType, BoundaryType, NullType, StemType, PrefixType, SuffixType) {Description = "Type"};
 
 			OriginalStrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "OriginalStrRep"};
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};

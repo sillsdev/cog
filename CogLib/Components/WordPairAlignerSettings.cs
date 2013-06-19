@@ -1,26 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.Cog.SequenceAlignment;
 
 namespace SIL.Cog.Components
 {
-	public enum AlignerMode
+	public sealed class WordPairAlignerSettings
 	{
-		Global = 0,
-		SemiGlobal,
-		HalfLocal,
-		Local
-	}
-
-	public sealed class AlignerSettings
-	{
-		private AlignerMode _mode;
-		private bool _disableExpansionCompression;
+		private AlignmentMode _mode;
+		private bool _expansionCompressionEnabled;
 		private SoundClass[] _contextualSoundClasses;
 
 		internal bool ReadOnly { get; set; }
 
-		public AlignerMode Mode
+		public AlignmentMode Mode
 		{
 			get { return _mode; }
 			set
@@ -30,13 +23,13 @@ namespace SIL.Cog.Components
 			}
 		}
 
-		public bool DisableExpansionCompression
+		public bool ExpansionCompressionEnabled
 		{
-			get { return _disableExpansionCompression; }
+			get { return _expansionCompressionEnabled; }
 			set
 			{
 				CheckReadOnly();
-				_disableExpansionCompression = value;
+				_expansionCompressionEnabled = value;
 			}
 		}
 
@@ -58,7 +51,7 @@ namespace SIL.Cog.Components
 		private void CheckReadOnly()
 		{
 			if (ReadOnly)
-				throw new InvalidOperationException("Settings cannot be changed after an AlignerBase object has been created.");
+				throw new InvalidOperationException("Settings cannot be changed after an Aligner object has been created.");
 		}
 	}
 }

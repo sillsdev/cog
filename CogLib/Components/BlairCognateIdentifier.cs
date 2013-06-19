@@ -52,7 +52,7 @@ namespace SIL.Cog.Components
 
 		public override void Process(VarietyPair varietyPair)
 		{
-			IAligner aligner = Project.Aligners[_alignerID];
+			IWordPairAligner aligner = Project.Aligners[_alignerID];
 			var correspondences = new HashSet<Tuple<string, string>>(varietyPair.SoundChangeFrequencyDistribution.Conditions
 				.SelectMany(cond => varietyPair.SoundChangeFrequencyDistribution[cond].ObservedSamples.Where(ngram => varietyPair.SoundChangeFrequencyDistribution[cond][ngram] >= 3),
 				(lhs, ngram) => Tuple.Create(lhs.Target.ToString(), ngram.ToString())));
@@ -60,19 +60,17 @@ namespace SIL.Cog.Components
 			int totalCognateCount = 0;
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
-				IAlignerResult alignerResult = aligner.Compute(wordPair);
-				Alignment alignment = alignerResult.GetAlignments().First();
+				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
+				Alignment<ShapeNode> alignment = alignerResult.GetAlignments().First();
 				int cat1Count = 0;
 				int cat1And2Count = 0;
 				int totalCount = 0;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> link in alignment.AlignedAnnotations)
+				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
-					var u = link.Item1.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
-						: new Ngram(alignment.Shape1.GetNodes(link.Item1.Span).Select(node => varietyPair.Variety1.Segments[node]));
-					var v = link.Item2.Type() == CogFeatureSystem.NullType ? new Ngram(Segment.Null)
-						: new Ngram(alignment.Shape2.GetNodes(link.Item2.Span).Select(node => varietyPair.Variety2.Segments[node]));
-					string uStr = link.Item1.StrRep();
-					string vStr = link.Item2.StrRep();
+					Ngram u = alignment[0, column].ToNgram(varietyPair.Variety1);
+					Ngram v = alignment[1, column].ToNgram(varietyPair.Variety2);
+					string uStr = u.ToString();
+					string vStr = v.ToString();
 					int cat = 3;
 					if (uStr == vStr)
 					{
@@ -121,7 +119,7 @@ namespace SIL.Cog.Components
 				double type1Score = (double) cat1Count / totalCount;
 				double type1And2Score = (double) cat1And2Count / totalCount;
 				wordPair.AreCognatePredicted = type1Score >= 0.5 && type1And2Score >= 0.75;
-				wordPair.PhoneticSimilarityScore = alignment.Score;
+				wordPair.PhoneticSimilarityScore = alignment.NormalizedScore;
 				if (wordPair.AreCognatePredicted)
 					totalCognateCount++;
 				totalScore += wordPair.PhoneticSimilarityScore;

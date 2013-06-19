@@ -1,68 +1,69 @@
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Cog.Components;
+using SIL.Cog.SequenceAlignment;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Config.Components
 {
-	public abstract class AlignerConfig : IComponentConfig<IAligner>
+	public abstract class AlignerConfig : IComponentConfig<IWordPairAligner>
 	{
-		public abstract IAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem);
+		public abstract IWordPairAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem);
 
-		protected AlignerSettings LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem)
+		protected WordPairAlignerSettings LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem)
 		{
-			var settings = new AlignerSettings();
+			var settings = new WordPairAlignerSettings();
 			var modeStr = (string) elem.Element(ConfigManager.Cog + "Mode");
 			if (modeStr != null)
 			{
 				switch (modeStr)
 				{
 					case "local":
-						settings.Mode = AlignerMode.Local;
+						settings.Mode = AlignmentMode.Local;
 						break;
 					case "global":
-						settings.Mode = AlignerMode.Global;
+						settings.Mode = AlignmentMode.Global;
 						break;
 					case "semi-global":
-						settings.Mode = AlignerMode.SemiGlobal;
+						settings.Mode = AlignmentMode.SemiGlobal;
 						break;
 					case "half-local":
-						settings.Mode = AlignerMode.HalfLocal;
+						settings.Mode = AlignmentMode.HalfLocal;
 						break;
 				}
 			}
-			var disableExpansionCompressionStr = (string) elem.Element(ConfigManager.Cog + "DisableExpansionCompression");
+			var disableExpansionCompressionStr = (string) elem.Element(ConfigManager.Cog + "ExpansionCompressionEnabled");
 			if (disableExpansionCompressionStr != null)
-				settings.DisableExpansionCompression = bool.Parse(disableExpansionCompressionStr);
+				settings.ExpansionCompressionEnabled = bool.Parse(disableExpansionCompressionStr);
 			XElement soundClassesElem = elem.Element(ConfigManager.Cog + "ContextualSoundClasses");
 			if (soundClassesElem != null && soundClassesElem.HasElements)
 				settings.ContextualSoundClasses = ConfigManager.LoadSoundClasses(segmenter, featSys, soundClassesElem);
 			return settings;
 		}
 
-		public abstract void Save(IAligner component, XElement elem);
+		public abstract void Save(IWordPairAligner component, XElement elem);
 
-		protected void SaveSettings(AlignerSettings settings, XElement elem)
+		protected void SaveSettings(WordPairAlignerSettings settings, XElement elem)
 		{
 			string modeStr = null;
 			switch (settings.Mode)
 			{
-				case AlignerMode.Local:
+				case AlignmentMode.Local:
 					modeStr = "local";
 					break;
-				case AlignerMode.Global:
+				case AlignmentMode.Global:
 					modeStr = "global";
 					break;
-				case AlignerMode.SemiGlobal:
+				case AlignmentMode.SemiGlobal:
 					modeStr = "semi-global";
 					break;
-				case AlignerMode.HalfLocal:
+				case AlignmentMode.HalfLocal:
 					modeStr = "half-local";
 					break;
 			}
 			elem.Add(new XElement(ConfigManager.Cog + "Mode", modeStr));
-			elem.Add(new XElement(ConfigManager.Cog + "DisableExpansionCompression", settings.DisableExpansionCompression));
+			elem.Add(new XElement(ConfigManager.Cog + "ExpansionCompressionEnabled", settings.ExpansionCompressionEnabled));
 			if (settings.ContextualSoundClasses.Any())
 			{
 				elem.Add(new XElement(ConfigManager.Cog + "ContextualSoundClasses", ConfigManager.SaveSoundClasses(settings.ContextualSoundClasses)));

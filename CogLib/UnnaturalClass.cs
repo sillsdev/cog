@@ -69,16 +69,16 @@ namespace SIL.Cog
 			get { return _ignoreModifiers; }
 		}
 
-		public override bool Matches(Annotation<ShapeNode> ann)
+		public override bool Matches(Segment left, Ngram target, Segment right)
 		{
-			string strRep = ann.StrRep();
+			string strRep = target.ToString();
 			if (_ignoreModifiers)
 				strRep = StripModifiers(strRep);
 
-			if (ann.Span.Start.Prev != null && ann.Span.Start.Prev.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("#{0}", strRep)))
+			if (left != null && left.Type == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("#{0}", strRep)))
 				return true;
 
-			if (ann.Span.End.Next != null && ann.Span.End.Next.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("{0}#", strRep)))
+			if (right != null && right.Type == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("{0}#", strRep)))
 				return true;
 
 			return _normalizedSegments.Contains(strRep);

@@ -21,7 +21,10 @@ namespace SIL.Cog.Views
 
 		private void WordPairsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var vm = (WordPairsViewModel) DataContext;
+			var vm = DataContext as WordPairsViewModel;
+			if (vm == null)
+				return;
+
 			foreach (WordPairViewModel wp in e.RemovedItems)
 				vm.SelectedWordPairs.Remove(wp);
 			foreach (WordPairViewModel wp in e.AddedItems)

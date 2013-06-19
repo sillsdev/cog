@@ -40,6 +40,7 @@ namespace SIL.Cog.ViewModels
 
 		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
+			IWordPairAligner aligner = _project.Aligners["primary"];
 			wordPairs.SelectedChangeWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{
@@ -52,8 +53,8 @@ namespace SIL.Cog.ViewModels
 					}
 					else
 					{
-						SoundContext lhs = GetLhs(node);
-						Ngram corr = _varietyPair.Variety2.Segments[node.Annotation2];
+						SoundContext lhs = wordPair.ModelAlignment.ToSoundContext(0, node.Column, wordPair.ModelWordPair.Word1, aligner.ContextualSoundClasses);
+						Ngram corr = wordPair.ModelAlignment[1, node.Column].ToNgram(_varietyPair.Variety2);
 						node.IsSelected = lhs.Equals(_currentSoundChange.ModelSoundChangeLhs) && corr.Equals(_currentSoundChange.ModelCorrespondence);
 						if (node.IsSelected)
 							selected = true;
@@ -63,12 +64,6 @@ namespace SIL.Cog.ViewModels
 				if (selected)
 					wordPairs.SelectedChangeWordPairs.Add(wordPair);
 			}
-		}
-
-		private SoundContext GetLhs(AlignedNodeViewModel node)
-		{
-			IAligner aligner = _project.Aligners["primary"];
-			return node.Annotation1.Sound(_varietyPair.Variety1, aligner.ContextualSoundClasses);
 		}
 
 		public bool AreVarietiesInOrder

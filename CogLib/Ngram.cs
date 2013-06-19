@@ -45,7 +45,7 @@ namespace SIL.Cog
 			get
 			{
 				if (_segments.Length == 0)
-					return null;
+					throw new InvalidOperationException("The n-gram is empty.");
 				return _segments[0];
 			}
 		}
@@ -53,8 +53,7 @@ namespace SIL.Cog
 		public Segment GetFirst(Direction dir)
 		{
 			if (_segments.Length == 0)
-				return null;
-
+				throw new InvalidOperationException("The n-gram is empty.");
 			return dir == Direction.LeftToRight ? First : Last;
 		}
 
@@ -63,7 +62,7 @@ namespace SIL.Cog
 			get
 			{
 				if (_segments.Length == 0)
-					return null;
+					throw new InvalidOperationException("The n-gram is empty.");
 				return _segments[_segments.Length - 1];
 			}
 		}
@@ -71,7 +70,7 @@ namespace SIL.Cog
 		public Segment GetLast(Direction dir)
 		{
 			if (_segments.Length == 0)
-				return null;
+				throw new InvalidOperationException("The n-gram is empty.");
 
 			return dir == Direction.LeftToRight ? Last : First;
 		}

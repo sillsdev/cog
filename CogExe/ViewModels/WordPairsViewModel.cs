@@ -151,34 +151,14 @@ namespace SIL.Cog.ViewModels
 
 		private static string PadString(string str, params string[] strs)
 		{
-			int len = GetLength(str);
-			int maxLen = strs.Select(GetLength).Concat(len).Max();
+			int len = str.DisplayLength();
+			int maxLen = strs.Select(s => s.DisplayLength()).Concat(len).Max();
 			var sb = new StringBuilder();
 			sb.Append(str);
 			for (int i = 0; i < maxLen - len; i++)
 				sb.Append(" ");
 
 			return sb.ToString();
-		}
-
-		private static int GetLength(string str)
-		{
-			int len = 0;
-			foreach (char c in str)
-			{
-				switch (CharUnicodeInfo.GetUnicodeCategory(c))
-				{
-					case UnicodeCategory.NonSpacingMark:
-					case UnicodeCategory.SpacingCombiningMark:
-					case UnicodeCategory.EnclosingMark:
-						break;
-
-					default:
-						len++;
-						break;
-				}
-			}
-			return len;
 		}
 	}
 }

@@ -26,6 +26,7 @@ namespace SIL.Cog.Views
 			correspondenceSource.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
 			CorrespondenceDataGrid.ItemsSource = correspondenceSource;
 			correspondenceSource.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
+			correspondenceSource.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
 			correspondenceSource.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
 			correspondenceSource.Refresh();
 			CorrespondenceDataGrid.SelectedIndex = 0;
@@ -36,6 +37,7 @@ namespace SIL.Cog.Views
 			var lcv = (ListCollectionView) CollectionViewSource.GetDefaultView(CorrespondenceDataGrid.ItemsSource);
 			lcv.SortDescriptions.Clear();
 			lcv.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
+			lcv.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
 
 			ListSortDirection direction = e.Column.SortDirection != ListSortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending;
 

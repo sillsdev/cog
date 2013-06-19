@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Collections;
+using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
@@ -119,32 +119,30 @@ namespace SIL.Cog.ViewModels
 				switch (correspondenceType)
 				{
 					case SoundCorrespondenceType.InitialConsonants:
-						AlignedNodeViewModel initialNode = vm.AlignedNodes[0];
-						maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, initialNode), maxFreq);
+						maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, 0), maxFreq);
 						break;
 
 					case SoundCorrespondenceType.MedialConsonants:
-						foreach (AlignedNodeViewModel node in vm.AlignedNodes.Skip(1).Take(vm.AlignedNodes.Count - 2))
+						for (int column = 1; column < vm.ModelAlignment.ColumnCount - 1; column++)
 						{
 							if (_generateCorrespondencesWorker.CancellationPending)
 								break;
 
-							maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, node), maxFreq);
+							maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, column), maxFreq);
 						}
 						break;
 
 					case SoundCorrespondenceType.FinalConsonants:
-						AlignedNodeViewModel finalNode = vm.AlignedNodes[vm.AlignedNodes.Count - 1];
-						maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, finalNode), maxFreq);
+						maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, vm.ModelAlignment.ColumnCount - 1), maxFreq);
 						break;
 
 					case SoundCorrespondenceType.Vowels:
-						foreach (AlignedNodeViewModel node in vm.AlignedNodes)
+						for (int column = 0; column < vm.ModelAlignment.ColumnCount; column++)
 						{
 							if (_generateCorrespondencesWorker.CancellationPending)
 								break;
 
-							maxFreq = Math.Max(AddVowelCorrespondence(vm, segs, corrs, node), maxFreq);
+							maxFreq = Math.Max(AddVowelCorrespondence(vm, segs, corrs, column), maxFreq);
 						}
 						break;
 				}
@@ -158,13 +156,15 @@ namespace SIL.Cog.ViewModels
 		}
 
 		private static int AddConsonantCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
-			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, AlignedNodeViewModel node)
+			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, int column)
 		{
+			AlignmentCell<ShapeNode> cell1 = wp.ModelAlignment[0, column];
+			AlignmentCell<ShapeNode> cell2 = wp.ModelAlignment[1, column];
 			int freq = 0;
-			if (node.Annotation1.Type() == CogFeatureSystem.ConsonantType && node.Annotation2.Type() == CogFeatureSystem.ConsonantType)
+			if (!cell1.IsNull && cell1.First.Type() == CogFeatureSystem.ConsonantType && !cell2.IsNull && cell2.First.Type() == CogFeatureSystem.ConsonantType)
 			{
-				Ngram ngram1 = node.Annotation1.Ngram(wp.ModelWordPair.VarietyPair.Variety1);
-				Ngram ngram2 = node.Annotation2.Ngram(wp.ModelWordPair.VarietyPair.Variety2);
+				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1);
+				Ngram ngram2 = cell2.ToNgram(wp.ModelWordPair.VarietyPair.Variety2);
 				if (ngram1.Count == 1 && ngram2.Count == 1)
 				{
 					Segment seg1 = ngram1.First;
@@ -185,7 +185,7 @@ namespace SIL.Cog.ViewModels
 
 		private static bool GetConsonant(Dictionary<object, GlobalSegmentViewModel> consonants, Segment consonant, out object key)
 		{
-			if (BaseCharCount(consonant.StrRep) > 1)
+			if (consonant.StrRep.DisplayLength() > 1)
 			{
 				key = null;
 				return false;
@@ -239,13 +239,15 @@ namespace SIL.Cog.ViewModels
 		}
 
 		private static int AddVowelCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
-			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, AlignedNodeViewModel node)
+			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, int column)
 		{
+			AlignmentCell<ShapeNode> cell1 = wp.ModelAlignment[0, column];
+			AlignmentCell<ShapeNode> cell2 = wp.ModelAlignment[1, column];
 			int freq = 0;
-			if (node.Annotation1.Type() == CogFeatureSystem.VowelType && node.Annotation2.Type() == CogFeatureSystem.VowelType)
+			if (!cell1.IsNull && cell1.First.Type() == CogFeatureSystem.VowelType && !cell2.IsNull && cell2.First.Type() == CogFeatureSystem.VowelType)
 			{
-				Ngram ngram1 = node.Annotation1.Ngram(wp.ModelWordPair.VarietyPair.Variety1);
-				Ngram ngram2 = node.Annotation2.Ngram(wp.ModelWordPair.VarietyPair.Variety2);
+				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1);
+				Ngram ngram2 = cell2.ToNgram(wp.ModelWordPair.VarietyPair.Variety2);
 				if (ngram1.Count == 1 && ngram2.Count == 1)
 				{
 					Segment seg1 = ngram1.First;
@@ -266,7 +268,7 @@ namespace SIL.Cog.ViewModels
 
 		private static bool GetVowel(Dictionary<object, GlobalSegmentViewModel> vowels, Segment vowel, out object key)
 		{
-			if (BaseCharCount(vowel.StrRep) > 1)
+			if (vowel.StrRep.DisplayLength() > 1)
 			{
 				key = null;
 				return false;
@@ -284,26 +286,6 @@ namespace SIL.Cog.ViewModels
 			GlobalSegmentViewModel seg = vowels.GetValue(key, () => new VowelGlobalSegmentViewModel(height, backness, round));
 			seg.StrReps.Add(vowel.StrRep);
 			return true;
-		}
-
-		private static int BaseCharCount(string str)
-		{
-			int count = 0;
-			foreach (char c in str)
-			{
-				switch (CharUnicodeInfo.GetUnicodeCategory(c))
-				{
-					case UnicodeCategory.NonSpacingMark:
-					case UnicodeCategory.SpacingCombiningMark:
-					case UnicodeCategory.EnclosingMark:
-						break;
-
-					default:
-						count++;
-						break;
-				}
-			}
-			return count;
 		}
 
 		private void GenerateCorrespondencesAsyncFinished(object sender, RunWorkerCompletedEventArgs e)

@@ -25,7 +25,7 @@ namespace SIL.Cog.Components
 
 		public bool IsMapped(Segment seg1, Segment seg2)
 		{
-			IAligner aligner = _project.Aligners[_alignerID];
+			IWordPairAligner aligner = _project.Aligners[_alignerID];
 			return aligner.Delta(seg1.FeatureStruct, seg2.FeatureStruct) <= _threshold;
 		}
 	}

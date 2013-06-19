@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Machine;
@@ -38,23 +37,26 @@ namespace SIL.Cog.Components
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
-			IAligner aligner = Project.Aligners[_alignerID];
+			IWordPairAligner aligner = Project.Aligners[_alignerID];
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
-				IAlignerResult alignerResult = aligner.Compute(wp);
-				Alignment alignment = alignerResult.GetAlignments().First();
-				wp.PhoneticSimilarityScore = alignment.Score;
+				IWordPairAlignerResult alignerResult = aligner.Compute(wp);
+				Alignment<ShapeNode> alignment = alignerResult.GetAlignments().First();
+				wp.PhoneticSimilarityScore = alignment.NormalizedScore;
 				int initialEquivalentClasses = 0;
 				bool mismatchFound = false;
-				foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> aann in alignment.AlignedAnnotations)
+				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
-					if (aann.Item1.Type() == CogFeatureSystem.VowelType || aann.Item2.Type() == CogFeatureSystem.VowelType)
+					AlignmentCell<ShapeNode> cell1 = alignment[0, column];
+					AlignmentCell<ShapeNode> cell2 = alignment[1, column];
+
+					if ((cell1.Count > 0 && cell1[0].Type() == CogFeatureSystem.VowelType) || (cell2.Count > 0 && cell2[0].Type() == CogFeatureSystem.VowelType))
 					{
 						wp.AlignmentNotes.Add("X");
 					}
 					else
 					{
-						if (aann.Item1.StrRep() == aann.Item2.StrRep())
+						if (cell1.StrRep() == cell2.StrRep())
 						{
 							wp.AlignmentNotes.Add("1");
 							if (!mismatchFound)
@@ -62,8 +64,8 @@ namespace SIL.Cog.Components
 						}
 						else
 						{
-							SoundClass sc1 = GetSoundClass(aann.Item1);
-							SoundClass sc2 = GetSoundClass(aann.Item2);
+							SoundClass sc1 = alignment.GetMatchingSoundClass(0, column, wp.Word1, _soundClasses);
+							SoundClass sc2 = alignment.GetMatchingSoundClass(1, column, wp.Word2, _soundClasses);
 							if (sc1 != null && sc2 != null && sc1 == sc2)
 							{
 								wp.AlignmentNotes.Add("1");
@@ -91,11 +93,6 @@ namespace SIL.Cog.Components
 			int wordPairCount = varietyPair.WordPairs.Count;
 			varietyPair.PhoneticSimilarityScore = totalScore / wordPairCount;
 			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
-		}
-
-		private SoundClass GetSoundClass(Annotation<ShapeNode> ann)
-		{
-			return _soundClasses.FirstOrDefault(sc => sc.Matches(ann));
 		}
 	}
 }

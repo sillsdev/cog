@@ -7,7 +7,7 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Components
 {
-	public class Aline : AlignerBase
+	public class Aline : WordPairAlignerBase
 	{
 		private const int MaxSoundChangeScore = 2000;
 		private const int MaxSubstitutionScore = 3500;
@@ -22,12 +22,12 @@ namespace SIL.Cog.Components
 
 		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
 			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics)
-			: this(spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new AlignerSettings())
+			: this(spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new WordPairAlignerSettings())
 		{
 		}
 
 		public Aline(SpanFactory<ShapeNode> spanFactory, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
-			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, AlignerSettings settings)
+			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, WordPairAlignerSettings settings)
 			: base(spanFactory, settings)
 		{
 			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures);
@@ -56,28 +56,28 @@ namespace SIL.Cog.Components
 			get { return _valueMetrics.AsReadOnlyDictionary(); }
 		}
 
-		public override int SigmaInsertion(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
+		protected override int GetInsertionScore(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
 		{
 			return -IndelCost + SoundChange(varietyPair, null, p, q, null);
 		}
 
-		public override int SigmaDeletion(VarietyPair varietyPair, ShapeNode p)
+		protected override int GetDeletionScore(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
 		{
 			return -IndelCost + SoundChange(varietyPair, p, null, null, null);
 		}
 
-		public override int SigmaSubstitution(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
+		protected override int GetSubstitutionScore(VarietyPair varietyPair, ShapeNode p, ShapeNode q)
 		{
 			return (MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(p) + V(q))) + SoundChange(varietyPair, p, null, q, null);
 		}
 
-		public override int SigmaExpansion(VarietyPair varietyPair, ShapeNode p, ShapeNode q1, ShapeNode q2)
+		protected override int GetExpansionScore(VarietyPair varietyPair, ShapeNode p, ShapeNode q1, ShapeNode q2)
 		{
 			return (MaxExpansionCompressionScore - (Delta(p.Annotation.FeatureStruct, q1.Annotation.FeatureStruct) + Delta(p.Annotation.FeatureStruct, q2.Annotation.FeatureStruct) + V(p) + Math.Max(V(q1), V(q2))))
 				+ SoundChange(varietyPair, p, null, q1, q2);
 		}
 
-		public override int SigmaCompression(VarietyPair varietyPair, ShapeNode p1, ShapeNode p2, ShapeNode q)
+		protected override int GetCompressionScore(VarietyPair varietyPair, ShapeNode p1, ShapeNode p2, ShapeNode q)
 		{
 			return (MaxExpansionCompressionScore - (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(q) + Math.Max(V(p1), V(p2))))
 				+ SoundChange(varietyPair, p1, p2, q, null);
@@ -97,12 +97,12 @@ namespace SIL.Cog.Components
 			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * _featureWeights[feat]));
 		}
 
-		public override int GetMaxScore1(VarietyPair varietyPair, ShapeNode p)
+		protected override int GetMaxScore1(VarietyPair varietyPair, ShapeNode p)
 		{
 			int maxScore = GetMaxScore(p);
 			if (varietyPair.SoundChangeProbabilityDistribution != null)
 			{
-				SoundContext lhs = p.Sound(varietyPair.Variety1, ContextualSoundClasses);
+				SoundContext lhs = p.ToSoundContext(varietyPair.Variety1, ContextualSoundClasses);
 				double prob = varietyPair.DefaultCorrespondenceProbability;
 				IProbabilityDistribution<Ngram> probDist;
 				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
@@ -112,12 +112,12 @@ namespace SIL.Cog.Components
 			return maxScore;
 		}
 
-		public override int GetMaxScore2(VarietyPair varietyPair, ShapeNode q)
+		protected override int GetMaxScore2(VarietyPair varietyPair, ShapeNode q)
 		{
 			int maxScore = GetMaxScore(q);
 			if (varietyPair.SoundChangeProbabilityDistribution != null)
 			{
-				Ngram corr = q.Ngram(varietyPair.Variety2);
+				Ngram corr = q.ToNgram(varietyPair.Variety2);
 
 				double prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 				maxScore += (int) (MaxSoundChangeScore * prob);
@@ -157,24 +157,22 @@ namespace SIL.Cog.Components
 				corr = q2 == null ? new Ngram(corrSegment) : new Ngram(corrSegment, varietyPair.Variety2.Segments[q2]);
 			}
 
-			SoundClass leftEnv = null, rightEnv = null;
-			Annotation<ShapeNode> prev = (p1 == null ? p2 : p1.GetPrev(n => n.Type() != CogFeatureSystem.NullType)).Annotation;
-			Annotation<ShapeNode> next = (p2 ?? p1).GetNext(n => n.Type() != CogFeatureSystem.NullType).Annotation;
-			foreach (SoundClass soundClass in ContextualSoundClasses)
-			{
-				if (leftEnv == null && soundClass.Matches(prev))
-					leftEnv = soundClass;
-				if (rightEnv == null && soundClass.Matches(next))
-					rightEnv = soundClass;
-				if (leftEnv != null && rightEnv != null)
-					break;
-			}
+			ShapeNode leftNode = p1 == null ? p2 : p1.GetPrev(NodeFilter);
+			SoundClass leftEnv = leftNode == null ? null : leftNode.GetMatchingSoundClass(varietyPair.Variety1, ContextualSoundClasses);
+			ShapeNode pRight = p2 ?? p1;
+			ShapeNode rightNode = pRight == null ? null : pRight.GetNext(NodeFilter);
+			SoundClass rightEnv = rightNode == null ? null : rightNode.GetMatchingSoundClass(varietyPair.Variety1, ContextualSoundClasses);
 
 			var lhs = new SoundContext(leftEnv, target, rightEnv);
 			IProbabilityDistribution<Ngram> probDist;
 			double prob = varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
 				: varietyPair.DefaultCorrespondenceProbability;
 			return (int) (MaxSoundChangeScore * prob);
+		}
+
+		private static bool NodeFilter(ShapeNode node)
+		{
+			return node.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType);
 		}
 
 		private int Diff(FeatureStruct fs1, FeatureStruct fs2, SymbolicFeature feature)

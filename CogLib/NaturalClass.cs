@@ -1,4 +1,3 @@
-using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
@@ -24,9 +23,14 @@ namespace SIL.Cog
 			get { return _fs; }
 		}
 
-		public override bool Matches(Annotation<ShapeNode> ann)
+		public override bool Matches(Segment left, Ngram target, Segment right)
 		{
-			return _fs.Subsumes(ann.FeatureStruct);
+			foreach (Segment seg in target)
+			{
+				if (_fs.Subsumes(seg.FeatureStruct))
+					return true;
+			}
+			return false;
 		}
 	}
 }

@@ -53,17 +53,17 @@ namespace SIL.Cog.Components
 			}
 
 			var expectedCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
-			IAligner aligner = Project.Aligners[_alignerID];
+			IWordPairAligner aligner = Project.Aligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
-				IAlignerResult alignerResult = aligner.Compute(wordPair);
-				Alignment alignment = alignerResult.GetAlignments().First();
-				if ((pair.SoundChangeProbabilityDistribution == null && alignment.Score >= _initialAlignmentThreshold) || (pair.SoundChangeProbabilityDistribution != null && wordPair.AreCognatePredicted))
+				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
+				Alignment<ShapeNode> alignment = alignerResult.GetAlignments().First();
+				if ((pair.SoundChangeProbabilityDistribution == null && alignment.NormalizedScore >= _initialAlignmentThreshold) || (pair.SoundChangeProbabilityDistribution != null && wordPair.AreCognatePredicted))
 				{
-					foreach (Tuple<Annotation<ShapeNode>, Annotation<ShapeNode>> possibleLink in alignment.AlignedAnnotations)
+					for (int column = 0; column < alignment.ColumnCount; column++)
 					{
-						SoundContext lhs = possibleLink.Item1.Sound(pair.Variety1, aligner.ContextualSoundClasses);
-						Ngram corr = possibleLink.Item2.Ngram(pair.Variety2);
+						SoundContext lhs = alignment.ToSoundContext(0, column, wordPair.Word1, aligner.ContextualSoundClasses);
+						Ngram corr = alignment[1, column].ToNgram(pair.Variety2);
 						expectedCounts[lhs].Increment(corr);
 					}
 				}
@@ -73,9 +73,9 @@ namespace SIL.Cog.Components
 
 		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts)
 		{
-			IAligner aligner = Project.Aligners[_alignerID];
+			IWordPairAligner aligner = Project.Aligners[_alignerID];
 			int segmentCount = pair.Variety2.Segments.Count;
-			int possCorrCount = aligner.SupportsExpansionCompression ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
+			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
 
 			bool converged = true;

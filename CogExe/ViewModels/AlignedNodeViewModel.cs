@@ -5,31 +5,43 @@ namespace SIL.Cog.ViewModels
 {
 	public class AlignedNodeViewModel : ViewModelBase
 	{
-		private readonly Annotation<ShapeNode> _ann1;
-		private readonly Annotation<ShapeNode> _ann2;
+		private readonly int _column;
+		private readonly AlignmentCell<ShapeNode> _cell1;
+		private readonly AlignmentCell<ShapeNode> _cell2;
 		private readonly string _note;
 		private bool _isSelected;
 
-		public AlignedNodeViewModel(Annotation<ShapeNode> ann1, Annotation<ShapeNode> ann2)
-			: this(ann1, ann2, null)
+		public AlignedNodeViewModel(AlignmentCell<ShapeNode> cell1, AlignmentCell<ShapeNode> cell2)
+			: this(-1, cell1, cell2, null)
 		{
 		}
 
-		public AlignedNodeViewModel(Annotation<ShapeNode> ann1, Annotation<ShapeNode> ann2, string note)
+		public AlignedNodeViewModel(int column, AlignmentCell<ShapeNode> cell1, AlignmentCell<ShapeNode> cell2, string note)
 		{
-			_ann1 = ann1;
-			_ann2 = ann2;
+			_column = column;
+			_cell1 = cell1;
+			_cell2 = cell2;
 			_note = note;
 		}
 
 		public string StrRep1
 		{
-			get { return GetString(_ann1); }
+			get
+			{
+				if (_cell1.IsNull && _column != -1)
+					return "-";
+				return _cell1.StrRep();
+			}
 		}
 
 		public string StrRep2
 		{
-			get { return GetString(_ann2); }
+			get
+			{
+				if (_cell2.IsNull && _column != -1)
+					return "-";
+				return _cell2.StrRep();
+			}
 		}
 
 		public string Note
@@ -43,22 +55,9 @@ namespace SIL.Cog.ViewModels
 			set { Set("IsSelected", ref _isSelected, value); }
 		}
 
-		public Annotation<ShapeNode> Annotation1
+		public int Column
 		{
-			get { return _ann1; }
-		}
-
-		public Annotation<ShapeNode> Annotation2
-		{
-			get { return _ann2; }
-		}
-
-		private static string GetString(Annotation<ShapeNode> ann)
-		{
-			if (ann == null)
-				return "";
-
-			return ann.StrRep();
+			get { return _column; }
 		}
 	}
 }

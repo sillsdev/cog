@@ -61,6 +61,25 @@ namespace SIL.Cog
 			}
 		}
 
+		public void AddRange(IEnumerable<Word> words)
+		{
+			CheckReentrancy();
+			var added = new List<Word>();
+			foreach (Word word in words)
+			{
+				HashSet<Word> senseWords = _words.GetValue(word.Sense, () => new HashSet<Word>());
+				if (senseWords.Add(word))
+				{
+					word.Variety = _variety;
+					_variety.Segments.WordAdded(word);
+					added.Add(word);
+				}
+			}
+
+			if (added.Count > 0)
+				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, added));
+		}
+
 		public void Clear()
 		{
 			CheckReentrancy();

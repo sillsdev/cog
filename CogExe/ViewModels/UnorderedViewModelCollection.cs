@@ -25,17 +25,31 @@ namespace SIL.Cog.ViewModels
 					switch (e.Action)
 					{
 						case NotifyCollectionChangedAction.Add:
-							foreach (TModel model in e.NewItems)
-								Add(_viewModelFactory(model));
+							AddRange(e.NewItems.Cast<TModel>().Select(model => _viewModelFactory(model)));
 							break;
 
 						case NotifyCollectionChangedAction.Remove:
-							foreach (TModel model in e.OldItems)
-								Remove(model);
+							if (e.OldItems.Count == 1)
+							{
+								Remove((TModel) e.OldItems[0]);
+							}
+							else
+							{
+								using (BulkUpdate())
+								{
+									foreach (TModel model in e.OldItems)
+										Remove(model);
+								}
+							}
 							break;
 
 						case NotifyCollectionChangedAction.Reset:
-							Clear();
+							using (BulkUpdate())
+							{
+								Clear();
+								var source = (TCollection) sender;
+								AddRange(source.Select(model => _viewModelFactory(model)));
+							}
 							break;
 					}
 				});

@@ -42,8 +42,17 @@ namespace SIL.Cog.Services
 			{
 				project.Senses.Clear();
 				project.Varieties.Clear();
-				WordListsImporters[result.SelectedFileType].Import(result.FileName, project);
-				return true;
+				try
+				{
+					WordListsImporters[result.SelectedFileType].Import(result.FileName, project);
+					return true;
+				}
+				catch (ImportException ie)
+				{
+					project.Senses.Clear();
+					project.Varieties.Clear();
+					_dialogService.ShowError(ownerViewModel, ie.Message, "Import Error");
+				}
 			}
 			return false;
 		}

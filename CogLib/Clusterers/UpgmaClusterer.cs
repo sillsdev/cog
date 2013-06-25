@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QuickGraph;
 using SIL.Collections;
 
 namespace SIL.Cog.Clusterers
 {
-	public class UpgmaClusterer<T> : IClusterer<T>
+	public class UpgmaClusterer<T> : IRootedHierarchicalClusterer<T>
 	{
 		private readonly Func<T, T, double> _getDistance;
 
@@ -14,9 +15,16 @@ namespace SIL.Cog.Clusterers
 			_getDistance = getDistance;
 		}
 
-		public IEnumerable<Cluster<T>> GenerateClusters(IEnumerable<T> dataObjects)
+		public IBidirectionalGraph<Cluster<T>, ClusterEdge<T>> GenerateClusters(IEnumerable<T> dataObjects)
 		{
-			var clusters = new List<Cluster<T>>(dataObjects.Select(obj => new Cluster<T>(obj.ToEnumerable()) {Description = obj.ToString()}));
+			var tree = new BidirectionalGraph<Cluster<T>, ClusterEdge<T>>(false);
+			var clusters = new List<Cluster<T>>();
+			foreach (T dataObject in dataObjects)
+			{
+				var cluster = new Cluster<T>(dataObject) {Description = dataObject.ToString()};
+				clusters.Add(cluster);
+				tree.AddVertex(cluster);
+			}
 			var distances = new Dictionary<UnorderedTuple<Cluster<T>, Cluster<T>>, double>();
 			var heights = new Dictionary<Cluster<T>, double>();
 			for (int i = 0; i < clusters.Count; i++)
@@ -49,31 +57,39 @@ namespace SIL.Cog.Clusterers
 				distances.Remove(UnorderedTuple.Create(iCluster, jCluster));
 
 				var uCluster = new Cluster<T>();
+				tree.AddVertex(uCluster);
+
 				double height = minDist / 2;
 				heights[uCluster] = height;
+				
+				int iCount = tree.GetAllDataObjects(iCluster).Count();
 				double iLen = height - heights[iCluster];
-				if (iLen <= 0 && !iCluster.IsLeaf)
+				if (iLen <= 0 && !tree.IsOutEdgesEmpty(iCluster))
 				{
-					foreach (var iChild in iCluster.Children.Select(c => new {Node = c, Len = iCluster.Children.GetLength(c)}).ToArray())
-						uCluster.Children.Add(iChild.Node, iChild.Len);
+					foreach (ClusterEdge<T> edge in tree.OutEdges(iCluster))
+						tree.AddEdge(new ClusterEdge<T>(uCluster, edge.Target, edge.Length));
+					tree.RemoveVertex(iCluster);
 				}
 				else
 				{
-					uCluster.Children.Add(iCluster, Math.Max(iLen, 0));
-				}
-				double jLen = height - heights[jCluster];
-				if (jLen <= 0 && !jCluster.IsLeaf)
-				{
-					foreach (var jChild in jCluster.Children.Select(c => new {Node = c, Len = jCluster.Children.GetLength(c)}).ToArray())
-						uCluster.Children.Add(jChild.Node, jChild.Len);
-				}
-				else
-				{
-					uCluster.Children.Add(jCluster, Math.Max(jLen, 0));
+					tree.RemoveInEdgeIf(iCluster, edge => true);
+					tree.AddEdge(new ClusterEdge<T>(uCluster, iCluster, Math.Max(iLen, 0)));
 				}
 
-				int iCount = iCluster.AllDataObjects.Count();
-				int jCount = jCluster.AllDataObjects.Count();
+				int jCount = tree.GetAllDataObjects(jCluster).Count();
+				double jLen = height - heights[jCluster];
+				if (jLen <= 0 && !tree.IsOutEdgesEmpty(jCluster))
+				{
+					foreach (ClusterEdge<T> edge in tree.OutEdges(jCluster))
+						tree.AddEdge(new ClusterEdge<T>(uCluster, edge.Target, edge.Length));
+					tree.RemoveVertex(jCluster);
+				}
+				else
+				{
+					tree.RemoveInEdgeIf(jCluster, edge => true);
+					tree.AddEdge(new ClusterEdge<T>(uCluster, jCluster, Math.Max(jLen, 0)));
+				}
+
 				double iWeight = (double) iCount / (iCount + jCount);
 				double jWeight = (double) jCount / (iCount + jCount);
 				foreach (Cluster<T> kCluster in clusters.Where(c => c != iCluster && c != jCluster))
@@ -89,7 +105,7 @@ namespace SIL.Cog.Clusterers
 				clusters.Add(uCluster);
 			}
 
-			return clusters;
+			return tree;
 		}
 	}
 }

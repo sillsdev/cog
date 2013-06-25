@@ -57,7 +57,7 @@ namespace SIL.Cog.Components
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
 				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
-				Alignment<ShapeNode> alignment = alignerResult.GetAlignments().First();
+				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				if ((pair.SoundChangeProbabilityDistribution == null && alignment.NormalizedScore >= _initialAlignmentThreshold) || (pair.SoundChangeProbabilityDistribution != null && wordPair.AreCognatePredicted))
 				{
 					for (int column = 0; column < alignment.ColumnCount; column++)

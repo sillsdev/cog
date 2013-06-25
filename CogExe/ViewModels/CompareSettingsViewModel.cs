@@ -1,26 +1,23 @@
 ﻿using System.Diagnostics;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
-using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
 	public class CompareSettingsViewModel : SettingsWorkspaceViewModelBase
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 
-		public CompareSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService)
+		public CompareSettingsViewModel(IDialogService dialogService, IImportService importService)
 		{
-			_spanFactory = spanFactory;
 			_dialogService = dialogService;
 			_importService = importService;
 		}
 
 		protected override void CreateComponents()
 		{
-			Components.Add(new AlineViewModel(_spanFactory, _dialogService, Project, (Aline) Project.Aligners["primary"]));
+			Components.Add(new AlineViewModel(_dialogService, Project, (Aline) Project.Aligners["primary"]));
 			Components.Add(new EMSoundChangeInducerViewModel(Project, (EMSoundChangeInducer) Project.VarietyPairProcessors["soundChangeInducer"]));
 			IProcessor<VarietyPair> cognateIdentifier = Project.VarietyPairProcessors["cognateIdentifier"];
 			ComponentSettingsViewModelBase cognateIdentifierVM = null;

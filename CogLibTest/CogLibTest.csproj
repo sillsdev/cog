@@ -37,6 +37,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,13 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlignmentAlgorithmTestBase.cs" />
     <Compile Include="ClustererTestBase.cs" />
     <Compile Include="FlatUpgmaClustererTest.cs" />
+    <Compile Include="MultipleAlignmentAlgorithmTest.cs" />
     <Compile Include="NeighborJoiningClustererTest.cs" />
     <Compile Include="NgramModelTest.cs" />
+    <Compile Include="PairwiseAlignmentAlgorithmTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmenterTest.cs" />
     <Compile Include="SimpleGoodTuringProbabilityDistributionTest.cs" />
+    <Compile Include="StringScorer.cs" />
     <Compile Include="UpgmaClustererTest.cs" />
   </ItemGroup>
   <ItemGroup>

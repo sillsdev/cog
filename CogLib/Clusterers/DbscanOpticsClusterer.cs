@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SIL.Cog.Clusterers
 {
-	public class DbscanOpticsClusterer<T> : OpticsClusterer<T>
+	public class DbscanOpticsClusterer<T> : OpticsFlatClusterer<T>
 	{
 		private readonly double _epsilon;
 

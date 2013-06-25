@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using GraphSharp;
 using QuickGraph;
+using QuickGraph.Algorithms;
 using SIL.Cog.Clusterers;
 using SIL.Cog.Components;
 using SIL.Machine.FeatureModel;
@@ -13,10 +13,9 @@ namespace SIL.Cog.ViewModels
 {
 	public static class ViewModelExtensions
 	{
-		public static IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> GenerateHierarchicalGraph(this CogProject project, ClusteringMethod clusteringMethod,
-			SimilarityMetric similarityMetric)
+		public static IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> GenerateHierarchicalGraph(this CogProject project, HierarchicalGraphType graphType,
+			ClusteringMethod clusteringMethod, SimilarityMetric similarityMetric)
 		{
-			IEnumerable<Cluster<Variety>> clusters = null;
 			switch (clusteringMethod)
 			{
 				case ClusteringMethod.Upgma:
@@ -32,8 +31,8 @@ namespace SIL.Cog.ViewModels
 					}
 
 					var upgma = new UpgmaClusterer<Variety>(upgmaGetDistance);
-					clusters = upgma.GenerateClusters(project.Varieties);
-					break;
+					IBidirectionalGraph<Cluster<Variety>, ClusterEdge<Variety>> upgmaTree = upgma.GenerateClusters(project.Varieties);
+					return BuildHierarchicalGraph(upgmaTree);
 
 				case ClusteringMethod.NeighborJoining:
 					Func<Variety, Variety, double> njGetDistance = null;
@@ -47,59 +46,64 @@ namespace SIL.Cog.ViewModels
 							break;
 					}
 					var nj = new NeighborJoiningClusterer<Variety>(njGetDistance);
-					clusters = nj.GenerateClusters(project.Varieties);
+					IUndirectedGraph<Cluster<Variety>, ClusterEdge<Variety>> njTree = nj.GenerateClusters(project.Varieties);
+					switch (graphType)
+					{
+						case HierarchicalGraphType.Dendrogram:
+							IBidirectionalGraph<Cluster<Variety>, ClusterEdge<Variety>> rootedTree = njTree.ToRootedTree();
+							return BuildHierarchicalGraph(rootedTree);
+
+						case HierarchicalGraphType.Tree:
+							return BuildHierarchicalGraph(njTree);
+					}
 					break;
 			}
-			Debug.Assert(clusters != null);
-			var graph = new HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>();
-			Cluster<Variety>[] clusterArray = clusters.ToArray();
-			var root = new HierarchicalGraphVertex(0);
-			IEnumerable<Tuple<Cluster<Variety>, double>> clusterLengths;
-			IEnumerable<Variety> varieties;
-			if (clusterArray.Length == 1)
-			{
-				Cluster<Variety> rootCluster = clusterArray[0];
-				clusterLengths = rootCluster.Children.Select(c => Tuple.Create(c, rootCluster.Children.GetLength(c)));
-				varieties = rootCluster.DataObjects;
-			}
-			else
-			{
-				clusterLengths = clusterArray.Select(c => Tuple.Create(c, 0.0));
-				varieties = clusterArray.SelectMany(c => c.DataObjects);
-			}
-			graph.AddVertex(root);
-			GenerateVertices(graph, root, clusterLengths, varieties);
 
+			return null;
+		}
+
+		private static IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> BuildHierarchicalGraph(IBidirectionalGraph<Cluster<Variety>, ClusterEdge<Variety>> tree)
+		{
+			var graph = new HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>();
+			var root = new HierarchicalGraphVertex(0);
+			graph.AddVertex(root);
+			GenerateHierarchicalVertices(graph, root, tree, tree.Roots().First());
 			return graph;
 		}
 
-		private static void GenerateVertices(HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphVertex vertex,
-			IEnumerable<Tuple<Cluster<Variety>, double>> children, IEnumerable<Variety> varieties)
+		private static void GenerateHierarchicalVertices(HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphVertex vertex,
+			IBidirectionalGraph<Cluster<Variety>, ClusterEdge<Variety>> tree, Cluster<Variety> cluster)
 		{
-			foreach (Tuple<Cluster<Variety>, double> child in children)
+			foreach (ClusterEdge<Variety> edge in tree.OutEdges(cluster))
 			{
-				Cluster<Variety> childCluster = child.Item1;
-				double length = child.Item2;
-				HierarchicalGraphVertex newVertex;
-				if (childCluster.IsLeaf && childCluster.DataObjects.Count == 1)
-				{
-					newVertex = new HierarchicalGraphVertex(childCluster.DataObjects.First(), vertex.Depth + length);
-					graph.AddVertex(newVertex);
-				}
-				else
-				{
-					newVertex = new HierarchicalGraphVertex(vertex.Depth + length);
-					graph.AddVertex(newVertex);
-					GenerateVertices(graph, newVertex, childCluster.Children.Select(c => Tuple.Create(c, childCluster.Children.GetLength(c))), childCluster.DataObjects);
-				}
-				graph.AddEdge(new HierarchicalGraphEdge(vertex, newVertex, EdgeTypes.Hierarchical, child.Item2));
+				double depth = vertex.Depth + edge.Length;
+				var newVertex = edge.Target.DataObjects.Count == 1 ? new HierarchicalGraphVertex(edge.Target.DataObjects.First(), depth) : new HierarchicalGraphVertex(depth);
+				graph.AddVertex(newVertex);
+				graph.AddEdge(new HierarchicalGraphEdge(vertex, newVertex, EdgeTypes.Hierarchical, edge.Length));
+				GenerateHierarchicalVertices(graph, newVertex, tree, edge.Target);
 			}
+		}
 
-			foreach (Variety variety in varieties)
+		private static IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> BuildHierarchicalGraph(IUndirectedGraph<Cluster<Variety>, ClusterEdge<Variety>> tree)
+		{
+			var graph = new HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>();
+			var root = new HierarchicalGraphVertex(0);
+			graph.AddVertex(root);
+			GenerateHierarchicalVertices(graph, root, tree, null, tree.GetCenter());
+			return graph;
+		}
+
+		private static void GenerateHierarchicalVertices(HierarchicalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphVertex vertex,
+			IUndirectedGraph<Cluster<Variety>, ClusterEdge<Variety>> tree, Cluster<Variety> parent, Cluster<Variety> cluster)
+		{
+			foreach (ClusterEdge<Variety> edge in tree.AdjacentEdges(cluster).Where(e => e.GetOtherVertex(cluster) != parent))
 			{
-				var vm = new HierarchicalGraphVertex(variety, 0);
-				graph.AddVertex(vm);
-				graph.AddEdge(new HierarchicalGraphEdge(vertex, vm, EdgeTypes.Hierarchical, 0));
+				Cluster<Variety> target = edge.GetOtherVertex(cluster);
+				double depth = vertex.Depth + edge.Length;
+				var newVertex = target.DataObjects.Count == 1 ? new HierarchicalGraphVertex(target.DataObjects.First(), depth) : new HierarchicalGraphVertex(depth);
+				graph.AddVertex(newVertex);
+				graph.AddEdge(new HierarchicalGraphEdge(vertex, newVertex, EdgeTypes.Hierarchical, edge.Length));
+				GenerateHierarchicalVertices(graph, newVertex, tree, cluster, target);
 			}
 		}
 

@@ -280,7 +280,7 @@ namespace SIL.Cog.ViewModels
 		{
 			var vm = new ExportHierarchicalGraphViewModel();
 			if (_dialogService.ShowDialog(this, vm) == true)
-				_exportService.ExportHierarchicalGraph(this, _project.GenerateHierarchicalGraph(vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
+				_exportService.ExportHierarchicalGraph(this, _project.GenerateHierarchicalGraph(vm.GraphType, vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
 		}
 
 		private bool CanExportNetworkGraph()

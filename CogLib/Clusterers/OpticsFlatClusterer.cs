@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace SIL.Cog.Clusterers
 {
-	public abstract class OpticsClusterer<T> : IClusterer<T>
+	public abstract class OpticsFlatClusterer<T> : IFlatClusterer<T>
 	{
 		private readonly Optics<T> _optics; 
 
-		protected OpticsClusterer(Optics<T> optics)
+		protected OpticsFlatClusterer(Optics<T> optics)
 		{
 			_optics = optics;
 		}

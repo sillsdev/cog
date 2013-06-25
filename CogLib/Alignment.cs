@@ -5,40 +5,45 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class Alignment<T> where T : class
+	public class Alignment<TSeq, TItem>
 	{
-		private readonly AlignmentCell<T>[,] _matrix;
-		private readonly ReadOnlyList<AlignmentCell<T>> _prefixes;
-		private readonly ReadOnlyList<AlignmentCell<T>> _suffixes;
+		private readonly ReadOnlyList<TSeq> _sequences; 
+		private readonly AlignmentCell<TItem>[,] _matrix;
+		private readonly ReadOnlyList<AlignmentCell<TItem>> _prefixes;
+		private readonly ReadOnlyList<AlignmentCell<TItem>> _suffixes;
 		private readonly int _rawScore;
 		private readonly double _normalizedScore;
 
-		public Alignment(int rawScore, double normalizedScore, params Tuple<IEnumerable<T>, IEnumerable<AlignmentCell<T>>, IEnumerable<T>>[] sequences)
-			: this(rawScore, normalizedScore, (IEnumerable<Tuple<IEnumerable<T>, IEnumerable<AlignmentCell<T>>, IEnumerable<T>>>) sequences)
+		public Alignment(int rawScore, double normalizedScore, params Tuple<TSeq, AlignmentCell<TItem>, IEnumerable<AlignmentCell<TItem>>, AlignmentCell<TItem>>[] sequences)
+			: this(rawScore, normalizedScore, (IEnumerable<Tuple<TSeq, AlignmentCell<TItem>, IEnumerable<AlignmentCell<TItem>>, AlignmentCell<TItem>>>) sequences)
 		{
 		}
 
-		public Alignment(int rawScore, double normalizedScore, IEnumerable<Tuple<IEnumerable<T>, IEnumerable<AlignmentCell<T>>, IEnumerable<T>>> sequences)
+		public Alignment(int rawScore, double normalizedScore, IEnumerable<Tuple<TSeq, AlignmentCell<TItem>, IEnumerable<AlignmentCell<TItem>>, AlignmentCell<TItem>>> sequences)
 		{
 			_rawScore = rawScore;
 			_normalizedScore = normalizedScore;
-			Tuple<IEnumerable<T>, IEnumerable<AlignmentCell<T>>, IEnumerable<T>>[] sequenceArray = sequences.ToArray();
-			var prefixes = new AlignmentCell<T>[sequenceArray.Length];
-			var suffixes = new AlignmentCell<T>[sequenceArray.Length];
+			Tuple<TSeq, AlignmentCell<TItem>, IEnumerable<AlignmentCell<TItem>>, AlignmentCell<TItem>>[] sequenceArray = sequences.ToArray();
+			var seqs = new TSeq[sequenceArray.Length];
+			var prefixes = new AlignmentCell<TItem>[sequenceArray.Length];
+			var suffixes = new AlignmentCell<TItem>[sequenceArray.Length];
 			for (int i = 0; i < sequenceArray.Length; i++)
 			{
-				prefixes[i] = new AlignmentCell<T>(sequenceArray[i].Item1.ToArray());
+				seqs[i] = sequenceArray[i].Item1;
 
-				AlignmentCell<T>[] columnArray = sequenceArray[i].Item2.ToArray();
+				prefixes[i] = sequenceArray[i].Item2;
+
+				AlignmentCell<TItem>[] columnArray = sequenceArray[i].Item3.ToArray();
 				if (_matrix == null)
-					_matrix = new AlignmentCell<T>[sequenceArray.Length, columnArray.Length];
+					_matrix = new AlignmentCell<TItem>[sequenceArray.Length, columnArray.Length];
 				for (int j = 0; j < columnArray.Length; j++)
 					_matrix[i, j] = columnArray[j];
 
-				suffixes[i] = new AlignmentCell<T>(sequenceArray[i].Item3.ToArray());
+				suffixes[i] = sequenceArray[i].Item4;
 			}
-			_prefixes = new ReadOnlyList<AlignmentCell<T>>(prefixes);
-			_suffixes = new ReadOnlyList<AlignmentCell<T>>(suffixes);
+			_sequences = new ReadOnlyList<TSeq>(seqs);
+			_prefixes = new ReadOnlyList<AlignmentCell<TItem>>(prefixes);
+			_suffixes = new ReadOnlyList<AlignmentCell<TItem>>(suffixes);
 		}
 
 		public int RawScore
@@ -61,17 +66,22 @@ namespace SIL.Cog
 			get { return _matrix.GetLength(1); }
 		}
 
-		public IReadOnlyList<AlignmentCell<T>> Prefixes
+		public IReadOnlyList<TSeq> Sequences
+		{
+			get { return _sequences; }
+		}
+
+		public IReadOnlyList<AlignmentCell<TItem>> Prefixes
 		{
 			get { return _prefixes; }
 		}
 
-		public IReadOnlyList<AlignmentCell<T>> Suffixes
+		public IReadOnlyList<AlignmentCell<TItem>> Suffixes
 		{
 			get { return _suffixes; }
 		}
 
-		public AlignmentCell<T> this[int sequenceIndex, int columnIndex]
+		public AlignmentCell<TItem> this[int sequenceIndex, int columnIndex]
 		{
 			get { return _matrix[sequenceIndex, columnIndex]; }
 		}

@@ -1,23 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class AlignmentCell<T> : IReadOnlyList<T> where T : class
+	public class AlignmentCell<T> : IReadOnlyList<T>
 	{
 		private readonly T[] _items;
-
-		public AlignmentCell(T item)
-		{
-			_items = new[] {item};
-		}
 
 		public AlignmentCell(params T[] items)
 		{
 			if (items.Length > 0)
 				_items = items;
+		}
+
+		public AlignmentCell(IEnumerable<T> items)
+		{
+			T[] itemArray = items.ToArray();
+			if (itemArray.Length > 0)
+				_items = itemArray;
 		}
 
 		public bool IsNull

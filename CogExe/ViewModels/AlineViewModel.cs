@@ -6,7 +6,6 @@ using System.Linq;
 using SIL.Cog.Components;
 using SIL.Cog.SequenceAlignment;
 using SIL.Cog.Services;
-using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
@@ -25,16 +24,14 @@ namespace SIL.Cog.ViewModels
 
 	public class AlineViewModel : ComponentSettingsViewModelBase
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private AlineMode _mode;
 		private bool _expansionCompressionEnabled;
 		private readonly ReadOnlyCollection<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
 
-		public AlineViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, CogProject project, Aline aligner)
+		public AlineViewModel(IDialogService dialogService, CogProject project, Aline aligner)
 			: base("Alignment", project)
 		{
-			_spanFactory = spanFactory;
 			var features = new List<RelevantFeatureViewModel>();
 			foreach (KeyValuePair<SymbolicFeature, int> kvp in aligner.FeatureWeights)
 			{
@@ -139,7 +136,7 @@ namespace SIL.Cog.ViewModels
 					valueMetrics[value.ModelSymbol] = value.Metric;
 			}
 
-			var aligner = new Aline(_spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
+			var aligner = new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass)});
 			Project.Aligners["primary"] = aligner;
 			return aligner;

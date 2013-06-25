@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using QuickGraph;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -84,7 +86,7 @@ namespace SIL.Cog
 			return soundClasses.FirstOrDefault(sc => sc.Matches(left, target, right));
 		}
 
-		public static SoundClass GetMatchingSoundClass(this Alignment<ShapeNode> alignment, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
+		public static SoundClass GetMatchingSoundClass(this Alignment<Word, ShapeNode> alignment, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
 		{
 			ShapeNode leftNode = GetLeftNode(alignment, word, seq, col);
 			Segment left = leftNode == null ? null : word.Variety.Segments[leftNode];
@@ -99,7 +101,7 @@ namespace SIL.Cog
 			return node.Type().IsOneOf(CogFeatureSystem.VowelType, CogFeatureSystem.ConsonantType, CogFeatureSystem.AnchorType);
 		}
 
-		public static SoundContext ToSoundContext(this Alignment<ShapeNode> alignment, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
+		public static SoundContext ToSoundContext(this Alignment<Word, ShapeNode> alignment, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
 		{
 			ShapeNode leftNode = GetLeftNode(alignment, word, seq, col);
 			SoundClass leftEnv = leftNode == null ? null : leftNode.GetMatchingSoundClass(word.Variety, soundClasses);
@@ -109,7 +111,7 @@ namespace SIL.Cog
 			return new SoundContext(leftEnv, target, rightEnv);
 		}
 
-		private static ShapeNode GetLeftNode(Alignment<ShapeNode> alignment, Word word, int seq, int col)
+		private static ShapeNode GetLeftNode(Alignment<Word, ShapeNode> alignment, Word word, int seq, int col)
 		{
 			AlignmentCell<ShapeNode> cell = alignment[seq, col];
 			ShapeNode leftNode;
@@ -136,7 +138,7 @@ namespace SIL.Cog
 			return leftNode;
 		}
 
-		private static ShapeNode GetRightNode(Alignment<ShapeNode> alignment, Word word, int seq, int col)
+		private static ShapeNode GetRightNode(Alignment<Word, ShapeNode> alignment, Word word, int seq, int col)
 		{
 			AlignmentCell<ShapeNode> cell = alignment[seq, col];
 			ShapeNode rightNode;
@@ -175,7 +177,7 @@ namespace SIL.Cog
 			return new Ngram(nodes.Select(node => variety.Segments[node]));
 		}
 
-		public static string ToString(this Alignment<ShapeNode> alignment, IEnumerable<string> notes)
+		public static string ToString(this Alignment<Word, ShapeNode> alignment, IEnumerable<string> notes)
 		{
 			var sb = new StringBuilder();
 			List<string> notesList = notes.ToList();
@@ -246,6 +248,110 @@ namespace SIL.Cog
 				}
 			}
 			return len;
+		}
+
+		public static IEnumerable<T> GetAllDataObjects<T>(this IBidirectionalGraph<Cluster<T>, ClusterEdge<T>> tree, Cluster<T> cluster)
+		{
+			if (tree.IsOutEdgesEmpty(cluster))
+				return cluster.DataObjects;
+			return tree.OutEdges(cluster).Aggregate((IEnumerable<T>) cluster.DataObjects, (res, edge) => res.Concat(tree.GetAllDataObjects(edge.Target)));
+		}
+
+		private static void GetMidpoint<T>(IUndirectedGraph<Cluster<T>, ClusterEdge<T>> tree, out ClusterEdge<T> midpointEdge, out double pointOnEdge, out Cluster<T> firstCluster)
+		{
+			Cluster<T> cluster1;
+			IEnumerable<ClusterEdge<T>> path;
+			GetLongestPath(tree, null, tree.Vertices.First(), 0, Enumerable.Empty<ClusterEdge<T>>(), out cluster1, out path);
+			Cluster<T> cluster2;
+			double deepestLen = GetLongestPath(tree, null, cluster1, 0, Enumerable.Empty<ClusterEdge<T>>(), out cluster2, out path);
+			double midpoint = deepestLen / 2;
+
+			firstCluster = cluster1;
+			double totalLen = 0;
+			midpointEdge = null;
+			foreach (ClusterEdge<T> edge in path)
+			{
+				totalLen += edge.Length;
+				if (totalLen > midpoint)
+				{
+					midpointEdge = edge;
+					break;
+				}
+				firstCluster = edge.GetOtherVertex(firstCluster);
+			}
+			Debug.Assert(midpointEdge != null);
+
+			double diff = totalLen - midpoint;
+			pointOnEdge = midpointEdge.Length - diff;
+		}
+
+		public static Cluster<T> GetCenter<T>(this IUndirectedGraph<Cluster<T>, ClusterEdge<T>> tree)
+		{
+			ClusterEdge<T> midpointEdge;
+			double pointOnEdge;
+			Cluster<T> firstCluster;
+			GetMidpoint(tree, out midpointEdge, out pointOnEdge, out firstCluster);
+			return pointOnEdge < midpointEdge.Length - pointOnEdge ? firstCluster : midpointEdge.GetOtherVertex(firstCluster);
+		}
+
+		public static IBidirectionalGraph<Cluster<T>, ClusterEdge<T>> ToRootedTree<T>(this IUndirectedGraph<Cluster<T>, ClusterEdge<T>> tree)
+		{
+			ClusterEdge<T> midpointEdge;
+			double pointOnEdge;
+			Cluster<T> firstCluster;
+			GetMidpoint(tree, out midpointEdge, out pointOnEdge, out firstCluster);
+
+			var rootedTree = new BidirectionalGraph<Cluster<T>, ClusterEdge<T>>(false);
+			if (pointOnEdge < double.Epsilon)
+			{
+				rootedTree.AddVertex(firstCluster);
+				GenerateRootedTree(tree, null, firstCluster, rootedTree);
+			}
+			else
+			{
+				var root = new Cluster<T>();
+				rootedTree.AddVertex(root);
+				Cluster<T> otherCluster = midpointEdge.GetOtherVertex(firstCluster);
+				rootedTree.AddVertex(otherCluster);
+				rootedTree.AddEdge(new ClusterEdge<T>(root, otherCluster, midpointEdge.Length - pointOnEdge));
+				GenerateRootedTree(tree, firstCluster, otherCluster, rootedTree);
+				rootedTree.AddVertex(firstCluster);
+				rootedTree.AddEdge(new ClusterEdge<T>(root, firstCluster, pointOnEdge));
+				GenerateRootedTree(tree, otherCluster, firstCluster, rootedTree);
+			}
+			return rootedTree;
+		}
+
+		private static void GenerateRootedTree<T>(IUndirectedGraph<Cluster<T>, ClusterEdge<T>> unrootedTree, Cluster<T> parent, Cluster<T> node, BidirectionalGraph<Cluster<T>, ClusterEdge<T>> rootedTree)
+		{
+			foreach (ClusterEdge<T> edge in unrootedTree.AdjacentEdges(node).Where(e => e.GetOtherVertex(node) != parent))
+			{
+				Cluster<T> otherCluster = edge.GetOtherVertex(node);
+				rootedTree.AddVertex(otherCluster);
+				rootedTree.AddEdge(new ClusterEdge<T>(node, otherCluster, edge.Length));
+				GenerateRootedTree(unrootedTree, node, otherCluster, rootedTree);
+			}
+		}
+
+		private static double GetLongestPath<T>(IUndirectedGraph<Cluster<T>, ClusterEdge<T>> tree, Cluster<T> parent, Cluster<T> node, double len, IEnumerable<ClusterEdge<T>> path,
+			out Cluster<T> deepestNode, out IEnumerable<ClusterEdge<T>> deepestPath)
+		{
+			deepestNode = node;
+			deepestPath = path;
+		    double maxDepth = 0;
+		    foreach (ClusterEdge<T> childEdge in tree.AdjacentEdges(node).Where(e => e.GetOtherVertex(node) != parent))
+		    {
+		        Cluster<T> cdn;
+			    IEnumerable<ClusterEdge<T>> cdp;
+		        double depth = GetLongestPath(tree, node, childEdge.GetOtherVertex(node), childEdge.Length, path.Concat(childEdge), out cdn, out cdp);
+		        if (depth > maxDepth)
+		        {
+		            deepestNode = cdn;
+		            maxDepth = depth;
+			        deepestPath = cdp;
+		        }
+		    }
+		    return maxDepth + len;
 		}
 	}
 }

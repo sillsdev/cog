@@ -34,7 +34,7 @@ namespace SIL.Cog.Components
 				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
 				int alignmentCount = 0;
 				double totalAlignmentScore = 0.0;
-				foreach (Alignment<ShapeNode> alignment in alignerResult.GetAlignments())
+				foreach (Alignment<Word, ShapeNode> alignment in alignerResult.GetAlignments())
 				{
 					totalAlignmentScore += alignment.NormalizedScore;
 					alignmentCount++;

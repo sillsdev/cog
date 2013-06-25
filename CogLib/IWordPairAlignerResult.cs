@@ -7,7 +7,7 @@ namespace SIL.Cog
 	{
 		int BestRawScore { get; }
 
-		IEnumerable<Alignment<ShapeNode>> GetAlignments();
-		IEnumerable<Alignment<ShapeNode>> GetAlignments(double scoreMargin);
+		IEnumerable<Alignment<Word, ShapeNode>> GetAlignments();
+		IEnumerable<Alignment<Word, ShapeNode>> GetAlignments(double scoreMargin);
 	}
 }

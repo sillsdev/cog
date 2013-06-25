@@ -8,16 +8,12 @@ namespace SIL.Cog.Components
 {
 	public class WordPairAlignerResult : IWordPairAlignerResult
 	{
-		private readonly PairwiseAlignmentAlgorithm<ShapeNode> _algorithm;
+		private readonly PairwiseAlignmentAlgorithm<Word, ShapeNode> _algorithm;
 		private bool _computed;
 
-		internal WordPairAlignerResult(WordPairAlignerSettings settings, IPairwiseAlignmentScorer<ShapeNode> scorer, Word word1, Word word2)
+		internal WordPairAlignerResult(IPairwiseAlignmentScorer<Word, ShapeNode> scorer, WordPairAlignerSettings settings, Word word1, Word word2)
 		{
-			int startIndex1, count1;
-			IEnumerable<ShapeNode> sequence1 = GetNodes(word1, out startIndex1, out count1);
-			int startIndex2, count2;
-			IEnumerable<ShapeNode> sequence2 = GetNodes(word2, out startIndex2, out count2);
-			_algorithm = new PairwiseAlignmentAlgorithm<ShapeNode>(scorer, sequence1, startIndex1, count1, sequence2, startIndex2, count2)
+			_algorithm = new PairwiseAlignmentAlgorithm<Word, ShapeNode>(scorer, word1, word2, GetNodes)
 				{
 					ExpansionCompressionEnabled = settings.ExpansionCompressionEnabled,
 					Mode = settings.Mode
@@ -54,7 +50,7 @@ namespace SIL.Cog.Components
 			}
 		}
 
-		public IEnumerable<Alignment<ShapeNode>> GetAlignments()
+		public IEnumerable<Alignment<Word, ShapeNode>> GetAlignments()
 		{
 			if (!_computed)
 			{
@@ -64,7 +60,7 @@ namespace SIL.Cog.Components
 			return _algorithm.GetAlignments();
 		}
 
-		public IEnumerable<Alignment<ShapeNode>> GetAlignments(double scoreMargin)
+		public IEnumerable<Alignment<Word, ShapeNode>> GetAlignments(double scoreMargin)
 		{
 			if (!_computed)
 			{

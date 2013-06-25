@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SIL.Cog.Clusterers
 {
-	public class DbscanClusterer<T> : IClusterer<T>
+	public class DbscanClusterer<T> : IFlatClusterer<T>
 	{
 		private readonly Func<T, IEnumerable<T>> _getNeighbors;
 		private readonly double _minPoints;

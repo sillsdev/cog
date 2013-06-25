@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SIL.Cog.Clusterers
 {
-	public class LsdbcClusterer<T> : IClusterer<T>
+	public class LsdbcClusterer<T> : IFlatClusterer<T>
 	{
 		private readonly double _factor;
 		private readonly Func<T, IEnumerable<Tuple<T, double>>> _getKNearestNeighbors;

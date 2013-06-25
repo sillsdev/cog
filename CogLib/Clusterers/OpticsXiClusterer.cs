@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using QuickGraph;
 using SIL.Collections;
 
 namespace SIL.Cog.Clusterers
 {
-	public class OpticsXiClusterer<T> : OpticsClusterer<T>
+	public class OpticsXiClusterer<T> : OpticsRootedHierarchicalClusterer<T>
 	{
 		private readonly double _ixi;
 
@@ -15,13 +16,14 @@ namespace SIL.Cog.Clusterers
 			_ixi = 1.0 - xi;
 		}
 
-		public override IEnumerable<Cluster<T>> GenerateClusters(IList<ClusterOrderEntry<T>> clusterOrder)
+		public override IBidirectionalGraph<Cluster<T>, ClusterEdge<T>> GenerateClusters(IList<ClusterOrderEntry<T>> clusterOrder)
 		{
 			double mib = 0.0;
 			var clusterIndices = new Dictionary<Cluster<T>, Tuple<int, int>>();
 			var curClusters = new HashSet<Cluster<T>>();
 			var unclassifed = new HashSet<T>(clusterOrder.Select(oe => oe.DataObject));
 			var sdaSet = new List<SteepArea>();
+			var tree = new BidirectionalGraph<Cluster<T>, ClusterEdge<T>>(false);
 			var scan = new SteepScanPosition(clusterOrder);
 			while (scan.HasNext)
 			{
@@ -110,6 +112,7 @@ namespace SIL.Cog.Clusterers
 								continue;
 
 							var cluster = new Cluster<T>(clusterOrder.Skip(cstart).Take(cend - cstart + 1).Select(oe => oe.DataObject).Intersect(unclassifed));
+							tree.AddVertex(cluster);
 							unclassifed.ExceptWith(cluster.DataObjects);
 
 							var toRemove = new HashSet<Cluster<T>>();
@@ -118,7 +121,7 @@ namespace SIL.Cog.Clusterers
 								Tuple<int, int> indices = clusterIndices[curCluster];
 								if (cstart <= indices.Item1 && indices.Item2 <= cend)
 								{
-									cluster.Children.Add(curCluster);
+									tree.AddEdge(new ClusterEdge<T>(cluster, curCluster));
 									toRemove.Add(curCluster);
 								}
 							}
@@ -137,12 +140,12 @@ namespace SIL.Cog.Clusterers
 			{
 				Cluster<T> allCluster = double.IsPositiveInfinity(clusterOrder.Last().Reachability)
 					? new Cluster<T>(unclassifed, true) : new Cluster<T>(unclassifed);
+				tree.AddVertex(allCluster);
 				foreach (Cluster<T> curCluster in curClusters)
-					allCluster.Children.Add(curCluster);
-				return allCluster.ToEnumerable();
+					tree.AddEdge(new ClusterEdge<T>(allCluster, curCluster));
 			}
 
-			return curClusters;
+			return tree;
 		}
 
 		private void UpdateFilterSdaSet(double mib, List<SteepArea> sdaSet)

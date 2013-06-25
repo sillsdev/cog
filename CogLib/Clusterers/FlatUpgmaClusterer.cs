@@ -5,7 +5,7 @@ using SIL.Collections;
 
 namespace SIL.Cog.Clusterers
 {
-	public class FlatUpgmaClusterer<T> : IClusterer<T>
+	public class FlatUpgmaClusterer<T> : IFlatClusterer<T>
 	{
 		private readonly Func<T, T, double> _getDistance;
 		private readonly double _threshold;

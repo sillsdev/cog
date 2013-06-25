@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Clusterers;
-using SIL.Collections;
 
 namespace SIL.Cog.Test
 {
@@ -28,9 +26,7 @@ namespace SIL.Cog.Test
 					new Cluster<char>(new[] {'A', 'E', 'D'})
 				};
 
-			Assert.That(clusters.Length, Is.EqualTo(expected.Length));
-			foreach (Tuple<Cluster<char>, Cluster<char>> c in clusters.Zip(expected))
-				AssertClustersEqual(c.Item1, c.Item2);
+			Assert.That(clusters, Is.EquivalentTo(expected).Using(new ClusterEqualityComparer<char>()));
 		}
 	}
 }

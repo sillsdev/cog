@@ -1,13 +1,14 @@
 namespace SIL.Cog.SequenceAlignment
 {
-	public interface IPairwiseAlignmentScorer<in T> where T : class
+	public interface IPairwiseAlignmentScorer<in TSeq, in TItem>
 	{
-		int GetInsertionScore(T p, T q);
-		int GetDeletionScore(T p, T q);
-		int GetSubstitutionScore(T p, T q);
-		int GetExpansionScore(T p, T q1, T q2);
-		int GetCompressionScore(T p1, T p2, T q);
-		int GetMaxScore1(T p);
-		int GetMaxScore2(T q);
+		int GetGapPenalty(TSeq sequence1, TSeq sequence2);
+		int GetInsertionScore(TSeq sequence1, TItem p, TSeq sequence2, TItem q);
+		int GetDeletionScore(TSeq sequence1, TItem p, TSeq sequence2, TItem q);
+		int GetSubstitutionScore(TSeq sequence1, TItem p, TSeq sequence2, TItem q);
+		int GetExpansionScore(TSeq sequence1, TItem p, TSeq sequence2, TItem q1, TItem q2);
+		int GetCompressionScore(TSeq sequence1, TItem p1, TItem p2, TSeq sequence2, TItem q);
+		int GetMaxScore1(TSeq sequence1, TItem p, TSeq sequence2);
+		int GetMaxScore2(TSeq sequence1, TSeq sequence2, TItem q);
 	}
 }

@@ -60,7 +60,7 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric) : null;
+			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
 			_project.Varieties.CollectionChanged += VarietiesChanged;
 			_project.Senses.CollectionChanged += SensesChanged;
 		}
@@ -80,7 +80,7 @@ namespace SIL.Cog.ViewModels
 			switch (msg.Notification)
 			{
 				case Notifications.ComparisonPerformed:
-					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
+					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 					break;
 			}
 		}
@@ -97,7 +97,7 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				if (Set(() => ClusteringMethod, ref _clusteringMethod, value) && _graph != null)
-					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
+					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
-					Graph = _project.GenerateHierarchicalGraph(_clusteringMethod, _similarityMetric);
+					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 			}
 		}
 

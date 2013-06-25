@@ -61,7 +61,7 @@ namespace SIL.Cog.Components
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
 				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
-				Alignment<ShapeNode> alignment = alignerResult.GetAlignments().First();
+				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				int cat1Count = 0;
 				int cat1And2Count = 0;
 				int totalCount = 0;

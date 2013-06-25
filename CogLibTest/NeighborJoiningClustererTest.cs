@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using QuickGraph;
 using SIL.Cog.Clusterers;
 
 namespace SIL.Cog.Test
@@ -18,50 +20,63 @@ namespace SIL.Cog.Test
 					{3, 3, 3, 1, 0}
 				};
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => matrix[o1 - 'A', o2 - 'A']);
-			Cluster<char>[] clusters = nj.GenerateClusters(new[] {'A', 'B', 'C', 'D', 'E'}).ToArray();
+			IUndirectedGraph<Cluster<char>, ClusterEdge<char>> tree = nj.GenerateClusters(new[] {'A', 'B', 'C', 'D', 'E'});
 
-			var root = new Cluster<char> {Children =
+			var vertices = new Dictionary<string, Cluster<char>> 
 				{
-					{new Cluster<char>(new[] {'C'}) {Description = "C"}, 1.0},
-					{new Cluster<char> {Children =
-						{
-							{new Cluster<char>(new[] {'D'}) {Description = "D"}, 0.5},
-							{new Cluster<char>(new[] {'E'}) {Description = "E"}, 0.5}
-						}}, 1.5},
-					{new Cluster<char> {Children =
-						{
-							{new Cluster<char>(new[] {'A'}) {Description = "A"}, 0.5},
-							{new Cluster<char>(new[] {'B'}) {Description = "B"}, 0.5}
-						}}, 0.5}
-				}};
-			Assert.That(clusters.Length, Is.EqualTo(1));
-			AssertClustersEqual(clusters[0], root);
+					{"root", new Cluster<char> {Description = "root"}},
+					{"A", new Cluster<char>('A') {Description = "A"}},
+					{"B", new Cluster<char>('B') {Description = "B"}},
+					{"C", new Cluster<char>('C') {Description = "C"}},
+					{"D", new Cluster<char>('D') {Description = "D"}},
+					{"E", new Cluster<char>('E') {Description = "E"}},
+					{"DE", new Cluster<char> {Description = "DE"}},
+					{"AB", new Cluster<char> {Description = "AB"}}
+				};
+
+			var edges = new[]
+				{
+					new ClusterEdge<char>(vertices["root"], vertices["C"], 1.0),
+					new ClusterEdge<char>(vertices["root"], vertices["DE"], 1.5),
+					new ClusterEdge<char>(vertices["root"], vertices["AB"], 0.5),
+					new ClusterEdge<char>(vertices["DE"], vertices["D"], 0.5),
+					new ClusterEdge<char>(vertices["DE"], vertices["E"], 0.5),
+					new ClusterEdge<char>(vertices["AB"], vertices["A"], 0.5),
+					new ClusterEdge<char>(vertices["AB"], vertices["B"], 0.5)
+				};
+
+			AssertTreeEqual(tree, edges.ToUndirectedGraph<Cluster<char>, ClusterEdge<char>>(false));
 		}
 
 		[Test]
 		public void ClusterNoDataObjects()
 		{
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => 0);
-			Cluster<char>[] clusters = nj.GenerateClusters(Enumerable.Empty<char>()).ToArray();
-			Assert.That(clusters, Is.Empty);
+			IUndirectedGraph<Cluster<char>, ClusterEdge<char>> tree = nj.GenerateClusters(Enumerable.Empty<char>());
+			Assert.That(tree.IsEdgesEmpty);
 		}
 
 		[Test]
 		public void ClusterOneDataObject()
 		{
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => 0);
-			Cluster<char>[] clusters = nj.GenerateClusters(new[] {'A'}).ToArray();
-			Assert.That(clusters.Length, Is.EqualTo(1));
-			AssertClustersEqual(clusters[0], new Cluster<char>(new[] {'A'}) {Description = "A"});
+			IUndirectedGraph<Cluster<char>, ClusterEdge<char>> tree = nj.GenerateClusters(new[] {'A'});
+			Assert.That(tree.VertexCount, Is.EqualTo(1));
+			Assert.That(tree.IsEdgesEmpty);
 		}
 
 		[Test]
 		public void ClusterTwoDataObjects()
 		{
 			var nj = new NeighborJoiningClusterer<char>((o1, o2) => 1);
-			Cluster<char>[] clusters = nj.GenerateClusters(new[] {'A', 'B'}).ToArray();
-			Assert.That(clusters.Length, Is.EqualTo(1));
-			AssertClustersEqual(clusters[0], new Cluster<char>(new[] {'B'}) {Description = "B", Children = {{new Cluster<char>(new[] {'A'}) {Description = "A"}, 1.0}}});
+			IUndirectedGraph<Cluster<char>, ClusterEdge<char>> tree = nj.GenerateClusters(new[] {'A', 'B'});
+
+			var edges = new[]
+				{
+					new ClusterEdge<char>(new Cluster<char>('A'), new Cluster<char>('B'), 1.0),
+				};
+
+			AssertTreeEqual(tree, edges.ToUndirectedGraph<Cluster<char>, ClusterEdge<char>>());
 		}
 	}
 }

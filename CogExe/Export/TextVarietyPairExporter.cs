@@ -54,7 +54,7 @@ namespace SIL.Cog.Export
 				if (!first)
 					writer.WriteLine();
 				IWordPairAlignerResult results = aligner.Compute(pair);
-				Alignment<ShapeNode> alignment = results.GetAlignments().First();
+				Alignment<Word, ShapeNode> alignment = results.GetAlignments().First();
 				writer.Write(pair.Word1.Sense.Gloss);
 				if (!string.IsNullOrEmpty(pair.Word1.Sense.Category))
 					writer.Write(" ({0})", pair.Word1.Sense.Category);

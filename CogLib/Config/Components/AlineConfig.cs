@@ -39,7 +39,7 @@ namespace SIL.Cog.Config.Components
 				}
 			}
 
-			return new Aline(spanFactory, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
+			return new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
 		}
 
 		public override void Save(IWordPairAligner component, XElement elem)

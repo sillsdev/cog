@@ -41,7 +41,7 @@ namespace SIL.Cog.Components
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
 				IWordPairAlignerResult alignerResult = aligner.Compute(wp);
-				Alignment<ShapeNode> alignment = alignerResult.GetAlignments().First();
+				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				wp.PhoneticSimilarityScore = alignment.NormalizedScore;
 				int initialEquivalentClasses = 0;
 				bool mismatchFound = false;

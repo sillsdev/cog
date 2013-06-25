@@ -13,7 +13,7 @@ namespace SIL.Cog.ViewModels
 
 		private readonly AlignedNodeViewModel _prefixNode;
 		private readonly ReadOnlyCollection<AlignedNodeViewModel> _alignedNodes;
-		private readonly Alignment<ShapeNode> _alignment; 
+		private readonly Alignment<Word, ShapeNode> _alignment; 
 		private readonly AlignedNodeViewModel _suffixNode;
 		private readonly SenseViewModel _sense;
 		private readonly VarietyViewModel _variety1;
@@ -98,7 +98,7 @@ namespace SIL.Cog.ViewModels
 			get { return _wordPair; }
 		}
 
-		public Alignment<ShapeNode> ModelAlignment
+		public Alignment<Word, ShapeNode> ModelAlignment
 		{
 			get { return _alignment; }
 		}

@@ -28,10 +28,10 @@ namespace SIL.Cog.Components
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
-			IWordPairAligner aligner = Project.Aligners[_alignerID];
+			IWordAligner aligner = Project.WordAligners[_alignerID];
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
-				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
+				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
 				int alignmentCount = 0;
 				double totalAlignmentScore = 0.0;
 				foreach (Alignment<Word, ShapeNode> alignment in alignerResult.GetAlignments())

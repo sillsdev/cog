@@ -29,13 +29,13 @@ namespace SIL.Cog.ViewModels
 		public string Gloss
 		{
 			get { return _gloss; }
-			set { Set("Gloss", ref _gloss, value); }
+			set { Set(() => Gloss, ref _gloss, value); }
 		}
 
 		public string Category
 		{
 			get { return _category; }
-			set { Set("Category", ref _category, value); }
+			set { Set(() => Category, ref _category, value); }
 		}
 
 		public string this[string columnName]

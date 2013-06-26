@@ -138,7 +138,7 @@ namespace SIL.Cog.ViewModels
 
 			var aligner = new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.ModelSoundClass)});
-			Project.Aligners["primary"] = aligner;
+			Project.WordAligners["primary"] = aligner;
 			return aligner;
 		}
 	}

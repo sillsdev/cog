@@ -40,7 +40,7 @@ namespace SIL.Cog.ViewModels
 
 		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
-			IWordPairAligner aligner = _project.Aligners["primary"];
+			IWordAligner aligner = _project.WordAligners["primary"];
 			wordPairs.SelectedChangeWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{

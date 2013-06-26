@@ -9,9 +9,9 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Config.Components
 {
-	public class AlineConfig : AlignerConfig
+	public class AlineConfig : WordAlignerConfigBase
 	{
-		public override IWordPairAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public override IWordAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
 		{
 			WordPairAlignerSettings settings = LoadSettings(project.Segmenter, project.FeatureSystem, elem);
 			XElement relevantFeaturesElem = elem.Element(ConfigManager.Cog + "RelevantFeatures");
@@ -42,7 +42,7 @@ namespace SIL.Cog.Config.Components
 			return new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
 		}
 
-		public override void Save(IWordPairAligner component, XElement elem)
+		public override void Save(IWordAligner component, XElement elem)
 		{
 			var aline = (Aline) component;
 			SaveSettings(aline.Settings, elem);

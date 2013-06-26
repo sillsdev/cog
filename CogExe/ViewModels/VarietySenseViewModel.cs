@@ -39,7 +39,7 @@ namespace SIL.Cog.ViewModels
 
 		private void ModelWordsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			Set("StrRep", ref _strRep, string.Join("/", ModelWords.Select(word => word.StrRep)));
+			Set(() => StrRep, ref _strRep, string.Join("/", ModelWords.Select(word => word.StrRep)));
 		}
 
 		public string StrRep

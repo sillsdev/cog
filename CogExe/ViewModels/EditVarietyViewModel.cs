@@ -26,7 +26,7 @@ namespace SIL.Cog.ViewModels
 		public string Name
 		{
 			get { return _name; }
-			set { Set("Name", ref _name, value); }
+			set { Set(() => Name, ref _name, value); }
 		}
 
 		public string this[string columnName]

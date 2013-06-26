@@ -28,8 +28,8 @@ namespace SIL.Cog.ViewModels
 			get { return _vowelThreshold; }
 			set
 			{
-				Set("VowelThreshold", ref _vowelThreshold, value);
-				IsChanged = true;
+				if (Set(() => VowelThreshold, ref _vowelThreshold, value))
+					IsChanged = true;
 			}
 		}
 
@@ -38,8 +38,8 @@ namespace SIL.Cog.ViewModels
 			get { return _consThreshold; }
 			set
 			{
-				Set("ConsonantThreshold", ref _consThreshold, value);
-				IsChanged = true;
+				if (Set(() => ConsonantThreshold, ref _consThreshold, value))
+					IsChanged = true;
 			}
 		}
 

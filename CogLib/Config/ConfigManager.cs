@@ -137,10 +137,10 @@ namespace SIL.Cog.Config
 			if (joinersElem != null)
 				ParseSymbols(project.FeatureSystem, joinersElem, project.Segmenter.Joiners);
 
-			XElement alignersElem = root.Element(Cog + "Aligners");
+			XElement alignersElem = root.Element(Cog + "WordAligners");
 			Debug.Assert(alignersElem != null);
-			foreach (XElement alignerElem in alignersElem.Elements(Cog + "Aligner"))
-				LoadComponent(spanFactory, project, alignerElem, project.Aligners);
+			foreach (XElement alignerElem in alignersElem.Elements(Cog + "WordAligner"))
+				LoadComponent(spanFactory, project, alignerElem, project.WordAligners);
 
 			var senses = new Dictionary<string, Sense>();
 			XElement sensesElem = root.Element(Cog + "Senses");
@@ -297,7 +297,7 @@ namespace SIL.Cog.Config
 					new XElement(Cog + "ToneLetters", SaveSymbols(project.Segmenter.ToneLetters)),
 					new XElement(Cog + "Joiners", SaveSymbols(project.Segmenter.Joiners))));
 
-			root.Add(new XElement(Cog + "Aligners", project.Aligners.Select(kvp => SaveComponent("Aligner", kvp.Key, kvp.Value))));
+			root.Add(new XElement(Cog + "WordAligners", project.WordAligners.Select(kvp => SaveComponent("WordAligner", kvp.Key, kvp.Value))));
 
 			var senseIds = new Dictionary<Sense, string>();
 			var sensesElem = new XElement(Cog + "Senses");

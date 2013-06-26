@@ -10,7 +10,8 @@ namespace SIL.Cog.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return new ConcurrentCollection<object>((INotifyCollectionChanged) value);
+			Type type = typeof (ConcurrentCollection<>).MakeGenericType((Type) parameter);
+			return Activator.CreateInstance(type, (INotifyCollectionChanged) value);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

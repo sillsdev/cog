@@ -80,7 +80,7 @@ namespace SIL.Cog.Test
 		}
 
 		[Test]
-		public void AlignLessThanTwoSequences()
+		public void AlignLessThanThreeSequences()
 		{
 			var scorer = new StringScorer();
 			Assert.Throws<ArgumentException>(() =>
@@ -92,29 +92,11 @@ namespace SIL.Cog.Test
 				{
 					var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"bar"}, GetChars);
 				});
-		}
 
-		[Test]
-		public void AlignTwoSequences()
-		{
-			var scorer = new StringScorer();
-			var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar"}, GetChars);
-			msa.Compute();
-			Alignment<string, char> alignment = msa.GetAlignment();
-
-			AssertAlignmentsEqual(alignment, CreateAlignment(
-				"| c a r |",
-				"| b a r |"
-				));
-
-			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bark"}, GetChars);
-			msa.Compute();
-			alignment = msa.GetAlignment();
-
-			AssertAlignmentsEqual(alignment, CreateAlignment(
-				"| c a r - |",
-				"| b a r k |"
-				));
+				Assert.Throws<ArgumentException>(() =>
+				{
+					var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar"}, GetChars);
+				});
 		}
 
 		[Test]

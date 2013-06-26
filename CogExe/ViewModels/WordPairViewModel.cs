@@ -29,8 +29,8 @@ namespace SIL.Cog.ViewModels
 			_variety1 = new VarietyViewModel(_wordPair.VarietyPair.Variety1);
 			_variety2 = new VarietyViewModel(_wordPair.VarietyPair.Variety2);
 
-			IWordPairAligner aligner = _project.Aligners["primary"];
-			IWordPairAlignerResult results = aligner.Compute(_wordPair);
+			IWordAligner aligner = _project.WordAligners["primary"];
+			IWordAlignerResult results = aligner.Compute(_wordPair);
 			_alignment = results.GetAlignments().First();
 			_prefixNode = new AlignedNodeViewModel(_alignment.Prefixes[0], _alignment.Prefixes[1]);
 			var nodes = new List<AlignedNodeViewModel>();

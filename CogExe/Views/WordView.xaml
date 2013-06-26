@@ -29,7 +29,7 @@
             </TextBlock.TextDecorations>
         </TextBlock>
         <ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
-				 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments, Converter={StaticResource ConcurrentConverter}}"
+				 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}"
 				 v:ItemsControlDragDrop.DragDropTemplate="{StaticResource BlankTemplate}" LostFocus="_listBox_LostFocus">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>

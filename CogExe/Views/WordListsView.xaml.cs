@@ -47,19 +47,6 @@ namespace SIL.Cog.Views
 			WordListsGrid.Columns.Clear();
 			for (int i = 0; i < vm.Senses.Count; i++)
 			{
-				//var geometry = Geometry.Parse("M 0,1 C 1,0 2,2 3,1");
-				//var path = new Path {Stroke = Brushes.Red, StrokeThickness = 0.5, StrokeEndLineCap = PenLineCap.Square, StrokeStartLineCap = PenLineCap.Square, Data = geometry};
-				//var brush = new VisualBrush
-				//    {
-				//        Viewbox = new Rect(0, 0, 3, 2),
-				//        ViewboxUnits = BrushMappingMode.Absolute,
-				//        Viewport = new Rect(0, 1.5, 6, 4),
-				//        ViewportUnits = BrushMappingMode.Absolute,
-				//        TileMode = TileMode.Tile,
-				//        Visual = path
-				//    };
-				//var pen = new Pen(brush, 6);
-
 				var pen = new Pen(new SolidColorBrush(Colors.Red), 2) {DashStyle = DashStyles.Dash};
 				var textDecoration = new TextDecoration {Location = TextDecorationLocation.Underline, Pen = pen, PenOffset = 1};
 				var textDecorations = new TextDecorationCollection {textDecoration};
@@ -69,7 +56,7 @@ namespace SIL.Cog.Views
 				textBlockFactory.SetBinding(TextBlockBehaviors.InlinesListProperty, textBinding);
 				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
 				textBlockFactory.SetValue(TextBlock.FontSizeProperty, 16.0);
-				textBlockFactory.SetBinding(FrameworkElement.TagProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
+				textBlockFactory.SetBinding(TagProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
 				textBlockFactory.Name = "textBlock";
 				var cellTemplate = new DataTemplate
 					{
@@ -78,7 +65,7 @@ namespace SIL.Cog.Views
 							{
 								new Trigger {SourceName = "textBlock", Property = TextBlockBehaviors.IsTextTrimmedProperty, Value = true, Setters =
 									{
-										new Setter(FrameworkElement.ToolTipProperty, new Binding(string.Format("Senses[{0}].StrRep", i)), "textBlock")
+										new Setter(ToolTipProperty, new Binding(string.Format("Senses[{0}].StrRep", i)), "textBlock")
 									}}
 							}
 					};
@@ -86,7 +73,7 @@ namespace SIL.Cog.Views
 				var textBoxFactory = new FrameworkElementFactory(typeof(TextBox));
 				textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
 				textBoxFactory.SetValue(BorderThicknessProperty, new Thickness(0));
-				textBoxFactory.SetValue(Control.FontSizeProperty, 16.0);
+				textBoxFactory.SetValue(FontSizeProperty, 16.0);
 				textBoxFactory.Name = "textBox";
 				var cellEditTemplate = new DataTemplate {VisualTree = textBoxFactory};
 

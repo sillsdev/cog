@@ -39,7 +39,7 @@ namespace SIL.Cog.ViewModels
 		public bool IsSelected
 		{
 			get { return _isSelected; }
-			set { Set("IsSelected", ref _isSelected, value); }
+			set { Set(() => IsSelected, ref _isSelected, value); }
 		}
 
 		public override string ToString()

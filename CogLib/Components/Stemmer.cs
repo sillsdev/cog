@@ -41,14 +41,22 @@ namespace SIL.Cog.Components
 				if (dir == Direction.LeftToRight)
 					pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 				foreach (ShapeNode node in affix.Shape)
+				{
 					pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.FeatureStruct.DeepClone()));
+					pattern.Children.Add(new Quantifier<Word, ShapeNode>(0, 1, new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType).Value)));
+				}
 				if (dir == Direction.RightToLeft)
 					pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 				string category = affix.Category;
 				ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
 			}
 
-			var matcherSettings = new MatcherSettings<ShapeNode> {Direction = dir, Filter = ann => ann.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)};
+			var matcherSettings = new MatcherSettings<ShapeNode>
+				{
+					Direction = dir,
+					Filter = ann => ann.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType,
+						CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType)
+				};
 			var rule = new PatternRule<Word, ShapeNode>(_spanFactory, ruleSpec, matcherSettings);
 
 			foreach (Word word in words.Where(w => w.Shape.Count > 0))

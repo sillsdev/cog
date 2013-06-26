@@ -37,10 +37,10 @@ namespace SIL.Cog.Components
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
-			IWordPairAligner aligner = Project.Aligners[_alignerID];
+			IWordAligner aligner = Project.WordAligners[_alignerID];
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
-				IWordPairAlignerResult alignerResult = aligner.Compute(wp);
+				IWordAlignerResult alignerResult = aligner.Compute(wp);
 				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				wp.PhoneticSimilarityScore = alignment.NormalizedScore;
 				int initialEquivalentClasses = 0;

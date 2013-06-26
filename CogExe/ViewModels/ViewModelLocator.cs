@@ -64,6 +64,7 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<NetworkGraphViewModel>();
 			SimpleIoc.Default.Register<GeographicalViewModel>();
 			SimpleIoc.Default.Register<SimilarSegmentsViewModel>();
+			SimpleIoc.Default.Register<SenseAlignmentViewModel>();
         }
 
         public MainWindowViewModel Main

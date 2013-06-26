@@ -52,7 +52,7 @@ namespace SIL.Cog.Components
 
 		public override void Process(VarietyPair varietyPair)
 		{
-			IWordPairAligner aligner = Project.Aligners[_alignerID];
+			IWordAligner aligner = Project.WordAligners[_alignerID];
 			var correspondences = new HashSet<Tuple<string, string>>(varietyPair.SoundChangeFrequencyDistribution.Conditions
 				.SelectMany(cond => varietyPair.SoundChangeFrequencyDistribution[cond].ObservedSamples.Where(ngram => varietyPair.SoundChangeFrequencyDistribution[cond][ngram] >= 3),
 				(lhs, ngram) => Tuple.Create(lhs.Target.ToString(), ngram.ToString())));
@@ -60,7 +60,7 @@ namespace SIL.Cog.Components
 			int totalCognateCount = 0;
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
-				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
+				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
 				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				int cat1Count = 0;
 				int cat1And2Count = 0;

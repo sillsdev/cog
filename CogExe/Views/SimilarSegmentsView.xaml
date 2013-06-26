@@ -73,8 +73,8 @@
 				</Grid>
 			</StackPanel>
 			<HeaderedContentControl Grid.Row="1" Header="Observed word pairs">
-				<ListBox ItemsSource="{Binding WordPairs.WordPairs, Converter={StaticResource ConcurrentConverter}}" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2"
-						 LostFocus="WordPairsListBox_OnLostFocus">
+				<ListBox ItemsSource="{Binding WordPairs.WordPairs, Converter={StaticResource ConcurrentConverter}, ConverterParameter={x:Type vm:WordPairViewModel}}" SelectionMode="Extended"
+						 Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
 					<ListBox.CommandBindings>
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
 						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />

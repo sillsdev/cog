@@ -181,6 +181,7 @@
     <Compile Include="Converters\ProbabilityToWidthConverter.cs" />
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsControlScrollbarMarkerPositionConverter.cs" />
+    <Compile Include="Converters\SenseAlignmentHighlightSegmentConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\WordsToInlinesConverter.cs" />
     <Compile Include="Export\CognateSetsExporterBase.cs" />
@@ -254,6 +255,8 @@
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
+    <Compile Include="ViewModels\SenseAlignmentViewModel.cs" />
+    <Compile Include="ViewModels\SenseAlignmentWordViewModel.cs" />
     <Compile Include="ViewModels\SimilarSegmentsViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
@@ -370,6 +373,9 @@
     </Compile>
     <Compile Include="Views\EditRegionDialog.xaml.cs">
       <DependentUpon>EditRegionDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SenseAlignmentView.xaml.cs">
+      <DependentUpon>SenseAlignmentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegionHitMarker.cs" />
     <Compile Include="Views\RegionMarker.cs" />
@@ -549,6 +555,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditRegionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SenseAlignmentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

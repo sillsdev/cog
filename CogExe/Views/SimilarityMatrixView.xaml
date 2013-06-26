@@ -14,8 +14,8 @@
 		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similarity Matrix</TextBlock>
 		<Grid>
             <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">Click on "Perform comparison" to calculate the similarity matrix for all variety pairs.</TextBlock>
-            <DataGrid Name="SimMatrixGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" AutoGenerateColumns="False" ItemsSource="{Binding Varieties}" SelectionUnit="Cell" EnableColumnVirtualization="False"
-                  EnableRowVirtualization="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True">
+            <DataGrid Name="SimMatrixGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" AutoGenerateColumns="False" ItemsSource="{Binding Varieties}"
+					  SelectionUnit="Cell" EnableColumnVirtualization="False" EnableRowVirtualization="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True">
                 <DataGrid.RowHeaderStyle>
                     <Style TargetType="DataGridRowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
                         <Setter Property="Content" Value="{Binding}" />

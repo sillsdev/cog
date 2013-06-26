@@ -58,8 +58,10 @@
     <Compile Include="Clusterers\NeighborJoiningClusterer.cs" />
     <Compile Include="Clusterers\OpticsRootedHierarchicalClusterer.cs" />
     <Compile Include="Clusterers\UpgmaClusterer.cs" />
-    <Compile Include="Components\WordPairAlignerBase.cs" />
-    <Compile Include="Components\WordPairAlignerResult.cs" />
+    <Compile Include="Components\MultipleWordAlignerResult.cs" />
+    <Compile Include="Components\WordAlignerBase.cs" />
+    <Compile Include="Components\PairwiseWordAlignerResult.cs" />
+    <Compile Include="Components\WordAlignerResultBase.cs" />
     <Compile Include="Components\WordPairAlignerSettings.cs" />
     <Compile Include="Components\Aline.cs" />
     <Compile Include="Components\BlairCognateIdentifier.cs" />
@@ -79,7 +81,7 @@
     <Compile Include="Components\UnsupervisedAffixIdentifier.cs" />
     <Compile Include="Components\VarietyPairGenerator.cs" />
     <Compile Include="Components\WordPairGenerator.cs" />
-    <Compile Include="Config\Components\AlignerConfig.cs" />
+    <Compile Include="Config\Components\WordAlignerConfigBase.cs" />
     <Compile Include="Config\Components\AlineConfig.cs" />
     <Compile Include="Config\Components\BlairCognateIdentifierConfig.cs" />
     <Compile Include="Config\Components\DolgopolskyCognateIdentifierConfig.cs" />
@@ -112,8 +114,8 @@
     <Compile Include="CogExtensions.cs" />
     <Compile Include="IRootedHierarchicalClusterer.cs" />
     <Compile Include="IUnrootedHierarchicalClusterer.cs" />
-    <Compile Include="IWordPairAligner.cs" />
-    <Compile Include="IWordPairAlignerResult.cs" />
+    <Compile Include="IWordAligner.cs" />
+    <Compile Include="IWordAlignerResult.cs" />
     <Compile Include="IConditionalProbabilityDistribution.cs" />
     <Compile Include="IProbabilityDistribution.cs" />
     <Compile Include="IProcessor.cs" />

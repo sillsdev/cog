@@ -19,10 +19,12 @@ namespace SIL.Cog.SequenceAlignment
 		{
 			_scorer = scorer;
 			_sequences = sequences.ToArray();
-			if (_sequences.Length < 2)
-				throw new ArgumentException("At least two sequences must be specified.", "sequences");
+			if (_sequences.Length < 3)
+				throw new ArgumentException("At least three sequences must be specified.", "sequences");
 			_itemsSelector = itemsSelector;
 		}
+
+		public bool UseInputOrder { get; set; }
 
 		public void Compute()
 		{
@@ -84,22 +86,28 @@ namespace SIL.Cog.SequenceAlignment
 			}
 
 			Alignment<TSeq, TItem> alignment = profiles[root].Alignment;
-
-			var reorderedSequences = new List<Tuple<TSeq, AlignmentCell<TItem>, IEnumerable<AlignmentCell<TItem>>, AlignmentCell<TItem>>>();
-			foreach (TSeq sequence in _sequences)
+			if (UseInputOrder)
 			{
-				for (int i = 0; i < alignment.SequenceCount; i++)
+				var reorderedSequences = new List<Tuple<TSeq, AlignmentCell<TItem>, IEnumerable<AlignmentCell<TItem>>, AlignmentCell<TItem>>>();
+				foreach (TSeq sequence in _sequences)
 				{
-					int seq = i;
-					if (sequence.Equals(alignment.Sequences[seq]))
+					for (int i = 0; i < alignment.SequenceCount; i++)
 					{
-						reorderedSequences.Add(Tuple.Create(sequence, alignment.Prefixes[seq], Enumerable.Range(0, alignment.ColumnCount).Select(col => alignment[seq, col]), alignment.Suffixes[seq]));
-						break;
+						int seq = i;
+						if (sequence.Equals(alignment.Sequences[seq]))
+						{
+							reorderedSequences.Add(Tuple.Create(sequence, alignment.Prefixes[seq], Enumerable.Range(0, alignment.ColumnCount).Select(col => alignment[seq, col]), alignment.Suffixes[seq]));
+							break;
+						}
 					}
 				}
-			}
 
-			_result = new Alignment<TSeq, TItem>(alignment.RawScore, alignment.NormalizedScore, reorderedSequences);
+				_result = new Alignment<TSeq, TItem>(alignment.RawScore, alignment.NormalizedScore, reorderedSequences);
+			}
+			else
+			{
+				_result = alignment;
+			}
 		}
 
 		public Alignment<TSeq, TItem> GetAlignment()
@@ -127,7 +135,7 @@ namespace SIL.Cog.SequenceAlignment
 				TItem[] items = _itemsSelector(seq, out startIndex, out count).ToArray();
 
 				var profile = new Profile<TSeq, TItem>(new Alignment<TSeq, TItem>(0, 0, Tuple.Create(seq, new AlignmentCell<TItem>(items.Take(startIndex)), 
-					items.Skip(startIndex).Select(item => new AlignmentCell<TItem>(item)), new AlignmentCell<TItem>(items.Skip(count)))), weight.ToEnumerable());
+					items.Skip(startIndex).Take(count).Select(item => new AlignmentCell<TItem>(item)), new AlignmentCell<TItem>(items.Skip(startIndex + count)))), weight.ToEnumerable());
 				profiles[edge.Target] = profile;
 				return weight;
 			}

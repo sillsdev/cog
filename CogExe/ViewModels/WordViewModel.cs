@@ -12,7 +12,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project; 
 		private readonly Word _word;
-		private readonly ObservableCollection<WordSegmentViewModel> _segments;
+		private ObservableCollection<WordSegmentViewModel> _segments;
 		private readonly SenseViewModel _sense;
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
@@ -22,7 +22,6 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			_sense = sense;
 			_word = word;
-			_segments = new ObservableCollection<WordSegmentViewModel>();
 			LoadSegments();
 			_monitor = new SimpleMonitor();
 			_word.PropertyChanged += WordPropertyChanged;
@@ -35,8 +34,6 @@ namespace SIL.Cog.ViewModels
 				case "Shape":
 					if (_monitor.Busy)
 						return;
-					_segments.CollectionChanged -= SegmentsChanged;
-					_segments.Clear();
 					LoadSegments();
 					break;
 			}
@@ -44,19 +41,21 @@ namespace SIL.Cog.ViewModels
 
 		private void LoadSegments()
 		{
+			var segments = new ObservableCollection<WordSegmentViewModel>();
 			if (_word.Shape.Count > 0)
 			{
 				Annotation<ShapeNode> prefixAnn = _word.Prefix;
 				if (prefixAnn != null)
-					_segments.AddRange(_word.Shape.GetNodes(prefixAnn.Span).Select(node => new WordSegmentViewModel(node)));
-				_segments.Add(new WordSegmentViewModel());
-				_segments.AddRange(_word.Shape.GetNodes(_word.Stem.Span).Select(node => new WordSegmentViewModel(node)));
-				_segments.Add(new WordSegmentViewModel());
+					segments.AddRange(_word.Shape.GetNodes(prefixAnn.Span).Select(node => new WordSegmentViewModel(node)));
+				segments.Add(new WordSegmentViewModel());
+				segments.AddRange(_word.Shape.GetNodes(_word.Stem.Span).Select(node => new WordSegmentViewModel(node)));
+				segments.Add(new WordSegmentViewModel());
 				Annotation<ShapeNode> suffixAnn = _word.Suffix;
 				if (suffixAnn != null)
-					_segments.AddRange(_word.Shape.GetNodes(suffixAnn.Span).Select(node => new WordSegmentViewModel(node)));
-				_segments.CollectionChanged += SegmentsChanged;
+					segments.AddRange(_word.Shape.GetNodes(suffixAnn.Span).Select(node => new WordSegmentViewModel(node)));
 			}
+			segments.CollectionChanged += SegmentsChanged;
+			Segments = segments;
 			IsValid = _word.Shape.Count > 0;
 		}
 
@@ -110,6 +109,7 @@ namespace SIL.Cog.ViewModels
 		public ObservableCollection<WordSegmentViewModel> Segments
 		{
 			get { return _segments; }
+			private set { Set(() => Segments, ref _segments, value); }
 		}
 
 		public string this[string columnName]

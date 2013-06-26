@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using System.Linq;
 using SIL.Cog.SequenceAlignment;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Components
 {
-	public abstract class WordPairAlignerBase : IWordPairAligner
+	public abstract class WordAlignerBase : IWordAligner
 	{
 		private readonly WordPairAlignerSettings _settings;
 
-		protected WordPairAlignerBase(WordPairAlignerSettings settings)
+		protected WordAlignerBase(WordPairAlignerSettings settings)
 		{
 			_settings = settings;
 			_settings.ReadOnly = true;
@@ -25,14 +26,22 @@ namespace SIL.Cog.Components
 			get { return _settings.ExpansionCompressionEnabled; }
 		}
 
-		public IWordPairAlignerResult Compute(Word word1, Word word2)
+		public IWordAlignerResult Compute(Word word1, Word word2)
 		{
-			return new WordPairAlignerResult(Scorer, _settings, word1, word2);
+			return new PairwiseWordAlignerResult(Scorer, _settings, word1, word2);
 		}
 
-		public IWordPairAlignerResult Compute(WordPair wordPair)
+		public IWordAlignerResult Compute(WordPair wordPair)
 		{
-			return new WordPairAlignerResult(Scorer, _settings, wordPair.Word1, wordPair.Word2);
+			return new PairwiseWordAlignerResult(Scorer, _settings, wordPair.Word1, wordPair.Word2);
+		}
+
+		public IWordAlignerResult Compute(IEnumerable<Word> words)
+		{
+			Word[] wordArray = words.ToArray();
+			if (wordArray.Length == 2)
+				return new PairwiseWordAlignerResult(Scorer, _settings, wordArray[0], wordArray[1]);
+			return new MultipleWordAlignerResult(Scorer, wordArray);
 		}
 
 		public WordPairAlignerSettings Settings

@@ -98,11 +98,11 @@ namespace SIL.Cog.ViewModels
 			if (_varieties.Count > 0)
 			{
 				VarietyViewModel[] varieties = _varieties.OrderBy(v => v.Name).ToArray();
-				Set("CurrentVariety1", ref _currentVariety1, varieties[0]);
+				Set(() => CurrentVariety1, ref _currentVariety1, varieties[0]);
 				if (_varieties.Count > 1)
-					Set("CurrentVariety2", ref _currentVariety2, varieties[1]);
+					Set(() => CurrentVariety2, ref _currentVariety2, varieties[1]);
 				else
-					Set("CurrentVariety2", ref _currentVariety2, varieties[0]);
+					Set(() => CurrentVariety2, ref _currentVariety2, varieties[0]);
 				SetCurrentVarietyPair();
 			}
 		}
@@ -132,7 +132,7 @@ namespace SIL.Cog.ViewModels
 			get { return _currentVariety1; }
 			set
 			{
-				if (Set("CurrentVariety1", ref _currentVariety1, value))
+				if (Set(() => CurrentVariety1, ref _currentVariety1, value))
 					SetCurrentVarietyPair();
 			}
 		}
@@ -142,7 +142,7 @@ namespace SIL.Cog.ViewModels
 			get { return _currentVariety2; }
 			set
 			{
-				if (Set("CurrentVariety2", ref _currentVariety2, value))
+				if (Set(() => CurrentVariety2, ref _currentVariety2, value))
 					SetCurrentVarietyPair();
 			}
 		}
@@ -152,19 +152,21 @@ namespace SIL.Cog.ViewModels
 			get { return _currentVarietyPair; }
 			set
 			{
-				Set("CurrentVarietyPair", ref _currentVarietyPair, value);
-				if (_currentVarietyPair == null)
+				if (Set(() => CurrentVarietyPair, ref _currentVarietyPair, value))
 				{
-					Set("CurrentVariety1", ref _currentVariety1, _varieties.Count > 0 ? _varieties[0] : null);
-					Set("CurrentVariety2", ref _currentVariety2, _varieties.Count > 1 ? _varieties[1] : null);
-					CurrentVarietyPairState = CurrentVarietyPairState.NotSelected;
-				}
-				else
-				{
-					Set("CurrentVariety1", ref _currentVariety1, _varieties.First(v => v.ModelVariety == _currentVarietyPair.ModelVarietyPair.Variety1));
-					Set("CurrentVariety2", ref _currentVariety2, _varieties.First(v => v.ModelVariety == _currentVarietyPair.ModelVarietyPair.Variety2));
-					CurrentVarietyPairState = _currentVariety1.ModelVariety.VarietyPairs.Contains(_currentVariety2.ModelVariety)
-						? CurrentVarietyPairState.SelectedAndCompared : CurrentVarietyPairState.SelectedAndNotCompared;
+					if (_currentVarietyPair == null)
+					{
+						Set(() => CurrentVariety1, ref _currentVariety1, _varieties.Count > 0 ? _varieties[0] : null);
+						Set(() => CurrentVariety2, ref _currentVariety2, _varieties.Count > 1 ? _varieties[1] : null);
+						CurrentVarietyPairState = CurrentVarietyPairState.NotSelected;
+					}
+					else
+					{
+						Set(() => CurrentVariety1, ref _currentVariety1, _varieties.First(v => v.ModelVariety == _currentVarietyPair.ModelVarietyPair.Variety1));
+						Set(() => CurrentVariety2, ref _currentVariety2, _varieties.First(v => v.ModelVariety == _currentVarietyPair.ModelVarietyPair.Variety2));
+						CurrentVarietyPairState = _currentVariety1.ModelVariety.VarietyPairs.Contains(_currentVariety2.ModelVariety)
+							                          ? CurrentVarietyPairState.SelectedAndCompared : CurrentVarietyPairState.SelectedAndNotCompared;
+					}
 				}
 			}
 		}
@@ -192,7 +194,7 @@ namespace SIL.Cog.ViewModels
 					state = CurrentVarietyPairState.SelectedAndNotCompared;
 				}
 			}
-			Set("CurrentVarietyPair", ref _currentVarietyPair, vm);
+			Set(() => CurrentVarietyPair, ref _currentVarietyPair, vm);
 			CurrentVarietyPairState = state;
 		}
 

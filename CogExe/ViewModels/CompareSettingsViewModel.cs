@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 
 		protected override void CreateComponents()
 		{
-			Components.Add(new AlineViewModel(_dialogService, Project, (Aline) Project.Aligners["primary"]));
+			Components.Add(new AlineViewModel(_dialogService, Project, (Aline) Project.WordAligners["primary"]));
 			Components.Add(new EMSoundChangeInducerViewModel(Project, (EMSoundChangeInducer) Project.VarietyPairProcessors["soundChangeInducer"]));
 			IProcessor<VarietyPair> cognateIdentifier = Project.VarietyPairProcessors["cognateIdentifier"];
 			ComponentSettingsViewModelBase cognateIdentifierVM = null;

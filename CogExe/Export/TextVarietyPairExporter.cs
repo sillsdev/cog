@@ -18,7 +18,7 @@ namespace SIL.Cog.Export
 				writer.WriteLine("Phonetic: {0:p}", varietyPair.PhoneticSimilarityScore);
 				writer.WriteLine();
 
-				IWordPairAligner aligner = project.Aligners["primary"];
+				IWordAligner aligner = project.WordAligners["primary"];
 				writer.WriteLine("Likely cognates");
 				writer.WriteLine("--------------");
 				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));
@@ -46,14 +46,14 @@ namespace SIL.Cog.Export
 			}
 		}
 
-		private static void WriteWordPairs(StreamWriter writer, IWordPairAligner aligner, IEnumerable<WordPair> wordPairs)
+		private static void WriteWordPairs(StreamWriter writer, IWordAligner aligner, IEnumerable<WordPair> wordPairs)
 		{
 			bool first = true;
 			foreach (WordPair pair in wordPairs.OrderByDescending(wp => wp.PhoneticSimilarityScore))
 			{
 				if (!first)
 					writer.WriteLine();
-				IWordPairAlignerResult results = aligner.Compute(pair);
+				IWordAlignerResult results = aligner.Compute(pair);
 				Alignment<Word, ShapeNode> alignment = results.GetAlignments().First();
 				writer.Write(pair.Word1.Sense.Gloss);
 				if (!string.IsNullOrEmpty(pair.Word1.Sense.Category))

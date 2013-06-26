@@ -113,6 +113,9 @@
 											<DataTemplate DataType="{x:Type vm:SimilarSegmentsViewModel}">
 												<v:SimilarSegmentsView />
 											</DataTemplate>
+											<DataTemplate DataType="{x:Type vm:SenseAlignmentViewModel}">
+												<v:SenseAlignmentView />
+											</DataTemplate>
 										</ContentPresenter.Resources>
                                     </ContentPresenter>
                                 </DockPanel>

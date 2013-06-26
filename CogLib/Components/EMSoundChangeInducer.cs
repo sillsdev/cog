@@ -53,10 +53,10 @@ namespace SIL.Cog.Components
 			}
 
 			var expectedCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
-			IWordPairAligner aligner = Project.Aligners[_alignerID];
+			IWordAligner aligner = Project.WordAligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
-				IWordPairAlignerResult alignerResult = aligner.Compute(wordPair);
+				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
 				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				if ((pair.SoundChangeProbabilityDistribution == null && alignment.NormalizedScore >= _initialAlignmentThreshold) || (pair.SoundChangeProbabilityDistribution != null && wordPair.AreCognatePredicted))
 				{
@@ -73,7 +73,7 @@ namespace SIL.Cog.Components
 
 		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts)
 		{
-			IWordPairAligner aligner = Project.Aligners[_alignerID];
+			IWordAligner aligner = Project.WordAligners[_alignerID];
 			int segmentCount = pair.Variety2.Segments.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));

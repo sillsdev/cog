@@ -361,10 +361,8 @@ namespace SIL.Cog.ViewModels
 						{
 							foreach (AlignedNodeViewModel an in wp.AlignedNodes)
 							{
-								an.IsSelected = ((_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep1) && !_selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep1))
-									|| (!_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep1) && _selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep1)))
-								    && ((_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep2) && !_selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep2))
-									|| (!_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep2) && _selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep2)));
+								an.IsSelected = (_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep1) && _selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep2))
+									|| (_selectedCorrespondence.Segment1.StrReps.Contains(an.StrRep2) && _selectedCorrespondence.Segment2.StrReps.Contains(an.StrRep1));
 							}
 							_wordPairs.WordPairs.Add(wp);
 						}

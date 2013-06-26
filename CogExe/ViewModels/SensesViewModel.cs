@@ -90,7 +90,7 @@ namespace SIL.Cog.ViewModels
 		public SenseViewModel CurrentSense
 		{
 			get { return _currentSense; }
-			set { Set("CurrentSense", ref _currentSense, value); }
+			set { Set(() => CurrentSense, ref _currentSense, value); }
 		}
 	}
 }

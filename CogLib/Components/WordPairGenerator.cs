@@ -20,7 +20,7 @@ namespace SIL.Cog.Components
 
 		public override void Process(VarietyPair varietyPair)
 		{
-			IWordPairAligner aligner = Project.Aligners[_alignerID];
+			IWordAligner aligner = Project.WordAligners[_alignerID];
 			varietyPair.WordPairs.Clear();
 			foreach (Sense sense in varietyPair.Variety1.Words.Senses)
 			{
@@ -39,7 +39,7 @@ namespace SIL.Cog.Components
 						.SelectMany(w1 => words2.Where(word => word.Shape.Count > 0).Select(w2 => new {Word1 = w1, Word2 = w2})).ToArray();
 					if (candidates.Length > 0)
 					{
-						var bestwp = candidates.MaxBy(wp => aligner.Compute(wp.Word1, wp.Word2).BestRawScore);
+						var bestwp = candidates.MaxBy(wp => aligner.Compute(wp.Word1, wp.Word2).GetAlignments().First().NormalizedScore);
 						varietyPair.WordPairs.Add(bestwp.Word1, bestwp.Word2);
 					}
 				}

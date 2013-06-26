@@ -33,7 +33,7 @@ namespace SIL.Cog.ViewModels
 
 		public SoundContext ToSoundContext(CogProject project, Variety variety)
 		{
-			IWordPairAligner aligner = project.Aligners["primary"];
+			IWordAligner aligner = project.WordAligners["primary"];
 			SoundClass leftEnv = LeftEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == LeftEnvironment);
 			SoundClass rightEnv = RightEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == RightEnvironment);
 			return new SoundContext(leftEnv, new Ngram(_target.Select(s => variety.Segments[s])), rightEnv);

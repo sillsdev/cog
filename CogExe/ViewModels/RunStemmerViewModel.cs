@@ -26,7 +26,7 @@
 		public StemmingMethod Method
 		{
 			get { return _method; }
-			set { Set("Method", ref _method, value); }
+			set { Set(() => Method, ref _method, value); }
 		}
 	}
 }

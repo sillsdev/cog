@@ -3,13 +3,14 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
-	public interface IWordPairAligner
+	public interface IWordAligner
 	{
 		IEnumerable<SoundClass> ContextualSoundClasses { get; }
 		bool ExpansionCompressionEnabled { get; }
 
-		IWordPairAlignerResult Compute(Word word1, Word word2);
-		IWordPairAlignerResult Compute(WordPair wordPair);
+		IWordAlignerResult Compute(Word word1, Word word2);
+		IWordAlignerResult Compute(WordPair wordPair);
+		IWordAlignerResult Compute(IEnumerable<Word> words);
 
 		int Delta(FeatureStruct fs1, FeatureStruct fs2);
 	}

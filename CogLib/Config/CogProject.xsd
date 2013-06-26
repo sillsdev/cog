@@ -55,7 +55,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="WordPairAlignerBase" abstract="true">
+	<xs:complexType name="WordAlignerBase" abstract="true">
 		<xs:sequence>
 			<xs:element name="Mode">
 				<xs:simpleType>
@@ -99,7 +99,7 @@
 
 	<xs:complexType name="Aline">
 		<xs:complexContent>
-			<xs:extension base="WordPairAlignerBase">
+			<xs:extension base="WordAlignerBase">
 				<xs:sequence>
 					<xs:element name="RelevantFeatures">
 						<xs:complexType>
@@ -263,10 +263,10 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="Aligners">
+				<xs:element name="WordAligners">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Aligner" type="WordPairAlignerBase" minOccurs="0" maxOccurs="unbounded" />
+							<xs:element name="WordAligner" type="WordAlignerBase" minOccurs="0" maxOccurs="unbounded" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -320,6 +320,7 @@
 																			</xs:restriction>
 																		</xs:simpleType>
 																	</xs:attribute>
+																	<xs:attribute name="category" type="xs:string" />
 																</xs:extension>
 															</xs:simpleContent>
 														</xs:complexType>

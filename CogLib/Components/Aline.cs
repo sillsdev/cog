@@ -6,7 +6,7 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Components
 {
-	public class Aline : WordPairAlignerBase
+	public class Aline : WordAlignerBase
 	{
 		private readonly AlineScorer _scorer;
 

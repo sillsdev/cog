@@ -34,7 +34,7 @@ namespace SIL.Cog.ViewModels
 			get { return _currentView; }
 			set
 			{
-				Set("CurrentView", ref _currentView, value);
+				Set(() => CurrentView, ref _currentView, value);
 				var cv = _currentView as MasterViewModelBase;
 				if (cv != null && cv.Views.Count > 0)
 					cv.CurrentView = cv.Views[0];
@@ -53,7 +53,7 @@ namespace SIL.Cog.ViewModels
 			{
 				if (view.SwitchView(viewType, model))
 				{
-					Set("CurrentView", ref _currentView, view);
+					Set(() => CurrentView, ref _currentView, view);
 					return true;
 				}
 			}

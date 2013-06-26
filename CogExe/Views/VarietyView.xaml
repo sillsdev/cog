@@ -17,7 +17,7 @@
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
             <StackPanel>
                 <Grid>
-                    <DataGrid ItemsSource="{Binding Affixes, Converter={StaticResource ConcurrentConverter}}" b:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}"
+                    <DataGrid ItemsSource="{Binding Affixes, Converter={StaticResource ConcurrentConverter}, ConverterParameter={x:Type vm:AffixViewModel}}" b:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}"
 							  AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*">

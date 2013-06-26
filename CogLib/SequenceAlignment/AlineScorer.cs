@@ -63,7 +63,7 @@ namespace SIL.Cog.SequenceAlignment
 
 		public int GetDeletionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q)
 		{
-			return GetSoundChangeScore(sequence1, p, null, sequence2, null, null);
+			return GetSoundChangeScore(sequence1, p, null, sequence2, null, q);
 		}
 
 		public int GetSubstitutionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q)
@@ -85,34 +85,35 @@ namespace SIL.Cog.SequenceAlignment
 
 		public int GetMaxScore1(Word sequence1, ShapeNode p, Word sequence2)
 		{
-			VarietyPair varietyPair = sequence1.Variety.VarietyPairs[sequence2.Variety];
-
-			int maxScore = GetMaxScore(p);
-			if (varietyPair.SoundChangeProbabilityDistribution != null)
-			{
-				SoundContext lhs = p.ToSoundContext(sequence1.Variety, _contextualSoundClasses);
-				double prob = varietyPair.DefaultCorrespondenceProbability;
-				IProbabilityDistribution<Ngram> probDist;
-				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
-					prob = probDist.Samples.Max(nseg => probDist[nseg]);
-				maxScore += (int) (MaxSoundChangeScore * prob);
-			}
-			return maxScore;
+			return GetMaxScore(p) + GetMaxSoundChangeScore(sequence1, p, sequence2);
 		}
 
 		public int GetMaxScore2(Word sequence1, Word sequence2, ShapeNode q)
 		{
-			VarietyPair varietyPair = sequence1.Variety.VarietyPairs[sequence2.Variety];
+			return GetMaxScore(q) + GetMaxSoundChangeScore(sequence2, q, sequence1);
+		}
 
-			int maxScore = GetMaxScore(q);
-			if (varietyPair.SoundChangeProbabilityDistribution != null)
+		private int GetMaxSoundChangeScore(Word word, ShapeNode node, Word otherWord)
+		{
+			VarietyPair varietyPair = word.Variety.VarietyPairs[otherWord.Variety];
+			if (varietyPair.SoundChangeProbabilityDistribution == null)
+				return 0;
+
+			double prob;
+			if (varietyPair.Variety1 == word.Variety)
 			{
-				Ngram corr = q.ToNgram(varietyPair.Variety2);
-
-				double prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
-				maxScore += (int) (MaxSoundChangeScore * prob);
+				SoundContext lhs = node.ToSoundContext(word.Variety, _contextualSoundClasses);
+				prob = varietyPair.DefaultCorrespondenceProbability;
+				IProbabilityDistribution<Ngram> probDist;
+				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
+					prob = probDist.Samples.Max(nseg => probDist[nseg]);
 			}
-			return maxScore;
+			else
+			{
+				Ngram corr = node.ToNgram(word.Variety);
+				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
+			}
+			return (int) (MaxSoundChangeScore * prob);
 		}
 
 		private int GetMaxScore(ShapeNode node)
@@ -173,6 +174,17 @@ namespace SIL.Cog.SequenceAlignment
 			if (varietyPair.SoundChangeProbabilityDistribution == null)
 				return 0;
 
+			if (sequence1.Variety == varietyPair.Variety2)
+			{
+				ShapeNode tempNode = p1;
+				p1 = q1;
+				q1 = tempNode;
+
+				tempNode = p2;
+				p2 = q2;
+				q2 = tempNode;
+			}
+
 			Ngram target;
 			if (p1 == null)
 			{
@@ -185,7 +197,7 @@ namespace SIL.Cog.SequenceAlignment
 			}
 
 			Ngram corr;
-			if (q1 == null && q2 == null)
+			if (q1 == null)
 			{
 				corr = new Ngram(Segment.Null);
 			}

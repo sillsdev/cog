@@ -7,9 +7,9 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Config.Components
 {
-	public abstract class AlignerConfig : IComponentConfig<IWordPairAligner>
+	public abstract class WordAlignerConfigBase : IComponentConfig<IWordAligner>
 	{
-		public abstract IWordPairAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem);
+		public abstract IWordAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem);
 
 		protected WordPairAlignerSettings LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem)
 		{
@@ -42,7 +42,7 @@ namespace SIL.Cog.Config.Components
 			return settings;
 		}
 
-		public abstract void Save(IWordPairAligner component, XElement elem);
+		public abstract void Save(IWordAligner component, XElement elem);
 
 		protected void SaveSettings(WordPairAlignerSettings settings, XElement elem)
 		{

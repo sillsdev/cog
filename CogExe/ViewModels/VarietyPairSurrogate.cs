@@ -73,7 +73,7 @@ namespace SIL.Cog.ViewModels
 					soundChanges[fd.Key.ToSoundContext(project, vp.Variety1)].Increment(new Ngram(sample.Key.Select(s => vp.Variety2.Segments[s])), sample.Value);
 			}
 			vp.SoundChangeFrequencyDistribution = soundChanges;
-			IWordPairAligner aligner = project.Aligners["primary"];
+			IWordAligner aligner = project.WordAligners["primary"];
 			int segmentCount = vp.Variety2.Segments.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(soundChanges,

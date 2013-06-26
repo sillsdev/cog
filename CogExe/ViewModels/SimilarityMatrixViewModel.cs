@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Clusterers;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
@@ -65,7 +64,7 @@ namespace SIL.Cog.ViewModels
 			if (IsEmpty)
 				return;
 			_modelVarieties.Clear();
-			Set("Varieties", ref _varieties, new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]));
+			Varieties = new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]);
 			IsEmpty = true;
 		}
 
@@ -129,7 +128,7 @@ namespace SIL.Cog.ViewModels
 				}).Concat(Tuple.Create(variety, 0.0)), 2);
 			_modelVarieties.AddRange(optics.ClusterOrder(_project.Varieties).Select(oe => oe.DataObject));
 			SimilarityMatrixVarietyViewModel[] vms = _modelVarieties.Select(v => new SimilarityMatrixVarietyViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
-			Set("Varieties", ref _varieties, new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(vms));
+			Varieties = new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(vms);
 			IsEmpty = false;
 		}
 
@@ -155,6 +154,7 @@ namespace SIL.Cog.ViewModels
 		public ReadOnlyCollection<SimilarityMatrixVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
+			private set { Set(() => Varieties, ref _varieties, value); }
 		}
 	}
 }

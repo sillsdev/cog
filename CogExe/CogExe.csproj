@@ -217,6 +217,7 @@
     <Compile Include="GraphAlgorithms\StressMajorizationLayoutParameters.cs" />
     <Compile Include="GraphAlgorithms\VisibilityGraph.cs" />
     <Compile Include="GraphAlgorithms\BundleEdgeRoutingAlgorithm.cs" />
+    <Compile Include="Import\ImportException.cs" />
     <Compile Include="Import\KmlGeographicRegionsImporter.cs" />
     <Compile Include="Import\IGeographicRegionsImporter.cs" />
     <Compile Include="Import\ISegmentMappingsImporter.cs" />

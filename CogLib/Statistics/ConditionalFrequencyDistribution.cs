@@ -15,7 +15,7 @@ namespace SIL.Cog.Statistics
 
 		public IReadOnlyCollection<TCondition> Conditions
 		{
-			get { return _freqDists.Keys.AsSimpleReadOnlyCollection(); }
+			get { return _freqDists.Keys.ToReadOnlyCollection(); }
 		}
 
 		public FrequencyDistribution<TSample> this[TCondition condition]

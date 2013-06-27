@@ -112,7 +112,7 @@ namespace SIL.Cog.GraphAlgorithms
 						d[i, j] = disconnectedCost;
 					else
 						d[i, j] *= idealEdgeLength;
-					w[i, j] = Math.Pow(d[i, j], -Parameters.Alpha);
+					w[i, j] = Math.Pow(Math.Max(d[i, j], 0.0001), -Parameters.Alpha);
 				}
 			}
 		}

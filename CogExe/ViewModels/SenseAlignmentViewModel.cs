@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
@@ -10,8 +9,8 @@ namespace SIL.Cog.ViewModels
 {
 	public class SenseAlignmentViewModel : WorkspaceViewModelBase
 	{
-		private readonly BulkObservableCollection<SenseAlignmentWordViewModel> _words; 
-		private ReadOnlyMirroredCollection<Sense, SenseViewModel> _senses;
+		private readonly BulkObservableList<SenseAlignmentWordViewModel> _words; 
+		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
 		private SenseViewModel _currentSense;
 		private CogProject _project;
 		private int _columnCount;
@@ -21,7 +20,7 @@ namespace SIL.Cog.ViewModels
 		public SenseAlignmentViewModel()
 			: base("Sense Alignment")
 		{
-			_words = new BulkObservableCollection<SenseAlignmentWordViewModel>();
+			_words = new BulkObservableList<SenseAlignmentWordViewModel>();
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 		}
 
@@ -39,9 +38,9 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			if (_senses != null)
-				((INotifyCollectionChanged) _senses).CollectionChanged -= SensesChanged;
-			Set("Senses", ref _senses, new ReadOnlyMirroredCollection<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense)));
-			((INotifyCollectionChanged) _senses).CollectionChanged += SensesChanged;
+				_senses.CollectionChanged -= SensesChanged;
+			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
+			_senses.CollectionChanged += SensesChanged;
 			CurrentSense = _senses.Count > 0 ? _senses[0] : null;
 		}
 
@@ -51,7 +50,7 @@ namespace SIL.Cog.ViewModels
 				CurrentSense = _senses[0];
 		}
 
-		public ReadOnlyObservableCollection<SenseViewModel> Senses
+		public ReadOnlyObservableList<SenseViewModel> Senses
 		{
 			get { return _senses; }
 		}
@@ -128,7 +127,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ObservableCollection<SenseAlignmentWordViewModel> Words
+		public ObservableList<SenseAlignmentWordViewModel> Words
 		{
 			get { return _words; }
 		}

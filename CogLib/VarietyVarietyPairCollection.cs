@@ -2,13 +2,23 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class VarietyVarietyPairCollection : IKeyedReadOnlyCollection<Variety, VarietyPair>, INotifyCollectionChanged
+	public sealed class VarietyVarietyPairCollection : IReadOnlyObservableCollection<VarietyPair>, IReadOnlyKeyedCollection<Variety, VarietyPair>, IObservableCollection<VarietyPair>,
+		IKeyedCollection<Variety, VarietyPair>
 	{
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+		{
+			add { PropertyChanged += value; }
+			remove { PropertyChanged -= value; }
+		}
+
+		private event PropertyChangedEventHandler PropertyChanged;
 
 		private readonly SimpleMonitor _reentrancyMonitor = new SimpleMonitor();
 		private readonly Variety _variety;
@@ -25,6 +35,7 @@ namespace SIL.Cog
 			CheckReentrancy();
 			Variety otherVariety = varietyPair.GetOtherVariety(_variety);
 			_varietyPairs.Add(otherVariety, varietyPair);
+			OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, varietyPair));
 		}
 
@@ -33,6 +44,7 @@ namespace SIL.Cog
 			CheckReentrancy();
 			Variety otherVariety = varietyPair.GetOtherVariety(_variety);
 			_varietyPairs.Remove(otherVariety);
+			OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, varietyPair));
 		}
 
@@ -42,7 +54,10 @@ namespace SIL.Cog
 			int count = _varietyPairs.Count;
 			_varietyPairs.Clear();
 			if (count > 0)
+			{
+				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			}
 		}
 
 		IEnumerator<VarietyPair> IEnumerable<VarietyPair>.GetEnumerator()
@@ -55,9 +70,39 @@ namespace SIL.Cog
 			return _varietyPairs.Values.GetEnumerator();
 		}
 
+		void ICollection<VarietyPair>.Add(VarietyPair item)
+		{
+			throw new NotSupportedException();
+		}
+
+		void ICollection<VarietyPair>.Clear()
+		{
+			throw new NotSupportedException();
+		}
+
+		public bool Contains(VarietyPair item)
+		{
+			return _varietyPairs.ContainsValue(item);
+		}
+
+		public void CopyTo(VarietyPair[] array, int arrayIndex)
+		{
+			_varietyPairs.Values.CopyTo(array, arrayIndex);
+		}
+
+		bool ICollection<VarietyPair>.Remove(VarietyPair item)
+		{
+			throw new NotSupportedException();
+		}
+
 		public int Count
 		{
 			get { return _varietyPairs.Count; }
+		}
+
+		bool ICollection<VarietyPair>.IsReadOnly
+		{
+			get { return true; }
 		}
 
 		public bool TryGetValue(Variety key, out VarietyPair item)
@@ -75,7 +120,21 @@ namespace SIL.Cog
 			return _varietyPairs.ContainsKey(key);
 		}
 
-		protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+		bool IKeyedCollection<Variety, VarietyPair>.Remove(Variety key)
+		{
+			throw new NotSupportedException();
+		}
+
+		private void OnPropertyChanged(PropertyChangedEventArgs e)
+		{
+			if (PropertyChanged != null)
+			{
+				using (_reentrancyMonitor.Enter())
+					PropertyChanged(this, e);
+			}
+		}
+
+		private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (CollectionChanged != null)
 			{
@@ -84,15 +143,10 @@ namespace SIL.Cog
 			}
 		}
 
-		protected void CheckReentrancy()
+		private void CheckReentrancy()
 		{
 			if (_reentrancyMonitor.Busy)
 				throw new InvalidOperationException("This collection cannot be changed during a CollectionChanged event.");
-		}
-
-		protected IDisposable BlockReentrancy()
-		{
-			return _reentrancyMonitor.Enter();
 		}
 	}
 }

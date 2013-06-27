@@ -11,8 +11,8 @@ namespace SIL.Cog
 		private FeatureSystem _featSys;
 		private readonly Segmenter _segmenter;
 
-		private readonly KeyedBulkObservableCollection<string, Variety> _varieties;
-		private readonly KeyedBulkObservableCollection<string, Sense> _senses;
+		private readonly KeyedBulkObservableList<string, Variety> _varieties;
+		private readonly KeyedBulkObservableList<string, Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners; 
@@ -24,9 +24,9 @@ namespace SIL.Cog
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
 			_segmenter = new Segmenter(spanFactory);
-			_senses = new KeyedBulkObservableCollection<string, Sense>(sense => sense.Gloss);
+			_senses = new KeyedBulkObservableList<string, Sense>(sense => sense.Gloss);
 			_senses.CollectionChanged += SensesChanged;
-			_varieties = new KeyedBulkObservableCollection<string, Variety>(variety => variety.Name);
+			_varieties = new KeyedBulkObservableList<string, Variety>(variety => variety.Name);
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
 
@@ -94,17 +94,17 @@ namespace SIL.Cog
 			get { return _segmenter; }
 		}
 
-		public KeyedBulkObservableCollection<string, Sense> Senses
+		public KeyedBulkObservableList<string, Sense> Senses
 		{
 			get { return _senses; }
 		}
 
-		public KeyedBulkObservableCollection<string, Variety> Varieties
+		public KeyedBulkObservableList<string, Variety> Varieties
 		{
 			get { return _varieties; }
 		}
 
-		public BulkObservableCollection<VarietyPair> VarietyPairs
+		public BulkObservableList<VarietyPair> VarietyPairs
 		{
 			get { return _varietyPairs; }
 		}

@@ -3,7 +3,7 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
-	public class SymbolCollection : KeyedBulkObservableCollection<string, Symbol>
+	public class SymbolCollection : KeyedBulkObservableList<string, Symbol>
 	{
 		public void Add(string strRep)
 		{

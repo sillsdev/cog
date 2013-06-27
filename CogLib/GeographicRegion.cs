@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using SIL.Collections;
 
 namespace SIL.Cog
@@ -7,19 +6,19 @@ namespace SIL.Cog
 	public class GeographicRegion : NotifyPropertyChangedBase
 	{
 		private string _desc;
-		private readonly ObservableCollection<GeographicCoordinate> _coordinates;
+		private readonly ObservableList<GeographicCoordinate> _coordinates;
 
 		public GeographicRegion()
 		{
-			_coordinates = new ObservableCollection<GeographicCoordinate>();
+			_coordinates = new ObservableList<GeographicCoordinate>();
 		}
 
 		public GeographicRegion(IEnumerable<GeographicCoordinate> coordinates)
 		{
-			_coordinates = new ObservableCollection<GeographicCoordinate>(coordinates);
+			_coordinates = new ObservableList<GeographicCoordinate>(coordinates);
 		}
 
-		public ObservableCollection<GeographicCoordinate> Coordinates
+		public ObservableList<GeographicCoordinate> Coordinates
 		{
 			get { return _coordinates; }
 		}

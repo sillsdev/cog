@@ -13,7 +13,7 @@
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolConverter" />
 		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
-		<cnvtrs:ConcurrentCollectionConverter x:Key="ConcurrentConverter" />
+		<cnvtrs:ConcurrentListConverter x:Key="ConcurrentConverter" />
 	</UserControl.Resources>
 	<DockPanel>
 		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similar segments</TextBlock>

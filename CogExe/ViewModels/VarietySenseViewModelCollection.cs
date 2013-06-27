@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using SIL.Collections;
@@ -8,8 +7,8 @@ namespace SIL.Cog.ViewModels
 {
 	public class VarietySenseViewModelCollection : ReadOnlyMirroredCollection<Sense, VarietySenseViewModel>
 	{
-		public VarietySenseViewModelCollection(ObservableCollection<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
-			: base(senses, viewModelFactory)
+		public VarietySenseViewModelCollection(ObservableList<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
+			: base(senses, viewModelFactory, vm => vm.ModelSense)
 		{
 			words.CollectionChanged += WordsChanged;
 		}

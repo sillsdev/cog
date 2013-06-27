@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -67,7 +66,7 @@ namespace SIL.Cog.ViewModels
 			};
 
 		private CogProject _project;
-		private readonly BulkObservableCollection<GlobalSegmentViewModel> _globalSegments; 
+		private readonly BulkObservableList<GlobalSegmentViewModel> _globalSegments; 
 		private readonly WordPairsViewModel _wordPairs;
 		private GlobalCorrespondenceViewModel _selectedCorrespondence;
 		private readonly BackgroundWorker _generateCorrespondencesWorker;
@@ -75,14 +74,14 @@ namespace SIL.Cog.ViewModels
 		private readonly ManualResetEvent _workCompleteEvent;
 		private bool _generatingCorrespondences;
 		private SoundCorrespondenceType _correspondenceType;
-		private readonly BulkObservableCollection<GlobalCorrespondenceViewModel> _globalCorrespondences;
+		private readonly BulkObservableList<GlobalCorrespondenceViewModel> _globalCorrespondences;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 
 		public SimilarSegmentsViewModel()
 			: base("Similar Segments")
 		{
-			_globalSegments = new BulkObservableCollection<GlobalSegmentViewModel>();
-			_globalCorrespondences = new BulkObservableCollection<GlobalCorrespondenceViewModel>();
+			_globalSegments = new BulkObservableList<GlobalSegmentViewModel>();
+			_globalCorrespondences = new BulkObservableList<GlobalCorrespondenceViewModel>();
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 			_generateCorrespondencesWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
 			_generateCorrespondencesWorker.DoWork += GenerateCorrespondencesAsync;
@@ -407,12 +406,12 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ObservableCollection<GlobalSegmentViewModel> GlobalSegments
+		public ObservableList<GlobalSegmentViewModel> GlobalSegments
 		{
 			get { return _globalSegments; }
 		}
 
-		public ObservableCollection<GlobalCorrespondenceViewModel> GlobalCorrespondences
+		public ObservableList<GlobalCorrespondenceViewModel> GlobalCorrespondences
 		{
 			get { return _globalCorrespondences; }
 		}

@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -29,7 +29,7 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_senses);
 		}
 
-		public ReadOnlyObservableCollection<VarietySenseViewModel> Senses
+		public ReadOnlyObservableList<VarietySenseViewModel> Senses
 		{
 			get { return _senses; }
 		}

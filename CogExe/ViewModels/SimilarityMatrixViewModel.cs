@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IProgressService _progressService;
 		private readonly IExportService _exportService;
 		private CogProject _project;
-		private ReadOnlyCollection<SimilarityMatrixVarietyViewModel> _varieties;
+		private System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel> _varieties;
 		private readonly List<Variety> _modelVarieties;
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
@@ -64,7 +64,7 @@ namespace SIL.Cog.ViewModels
 			if (IsEmpty)
 				return;
 			_modelVarieties.Clear();
-			Varieties = new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]);
+			Varieties = new System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]);
 			IsEmpty = true;
 		}
 
@@ -128,7 +128,7 @@ namespace SIL.Cog.ViewModels
 				}).Concat(Tuple.Create(variety, 0.0)), 2);
 			_modelVarieties.AddRange(optics.ClusterOrder(_project.Varieties).Select(oe => oe.DataObject));
 			SimilarityMatrixVarietyViewModel[] vms = _modelVarieties.Select(v => new SimilarityMatrixVarietyViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
-			Varieties = new ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(vms);
+			Varieties = new System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(vms);
 			IsEmpty = false;
 		}
 
@@ -151,7 +151,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public ReadOnlyCollection<SimilarityMatrixVarietyViewModel> Varieties
+		public System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 			private set { Set(() => Varieties, ref _varieties, value); }

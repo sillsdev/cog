@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -12,7 +11,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project; 
 		private readonly Word _word;
-		private ObservableCollection<WordSegmentViewModel> _segments;
+		private ObservableList<WordSegmentViewModel> _segments;
 		private readonly SenseViewModel _sense;
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
@@ -41,7 +40,7 @@ namespace SIL.Cog.ViewModels
 
 		private void LoadSegments()
 		{
-			var segments = new ObservableCollection<WordSegmentViewModel>();
+			var segments = new ObservableList<WordSegmentViewModel>();
 			if (_word.Shape.Count > 0)
 			{
 				Annotation<ShapeNode> prefixAnn = _word.Prefix;
@@ -106,7 +105,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsValid, ref _isValid, value); }
 		}
 
-		public ObservableCollection<WordSegmentViewModel> Segments
+		public ObservableList<WordSegmentViewModel> Segments
 		{
 			get { return _segments; }
 			private set { Set(() => Segments, ref _segments, value); }

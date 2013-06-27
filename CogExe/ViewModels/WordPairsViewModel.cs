@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
@@ -11,9 +9,9 @@ namespace SIL.Cog.ViewModels
 {
 	public class WordPairsViewModel : ViewModelBase
 	{
-		private readonly ObservableCollection<WordPairViewModel> _wordPairs;
-		private readonly ObservableCollection<WordPairViewModel> _selectedWordPairs;
-		private readonly ObservableCollection<WordPairViewModel> _selectedChangeWordPairs;
+		private readonly ObservableList<WordPairViewModel> _wordPairs;
+		private readonly ObservableList<WordPairViewModel> _selectedWordPairs;
+		private readonly ObservableList<WordPairViewModel> _selectedChangeWordPairs;
 
 		public WordPairsViewModel(CogProject project, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
 			: this(wordPairs.Select(pair => new WordPairViewModel(project, pair, areVarietiesInOrder)))
@@ -27,10 +25,10 @@ namespace SIL.Cog.ViewModels
 
 		private WordPairsViewModel(IEnumerable<WordPairViewModel> wordPairs)
 		{
-			_wordPairs = new ObservableCollection<WordPairViewModel>(wordPairs);
+			_wordPairs = new ObservableList<WordPairViewModel>(wordPairs);
 			_wordPairs.CollectionChanged += _wordPairs_CollectionChanged;
-			_selectedWordPairs = new ObservableCollection<WordPairViewModel>();
-			_selectedChangeWordPairs = new ObservableCollection<WordPairViewModel>();
+			_selectedWordPairs = new ObservableList<WordPairViewModel>();
+			_selectedChangeWordPairs = new ObservableList<WordPairViewModel>();
 		}
 
 		private void _wordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -39,17 +37,17 @@ namespace SIL.Cog.ViewModels
 			_selectedChangeWordPairs.Clear();
 		}
 
-		public ObservableCollection<WordPairViewModel> WordPairs
+		public ObservableList<WordPairViewModel> WordPairs
 		{
 			get { return _wordPairs; }
 		}
 
-		public ObservableCollection<WordPairViewModel> SelectedWordPairs
+		public ObservableList<WordPairViewModel> SelectedWordPairs
 		{
 			get { return _selectedWordPairs; }
 		}
 
-		public ObservableCollection<WordPairViewModel> SelectedChangeWordPairs
+		public ObservableList<WordPairViewModel> SelectedChangeWordPairs
 		{
 			get { return _selectedChangeWordPairs; }
 		}

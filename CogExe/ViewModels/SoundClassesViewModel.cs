@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
+using SIL.Collections;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
@@ -13,7 +13,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly ObservableCollection<SoundClassViewModel> _soundClasses;
+		private readonly ObservableList<SoundClassViewModel> _soundClasses;
 		private SoundClassViewModel _currentSoundClass;
 		private readonly ICommand _newNaturalClassCommand;
 		private readonly ICommand _newUnnaturalClassCommand;
@@ -26,7 +26,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_dialogService = dialogService;
 			_project = project;
-			_soundClasses = new ObservableCollection<SoundClassViewModel>(soundClasses.Select(nc => new SoundClassViewModel(nc)));
+			_soundClasses = new ObservableList<SoundClassViewModel>(soundClasses.Select(nc => new SoundClassViewModel(nc)));
 			if (_soundClasses.Count > 0)
 				_currentSoundClass = _soundClasses[0];
 
@@ -147,7 +147,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => CurrentSoundClass, ref _currentSoundClass, value); }
 		}
 
-		public ObservableCollection<SoundClassViewModel> SoundClasses
+		public ObservableList<SoundClassViewModel> SoundClasses
 		{
 			get { return _soundClasses; }
 		}

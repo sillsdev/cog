@@ -37,7 +37,7 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
-			var cognateWordPairSource = new ListCollectionView(new ConcurrentCollection<WordPairViewModel>(vm.WordPairs));
+			var cognateWordPairSource = new ListCollectionView(new ConcurrentList<WordPairViewModel>(vm.WordPairs));
 			WordPairsListBox.ItemsSource = cognateWordPairSource;
 			cognateWordPairSource.SortDescriptions.Add(new SortDescription("PhoneticSimilarityScore", ListSortDirection.Descending));
 			cognateWordPairSource.Refresh();

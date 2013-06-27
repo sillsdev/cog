@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 
 namespace SIL.Cog.Views
 {
-	public class ConcurrentCollection<T> : ReadOnlyMirroredCollection<T, T>
+	public class ConcurrentList<T> : ReadOnlyMirroredList<T, T>
 	{
-		public ConcurrentCollection(INotifyCollectionChanged source)
-			: base(source, item => item)
+		public ConcurrentList(IObservableList<T> source)
+			: base(source, item => item, item => item)
 		{
 		}
 

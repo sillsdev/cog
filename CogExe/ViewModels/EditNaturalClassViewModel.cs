@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using SIL.Collections;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
@@ -10,8 +10,8 @@ namespace SIL.Cog.ViewModels
 	public class EditNaturalClassViewModel : EditSoundClassViewModel
 	{
 		private SoundType _type;
-		private readonly ObservableCollection<FeatureViewModel> _availableFeatures;
-		private readonly ObservableCollection<FeatureViewModel> _selectedFeatures;
+		private readonly ObservableList<FeatureViewModel> _availableFeatures;
+		private readonly ObservableList<FeatureViewModel> _selectedFeatures;
 		private FeatureViewModel _currentSelectedFeature;
 		private FeatureViewModel _currentAvailableFeature;
 		private readonly ICommand _addCommand;
@@ -20,8 +20,8 @@ namespace SIL.Cog.ViewModels
 		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<SoundClass> soundClasses)
 			: base("New Natural Class", soundClasses)
 		{
-			_availableFeatures = new ObservableCollection<FeatureViewModel>(featSys.OfType<SymbolicFeature>().Select(f => new FeatureViewModel(f)));
-			_selectedFeatures = new ObservableCollection<FeatureViewModel>();
+			_availableFeatures = new ObservableList<FeatureViewModel>(featSys.OfType<SymbolicFeature>().Select(f => new FeatureViewModel(f)));
+			_selectedFeatures = new ObservableList<FeatureViewModel>();
 
 			_addCommand = new RelayCommand(AddFeature, CanAddFeature);
 			_removeCommand = new RelayCommand(RemoveFeature, CanRemoveFeature);
@@ -31,8 +31,8 @@ namespace SIL.Cog.ViewModels
 			: base("Edit Natural Class", soundClasses, naturalClass)
 		{
 			_type = naturalClass.Type == CogFeatureSystem.ConsonantType ? SoundType.Consonant : SoundType.Vowel;
-			_availableFeatures = new ObservableCollection<FeatureViewModel>();
-			_selectedFeatures = new ObservableCollection<FeatureViewModel>();
+			_availableFeatures = new ObservableList<FeatureViewModel>();
+			_selectedFeatures = new ObservableList<FeatureViewModel>();
 			foreach (SymbolicFeature feature in featSys.OfType<SymbolicFeature>())
 			{
 				SymbolicFeatureValue sfv;
@@ -86,7 +86,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => CurrentAvailableFeature, ref _currentAvailableFeature, value); }
 		}
 
-		public ObservableCollection<FeatureViewModel> AvailableFeatures
+		public ObservableList<FeatureViewModel> AvailableFeatures
 		{
 			get { return _availableFeatures; }
 		}
@@ -97,7 +97,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => CurrentSelectedFeature, ref _currentSelectedFeature, value); }
 		}
 
-		public ObservableCollection<FeatureViewModel> SelectedFeatures
+		public ObservableList<FeatureViewModel> SelectedFeatures
 		{
 			get { return _selectedFeatures; }
 		}

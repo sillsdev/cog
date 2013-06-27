@@ -2,25 +2,34 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class WordCollection : ICollection<Word>, INotifyCollectionChanged
+	public sealed class WordCollection : IObservableCollection<Word>
 	{
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+		{
+			add { PropertyChanged += value; }
+			remove { PropertyChanged -= value; }
+		}
+
+		private event PropertyChangedEventHandler PropertyChanged;
 
 		private readonly SimpleMonitor _reentrancyMonitor = new SimpleMonitor();
 		private readonly Variety _variety;
 		private readonly Dictionary<Sense, HashSet<Word>> _words;
-		private readonly SimpleReadOnlyCollection<Word> _emptyWords;
+		private readonly ReadOnlyCollection<Word> _emptyWords;
 
 		internal WordCollection(Variety variety)
 		{
 			_variety = variety;
 			_words = new Dictionary<Sense, HashSet<Word>>();
-			_emptyWords = new SimpleReadOnlyCollection<Word>(new Word[0]);
+			_emptyWords = new ReadOnlyCollection<Word>(new Word[0]);
 		}
 
 		IEnumerator<Word> IEnumerable<Word>.GetEnumerator()
@@ -44,7 +53,7 @@ namespace SIL.Cog
 			{
 				HashSet<Word> words;
 				if (_words.TryGetValue(sense, out words))
-					return words.AsSimpleReadOnlyCollection();
+					return words.ToReadOnlyCollection();
 				return _emptyWords;
 			}
 		}
@@ -57,6 +66,7 @@ namespace SIL.Cog
 			{
 				item.Variety = _variety;
 				_variety.Segments.WordAdded(item);
+				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
 			}
 		}
@@ -70,7 +80,10 @@ namespace SIL.Cog
 			_words.Clear();
 			_variety.Segments.WordsCleared();
 			if (count > 0)
+			{
+				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			}
 		}
 
 		public bool Contains(Word item)
@@ -99,6 +112,7 @@ namespace SIL.Cog
 					if (senseWords.Count == 0)
 						_words.Remove(item.Sense);
 					_variety.Segments.WordRemoved(item);
+					OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 					OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
 					return true;
 				}
@@ -121,7 +135,7 @@ namespace SIL.Cog
 			get { return false; }
 		}
 
-		protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+		private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (CollectionChanged != null)
 			{
@@ -130,15 +144,19 @@ namespace SIL.Cog
 			}
 		}
 
-		protected void CheckReentrancy()
+		private void OnPropertyChanged(PropertyChangedEventArgs e)
+		{
+			if (PropertyChanged != null)
+			{
+				using (_reentrancyMonitor.Enter())
+					PropertyChanged(this, e);
+			}
+		}
+
+		private void CheckReentrancy()
 		{
 			if (_reentrancyMonitor.Busy)
 				throw new InvalidOperationException("This collection cannot be changed during a CollectionChanged event.");
-		}
-
-		protected IDisposable BlockReentrancy()
-		{
-			return _reentrancyMonitor.Enter();
 		}
 	}
 }

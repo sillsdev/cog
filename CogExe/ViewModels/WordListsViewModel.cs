@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using GalaSoft.MvvmLight.Command;
@@ -18,8 +17,8 @@ namespace SIL.Cog.ViewModels
 		private readonly IExportService _exportService;
 		private readonly IProgressService _progressService;
 		private CogProject _project;
-		private ReadOnlyMirroredCollection<Sense, SenseViewModel> _senses;
- 		private ReadOnlyMirroredCollection<Variety, WordListsVarietyViewModel> _varieties;
+		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
+ 		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 
 		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService, IImportService importService, IExportService exportService)
@@ -122,12 +121,12 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public ReadOnlyObservableCollection<SenseViewModel> Senses
+		public ReadOnlyObservableList<SenseViewModel> Senses
 		{
 			get { return _senses; }
 		}
 
-		public ReadOnlyObservableCollection<WordListsVarietyViewModel> Varieties
+		public ReadOnlyObservableList<WordListsVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}
@@ -135,13 +134,13 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Set("Senses", ref _senses, new ReadOnlyMirroredCollection<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense)));
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, WordListsVarietyViewModel>(project.Varieties, variety =>
+			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties, variety =>
 				{
 					var vm = new WordListsVarietyViewModel(project, variety);
 					vm.PropertyChanged += ChildPropertyChanged;
 					return vm;
-				}));
+				}, vm => vm.ModelVariety));
 			SetIsEmpty();
 			_project.Varieties.CollectionChanged += VarietiesChanged;
 			_project.Senses.CollectionChanged += SensesChanged;

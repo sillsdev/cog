@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using SIL.Cog.Statistics;
 using SIL.Collections;
 
@@ -9,9 +8,9 @@ namespace SIL.Cog
 		private readonly WordCollection _words;
 		private readonly SegmentCollection _segments;
 		private readonly VarietyVarietyPairCollection _varietyPairs;
-		private readonly BulkObservableCollection<Affix> _affixes;
+		private readonly BulkObservableList<Affix> _affixes;
 		private string _name;
-		private readonly ObservableCollection<GeographicRegion> _regions;
+		private readonly ObservableList<GeographicRegion> _regions;
 		private readonly FrequencyDistribution<Segment> _segmentFreqDist;
 		private readonly MaxLikelihoodProbabilityDistribution<Segment> _segmentProbDist; 
 
@@ -21,8 +20,8 @@ namespace SIL.Cog
 			_words = new WordCollection(this);
 			_segments = new SegmentCollection(this);
 			_varietyPairs = new VarietyVarietyPairCollection(this);
-			_affixes = new BulkObservableCollection<Affix>();
-			_regions = new ObservableCollection<GeographicRegion>();
+			_affixes = new BulkObservableList<Affix>();
+			_regions = new ObservableList<GeographicRegion>();
 			_segmentFreqDist = new FrequencyDistribution<Segment>();
 			_segmentProbDist = new MaxLikelihoodProbabilityDistribution<Segment>(_segmentFreqDist);
 		}
@@ -52,12 +51,12 @@ namespace SIL.Cog
 			get { return _varietyPairs; }
 		}
 
-		public BulkObservableCollection<Affix> Affixes
+		public BulkObservableList<Affix> Affixes
 		{
 			get { return _affixes; }
 		}
 
-		public ObservableCollection<GeographicRegion> Regions
+		public ObservableList<GeographicRegion> Regions
 		{
 			get { return _regions; }
 		}

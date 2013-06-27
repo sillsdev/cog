@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using SIL.Collections;
 
 namespace SIL.Cog
@@ -7,7 +6,7 @@ namespace SIL.Cog
 	{
 		private readonly Word _word1;
 		private readonly Word _word2;
-		private readonly ObservableCollection<string> _alignmentNotes;
+		private readonly ObservableList<string> _alignmentNotes;
 		private bool _areCognateActual;
 		private bool _areCognatePredicted;
 		private double _phoneticSimilarityScore;
@@ -16,7 +15,7 @@ namespace SIL.Cog
 		{
 			_word1 = word1;
 			_word2 = word2;
-			_alignmentNotes = new ObservableCollection<string>();
+			_alignmentNotes = new ObservableList<string>();
 		}
 
 		public VarietyPair VarietyPair { get; internal set; }
@@ -43,7 +42,7 @@ namespace SIL.Cog
 			get { return _word1.Sense; }
 		}
 
-		public ObservableCollection<string> AlignmentNotes
+		public ObservableList<string> AlignmentNotes
 		{
 			get { return _alignmentNotes; }
 		}

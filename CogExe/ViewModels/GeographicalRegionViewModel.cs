@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -14,7 +14,7 @@ namespace SIL.Cog.ViewModels
 		private readonly CogProject _project;
 		private readonly GeographicalVarietyViewModel _variety;
 		private readonly GeographicRegion _region;
-		private readonly ObservableCollection<Tuple<double, double>> _coordinates;
+		private readonly ObservableList<Tuple<double, double>> _coordinates;
 		private readonly ICommand _editCommand;
 		private readonly ICommand _removeCommand;
 
@@ -25,7 +25,7 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			_variety = variety;
 			_region = region;
-			_coordinates = new ObservableCollection<Tuple<double, double>>(_region.Coordinates.Select(coord => Tuple.Create(coord.Latitude, coord.Longitude)));
+			_coordinates = new ObservableList<Tuple<double, double>>(_region.Coordinates.Select(coord => Tuple.Create(coord.Latitude, coord.Longitude)));
 			_coordinates.CollectionChanged += CoordinatesChanged;
 			_editCommand = new RelayCommand(EditRegion);
 			_removeCommand = new RelayCommand(RemoveRegion);
@@ -80,7 +80,7 @@ namespace SIL.Cog.ViewModels
 			_variety.ModelVariety.Regions.Remove(_region);
 		}
 
-		public ObservableCollection<Tuple<double, double>> Coordinates
+		public ObservableList<Tuple<double, double>> Coordinates
 		{
 			get { return _coordinates; }
 		}

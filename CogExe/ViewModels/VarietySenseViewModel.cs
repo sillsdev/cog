@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using SIL.Collections;
@@ -9,8 +8,8 @@ namespace SIL.Cog.ViewModels
 {
 	public class VarietySenseViewModel : SenseViewModel
 	{
-		private readonly ObservableCollection<Word> _modelWords;
-		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
+		private readonly ObservableList<Word> _modelWords;
+		private readonly ReadOnlyMirroredList<Word, WordViewModel> _words;
 		private readonly CogProject _project;
 		private string _strRep;
 		private readonly Variety _variety;
@@ -21,18 +20,18 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			_variety = variety;
 
-			_modelWords = new ObservableCollection<Word>(words);
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, this, word));
+			_modelWords = new ObservableList<Word>(words);
+			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, this, word), vm => vm.ModelWord);
 			_modelWords.CollectionChanged += ModelWordsChanged;
 			_strRep = string.Join("/", _modelWords.Select(word => word.StrRep));
 		}
 
-		public ReadOnlyObservableCollection<WordViewModel> Words
+		public ReadOnlyObservableList<WordViewModel> Words
 		{
 			get { return _words; }
 		}
 
-		public ObservableCollection<Word> ModelWords
+		public ObservableList<Word> ModelWords
 		{
 			get { return _modelWords; }
 		}

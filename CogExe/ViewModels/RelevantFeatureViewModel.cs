@@ -11,7 +11,7 @@ namespace SIL.Cog.ViewModels
 		private bool _vowel;
 		private bool _consonant;
 		private int _weight;
-		private readonly ReadOnlyCollection<RelevantValueViewModel> _values; 
+		private readonly System.Collections.ObjectModel.ReadOnlyCollection<RelevantValueViewModel> _values; 
 
 		public RelevantFeatureViewModel(SymbolicFeature feature, int weight, bool vowel, bool consonant, IReadOnlyDictionary<FeatureSymbol, int> valueMetrics)
 			: base(feature.Description)
@@ -28,7 +28,7 @@ namespace SIL.Cog.ViewModels
 				vm.PropertyChanged += ChildPropertyChanged;
 				values.Add(vm);
 			}
-			_values = new ReadOnlyCollection<RelevantValueViewModel>(values);
+			_values = new System.Collections.ObjectModel.ReadOnlyCollection<RelevantValueViewModel>(values);
 		}
 
 		public SymbolicFeature ModelFeature
@@ -66,7 +66,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ReadOnlyCollection<RelevantValueViewModel> Values
+		public System.Collections.ObjectModel.ReadOnlyCollection<RelevantValueViewModel> Values
 		{
 			get { return _values; }
 		}

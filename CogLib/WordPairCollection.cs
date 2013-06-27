@@ -2,7 +2,7 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class WordPairCollection : KeyedBulkObservableCollection<Sense, WordPair>
+	public class WordPairCollection : KeyedBulkObservableList<Sense, WordPair>
 	{
 		private readonly VarietyPair _varietyPair;
  

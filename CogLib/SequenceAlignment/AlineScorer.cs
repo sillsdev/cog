@@ -24,10 +24,10 @@ namespace SIL.Cog.SequenceAlignment
 		public AlineScorer(IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
 			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, IEnumerable<SoundClass> contextualSoundClasses)
 		{
-			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures).AsReadOnlySet();
-			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures).AsReadOnlySet();
-			_featureWeights = new Dictionary<SymbolicFeature, int>(featureWeights).AsReadOnlyDictionary();
-			_valueMetrics = new Dictionary<FeatureSymbol, int>(valueMetrics).AsReadOnlyDictionary();
+			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures).ToReadOnlySet();
+			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures).ToReadOnlySet();
+			_featureWeights = new Dictionary<SymbolicFeature, int>(featureWeights).ToReadOnlyDictionary();
+			_valueMetrics = new Dictionary<FeatureSymbol, int>(valueMetrics).ToReadOnlyDictionary();
 			_contextualSoundClasses = contextualSoundClasses.ToArray();
 		}
 

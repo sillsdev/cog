@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -11,7 +11,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private bool _ignoreModifiers;
 		private readonly CogProject _project;
-		private readonly ObservableCollection<string> _segments;
+		private readonly ObservableList<string> _segments;
 		private string _currentSegment;
 		private readonly ICommand _addSegmentCommand;
 		private readonly ICommand _removeSegmentCommand;
@@ -21,7 +21,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_dialogService = dialogService;
 			_project = project;
-			_segments = new ObservableCollection<string>();
+			_segments = new ObservableList<string>();
 			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}
@@ -32,7 +32,7 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_project = project;
 			_ignoreModifiers = unnaturalClass.IgnoreModifiers;
-			_segments = new ObservableCollection<string>(unnaturalClass.Segments);
+			_segments = new ObservableList<string>(unnaturalClass.Segments);
 			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}
@@ -74,7 +74,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IgnoreModifiers, ref _ignoreModifiers, value); }
 		}
 
-		public ObservableCollection<string> Segments
+		public ObservableList<string> Segments
 		{
 			get { return _segments; }
 		}

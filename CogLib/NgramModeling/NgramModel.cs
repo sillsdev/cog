@@ -117,12 +117,12 @@ namespace SIL.Cog.NgramModeling
 
 		public IReadOnlyCollection<Ngram> Ngrams
 		{
-			get { return _ngrams.AsSimpleReadOnlyCollection(); }
+			get { return _ngrams.ToReadOnlyCollection(); }
 		}
 
 		public IReadOnlyCollection<string> Categories
 		{
-			get { return _categories.AsSimpleReadOnlyCollection(); }
+			get { return _categories.ToReadOnlyCollection(); }
 		}
 
 		public INgramModelSmoother Smoother

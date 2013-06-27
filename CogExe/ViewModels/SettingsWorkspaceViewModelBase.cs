@@ -1,14 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public abstract class SettingsWorkspaceViewModelBase : WorkspaceViewModelBase
 	{
 		private CogProject _project;
-		private readonly ObservableCollection<ComponentSettingsViewModelBase> _components;
+		private readonly ObservableList<ComponentSettingsViewModelBase> _components;
 		private readonly ICommand _applyCommand;
 		private readonly ICommand _resetCommand;
 		private bool _isDirty;
@@ -16,7 +16,7 @@ namespace SIL.Cog.ViewModels
 		protected SettingsWorkspaceViewModelBase() 
 			: base("Settings")
 		{
-			_components = new ObservableCollection<ComponentSettingsViewModelBase>();
+			_components = new ObservableList<ComponentSettingsViewModelBase>();
 			_applyCommand = new RelayCommand(Apply, CanApply);
 			_resetCommand = new RelayCommand(Reset);
 		}
@@ -80,7 +80,7 @@ namespace SIL.Cog.ViewModels
 			get { return _isDirty; }
 		}
 
-		public ObservableCollection<ComponentSettingsViewModelBase> Components
+		public ObservableList<ComponentSettingsViewModelBase> Components
 		{
 			get { return _components; }
 		}

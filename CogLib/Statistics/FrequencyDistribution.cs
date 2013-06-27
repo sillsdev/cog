@@ -16,7 +16,7 @@ namespace SIL.Cog.Statistics
 
 		public IReadOnlyCollection<TSample> ObservedSamples
 		{
-			get { return _sampleCounts.Keys.AsSimpleReadOnlyCollection(); }
+			get { return _sampleCounts.Keys.ToReadOnlyCollection(); }
 		}
 
 		public void Increment(TSample sample)

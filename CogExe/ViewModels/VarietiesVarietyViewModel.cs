@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -13,13 +12,13 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly UnorderedViewModelCollection<SegmentCollection, VarietySegmentViewModel, Segment> _segments;
-		private readonly UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense> _senses;
-		private readonly UnorderedViewModelCollection<WordCollection, WordViewModel, Word> _words; 
-		private readonly ReadOnlyMirroredCollection<Affix, AffixViewModel> _affixes;
+		private readonly ReadOnlyMirroredCollection<Segment, VarietySegmentViewModel> _segments;
+		private readonly ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
+		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words; 
+		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
-		private readonly ObservableCollection<WordViewModel> _selectedWords; 
+		private readonly ObservableList<WordViewModel> _selectedWords;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
@@ -29,9 +28,10 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_dialogService = dialogService;
-			_segments = new UnorderedViewModelCollection<SegmentCollection, VarietySegmentViewModel, Segment>(variety.Segments, segment => new VarietySegmentViewModel(variety, segment), vm => vm.ModelSegment);
-			_senses = new UnorderedViewModelCollection<ObservableCollection<Sense>, SenseViewModel, Sense>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
-			_words = new UnorderedViewModelCollection<WordCollection, WordViewModel, Word>(variety.Words, word =>
+			_segments = new ReadOnlyMirroredCollection<Segment, VarietySegmentViewModel>((IReadOnlyObservableCollection<Segment>) variety.Segments,
+				segment => new VarietySegmentViewModel(variety, segment), vm => vm.ModelSegment);
+			_senses = new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
+			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
 				{
 					var vm = new WordViewModel(project, _senses[word.Sense], word);
 					vm.PropertyChanged += ChildPropertyChanged;
@@ -39,8 +39,8 @@ namespace SIL.Cog.ViewModels
 				}, vm => vm.ModelWord);
 			_words.CollectionChanged += WordsChanged;
 
-			_selectedWords = new ObservableCollection<WordViewModel>();
-			_affixes = new ReadOnlyMirroredCollection<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix));
+			_selectedWords = new ObservableList<WordViewModel>();
+			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.ModelAffix);
 			if (_affixes.Count > 0)
 				_currentAffix = _affixes[0];
 			_newAffixCommand = new RelayCommand(NewAffix);
@@ -111,27 +111,27 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_words);
 		}
 
-		public ObservableCollection<VarietySegmentViewModel> Segments
+		public ReadOnlyObservableList<VarietySegmentViewModel> Segments
 		{
 			get { return _segments; }
 		}
 
-		public ObservableCollection<SenseViewModel> Senses
+		public ReadOnlyObservableList<SenseViewModel> Senses
 		{
 			get { return _senses; }
 		}
 
-		public ObservableCollection<WordViewModel> Words
+		public ReadOnlyObservableList<WordViewModel> Words
 		{
 			get { return _words; }
 		}
 
-		public ReadOnlyObservableCollection<AffixViewModel> Affixes
+		public ReadOnlyObservableList<AffixViewModel> Affixes
 		{
 			get { return _affixes; }
 		}
 
-		public ObservableCollection<WordViewModel> SelectedWords
+		public ObservableList<WordViewModel> SelectedWords
 		{
 			get { return _selectedWords; }
 		}

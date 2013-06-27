@@ -2,7 +2,7 @@
 
 namespace SIL.Cog
 {
-	public class VarietyPairCollection : BulkObservableCollection<VarietyPair>
+	public class VarietyPairCollection : BulkObservableList<VarietyPair>
 	{
 		protected override void InsertItem(int index, VarietyPair item)
 		{

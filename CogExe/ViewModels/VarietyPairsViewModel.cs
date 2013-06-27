@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
@@ -21,7 +20,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private CogProject _project;
 		private readonly IProgressService _progressService;
-		private ReadOnlyMirroredCollection<Variety, VarietyViewModel> _varieties;
+		private ReadOnlyMirroredList<Variety, VarietyViewModel> _varieties;
 		private VarietyViewModel _currentVariety1;
 		private VarietyViewModel _currentVariety2;
 		private VarietyPairViewModel _currentVarietyPair;
@@ -83,7 +82,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_project.VarietyPairs.CollectionChanged += VarietyPairsChanged;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, VarietyViewModel>(_project.Varieties, variety => new VarietyViewModel(variety)));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_project.Varieties, variety => new VarietyViewModel(variety), vm => vm.ModelVariety));
 			ResetCurrentVarietyPair();
 			((INotifyCollectionChanged) _varieties).CollectionChanged += VarietiesChanged;
 		}
@@ -122,7 +121,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ReadOnlyObservableCollection<VarietyViewModel> Varieties
+		public ReadOnlyObservableList<VarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}

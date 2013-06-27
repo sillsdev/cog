@@ -159,7 +159,7 @@
     <Compile Include="Controls\ZoomContentPresenter.cs" />
     <Compile Include="Controls\ZoomControl.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
-    <Compile Include="Converters\ConcurrentCollectionConverter.cs" />
+    <Compile Include="Converters\ConcurrentListConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
@@ -306,7 +306,6 @@
     <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ThresholdSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
-    <Compile Include="ViewModels\UnorderedViewModelCollection.cs" />
     <Compile Include="ViewModels\SoundChangeViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaCommandsViewModel.cs" />
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
@@ -341,7 +340,7 @@
     <Compile Include="Views\AddUnnaturalClassSegmentDialog.xaml.cs">
       <DependentUpon>AddUnnaturalClassSegmentDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ConcurrentCollection.cs" />
+    <Compile Include="Views\ConcurrentList.cs" />
     <Compile Include="Views\DolgopolskyCognateIdentifierView.xaml.cs">
       <DependentUpon>DolgopolskyCognateIdentifierView.xaml</DependentUpon>
     </Compile>

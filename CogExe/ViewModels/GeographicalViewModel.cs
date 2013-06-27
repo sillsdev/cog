@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -22,7 +21,7 @@ namespace SIL.Cog.ViewModels
 		private readonly List<Cluster<Variety>> _currentClusters;
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
-		private ReadOnlyMirroredCollection<Variety, GeographicalVarietyViewModel> _varieties;
+		private ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel> _varieties;
 
 		public GeographicalViewModel(IDialogService dialogService, IImportService importService, IExportService exportService)
 			: base("Geographical")
@@ -116,14 +115,14 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredCollection<Variety, GeographicalVarietyViewModel>(project.Varieties,
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel>(project.Varieties,
 				variety =>
 					{
 						var newVariety = new GeographicalVarietyViewModel(_dialogService, project, variety);
 						((INotifyCollectionChanged) newVariety.Regions).CollectionChanged += (sender, e) => RegionsChanged(newVariety);
 						newVariety.PropertyChanged += ChildPropertyChanged;
 						return newVariety;
-					}));
+					}, vm => vm.ModelVariety));
 			if (_project.VarietyPairs.Count > 0)
 				ClusterVarieties();
 			else
@@ -153,7 +152,7 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_varieties);
 		}
 
-		public ReadOnlyObservableCollection<GeographicalVarietyViewModel> Varieties
+		public ReadOnlyObservableList<GeographicalVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 		}

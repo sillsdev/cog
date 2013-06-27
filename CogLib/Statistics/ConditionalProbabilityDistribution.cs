@@ -17,7 +17,7 @@ namespace SIL.Cog.Statistics
 
 		public IReadOnlyCollection<TCondition> Conditions
 		{
-			get { return _probDists.Keys.AsSimpleReadOnlyCollection(); }
+			get { return _probDists.Keys.ToReadOnlyCollection(); }
 		}
 
 		public IProbabilityDistribution<TSample> this[TCondition condition]

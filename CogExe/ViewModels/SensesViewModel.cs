@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
@@ -10,7 +9,7 @@ namespace SIL.Cog.ViewModels
 	public class SensesViewModel : WorkspaceViewModelBase
 	{
 		private readonly IDialogService _dialogService;
-		private ReadOnlyMirroredCollection<Sense, SenseViewModel> _senses;
+		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
 		private SenseViewModel _currentSense;
 		private CogProject _project;
 
@@ -70,9 +69,9 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			if (_senses != null)
-				((INotifyCollectionChanged) _senses).CollectionChanged -= SensesChanged;
-			Set("Senses", ref _senses, new ReadOnlyMirroredCollection<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense)));
-			((INotifyCollectionChanged) _senses).CollectionChanged += SensesChanged;
+				_senses.CollectionChanged -= SensesChanged;
+			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
+			_senses.CollectionChanged += SensesChanged;
 			CurrentSense = _senses.Count > 0 ? _senses[0] : null;
 		}
 
@@ -82,7 +81,7 @@ namespace SIL.Cog.ViewModels
 				CurrentSense = _senses[0];
 		}
 
-		public ReadOnlyObservableCollection<SenseViewModel> Senses
+		public ReadOnlyObservableList<SenseViewModel> Senses
 		{
 			get { return _senses; }
 		}

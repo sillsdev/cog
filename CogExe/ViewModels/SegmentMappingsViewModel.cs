@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -14,7 +14,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly CogProject _project;
-		private readonly ObservableCollection<SegmentMappingViewModel> _mappings;
+		private readonly ObservableList<SegmentMappingViewModel> _mappings;
 		private SegmentMappingViewModel _currentMapping;
 		private readonly ICommand _newCommand;
 		private readonly ICommand _removeCommand;
@@ -30,7 +30,7 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_importService = importService;
 			_project = project;
-			_mappings = new ObservableCollection<SegmentMappingViewModel>(mappings.Select(mapping => new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2)));
+			_mappings = new ObservableList<SegmentMappingViewModel>(mappings.Select(mapping => new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2)));
 			_newCommand = new RelayCommand(AddMapping);
 			_removeCommand = new RelayCommand(RemoveMapping, CanRemoveMapping);
 			_importCommand = new RelayCommand(Import);
@@ -74,7 +74,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => CurrentMapping, ref _currentMapping, value); }
 		}
 
-		public ObservableCollection<SegmentMappingViewModel> Mappings
+		public ObservableList<SegmentMappingViewModel> Mappings
 		{
 			get { return _mappings; }
 		}

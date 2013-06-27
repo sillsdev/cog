@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public abstract class WorkspaceViewModelBase : InitializableViewModelBase
 	{
-		private readonly ObservableCollection<CogViewModelBase> _taskAreas; 
+		private readonly ObservableList<CogViewModelBase> _taskAreas; 
 
 		protected WorkspaceViewModelBase(string displayName)
 			: base(displayName)
 		{
-			_taskAreas = new ObservableCollection<CogViewModelBase>();
+			_taskAreas = new ObservableList<CogViewModelBase>();
 		}
 
-		public ObservableCollection<CogViewModelBase> TaskAreas
+		public ObservableList<CogViewModelBase> TaskAreas
 		{
 			get { return _taskAreas; }
 		}

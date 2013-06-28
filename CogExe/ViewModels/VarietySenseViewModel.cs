@@ -69,6 +69,7 @@ namespace SIL.Cog.ViewModels
 							var newWord = new Word(wordStr, shape, ModelSense);
 							ModelWords.Insert(index, newWord);
 							_variety.Words.Add(newWord);
+							_project.Syllabifier.Syllabify(newWord);
 						}
 						index++;
 					}

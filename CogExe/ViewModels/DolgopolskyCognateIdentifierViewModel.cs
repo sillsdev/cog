@@ -27,7 +27,7 @@ namespace SIL.Cog.ViewModels
 					new UnnaturalClass(project.Segmenter, "T", new[] {"t", "d", "ɗ", "ʈ", "ɖ", "θ", "ð"}, true),
  					new UnnaturalClass(project.Segmenter, "W", new[] {"w", "ʋ", "v", "ʙ"}, true)
 				};
-			_soundClasses = new SoundClassesViewModel(dialogService, project, soundClasses);
+			_soundClasses = new SoundClassesViewModel(dialogService, project, soundClasses.Select(sc => new SoundClassViewModel(sc)), false);
 			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;
 		}
 
@@ -35,7 +35,7 @@ namespace SIL.Cog.ViewModels
 			: base("Dolgopolsky", project)
 		{
 			_initialEquivalenceThreshold = cognateIdentifier.InitialEquivalenceThreshold;
-			_soundClasses = new SoundClassesViewModel(dialogService, project, cognateIdentifier.SoundClasses);
+			_soundClasses = new SoundClassesViewModel(dialogService, project, cognateIdentifier.SoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
 			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;
 		}
 

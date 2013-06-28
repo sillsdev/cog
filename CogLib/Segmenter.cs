@@ -201,68 +201,80 @@ namespace SIL.Cog
 
 				if (match.Groups["vowelSeg"].Success)
 				{
-					Group vowelComp = match.Groups["vowelComp"];
 					string strRep;
-					FeatureStruct phonemeFS = BuildFeatStruct(match, vowelComp.Captures[0], "vowelBase", _vowels, out strRep);
-					var sb = new StringBuilder();
-					sb.Append(strRep);
-					if (match.Groups["joiner"].Success)
+					FeatureStruct phonemeFS;
+					if (!TryComplexSymbol(match, _vowels, out strRep, out phonemeFS))
 					{
+						var sb = new StringBuilder();
+						Group vowelComp = match.Groups["vowelComp"];
+						string partStrRep;
+						phonemeFS = BuildFeatStruct(match, vowelComp.Captures[0], "vowelBase", _vowels, out partStrRep);
+						sb.Append(partStrRep);
 						Group joinerGroup = match.Groups["joiner"];
-						for (int i = 0; i < joinerGroup.Captures.Count; i++)
+						if (joinerGroup.Success)
 						{
-							string joinerStr = joinerGroup.Captures[i].Value;
-							//sb.Append(joinerStr);
-							phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out strRep));
-							sb.Append(strRep);
-							phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
+							for (int i = 0; i < joinerGroup.Captures.Count; i++)
+							{
+								string joinerStr = joinerGroup.Captures[i].Value;
+								//sb.Append(joinerStr);
+								phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out partStrRep));
+								sb.Append(partStrRep);
+								phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
+							}
 						}
-					}
-					else if (vowelComp.Captures.Count > 1)
-					{
-						for (int i = 1; i < vowelComp.Captures.Count; i++)
+						else if (vowelComp.Captures.Count > 1)
 						{
-							phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i], "vowelBase", _vowels, out strRep));
-							sb.Append(strRep);
+							for (int i = 1; i < vowelComp.Captures.Count; i++)
+							{
+								phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i], "vowelBase", _vowels, out partStrRep));
+								sb.Append(partStrRep);
+							}
 						}
+						strRep = sb.ToString();
 					}
 
-					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
+					phonemeFS.AddValue(CogFeatureSystem.StrRep, strRep);
 					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
 					shape.Add(phonemeFS);
 				}
 				else if (match.Groups["consSeg"].Success)
 				{
-					Group consComp = match.Groups["consComp"];
 					string strRep;
-					FeatureStruct phonemeFS = BuildFeatStruct(match, consComp.Captures[0], "consBase", _consonants, out strRep);
-					var sb = new StringBuilder();
-					sb.Append(strRep);
-					if (match.Groups["joiner"].Success)
+					FeatureStruct phonemeFS;
+					if (!TryComplexSymbol(match, _consonants, out strRep, out phonemeFS))
 					{
+						var sb = new StringBuilder();
+						Group consComp = match.Groups["consComp"];
+						string compStrRep;
+						phonemeFS = BuildFeatStruct(match, consComp.Captures[0], "consBase", _consonants, out compStrRep);
+						sb.Append(compStrRep);
 						Group joinerGroup = match.Groups["joiner"];
-						for (int i = 0; i < joinerGroup.Captures.Count; i++)
+						if (joinerGroup.Success)
 						{
-							string joinerStr = joinerGroup.Captures[i].Value;
-							//sb.Append(joinerStr);
-							phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out strRep));
-							sb.Append(strRep);
-							FeatureStruct joinerFs = _joiners[joinerStr].FeatureStruct;
-							if (joinerFs != null)
-								phonemeFS.PriorityUnion(joinerFs);
+							for (int i = 0; i < joinerGroup.Captures.Count; i++)
+							{
+								string joinerStr = joinerGroup.Captures[i].Value;
+								//sb.Append(joinerStr);
+								phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out compStrRep));
+								sb.Append(compStrRep);
+								FeatureStruct joinerFs = _joiners[joinerStr].FeatureStruct;
+								if (joinerFs != null)
+									phonemeFS.PriorityUnion(joinerFs);
+							}
 						}
-					}
-					else if (consComp.Captures.Count > 1)
-					{
-						for (int i = 1; i < consComp.Captures.Count; i++)
+						else if (consComp.Captures.Count > 1)
 						{
-							phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i], "consBase", _consonants, out strRep));
-							sb.Append(strRep);
+							for (int i = 1; i < consComp.Captures.Count; i++)
+							{
+								phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i], "consBase", _consonants, out compStrRep));
+								sb.Append(compStrRep);
+							}
 						}
+						strRep = sb.ToString();
 					}
 
-					phonemeFS.AddValue(CogFeatureSystem.StrRep, sb.ToString());
+					phonemeFS.AddValue(CogFeatureSystem.StrRep, strRep);
 					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
 					shape.Add(phonemeFS);
@@ -296,6 +308,27 @@ namespace SIL.Cog
 			return false;
 		}
 
+		private bool TryComplexSymbol(Match match, SymbolCollection bases, out string strRep, out FeatureStruct fs)
+		{
+			Group joinerGroup = match.Groups["joiner"];
+			Group modGroup = match.Groups["mod"];
+			Group consBaseGroup = match.Groups["consBase"];
+			Symbol symbol;
+			if (joinerGroup.Success && (!modGroup.Success || modGroup.Index >= consBaseGroup.Index + consBaseGroup.Length)
+				&& bases.TryGetValue(string.Concat(consBaseGroup.Captures.Cast<Capture>().Select(cap => cap.Value)), out symbol))
+			{
+				var sb = new StringBuilder();
+				sb.Append(symbol.StrRep);
+				fs = symbol.FeatureStruct != null ? symbol.FeatureStruct.DeepClone() : new FeatureStruct();
+				ApplyModifiers(match.Groups["mod"].Captures.Cast<Capture>(), sb, fs);
+				strRep = sb.ToString();
+				return true;
+			}
+			strRep = null;
+			fs = null;
+			return false;
+		}
+
 		private FeatureStruct BuildFeatStruct(Match match, Capture capture, string baseGroupName, SymbolCollection bases, out string strRep)
 		{
 			string baseStr = match.Groups[baseGroupName].Captures.Cast<Capture>().Single(cap => capture.Index == cap.Index).Value.ToLowerInvariant();
@@ -303,8 +336,15 @@ namespace SIL.Cog
 			FeatureStruct fs = baseFs != null ? baseFs.DeepClone() : new FeatureStruct();
 			var sb = new StringBuilder();
 			sb.Append(baseStr);
+			ApplyModifiers(match.Groups["mod"].Captures.Cast<Capture>().Where(cap => capture.Index <= cap.Index && (capture.Index + capture.Length) >= (cap.Index + cap.Length)), sb, fs);
+			strRep = sb.ToString();
+			return fs;
+		}
+
+		private void ApplyModifiers(IEnumerable<Capture> modifiers, StringBuilder sb, FeatureStruct fs)
+		{
 			var modStrs = new List<string>();
-			foreach (Capture modifier in match.Groups["mod"].Captures.Cast<Capture>().Where(cap => capture.Index <= cap.Index && (capture.Index + capture.Length) >= (cap.Index + cap.Length)))
+			foreach (Capture modifier in modifiers)
 			{
 				string modStr = modifier.Value;
 				Symbol modInfo = _modifiers[modStr];
@@ -321,8 +361,7 @@ namespace SIL.Cog
 						modStrs.Add(modStr);
 				}
 			}
-			strRep = modStrs.OrderBy(str => str).Aggregate(sb, (s, modStr) => s.Append(modStr)).ToString();
-			return fs;
+			modStrs.OrderBy(str => str).Aggregate(sb, (s, modStr) => s.Append(modStr));
 		}
 
 		private static bool IsStackingDiacritic(char c)

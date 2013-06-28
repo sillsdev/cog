@@ -59,7 +59,10 @@ namespace SIL.Cog.Import
 			}
 
 			foreach (Tuple<Variety, List<Word>> variety in varieties.Values)
+			{
 				variety.Item1.Words.AddRange(variety.Item2);
+				project.Syllabifier.Syllabify(variety.Item1);
+			}
 		}
 	}
 }

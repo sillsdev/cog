@@ -56,11 +56,11 @@ namespace SIL.Cog.ViewModels
 					break;
 			}
 			_expansionCompressionEnabled = aligner.Settings.ExpansionCompressionEnabled;
-			_soundClasses = new SoundClassesViewModel(dialogService, project, aligner.ContextualSoundClasses);
-			_soundClasses.SoundClasses.CollectionChanged += NaturalClassesChanged;
+			_soundClasses = new SoundClassesViewModel(dialogService, project, aligner.ContextualSoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
+			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;
 		}
 
-		private void NaturalClassesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void SoundClassesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			IsChanged = true;
 		}

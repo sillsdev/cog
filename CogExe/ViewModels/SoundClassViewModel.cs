@@ -5,15 +5,28 @@ namespace SIL.Cog.ViewModels
 	public class SoundClassViewModel : ViewModelBase
 	{
 		private readonly SoundClass _soundClass;
+		private int _sonority;
 
 		public SoundClassViewModel(SoundClass soundClass)
+			: this(soundClass, 0)
+		{
+		}
+
+		public SoundClassViewModel(SoundClass soundClass, int sonority)
 		{
 			_soundClass = soundClass;
+			_sonority = sonority;
 		}
 
 		public string Name
 		{
 			get { return _soundClass.Name; }
+		}
+
+		public int Sonority
+		{
+			get { return _sonority; }
+			set { Set(() => Sonority, ref _sonority, value); }
 		}
 
 		public string Type

@@ -7,17 +7,17 @@ namespace SIL.Cog.ViewModels
 	public class InputSettingsViewModel : SettingsWorkspaceViewModelBase
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
-		private readonly IProgressService _progressService;
+		private readonly IDialogService _dialogService;
 
-		public InputSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IProgressService progressService)
+		public InputSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService)
 		{
 			_spanFactory = spanFactory;
-			_progressService = progressService;
+			_dialogService = dialogService;
 		}
 
 		protected override void CreateComponents()
 		{
-			Components.Add(new SegmenterViewModel(_progressService, Project));
+			Components.Add(new SyllabifierViewModel(_dialogService, Project));
 			Components.Add(new UnsupervisedAffixIdentifierViewModel(_spanFactory, Project, (UnsupervisedAffixIdentifier) Project.VarietyProcessors["affixIdentifier"]));
 		}
 	}

@@ -137,6 +137,19 @@ namespace SIL.Cog.Config
 			if (joinersElem != null)
 				ParseSymbols(project.FeatureSystem, joinersElem, project.Segmenter.Joiners);
 
+			XElement syllabificationElem = root.Element(Cog + "Syllabification");
+			Debug.Assert(syllabificationElem != null);
+			var enabledStr = (string) syllabificationElem.Attribute("enabled");
+			project.Syllabifier.Enabled = string.IsNullOrEmpty(enabledStr) || bool.Parse(enabledStr);
+			XElement scaleElem = syllabificationElem.Element(Cog + "SonorityScale");
+			Debug.Assert(scaleElem != null);
+			foreach (XElement sonorityClassElem in scaleElem.Elements(Cog + "SonorityClass"))
+			{
+				int sonority = int.Parse((string) sonorityClassElem.Attribute("sonority"));
+				SoundClass soundClass = LoadSoundClass(project.Segmenter, project.FeatureSystem, sonorityClassElem.Elements().First());
+				project.Syllabifier.SonorityScale.Add(new SonorityClass(sonority, soundClass));
+			}
+
 			XElement alignersElem = root.Element(Cog + "WordAligners");
 			Debug.Assert(alignersElem != null);
 			foreach (XElement alignerElem in alignersElem.Elements(Cog + "WordAligner"))
@@ -188,6 +201,7 @@ namespace SIL.Cog.Config
 							variety.Words.Add(new Word(sb.ToString(), shape, sense));
 						}
 					}
+					project.Syllabifier.Syllabify(variety);
 				}
 				XElement affixesElem = varietyElem.Element(Cog + "Affixes");
 				if (affixesElem != null)
@@ -295,7 +309,11 @@ namespace SIL.Cog.Config
 					new XElement(Cog + "Modifiers", SaveSymbols(project.Segmenter.Modifiers)),
 					new XElement(Cog + "Boundaries", SaveSymbols(project.Segmenter.Boundaries)),
 					new XElement(Cog + "ToneLetters", SaveSymbols(project.Segmenter.ToneLetters)),
-					new XElement(Cog + "Joiners", SaveSymbols(project.Segmenter.Joiners))));
+					new XElement(Cog + "Joiners", SaveSymbols(project.Segmenter.Joiners))),
+				new XElement(Cog + "Syllabification",
+					new XAttribute("enabled", project.Syllabifier.Enabled),
+					new XElement(Cog + "SonorityScale",
+						project.Syllabifier.SonorityScale.Select(sc => new XElement(Cog + "SonorityClass", new XAttribute("sonority", sc.Sonority), SaveSoundClass(sc.SoundClass))))));
 
 			root.Add(new XElement(Cog + "WordAligners", project.WordAligners.Select(kvp => SaveComponent("WordAligner", kvp.Key, kvp.Value))));
 
@@ -401,43 +419,48 @@ namespace SIL.Cog.Config
 		internal static IEnumerable<SoundClass> LoadSoundClasses(Segmenter segmenter, FeatureSystem featSys, XElement elem)
 		{
 			foreach (XElement scElem in elem.Elements())
+				yield return LoadSoundClass(segmenter, featSys, scElem);
+		}
+
+		private static SoundClass LoadSoundClass(Segmenter segmenter, FeatureSystem featSys, XElement elem)
+		{
+			var name = (string) elem.Attribute("name");
+			if (elem.Name == Cog + "NaturalClass")
 			{
-				var name = (string) scElem.Attribute("name");
-				if (scElem.Name == Cog + "NaturalClass")
-				{
-					FeatureStruct fs = LoadFeatureStruct(featSys, scElem);
-					fs.AddValue(CogFeatureSystem.Type, ((string) scElem.Attribute("type")) == "vowel" ? CogFeatureSystem.VowelType : CogFeatureSystem.ConsonantType);
-					yield return new NaturalClass(name, fs);
-				}
-				else if (scElem.Name == Cog + "UnnaturalClass")
-				{
-					IEnumerable<string> segments = scElem.Elements(Cog + "Segment").Select(segElem => (string) segElem);
-					var ignoreModifiersStr = (string) scElem.Attribute("ignoreModifiers");
-					yield return new UnnaturalClass(segmenter, name, segments, !string.IsNullOrEmpty(ignoreModifiersStr) && bool.Parse(ignoreModifiersStr));
-				}
+				FeatureStruct fs = LoadFeatureStruct(featSys, elem);
+				fs.AddValue(CogFeatureSystem.Type, ((string) elem.Attribute("type")) == "vowel" ? CogFeatureSystem.VowelType : CogFeatureSystem.ConsonantType);
+				return new NaturalClass(name, fs);
 			}
+			if (elem.Name == Cog + "UnnaturalClass")
+			{
+				IEnumerable<string> segments = elem.Elements(Cog + "Segment").Select(segElem => (string) segElem);
+				var ignoreModifiersStr = (string) elem.Attribute("ignoreModifiers");
+				return new UnnaturalClass(segmenter, name, segments, !string.IsNullOrEmpty(ignoreModifiersStr) && bool.Parse(ignoreModifiersStr));
+			}
+			return null;
 		}
 
 		internal static IEnumerable<XElement> SaveSoundClasses(IEnumerable<SoundClass> soundClasses)
 		{
 			foreach (SoundClass sc in soundClasses)
+				yield return SaveSoundClass(sc);
+		}
+
+		private static XElement SaveSoundClass(SoundClass soundClass)
+		{
+			var nc = soundClass as NaturalClass;
+			if (nc != null)
 			{
-				var nc = sc as NaturalClass;
-				if (nc != null)
-				{
-					yield return new XElement(Cog + "NaturalClass", new XAttribute("name", nc.Name),
-						new XAttribute("type", nc.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), CreateFeatureStruct(nc.FeatureStruct));
-				}
-				else
-				{
-					var unc = sc as UnnaturalClass;
-					if (unc != null)
-					{
-						yield return new XElement(Cog + "UnnaturalClass", new XAttribute("name", unc.Name), new XAttribute("ignoreModifiers", unc.IgnoreModifiers),
-							unc.Segments.Select(s => new XElement(Cog + "Segment", s)));
-					}
-				}
+				return new XElement(Cog + "NaturalClass", new XAttribute("name", nc.Name),
+					new XAttribute("type", nc.Type == CogFeatureSystem.VowelType ? "vowel" : "consonant"), CreateFeatureStruct(nc.FeatureStruct));
 			}
+			var unc = soundClass as UnnaturalClass;
+			if (unc != null)
+			{
+				return new XElement(Cog + "UnnaturalClass", new XAttribute("name", unc.Name), new XAttribute("ignoreModifiers", unc.IgnoreModifiers),
+				                    unc.Segments.Select(s => new XElement(Cog + "Segment", s)));
+			}
+			return null;
 		}
 
 		internal static XElement SaveComponent<T>(string elemName, T component)

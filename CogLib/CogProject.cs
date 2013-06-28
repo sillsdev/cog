@@ -10,6 +10,7 @@ namespace SIL.Cog
 	{
 		private FeatureSystem _featSys;
 		private readonly Segmenter _segmenter;
+		private readonly Syllabifier _syllabifier;
 
 		private readonly KeyedBulkObservableList<string, Variety> _varieties;
 		private readonly KeyedBulkObservableList<string, Sense> _senses;
@@ -24,6 +25,7 @@ namespace SIL.Cog
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
 			_segmenter = new Segmenter(spanFactory);
+			_syllabifier = new Syllabifier();
 			_senses = new KeyedBulkObservableList<string, Sense>(sense => sense.Gloss);
 			_senses.CollectionChanged += SensesChanged;
 			_varieties = new KeyedBulkObservableList<string, Variety>(variety => variety.Name);
@@ -92,6 +94,11 @@ namespace SIL.Cog
 		public Segmenter Segmenter
 		{
 			get { return _segmenter; }
+		}
+
+		public Syllabifier Syllabifier
+		{
+			get { return _syllabifier; }
 		}
 
 		public KeyedBulkObservableList<string, Sense> Senses

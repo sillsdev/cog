@@ -289,8 +289,8 @@
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
-    <Compile Include="ViewModels\SegmenterViewModel.cs" />
     <Compile Include="ViewModels\SoundContextSurrogate.cs" />
+    <Compile Include="ViewModels\SyllabifierViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaIntegerViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairSurrogate.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
@@ -422,9 +422,6 @@
     <Compile Include="Views\RunStemmerDialog.xaml.cs">
       <DependentUpon>RunStemmerDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SegmenterView.xaml.cs">
-      <DependentUpon>SegmenterView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SensesView.xaml.cs">
       <DependentUpon>SensesView.xaml</DependentUpon>
     </Compile>
@@ -433,6 +430,9 @@
     </Compile>
     <Compile Include="Views\SegmentMappingsView.xaml.cs">
       <DependentUpon>SegmentMappingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SyllabifierView.xaml.cs">
+      <DependentUpon>SyllabifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TaskAreaCommandGroupView.xaml.cs">
       <DependentUpon>TaskAreaCommandGroupView.xaml</DependentUpon>
@@ -626,10 +626,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SegmenterView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\SensesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -639,6 +635,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SegmentMappingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SyllabifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -138,6 +138,7 @@
     <Compile Include="SequenceAlignment\PairwiseAlignmentAlgorithm.cs" />
     <Compile Include="SequenceAlignment\Profile.cs" />
     <Compile Include="SequenceAlignment\ProfileScorer.cs" />
+    <Compile Include="SonorityClass.cs" />
     <Compile Include="SoundContext.cs" />
     <Compile Include="SoundClass.cs" />
     <Compile Include="Statistics\ConditionalFrequencyDistribution.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Statistics\MaxLikelihoodProbabilityDistribution.cs" />
     <Compile Include="Statistics\SimpleGoodTuringProbabilityDistribution.cs" />
     <Compile Include="Statistics\WittenBellProbabilityDistribution.cs" />
+    <Compile Include="Syllabifier.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="SymbolCollection.cs" />
     <Compile Include="UnnaturalClass.cs" />

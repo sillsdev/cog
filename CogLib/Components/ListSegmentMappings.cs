@@ -74,7 +74,7 @@ namespace SIL.Cog.Components
 		private bool GetNormalizedStrRep(Segmenter segmenter, string str, out string normalizedStr)
 		{
 			Shape shape;
-			if (segmenter.ToShape(str, out shape) && shape.Count == 1)
+			if (segmenter.ToShape(str, out shape) && shape.All(n => n.Type() == shape.First.Type()))
 			{
 				normalizedStr = shape.First.StrRep();
 				return true;

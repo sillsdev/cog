@@ -26,6 +26,7 @@ namespace SIL.Cog.Components
 				Shape shape;
 				Project.Segmenter.ToShape(null, word.StrRep, null, out shape);
 				word.Shape = shape;
+				Project.Syllabifier.Syllabify(word);
 			}
 
 			StemWords(Direction.LeftToRight, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Prefix));

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Linq;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
-	public class VarietySenseViewModelCollection : ReadOnlyMirroredCollection<Sense, VarietySenseViewModel>
+	public class VarietySenseViewModelCollection : ReadOnlyMirroredList<Sense, VarietySenseViewModel>
 	{
 		public VarietySenseViewModelCollection(ObservableList<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
 			: base(senses, viewModelFactory, vm => vm.ModelSense)
@@ -20,7 +19,7 @@ namespace SIL.Cog.ViewModels
 				case NotifyCollectionChangedAction.Add:
 					foreach (Word word in e.NewItems)
 					{
-						VarietySenseViewModel vm = this.Single(v => v.ModelSense == word.Sense);
+						VarietySenseViewModel vm = this[word.Sense];
 						if (!vm.ModelWords.Contains(word))
 							vm.ModelWords.Add(word);
 					}
@@ -29,7 +28,7 @@ namespace SIL.Cog.ViewModels
 				case NotifyCollectionChangedAction.Remove:
 					foreach (Word word in e.OldItems)
 					{
-						VarietySenseViewModel vm = this.Single(v => v.ModelSense == word.Sense);
+						VarietySenseViewModel vm = this[word.Sense];
 						vm.ModelWords.Remove(word);
 					}
 					break;

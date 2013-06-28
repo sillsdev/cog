@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace SIL.Cog.Views
 {
 	/// <summary>
-	/// Interaction logic for SegmenterView.xaml
+	/// Interaction logic for SyllabifierView.xaml
 	/// </summary>
-	public partial class SegmenterView : UserControl
+	public partial class SyllabifierView : UserControl
 	{
-		public SegmenterView()
+		public SyllabifierView()
 		{
 			InitializeComponent();
 		}

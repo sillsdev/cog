@@ -85,7 +85,10 @@ namespace SIL.Cog.ViewModels
 			_project.Segmenter.ToShape(prefix, stem, suffix, out shape);
 
 			using (_monitor.Enter())
+			{
 				_word.Shape = shape;
+				_project.Syllabifier.Syllabify(_word);
+			}
 			IsChanged = true;
 		}
 

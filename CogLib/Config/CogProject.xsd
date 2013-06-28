@@ -51,7 +51,7 @@
 	<xs:complexType name="BaseSymbolCollection">
 		<xs:complexContent>
 			<xs:extension base="SymbolCollection">
-				<xs:attribute name="maxLength" type="xs:int" default="3" />
+				<xs:attribute name="maxLength" type="xs:int" default="1" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -261,6 +261,30 @@
 							<xs:element name="ToneLetters" type="SymbolCollection" />
 							<xs:element name="Joiners" type="SymbolCollection" />
 						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Syllabification">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="SonorityScale">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="SonorityClass" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:choice>
+														<xs:element ref="NaturalClass" />
+														<xs:element ref="UnnaturalClass" />
+													</xs:choice>
+												</xs:sequence>
+												<xs:attribute name="sonority" type="xs:int" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="enabled" type="xs:boolean" default="true" />
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="WordAligners">

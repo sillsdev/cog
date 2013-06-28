@@ -48,7 +48,7 @@ namespace SIL.Cog
 		private bool Normalize(string segment, out string normalizedSegment)
 		{
 			Shape shape;
-			if (_segmenter.ToShape(segment, out shape) && shape.Count == 1)
+			if (_segmenter.ToShape(segment, out shape) && shape.All(n => n.Type() == shape.First.Type()))
 			{
 				normalizedSegment = shape.First.StrRep();
 				if (_ignoreModifiers)

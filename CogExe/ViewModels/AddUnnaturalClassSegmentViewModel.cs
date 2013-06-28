@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -35,7 +36,7 @@ namespace SIL.Cog.ViewModels
 							Shape shape;
 							if (!_project.Segmenter.ToShape(seg, out shape))
 								return "This is an invalid segment";
-							if (shape.Count > 1)
+							if (shape.Any(n => n.Type() != shape.First.Type()))
 								return "Please specify only one segment";
 						}
 						break;

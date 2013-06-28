@@ -58,6 +58,7 @@ namespace SIL.Cog.Import
 						}
 
 						project.Varieties.Add(variety);
+						project.Syllabifier.Syllabify(variety);
 					}
 				}
 			}

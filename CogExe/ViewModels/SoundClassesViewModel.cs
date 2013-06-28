@@ -21,12 +21,13 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _removeSoundClassCommand;
 		private readonly ICommand _moveSoundClassUpCommand;
 		private readonly ICommand _moveSoundClassDownCommand;
+		private readonly bool _displaySonority;
 
-		public SoundClassesViewModel(IDialogService dialogService, CogProject project, IEnumerable<SoundClass> soundClasses)
+		public SoundClassesViewModel(IDialogService dialogService, CogProject project, IEnumerable<SoundClassViewModel> soundClasses, bool displaySonority)
 		{
 			_dialogService = dialogService;
 			_project = project;
-			_soundClasses = new ObservableList<SoundClassViewModel>(soundClasses.Select(nc => new SoundClassViewModel(nc)));
+			_soundClasses = new ObservableList<SoundClassViewModel>(soundClasses);
 			if (_soundClasses.Count > 0)
 				_currentSoundClass = _soundClasses[0];
 
@@ -36,6 +37,7 @@ namespace SIL.Cog.ViewModels
 			_removeSoundClassCommand = new RelayCommand(RemoveSoundClass, CanRemoveSoundClass);
 			_moveSoundClassUpCommand = new RelayCommand(MoveSoundClassUp, CanMoveSoundClassUp);
 			_moveSoundClassDownCommand = new RelayCommand(MoveSoundClassDown, CanMoveSoundClassDown);
+			_displaySonority = displaySonority;
 		}
 
 		private void NewNaturalClass()
@@ -145,6 +147,11 @@ namespace SIL.Cog.ViewModels
 		{
 			get { return _currentSoundClass; }
 			set { Set(() => CurrentSoundClass, ref _currentSoundClass, value); }
+		}
+
+		public bool DisplaySonority
+		{
+			get { return _displaySonority; }
 		}
 
 		public ObservableList<SoundClassViewModel> SoundClasses

@@ -13,6 +13,11 @@ namespace SIL.Cog.Behaviors
 {
 	public static class DataGridBehaviors
 	{
+		static DataGridBehaviors()
+		{
+			FrameworkElement.DataContextProperty.AddOwner(typeof(DataGridColumn));
+		}
+
 		public static readonly DependencyProperty CommitOnLostFocusProperty =
 			DependencyProperty.RegisterAttached(
 				"CommitOnLostFocus", 
@@ -267,7 +272,37 @@ namespace SIL.Cog.Behaviors
 			datagrid.SetValue(AutoScrollOnSelectionProperty, value);
 		}
 
-
-
+		public static object GetDataContextForColumns(DependencyObject obj)
+		{
+			return obj.GetValue(DataContextForColumnsProperty);
+		}
+ 
+		public static void SetDataContextForColumns(DependencyObject obj, object value)
+		{
+			obj.SetValue(DataContextForColumnsProperty, value);
+		}
+ 
+		/// <summary>
+		/// Allows to set DataContext property on columns of the DataGrid (DataGridColumn)
+		/// </summary>
+		/// <example><DataGridTextColumn Header="{Binding DataContext.ColumnHeader, RelativeSource={RelativeSource Self}}" /></example>
+		public static readonly DependencyProperty DataContextForColumnsProperty =
+			DependencyProperty.RegisterAttached(
+			"DataContextForColumns",
+			typeof(object),
+			typeof(DataGridBehaviors),
+			new UIPropertyMetadata(OnDataContextChanged));
+ 
+		/// <summary>
+		/// Propogates the context change to all the DataGrid's columns
+		/// </summary>
+		private static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var grid = d as DataGrid;
+			if (grid == null) return;
+ 
+			foreach (DataGridColumn col in grid.Columns)
+				col.SetValue(FrameworkElement.DataContextProperty, e.NewValue);
+		}
 	}
 }

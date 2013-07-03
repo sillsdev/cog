@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using SIL.Machine;
+using System.Text;
 
 namespace SIL.Cog.Import
 {
@@ -48,17 +48,13 @@ namespace SIL.Cog.Import
 							{
 								foreach (string w in wordStr.Split(','))
 								{
-									string str = w.Trim();
-									Shape shape;
-									if (!project.Segmenter.ToShape(null, str, null, out shape))
-										shape = project.Segmenter.EmptyShape;
-									variety.Words.Add(new Word(str, shape, senses[glosses[i].Trim()]));
+									string str = w.Trim().Normalize(NormalizationForm.FormD);
+									variety.Words.Add(new Word(str, senses[glosses[i].Trim()]));
 								}
 							}
 						}
 
 						project.Varieties.Add(variety);
-						project.Syllabifier.Syllabify(variety);
 					}
 				}
 			}

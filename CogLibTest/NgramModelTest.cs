@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using SIL.Cog.Components;
 using SIL.Cog.NgramModeling;
 using SIL.Collections;
 using SIL.Machine;
@@ -35,33 +36,36 @@ namespace SIL.Cog.Test
 			AddWord("test");
 			AddWord("income");
 			AddWord("unproduce");
+
+			var segDistCalc = new SegmentDistributionCalculator();
+			segDistCalc.Process(_variety);
 		}
 
 		private void AddWord(string str)
 		{
-			Shape shape;
-			_segmenter.ToShape(str, out shape);
-			_variety.Words.Add(new Word(str, shape, new Sense(str, null)));
+			var word = new Word(str, new Sense(str, null));
+			_segmenter.Segment(word);
+			_variety.Words.Add(word);
 		}
 
 		[Test]
 		public void GetProbability()
 		{
 			var model = NgramModel.Train(2, _variety, new MaxLikelihoodSmoother());
-			Assert.That(model.GetProbability(_variety.Segments["l"], new Ngram(_variety.Segments["a"])), Is.EqualTo(0.666).Within(0.001));
-			Assert.That(model.GetProbability(Segment.Anchor, new Ngram(_variety.Segments["a"])), Is.EqualTo(0.333).Within(0.001));
-			Assert.That(model.GetProbability(_variety.Segments["a"], new Ngram(_variety.Segments["a"])), Is.EqualTo(0.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("l"), _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.666).Within(0.001));
+			Assert.That(model.GetProbability(Segment.Anchor, _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.333).Within(0.001));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("a"), _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.0));
 
-			Assert.That(model.GetProbability(_variety.Segments["l"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.5));
-			Assert.That(model.GetProbability(_variety.Segments["o"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.166).Within(0.001));
-			Assert.That(model.GetProbability(Segment.Anchor, new Ngram(_variety.Segments["l"])), Is.EqualTo(0.333).Within(0.001));
-			Assert.That(model.GetProbability(_variety.Segments["a"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("l"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.5));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("o"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.166).Within(0.001));
+			Assert.That(model.GetProbability(Segment.Anchor, _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.333).Within(0.001));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("a"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.0));
 
 			model = NgramModel.Train(3, _variety, new MaxLikelihoodSmoother());
-			Assert.That(model.GetProbability(_variety.Segments["l"], new Ngram(_variety.Segments["a"], _variety.Segments["t"])), Is.EqualTo(0.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("l"), new Ngram(_variety.SegmentPool.GetExisting("a"), _variety.SegmentPool.GetExisting("t"))), Is.EqualTo(0.0));
 
-			Assert.That(model.GetProbability(_variety.Segments["l"], new Ngram(_variety.Segments["a"], _variety.Segments["l"])), Is.EqualTo(1.0));
-			Assert.That(model.GetProbability(_variety.Segments["t"], new Ngram(_variety.Segments["a"], _variety.Segments["l"])), Is.EqualTo(0.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("l"), new Ngram(_variety.SegmentPool.GetExisting("a"), _variety.SegmentPool.GetExisting("l"))), Is.EqualTo(1.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("t"), new Ngram(_variety.SegmentPool.GetExisting("a"), _variety.SegmentPool.GetExisting("l"))), Is.EqualTo(0.0));
 		}
 
 		[Test]
@@ -79,15 +83,15 @@ namespace SIL.Cog.Test
 		public void GetProbabilityRightToLeft()
 		{
 			var model = NgramModel.Train(2, _variety, Direction.RightToLeft, new MaxLikelihoodSmoother());
-			Assert.That(model.GetProbability(_variety.Segments["a"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.333).Within(0.001));
-			Assert.That(model.GetProbability(_variety.Segments["l"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.5));
-			Assert.That(model.GetProbability(_variety.Segments["e"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.166).Within(0.001));
-			Assert.That(model.GetProbability(_variety.Segments["t"], new Ngram(_variety.Segments["l"])), Is.EqualTo(0.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("a"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.333).Within(0.001));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("l"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.5));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("e"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.166).Within(0.001));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("t"), _variety.SegmentPool.GetExisting("l")), Is.EqualTo(0.0));
 
-			Assert.That(model.GetProbability(_variety.Segments["c"], new Ngram(_variety.Segments["a"])), Is.EqualTo(0.333).Within(0.001));
-			Assert.That(model.GetProbability(_variety.Segments["t"], new Ngram(_variety.Segments["a"])), Is.EqualTo(0.333).Within(0.001));
-			Assert.That(model.GetProbability(Segment.Anchor, new Ngram(_variety.Segments["a"])), Is.EqualTo(0.333).Within(0.001));
-			Assert.That(model.GetProbability(_variety.Segments["l"], new Ngram(_variety.Segments["a"])), Is.EqualTo(0.0));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("c"), _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.333).Within(0.001));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("t"), _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.333).Within(0.001));
+			Assert.That(model.GetProbability(Segment.Anchor, _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.333).Within(0.001));
+			Assert.That(model.GetProbability(_variety.SegmentPool.GetExisting("l"), _variety.SegmentPool.GetExisting("a")), Is.EqualTo(0.0));
 		}
 	}
 }

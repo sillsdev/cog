@@ -1201,73 +1201,6 @@
 			<Symbol strRep="&#x035C;"/>
 		</Joiners>
 	</Segmentation>
-	<Syllabification>
-		<SonorityScale>
-			<SonorityClass sonority="1">
-				<NaturalClass name="Stop" type="consonant">
-					<FeatureValue feature="manner" value="stop" />
-					<FeatureValue feature="nasal" value="nasal-" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="2">
-				<NaturalClass name="Affricate" type="consonant">
-					<FeatureValue feature="manner" value="affricate" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="3">
-				<NaturalClass name="Fricative" type="consonant">
-					<FeatureValue feature="manner" value="fricative" />
-					<FeatureValue feature="lateral" value="lateral-" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="4">
-				<NaturalClass name="Nasal" type="consonant">
-					<FeatureValue feature="nasal" value="nasal+" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="5">
-				<NaturalClass name="Lateral" type="consonant">
-					<FeatureValue feature="lateral" value="lateral+" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="6">
-				<NaturalClass name="Flap" type="consonant">
-					<FeatureValue feature="manner" value="flap" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="7">
-				<UnnaturalClass name="Glide">
-					<Segment>j</Segment>
-					<Segment>ɥ</Segment>
-					<Segment>ɰ</Segment>
-					<Segment>w</Segment>
-				</UnnaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="7">
-				<NaturalClass name="Non-syllabic vowel" type="vowel">
-					<FeatureValue feature="syllabic" value="syllabic-" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="7">
-				<NaturalClass name="Close vowel" type="vowel">
-					<FeatureValue feature="syllabic" value="syllabic+" />
-					<FeatureValue feature="manner" value="close-vowel" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="8">
-				<NaturalClass name="Mid vowel" type="vowel">
-					<FeatureValue feature="syllabic" value="syllabic+" />
-					<FeatureValue feature="manner" value="mid-vowel" />
-				</NaturalClass>
-			</SonorityClass>
-			<SonorityClass sonority="9">
-				<NaturalClass name="Open vowel" type="vowel">
-					<FeatureValue feature="syllabic" value="syllabic+" />
-					<FeatureValue feature="manner" value="open-vowel" />
-				</NaturalClass>
-			</SonorityClass>
-		</SonorityScale>
-	</Syllabification>
 	<WordAligners>
 		<WordAligner id="primary" xsi:type="Aline">
 			<Mode>local</Mode>
@@ -1372,6 +1305,73 @@
 			<AffixThreshold>0.5</AffixThreshold>
 			<MaxAffixLength>5</MaxAffixLength>
 			<CategoryRequired>false</CategoryRequired>
+		</VarietyProcessor>
+		<VarietyProcessor id="syllabifier" xsi:type="SspSyllabifier">
+			<SonorityScale>
+				<SonorityClass sonority="1">
+					<NaturalClass name="Stop" type="consonant">
+						<FeatureValue feature="manner" value="stop" />
+						<FeatureValue feature="nasal" value="nasal-" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="2">
+					<NaturalClass name="Affricate" type="consonant">
+						<FeatureValue feature="manner" value="affricate" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="3">
+					<NaturalClass name="Fricative" type="consonant">
+						<FeatureValue feature="manner" value="fricative" />
+						<FeatureValue feature="lateral" value="lateral-" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="4">
+					<NaturalClass name="Nasal" type="consonant">
+						<FeatureValue feature="nasal" value="nasal+" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="5">
+					<NaturalClass name="Lateral" type="consonant">
+						<FeatureValue feature="lateral" value="lateral+" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="6">
+					<NaturalClass name="Flap" type="consonant">
+						<FeatureValue feature="manner" value="flap" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="7">
+					<UnnaturalClass name="Glide">
+						<Segment>j</Segment>
+						<Segment>ɥ</Segment>
+						<Segment>ɰ</Segment>
+						<Segment>w</Segment>
+					</UnnaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="7">
+					<NaturalClass name="Non-syllabic vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic-" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="8">
+					<NaturalClass name="Close vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="manner" value="close-vowel" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="9">
+					<NaturalClass name="Mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="manner" value="mid-vowel" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="10">
+					<NaturalClass name="Open vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="manner" value="open-vowel" />
+					</NaturalClass>
+				</SonorityClass>
+			</SonorityScale>
 		</VarietyProcessor>
 	</VarietyProcessors>
 	<VarietyPairProcessors>

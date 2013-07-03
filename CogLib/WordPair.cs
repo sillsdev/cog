@@ -2,7 +2,7 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class WordPair : NotifyPropertyChangedBase
+	public class WordPair : ObservableObject
 	{
 		private readonly Word _word1;
 		private readonly Word _word2;
@@ -50,31 +50,19 @@ namespace SIL.Cog
 		public bool AreCognateActual
 		{
 			get { return _areCognateActual; }
-			set
-			{
-				_areCognateActual = value;
-				OnPropertyChanged("AreCognateActual");
-			}
+			set { Set(() => AreCognateActual, ref _areCognateActual, value); }
 		}
 
 		public bool AreCognatePredicted
 		{
 			get { return _areCognatePredicted; }
-			set
-			{
-				_areCognatePredicted = value;
-				OnPropertyChanged("AreCognatePredicted");
-			}
+			set { Set(() => AreCognatePredicted, ref _areCognatePredicted, value); }
 		}
 
 		public double PhoneticSimilarityScore
 		{
 			get { return _phoneticSimilarityScore; }
-			set
-			{
-				_phoneticSimilarityScore = value;
-				OnPropertyChanged("PhoneticSimilarityScore");
-			}
+			set { Set(() => PhoneticSimilarityScore, ref _phoneticSimilarityScore, value); }
 		}
 	}
 }

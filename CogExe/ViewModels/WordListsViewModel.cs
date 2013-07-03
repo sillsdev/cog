@@ -77,24 +77,13 @@ namespace SIL.Cog.ViewModels
 			var vm = new RunStemmerViewModel(true);
 			if (_dialogService.ShowDialog(this, vm) == true)
 			{
-				IEnumerable<IProcessor<Variety>> processors = null;
-				switch (vm.Method)
+				if (vm.Method == StemmingMethod.Automatic)
 				{
-					case StemmingMethod.Automatic:
-						foreach (Variety variety in _project.Varieties)
-							variety.Affixes.Clear();
-						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory, _project)};
-						break;
-					case StemmingMethod.Hybrid:
-						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory, _project)};
-						break;
-					case StemmingMethod.Manual:
-						processors = new[] {new Stemmer(_spanFactory, _project)};
-						break;
+					foreach (Variety variety in _project.Varieties)
+						variety.Affixes.Clear();
 				}
-				Debug.Assert(processors != null);
-				var pipeline = new MultiThreadedPipeline<Variety>(processors);
 
+				var pipeline = new MultiThreadedPipeline<Variety>(_project.GetStemmingProcessors(_spanFactory, vm.Method));
 				var progressVM = new ProgressViewModel(pvm =>
 					{
 						pvm.Text = "Stemming all varieties...";

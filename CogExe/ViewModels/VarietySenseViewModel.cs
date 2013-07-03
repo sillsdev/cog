@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
+using SIL.Cog.Components;
 using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
@@ -63,13 +64,12 @@ namespace SIL.Cog.ViewModels
 						}
 						else
 						{
-							Shape shape;
-							if (!_project.Segmenter.ToShape(null, wordStr, null, out shape))
-								shape = _project.Segmenter.EmptyShape;
-							var newWord = new Word(wordStr, shape, ModelSense);
+							var newWord = new Word(wordStr.Normalize(NormalizationForm.FormD), ModelSense);
 							ModelWords.Insert(index, newWord);
 							_variety.Words.Add(newWord);
-							_project.Syllabifier.Syllabify(newWord);
+
+							var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
+							pipeline.Process(_variety.ToEnumerable());
 						}
 						index++;
 					}

@@ -67,8 +67,8 @@ namespace SIL.Cog.Components
 				int totalCount = 0;
 				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
-					Ngram u = alignment[0, column].ToNgram(varietyPair.Variety1);
-					Ngram v = alignment[1, column].ToNgram(varietyPair.Variety2);
+					Ngram u = alignment[0, column].ToNgram(varietyPair.Variety1.SegmentPool);
+					Ngram v = alignment[1, column].ToNgram(varietyPair.Variety2.SegmentPool);
 					string uStr = u.ToString();
 					string vStr = v.ToString();
 					int cat = 3;
@@ -80,7 +80,7 @@ namespace SIL.Cog.Components
 					{
 						cat = 0;
 					}
-					else if (uStr == "-" || vStr == "-")
+					else if (u.Count == 0 || v.Count == 0)
 					{
 						if (AreSegmentsMapped(_similarSegments, u, v) || correspondences.Contains(Tuple.Create(uStr, vStr)))
 							cat = _ignoreRegularInsertionDeletion ? 0 : 1;
@@ -132,9 +132,11 @@ namespace SIL.Cog.Components
 
 		private bool AreSegmentsMapped(ISegmentMappings mappings, Ngram u, Ngram v)
 		{
-			foreach (Segment uSeg in u)
+			IEnumerable<Segment> uSegs = u.Count == 0 ? new Segment[] {null} : (IEnumerable<Segment>) u;
+			IEnumerable<Segment> vSegs = v.Count == 0 ? new Segment[] {null} : (IEnumerable<Segment>) v;
+			foreach (Segment uSeg in uSegs)
 			{
-				foreach (Segment vSeg in v)
+				foreach (Segment vSeg in vSegs)
 				{
 					if (mappings.IsMapped(uSeg, vSeg))
 						return true;

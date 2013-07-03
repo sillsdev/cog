@@ -34,7 +34,7 @@ namespace SIL.Cog.ViewModels
 						if (seg.Length > 0 && seg != "-")
 						{
 							Shape shape;
-							if (!_project.Segmenter.ToShape(seg, out shape))
+							if (!_project.Segmenter.TrySegment(seg, out shape))
 								return "This is an invalid segment";
 							if (shape.Any(n => n.Type() != shape.First.Type()))
 								return "Please specify only one segment";

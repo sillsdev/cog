@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using SIL.Cog.Components;
 using SIL.Cog.Import;
+using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Services
 {
@@ -45,6 +47,9 @@ namespace SIL.Cog.Services
 				try
 				{
 					WordListsImporters[result.SelectedFileType].Import(result.FileName, project);
+					var pipeline = new MultiThreadedPipeline<Variety>(project.GetVarietyInitProcessors());
+					pipeline.Process(project.Varieties);
+					pipeline.WaitForComplete();
 					return true;
 				}
 				catch (ImportException ie)

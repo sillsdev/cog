@@ -52,48 +52,51 @@ namespace SIL.Cog
 			return (FeatureSymbol) ann.FeatureStruct.GetValue(CogFeatureSystem.Type);
 		}
 
-		public static SoundContext ToSoundContext(this ShapeNode node, Variety variety, IEnumerable<SoundClass> soundClasses)
+		public static SoundContext ToSoundContext(this ShapeNode node, SegmentPool segmentPool, IEnumerable<SoundClass> soundClasses)
 		{
 			ShapeNode prevNode = node.GetPrev(NodeFilter);
-			SoundClass leftEnv = prevNode.GetMatchingSoundClass(variety, soundClasses);
-			Ngram target = node.ToNgram(variety);
+			SoundClass leftEnv;
+			if (!soundClasses.TryGetMatchingSoundClass(segmentPool, prevNode, out leftEnv))
+				leftEnv = null;
 			ShapeNode nextNode = node.GetNext(NodeFilter);
-			SoundClass rightEnv = nextNode.GetMatchingSoundClass(variety, soundClasses);
-			return new SoundContext(leftEnv, target, rightEnv);
+			SoundClass rightEnv;
+			if (!soundClasses.TryGetMatchingSoundClass(segmentPool, nextNode, out rightEnv))
+				rightEnv = null;
+			return new SoundContext(leftEnv, segmentPool.Get(node), rightEnv);
 		}
 
-		public static SoundClass GetMatchingSoundClass(this ShapeNode node, Variety variety, IEnumerable<SoundClass> soundClasses)
+		public static bool TryGetMatchingSoundClass(this IEnumerable<SoundClass> soundClasses, SegmentPool segmentPool, ShapeNode node, out SoundClass soundClass)
 		{
 			Annotation<ShapeNode> stemAnn = ((Shape) node.List).Annotations.First(ann => ann.Type() == CogFeatureSystem.StemType);
-			Segment left = null;
+			ShapeNode left = null;
 			if (stemAnn.Span.Contains(node) || node.Annotation.CompareTo(stemAnn) > 0)
 			{
 				ShapeNode leftNode = node.GetPrev(NodeFilter);
 				if (leftNode != null)
-					left = stemAnn.Span.Contains(leftNode) ? variety.Segments[leftNode] : Segment.Anchor;
+					left = stemAnn.Span.Contains(leftNode) ? leftNode : node.List.Begin;
 			}
 
-			Ngram target = stemAnn.Span.Contains(node) ? node.ToNgram(variety) : new Ngram(Segment.Anchor);
+			Ngram target = stemAnn.Span.Contains(node) ? segmentPool.Get(node) : Segment.Anchor;
 
-			Segment right = null;
+			ShapeNode right = null;
 			if (stemAnn.Span.Contains(node) || node.Annotation.CompareTo(stemAnn) < 0)
 			{
 				ShapeNode rightNode = node.GetNext(NodeFilter);
 				if (rightNode != null)
-					right = stemAnn.Span.Contains(rightNode) ? variety.Segments[rightNode] : Segment.Anchor;
+					right = stemAnn.Span.Contains(rightNode) ? rightNode : node.List.End;
 			}
 
-			return soundClasses.FirstOrDefault(sc => sc.Matches(left, target, right));
+			soundClass = soundClasses.FirstOrDefault(sc => sc.Matches(left, target, right));
+			return soundClass != null;
 		}
 
-		public static SoundClass GetMatchingSoundClass(this Alignment<Word, ShapeNode> alignment, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
+		public static bool TryGetMatchingSoundClass(this IEnumerable<SoundClass> soundClasses, SegmentPool segmentPool, Alignment<Word, ShapeNode> alignment, int seq, int col, Word word, out SoundClass soundClass)
 		{
 			ShapeNode leftNode = GetLeftNode(alignment, word, seq, col);
-			Segment left = leftNode == null ? null : word.Variety.Segments[leftNode];
-			Ngram target = alignment[seq, col].ToNgram(word.Variety);
+			Ngram target = alignment[seq, col].ToNgram(segmentPool);
 			ShapeNode rightNode = GetRightNode(alignment, word, seq, col);
-			Segment right = rightNode == null ? null : word.Variety.Segments[rightNode];
-			return soundClasses.FirstOrDefault(sc => sc.Matches(left, target, right));
+			soundClass = soundClasses.FirstOrDefault(sc => sc.Matches(leftNode, target, rightNode));
+			return soundClass != null;
 		}
 
 		private static bool NodeFilter(ShapeNode node)
@@ -101,13 +104,17 @@ namespace SIL.Cog
 			return node.Type().IsOneOf(CogFeatureSystem.VowelType, CogFeatureSystem.ConsonantType, CogFeatureSystem.AnchorType);
 		}
 
-		public static SoundContext ToSoundContext(this Alignment<Word, ShapeNode> alignment, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
+		public static SoundContext ToSoundContext(this Alignment<Word, ShapeNode> alignment, SegmentPool segmentPool, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
 		{
 			ShapeNode leftNode = GetLeftNode(alignment, word, seq, col);
-			SoundClass leftEnv = leftNode == null ? null : leftNode.GetMatchingSoundClass(word.Variety, soundClasses);
-			Ngram target = alignment[seq, col].ToNgram(word.Variety);
+			SoundClass leftEnv;
+			if (leftNode == null || !soundClasses.TryGetMatchingSoundClass(segmentPool, leftNode, out leftEnv))
+				leftEnv = null;
+			Ngram target = alignment[seq, col].ToNgram(segmentPool);
 			ShapeNode rightNode = GetRightNode(alignment, word, seq, col);
-			SoundClass rightEnv = rightNode == null ? null : rightNode.GetMatchingSoundClass(word.Variety, soundClasses);
+			SoundClass rightEnv;
+			if (rightNode == null || !soundClasses.TryGetMatchingSoundClass(segmentPool, rightNode, out rightEnv))
+				rightEnv = null;
 			return new SoundContext(leftEnv, target, rightEnv);
 		}
 
@@ -165,16 +172,9 @@ namespace SIL.Cog
 			return rightNode;
 		}
 
-		public static Ngram ToNgram(this ShapeNode node, Variety variety)
+		public static Ngram ToNgram(this IEnumerable<ShapeNode> nodes, SegmentPool segmentPool)
 		{
-			return new Ngram(variety.Segments[node]);
-		}
-
-		public static Ngram ToNgram(this AlignmentCell<ShapeNode> nodes, Variety variety)
-		{
-			if (nodes.Count == 0)
-				return new Ngram(Segment.Null);
-			return new Ngram(nodes.Select(node => variety.Segments[node]));
+			return new Ngram(nodes.Select(segmentPool.Get));
 		}
 
 		public static string ToString(this Alignment<Word, ShapeNode> alignment, IEnumerable<string> notes)
@@ -248,6 +248,24 @@ namespace SIL.Cog
 				}
 			}
 			return len;
+		}
+
+		public static bool IsValidSegment(this Segmenter segmenter, string str)
+		{
+			Shape shape;
+			return segmenter.TrySegment(str, out shape) && shape.All(n => n.Type() == shape.First.Type());
+		}
+
+		public static bool NormalizeSegmentString(this Segmenter segmenter, string str, out string normalizedStr)
+		{
+			Shape shape;
+			if (segmenter.TrySegment(str, out shape) && shape.All(n => n.Type() == shape.First.Type()))
+			{
+				normalizedStr = shape.StrRep();
+				return true;
+			}
+			normalizedStr = null;
+			return false;
 		}
 
 		public static IEnumerable<T> GetAllDataObjects<T>(this IBidirectionalGraph<Cluster<T>, ClusterEdge<T>> tree, Cluster<T> cluster)

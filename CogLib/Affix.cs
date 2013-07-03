@@ -9,7 +9,7 @@ namespace SIL.Cog
 		Suffix
 	}
 
-	public class Affix : NotifyPropertyChangedBase
+	public class Affix : ObservableObject
 	{
 		private readonly string _strRep;
 		private readonly AffixType _type;
@@ -17,10 +17,9 @@ namespace SIL.Cog
 		private readonly string _category;
 		private double _score;
 
-		public Affix(string strRep, AffixType type, Shape shape, string category)
+		public Affix(string strRep, AffixType type, string category)
 		{
 			_strRep = strRep;
-			_shape = shape;
 			_type = type;
 			_category = category;
 		}
@@ -28,11 +27,7 @@ namespace SIL.Cog
 		public Shape Shape
 		{
 			get { return _shape; }
-			set
-			{
-				_shape = value;
-				OnPropertyChanged("Shape");
-			}
+			internal set { Set(() => Shape, ref _shape, value); }
 		}
 
 		public AffixType Type
@@ -53,11 +48,7 @@ namespace SIL.Cog
 		public double Score
 		{
 			get { return _score; }
-			set
-			{
-				_score = value;
-				OnPropertyChanged("Score");
-			}
+			set { Set(() => Score, ref _score, value); }
 		}
 
 		public override string ToString()

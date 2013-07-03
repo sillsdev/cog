@@ -1,3 +1,4 @@
+using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
@@ -23,7 +24,7 @@ namespace SIL.Cog
 			get { return _fs; }
 		}
 
-		public override bool Matches(Segment left, Ngram target, Segment right)
+		public override bool Matches(ShapeNode leftNode, Ngram target, ShapeNode rightNode)
 		{
 			foreach (Segment seg in target)
 			{

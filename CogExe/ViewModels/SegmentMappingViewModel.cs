@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
@@ -15,9 +14,8 @@ namespace SIL.Cog.ViewModels
 			_segment1 = segment1;
 			_segment2 = segment2;
 
-			Shape shape;
-			_isSegment1Valid = project.Segmenter.ToShape(_segment1, out shape);
-			_isSegment2Valid = project.Segmenter.ToShape(_segment2, out shape);
+			_isSegment1Valid = project.Segmenter.IsValidSegment(_segment1);
+			_isSegment2Valid = project.Segmenter.IsValidSegment(_segment2);
 		}
 
 		public string Segment1

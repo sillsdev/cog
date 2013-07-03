@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using SIL.Cog.Views;
 
@@ -9,6 +11,9 @@ namespace SIL.Cog.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+				return null;
+
 			Type type = typeof (ConcurrentList<>).MakeGenericType((Type) parameter);
 			return Activator.CreateInstance(type, value);
 		}

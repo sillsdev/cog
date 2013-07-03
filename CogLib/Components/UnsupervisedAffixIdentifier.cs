@@ -11,7 +11,9 @@ namespace SIL.Cog.Components
 {
 	public class UnsupervisedAffixIdentifier : IProcessor<Variety>
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
+		private static readonly Segment Dash = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.BoundaryType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
+
+		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly double _threshold;
 		private readonly int _maxAffixLength;
 		private readonly bool _categoryRequired;
@@ -59,7 +61,7 @@ namespace SIL.Cog.Components
 			}
 			shape.Freeze();
 			return new Affix(string.Concat(shape.Select(n => n.StrRep())), ngram.First.Equals(Segment.Anchor) ? AffixType.Prefix : AffixType.Suffix,
-				shape, category) {Score = score};
+				category) {Shape = shape, Score = score};
 		}
 
 		private static bool Filter(ShapeNode node)
@@ -101,7 +103,7 @@ namespace SIL.Cog.Components
 					if (node == word.Shape.GetLast(dir, Filter))
 						break;
 
-					affix = affix.Concat(variety.Segments[node], dir);
+					affix = affix.Concat(variety.SegmentPool.Get(node), dir);
 					candidates.Add(affix);
 					affixFreqDist[Tuple.Create(affix.Count, (string) null)].Increment(affix);
 					ngramFreqDist[Tuple.Create(affix.Count, (string) null)].Increment(affix);
@@ -112,8 +114,8 @@ namespace SIL.Cog.Components
 					}	
 				}
 
-				var segs = word.Shape.Where(Filter).Select(n => variety.Segments[n]);
-				var wordNgram = new Ngram(dir == Direction.LeftToRight ? Segment.Null.ToEnumerable().Concat(segs) : segs.Concat(Segment.Null));
+				IEnumerable<Segment> segs = word.Shape.Where(Filter).Select(n => variety.SegmentPool.Get(n));
+				var wordNgram = new Ngram(dir == Direction.LeftToRight ? Dash.ToEnumerable().Concat(segs) : segs.Concat(Dash));
 				if (wordNgram.Count <= _maxAffixLength + 1)
 				{
 					ngramFreqDist[Tuple.Create(wordNgram.Count, (string) null)].Increment(wordNgram);
@@ -123,10 +125,10 @@ namespace SIL.Cog.Components
 
 				foreach (ShapeNode node1 in word.Shape.GetFirst(dir, Filter).GetNext(dir, Filter).GetNodes(dir).Where(Filter))
 				{
-					var nonaffix = new Ngram(Segment.Null);
+					var nonaffix = new Ngram(Dash);
 					foreach (ShapeNode node2 in node1.GetNodes(dir).Where(Filter).Take(_maxAffixLength))
 					{
-						nonaffix = nonaffix.Concat(variety.Segments[node2], dir);
+						nonaffix = nonaffix.Concat(variety.SegmentPool.Get(node2), dir);
 						ngramFreqDist[Tuple.Create(nonaffix.Count, (string) null)].Increment(nonaffix);
 						if (!string.IsNullOrEmpty(word.Sense.Category))
 							ngramFreqDist[Tuple.Create(nonaffix.Count, word.Sense.Category)].Increment(nonaffix);
@@ -148,11 +150,11 @@ namespace SIL.Cog.Components
 						category = candidateCategory;
 				}
 				NgramModel higherOrderModel = ngramModels[candidate.Count];
-				double curveDrop = CosineSimilarity(variety.Segments.Select(seg => higherOrderModel.GetProbability(seg, candidate, category)),
-					variety.Segments.Select(seg => ngramModels[0].GetProbability(seg, new Ngram(), category)));
+				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => higherOrderModel.GetProbability(seg, candidate, category)),
+					variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => ngramModels[0].GetProbability(seg, new Ngram(), category)));
 
 				double affixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)][candidate];
-				Ngram nonaffix = dir == Direction.LeftToRight ? new Ngram(Segment.Null.ToEnumerable().Concat(candidate.SkipFirst())) : candidate.TakeAllExceptLast().Concat(Segment.Null);
+				Ngram nonaffix = dir == Direction.LeftToRight ? new Ngram(Dash.ToEnumerable().Concat(candidate.SkipFirst())) : candidate.TakeAllExceptLast().Concat(Dash);
 				double nonaffixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)][nonaffix];
 				double diff = affixProb - nonaffixProb;
 				diff = Math.Min(diff, 0.75);

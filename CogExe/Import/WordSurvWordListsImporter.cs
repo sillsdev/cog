@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Xml.Linq;
-using SIL.Machine;
 
 namespace SIL.Cog.Import
 {
@@ -46,11 +46,8 @@ namespace SIL.Cog.Import
 							{
 								foreach (string w in wordform.Split(','))
 								{
-									string str = w.Trim();
-									Shape shape;
-									if (!project.Segmenter.ToShape(null, str, null, out shape))
-										shape = project.Segmenter.EmptyShape;
-									variety.Item2.Add(new Word(str, shape, sense));
+									string str = w.Trim().Normalize(NormalizationForm.FormD);
+									variety.Item2.Add(new Word(str, sense));
 								}
 							}
 						}
@@ -59,10 +56,7 @@ namespace SIL.Cog.Import
 			}
 
 			foreach (Tuple<Variety, List<Word>> variety in varieties.Values)
-			{
 				variety.Item1.Words.AddRange(variety.Item2);
-				project.Syllabifier.Syllabify(variety.Item1);
-			}
 		}
 	}
 }

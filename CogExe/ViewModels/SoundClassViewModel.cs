@@ -8,7 +8,7 @@ namespace SIL.Cog.ViewModels
 		private int _sonority;
 
 		public SoundClassViewModel(SoundClass soundClass)
-			: this(soundClass, 0)
+			: this(soundClass, -1)
 		{
 		}
 

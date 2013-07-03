@@ -1,4 +1,6 @@
-﻿namespace SIL.Cog
+﻿using SIL.Machine;
+
+namespace SIL.Cog
 {
 	public abstract class SoundClass
 	{
@@ -14,6 +16,6 @@
 			get { return _name; }
 		}
 
-		public abstract bool Matches(Segment left, Ngram target, Segment right);
+		public abstract bool Matches(ShapeNode leftNode, Ngram target, ShapeNode rightNode);
 	}
 }

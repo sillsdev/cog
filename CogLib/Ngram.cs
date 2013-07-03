@@ -8,6 +8,14 @@ namespace SIL.Cog
 {
 	public class Ngram : IReadOnlyList<Segment>, IEquatable<Ngram>
 	{
+		public static implicit operator Ngram(Segment seg)
+		{
+			if (seg == null)
+				return new Ngram();
+
+			return new Ngram(seg);
+		}
+
 		private readonly Segment[] _segments; 
 
 		public Ngram(params Segment[] segs)
@@ -133,6 +141,9 @@ namespace SIL.Cog
 
 		public override string ToString()
 		{
+			if (_segments.Length == 0)
+				return "-";
+
 			return string.Concat(_segments.Select(seg => seg.StrRep));
 		}
 	}

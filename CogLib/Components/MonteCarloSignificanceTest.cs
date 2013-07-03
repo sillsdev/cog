@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Collections;
 
 namespace SIL.Cog.Components
 {
@@ -28,7 +27,7 @@ namespace SIL.Cog.Components
 				var randVariety2 = new Variety(varietyPair.Variety2.Name + "-rand" + n);
 				randVariety2.Words.AddRange(varietyPair.Variety2.Words.Senses.OrderBy(gloss => Guid.NewGuid())
 					.Zip(varietyPair.Variety2.Words.Senses.Select(sense => varietyPair.Variety2.Words[sense].FirstOrDefault()).Where(word => word != null),
-						(sense, word) => new Word(word.StrRep, word.Shape, sense)));
+						(sense, word) => new Word(word.StrRep, word.StemIndex, word.StemLength, sense) {Shape = word.Shape}));
 				var randVarietyPair = new VarietyPair(varietyPair.Variety1, randVariety2);
 				foreach (IProcessor<VarietyPair> processor in processors)
 					processor.Process(randVarietyPair);

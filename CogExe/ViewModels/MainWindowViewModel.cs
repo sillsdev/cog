@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using ProtoBuf;
+using SIL.Cog.Components;
 using SIL.Cog.Config;
 using SIL.Cog.Properties;
 using SIL.Cog.Services;
@@ -402,6 +404,11 @@ namespace SIL.Cog.ViewModels
 				AcceptChanges();
 			ProjectFilePath = path;
 			_project = project;
+
+			var pipeline = new MultiThreadedPipeline<Variety>(_project.GetVarietyInitProcessors());
+			pipeline.Process(_project.Varieties);
+			pipeline.WaitForComplete();
+
 			if (ProjectFilePath != null)
 			{
 				string cogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");

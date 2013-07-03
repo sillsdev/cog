@@ -102,7 +102,7 @@ namespace SIL.Cog.SequenceAlignment
 			double prob;
 			if (varietyPair.Variety1 == word.Variety)
 			{
-				SoundContext lhs = node.ToSoundContext(word.Variety, _contextualSoundClasses);
+				SoundContext lhs = node.ToSoundContext(word.Variety.SegmentPool, _contextualSoundClasses);
 				prob = varietyPair.DefaultCorrespondenceProbability;
 				IProbabilityDistribution<Ngram> probDist;
 				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
@@ -110,7 +110,7 @@ namespace SIL.Cog.SequenceAlignment
 			}
 			else
 			{
-				Ngram corr = node.ToNgram(word.Variety);
+				Ngram corr = word.Variety.SegmentPool.Get(node);
 				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 			}
 			return (int) (MaxSoundChangeScore * prob);
@@ -188,30 +188,34 @@ namespace SIL.Cog.SequenceAlignment
 			Ngram target;
 			if (p1 == null)
 			{
-				target = new Ngram(Segment.Null);
+				target = new Ngram();
 			}
 			else
 			{
-				Segment targetSegment = varietyPair.Variety1.Segments[p1];
-				target = p2 == null ? new Ngram(targetSegment) : new Ngram(targetSegment, varietyPair.Variety1.Segments[p2]);
+				Segment targetSegment = varietyPair.Variety1.SegmentPool.Get(p1);
+				target = p2 == null ? targetSegment : new Ngram(targetSegment, varietyPair.Variety1.SegmentPool.Get(p2));
 			}
 
 			Ngram corr;
 			if (q1 == null)
 			{
-				corr = new Ngram(Segment.Null);
+				corr = new Ngram();
 			}
 			else
 			{
-				Segment corrSegment = varietyPair.Variety2.Segments[q1];
-				corr = q2 == null ? new Ngram(corrSegment) : new Ngram(corrSegment, varietyPair.Variety2.Segments[q2]);
+				Segment corrSegment = varietyPair.Variety2.SegmentPool.Get(q1);
+				corr = q2 == null ? corrSegment : new Ngram(corrSegment, varietyPair.Variety2.SegmentPool.Get(q2));
 			}
 
 			ShapeNode leftNode = p1 == null ? p2 : p1.GetPrev(NodeFilter);
-			SoundClass leftEnv = leftNode == null ? null : leftNode.GetMatchingSoundClass(varietyPair.Variety1, _contextualSoundClasses);
+			SoundClass leftEnv;
+			if (leftNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(varietyPair.Variety1.SegmentPool, leftNode, out leftEnv))
+				leftEnv = null;
 			ShapeNode pRight = p2 ?? p1;
 			ShapeNode rightNode = pRight == null ? null : pRight.GetNext(NodeFilter);
-			SoundClass rightEnv = rightNode == null ? null : rightNode.GetMatchingSoundClass(varietyPair.Variety1, _contextualSoundClasses);
+			SoundClass rightEnv;
+			if (rightNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(varietyPair.Variety1.SegmentPool, rightNode, out rightEnv))
+				rightEnv = null;
 
 			var lhs = new SoundContext(leftEnv, target, rightEnv);
 			IProbabilityDistribution<Ngram> probDist;

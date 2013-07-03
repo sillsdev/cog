@@ -162,8 +162,8 @@ namespace SIL.Cog.ViewModels
 			int freq = 0;
 			if (!cell1.IsNull && cell1.First.Type() == CogFeatureSystem.ConsonantType && !cell2.IsNull && cell2.First.Type() == CogFeatureSystem.ConsonantType)
 			{
-				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1);
-				Ngram ngram2 = cell2.ToNgram(wp.ModelWordPair.VarietyPair.Variety2);
+				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1.SegmentPool);
+				Ngram ngram2 = cell2.ToNgram(wp.ModelWordPair.VarietyPair.Variety2.SegmentPool);
 				if (ngram1.Count == 1 && ngram2.Count == 1)
 				{
 					Segment seg1 = ngram1.First;
@@ -245,8 +245,8 @@ namespace SIL.Cog.ViewModels
 			int freq = 0;
 			if (!cell1.IsNull && cell1.First.Type() == CogFeatureSystem.VowelType && !cell2.IsNull && cell2.First.Type() == CogFeatureSystem.VowelType)
 			{
-				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1);
-				Ngram ngram2 = cell2.ToNgram(wp.ModelWordPair.VarietyPair.Variety2);
+				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1.SegmentPool);
+				Ngram ngram2 = cell2.ToNgram(wp.ModelWordPair.VarietyPair.Variety2.SegmentPool);
 				if (ngram1.Count == 1 && ngram2.Count == 1)
 				{
 					Segment seg1 = ngram1.First;

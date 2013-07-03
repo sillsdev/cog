@@ -5,7 +5,6 @@ namespace SIL.Cog
 {
 	public class Segment : IEquatable<Segment>
 	{
-		public static readonly Segment Null = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.NullType).Feature(CogFeatureSystem.StrRep).EqualTo("-").Value);
 		public static readonly Segment Anchor = new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value);
 
 		private readonly FeatureStruct _fs;
@@ -13,10 +12,7 @@ namespace SIL.Cog
 		public Segment(FeatureStruct fs)
 		{
 			if (!fs.IsFrozen)
-			{
-				fs = fs.DeepClone();
-				fs.Freeze();
-			}
+				throw new ArgumentException("The feature structure must be immutable.", "fs");
 			_fs = fs;
 		}
 
@@ -37,7 +33,7 @@ namespace SIL.Cog
 
 		public bool Equals(Segment other)
 		{
-			return other != null && _fs.ValueEquals(other._fs);
+			return other != null && StrRep == other.StrRep;
 		}
 
 		public override bool Equals(object obj)
@@ -48,7 +44,7 @@ namespace SIL.Cog
 
 		public override int GetHashCode()
 		{
-			return _fs.GetFrozenHashCode();
+			return StrRep.GetHashCode();
 		}
 
 		public override string ToString()

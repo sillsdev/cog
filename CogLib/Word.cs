@@ -5,22 +5,32 @@ using SIL.Machine;
 
 namespace SIL.Cog
 {
-	public class Word : NotifyPropertyChangedBase, IData<ShapeNode>, IDeepCloneable<Word>
+	public class Word : ObservableObject, IData<ShapeNode>, IDeepCloneable<Word>
 	{
+		private int _stemIndex;
+		private int _stemLength;
 		private readonly string _strRep;
 		private Shape _shape;
 		private readonly Sense _sense;
 
-		public Word(string strRep, Shape shape, Sense sense)
+		public Word(string strRep, Sense sense)
+			: this(strRep, 0, strRep.Length, sense)
+		{
+		}
+
+		public Word(string strRep, int stemIndex, int stemLength, Sense sense)
 		{
 			_strRep = strRep;
-			_shape = shape;
 			_sense = sense;
+			_stemIndex = stemIndex;
+			_stemLength = stemLength;
 		}
 
 		private Word(Word word)
 		{
 			_strRep = word._strRep;
+			_stemIndex = word._stemIndex;
+			_stemLength = word._stemLength;
 			_shape = word._shape.DeepClone();
 			_shape.Freeze();
 			_sense = word._sense;
@@ -31,14 +41,27 @@ namespace SIL.Cog
 			get { return _strRep; }
 		}
 
+		public int StemIndex
+		{
+			get { return _stemIndex; }
+			set { Set(() => StemIndex, ref _stemIndex, value); }
+		}
+
+		public int StemLength
+		{
+			get { return _stemLength; }
+			set { Set(() => StemLength, ref _stemLength, value); }
+		}
+
 		public Shape Shape
 		{
 			get { return _shape; }
-			set
-			{
-				_shape = value;
-				OnPropertyChanged("Shape");
-			}
+			internal set { Set(() => Shape, ref _shape, value); }
+		}
+
+		public bool IsValid
+		{
+			get { return _shape != null && _shape.Count > 0; }
 		}
 
 		public Sense Sense

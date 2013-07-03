@@ -290,7 +290,7 @@
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
     <Compile Include="ViewModels\SoundContextSurrogate.cs" />
-    <Compile Include="ViewModels\SyllabifierViewModel.cs" />
+    <Compile Include="ViewModels\SspSyllabifierViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaIntegerViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairSurrogate.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
@@ -431,8 +431,8 @@
     <Compile Include="Views\SegmentMappingsView.xaml.cs">
       <DependentUpon>SegmentMappingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SyllabifierView.xaml.cs">
-      <DependentUpon>SyllabifierView.xaml</DependentUpon>
+    <Compile Include="Views\SspSyllabifierView.xaml.cs">
+      <DependentUpon>SspSyllabifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TaskAreaCommandGroupView.xaml.cs">
       <DependentUpon>TaskAreaCommandGroupView.xaml</DependentUpon>
@@ -638,7 +638,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SyllabifierView.xaml">
+    <Page Include="Views\SspSyllabifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

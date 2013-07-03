@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using SIL.Collections;
 using SIL.Machine;
@@ -21,14 +20,6 @@ namespace SIL.Cog.Components
 
 		public override void Process(Variety variety)
 		{
-			foreach (Word word in variety.Words.Where(w => w.Shape.Count > 0 && (w.Prefix != null || w.Suffix != null)))
-			{
-				Shape shape;
-				Project.Segmenter.ToShape(null, word.StrRep, null, out shape);
-				word.Shape = shape;
-				Project.Syllabifier.Syllabify(word);
-			}
-
 			StemWords(Direction.LeftToRight, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Prefix));
 			StemWords(Direction.RightToLeft, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Suffix));
 		}
@@ -72,43 +63,42 @@ namespace SIL.Cog.Components
 
 		private ShapeNode MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match, out Word output)
 		{
-			Annotation<ShapeNode> stemAnn = match.Input.Stem;
-
-			var newShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
-
-			ShapeNode startNode = null;
-			ShapeNode endNode = null;
-			foreach (ShapeNode node in match.Input.Shape)
+			output = match.Input;
+			Annotation<ShapeNode> stemAnn = output.Stem;
+			int index = 0;
+			foreach (ShapeNode node in output.Shape)
 			{
-				ShapeNode newNode = node.DeepClone();
-				newShape.Add(newNode);
+				int len = node.OriginalStrRep().Length;
+				bool finished = false;
 				switch (rule.Matcher.Direction)
 				{
 					case Direction.LeftToRight:
 						if (node == match.Span.End.Next)
-							startNode = newNode;
+							output.StemIndex = index;
 						if (node == stemAnn.Span.End)
-							endNode = newNode;
+						{
+							output.StemLength = index + len - output.StemIndex;
+							finished = true;
+						}
 						break;
 
 					case Direction.RightToLeft:
 						if (node == stemAnn.Span.Start)
-							startNode = newNode;
+							output.StemIndex = index;
 						if (node == match.Span.Start.Prev)
-							endNode = newNode;
+						{
+							output.StemLength = index + len - output.StemIndex;
+							finished = true;
+						}
 						break;
 				}
+
+				if (finished)
+					break;
+				index += len;
 			}
 
-			Debug.Assert(startNode != null && endNode != null);
-			if (startNode != newShape.First)
-				newShape.Annotations.Add(newShape.First, startNode.Prev, FeatureStruct.New().Symbol(CogFeatureSystem.PrefixType).Value);
-			newShape.Annotations.Add(startNode, endNode, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
-			if (endNode != newShape.Last)
-				newShape.Annotations.Add(endNode.Next, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SuffixType).Value);
-			newShape.Freeze();
-			output = match.Input;
-			output.Shape = newShape;
+			Project.Segmenter.Segment(output);
 			return null;
 		}
 	}

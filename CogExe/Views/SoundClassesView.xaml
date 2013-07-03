@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:c="clr-namespace:SIL.Cog.Controls" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+             xmlns:b="clr-namespace:SIL.Cog.Behaviors"
              mc:Ignorable="d" DataContextChanged="SoundClassesView_OnDataContextChanged"
              d:DesignHeight="200" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SoundClassesViewModel}">
 	<UserControl.Resources>
@@ -13,12 +14,12 @@
 	<StackPanel>
 		<Grid>
 			<DataGrid Name="SoundClassesGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" Height="125"
-						ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding CurrentSoundClass}" IsReadOnly="True">
+					  ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding CurrentSoundClass}" IsReadOnly="True" b:DataGridBehaviors.DataContextForColumns="{Binding}">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" />
 					<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" />
 					<DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
-					<DataGridTemplateColumn Header="Sonority" Width="Auto" Visibility="{Binding DisplaySonority, Converter={StaticResource VisConverter}}">
+					<DataGridTemplateColumn Header="Sonority" Width="Auto" Visibility="{Binding DataContext.DisplaySonority, RelativeSource={RelativeSource Self}, Converter={StaticResource VisConverter}}">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate DataType="{x:Type vm:SoundClassViewModel}">
 								<xctk:IntegerUpDown Value="{Binding Sonority, UpdateSourceTrigger=PropertyChanged}" Minimum="0" />

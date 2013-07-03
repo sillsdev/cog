@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Components;
@@ -111,23 +109,10 @@ namespace SIL.Cog.ViewModels
 			var vm = new RunStemmerViewModel(false);
 			if (_dialogService.ShowDialog(this, vm) == true)
 			{
-				IEnumerable<IProcessor<Variety>> processors = null;
-				switch (vm.Method)
-				{
-					case StemmingMethod.Automatic:
-						_currentVariety.ModelVariety.Affixes.Clear();
-						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory, _project)};
-						break;
-					case StemmingMethod.Hybrid:
-						processors = new[] {_project.VarietyProcessors["affixIdentifier"], new Stemmer(_spanFactory, _project)};
-						break;
-					case StemmingMethod.Manual:
-						processors = new[] {new Stemmer(_spanFactory, _project)};
-						break;
-				}
-				Debug.Assert(processors != null);
-				var pipeline = new Pipeline<Variety>(processors);
+				if (vm.Method == StemmingMethod.Automatic)
+					_currentVariety.ModelVariety.Affixes.Clear();
 
+				var pipeline = new Pipeline<Variety>(_project.GetStemmingProcessors(_spanFactory, vm.Method));
 				_progressService.ShowProgress(() => pipeline.Process(_currentVariety.ModelVariety.ToEnumerable()));
 				IsChanged = true;
 			}

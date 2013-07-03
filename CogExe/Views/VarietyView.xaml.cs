@@ -30,7 +30,7 @@ namespace SIL.Cog.Views
 			wordsSource.SortDescriptions.Add(new SortDescription("Sense.Gloss", ListSortDirection.Ascending));
 			wordsSource.Refresh();
 
-			var segmentsSource = new ListCollectionView(vm.Segments);
+			var segmentsSource = new ListCollectionView(new ConcurrentList<VarietySegmentViewModel>(vm.Segments));
 			SegmentsDataGrid.ItemsSource = segmentsSource;
 			segmentsSource.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
 			segmentsSource.Refresh();

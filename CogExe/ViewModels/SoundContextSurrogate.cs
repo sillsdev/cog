@@ -31,12 +31,12 @@ namespace SIL.Cog.ViewModels
 		[ProtoMember(3)]
 		public string RightEnvironment { get; set; }
 
-		public SoundContext ToSoundContext(CogProject project, Variety variety)
+		public SoundContext ToSoundContext(CogProject project, SegmentPool segmentPool)
 		{
 			IWordAligner aligner = project.WordAligners["primary"];
 			SoundClass leftEnv = LeftEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == LeftEnvironment);
 			SoundClass rightEnv = RightEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == RightEnvironment);
-			return new SoundContext(leftEnv, new Ngram(_target.Select(s => variety.Segments[s])), rightEnv);
+			return new SoundContext(leftEnv, new Ngram(_target.Select(segmentPool.GetExisting)), rightEnv);
 		}
 	}
 }

@@ -3,42 +3,31 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class Variety : NotifyPropertyChangedBase
+	public class Variety : ObservableObject
 	{
 		private readonly WordCollection _words;
-		private readonly SegmentCollection _segments;
 		private readonly VarietyVarietyPairCollection _varietyPairs;
 		private readonly BulkObservableList<Affix> _affixes;
 		private string _name;
-		private readonly ObservableList<GeographicRegion> _regions;
-		private readonly FrequencyDistribution<Segment> _segmentFreqDist;
-		private readonly MaxLikelihoodProbabilityDistribution<Segment> _segmentProbDist; 
+		private readonly BulkObservableList<GeographicRegion> _regions;
+		private FrequencyDistribution<Segment> _segmentFreqDist;
+		private IProbabilityDistribution<Segment> _segmentProbDist;
+		private readonly SegmentPool _segmentPool;
 
 		public Variety(string name)
 		{
 			_name = name;
 			_words = new WordCollection(this);
-			_segments = new SegmentCollection(this);
 			_varietyPairs = new VarietyVarietyPairCollection(this);
 			_affixes = new BulkObservableList<Affix>();
-			_regions = new ObservableList<GeographicRegion>();
-			_segmentFreqDist = new FrequencyDistribution<Segment>();
-			_segmentProbDist = new MaxLikelihoodProbabilityDistribution<Segment>(_segmentFreqDist);
+			_regions = new BulkObservableList<GeographicRegion>();
+			_segmentPool = new SegmentPool();
 		}
 
 		public string Name
 		{
 			get { return _name; }
-			set
-			{
-				_name = value;
-				OnPropertyChanged("Name");
-			}
-		}
-
-		public SegmentCollection Segments
-		{
-			get { return _segments; }
+			set { Set(() => Name, ref _name, value); }
 		}
 
 		public WordCollection Words
@@ -56,7 +45,7 @@ namespace SIL.Cog
 			get { return _affixes; }
 		}
 
-		public ObservableList<GeographicRegion> Regions
+		public BulkObservableList<GeographicRegion> Regions
 		{
 			get { return _regions; }
 		}
@@ -64,11 +53,18 @@ namespace SIL.Cog
 		public FrequencyDistribution<Segment> SegmentFrequencyDistribution
 		{
 			get { return _segmentFreqDist; }
+			set { Set(() => SegmentFrequencyDistribution, ref _segmentFreqDist, value); }
 		}
 
 		public IProbabilityDistribution<Segment> SegmentProbabilityDistribution
 		{
 			get { return _segmentProbDist; }
+			set { Set(() => SegmentProbabilityDistribution, ref _segmentProbDist, value); }
+		}
+
+		public SegmentPool SegmentPool
+		{
+			get { return _segmentPool; }
 		}
 
 		public override string ToString()

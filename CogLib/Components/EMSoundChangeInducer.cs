@@ -62,8 +62,8 @@ namespace SIL.Cog.Components
 				{
 					for (int column = 0; column < alignment.ColumnCount; column++)
 					{
-						SoundContext lhs = alignment.ToSoundContext(0, column, wordPair.Word1, aligner.ContextualSoundClasses);
-						Ngram corr = alignment[1, column].ToNgram(pair.Variety2);
+						SoundContext lhs = alignment.ToSoundContext(pair.Variety1.SegmentPool, 0, column, wordPair.Word1, aligner.ContextualSoundClasses);
+						Ngram corr = alignment[1, column].ToNgram(pair.Variety2.SegmentPool);
 						expectedCounts[lhs].Increment(corr);
 					}
 				}
@@ -74,7 +74,7 @@ namespace SIL.Cog.Components
 		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts)
 		{
 			IWordAligner aligner = Project.WordAligners[_alignerID];
-			int segmentCount = pair.Variety2.Segments.Count;
+			int segmentCount = pair.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
 

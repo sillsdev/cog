@@ -78,7 +78,7 @@ namespace SIL.Cog.ViewModels
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);
 
-			var pipeline = new MultiThreadedPipeline<VarietyPair>(_project.GetVarietyPairProcessors());
+			var pipeline = new MultiThreadedPipeline<VarietyPair>(_project.GetComparisonProcessors());
 
 			var progressVM = new ProgressViewModel(vm =>
 				{

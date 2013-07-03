@@ -50,7 +50,7 @@ namespace SIL.Cog.ViewModels
 			if (string.IsNullOrEmpty(segment))
 				return "Please specify a segment";
 			Shape shape;
-			if (!_project.Segmenter.ToShape(segment, out shape))
+			if (!_project.Segmenter.TrySegment(segment, out shape))
 				return "This is an invalid segment";
 			if (shape.Any(n => n.Type() != shape.First.Type()))
 				return "Please specify only one segment";

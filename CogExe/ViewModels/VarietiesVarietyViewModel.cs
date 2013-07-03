@@ -1,10 +1,10 @@
 ﻿using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
 using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
@@ -12,7 +12,8 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly ReadOnlyMirroredCollection<Segment, VarietySegmentViewModel> _segments;
+		private readonly BulkObservableList<VarietySegmentViewModel> _segments;
+		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments; 
 		private readonly ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
 		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words; 
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
@@ -28,8 +29,10 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_dialogService = dialogService;
-			_segments = new ReadOnlyMirroredCollection<Segment, VarietySegmentViewModel>((IReadOnlyObservableCollection<Segment>) variety.Segments,
-				segment => new VarietySegmentViewModel(variety, segment), vm => vm.ModelSegment);
+			_segments = new BulkObservableList<VarietySegmentViewModel>(variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<VarietySegmentViewModel>()
+				: variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
+			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
+			variety.PropertyChanged += VarietyPropertyChanged;
 			_senses = new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
 			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
 				{
@@ -37,7 +40,7 @@ namespace SIL.Cog.ViewModels
 					vm.PropertyChanged += ChildPropertyChanged;
 					return vm;
 				}, vm => vm.ModelWord);
-			_words.CollectionChanged += WordsChanged;
+			variety.Words.CollectionChanged += WordsChanged;
 
 			_selectedWords = new ObservableList<WordViewModel>();
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.ModelAffix);
@@ -46,6 +49,27 @@ namespace SIL.Cog.ViewModels
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
+		}
+
+		private void VarietyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "SegmentFrequencyDistribution":
+					var variety = (Variety) sender;
+					Segment curSeg = null;
+					if (CurrentSegment != null)
+						curSeg = CurrentSegment.ModelSegment;
+					using (_segments.BulkUpdate())
+					{
+						_segments.Clear();
+						if (variety.SegmentFrequencyDistribution != null)
+							_segments.AddRange(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
+					}
+					if (curSeg != null)
+						CurrentSegment = _segments.FirstOrDefault(vm => vm.ModelSegment == curSeg);
+					break;
+			}
 		}
 
 		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -63,11 +87,9 @@ namespace SIL.Cog.ViewModels
 			var vm = new EditAffixViewModel(_project);
 			if (_dialogService.ShowDialog(this, vm) == true)
 			{
-				Shape shape;
-				if (!_project.Segmenter.ToShape(vm.StrRep, out shape))
-					shape = _project.Segmenter.EmptyShape;
-				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
+				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				ModelVariety.Affixes.Add(affix);
+				_project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
 				IsChanged = true;
 			}
@@ -83,12 +105,10 @@ namespace SIL.Cog.ViewModels
 			var vm = new EditAffixViewModel(_project, _currentAffix.ModelAffix);
 			if (_dialogService.ShowDialog(this, vm) == true)
 			{
-				Shape shape;
-				if (!_project.Segmenter.ToShape(vm.StrRep, out shape))
-					shape = _project.Segmenter.EmptyShape;
-				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, shape, vm.Category);
+				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = ModelVariety.Affixes.IndexOf(_currentAffix.ModelAffix);
 				ModelVariety.Affixes[index] = affix;
+				_project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
 				IsChanged = true;
 			}
@@ -113,7 +133,7 @@ namespace SIL.Cog.ViewModels
 
 		public ReadOnlyObservableList<VarietySegmentViewModel> Segments
 		{
-			get { return _segments; }
+			get { return _readOnlySegments; }
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses
@@ -147,20 +167,22 @@ namespace SIL.Cog.ViewModels
 			get { return _currentSegment; }
 			set
 			{
-				Set(() => CurrentSegment, ref _currentSegment, value);
-				_selectedWords.Clear();
-				foreach (WordViewModel word in _words)
+				if (Set(() => CurrentSegment, ref _currentSegment, value))
 				{
-					bool selected = false;
-					foreach (WordSegmentViewModel segment in word.Segments)
+					_selectedWords.Clear();
+					foreach (WordViewModel word in _words)
 					{
-						segment.IsSelected = _currentSegment != null && segment.StrRep == _currentSegment.StrRep;
-						if (segment.IsSelected)
-							selected = true;
-					}
+						bool selected = false;
+						foreach (WordSegmentViewModel segment in word.Segments)
+						{
+							segment.IsSelected = _currentSegment != null && segment.StrRep == _currentSegment.StrRep;
+							if (segment.IsSelected)
+								selected = true;
+						}
 
-					if (selected)
-						_selectedWords.Add(word);
+						if (selected)
+							_selectedWords.Add(word);
+					}
 				}
 			}
 		}

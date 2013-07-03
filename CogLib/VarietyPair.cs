@@ -3,7 +3,7 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class VarietyPair : NotifyPropertyChangedBase
+	public class VarietyPair : ObservableObject
 	{
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
@@ -52,81 +52,49 @@ namespace SIL.Cog
 		public double PhoneticSimilarityScore
 		{
 			get { return _phoneticSimilarityScore; }
-			set
-			{
-				_phoneticSimilarityScore = value;
-				OnPropertyChanged("PhoneticSimilarityScore");
-			}
+			set { Set(() => PhoneticSimilarityScore, ref _phoneticSimilarityScore, value); }
 		}
 
 		public double LexicalSimilarityScore
 		{
 			get { return _lexicalSimilarityScore; }
-			set
-			{
-				_lexicalSimilarityScore = value;
-				OnPropertyChanged("LexicalSimilarityScore");
-			}
+			set { Set(() => LexicalSimilarityScore, ref _lexicalSimilarityScore, value); }
 		}
 
 		public double Significance
 		{
 			get { return _significance; }
-			set
-			{
-				_significance = value;
-				OnPropertyChanged("Significance");
-			}
+			set { Set(() => Significance, ref _significance, value); }
 		}
 
 		public double Precision
 		{
 			get { return _precision; }
-			set
-			{
-				_precision = value;
-				OnPropertyChanged("Precision");
-			}
+			set { Set(() => Precision, ref _precision, value); }
 		}
 
 		public double Recall
 		{
 			get { return _recall; }
-			set
-			{
-				_recall = value;
-				OnPropertyChanged("Recall");
-			}
+			set { Set(() => Recall, ref _recall, value); }
 		}
 
 		public IConditionalProbabilityDistribution<SoundContext, Ngram> SoundChangeProbabilityDistribution
 		{
 			get { return _soundChangeProbabilityDistribution; }
-			set
-			{
-				_soundChangeProbabilityDistribution = value;
-				OnPropertyChanged("SoundChangeProbabilityDistribution");
-			}
+			set { Set(() => SoundChangeProbabilityDistribution, ref _soundChangeProbabilityDistribution, value); }
 		}
 
 		public ConditionalFrequencyDistribution<SoundContext, Ngram> SoundChangeFrequencyDistribution
 		{
 			get { return _soundFreqDist; }
-			set
-			{
-				_soundFreqDist = value;
-				OnPropertyChanged("SoundChangeFrequencyDistribution");
-			}
+			set { Set(() => SoundChangeFrequencyDistribution, ref _soundFreqDist, value); }
 		}
 
 		public double DefaultCorrespondenceProbability
 		{
 			get { return _defaultCorrProb; }
-			set
-			{
-				_defaultCorrProb = value;
-				OnPropertyChanged("DefaultCorrespondenceProbability");
-			}
+			set { Set(() => DefaultCorrespondenceProbability, ref _defaultCorrProb, value); }
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace SIL.Cog.Test
 		public void AlignMoreThanTwoSequences()
 		{
 			var scorer = new StringScorer();
-			var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar", "carp"}, GetChars);
+			var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar", "carp"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			Alignment<string, char> alignment = msa.GetAlignment();
 
@@ -22,7 +22,7 @@ namespace SIL.Cog.Test
 				"| c a r p |"
 				));
 
-			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar", "star"}, GetChars);
+			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar", "star"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			alignment = msa.GetAlignment();
 
@@ -32,7 +32,7 @@ namespace SIL.Cog.Test
 				"| s t a r |"
 				));
 
-			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar", "stare"}, GetChars);
+			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "bar", "stare"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			alignment = msa.GetAlignment();
 
@@ -42,7 +42,7 @@ namespace SIL.Cog.Test
 				"| s t a r e |"
 				));
 
-			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"scar", "car", "bar", "stare"}, GetChars);
+			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"scar", "car", "bar", "stare"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			alignment = msa.GetAlignment();
 
@@ -53,7 +53,7 @@ namespace SIL.Cog.Test
 				"| s t a r e |"
 				));
 
-			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"sane", "scar", "car", "bar", "stare"}, GetChars);
+			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"sane", "scar", "car", "bar", "stare"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			alignment = msa.GetAlignment();
 
@@ -65,7 +65,7 @@ namespace SIL.Cog.Test
 				"| s t a r e |"
 				));
 
-			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"sane", "scar", "she", "car", "bar", "stare"}, GetChars);
+			msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"sane", "scar", "she", "car", "bar", "stare"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			alignment = msa.GetAlignment();
 
@@ -103,7 +103,7 @@ namespace SIL.Cog.Test
 		public void AlignEmptySequence()
 		{
 			var scorer = new StringScorer();
-			var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "", "bar"}, GetChars);
+			var msa = new MultipleAlignmentAlgorithm<string, char>(scorer, new[] {"car", "", "bar"}, GetChars) {UseInputOrder = true};
 			msa.Compute();
 			Alignment<string, char> alignment = msa.GetAlignment();
 

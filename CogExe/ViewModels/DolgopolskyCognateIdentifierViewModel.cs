@@ -16,16 +16,16 @@ namespace SIL.Cog.ViewModels
 			_initialEquivalenceThreshold = 2;
 			var soundClasses = new SoundClass[]
 				{
-					new UnnaturalClass(project.Segmenter, "K", new[] {"t͡s", "d͡z", "t͡ɕ", "d͡ʑ", "t͡ʃ", "d͡ʒ", "c", "ɟ", "t͡θ", "t͡ʂ", "d͡ʐ", "k", "g", "q", "ɢ", "ɡ", "ɠ", "x", "ɣ", "χ"}, true),
-					new UnnaturalClass(project.Segmenter, "P", new[] {"ɸ", "β", "f", "p͡f", "p", "b", "ɓ"}, true),
-					new UnnaturalClass(project.Segmenter, "Ø", new[] {"ʔ", "ħ", "ʕ", "h", "ɦ", "-", "#ŋ"}, true),
-					new UnnaturalClass(project.Segmenter, "J", new[] {"j", "ɥ", "ɰ"}, true),
-					new UnnaturalClass(project.Segmenter, "M", new[] {"m", "ɱ", "ʍ"}, true),
- 					new UnnaturalClass(project.Segmenter, "N", new[] {"n", "ɳ", "ŋ", "ɴ", "ɲ"}, true),
- 					new UnnaturalClass(project.Segmenter, "S", new[] {"s", "z", "ʃ", "ʒ", "ʂ", "ʐ", "ç", "ʝ", "ɕ", "ʑ", "ɧ"}, true),
-					new UnnaturalClass(project.Segmenter, "R", new[] {"ɹ", "ɻ", "ʀ", "ɾ", "r", "ʁ", "ɽ", "l", "ɭ", "ʎ", "ʟ", "ɬ", "ɮ", "ɫ", "ł"}, true),
-					new UnnaturalClass(project.Segmenter, "T", new[] {"t", "d", "ɗ", "ʈ", "ɖ", "θ", "ð"}, true),
- 					new UnnaturalClass(project.Segmenter, "W", new[] {"w", "ʋ", "v", "ʙ"}, true)
+					new UnnaturalClass("K", new[] {"t͡s", "d͡z", "t͡ɕ", "d͡ʑ", "t͡ʃ", "d͡ʒ", "c", "ɟ", "t͡θ", "t͡ʂ", "d͡ʐ", "k", "g", "q", "ɢ", "ɡ", "ɠ", "x", "ɣ", "χ"}, true, project.Segmenter),
+					new UnnaturalClass("P", new[] {"ɸ", "β", "f", "p͡f", "p", "b", "ɓ"}, true, project.Segmenter),
+					new UnnaturalClass("Ø", new[] {"ʔ", "ħ", "ʕ", "h", "ɦ", "-", "#ŋ"}, true, project.Segmenter),
+					new UnnaturalClass("J", new[] {"j", "ɥ", "ɰ"}, true, project.Segmenter),
+					new UnnaturalClass("M", new[] {"m", "ɱ", "ʍ"}, true, project.Segmenter),
+ 					new UnnaturalClass("N", new[] {"n", "ɳ", "ŋ", "ɴ", "ɲ"}, true, project.Segmenter),
+ 					new UnnaturalClass("S", new[] {"s", "z", "ʃ", "ʒ", "ʂ", "ʐ", "ç", "ʝ", "ɕ", "ʑ", "ɧ"}, true, project.Segmenter),
+					new UnnaturalClass("R", new[] {"ɹ", "ɻ", "ʀ", "ɾ", "r", "ʁ", "ɽ", "l", "ɭ", "ʎ", "ʟ", "ɬ", "ɮ", "ɫ", "ł"}, true, project.Segmenter),
+					new UnnaturalClass("T", new[] {"t", "d", "ɗ", "ʈ", "ɖ", "θ", "ð"}, true, project.Segmenter),
+ 					new UnnaturalClass("W", new[] {"w", "ʋ", "v", "ʙ"}, true, project.Segmenter)
 				};
 			_soundClasses = new SoundClassesViewModel(dialogService, project, soundClasses.Select(sc => new SoundClassViewModel(sc)), false);
 			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;

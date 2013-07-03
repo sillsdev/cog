@@ -51,7 +51,7 @@
 	<xs:complexType name="BaseSymbolCollection">
 		<xs:complexContent>
 			<xs:extension base="SymbolCollection">
-				<xs:attribute name="maxLength" type="xs:int" default="1" />
+				<xs:attribute name="maxLength" type="xs:int" use="optional" default="1" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -134,6 +134,31 @@
 					<xs:element name="AffixThreshold" type="xs:double" />
 					<xs:element name="MaxAffixLength" type="xs:int" />
 					<xs:element name="CategoryRequired" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SspSyllabifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyProcessorBase">
+				<xs:sequence>
+					<xs:element name="SonorityScale">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="SonorityClass" minOccurs="1" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:choice>
+												<xs:element ref="NaturalClass" />
+												<xs:element ref="UnnaturalClass" />
+											</xs:choice>
+										</xs:sequence>
+										<xs:attribute name="sonority" type="xs:int" use="required" />
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -263,30 +288,6 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="Syllabification">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="SonorityScale">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="SonorityClass" minOccurs="0" maxOccurs="unbounded">
-											<xs:complexType>
-												<xs:sequence>
-													<xs:choice>
-														<xs:element ref="NaturalClass" />
-														<xs:element ref="UnnaturalClass" />
-													</xs:choice>
-												</xs:sequence>
-												<xs:attribute name="sonority" type="xs:int" use="required" />
-											</xs:complexType>
-										</xs:element>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
-						<xs:attribute name="enabled" type="xs:boolean" default="true" />
-					</xs:complexType>
-				</xs:element>
 				<xs:element name="WordAligners">
 					<xs:complexType>
 						<xs:sequence>
@@ -318,12 +319,13 @@
 												<xs:sequence>
 													<xs:element name="Word" minOccurs="0" maxOccurs="unbounded">
 														<xs:complexType>
-															<xs:sequence>
-																<xs:element name="Prefix" minOccurs="0" maxOccurs="1" type="xs:string" />
-																<xs:element name="Stem" type="xs:string" />
-																<xs:element name="Suffix" minOccurs="0" maxOccurs="1" type="xs:string" />
-															</xs:sequence>
-															<xs:attribute name="sense" type="xs:string" use="required" />
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="sense" type="xs:string" use="required" />
+																	<xs:attribute name="stemIndex" type="xs:int" use="optional" />
+																	<xs:attribute name="stemLength" type="xs:int" use="optional" />
+																</xs:extension>
+															</xs:simpleContent>
 														</xs:complexType>
 													</xs:element>
 												</xs:sequence>

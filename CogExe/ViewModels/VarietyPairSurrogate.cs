@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Statistics;
@@ -9,12 +10,12 @@ namespace SIL.Cog.ViewModels
 	public class VarietyPairSurrogate
 	{
 		private readonly List<WordPairSurrogate> _wordPairs;
-		private readonly Dictionary<SoundContextSurrogate, Dictionary<List<string>, int>> _soundChanges; 
+		private readonly Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> _soundChanges; 
 
 		public VarietyPairSurrogate()
 		{
 			_wordPairs = new List<WordPairSurrogate>();
-			_soundChanges = new Dictionary<SoundContextSurrogate, Dictionary<List<string>, int>>();
+			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
 		}
 
 		public VarietyPairSurrogate(VarietyPair vp)
@@ -25,12 +26,11 @@ namespace SIL.Cog.ViewModels
 			PhoneticSimilarityScore = vp.PhoneticSimilarityScore;
 			LexicalSimilarityScore = vp.LexicalSimilarityScore;
 			DefaultCorrespondenceProbability = vp.DefaultCorrespondenceProbability;
-			_soundChanges = new Dictionary<SoundContextSurrogate, Dictionary<List<string>, int>>();
+			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
 			foreach (SoundContext lhs in vp.SoundChangeFrequencyDistribution.Conditions)
 			{
 				FrequencyDistribution<Ngram> freqDist = vp.SoundChangeFrequencyDistribution[lhs];
-				Dictionary<List<string>, int> dict = freqDist.ObservedSamples.ToDictionary(ngram => ngram.Select(seg => seg.StrRep).ToList(), ngram => freqDist[ngram]);
-				_soundChanges[new SoundContextSurrogate(lhs)] = dict;
+				_soundChanges[new SoundContextSurrogate(lhs)] = freqDist.ObservedSamples.Select(ngram => Tuple.Create(ngram.Select(seg => seg.StrRep).ToArray(), freqDist[ngram])).ToArray();
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace SIL.Cog.ViewModels
 		[ProtoMember(6)]
 		public double DefaultCorrespondenceProbability { get; set; }
 		[ProtoMember(7)]
-		public Dictionary<SoundContextSurrogate, Dictionary<List<string>, int>> SoundChangeFrequencyDistribution
+		public Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> SoundChangeFrequencyDistribution
 		{
 			get { return _soundChanges; }
 		}
@@ -67,14 +67,19 @@ namespace SIL.Cog.ViewModels
 				};
 			vp.WordPairs.AddRange(_wordPairs.Select(surrogate => surrogate.ToWordPair(project, vp)));
 			var soundChanges = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
-			foreach (KeyValuePair<SoundContextSurrogate, Dictionary<List<string>, int>> fd in _soundChanges)
+			foreach (KeyValuePair<SoundContextSurrogate, Tuple<string[], int>[]> fd in _soundChanges)
 			{
-				foreach (KeyValuePair<List<string>, int> sample in fd.Value)
-					soundChanges[fd.Key.ToSoundContext(project, vp.Variety1)].Increment(new Ngram(sample.Key.Select(s => vp.Variety2.Segments[s])), sample.Value);
+				SoundContext ctxt = fd.Key.ToSoundContext(project, vp.Variety1.SegmentPool);
+				FrequencyDistribution<Ngram> freqDist = soundChanges[ctxt];
+				foreach (Tuple<string[], int> sample in fd.Value)
+				{
+					Ngram corr = sample.Item1 == null ? new Ngram() : new Ngram(sample.Item1.Select(s => vp.Variety2.SegmentPool.GetExisting(s)));
+					freqDist.Increment(corr, sample.Item2);
+				}
 			}
 			vp.SoundChangeFrequencyDistribution = soundChanges;
 			IWordAligner aligner = project.WordAligners["primary"];
-			int segmentCount = vp.Variety2.Segments.Count;
+			int segmentCount = vp.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(soundChanges,
 				freqDist => new WittenBellProbabilityDistribution<Ngram>(freqDist, possCorrCount));

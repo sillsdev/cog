@@ -11,7 +11,7 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog
 {
-	public class Segmenter : NotifyPropertyChangedBase
+	public class Segmenter : ObservableObject
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly SymbolCollection _vowels;
@@ -89,9 +89,8 @@ namespace SIL.Cog
 				if (value < 1)
 					throw new ArgumentOutOfRangeException("value");
 
-				_maxConsonantLength = value;
-				_regex = null;
-				OnPropertyChanged("MaxConsonantLength");
+				if (Set(() => MaxConsonantLength, ref _maxConsonantLength, value))
+					_regex = null;
 			}
 		}
 
@@ -103,27 +102,42 @@ namespace SIL.Cog
 				if (value < 1)
 					throw new ArgumentOutOfRangeException("value");
 
-				_maxVowelLength = value;
-				_regex = null;
-				OnPropertyChanged("MaxVowelLength");
+				if (Set(() => MaxVowelLength, ref _maxVowelLength, value))
+					_regex = null;
 			}
 		}
 
-		public Shape EmptyShape
+		public void Segment(Affix affix)
 		{
-			get { return _emptyShape; }
-		}
-
-		public bool ToShape(string prefix, string stem, string suffix, out Shape shape)
-		{
-			if (string.IsNullOrEmpty(stem))
+			if (string.IsNullOrEmpty(affix.StrRep))
 			{
-				shape = _emptyShape;
-				return true;
+				affix.Shape = _emptyShape;
+				return;
 			}
 
-			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			var shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			if (SegmentString(shape, affix.StrRep))
+			{
+				shape.Freeze();
+				affix.Shape = shape;
+			}
+			else
+			{
+				affix.Shape = _emptyShape;
+			}
+		}
 
+		public void Segment(Word word)
+		{
+			if (string.IsNullOrEmpty(word.StrRep))
+			{
+				word.Shape = _emptyShape;
+				return;
+			}
+
+			var shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+
+			string prefix = word.StrRep.Substring(0, word.StemIndex);
 			ShapeNode start = shape.Begin;
 			if (!string.IsNullOrEmpty(prefix))
 			{
@@ -134,11 +148,12 @@ namespace SIL.Cog
 				}
 				else
 				{
-					shape = null;
-					return false;
+					word.Shape = _emptyShape;
+					return;
 				}
 			}
 
+			string stem = word.StrRep.Substring(word.StemIndex, word.StemLength);
 			if (SegmentString(shape, stem))
 			{
 				shape.Annotations.Add(start.Next, shape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
@@ -146,10 +161,11 @@ namespace SIL.Cog
 			}
 			else
 			{
-				shape = null;
-				return false;
+				word.Shape = _emptyShape;
+				return;
 			}
 
+			string suffix = word.StrRep.Substring(word.StemIndex + word.StemLength);
 			if (!string.IsNullOrEmpty(suffix))
 			{
 				if (SegmentString(shape, suffix))
@@ -158,16 +174,24 @@ namespace SIL.Cog
 				}
 				else
 				{
-					shape = null;
-					return false;
+					word.Shape = _emptyShape;
+					return;
 				}
 			}
 
 			shape.Freeze();
-			return true;
+			word.Shape = shape;
 		}
 
-		public bool ToShape(string str, out Shape shape)
+		public Shape Segment(string str)
+		{
+			Shape shape;
+			if (TrySegment(str, out shape))
+				return shape;
+			throw new ArgumentException("The input string cannot be segmented.", "str");
+		}
+
+		public bool TrySegment(string str, out Shape shape)
 		{
 			if (string.IsNullOrEmpty(str))
 			{
@@ -184,6 +208,38 @@ namespace SIL.Cog
 			}
 
 			shape = null;
+			return false;
+		}
+
+		public bool CanSegment(string str)
+		{
+			if (_regex == null)
+				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+			string nfdStr = str.Normalize(NormalizationForm.FormD);
+			int index = 0;
+			int nodeCount = 0;
+			foreach (Match match in _regex.Matches(nfdStr))
+			{
+				if (match.Index != index)
+					break;
+
+				if (match.Groups["vowelSeg"].Success || match.Groups["consSeg"].Success || match.Groups["tone"].Success || match.Groups["bdry"].Success)
+				{
+					nodeCount++;
+				}
+
+				index = match.Index + match.Length;
+
+				if (index == nfdStr.Length)
+				{
+					if (nodeCount == 0)
+						break;
+
+					return true;
+				}
+			}
+
 			return false;
 		}
 
@@ -217,7 +273,7 @@ namespace SIL.Cog
 							{
 								string joinerStr = joinerGroup.Captures[i].Value;
 								//sb.Append(joinerStr);
-								phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out partStrRep));
+								phonemeFS.Add(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out partStrRep));
 								sb.Append(partStrRep);
 								phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
 							}
@@ -226,7 +282,7 @@ namespace SIL.Cog
 						{
 							for (int i = 1; i < vowelComp.Captures.Count; i++)
 							{
-								phonemeFS.Union(BuildFeatStruct(match, vowelComp.Captures[i], "vowelBase", _vowels, out partStrRep));
+								phonemeFS.Add(BuildFeatStruct(match, vowelComp.Captures[i], "vowelBase", _vowels, out partStrRep));
 								sb.Append(partStrRep);
 							}
 						}
@@ -256,7 +312,7 @@ namespace SIL.Cog
 							{
 								string joinerStr = joinerGroup.Captures[i].Value;
 								//sb.Append(joinerStr);
-								phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out compStrRep));
+								phonemeFS.Add(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out compStrRep));
 								sb.Append(compStrRep);
 								FeatureStruct joinerFs = _joiners[joinerStr].FeatureStruct;
 								if (joinerFs != null)
@@ -267,7 +323,7 @@ namespace SIL.Cog
 						{
 							for (int i = 1; i < consComp.Captures.Count; i++)
 							{
-								phonemeFS.Union(BuildFeatStruct(match, consComp.Captures[i], "consBase", _consonants, out compStrRep));
+								phonemeFS.Add(BuildFeatStruct(match, consComp.Captures[i], "consBase", _consonants, out compStrRep));
 								sb.Append(compStrRep);
 							}
 						}

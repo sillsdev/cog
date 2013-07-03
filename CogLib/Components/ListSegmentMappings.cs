@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog.Components
 {
@@ -22,7 +21,7 @@ namespace SIL.Cog.Components
 			foreach (Tuple<string, string> mapping in _mappings)
 			{
 				string str1, str2;
-				if (GetNormalizedStrRep(project.Segmenter, mapping.Item1, out str1) && GetNormalizedStrRep(project.Segmenter, mapping.Item2, out str2))
+				if (project.Segmenter.NormalizeSegmentString(mapping.Item1, out str1) && project.Segmenter.NormalizeSegmentString(mapping.Item2, out str2))
 				{
 					HashSet<string> segments = _mappingLookup.GetValue(str1, () => new HashSet<string>());
 					segments.Add(str2);
@@ -71,23 +70,11 @@ namespace SIL.Cog.Components
 			get { return _generateDigraphs; }
 		}
 
-		private bool GetNormalizedStrRep(Segmenter segmenter, string str, out string normalizedStr)
-		{
-			Shape shape;
-			if (segmenter.ToShape(str, out shape) && shape.All(n => n.Type() == shape.First.Type()))
-			{
-				normalizedStr = shape.First.StrRep();
-				return true;
-			}
-			normalizedStr = null;
-			return false;
-		}
-
 		public bool IsMapped(Segment seg1, Segment seg2)
 		{
 			HashSet<string> segments;
-			if (_mappingLookup.TryGetValue(seg1.StrRep, out segments))
-				return segments.Contains(seg2.StrRep);
+			if (_mappingLookup.TryGetValue(seg1 == null ? "-" : seg1.StrRep, out segments))
+				return segments.Contains(seg2 == null ? "-" : seg2.StrRep);
 			return false;
 		}
 	}

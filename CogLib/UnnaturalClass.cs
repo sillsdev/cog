@@ -11,7 +11,7 @@ namespace SIL.Cog
 		private readonly HashSet<string> _normalizedSegments;
 		private readonly bool _ignoreModifiers;
 
-		public UnnaturalClass(Segmenter segmenter, string name, IEnumerable<string> segments, bool ignoreModifiers)
+		public UnnaturalClass(string name, IEnumerable<string> segments, bool ignoreModifiers, Segmenter segmenter)
 			: base(name)
 		{
 			_segmenter = segmenter;
@@ -20,7 +20,7 @@ namespace SIL.Cog
 			_normalizedSegments = new HashSet<string>();
 			foreach (string segment in _segments)
 			{
-				if (segment == "#")
+				if (segment == "#" || segment == "-")
 				{
 					_normalizedSegments.Add(segment);
 				}
@@ -47,10 +47,8 @@ namespace SIL.Cog
 
 		private bool Normalize(string segment, out string normalizedSegment)
 		{
-			Shape shape;
-			if (_segmenter.ToShape(segment, out shape) && shape.All(n => n.Type() == shape.First.Type()))
+			if (_segmenter.NormalizeSegmentString(segment, out normalizedSegment))
 			{
-				normalizedSegment = shape.First.StrRep();
 				if (_ignoreModifiers)
 					normalizedSegment = StripModifiers(normalizedSegment);
 				return true;
@@ -69,16 +67,16 @@ namespace SIL.Cog
 			get { return _ignoreModifiers; }
 		}
 
-		public override bool Matches(Segment left, Ngram target, Segment right)
+		public override bool Matches(ShapeNode leftNode, Ngram target, ShapeNode rightNode)
 		{
 			string strRep = target.ToString();
 			if (_ignoreModifiers)
 				strRep = StripModifiers(strRep);
 
-			if (left != null && left.Type == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("#{0}", strRep)))
+			if (leftNode != null && leftNode.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("#{0}", strRep)))
 				return true;
 
-			if (right != null && right.Type == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("{0}#", strRep)))
+			if (rightNode != null && rightNode.Type() == CogFeatureSystem.AnchorType && _normalizedSegments.Contains(string.Format("{0}#", strRep)))
 				return true;
 
 			return _normalizedSegments.Contains(strRep);

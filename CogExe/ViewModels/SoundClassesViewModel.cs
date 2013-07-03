@@ -49,7 +49,7 @@ namespace SIL.Cog.ViewModels
 				fs.AddValue(CogFeatureSystem.Type, vm.Type == SoundType.Consonant ? CogFeatureSystem.ConsonantType : CogFeatureSystem.VowelType);
 				foreach (FeatureViewModel feature in vm.SelectedFeatures)
 					fs.AddValue(feature.ModelFeature, feature.CurrentValue.ModelSymbol);
-				var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs));
+				var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _displaySonority ? 0 : -1);
 				_soundClasses.Add(newNaturalClass);
 				CurrentSoundClass = newNaturalClass;
 			}
@@ -60,7 +60,7 @@ namespace SIL.Cog.ViewModels
 			var vm = new EditUnnaturalClassViewModel(_dialogService, _project, _soundClasses.Select(nc => nc.ModelSoundClass));
 			if (_dialogService.ShowDialog(this, vm) == true)
 			{
-				var newNaturalClass = new SoundClassViewModel(new UnnaturalClass(_project.Segmenter, vm.Name, vm.Segments, vm.IgnoreModifiers));
+				var newNaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _project.Segmenter), _displaySonority ? 0 : -1);
 				_soundClasses.Add(newNaturalClass);
 				CurrentSoundClass = newNaturalClass;
 			}
@@ -83,7 +83,7 @@ namespace SIL.Cog.ViewModels
 					fs.AddValue(CogFeatureSystem.Type, vm.Type == SoundType.Consonant ? CogFeatureSystem.ConsonantType : CogFeatureSystem.VowelType);
 					foreach (FeatureViewModel feature in vm.SelectedFeatures)
 						fs.AddValue(feature.ModelFeature, feature.CurrentValue.ModelSymbol);
-					var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs));
+					var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _currentSoundClass.Sonority);
 					int index = _soundClasses.IndexOf(_currentSoundClass);
 					_soundClasses[index] = newNaturalClass;
 					CurrentSoundClass = newNaturalClass;
@@ -97,7 +97,7 @@ namespace SIL.Cog.ViewModels
 					var vm = new EditUnnaturalClassViewModel(_dialogService, _project, _soundClasses.Select(nc => nc.ModelSoundClass), currentUnc);
 					if (_dialogService.ShowDialog(this, vm) == true)
 					{
-						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(_project.Segmenter, vm.Name, vm.Segments, vm.IgnoreModifiers));
+						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _project.Segmenter), _currentSoundClass.Sonority);
 						int index = _soundClasses.IndexOf(_currentSoundClass);
 						_soundClasses[index] = newUnnaturalClass;
 						CurrentSoundClass = newUnnaturalClass;

@@ -3,7 +3,7 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class GeographicRegion : NotifyPropertyChangedBase
+	public class GeographicRegion : ObservableObject
 	{
 		private string _desc;
 		private readonly ObservableList<GeographicCoordinate> _coordinates;
@@ -26,11 +26,7 @@ namespace SIL.Cog
 		public string Description
 		{
 			get { return _desc; }
-			set
-			{
-				_desc = value;
-				OnPropertyChanged("Description");
-			}
+			set { Set(() => Description, ref _desc, value); }
 		}
 	}
 }

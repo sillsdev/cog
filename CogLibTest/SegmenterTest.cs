@@ -26,49 +26,49 @@ namespace SIL.Cog.Test
 		}
 
 		[Test]
-		public void ToShape()
+		public void TrySegment()
 		{
 			Shape shape;
-			Assert.That(_segmenter.ToShape("call", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("call", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(4));
 			AssertShapeNodeEqual(shape.First, "c", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.ElementAt(1), "a", CogFeatureSystem.VowelType);
 			AssertShapeNodeEqual(shape.ElementAt(2), "l", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.Last, "l", CogFeatureSystem.ConsonantType);
 
-			Assert.That(_segmenter.ToShape("church", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("church", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(4));
 			AssertShapeNodeEqual(shape.First, "ch", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.ElementAt(1), "u", CogFeatureSystem.VowelType);
 			AssertShapeNodeEqual(shape.ElementAt(2), "r", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.Last, "ch", CogFeatureSystem.ConsonantType);
 
-			Assert.That(_segmenter.ToShape("ex-wife", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("ex-wife", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(7));
 			AssertShapeNodeEqual(shape.ElementAt(2), "-", CogFeatureSystem.BoundaryType);
 
-			Assert.That(_segmenter.ToShape("señor", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("señor", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(5));
 			AssertShapeNodeEqual(shape.ElementAt(2), "n", CogFeatureSystem.ConsonantType);
 			Assert.That(shape.ElementAt(2).OriginalStrRep(), Is.EqualTo("ñ"));
 
-			Assert.That(_segmenter.ToShape("John", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("John", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(4));
 			AssertShapeNodeEqual(shape.First, "j", CogFeatureSystem.ConsonantType);
 			Assert.That(shape.First.OriginalStrRep(), Is.EqualTo("J"));
 		}
 
 		[Test]
-		public void ToShapeWithComplexConsonants()
+		public void TrySegmentWithComplexConsonants()
 		{
 			Shape shape;
-			Assert.That(_segmenter.ToShape("cal͡l", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("cal͡l", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(3));
 			AssertShapeNodeEqual(shape.First, "c", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.ElementAt(1), "a", CogFeatureSystem.VowelType);
 			AssertShapeNodeEqual(shape.Last, "ll", CogFeatureSystem.ConsonantType);
 
-			Assert.That(_segmenter.ToShape("s͡tand", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("s͡tand", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(4));
 			AssertShapeNodeEqual(shape.First, "st", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.ElementAt(1), "a", CogFeatureSystem.VowelType);
@@ -77,13 +77,13 @@ namespace SIL.Cog.Test
 
 			_segmenter.MaxConsonantLength = 2;
 
-			Assert.That(_segmenter.ToShape("call", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("call", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(3));
 			AssertShapeNodeEqual(shape.First, "c", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.ElementAt(1), "a", CogFeatureSystem.VowelType);
 			AssertShapeNodeEqual(shape.Last, "ll", CogFeatureSystem.ConsonantType);
 
-			Assert.That(_segmenter.ToShape("church", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("church", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(3));
 			AssertShapeNodeEqual(shape.First, "ch", CogFeatureSystem.ConsonantType);
 			AssertShapeNodeEqual(shape.ElementAt(1), "u", CogFeatureSystem.VowelType);
@@ -91,29 +91,31 @@ namespace SIL.Cog.Test
 		}
 
 		[Test]
-		public void ToShapeWithAffixes()
+		public void SegmentWord()
 		{
-			Shape shape;
-			Assert.That(_segmenter.ToShape(null, "call", "ed", out shape), Is.True);
-			Assert.That(shape.Count, Is.EqualTo(6));
-			AssertShapeNodeEqual(shape.First, "c", CogFeatureSystem.ConsonantType);
-			AssertShapeNodeEqual(shape.ElementAt(1), "a", CogFeatureSystem.VowelType);
-			AssertShapeNodeEqual(shape.ElementAt(4), "e", CogFeatureSystem.VowelType);
-			AssertShapeNodeEqual(shape.Last, "d", CogFeatureSystem.ConsonantType);
-			Annotation<ShapeNode> stemAnn = shape.Annotations.Single(a => a.Type() == CogFeatureSystem.StemType);
-			Assert.That(stemAnn.Span, Is.EqualTo(_spanFactory.Create(shape.First, shape.ElementAt(3))));
-			Annotation<ShapeNode> suffixAnn = shape.Annotations.Single(a => a.Type() == CogFeatureSystem.SuffixType);
-			Assert.That(suffixAnn.Span, Is.EqualTo(_spanFactory.Create(shape.ElementAt(4), shape.Last)));
+			var sense = new Sense("gloss", "category");
+			var word = new Word("called", 0, 4, sense);
+
+			_segmenter.Segment(word);
+			Assert.That(word.Shape.Count, Is.EqualTo(6));
+			AssertShapeNodeEqual(word.Shape.First, "c", CogFeatureSystem.ConsonantType);
+			AssertShapeNodeEqual(word.Shape.ElementAt(1), "a", CogFeatureSystem.VowelType);
+			AssertShapeNodeEqual(word.Shape.ElementAt(4), "e", CogFeatureSystem.VowelType);
+			AssertShapeNodeEqual(word.Shape.Last, "d", CogFeatureSystem.ConsonantType);
+			Annotation<ShapeNode> stemAnn = word.Shape.Annotations.Single(a => a.Type() == CogFeatureSystem.StemType);
+			Assert.That(stemAnn.Span, Is.EqualTo(_spanFactory.Create(word.Shape.First, word.Shape.ElementAt(3))));
+			Annotation<ShapeNode> suffixAnn = word.Shape.Annotations.Single(a => a.Type() == CogFeatureSystem.SuffixType);
+			Assert.That(suffixAnn.Span, Is.EqualTo(_spanFactory.Create(word.Shape.ElementAt(4), word.Shape.Last)));
 		}
 
 		[Test]
 		public void InvalidShape()
 		{
 			Shape shape;
-			Assert.That(_segmenter.ToShape("hello@", out shape), Is.False);
-			Assert.That(_segmenter.ToShape("!test", out shape), Is.False);
-			Assert.That(_segmenter.ToShape("wo.rd", out shape), Is.False);
-			Assert.That(_segmenter.ToShape("née", out shape), Is.False);
+			Assert.That(_segmenter.TrySegment("hello@", out shape), Is.False);
+			Assert.That(_segmenter.TrySegment("!test", out shape), Is.False);
+			Assert.That(_segmenter.TrySegment("wo.rd", out shape), Is.False);
+			Assert.That(_segmenter.TrySegment("née", out shape), Is.False);
 		}
 
 		private void AssertShapeNodeEqual(ShapeNode actualNode, string expectedStrRep, FeatureSymbol expectedType)

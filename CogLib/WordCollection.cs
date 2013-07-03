@@ -65,7 +65,6 @@ namespace SIL.Cog
 			if (senseWords.Add(item))
 			{
 				item.Variety = _variety;
-				_variety.Segments.WordAdded(item);
 				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
 			}
@@ -81,7 +80,6 @@ namespace SIL.Cog
 				if (senseWords.Add(word))
 				{
 					word.Variety = _variety;
-					_variety.Segments.WordAdded(word);
 					added.Add(word);
 				}
 			}
@@ -97,7 +95,6 @@ namespace SIL.Cog
 			foreach (Word word in this)
 				word.Variety = null;
 			_words.Clear();
-			_variety.Segments.WordsCleared();
 			if (count > 0)
 			{
 				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
@@ -130,7 +127,6 @@ namespace SIL.Cog
 					item.Variety = null;
 					if (senseWords.Count == 0)
 						_words.Remove(item.Sense);
-					_variety.Segments.WordRemoved(item);
 					OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 					OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
 					return true;

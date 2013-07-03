@@ -2,7 +2,7 @@ using SIL.Collections;
 
 namespace SIL.Cog
 {
-	public class Sense : NotifyPropertyChangedBase
+	public class Sense : ObservableObject
 	{
 		private string _gloss;
 		private string _category;
@@ -16,21 +16,13 @@ namespace SIL.Cog
 		public string Gloss
 		{
 			get { return _gloss; }
-			set
-			{
-				_gloss = value;
-				OnPropertyChanged("Gloss");
-			}
+			set { Set(() => Gloss, ref _gloss, value); }
 		}
 
 		public string Category
 		{
 			get { return _category; }
-			set
-			{
-				_category = value;
-				OnPropertyChanged("Category");
-			}
+			set { Set(() => Category, ref _category, value); }
 		}
 
 		public override string ToString()

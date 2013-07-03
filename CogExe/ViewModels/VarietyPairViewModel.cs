@@ -53,8 +53,8 @@ namespace SIL.Cog.ViewModels
 					}
 					else
 					{
-						SoundContext lhs = wordPair.ModelAlignment.ToSoundContext(0, node.Column, wordPair.ModelWordPair.Word1, aligner.ContextualSoundClasses);
-						Ngram corr = wordPair.ModelAlignment[1, node.Column].ToNgram(_varietyPair.Variety2);
+						SoundContext lhs = wordPair.ModelAlignment.ToSoundContext(wordPair.ModelWordPair.VarietyPair.Variety1.SegmentPool, 0, node.Column, wordPair.ModelWordPair.Word1, aligner.ContextualSoundClasses);
+						Ngram corr = wordPair.ModelAlignment[1, node.Column].ToNgram(wordPair.ModelWordPair.VarietyPair.Variety2.SegmentPool);
 						node.IsSelected = lhs.Equals(_currentSoundChange.ModelSoundChangeLhs) && corr.Equals(_currentSoundChange.ModelCorrespondence);
 						if (node.IsSelected)
 							selected = true;

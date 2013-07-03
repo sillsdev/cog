@@ -15,7 +15,7 @@ namespace SIL.Cog.NgramModeling
 		{
 			_cfd = cfd;
 			_dir = dir;
-			_vocabularySize = variety.Segments.Count + 1;
+			_vocabularySize = variety.SegmentFrequencyDistribution.ObservedSamples.Count + 1;
 			if (ngramSize > 1)
 				_lowerOrderModel = new NgramModel(ngramSize - 1, variety, dir, new WittenBellSmoother());
 		}

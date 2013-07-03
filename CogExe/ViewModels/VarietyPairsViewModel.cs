@@ -52,7 +52,7 @@ namespace SIL.Cog.ViewModels
 			var pair = new VarietyPair(_currentVariety1.ModelVariety, _currentVariety2.ModelVariety);
 			_project.VarietyPairs.Add(pair);
 
-			var pipeline = new Pipeline<VarietyPair>(_project.GetVarietyPairProcessors());
+			var pipeline = new Pipeline<VarietyPair>(_project.GetComparisonProcessors());
 			_progressService.ShowProgress(() =>
 				{
 					pipeline.Process(pair.ToEnumerable());

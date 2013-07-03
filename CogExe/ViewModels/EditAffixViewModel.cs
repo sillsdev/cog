@@ -60,8 +60,7 @@ namespace SIL.Cog.ViewModels
 					case "StrRep":
 						if (string.IsNullOrEmpty(_strRep))
 							return "Please specify an affix";
-						Shape shape;
-						if (!_project.Segmenter.ToShape(_strRep, out shape))
+						if (!_project.Segmenter.CanSegment(_strRep))
 							return "The affix contains invalid segments";
 						break;
 				}

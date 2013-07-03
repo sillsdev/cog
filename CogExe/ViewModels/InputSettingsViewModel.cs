@@ -17,7 +17,11 @@ namespace SIL.Cog.ViewModels
 
 		protected override void CreateComponents()
 		{
-			Components.Add(new SyllabifierViewModel(_dialogService, Project));
+			IProcessor<Variety> syllabifier;
+			if (Project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
+				Components.Add(new SspSyllabifierViewModel(_dialogService, Project, (SspSyllabifier) syllabifier));
+			else
+				Components.Add(new SspSyllabifierViewModel(_dialogService, Project));
 			Components.Add(new UnsupervisedAffixIdentifierViewModel(_spanFactory, Project, (UnsupervisedAffixIdentifier) Project.VarietyProcessors["affixIdentifier"]));
 		}
 	}

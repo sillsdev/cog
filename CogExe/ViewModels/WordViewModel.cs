@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using SIL.Cog.Components;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -41,7 +41,7 @@ namespace SIL.Cog.ViewModels
 		private void LoadSegments()
 		{
 			var segments = new ObservableList<WordSegmentViewModel>();
-			if (_word.Shape.Count > 0)
+			if (_word.Shape != null && _word.Shape.Count > 0)
 			{
 				Annotation<ShapeNode> prefixAnn = _word.Prefix;
 				if (prefixAnn != null)
@@ -55,7 +55,7 @@ namespace SIL.Cog.ViewModels
 			}
 			segments.CollectionChanged += SegmentsChanged;
 			Segments = segments;
-			IsValid = _word.Shape.Count > 0;
+			IsValid = _word.Shape != null && _word.Shape.Count > 0;
 		}
 
 		private void SegmentsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -63,32 +63,25 @@ namespace SIL.Cog.ViewModels
 			if (e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
 				return;
 
-			var sb = new StringBuilder();
 			int i = 0;
-			for (; !_segments[i].IsBoundary; i++)
-				sb.Append(_segments[i].OriginalStrRep);
-			string prefix = sb.ToString();
-
-			sb = new StringBuilder();
-			i++;
-			for (; !_segments[i].IsBoundary; i++)
-				sb.Append(_segments[i].OriginalStrRep);
-			string stem = sb.ToString();
-
-			sb = new StringBuilder();
-			i++;
-			for (; i < _segments.Count; i++)
-				sb.Append(_segments[i].OriginalStrRep);
-			string suffix = sb.ToString();
-
-			Shape shape;
-			_project.Segmenter.ToShape(prefix, stem, suffix, out shape);
-
-			using (_monitor.Enter())
+			int index = 0;
+			while (!_segments[i].IsBoundary)
 			{
-				_word.Shape = shape;
-				_project.Syllabifier.Syllabify(_word);
+				index += _segments[i].OriginalStrRep.Length;
+				i++;
 			}
+			_word.StemIndex = index;
+			i++;
+			while (!_segments[i].IsBoundary)
+			{
+				index += _segments[i].OriginalStrRep.Length;
+				i++;
+			}
+			_word.StemLength = index - _word.StemIndex;
+
+			var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
+			pipeline.Process(_word.Variety.ToEnumerable());
+
 			IsChanged = true;
 		}
 

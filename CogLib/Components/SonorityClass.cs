@@ -1,4 +1,4 @@
-﻿namespace SIL.Cog
+namespace SIL.Cog.Components
 {
 	public class SonorityClass
 	{

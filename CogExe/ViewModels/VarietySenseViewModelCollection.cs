@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using SIL.Cog.Collections;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels

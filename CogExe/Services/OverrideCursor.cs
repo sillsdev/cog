@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Services
 {
 	public class OverrideCursor : IDisposable
 	{

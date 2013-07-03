@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using SIL.Cog.Collections;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -34,7 +35,7 @@ namespace SIL.Cog.Views
 			SegmentsDataGrid.ItemsSource = segmentsSource;
 			segmentsSource.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
 			segmentsSource.Refresh();
-			SegmentsDataGrid.SelectedIndex = 0;
+			SegmentsDataGrid.SelectedIndex = -1;
 			SegmentsDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
 		}
 

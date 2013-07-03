@@ -1,4 +1,5 @@
-﻿using SIL.Cog.Services;
+﻿using SIL.Cog.Collections;
+using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels

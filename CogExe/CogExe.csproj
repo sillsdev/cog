@@ -136,6 +136,9 @@
     <Compile Include="Behaviors\TextBlockBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaviors.cs" />
     <Compile Include="Behaviors\UIElementBehaviors.cs" />
+    <Compile Include="Collections\ConcurrentList.cs" />
+    <Compile Include="Collections\ReadOnlyMirroredCollection.cs" />
+    <Compile Include="Collections\ReadOnlyMirroredList.cs" />
     <Compile Include="Controls\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>
@@ -235,6 +238,7 @@
     <Compile Include="Services\ImportService.cs" />
     <Compile Include="Services\IProgressService.cs" />
     <Compile Include="Services\IWindowViewModelMappings.cs" />
+    <Compile Include="Services\OverrideCursor.cs" />
     <Compile Include="Services\ProgressService.cs" />
     <Compile Include="Services\ServiceExtensions.cs" />
     <Compile Include="Services\WindowViewModelMappings.cs" />
@@ -341,7 +345,6 @@
     <Compile Include="Views\AddUnnaturalClassSegmentDialog.xaml.cs">
       <DependentUpon>AddUnnaturalClassSegmentDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ConcurrentList.cs" />
     <Compile Include="Views\DolgopolskyCognateIdentifierView.xaml.cs">
       <DependentUpon>DolgopolskyCognateIdentifierView.xaml</DependentUpon>
     </Compile>
@@ -484,7 +487,6 @@
     <Compile Include="Views\VarietyView.xaml.cs">
       <DependentUpon>VarietyView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\OverrideCursor.cs" />
     <Compile Include="Views\WindowPlacement.cs" />
     <Compile Include="Views\WordPairsView.xaml.cs">
       <DependentUpon>WordPairsView.xaml</DependentUpon>

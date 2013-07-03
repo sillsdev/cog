@@ -6,6 +6,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Clusterers;
+using SIL.Cog.Collections;
 using SIL.Cog.Services;
 using SIL.Collections;
 

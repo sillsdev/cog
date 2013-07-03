@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Collections;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using SIL.Cog.Collections;
 using SIL.Cog.Views;
 
 namespace SIL.Cog.Converters

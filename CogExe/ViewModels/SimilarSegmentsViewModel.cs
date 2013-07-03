@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -313,6 +314,18 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			if (_project.VarietyPairs.Count > 0)
 				GenerateCorrespondences();
+			_project.Varieties.CollectionChanged += VarietiesChanged;
+			_project.Senses.CollectionChanged += SensesChanged;
+		}
+
+		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			CancelWorker();
+		}
+
+		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			CancelWorker();
 		}
 
 		private void HandleNotificationMessage(NotificationMessage msg)

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 
-namespace SIL.Cog.Views
+namespace SIL.Cog.Collections
 {
 	public class ConcurrentList<T> : ReadOnlyMirroredList<T, T>
 	{
@@ -12,9 +12,9 @@ namespace SIL.Cog.Views
 		{
 		}
 
-		protected override void MirrorInsert(int index, IEnumerable<T> items)
+		protected override void MirrorInsert(int index, IEnumerable<T> items, int count)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() => base.MirrorInsert(index, items));
+			DispatcherHelper.CheckBeginInvokeOnUI(() => base.MirrorInsert(index, items, count));
 		}
 
 		protected override void MirrorReplace(int index, int count, IEnumerable<T> items)

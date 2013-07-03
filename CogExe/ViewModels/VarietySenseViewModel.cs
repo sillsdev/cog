@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using SIL.Cog.Collections;
 using SIL.Cog.Components;
 using SIL.Collections;
 

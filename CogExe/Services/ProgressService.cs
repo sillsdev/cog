@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using SIL.Cog.ViewModels;
-using SIL.Cog.Views;
 
 namespace SIL.Cog.Services
 {

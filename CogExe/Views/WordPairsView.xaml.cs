@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using SIL.Cog.Collections;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views

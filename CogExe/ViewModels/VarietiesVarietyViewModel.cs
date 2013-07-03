@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using SIL.Cog.Collections;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -67,7 +68,7 @@ namespace SIL.Cog.ViewModels
 							_segments.AddRange(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
 					}
 					if (curSeg != null)
-						CurrentSegment = _segments.FirstOrDefault(vm => vm.ModelSegment == curSeg);
+						CurrentSegment = _segments.FirstOrDefault(vm => vm.ModelSegment.Equals(curSeg));
 					break;
 			}
 		}

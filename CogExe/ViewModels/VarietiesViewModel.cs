@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
+using SIL.Cog.Collections;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;
@@ -38,8 +39,6 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			if (_varieties != null)
-				_varieties.CollectionChanged -= VarietiesChanged;
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(_project.Varieties,
 				variety =>
 					{

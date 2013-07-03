@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
+using SIL.Cog.Collections;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -68,8 +69,6 @@ namespace SIL.Cog.ViewModels
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			if (_senses != null)
-				_senses.CollectionChanged -= SensesChanged;
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
 			_senses.CollectionChanged += SensesChanged;
 			CurrentSense = _senses.Count > 0 ? _senses[0] : null;

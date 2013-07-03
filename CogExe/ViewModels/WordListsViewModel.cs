@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
+﻿using System.Collections.Specialized;
 using GalaSoft.MvvmLight.Command;
+using SIL.Cog.Collections;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;

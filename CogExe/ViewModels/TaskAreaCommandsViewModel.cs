@@ -1,18 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public class TaskAreaCommandsViewModel : CogViewModelBase
 	{
-		private readonly ReadOnlyCollection<CommandViewModel> _commands;
+		private readonly ReadOnlyList<CommandViewModel> _commands;
 
 		public TaskAreaCommandsViewModel(string displayName, params CommandViewModel[] commands)
 			: base(displayName)
 		{
-			_commands = new ReadOnlyCollection<CommandViewModel>(commands);
+			_commands = new ReadOnlyList<CommandViewModel>(commands);
 		}
 
-		public ReadOnlyCollection<CommandViewModel> Commands
+		public ReadOnlyList<CommandViewModel> Commands
 		{
 			get { return _commands; }
 		}

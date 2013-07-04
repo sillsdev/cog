@@ -14,7 +14,7 @@ namespace SIL.Cog.ViewModels
 		private readonly CogProject _project;
 		private readonly GeographicalVarietyViewModel _variety;
 		private readonly GeographicRegion _region;
-		private readonly ObservableList<Tuple<double, double>> _coordinates;
+		private readonly BindableList<Tuple<double, double>> _coordinates;
 		private readonly ICommand _editCommand;
 		private readonly ICommand _removeCommand;
 
@@ -25,7 +25,7 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			_variety = variety;
 			_region = region;
-			_coordinates = new ObservableList<Tuple<double, double>>(_region.Coordinates.Select(coord => Tuple.Create(coord.Latitude, coord.Longitude)));
+			_coordinates = new BindableList<Tuple<double, double>>(_region.Coordinates.Select(coord => Tuple.Create(coord.Latitude, coord.Longitude)));
 			_coordinates.CollectionChanged += CoordinatesChanged;
 			_editCommand = new RelayCommand(EditRegion);
 			_removeCommand = new RelayCommand(RemoveRegion);
@@ -106,7 +106,7 @@ namespace SIL.Cog.ViewModels
 			get { return _removeCommand; }
 		}
 
-		public GeographicRegion ModelRegion
+		internal GeographicRegion ModelRegion
 		{
 			get { return _region; }
 		}

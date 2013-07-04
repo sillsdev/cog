@@ -11,7 +11,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private bool _ignoreModifiers;
 		private readonly CogProject _project;
-		private readonly ObservableList<string> _segments;
+		private readonly BindableList<string> _segments;
 		private string _currentSegment;
 		private readonly ICommand _addSegmentCommand;
 		private readonly ICommand _removeSegmentCommand;
@@ -21,7 +21,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_dialogService = dialogService;
 			_project = project;
-			_segments = new ObservableList<string>();
+			_segments = new BindableList<string>();
 			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}
@@ -32,7 +32,7 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_project = project;
 			_ignoreModifiers = unnaturalClass.IgnoreModifiers;
-			_segments = new ObservableList<string>(unnaturalClass.Segments);
+			_segments = new BindableList<string>(unnaturalClass.Segments);
 			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}

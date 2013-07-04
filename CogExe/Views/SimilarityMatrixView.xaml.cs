@@ -63,8 +63,6 @@ namespace SIL.Cog.Views
 				textBlockFactory.AppendChild(hyperlinkFactory);
 				var backgroundBinding = new Binding(string.Format("VarietyPairs[{0}].SimilarityScore", i)) {Converter = new PercentageToSpectrumColorConverter()};
 				textBlockFactory.SetBinding(TextBlock.BackgroundProperty, backgroundBinding);
-				//var foregroundBinding = new Binding("Background") {RelativeSource = new RelativeSource(RelativeSourceMode.Self), Converter = new BackgroundToForegroundConverter()};
-				//textBlockFactory.SetBinding(TextBlock.ForegroundProperty, foregroundBinding);
 				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
 				var tooltipBinding = new MultiBinding();
 				tooltipBinding.Bindings.Add(new Binding("Name"));

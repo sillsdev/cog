@@ -8,7 +8,7 @@ namespace SIL.Cog.ViewModels
 	public abstract class SettingsWorkspaceViewModelBase : WorkspaceViewModelBase
 	{
 		private CogProject _project;
-		private readonly ObservableList<ComponentSettingsViewModelBase> _components;
+		private readonly BindableList<ComponentSettingsViewModelBase> _components;
 		private readonly ICommand _applyCommand;
 		private readonly ICommand _resetCommand;
 		private bool _isDirty;
@@ -16,7 +16,7 @@ namespace SIL.Cog.ViewModels
 		protected SettingsWorkspaceViewModelBase() 
 			: base("Settings")
 		{
-			_components = new ObservableList<ComponentSettingsViewModelBase>();
+			_components = new BindableList<ComponentSettingsViewModelBase>();
 			_applyCommand = new RelayCommand(Apply, CanApply);
 			_resetCommand = new RelayCommand(Reset);
 		}

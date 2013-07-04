@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -55,7 +56,7 @@ namespace SIL.Cog.Views
 			switch (e.PropertyName)
 			{
 				case "Varieties":
-					ResetRegions(vm);
+					DispatcherHelper.CheckBeginInvokeOnUI(() => ResetRegions(vm));
 					break;
 			}
 		}
@@ -64,12 +65,12 @@ namespace SIL.Cog.Views
 		{
 			foreach (RegionMarker rm in MapControl.Markers.OfType<RegionMarker>().ToArray())
 				rm.Dispose();
-			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += VarietiesChanged;
+			vm.Varieties.CollectionChanged += VarietiesChanged;
 			foreach (GeographicalVarietyViewModel variety in vm.Varieties)
 			{
 				AddRegions(variety.Regions);
 				GeographicalVarietyViewModel v = variety;
-				((INotifyCollectionChanged) variety.Regions).CollectionChanged += (sender, e) => RegionsChanged(v, e);
+				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
 			}
 			GoHome();
 		}
@@ -118,7 +119,7 @@ namespace SIL.Cog.Views
 			{
 				AddRegions(variety.Regions);
 				GeographicalVarietyViewModel v = variety;
-				((INotifyCollectionChanged) variety.Regions).CollectionChanged += (sender, e) => RegionsChanged(v, e);
+				variety.Regions.CollectionChanged += (sender, e) => RegionsChanged(v, e);
 			}
 		}
 

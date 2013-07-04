@@ -5,12 +5,12 @@ namespace SIL.Cog.ViewModels
 {
 	public abstract class WorkspaceViewModelBase : InitializableViewModelBase
 	{
-		private readonly ObservableList<CogViewModelBase> _taskAreas; 
+		private readonly BindableList<CogViewModelBase> _taskAreas; 
 
 		protected WorkspaceViewModelBase(string displayName)
 			: base(displayName)
 		{
-			_taskAreas = new ObservableList<CogViewModelBase>();
+			_taskAreas = new BindableList<CogViewModelBase>();
 		}
 
 		public ObservableList<CogViewModelBase> TaskAreas

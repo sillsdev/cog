@@ -3,32 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
-             xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Loaded="VarietyPairsView_OnLoaded"
              d:DataContext="{d:DesignInstance vm:VarietyPairsViewModel}">
     <UserControl.Resources>
         <cnvtrs:EnumMatchToVisibilityConverter x:Key="EnumConverter" />
-        <CollectionViewSource x:Key="VarietiesSource1" Source="{Binding Varieties}">
-            <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="Name" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-        <CollectionViewSource x:Key="VarietiesSource2" Source="{Binding Varieties}">
-            <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="Name" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
     </UserControl.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Variety pair details" />
             <Border Background="{StaticResource Variety1Brush}" Padding="3" Margin="0,0,5,0" CornerRadius="5">
-				<ComboBox Name="Varieties1ComboBox" FontSize="16" ItemsSource="{Binding Source={StaticResource VarietiesSource1}}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" />    
+				<ComboBox Name="Varieties1ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView1}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" />    
             </Border>
             <Border Background="{StaticResource Variety2Brush}" Padding="3" CornerRadius="5">
-				<ComboBox Name="Varieties2ComboBox" FontSize="16" ItemsSource="{Binding Source={StaticResource VarietiesSource2}}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" />
+				<ComboBox Name="Varieties2ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView2}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" />
             </Border>
         </StackPanel>
         <Grid>

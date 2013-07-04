@@ -54,12 +54,12 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public VarietyPair ModelVarietyPair
+		internal VarietyPair ModelVarietyPair
 		{
 			get { return _varietyPair; }
 		}
 
-		public Variety ModelOtherVariety
+		internal Variety ModelOtherVariety
 		{
 			get { return _otherVariety; }
 		}

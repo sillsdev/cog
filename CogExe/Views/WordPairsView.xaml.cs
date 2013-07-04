@@ -1,10 +1,7 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
-using SIL.Cog.Collections;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -30,18 +27,6 @@ namespace SIL.Cog.Views
 				vm.SelectedWordPairs.Remove(wp);
 			foreach (WordPairViewModel wp in e.AddedItems)
 				vm.SelectedWordPairs.Add(wp);
-		}
-
-		private void WordPairsView_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			var vm = DataContext as WordPairsViewModel;
-			if (vm == null)
-				return;
-
-			var cognateWordPairSource = new ListCollectionView(new ConcurrentList<WordPairViewModel>(vm.WordPairs));
-			WordPairsListBox.ItemsSource = cognateWordPairSource;
-			cognateWordPairSource.SortDescriptions.Add(new SortDescription("PhoneticSimilarityScore", ListSortDirection.Descending));
-			cognateWordPairSource.Refresh();
 		}
 
 		private void MarkerClicked(object sender, MouseButtonEventArgs e)

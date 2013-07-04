@@ -13,7 +13,6 @@
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolConverter" />
 		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
-		<cnvtrs:ConcurrentListConverter x:Key="ConcurrentConverter" />
 	</UserControl.Resources>
 	<DockPanel>
 		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similar segments</TextBlock>
@@ -73,7 +72,7 @@
 				</Grid>
 			</StackPanel>
 			<HeaderedContentControl Grid.Row="1" Header="Observed word pairs">
-				<ListBox ItemsSource="{Binding WordPairs.WordPairs, Converter={StaticResource ConcurrentConverter}, ConverterParameter={x:Type vm:WordPairViewModel}}" SelectionMode="Extended"
+				<ListBox ItemsSource="{Binding WordPairs.WordPairsView}" SelectionMode="Extended"
 						 Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
 					<ListBox.CommandBindings>
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />

@@ -10,7 +10,6 @@
         <DataTemplate x:Key="BlankTemplate" />
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="InverseBoolConverter" />
-		<cnvtrs:ConcurrentListConverter x:Key="ConcurrentConverter" />
     </UserControl.Resources>
     <Grid>
         <TextBlock Margin="3,0,0,0"  FontSize="16" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
@@ -17,7 +16,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IProgressService _progressService;
 		private readonly IExportService _exportService;
 		private CogProject _project;
-		private System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel> _varieties;
+		private ReadOnlyList<SimilarityMatrixVarietyViewModel> _varieties;
 		private readonly List<Variety> _modelVarieties;
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
@@ -64,7 +63,7 @@ namespace SIL.Cog.ViewModels
 			if (IsEmpty)
 				return;
 			_modelVarieties.Clear();
-			Varieties = new System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]);
+			Varieties = new ReadOnlyList<SimilarityMatrixVarietyViewModel>(new SimilarityMatrixVarietyViewModel[0]);
 			IsEmpty = true;
 		}
 
@@ -128,7 +127,7 @@ namespace SIL.Cog.ViewModels
 				}).Concat(Tuple.Create(variety, 0.0)), 2);
 			_modelVarieties.AddRange(optics.ClusterOrder(_project.Varieties).Select(oe => oe.DataObject));
 			SimilarityMatrixVarietyViewModel[] vms = _modelVarieties.Select(v => new SimilarityMatrixVarietyViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
-			Varieties = new System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel>(vms);
+			Varieties = new ReadOnlyList<SimilarityMatrixVarietyViewModel>(vms);
 			IsEmpty = false;
 		}
 
@@ -151,7 +150,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<SimilarityMatrixVarietyViewModel> Varieties
+		public ReadOnlyList<SimilarityMatrixVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 			private set { Set(() => Varieties, ref _varieties, value); }

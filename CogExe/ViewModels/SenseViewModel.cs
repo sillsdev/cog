@@ -22,7 +22,7 @@
 			set { _sense.Category = value; }
 		}
 
-		public Sense ModelSense
+		internal Sense ModelSense
 		{
 			get { return _sense; }
 		}

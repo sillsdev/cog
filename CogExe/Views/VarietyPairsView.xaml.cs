@@ -28,7 +28,7 @@ namespace SIL.Cog.Views
 		private void SetupVarieties()
 		{
 			var vm = (VarietyPairsViewModel) DataContext;
-			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += Varieties_CollectionChanged;
+			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
 			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
@@ -85,8 +85,11 @@ namespace SIL.Cog.Views
 		{
 			if (e.PropertyName == "Name")
 			{
-				Varieties1ComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
-				Varieties2ComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
+				DispatcherHelper.CheckBeginInvokeOnUI(() =>
+					{
+						Varieties1ComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
+						Varieties2ComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
+					});
 			}
 		}
 	}

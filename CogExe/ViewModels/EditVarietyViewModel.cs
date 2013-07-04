@@ -29,7 +29,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => Name, ref _name, value); }
 		}
 
-		public string this[string columnName]
+		string IDataErrorInfo.this[string columnName]
 		{
 			get
 			{
@@ -47,7 +47,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public string Error
+		string IDataErrorInfo.Error
 		{
 			get { return null; }
 		}

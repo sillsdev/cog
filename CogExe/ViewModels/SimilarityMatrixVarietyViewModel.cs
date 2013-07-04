@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public class SimilarityMatrixVarietyViewModel : VarietyViewModel
 	{
-		private readonly ReadOnlyCollection<SimilarityMatrixVarietyPairViewModel> _varietyPairs; 
+		private readonly ReadOnlyList<SimilarityMatrixVarietyPairViewModel> _varietyPairs; 
 
 		public SimilarityMatrixVarietyViewModel(SimilarityMetric similarityMetric, IEnumerable<Variety> varieties, Variety variety)
 			: base(variety)
@@ -16,10 +16,10 @@ namespace SIL.Cog.ViewModels
 				VarietyPair vp;
 				varietyPairs.Add(variety.VarietyPairs.TryGetValue(v, out vp) ? new SimilarityMatrixVarietyPairViewModel(similarityMetric, v, vp) : new SimilarityMatrixVarietyPairViewModel(v));
 			}
-			_varietyPairs = new ReadOnlyCollection<SimilarityMatrixVarietyPairViewModel>(varietyPairs);
+			_varietyPairs = new ReadOnlyList<SimilarityMatrixVarietyPairViewModel>(varietyPairs);
 		}
 
-		public ReadOnlyCollection<SimilarityMatrixVarietyPairViewModel> VarietyPairs
+		public ReadOnlyList<SimilarityMatrixVarietyPairViewModel> VarietyPairs
 		{
 			get { return _varietyPairs; }
 		}

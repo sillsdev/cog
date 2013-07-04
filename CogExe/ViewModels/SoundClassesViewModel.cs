@@ -13,7 +13,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly ObservableList<SoundClassViewModel> _soundClasses;
+		private readonly BindableList<SoundClassViewModel> _soundClasses;
 		private SoundClassViewModel _currentSoundClass;
 		private readonly ICommand _newNaturalClassCommand;
 		private readonly ICommand _newUnnaturalClassCommand;
@@ -27,7 +27,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_dialogService = dialogService;
 			_project = project;
-			_soundClasses = new ObservableList<SoundClassViewModel>(soundClasses);
+			_soundClasses = new BindableList<SoundClassViewModel>(soundClasses);
 			if (_soundClasses.Count > 0)
 				_currentSoundClass = _soundClasses[0];
 

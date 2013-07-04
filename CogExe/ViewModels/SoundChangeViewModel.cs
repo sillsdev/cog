@@ -39,12 +39,12 @@ namespace SIL.Cog.ViewModels
 			get { return _frequency; }
 		}
 
-		public SoundContext ModelSoundChangeLhs
+		internal SoundContext ModelSoundChangeLhs
 		{
 			get { return _modelLhs; }
 		}
 
-		public Ngram ModelCorrespondence
+		internal Ngram ModelCorrespondence
 		{
 			get { return _correspondence; }
 		}

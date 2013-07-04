@@ -48,7 +48,7 @@ namespace SIL.Cog.ViewModels
 			get { return _affix.Type == AffixType.Prefix ? AffixViewModelType.Prefix : AffixViewModelType.Suffix; }
 		}
 
-		public Affix ModelAffix
+		internal Affix ModelAffix
 		{
 			get { return _affix; }
 		}

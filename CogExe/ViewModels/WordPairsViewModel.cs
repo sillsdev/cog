@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using SIL.Collections;
 
@@ -9,9 +11,10 @@ namespace SIL.Cog.ViewModels
 {
 	public class WordPairsViewModel : ViewModelBase
 	{
-		private readonly ObservableList<WordPairViewModel> _wordPairs;
-		private readonly ObservableList<WordPairViewModel> _selectedWordPairs;
-		private readonly ObservableList<WordPairViewModel> _selectedChangeWordPairs;
+		private readonly BindableList<WordPairViewModel> _wordPairs;
+		private ListCollectionView _wordPairsView;
+		private readonly BindableList<WordPairViewModel> _selectedWordPairs;
+		private readonly BindableList<WordPairViewModel> _selectedChangeWordPairs;
 
 		public WordPairsViewModel(CogProject project, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
 			: this(wordPairs.Select(pair => new WordPairViewModel(project, pair, areVarietiesInOrder)))
@@ -25,10 +28,10 @@ namespace SIL.Cog.ViewModels
 
 		private WordPairsViewModel(IEnumerable<WordPairViewModel> wordPairs)
 		{
-			_wordPairs = new ObservableList<WordPairViewModel>(wordPairs);
+			_wordPairs = new BindableList<WordPairViewModel>(wordPairs);
 			_wordPairs.CollectionChanged += _wordPairs_CollectionChanged;
-			_selectedWordPairs = new ObservableList<WordPairViewModel>();
-			_selectedChangeWordPairs = new ObservableList<WordPairViewModel>();
+			_selectedWordPairs = new BindableList<WordPairViewModel>();
+			_selectedChangeWordPairs = new BindableList<WordPairViewModel>();
 		}
 
 		private void _wordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -40,6 +43,19 @@ namespace SIL.Cog.ViewModels
 		public ObservableList<WordPairViewModel> WordPairs
 		{
 			get { return _wordPairs; }
+		}
+
+		public ICollectionView WordPairsView
+		{
+			get
+			{
+				if (_wordPairsView == null)
+				{
+					_wordPairsView = new ListCollectionView(_wordPairs);
+					_wordPairsView.SortDescriptions.Add(new SortDescription("PhoneticSimilarityScore", ListSortDirection.Descending));
+				}
+				return _wordPairsView;
+			}
 		}
 
 		public ObservableList<WordPairViewModel> SelectedWordPairs

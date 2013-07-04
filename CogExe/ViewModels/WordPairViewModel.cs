@@ -93,12 +93,12 @@ namespace SIL.Cog.ViewModels
 			get { return _wordPair.AreCognatePredicted; }
 		}
 
-		public WordPair ModelWordPair
+		internal WordPair ModelWordPair
 		{
 			get { return _wordPair; }
 		}
 
-		public Alignment<Word, ShapeNode> ModelAlignment
+		internal Alignment<Word, ShapeNode> ModelAlignment
 		{
 			get { return _alignment; }
 		}

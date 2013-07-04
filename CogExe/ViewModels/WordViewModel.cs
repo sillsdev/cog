@@ -11,7 +11,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project; 
 		private readonly Word _word;
-		private ObservableList<WordSegmentViewModel> _segments;
+		private BindableList<WordSegmentViewModel> _segments;
 		private readonly SenseViewModel _sense;
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
@@ -40,7 +40,7 @@ namespace SIL.Cog.ViewModels
 
 		private void LoadSegments()
 		{
-			var segments = new ObservableList<WordSegmentViewModel>();
+			var segments = new BindableList<WordSegmentViewModel>();
 			if (_word.Shape != null && _word.Shape.Count > 0)
 			{
 				Annotation<ShapeNode> prefixAnn = _word.Prefix;
@@ -54,7 +54,7 @@ namespace SIL.Cog.ViewModels
 					segments.AddRange(_word.Shape.GetNodes(suffixAnn.Span).Select(node => new WordSegmentViewModel(node)));
 			}
 			segments.CollectionChanged += SegmentsChanged;
-			Segments = segments;
+			Set("Segments", ref _segments, segments);
 			IsValid = _word.Shape != null && _word.Shape.Count > 0;
 		}
 
@@ -104,10 +104,9 @@ namespace SIL.Cog.ViewModels
 		public ObservableList<WordSegmentViewModel> Segments
 		{
 			get { return _segments; }
-			private set { Set(() => Segments, ref _segments, value); }
 		}
 
-		public string this[string columnName]
+		string IDataErrorInfo.this[string columnName]
 		{
 			get
 			{
@@ -123,12 +122,12 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public string Error
+		string IDataErrorInfo.Error
 		{
 			get { return null; }
 		}
 
-		public Word ModelWord
+		internal Word ModelWord
 		{
 			get { return _word; }
 		}

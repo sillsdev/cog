@@ -14,7 +14,7 @@ namespace SIL.Cog.ViewModels
 			_metric = metric;
 		}
 
-		public FeatureSymbol ModelSymbol
+		internal FeatureSymbol ModelSymbol
 		{
 			get { return _symbol; }
 		}

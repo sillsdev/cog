@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
-             mc:Ignorable="d" DataContextChanged="WordPairsView_OnDataContextChanged"
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairsViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:ItemsControlScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
@@ -16,7 +16,7 @@
 				<ColumnDefinition Width="18" />
 			</Grid.ColumnDefinitions>
 			<ScrollViewer Grid.Column="0" Name="ScrollViewer">
-				<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
+				<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordPairsListBox" ItemsSource="{Binding WordPairsView}" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
 					<ListBox.CommandBindings>
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
 						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />

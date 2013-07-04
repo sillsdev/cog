@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Behaviors;
 using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
@@ -115,8 +116,12 @@ namespace SIL.Cog.Views
 
 		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "Name")
-				SizeRowSelectorPaneToFit();
+			switch (e.PropertyName)
+			{
+				case "Name":
+					DispatcherHelper.CheckBeginInvokeOnUI(SizeRowSelectorPaneToFit);
+					break;
+			}
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -125,14 +130,20 @@ namespace SIL.Cog.Views
 			switch (e.PropertyName)
 			{
 				case "Senses":
-					LoadColumns();
-					vm.Senses.CollectionChanged += Senses_CollectionChanged;
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							LoadColumns();
+							vm.Senses.CollectionChanged += Senses_CollectionChanged;
+						});
 					break;
 
 				case "Varieties":
-					LoadCollectionView();
-					SizeRowSelectorPaneToFit();
-					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							LoadCollectionView();
+							SizeRowSelectorPaneToFit();
+							vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+						});
 					WordListsGrid.Dispatcher.BeginInvoke(new Action(SelectFirstCell));
 					break;
 			}

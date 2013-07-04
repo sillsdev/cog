@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -21,22 +22,24 @@ namespace SIL.Cog.Views
 		{
 			var vm = (VarietiesViewModel) DataContext;
 			vm.PropertyChanged += ViewModel_PropertyChanged;
-			SetupVarieties(vm);
+			SetupVarieties();
 		}
 
-		private void SetupVarieties(VarietiesViewModel vm)
+		private void SetupVarieties()
 		{
-			((INotifyCollectionChanged) vm.Varieties).CollectionChanged += Varieties_CollectionChanged;
+			var vm = (VarietiesViewModel) DataContext;
+			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
 			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "Varieties")
+			switch (e.PropertyName)
 			{
-				var vm = (VarietiesViewModel) DataContext;
-				SetupVarieties(vm);
+				case "Varieties":
+					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
+					break;
 			}
 		}
 
@@ -78,8 +81,12 @@ namespace SIL.Cog.Views
 
 		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "Name")
-				VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
+			switch (e.PropertyName)
+			{
+				case "Name":
+					DispatcherHelper.CheckBeginInvokeOnUI(() => VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name));
+					break;
+			}
 		}
 	}
 }

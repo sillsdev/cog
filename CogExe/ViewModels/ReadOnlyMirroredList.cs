@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 
-namespace SIL.Cog.Collections
+namespace SIL.Cog.ViewModels
 {
 	public class ReadOnlyMirroredList<TSource, TTarget> : ReadOnlyObservableList<TTarget>, IReadOnlyKeyedCollection<TSource, TTarget>, IKeyedCollection<TSource, TTarget>
 	{
@@ -58,60 +59,77 @@ namespace SIL.Cog.Collections
 
 		protected virtual void MirrorInsert(int index, IEnumerable<TSource> items, int count)
 		{
-			if (count == 1)
-			{
-				_items.Insert(index, _sourceToTarget(items.First()));
-			}
-			else
-			{
-				using (_items.BulkUpdate())
-					_items.InsertRange(index, items.Select(item => _sourceToTarget(item)));
-			}
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					if (count == 1)
+					{
+						_items.Insert(index, _sourceToTarget(items.First()));
+					}
+					else
+					{
+						using (_items.BulkUpdate())
+							_items.InsertRange(index, items.Select(item => _sourceToTarget(item)));
+					}
+				});
 		}
 
 		protected virtual void MirrorMove(int oldIndex, int count, int newIndex)
 		{
-			if (count == 1)
-			{
-				_items.Move(oldIndex, newIndex);
-			}
-			else
-			{
-				using (_items.BulkUpdate())
-					_items.MoveRange(oldIndex, count, newIndex);
-			}
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					if (count == 1)
+					{
+						_items.Move(oldIndex, newIndex);
+					}
+					else
+					{
+						using (_items.BulkUpdate())
+							_items.MoveRange(oldIndex, count, newIndex);
+					}
+				});
 		}
 
 		protected virtual void MirrorRemove(int index, int count)
 		{
-			if (count == 1)
-			{
-				_items.RemoveAt(index);
-			}
-			else
-			{
-				using (_items.BulkUpdate())
-					_items.RemoveRangeAt(index, count);
-			}
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					if (count == 1)
+					{
+						_items.RemoveAt(index);
+					}
+					else
+					{
+						using (_items.BulkUpdate())
+							_items.RemoveRangeAt(index, count);
+					}
+				});
 		}
 
 		protected virtual void MirrorReplace(int index, int count, IEnumerable<TSource> items)
 		{
-			if (count == 1)
-			{
-				_items[index] = _sourceToTarget(items.First());
-			}
-			else
-			{
-				using (_items.BulkUpdate())
-					_items.ReplaceRange(index, count, items.Select(item => _sourceToTarget(item)));
-			}
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					if (count == 1)
+					{
+						_items[index] = _sourceToTarget(items.First());
+					}
+					else
+					{
+						using (_items.BulkUpdate())
+							_items.ReplaceRange(index, count, items.Select(item => _sourceToTarget(item)));
+					}
+				});
 		}
 
 		protected virtual void MirrorReset(IEnumerable<TSource> source)
 		{
-			using (_items.BulkUpdate())
-				_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
+			if (!DispatcherHelper.UIDispatcher.CheckAccess())
+				source = source.ToArray();
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					using (_items.BulkUpdate())
+						_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
+				});
 		}
 
 		public bool TryGetValue(TSource key, out TTarget item)

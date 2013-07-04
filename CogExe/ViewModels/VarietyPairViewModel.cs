@@ -1,13 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows.Data;
 using GalaSoft.MvvmLight;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public class VarietyPairViewModel : ViewModelBase
 	{
 		private readonly VarietyPair _varietyPair;
-		private readonly ReadOnlyCollection<SoundChangeViewModel> _soundChanges;
+		private readonly ReadOnlyList<SoundChangeViewModel> _soundChanges;
+		private ListCollectionView _soundChangesView;
 		private SoundChangeViewModel _currentSoundChange;
 		private readonly bool _areVarietiesInOrder;
 		private readonly CogProject _project;
@@ -23,7 +27,7 @@ namespace SIL.Cog.ViewModels
 			_cognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted), areVarietiesInOrder);
 			_noncognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted), areVarietiesInOrder);
 
-			_soundChanges = new ReadOnlyCollection<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
+			_soundChanges = new ReadOnlyList<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
 				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
 		}
 
@@ -81,9 +85,23 @@ namespace SIL.Cog.ViewModels
 			get { return _varietyPair.PhoneticSimilarityScore; }
 		}
 
-		public ReadOnlyCollection<SoundChangeViewModel> SoundChanges
+		public ReadOnlyList<SoundChangeViewModel> SoundChanges
 		{
 			get { return _soundChanges; }
+		}
+
+		public ICollectionView SoundChangesView
+		{
+			get
+			{
+				if (_soundChangesView == null)
+				{
+					_soundChangesView = new ListCollectionView(_soundChanges);
+					Debug.Assert(_soundChangesView.GroupDescriptions != null);
+					_soundChangesView.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
+				}
+				return _soundChangesView;
+			}
 		}
 
 		public WordPairsViewModel Cognates
@@ -96,7 +114,7 @@ namespace SIL.Cog.ViewModels
 			get { return _noncognates; }
 		}
 
-		public VarietyPair ModelVarietyPair
+		internal VarietyPair ModelVarietyPair
 		{
 			get { return _varietyPair; }
 		}

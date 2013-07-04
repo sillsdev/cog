@@ -43,7 +43,7 @@ namespace SIL.Cog.ViewModels
 			get { return _segment.FeatureStruct.GetString(); }
 		}
 
-		public Segment ModelSegment
+		internal Segment ModelSegment
 		{
 			get { return _segment; }
 		}

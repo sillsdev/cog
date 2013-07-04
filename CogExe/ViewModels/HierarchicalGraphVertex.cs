@@ -1,5 +1,4 @@
-﻿using SIL.Cog.Controls;
-using SIL.Cog.GraphAlgorithms;
+﻿using SIL.Cog.GraphAlgorithms;
 
 namespace SIL.Cog.ViewModels
 {

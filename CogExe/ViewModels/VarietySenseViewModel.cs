@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using SIL.Cog.Collections;
 using SIL.Cog.Components;
 using SIL.Collections;
 
@@ -33,7 +32,7 @@ namespace SIL.Cog.ViewModels
 			get { return _words; }
 		}
 
-		public ObservableList<Word> ModelWords
+		internal IList<Word> ModelWords
 		{
 			get { return _modelWords; }
 		}
@@ -61,12 +60,12 @@ namespace SIL.Cog.ViewModels
 							wordsToRemove.Remove(word);
 							int oldIndex = ModelWords.IndexOf(word);
 							if (index != oldIndex)
-								ModelWords.Move(oldIndex, index);
+								_modelWords.Move(oldIndex, index);
 						}
 						else
 						{
 							var newWord = new Word(wordStr.Normalize(NormalizationForm.FormD), ModelSense);
-							ModelWords.Insert(index, newWord);
+							_modelWords.Insert(index, newWord);
 							_variety.Words.Add(newWord);
 
 							var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());

@@ -57,7 +57,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public SoundClass ModelSoundClass
+		internal SoundClass ModelSoundClass
 		{
 			get { return _soundClass; }
 		}

@@ -1,17 +1,17 @@
 using System;
-using System.Collections.ObjectModel;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public abstract class MasterViewModelBase : InitializableViewModelBase
 	{
 		private InitializableViewModelBase _currentView;
-		private readonly ReadOnlyCollection<InitializableViewModelBase> _views;
+		private readonly ReadOnlyList<InitializableViewModelBase> _views;
 
 		protected MasterViewModelBase(string displayName, params InitializableViewModelBase[] views)
 			: base(displayName)
 		{
-			_views = new ReadOnlyCollection<InitializableViewModelBase>(views);
+			_views = new ReadOnlyList<InitializableViewModelBase>(views);
 			if (_views.Count > 0)
 				CurrentView = _views[0];
 			foreach (InitializableViewModelBase view in _views)
@@ -24,7 +24,7 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_views);
 		}
 
-		public ReadOnlyCollection<InitializableViewModelBase> Views
+		public ReadOnlyList<InitializableViewModelBase> Views
 		{
 			get { return _views; }
 		}

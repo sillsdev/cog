@@ -136,9 +136,6 @@
     <Compile Include="Behaviors\TextBlockBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaviors.cs" />
     <Compile Include="Behaviors\UIElementBehaviors.cs" />
-    <Compile Include="Collections\ConcurrentList.cs" />
-    <Compile Include="Collections\ReadOnlyMirroredCollection.cs" />
-    <Compile Include="Collections\ReadOnlyMirroredList.cs" />
     <Compile Include="Controls\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>
@@ -162,7 +159,6 @@
     <Compile Include="Controls\ZoomContentPresenter.cs" />
     <Compile Include="Controls\ZoomControl.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
-    <Compile Include="Converters\ConcurrentListConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
@@ -243,6 +239,7 @@
     <Compile Include="Services\ServiceExtensions.cs" />
     <Compile Include="Services\WindowViewModelMappings.cs" />
     <Compile Include="ViewModels\AddUnnaturalClassSegmentViewModel.cs" />
+    <Compile Include="ViewModels\BindableList.cs" />
     <Compile Include="ViewModels\ConsonantGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\DolgopolskyCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\EditNaturalClassViewModel.cs" />
@@ -260,6 +257,8 @@
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
+    <Compile Include="ViewModels\ReadOnlyMirroredCollection.cs" />
+    <Compile Include="ViewModels\ReadOnlyMirroredList.cs" />
     <Compile Include="ViewModels\SenseAlignmentViewModel.cs" />
     <Compile Include="ViewModels\SenseAlignmentWordViewModel.cs" />
     <Compile Include="ViewModels\SimilarSegmentsViewModel.cs" />
@@ -324,6 +323,7 @@
     <Compile Include="ViewModels\SimilarityMatrixVarietyViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixVarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietiesVarietyViewModel.cs" />
+    <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\VowelGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
@@ -336,7 +336,6 @@
     <Compile Include="ViewModels\WordPairViewModel.cs" />
     <Compile Include="ViewModels\WordSegmentViewModel.cs" />
     <Compile Include="ViewModels\WordViewModel.cs" />
-    <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\WorkspaceViewModelBase.cs" />
     <Compile Include="ViewModels\WrapperViewModel.cs" />
     <Compile Include="Views\AboutBox.xaml.cs">

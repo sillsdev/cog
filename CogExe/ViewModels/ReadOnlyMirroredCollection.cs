@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 
-namespace SIL.Cog.Collections
+namespace SIL.Cog.ViewModels
 {
 	public class ReadOnlyMirroredCollection<TSource, TTarget> : ReadOnlyObservableList<TTarget>, IReadOnlyKeyedCollection<TSource, TTarget>, IKeyedCollection<TSource, TTarget>
 	{
@@ -50,37 +51,48 @@ namespace SIL.Cog.Collections
 
 		protected virtual void MirrorAdd(IEnumerable<TSource> items, int count)
 		{
-			if (count == 1)
-			{
-				_items.Add(_sourceToTarget(items.First()));
-			}
-			else
-			{
-				using (_items.BulkUpdate())
-					_items.AddRange(items.Select(item => _sourceToTarget(item)));
-			}
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					if (count == 1)
+					{
+						_items.Add(_sourceToTarget(items.First()));
+					}
+					else
+					{
+						using (_items.BulkUpdate())
+							_items.AddRange(items.Select(item => _sourceToTarget(item)));
+					}
+				});
 		}
 
 		protected virtual void MirrorRemove(IEnumerable<TSource> items, int count)
 		{
-			if (count == 1)
-			{
-				_items.Remove(items.First());
-			}
-			else
-			{
-				using (_items.BulkUpdate())
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
 				{
-					foreach (TSource item in items)
-						_items.Remove(item);
-				}
-			}
+					if (count == 1)
+					{
+						_items.Remove(items.First());
+					}
+					else
+					{
+						using (_items.BulkUpdate())
+						{
+							foreach (TSource item in items)
+								_items.Remove(item);
+						}
+					}
+				});
 		}
 
 		protected virtual void MirrorReset(IEnumerable<TSource> source)
 		{
-			using (_items.BulkUpdate())
-				_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
+			if (!DispatcherHelper.UIDispatcher.CheckAccess())
+				source = source.ToArray();
+			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					using (_items.BulkUpdate())
+						_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
+				});
 		}
 
 		public bool TryGetValue(TSource key, out TTarget item)

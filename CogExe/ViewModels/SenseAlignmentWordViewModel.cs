@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -10,14 +10,14 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly VarietyViewModel _variety;
 		private readonly string _prefix;
-		private readonly ReadOnlyCollection<string> _columns;
+		private readonly ReadOnlyList<string> _columns;
 		private readonly string _suffix;
 
 		public SenseAlignmentWordViewModel(Word word, AlignmentCell<ShapeNode> prefix, IEnumerable<AlignmentCell<ShapeNode>> columns, AlignmentCell<ShapeNode> suffix)
 		{
 			_variety = new VarietyViewModel(word.Variety);
 			_prefix = prefix.StrRep();
-			_columns = new ReadOnlyCollection<string>(columns.Select(cell => cell.IsNull ? "-" : cell.StrRep()).ToArray());
+			_columns = new ReadOnlyList<string>(columns.Select(cell => cell.IsNull ? "-" : cell.StrRep()).ToArray());
 			_suffix = suffix.StrRep();
 		}
 
@@ -31,7 +31,7 @@ namespace SIL.Cog.ViewModels
 			get { return _prefix; }
 		}
 
-		public ReadOnlyCollection<string> Columns
+		public ReadOnlyList<string> Columns
 		{
 			get { return _columns; }
 		}

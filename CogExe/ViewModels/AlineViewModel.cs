@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using SIL.Cog.Components;
 using SIL.Cog.SequenceAlignment;
 using SIL.Cog.Services;
+using SIL.Collections;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.ViewModels
@@ -26,7 +26,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private AlineMode _mode;
 		private bool _expansionCompressionEnabled;
-		private readonly ReadOnlyCollection<RelevantFeatureViewModel> _features;
+		private readonly ReadOnlyList<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
 
 		public AlineViewModel(IDialogService dialogService, CogProject project, Aline aligner)
@@ -39,7 +39,7 @@ namespace SIL.Cog.ViewModels
 				vm.PropertyChanged += ChildPropertyChanged;
 				features.Add(vm);
 			}
-			_features = new ReadOnlyCollection<RelevantFeatureViewModel>(features);
+			_features = new ReadOnlyList<RelevantFeatureViewModel>(features);
 			switch (aligner.Settings.Mode)
 			{
 				case AlignmentMode.Local:
@@ -85,7 +85,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ReadOnlyCollection<RelevantFeatureViewModel> Features
+		public ReadOnlyList<RelevantFeatureViewModel> Features
 		{
 			get { return _features; }
 		}

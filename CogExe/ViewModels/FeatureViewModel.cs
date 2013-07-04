@@ -31,7 +31,7 @@ namespace SIL.Cog.ViewModels
 			get { return _feature.Description; }
 		}
 
-		public SymbolicFeature ModelFeature
+		internal SymbolicFeature ModelFeature
 		{
 			get { return _feature; }
 		}

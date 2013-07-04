@@ -67,7 +67,7 @@ namespace SIL.Cog.ViewModels
 			};
 
 		private CogProject _project;
-		private readonly BulkObservableList<GlobalSegmentViewModel> _globalSegments; 
+		private readonly BindableList<GlobalSegmentViewModel> _globalSegments; 
 		private readonly WordPairsViewModel _wordPairs;
 		private GlobalCorrespondenceViewModel _selectedCorrespondence;
 		private readonly BackgroundWorker _generateCorrespondencesWorker;
@@ -75,14 +75,14 @@ namespace SIL.Cog.ViewModels
 		private readonly ManualResetEvent _workCompleteEvent;
 		private bool _generatingCorrespondences;
 		private SoundCorrespondenceType _correspondenceType;
-		private readonly BulkObservableList<GlobalCorrespondenceViewModel> _globalCorrespondences;
+		private readonly BindableList<GlobalCorrespondenceViewModel> _globalCorrespondences;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 
 		public SimilarSegmentsViewModel()
 			: base("Similar Segments")
 		{
-			_globalSegments = new BulkObservableList<GlobalSegmentViewModel>();
-			_globalCorrespondences = new BulkObservableList<GlobalCorrespondenceViewModel>();
+			_globalSegments = new BindableList<GlobalSegmentViewModel>();
+			_globalCorrespondences = new BindableList<GlobalCorrespondenceViewModel>();
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 			_generateCorrespondencesWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
 			_generateCorrespondencesWorker.DoWork += GenerateCorrespondencesAsync;

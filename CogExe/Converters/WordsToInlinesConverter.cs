@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -23,7 +24,7 @@ namespace SIL.Cog.Converters
 				if (!first)
 					inlines.Add(new Run("/"));
 				var run = new Run(wordVM.StrRep);
-				if (!string.IsNullOrEmpty(wordVM["StrRep"]))
+				if (!string.IsNullOrEmpty(((IDataErrorInfo) wordVM)["StrRep"]))
 					run.TextDecorations = textDecoration;
 
 				inlines.Add(run);

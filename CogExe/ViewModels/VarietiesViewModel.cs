@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
-using SIL.Cog.Collections;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;
@@ -16,6 +17,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IProgressService _progressService;
 		private ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel> _varieties;
+		private ListCollectionView _varietiesView;
 		private VarietiesVarietyViewModel _currentVariety;
 		private CogProject _project;
 		private bool _isVarietySelected;
@@ -47,7 +49,8 @@ namespace SIL.Cog.ViewModels
 						return vm;
 					}, vm => vm.ModelVariety));
 			_varieties.CollectionChanged += VarietiesChanged;
-			CurrentVariety = _varieties.Count > 0 ? _varieties[0] : null;
+			Set("VarietiesView", ref _varietiesView, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
+			CurrentVariety = _varietiesView.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -120,6 +123,11 @@ namespace SIL.Cog.ViewModels
 		public ReadOnlyObservableList<VarietiesVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
+		}
+
+		public ICollectionView VarietiesView
+		{
+			get { return _varietiesView; }
 		}
 
 		public VarietiesVarietyViewModel CurrentVariety

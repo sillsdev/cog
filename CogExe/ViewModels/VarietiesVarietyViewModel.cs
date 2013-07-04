@@ -1,9 +1,10 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
-using SIL.Cog.Collections;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -13,14 +14,17 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly CogProject _project;
 		private readonly IDialogService _dialogService;
-		private readonly BulkObservableList<VarietySegmentViewModel> _segments;
-		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments; 
+		private readonly BindableList<VarietySegmentViewModel> _segments;
+		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
+		private double _maxSegProb;
+		private ListCollectionView _segmentsView;
 		private readonly ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
-		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words; 
+		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
+		private ListCollectionView _wordsView;
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
-		private readonly ObservableList<WordViewModel> _selectedWords;
+		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
@@ -30,8 +34,9 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			_dialogService = dialogService;
-			_segments = new BulkObservableList<VarietySegmentViewModel>(variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<VarietySegmentViewModel>()
+			_segments = new BindableList<VarietySegmentViewModel>(variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<VarietySegmentViewModel>()
 				: variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
+			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.PropertyChanged += VarietyPropertyChanged;
 			_senses = new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
@@ -43,10 +48,8 @@ namespace SIL.Cog.ViewModels
 				}, vm => vm.ModelWord);
 			variety.Words.CollectionChanged += WordsChanged;
 
-			_selectedWords = new ObservableList<WordViewModel>();
+			_selectedWords = new BindableList<WordViewModel>();
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.ModelAffix);
-			if (_affixes.Count > 0)
-				_currentAffix = _affixes[0];
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
@@ -56,7 +59,7 @@ namespace SIL.Cog.ViewModels
 		{
 			switch (e.PropertyName)
 			{
-				case "SegmentFrequencyDistribution":
+				case "SegmentProbabilityDistribution":
 					var variety = (Variety) sender;
 					Segment curSeg = null;
 					if (CurrentSegment != null)
@@ -67,6 +70,7 @@ namespace SIL.Cog.ViewModels
 						if (variety.SegmentFrequencyDistribution != null)
 							_segments.AddRange(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
 					}
+					MaxSegmentProbability = _segments.Select(seg => seg.Probability).Concat(0).Max();
 					if (curSeg != null)
 						CurrentSegment = _segments.FirstOrDefault(vm => vm.ModelSegment.Equals(curSeg));
 					break;
@@ -132,9 +136,25 @@ namespace SIL.Cog.ViewModels
 			ChildrenAcceptChanges(_words);
 		}
 
+		public double MaxSegmentProbability
+		{
+			get { return _maxSegProb; }
+			private set { Set(() => MaxSegmentProbability, ref _maxSegProb, value); }
+		}
+
 		public ReadOnlyObservableList<VarietySegmentViewModel> Segments
 		{
 			get { return _readOnlySegments; }
+		}
+
+		public ICollectionView SegmentsView
+		{
+			get
+			{
+				if (_segmentsView == null)
+					_segmentsView = new ListCollectionView(_segments);
+				return _segmentsView;
+			}
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses
@@ -145,6 +165,21 @@ namespace SIL.Cog.ViewModels
 		public ReadOnlyObservableList<WordViewModel> Words
 		{
 			get { return _words; }
+		}
+
+		public ICollectionView WordsView
+		{
+			get
+			{
+				if (_wordsView == null)
+				{
+					_wordsView = new ListCollectionView(_words);
+					Debug.Assert(_wordsView.GroupDescriptions != null);
+					_wordsView.GroupDescriptions.Add(new PropertyGroupDescription("Sense"));
+					_wordsView.SortDescriptions.Add(new SortDescription("Sense.Gloss", ListSortDirection.Ascending));
+				}
+				return _wordsView;
+			}
 		}
 
 		public ReadOnlyObservableList<AffixViewModel> Affixes

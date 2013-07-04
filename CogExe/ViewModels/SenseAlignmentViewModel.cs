@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using GalaSoft.MvvmLight.Messaging;
-using SIL.Cog.Collections;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -10,8 +11,9 @@ namespace SIL.Cog.ViewModels
 {
 	public class SenseAlignmentViewModel : WorkspaceViewModelBase
 	{
-		private readonly BulkObservableList<SenseAlignmentWordViewModel> _words; 
+		private readonly BindableList<SenseAlignmentWordViewModel> _words; 
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
+		private ListCollectionView _sensesView;
 		private SenseViewModel _currentSense;
 		private CogProject _project;
 		private int _columnCount;
@@ -21,7 +23,7 @@ namespace SIL.Cog.ViewModels
 		public SenseAlignmentViewModel()
 			: base("Sense Alignment")
 		{
-			_words = new BulkObservableList<SenseAlignmentWordViewModel>();
+			_words = new BindableList<SenseAlignmentWordViewModel>();
 			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
 		}
 
@@ -40,7 +42,8 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
 			_senses.CollectionChanged += SensesChanged;
-			CurrentSense = _senses.Count > 0 ? _senses[0] : null;
+			Set("SensesView", ref _sensesView, new ListCollectionView(_senses) {SortDescriptions = {new SortDescription("Gloss", ListSortDirection.Ascending)}});
+			CurrentSense = _senses.Count > 0 ? (SenseViewModel) _sensesView.GetItemAt(0) : null;
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -52,6 +55,11 @@ namespace SIL.Cog.ViewModels
 		public ReadOnlyObservableList<SenseViewModel> Senses
 		{
 			get { return _senses; }
+		}
+
+		public ICollectionView SensesView
+		{
+			get { return _sensesView; }
 		}
 
 		public int ColumnCount

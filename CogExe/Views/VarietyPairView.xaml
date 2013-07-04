@@ -6,7 +6,7 @@
              xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:v="clr-namespace:SIL.Cog.Views" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:VarietyPairViewModel}"
-             d:DesignHeight="300" d:DesignWidth="300" DataContextChanged="VarietyPairView_DataContextChanged">
+             d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <cnvtrs:ProbabilityToWidthConverter x:Key="ProbConverter" />
         <s:Double x:Key="MaxProbability">1.0</s:Double>
@@ -50,8 +50,8 @@
 				<v:WordPairsView DataContext="{Binding Noncognates}" />
 			</HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound changes">
-                <DataGrid Name="CorrespondenceDataGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" HorizontalScrollBarVisibility="Disabled"
-                          AlternatingRowBackground="White" IsReadOnly="True" SelectedItem="{Binding CurrentSoundChange}" Sorting="CorrespondenceDataGrid_Sorting">
+                <DataGrid Name="CorrespondenceDataGrid" ItemsSource="{Binding SoundChangesView, NotifyOnTargetUpdated=True}" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column"
+						  HorizontalScrollBarVisibility="Disabled" AlternatingRowBackground="White" IsReadOnly="True" SelectedItem="{Binding CurrentSoundChange}" Sorting="CorrespondenceDataGrid_Sorting" TargetUpdated="CorrespondenceDataGrid_OnTargetUpdated">
                     <DataGrid.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.ContainerStyle>
@@ -107,7 +107,7 @@
 								</Style>
 							</DataGridTextColumn.ElementStyle>
 						</DataGridTextColumn>
-                        <DataGridTemplateColumn Header="Probability" Width="*" ClipboardContentBinding="{Binding Probability, StringFormat=p}" SortDirection="Descending" SortMemberPath="Probability">
+                        <DataGridTemplateColumn Header="Probability" Width="*" ClipboardContentBinding="{Binding Probability, StringFormat=p}" SortMemberPath="Probability">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="vm:SoundChangeViewModel">
                                     <StackPanel Orientation="Horizontal">

@@ -14,7 +14,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly CogProject _project;
-		private readonly ObservableList<SegmentMappingViewModel> _mappings;
+		private readonly BindableList<SegmentMappingViewModel> _mappings;
 		private SegmentMappingViewModel _currentMapping;
 		private readonly ICommand _newCommand;
 		private readonly ICommand _removeCommand;
@@ -30,7 +30,7 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_importService = importService;
 			_project = project;
-			_mappings = new ObservableList<SegmentMappingViewModel>(mappings.Select(mapping => new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2)));
+			_mappings = new BindableList<SegmentMappingViewModel>(mappings.Select(mapping => new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2)));
 			_newCommand = new RelayCommand(AddMapping);
 			_removeCommand = new RelayCommand(RemoveMapping, CanRemoveMapping);
 			_importCommand = new RelayCommand(Import);

@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 			get { return _symbol.Description; }
 		}
 
-		public FeatureSymbol ModelSymbol
+		internal FeatureSymbol ModelSymbol
 		{
 			get { return _symbol; }
 		}

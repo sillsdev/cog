@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -12,7 +12,7 @@ namespace SIL.Cog.ViewModels
 		private readonly int _freq;
 		private readonly double _normalizedFreq;
 		private bool _isSelected;
-		private readonly ReadOnlyCollection<WordPairViewModel> _wordPairs; 
+		private readonly ReadOnlyList<WordPairViewModel> _wordPairs; 
 
 		public GlobalCorrespondenceViewModel(GlobalSegmentViewModel segment1, GlobalSegmentViewModel segment2, int freq, double normalizedFreq, IEnumerable<WordPairViewModel> wordPairs)
 		{
@@ -20,7 +20,7 @@ namespace SIL.Cog.ViewModels
 			_segment2 = segment2;
 			_freq = freq;
 			_normalizedFreq = normalizedFreq;
-			_wordPairs = new ReadOnlyCollection<WordPairViewModel>(wordPairs.ToArray());
+			_wordPairs = new ReadOnlyList<WordPairViewModel>(wordPairs.ToArray());
 		}
 
 		public GlobalSegmentViewModel Segment1
@@ -49,7 +49,7 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsSelected, ref _isSelected, value); }
 		}
 
-		public ReadOnlyCollection<WordPairViewModel> WordPairs
+		public ReadOnlyList<WordPairViewModel> WordPairs
 		{
 			get { return _wordPairs; }
 		}

@@ -10,7 +10,7 @@
 			_variety = variety;
 		}
 
-		public Variety ModelVariety
+		internal Variety ModelVariety
 		{
 			get { return _variety; }
 		}

@@ -28,7 +28,8 @@ namespace SIL.Cog.Services
 				{typeof(EditNaturalClassViewModel), typeof(EditNaturalClassDialog)},
 				{typeof(EditUnnaturalClassViewModel), typeof(EditUnnaturalClassDialog)},
 				{typeof(AddUnnaturalClassSegmentViewModel), typeof(AddUnnaturalClassSegmentDialog)},
-				{typeof(EditRegionViewModel), typeof(EditRegionDialog)}
+				{typeof(EditRegionViewModel), typeof(EditRegionDialog)},
+				{typeof(FindViewModel), typeof(FindDialog)}
 			};
 		}
 

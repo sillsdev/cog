@@ -39,7 +39,7 @@ namespace SIL.Cog.ViewModels
 		private void AddMapping()
 		{
 			var vm = new NewSegmentMappingViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var mapping = new SegmentMappingViewModel(_project, vm.Segment1, vm.Segment2);
 				_mappings.Add(mapping);

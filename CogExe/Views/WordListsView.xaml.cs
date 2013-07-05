@@ -6,10 +6,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Behaviors;
 using SIL.Cog.Converters;
 using SIL.Cog.ViewModels;
+using SIL.Collections;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
 
@@ -20,11 +22,14 @@ namespace SIL.Cog.Views
 	/// </summary>
 	public partial class WordListsView
 	{
+		private readonly SimpleMonitor _monitor;
+
 		public WordListsView()
 		{
 			InitializeComponent();
 			WordListsGrid.ClipboardExporters.Clear();
 			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
+			_monitor = new SimpleMonitor();
 		}
 
 		private void WordListsView_OnLoaded(object sender, RoutedEventArgs e)
@@ -146,6 +151,36 @@ namespace SIL.Cog.Views
 						});
 					WordListsGrid.Dispatcher.BeginInvoke(new Action(SelectFirstCell));
 					break;
+
+				case "CurrentVarietySense":
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							if (_monitor.Busy)
+								return;
+
+							using (_monitor.Enter())
+							{
+								WordListsGrid.SelectedCellRanges.Clear();
+								if (vm.CurrentVarietySense != null)
+								{
+									WordListsVarietyViewModel variety = vm.CurrentVarietySense.Variety;
+									int itemIndex = vm.Varieties.IndexOf(variety);
+									int columnIndex = variety.Senses.IndexOf(vm.CurrentVarietySense);
+									WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, columnIndex));
+									WordListsGrid.BringItemIntoView(variety);
+									WordListsGrid.Dispatcher.BeginInvoke(new Action(() =>
+									    {
+									        var row = (DataRow) WordListsGrid.GetContainerFromIndex(itemIndex);
+										    if (row != null)
+										    {
+											    Cell cell = row.Cells[columnIndex];
+											    cell.BringIntoView();
+										    }
+									    }), DispatcherPriority.ApplicationIdle);
+								}
+							}
+						});
+					break;
 			}
 		}
 
@@ -177,6 +212,29 @@ namespace SIL.Cog.Views
 		{
 			WordListsGrid.Items.Refresh();
 			SizeRowSelectorPaneToFit();
+		}
+
+		private void WordListsGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
+		{
+			var vm = (WordListsViewModel) DataContext;
+			if (_monitor.Busy)
+				return;
+
+			using (_monitor.Enter())
+			{
+				if (WordListsGrid.SelectedCellRanges.Count == 1)
+				{
+					SelectionCellRange cellRange = WordListsGrid.SelectedCellRanges[0];
+					int itemIndex = cellRange.ItemRange.StartIndex;
+					WordListsVarietyViewModel variety = vm.Varieties[itemIndex];
+					int columnIndex = cellRange.ColumnRange.StartIndex;
+					vm.CurrentVarietySense = variety.Senses[columnIndex];
+				}
+				else
+				{
+					vm.CurrentVarietySense = null;
+				}
+			}
 		}
 	}
 }

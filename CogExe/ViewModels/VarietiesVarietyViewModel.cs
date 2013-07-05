@@ -90,7 +90,7 @@ namespace SIL.Cog.ViewModels
 		private void NewAffix()
 		{
 			var vm = new EditAffixViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				ModelVariety.Affixes.Add(affix);
@@ -108,7 +108,7 @@ namespace SIL.Cog.ViewModels
 		private void EditAffix()
 		{
 			var vm = new EditAffixViewModel(_project, _currentAffix.ModelAffix);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = ModelVariety.Affixes.IndexOf(_currentAffix.ModelAffix);

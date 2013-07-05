@@ -40,7 +40,7 @@ namespace SIL.Cog.ViewModels
 		private void AddSegment()
 		{
 			var vm = new AddUnnaturalClassSegmentViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_segments.Add(vm.Segment);
 				CurrentSegment = vm.Segment;

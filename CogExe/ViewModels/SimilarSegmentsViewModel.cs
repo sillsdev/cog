@@ -83,7 +83,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_globalSegments = new BindableList<GlobalSegmentViewModel>();
 			_globalCorrespondences = new BindableList<GlobalCorrespondenceViewModel>();
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 			_generateCorrespondencesWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
 			_generateCorrespondencesWorker.DoWork += GenerateCorrespondencesAsync;
 			_generateCorrespondencesWorker.RunWorkerCompleted += GenerateCorrespondencesAsyncFinished;
@@ -328,14 +328,14 @@ namespace SIL.Cog.ViewModels
 			CancelWorker();
 		}
 
-		private void HandleNotificationMessage(NotificationMessage msg)
+		private void HandleMessage(Message msg)
 		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.PerformingComparison:
+				case MessageType.StartingComparison:
 					CancelWorker();
 					break;
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					GenerateCorrespondences();
 					break;
 			}

@@ -63,7 +63,7 @@ namespace SIL.Cog.ViewModels
 		private void EditRegion()
 		{
 			var vm = new EditRegionViewModel(_project, _variety.ModelVariety, _region);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_region.Description = vm.Description;
 				IsChanged = true;

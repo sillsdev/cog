@@ -15,7 +15,7 @@ namespace SIL.Cog.Services
 
 		public bool ShowProgress(object ownerViewModel, ProgressViewModel progressViewModel)
 		{
-			return _dialogService.ShowDialog(ownerViewModel, progressViewModel) == true;
+			return _dialogService.ShowModalDialog(ownerViewModel, progressViewModel) == true;
 		}
 
 		public void ShowProgress(Action action)

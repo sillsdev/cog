@@ -66,8 +66,7 @@ namespace SIL.Cog.ViewModels
 
 			PropertyChanging += MainWindowViewModel_PropertyChanging;
 
-			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 
 			string[] args = Environment.GetCommandLineArgs();
 			if (args.Length > 1)
@@ -125,19 +124,19 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		private void HandleSwitchView(SwitchViewMessage message)
+		private void HandleMessage(Message msg)
 		{
-			SwitchView(message.ViewModelType, message.Model);
-		}
-
-		private void HandleNotificationMessage(NotificationMessage msg)
-		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					if (ProjectFilePath == null || IsChanged)
 						return;
 					SaveComparisonCache();
+					break;
+
+				case MessageType.SwitchView:
+					var data = (SwitchViewData) msg.Data;
+					SwitchView(data.ViewModelType, data.Model);
 					break;
 			}
 		}
@@ -258,7 +257,7 @@ namespace SIL.Cog.ViewModels
 		private void ExportSimilarityMatrix()
 		{
 			var vm = new ExportSimilarityMatrixViewModel();
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_exportService.ExportSimilarityMatrix(this, _project, vm.SimilarityMetric);
 		}
 
@@ -280,7 +279,7 @@ namespace SIL.Cog.ViewModels
 		private void ExportHierarchicalGraph()
 		{
 			var vm = new ExportHierarchicalGraphViewModel();
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_exportService.ExportHierarchicalGraph(this, _project.GenerateHierarchicalGraph(vm.GraphType, vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
 		}
 
@@ -292,7 +291,7 @@ namespace SIL.Cog.ViewModels
 		private void ExportNetworkGraph()
 		{
 			var vm = new ExportNetworkGraphViewModel();
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_exportService.ExportNetworkGraph(this, _project.GenerateNetworkGraph(vm.SimilarityMetric), vm.SimilarityScoreFilter);
 		}
 

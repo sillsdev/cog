@@ -72,7 +72,7 @@ namespace SIL.Cog.ViewModels
 			if (_project.Varieties.Count == 0 || _project.Senses.Count == 0)
 				return;
 
-			Messenger.Default.Send(new NotificationMessage(Notifications.PerformingComparison));
+			Messenger.Default.Send(new Message(MessageType.StartingComparison));
 			ResetVarieties();
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);
@@ -96,7 +96,7 @@ namespace SIL.Cog.ViewModels
 						return;
 					vm.Text = "Analyzing results...";
 					CreateSimilarityMatrix();
-					Messenger.Default.Send(new NotificationMessage(Notifications.ComparisonPerformed));
+					Messenger.Default.Send(new Message(MessageType.ComparisonPerformed));
 				});
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 

@@ -1,5 +1,8 @@
 ﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;
@@ -14,10 +17,14 @@ namespace SIL.Cog.ViewModels
 		private readonly IImportService _importService;
 		private readonly IExportService _exportService;
 		private readonly IProgressService _progressService;
+		private VarietySenseViewModel _currentVarietySense;
 		private CogProject _project;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
  		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
+
+		private VarietySenseViewModel _startVarietySense;
+		private FindViewModel _findViewModel;
 
 		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService, IImportService importService, IExportService exportService)
 			: base("Word lists")
@@ -28,9 +35,12 @@ namespace SIL.Cog.ViewModels
 			_progressService = progressService;
 			_exportService = exportService;
 
+			Messenger.Default.Register<Message>(this, HandleMessage);
+
 			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
- 					new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense))));
+ 					new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
+					new CommandViewModel("Find words", new RelayCommand(Find))));
 
 			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
 					new CommandViewModel("Import word lists", new RelayCommand(Import)),
@@ -42,7 +52,7 @@ namespace SIL.Cog.ViewModels
 		private void AddNewVariety()
 		{
 			var vm = new EditVarietyViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_project.Varieties.Add(new Variety(vm.Name));
 				IsChanged = true;
@@ -52,11 +62,100 @@ namespace SIL.Cog.ViewModels
 		private void AddNewSense()
 		{
 			var vm = new EditSenseViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_project.Senses.Add(new Sense(vm.Gloss, vm.Category));
 				IsChanged = true;
 			}
+		}
+
+		private void HandleMessage(Message msg)
+		{
+			switch (msg.Type)
+			{
+				case MessageType.ViewChanged:
+					var data = (ViewChangedData) msg.Data;
+					if (data.OldViewModel == this)
+					{
+						if (_findViewModel != null)
+							_dialogService.CloseDialog(_findViewModel);
+					}
+					break;
+			}
+		}
+
+		private void Find()
+		{
+			if (_findViewModel != null)
+				return;
+
+			_findViewModel = new FindViewModel(FindNext);
+			_findViewModel.PropertyChanged += _findViewModel_PropertyChanged;
+			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
+		}
+
+		private void _findViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			_startVarietySense = null;
+		}
+
+		private void FindNext()
+		{
+			if (_varieties.Count > 0 && _senses.Count > 0 && _startVarietySense == null)
+			{
+				_startVarietySense = _currentVarietySense;
+			}
+			else if (_startVarietySense == _currentVarietySense)
+			{
+				SearchEnded();
+				return;
+			}
+			WordListsVarietyViewModel variety = _currentVarietySense.Variety;
+			int senseIndex = variety.Senses.IndexOf(_currentVarietySense);
+			VarietySenseViewModel curVarietySense;
+			switch (_findViewModel.Field)
+			{
+				case FindField.Word:
+					int varietyIndex = _varieties.IndexOf(variety);
+					do
+					{
+						senseIndex++;
+						if (senseIndex == _varieties[varietyIndex].Senses.Count)
+						{
+							varietyIndex = (varietyIndex + 1) % _varieties.Count;
+							senseIndex = 0;
+						}
+
+						curVarietySense = _varieties[varietyIndex].Senses[senseIndex];
+						if (curVarietySense.Words.Any(w => w.StrRep.Contains(_findViewModel.String)))
+						{
+							CurrentVarietySense = curVarietySense;
+							return;
+						}
+					} while (_startVarietySense != curVarietySense);
+					break;
+
+				case FindField.Sense:
+					do
+					{
+						senseIndex = (senseIndex + 1) % variety.Senses.Count;
+
+						curVarietySense = variety.Senses[senseIndex];
+						if (curVarietySense.ModelSense.Gloss.Contains(_findViewModel.String))
+						{
+							CurrentVarietySense = curVarietySense;
+							return;
+						}
+					} while (_startVarietySense != curVarietySense);
+					break;
+			}
+			SearchEnded();
+		}
+
+		private void SearchEnded()
+		{
+			_dialogService.ShowMessage(_findViewModel, "Find reached the starting point of the search.", "Cog");
+			_startVarietySense = null;
 		}
 
 		private void Import()
@@ -73,7 +172,7 @@ namespace SIL.Cog.ViewModels
 		private void RunStemmer()
 		{
 			var vm = new RunStemmerViewModel(true);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				if (vm.Method == StemmingMethod.Automatic)
 				{
@@ -106,6 +205,12 @@ namespace SIL.Cog.ViewModels
 		{
 			get { return _isEmpty; }
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
+		}
+
+		public VarietySenseViewModel CurrentVarietySense
+		{
+			get { return _currentVarietySense; }
+			set { Set(() => CurrentVarietySense, ref _currentVarietySense, value); }
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses

@@ -18,7 +18,7 @@ namespace SIL.Cog.ViewModels
 			: base("Network Graph")
 		{
 			_exportService = exportService;
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
@@ -52,11 +52,11 @@ namespace SIL.Cog.ViewModels
 			Graph = null;
 		}
 
-		private void HandleNotificationMessage(NotificationMessage msg)
+		private void HandleMessage(Message msg)
 		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					Graph = _project.GenerateNetworkGraph(_similarityMetric);
 					break;
 			}

@@ -16,11 +16,11 @@ namespace SIL.Cog.ViewModels
 			_senses = new VarietySenseViewModelCollection(project.Senses,
 				ModelVariety.Words, sense =>
 					{
-						var vm = new VarietySenseViewModel(project, ModelVariety, sense, ModelVariety.Words[sense]);
+						var vm = new VarietySenseViewModel(project, this, sense, ModelVariety.Words[sense]);
 						vm.PropertyChanged += ChildPropertyChanged;
 						return vm;
 					});
-			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), ModelVariety)));
+			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(VarietiesViewModel), ModelVariety))));
 		}
 
 		public override void AcceptChanges()

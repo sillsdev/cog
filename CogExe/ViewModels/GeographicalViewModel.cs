@@ -31,7 +31,7 @@ namespace SIL.Cog.ViewModels
 			_exportService = exportService;
 			_newRegionCommand = new RelayCommand<IEnumerable<Tuple<double, double>>>(AddNewRegion);
 			_currentClusters = new List<Cluster<Variety>>();
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 			_similarityScoreThreshold = 0.7;
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
@@ -55,18 +55,18 @@ namespace SIL.Cog.ViewModels
 		private void AddNewRegion(IEnumerable<Tuple<double, double>> coordinates)
 		{
 			var vm = new EditRegionViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var region = new GeographicRegion(coordinates.Select(coord => new GeographicCoordinate(coord.Item1, coord.Item2))) {Description = vm.Description};
 				vm.CurrentVariety.ModelVariety.Regions.Add(region);
 			}
 		}
 
-		private void HandleNotificationMessage(NotificationMessage msg)
+		private void HandleMessage(Message msg)
 		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					ClusterVarieties();
 					break;
 			}

@@ -24,14 +24,14 @@ namespace SIL.Cog.ViewModels
 			: base("Sense Alignment")
 		{
 			_words = new BindableList<SenseAlignmentWordViewModel>();
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 		}
 
-		private void HandleNotificationMessage(NotificationMessage msg)
+		private void HandleMessage(Message msg)
 		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					AlignWords();
 					break;
 			}

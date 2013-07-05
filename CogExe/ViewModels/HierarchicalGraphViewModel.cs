@@ -36,7 +36,7 @@ namespace SIL.Cog.ViewModels
 			: base("Hierarchical Graph")
 		{
 			_exportService = exportService;
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
 			    new CommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),
@@ -75,11 +75,11 @@ namespace SIL.Cog.ViewModels
 			Graph = null;
 		}
 
-		private void HandleNotificationMessage(NotificationMessage msg)
+		private void HandleMessage(Message msg)
 		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 					break;
 			}

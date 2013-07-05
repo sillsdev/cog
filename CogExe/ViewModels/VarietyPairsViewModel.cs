@@ -36,7 +36,7 @@ namespace SIL.Cog.ViewModels
 		{
 			_progressService = progressService;
 			_exportService = exportService;
-			Messenger.Default.Register<NotificationMessage>(this, HandleNotificationMessage);
+			Messenger.Default.Register<Message>(this, HandleMessage);
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks", 
 				new CommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison))));
@@ -49,7 +49,7 @@ namespace SIL.Cog.ViewModels
 			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected)
 				return;
 
-			Messenger.Default.Send(new NotificationMessage(Notifications.PerformingComparison));
+			Messenger.Default.Send(new Message(MessageType.StartingComparison));
 			if (_currentVarietyPair != null)
 				_project.VarietyPairs.Remove(_currentVarietyPair.ModelVarietyPair);
 
@@ -60,7 +60,7 @@ namespace SIL.Cog.ViewModels
 			_progressService.ShowProgress(() =>
 				{
 					pipeline.Process(pair.ToEnumerable());
-					Messenger.Default.Send(new NotificationMessage(Notifications.ComparisonPerformed));
+					Messenger.Default.Send(new Message(MessageType.ComparisonPerformed));
 				});
 		}
 
@@ -72,11 +72,11 @@ namespace SIL.Cog.ViewModels
 			_exportService.ExportVarietyPair(this, _project, _currentVarietyPair.ModelVarietyPair);
 		}
 
-		private void HandleNotificationMessage(NotificationMessage msg)
+		private void HandleMessage(Message msg)
 		{
-			switch (msg.Notification)
+			switch (msg.Type)
 			{
-				case Notifications.ComparisonPerformed:
+				case MessageType.ComparisonPerformed:
 					SetCurrentVarietyPair();
 					break;
 			}

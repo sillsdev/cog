@@ -18,8 +18,11 @@ namespace SIL.Cog.Services
 		/// <returns>
 		/// A nullable value of type bool that signifies how a window was closed by the user.
 		/// </returns>
-		bool? ShowDialog(object ownerViewModel, object viewModel);
+		bool? ShowModalDialog(object ownerViewModel, object viewModel);
 
+		void ShowModelessDialog(object ownerViewModel, object viewModel, Action closeCallback);
+
+		bool CloseDialog(object viewModel);
 
 		/// <summary>
 		/// Shows the open file dialog box that allows a user to specify a file that should be opened.

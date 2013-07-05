@@ -17,45 +17,37 @@ namespace SIL.Cog.Services
 			_windowViewModelMappings = windowViewModelMappings;
 		}
 
-		/// <summary>
-		/// Shows a dialog.
-		/// </summary>
-		/// <remarks>
-		/// The dialog used to represent the ViewModel is retrieved from the registered mappings.
-		/// </remarks>
-		/// <param name="ownerViewModel">
-		/// A ViewModel that represents the owner window of the dialog.
-		/// </param>
-		/// <param name="viewModel">The ViewModel of the new dialog.</param>
-		/// <returns>
-		/// A nullable value of type bool that signifies how a window was closed by the user.
-		/// </returns>
-		public bool? ShowDialog(object ownerViewModel, object viewModel)
+		public bool? ShowModalDialog(object ownerViewModel, object viewModel)
 		{
-			Type dialogType = _windowViewModelMappings.GetWindowTypeFromViewModelType(viewModel.GetType());
-			return ShowDialog(ownerViewModel, viewModel, dialogType);
+			Window dialog = CreateDialog(ownerViewModel, viewModel);
+			return dialog.ShowDialog();
 		}
 
-		/// <summary>
-		/// Shows a dialog.
-		/// </summary>
-		/// <param name="ownerViewModel">
-		/// A ViewModel that represents the owner window of the dialog.
-		/// </param>
-		/// <param name="viewModel">The ViewModel of the new dialog.</param>
-		/// <param name="dialogType">The type of the dialog.</param>
-		/// <returns>
-		/// A nullable value of type bool that signifies how a window was closed by the user.
-		/// </returns>
-		private bool? ShowDialog(object ownerViewModel, object viewModel, Type dialogType)
+		public void ShowModelessDialog(object ownerViewModel, object viewModel, Action closeCallback)
 		{
-			// Create dialog and set properties
+			Window dialog = CreateDialog(ownerViewModel, viewModel);
+			dialog.Closed += (sender, args) => closeCallback();
+			dialog.Show();
+		}
+
+		private Window CreateDialog(object ownerViewModel, object viewModel)
+		{
+			Type dialogType = _windowViewModelMappings.GetWindowTypeFromViewModelType(viewModel.GetType());
 			var dialog = (Window) Activator.CreateInstance(dialogType);
 			dialog.Owner = FindOwnerWindow(ownerViewModel);
 			dialog.DataContext = viewModel;
+			return dialog;
+		}
 
-			// Show dialog
-			return dialog.ShowDialog();
+		public bool CloseDialog(object viewModel)
+		{
+			Window dialog = Application.Current.Windows.Cast<Window>().SingleOrDefault(w => w.DataContext == viewModel);
+			if (dialog != null)
+			{
+				dialog.Close();
+				return true;
+			}
+			return false;
 		}
 
 		public FileDialogResult ShowOpenFileDialog(object ownerViewModel, string title, IEnumerable<FileType> fileTypes, FileType defaultFileType, string defaultFileName)
@@ -128,7 +120,7 @@ namespace SIL.Cog.Services
 
 		public void ShowMessage(object ownerViewModel, string message, string caption)
 		{
-			MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.OK);
+			MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
 		public void ShowWarning(object ownerViewModel, string message, string caption)

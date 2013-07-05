@@ -26,7 +26,7 @@ namespace SIL.Cog.ViewModels
 		private void AddNewSense()
 		{
 			var vm = new EditSenseViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var newSense = new Sense(vm.Gloss, vm.Category);
 				_project.Senses.Add(newSense);
@@ -41,7 +41,7 @@ namespace SIL.Cog.ViewModels
 				return;
 
 			var vm = new EditSenseViewModel(_project, _currentSense.ModelSense);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_currentSense.ModelSense.Gloss = vm.Gloss;
 				_currentSense.ModelSense.Category = vm.Category;

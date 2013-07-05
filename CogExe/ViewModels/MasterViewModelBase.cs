@@ -1,4 +1,5 @@
 using System;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -34,10 +35,20 @@ namespace SIL.Cog.ViewModels
 			get { return _currentView; }
 			set
 			{
-				Set(() => CurrentView, ref _currentView, value);
-				var cv = _currentView as MasterViewModelBase;
-				if (cv != null && cv.Views.Count > 0)
-					cv.CurrentView = cv.Views[0];
+				object oldView = _currentView;
+				if (Set(() => CurrentView, ref _currentView, value))
+				{
+					var cv = _currentView as MasterViewModelBase;
+					if (cv != null)
+					{
+						if (cv.Views.Count > 0)
+							cv.CurrentView = cv.Views[0];
+					}
+					else
+					{
+						Messenger.Default.Send(new Message(MessageType.ViewChanged, new ViewChangedData(oldView, _currentView)));
+					}
+				}
 			}
 		}
 

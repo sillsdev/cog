@@ -43,7 +43,7 @@ namespace SIL.Cog.ViewModels
 		private void NewNaturalClass()
 		{
 			var vm = new EditNaturalClassViewModel(_project.FeatureSystem, _soundClasses.Select(nc => nc.ModelSoundClass));
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var fs = new FeatureStruct();
 				fs.AddValue(CogFeatureSystem.Type, vm.Type == SoundType.Consonant ? CogFeatureSystem.ConsonantType : CogFeatureSystem.VowelType);
@@ -58,7 +58,7 @@ namespace SIL.Cog.ViewModels
 		private void NewUnnaturalClass()
 		{
 			var vm = new EditUnnaturalClassViewModel(_dialogService, _project, _soundClasses.Select(nc => nc.ModelSoundClass));
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var newNaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _project.Segmenter), _displaySonority ? 0 : -1);
 				_soundClasses.Add(newNaturalClass);
@@ -77,7 +77,7 @@ namespace SIL.Cog.ViewModels
 			if (currentNC != null)
 			{
 				var vm = new EditNaturalClassViewModel(_project.FeatureSystem, _soundClasses.Select(nc => nc.ModelSoundClass), currentNC);
-				if (_dialogService.ShowDialog(this, vm) == true)
+				if (_dialogService.ShowModalDialog(this, vm) == true)
 				{
 					var fs = new FeatureStruct();
 					fs.AddValue(CogFeatureSystem.Type, vm.Type == SoundType.Consonant ? CogFeatureSystem.ConsonantType : CogFeatureSystem.VowelType);
@@ -95,7 +95,7 @@ namespace SIL.Cog.ViewModels
 				if (currentUnc != null)
 				{
 					var vm = new EditUnnaturalClassViewModel(_dialogService, _project, _soundClasses.Select(nc => nc.ModelSoundClass), currentUnc);
-					if (_dialogService.ShowDialog(this, vm) == true)
+					if (_dialogService.ShowModalDialog(this, vm) == true)
 					{
 						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _project.Segmenter), _currentSoundClass.Sonority);
 						int index = _soundClasses.IndexOf(_currentSoundClass);

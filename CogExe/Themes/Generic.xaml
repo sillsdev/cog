@@ -448,8 +448,8 @@
 
 	<Style TargetType="xcdg:DataCell">
 		<Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-		<Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-		<Setter Property="CurrentBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+		<Setter Property="CurrentBackground" Value="{x:Null}" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="xcdg:Cell">
@@ -516,6 +516,16 @@
 						the Cell's background/foreground to the appropriate brushes. -->
 						<MultiDataTrigger>
 							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsCurrent}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).IsKeyboardFocusWithin}" Value="False" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).HideSelection}" Value="False" />
+							</MultiDataTrigger.Conditions>
+
+							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentBackground}" />
+							<Setter TargetName="rootBorder" Property="TextElement.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentForeground}" />
+						</MultiDataTrigger>
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
 								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" Value="True" />
 								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).IsKeyboardFocusWithin}" Value="False" />
 								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).HideSelection}" Value="False" />
@@ -534,18 +544,6 @@
 						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Visible}" Value="False">
 							<Setter Property="Visibility" Value="Collapsed" />
 						</DataTrigger>
-
-						<!-- When the Cell is Selected but the parent DataGridControl is not focused, we want to change
-						the Cell's background to the appropriate brushes. -->
-						<MultiDataTrigger>
-							<MultiDataTrigger.Conditions>
-								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsCurrent}" Value="True" />
-								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).IsKeyboardFocusWithin}" Value="False" />
-								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).(xcdg:DataGridContext.DataGridControl).HideSelection}" Value="False" />
-							</MultiDataTrigger.Conditions>
-
-							<Setter TargetName="rootBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=CurrentBackground}" />
-						</MultiDataTrigger>
 
 						<MultiDataTrigger>
 							<MultiDataTrigger.Conditions>

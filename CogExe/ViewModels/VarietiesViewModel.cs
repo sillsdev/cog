@@ -62,7 +62,7 @@ namespace SIL.Cog.ViewModels
 		private void AddNewVariety()
 		{
 			var vm = new EditVarietyViewModel(_project);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var variety = new Variety(vm.Name);
 				_project.Varieties.Add(variety);
@@ -83,7 +83,7 @@ namespace SIL.Cog.ViewModels
 				return;
 
 			var vm = new EditVarietyViewModel(_project, _currentVariety.ModelVariety);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_currentVariety.Name = vm.Name;
 				IsChanged = true;
@@ -109,7 +109,7 @@ namespace SIL.Cog.ViewModels
 		private void RunStemmer()
 		{
 			var vm = new RunStemmerViewModel(false);
-			if (_dialogService.ShowDialog(this, vm) == true)
+			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				if (vm.Method == StemmingMethod.Automatic)
 					_currentVariety.ModelVariety.Affixes.Clear();

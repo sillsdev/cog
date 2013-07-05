@@ -13,9 +13,9 @@ namespace SIL.Cog.ViewModels
 		private readonly ReadOnlyMirroredList<Word, WordViewModel> _words;
 		private readonly CogProject _project;
 		private string _strRep;
-		private readonly Variety _variety;
+		private readonly WordListsVarietyViewModel _variety;
 
-		public VarietySenseViewModel(CogProject project, Variety variety, Sense sense, IEnumerable<Word> words)
+		public VarietySenseViewModel(CogProject project, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
 			: base(sense)
 		{
 			_project = project;
@@ -30,6 +30,11 @@ namespace SIL.Cog.ViewModels
 		public ReadOnlyObservableList<WordViewModel> Words
 		{
 			get { return _words; }
+		}
+
+		public WordListsVarietyViewModel Variety
+		{
+			get { return _variety; }
 		}
 
 		internal IList<Word> ModelWords
@@ -66,17 +71,17 @@ namespace SIL.Cog.ViewModels
 						{
 							var newWord = new Word(wordStr.Normalize(NormalizationForm.FormD), ModelSense);
 							_modelWords.Insert(index, newWord);
-							_variety.Words.Add(newWord);
+							_variety.ModelVariety.Words.Add(newWord);
 
 							var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
-							pipeline.Process(_variety.ToEnumerable());
+							pipeline.Process(_variety.ModelVariety.ToEnumerable());
 						}
 						index++;
 					}
 				}
 
 				foreach (Word wordToRemove in wordsToRemove)
-					_variety.Words.Remove(wordToRemove);
+					_variety.ModelVariety.Words.Remove(wordToRemove);
 				IsChanged = true;
 			}
 		}

@@ -1,44 +1,27 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
 {
 	/// <summary>
-	/// Interaction logic for WordPairsView.xaml
+	/// Interaction logic for GlobalWordPairsView.xaml
 	/// </summary>
-	public partial class WordPairsView
+	public partial class GlobalWordPairsView
 	{
-		public WordPairsView()
+		public GlobalWordPairsView()
 		{
 			InitializeComponent();
 		}
 
 		private void WordPairsListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var vm = DataContext as WordPairsViewModel;
-			if (vm == null)
-				return;
-
+			var vm = (WordPairsViewModel) DataContext;
 			foreach (WordPairViewModel wp in e.RemovedItems)
 				vm.SelectedWordPairs.Remove(wp);
 			foreach (WordPairViewModel wp in e.AddedItems)
 				vm.SelectedWordPairs.Add(wp);
-		}
-
-		private void MarkerClicked(object sender, MouseButtonEventArgs e)
-		{
-			var rect = (Rectangle) sender;
-			ScrollToWordPair((WordPairViewModel) rect.DataContext, ScrollViewer, WordPairsListBox);
-		}
-
-		private void ScrollToWordPair(WordPairViewModel wordPair, ScrollViewer sv, ItemsControl ic)
-		{
-			var cp = (FrameworkElement) ic.ItemContainerGenerator.ContainerFromItem(wordPair);
-			var point = cp.TransformToAncestor(ic).Transform(new Point());
-			sv.ScrollToVerticalOffset((point.Y + (cp.ActualHeight / 2)) - (sv.ActualHeight / 2));
 		}
 
 		private void Copy_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -50,6 +33,11 @@ namespace SIL.Cog.Views
 		private void SelectAll_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			WordPairsListBox.SelectAll();
+		}
+
+		private void WordPairsListBox_OnLostFocus(object sender, RoutedEventArgs e)
+		{
+			WordPairsListBox.SelectedItems.Clear();
 		}
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
 using GraphSharp.Controls;
@@ -19,32 +18,6 @@ namespace SIL.Cog.Views
 		public SimilarSegmentsView()
 		{
 			InitializeComponent();
-			WordPairsListBox.SelectionChanged += WordPairsListBox_SelectionChanged;
-		}
-
-		private void WordPairsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			var vm = (SimilarSegmentsViewModel) DataContext;
-			foreach (WordPairViewModel wp in e.RemovedItems)
-				vm.WordPairs.SelectedWordPairs.Remove(wp);
-			foreach (WordPairViewModel wp in e.AddedItems)
-				vm.WordPairs.SelectedWordPairs.Add(wp);
-		}
-
-		private void Copy_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			var vm = (SimilarSegmentsViewModel) DataContext;
-			Clipboard.SetText(vm.WordPairs.SelectedWordPairsText);
-		}
-
-		private void SelectAll_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			WordPairsListBox.SelectAll();
-		}
-
-		private void WordPairsListBox_OnLostFocus(object sender, RoutedEventArgs e)
-		{
-			WordPairsListBox.SelectedItems.Clear();
 		}
 
 		private void SimilarSegmentsView_OnLoaded(object sender, RoutedEventArgs e)

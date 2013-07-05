@@ -22,7 +22,7 @@ namespace SIL.Cog.ViewModels
 			_variety = variety;
 
 			_modelWords = new ObservableList<Word>(words);
-			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, this, word), vm => vm.ModelWord);
+			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, word), vm => vm.ModelWord);
 			_modelWords.CollectionChanged += ModelWordsChanged;
 			_strRep = string.Join("/", _modelWords.Select(word => word.StrRep));
 		}

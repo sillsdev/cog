@@ -339,6 +339,7 @@
     <Compile Include="ViewModels\WordPairsViewModel.cs" />
     <Compile Include="ViewModels\WordPairViewModel.cs" />
     <Compile Include="ViewModels\WordSegmentViewModel.cs" />
+    <Compile Include="ViewModels\WordsViewModel.cs" />
     <Compile Include="ViewModels\WordViewModel.cs" />
     <Compile Include="ViewModels\WorkspaceViewModelBase.cs" />
     <Compile Include="ViewModels\WrapperViewModel.cs" />
@@ -372,6 +373,9 @@
     </Compile>
     <Compile Include="Views\GlobalCorrespondenceGridEdge.cs" />
     <Compile Include="Views\GlobalSegmentGridVertex.cs" />
+    <Compile Include="Views\GlobalWordPairsView.xaml.cs">
+      <DependentUpon>GlobalWordPairsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HeaderGridVertex.cs" />
     <Compile Include="Views\HierarchicalGraphView.xaml.cs">
       <DependentUpon>HierarchicalGraphView.xaml</DependentUpon>
@@ -500,6 +504,9 @@
     <Compile Include="Views\WordPairView.xaml.cs">
       <DependentUpon>WordPairView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WordsView.xaml.cs">
+      <DependentUpon>WordsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WordView.xaml.cs">
       <DependentUpon>WordView.xaml</DependentUpon>
     </Compile>
@@ -555,6 +562,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FindDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GlobalWordPairsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -703,6 +714,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\WordPairView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WordsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

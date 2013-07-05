@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 using SIL.Collections;
@@ -22,6 +24,9 @@ namespace SIL.Cog.ViewModels
 		private CogProject _project;
 		private bool _isVarietySelected;
 
+		private FindViewModel _findViewModel;
+		private WordViewModel _startWord;
+
 		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService)
 			: base("Varieties")
 		{
@@ -29,13 +34,97 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_progressService = progressService;
 
+			Messenger.Default.Register<Message>(this, HandleMessage);
+
 			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
 					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
 					new CommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
-					new CommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety))));
+					new CommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety)),
+					new CommandViewModel("Find words", new RelayCommand(Find))));
 
 			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks", 
 				new CommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
+		}
+
+		private void HandleMessage(Message msg)
+		{
+			switch (msg.Type)
+			{
+				case MessageType.ViewChanged:
+					var data = (ViewChangedData) msg.Data;
+					if (data.OldViewModel == this)
+					{
+						if (_findViewModel != null)
+							_dialogService.CloseDialog(_findViewModel);
+					}
+					break;
+			}
+		}
+
+		private void Find()
+		{
+			if ( _findViewModel != null || _currentVariety == null)
+				return;
+
+			_findViewModel = new FindViewModel(FindNext);
+			_findViewModel.PropertyChanged += (sender, args) => _startWord = null;
+			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
+		}
+
+		private void FindNext()
+		{
+			if (_currentVariety == null || _currentVariety.Words.Words.Count == 0)
+			{
+				SearchEnded();
+				return;
+			}
+			if (_currentVariety.Words.SelectedWords.Count == 0)
+			{
+				_startWord = _currentVariety.Words.WordsView.Cast<WordViewModel>().First();
+			}
+			else if (_startWord == null)
+			{
+				_startWord = _currentVariety.Words.SelectedWords[0];
+			}
+			else if (_currentVariety.Words.SelectedWords.Contains(_startWord))
+			{
+				SearchEnded();
+				return;
+			}
+
+			List<WordViewModel> words = _currentVariety.Words.WordsView.Cast<WordViewModel>().ToList();
+			int wordIndex = words.IndexOf(_currentVariety.Words.SelectedWords.Count == 0 ? _startWord : _currentVariety.Words.SelectedWords[0]);
+			WordViewModel curWord;
+			do
+			{
+				wordIndex = (wordIndex + 1) % words.Count;
+				curWord = words[wordIndex];
+				bool match = false;
+				switch (_findViewModel.Field)
+				{
+					case FindField.Word:
+						match = curWord.StrRep.Contains(_findViewModel.String);
+						break;
+
+					case FindField.Sense:
+						match = curWord.Sense.Gloss.Contains(_findViewModel.String);
+						break;
+				}
+				if (match)
+				{
+					_currentVariety.Words.SelectedWords.Clear();
+					_currentVariety.Words.SelectedWords.Add(curWord);
+					return;
+				}
+			}
+			while (_startWord != curWord);
+			SearchEnded();
+		}
+
+		private void SearchEnded()
+		{
+			_dialogService.ShowMessage(_findViewModel, "Find reached the starting point of the search.", "Cog");
+			_startWord = null;
 		}
 
 		public override void Initialize(CogProject project)

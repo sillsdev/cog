@@ -72,59 +72,7 @@
 				</Grid>
 			</StackPanel>
 			<HeaderedContentControl Grid.Row="1" Header="Observed word pairs">
-				<ListBox ItemsSource="{Binding WordPairs.WordPairsView}" SelectionMode="Extended"
-						 Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus">
-					<ListBox.CommandBindings>
-						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
-						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
-					</ListBox.CommandBindings>
-					<ListBox.ContextMenu>
-						<ContextMenu>
-							<MenuItem Command="Copy" />
-							<MenuItem Command="SelectAll" />
-						</ContextMenu>
-					</ListBox.ContextMenu>
-					<ListBox.ItemContainerStyle>
-						<Style TargetType="ListBoxItem">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="ListBoxItem">
-										<Grid>
-											<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
-											<Border Margin="5" Padding="3">
-												<ContentPresenter />
-											</Border>
-										</Grid>
-										<ControlTemplate.Triggers>
-											<Trigger Property="ItemsControl.AlternationIndex" Value="1">
-												<Setter TargetName="IconBorder" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
-											</Trigger>
-											<Trigger Property="IsSelected" Value="True">
-												<Setter TargetName="IconBorder" Property="Effect">
-													<Setter.Value>
-														<DropShadowEffect ShadowDepth="0" Color="#FFF9D460" BlurRadius="10" />
-													</Setter.Value>
-												</Setter>
-											</Trigger>
-										</ControlTemplate.Triggers>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-					</ListBox.ItemContainerStyle>
-					<ListBox.ItemTemplate>
-						<DataTemplate DataType="vm:WordPairViewModel">
-							<StackPanel HorizontalAlignment="Stretch">
-								<TextBlock FontSize="14">
-									<TextBlock Foreground="{StaticResource Variety1Brush}" Text="{Binding Variety1.Name}" />
-									<TextBlock Foreground="{StaticResource HeaderTextBrush}"> &#x2192; </TextBlock>
-									<TextBlock Foreground="{StaticResource Variety2Brush}" Text="{Binding Variety2.Name}" />
-								</TextBlock>
-								<v:WordPairView />
-							</StackPanel>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+				<v:GlobalWordPairsView DataContext="{Binding WordPairs}" />
 			</HeaderedContentControl>
 		</Grid>
 	</DockPanel>

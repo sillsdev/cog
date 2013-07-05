@@ -1,6 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -18,13 +16,10 @@ namespace SIL.Cog.ViewModels
 		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
 		private double _maxSegProb;
 		private ListCollectionView _segmentsView;
-		private readonly ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
-		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
-		private ListCollectionView _wordsView;
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
-		private readonly BindableList<WordViewModel> _selectedWords;
+		private readonly WordsViewModel _words;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
@@ -39,17 +34,9 @@ namespace SIL.Cog.ViewModels
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.PropertyChanged += VarietyPropertyChanged;
-			_senses = new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense);
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
-				{
-					var vm = new WordViewModel(project, _senses[word.Sense], word);
-					vm.PropertyChanged += ChildPropertyChanged;
-					return vm;
-				}, vm => vm.ModelWord);
-			variety.Words.CollectionChanged += WordsChanged;
-
-			_selectedWords = new BindableList<WordViewModel>();
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.ModelAffix);
+			_words = new WordsViewModel(project, variety);
+			_words.PropertyChanged += ChildPropertyChanged;
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
@@ -74,16 +61,6 @@ namespace SIL.Cog.ViewModels
 					if (curSeg != null)
 						CurrentSegment = _segments.FirstOrDefault(vm => vm.ModelSegment.Equals(curSeg));
 					break;
-			}
-		}
-
-		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			_selectedWords.Clear();
-			foreach (WordViewModel word in _words)
-			{
-				if (word.Segments.Any(s => s.IsSelected))
-					_selectedWords.Add(word);
 			}
 		}
 
@@ -133,7 +110,7 @@ namespace SIL.Cog.ViewModels
 		public override void AcceptChanges()
 		{
 			base.AcceptChanges();
-			ChildrenAcceptChanges(_words);
+			_words.AcceptChanges();
 		}
 
 		public double MaxSegmentProbability
@@ -157,39 +134,14 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		public ReadOnlyObservableList<SenseViewModel> Senses
-		{
-			get { return _senses; }
-		}
-
-		public ReadOnlyObservableList<WordViewModel> Words
+		public WordsViewModel Words
 		{
 			get { return _words; }
-		}
-
-		public ICollectionView WordsView
-		{
-			get
-			{
-				if (_wordsView == null)
-				{
-					_wordsView = new ListCollectionView(_words);
-					Debug.Assert(_wordsView.GroupDescriptions != null);
-					_wordsView.GroupDescriptions.Add(new PropertyGroupDescription("Sense"));
-					_wordsView.SortDescriptions.Add(new SortDescription("Sense.Gloss", ListSortDirection.Ascending));
-				}
-				return _wordsView;
-			}
 		}
 
 		public ReadOnlyObservableList<AffixViewModel> Affixes
 		{
 			get { return _affixes; }
-		}
-
-		public ObservableList<WordViewModel> SelectedWords
-		{
-			get { return _selectedWords; }
 		}
 
 		public AffixViewModel CurrentAffix
@@ -205,8 +157,8 @@ namespace SIL.Cog.ViewModels
 			{
 				if (Set(() => CurrentSegment, ref _currentSegment, value))
 				{
-					_selectedWords.Clear();
-					foreach (WordViewModel word in _words)
+					_words.SelectedSegmentWords.Clear();
+					foreach (WordViewModel word in _words.Words)
 					{
 						bool selected = false;
 						foreach (WordSegmentViewModel segment in word.Segments)
@@ -217,7 +169,7 @@ namespace SIL.Cog.ViewModels
 						}
 
 						if (selected)
-							_selectedWords.Add(word);
+							_words.SelectedSegmentWords.Add(word);
 					}
 				}
 			}

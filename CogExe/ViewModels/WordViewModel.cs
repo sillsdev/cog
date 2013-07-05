@@ -16,10 +16,10 @@ namespace SIL.Cog.ViewModels
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
 
-		public WordViewModel(CogProject project, SenseViewModel sense, Word word)
+		public WordViewModel(CogProject project, Word word)
 		{
 			_project = project;
-			_sense = sense;
+			_sense = new SenseViewModel(word.Sense);
 			_word = word;
 			LoadSegments();
 			_monitor = new SimpleMonitor();

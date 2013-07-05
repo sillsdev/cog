@@ -60,6 +60,7 @@ namespace SIL.Cog.Components
 			int totalCognateCount = 0;
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
+				wordPair.AlignmentNotes.Clear();
 				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
 				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				int cat1Count = 0;

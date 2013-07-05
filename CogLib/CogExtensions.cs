@@ -195,15 +195,15 @@ namespace SIL.Cog
 			for (int s = 0; s < alignment.SequenceCount; s++)
 			{
 				AppendSequence(sb, alignment.Prefixes[s].StrRep(), maxPrefixLen, Enumerable.Range(0, alignment.ColumnCount).Select(c => alignment[s, c].StrRep()), maxColLens,
-					alignment.Suffixes[s].StrRep(), maxSuffixLen);
+					alignment.Suffixes[s].StrRep(), maxSuffixLen, "|");
 			}
 			if (hasNotes)
-				AppendSequence(sb, "", maxPrefixLen, notesList, maxColLens, "", maxSuffixLen);
+				AppendSequence(sb, "", maxPrefixLen, notesList, maxColLens, "", maxSuffixLen, " ");
 
 			return sb.ToString();
 		}
 
-		private static void AppendSequence(StringBuilder sb, string prefix, int maxPrefixLen, IEnumerable<string> columns, int[] maxColLens, string suffix, int maxSuffixLen)
+		private static void AppendSequence(StringBuilder sb, string prefix, int maxPrefixLen, IEnumerable<string> columns, int[] maxColLens, string suffix, int maxSuffixLen, string separator)
 		{
 			if (maxPrefixLen > 0)
 			{
@@ -211,7 +211,7 @@ namespace SIL.Cog
 				sb.Append(" ");
 			}
 
-			sb.Append("|");
+			sb.Append(separator);
 			int index = 0;
 			foreach (string col in columns)
 			{
@@ -220,7 +220,7 @@ namespace SIL.Cog
 				sb.Append(col.PadRight(maxColLens[index]));
 				index++;
 			}
-			sb.Append("|");
+			sb.Append(separator);
 
 			if (maxSuffixLen > 0)
 			{

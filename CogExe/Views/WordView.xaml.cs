@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Views
@@ -19,6 +20,7 @@ namespace SIL.Cog.Views
 			InitializeComponent();
 			_drag = new ItemsControlDrag(ListBox, CanDrag);
 			_drop = new ItemsControlDrop(ListBox, CanDrop);
+			ListBox.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler((sender, args) => args.Handled = false), true);
 		}
 
 		private bool CanDrag(FrameworkElement itemContainer)
@@ -39,11 +41,7 @@ namespace SIL.Cog.Views
 				_prevSelectedItem = vm;
 			else
 				ListBox.SelectedItem = _prevSelectedItem;
-		}
-
-		private void _listBox_LostFocus(object sender, RoutedEventArgs e)
-		{
-			ListBox.SelectedItem = null;
+			e.Handled = true;
 		}
 	}
 }

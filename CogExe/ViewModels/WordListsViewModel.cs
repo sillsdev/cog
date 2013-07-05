@@ -86,17 +86,12 @@ namespace SIL.Cog.ViewModels
 
 		private void Find()
 		{
-			if (_findViewModel != null)
+			if (_varieties.Count == 0 || _senses.Count == 0 || _findViewModel != null)
 				return;
 
 			_findViewModel = new FindViewModel(FindNext);
-			_findViewModel.PropertyChanged += _findViewModel_PropertyChanged;
+			_findViewModel.PropertyChanged += (sender, args) => _startVarietySense = null;
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
-		}
-
-		private void _findViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			_startVarietySense = null;
 		}
 
 		private void FindNext()

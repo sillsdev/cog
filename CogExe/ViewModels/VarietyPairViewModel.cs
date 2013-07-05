@@ -45,7 +45,7 @@ namespace SIL.Cog.ViewModels
 		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
 			IWordAligner aligner = _project.WordAligners["primary"];
-			wordPairs.SelectedChangeWordPairs.Clear();
+			wordPairs.SelectedCorrespondenceWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{
 				bool selected = false;
@@ -66,7 +66,7 @@ namespace SIL.Cog.ViewModels
 				}
 
 				if (selected)
-					wordPairs.SelectedChangeWordPairs.Add(wordPair);
+					wordPairs.SelectedCorrespondenceWordPairs.Add(wordPair);
 			}
 		}
 

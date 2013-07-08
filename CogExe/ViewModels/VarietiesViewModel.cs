@@ -26,6 +26,7 @@ namespace SIL.Cog.ViewModels
 
 		private FindViewModel _findViewModel;
 		private WordViewModel _startWord;
+		private readonly SimpleMonitor _selectedWordsMonitor;
 
 		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService)
 			: base("Varieties")
@@ -33,6 +34,8 @@ namespace SIL.Cog.ViewModels
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
 			_progressService = progressService;
+
+			_selectedWordsMonitor = new SimpleMonitor();
 
 			Messenger.Default.Register<Message>(this, HandleMessage);
 
@@ -52,21 +55,18 @@ namespace SIL.Cog.ViewModels
 			{
 				case MessageType.ViewChanged:
 					var data = (ViewChangedData) msg.Data;
-					if (data.OldViewModel == this)
-					{
-						if (_findViewModel != null)
-							_dialogService.CloseDialog(_findViewModel);
-					}
+					if (data.OldViewModel == this && _findViewModel != null)
+						_dialogService.CloseDialog(_findViewModel);
 					break;
 			}
 		}
 
 		private void Find()
 		{
-			if ( _findViewModel != null || _currentVariety == null)
+			if ( _findViewModel != null)
 				return;
 
-			_findViewModel = new FindViewModel(FindNext);
+			_findViewModel = new FindViewModel(_dialogService, FindNext);
 			_findViewModel.PropertyChanged += (sender, args) => _startWord = null;
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
@@ -80,7 +80,7 @@ namespace SIL.Cog.ViewModels
 			}
 			if (_currentVariety.Words.SelectedWords.Count == 0)
 			{
-				_startWord = _currentVariety.Words.WordsView.Cast<WordViewModel>().First();
+				_startWord = _currentVariety.Words.WordsView.Cast<WordViewModel>().Last();
 			}
 			else if (_startWord == null)
 			{
@@ -93,8 +93,8 @@ namespace SIL.Cog.ViewModels
 			}
 
 			List<WordViewModel> words = _currentVariety.Words.WordsView.Cast<WordViewModel>().ToList();
-			int wordIndex = words.IndexOf(_currentVariety.Words.SelectedWords.Count == 0 ? _startWord : _currentVariety.Words.SelectedWords[0]);
-			WordViewModel curWord;
+			WordViewModel curWord = _currentVariety.Words.SelectedWords.Count == 0 ? _startWord : _currentVariety.Words.SelectedWords[0];
+			int wordIndex = words.IndexOf(curWord);
 			do
 			{
 				wordIndex = (wordIndex + 1) % words.Count;
@@ -112,8 +112,11 @@ namespace SIL.Cog.ViewModels
 				}
 				if (match)
 				{
-					_currentVariety.Words.SelectedWords.Clear();
-					_currentVariety.Words.SelectedWords.Add(curWord);
+					using (_selectedWordsMonitor.Enter())
+					{
+						_currentVariety.Words.SelectedWords.Clear();
+						_currentVariety.Words.SelectedWords.Add(curWord);
+					}
 					return;
 				}
 			}
@@ -123,7 +126,7 @@ namespace SIL.Cog.ViewModels
 
 		private void SearchEnded()
 		{
-			_dialogService.ShowMessage(_findViewModel, "Find reached the starting point of the search.", "Cog");
+			_findViewModel.ShowSearchEndedMessage();
 			_startWord = null;
 		}
 
@@ -224,9 +227,23 @@ namespace SIL.Cog.ViewModels
 			get { return _currentVariety; }
 			set
 			{
-				Set(() => CurrentVariety, ref _currentVariety, value);
+				VarietiesVarietyViewModel oldCurVariety = _currentVariety;
+				if (Set(() => CurrentVariety, ref _currentVariety, value))
+				{
+					_startWord = null;
+					if (oldCurVariety != null)
+						oldCurVariety.Words.SelectedWords.CollectionChanged -= SelectedWordsChanged;
+					if (_currentVariety != null)
+						_currentVariety.Words.SelectedWords.CollectionChanged += SelectedWordsChanged;
+				}
 				IsVarietySelected = _currentVariety != null;
 			}
+		}
+
+		private void SelectedWordsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!_selectedWordsMonitor.Busy)
+				_startWord = null;
 		}
 
 		public bool IsVarietySelected

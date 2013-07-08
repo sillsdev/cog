@@ -1,8 +1,10 @@
-﻿using System.Windows;
+﻿using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using SIL.Cog.ViewModels;
+using SIL.Collections;
 
 namespace SIL.Cog.Views
 {
@@ -11,21 +13,52 @@ namespace SIL.Cog.Views
 	/// </summary>
 	public partial class WordPairsView
 	{
+		private readonly SimpleMonitor _monitor;
+
 		public WordPairsView()
 		{
 			InitializeComponent();
+			_monitor = new SimpleMonitor();
 		}
 
-		private void WordPairsListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void WordPairsView_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var vm = DataContext as WordPairsViewModel;
 			if (vm == null)
 				return;
 
-			foreach (WordPairViewModel wp in e.RemovedItems)
-				vm.SelectedWordPairs.Remove(wp);
-			foreach (WordPairViewModel wp in e.AddedItems)
-				vm.SelectedWordPairs.Add(wp);
+			vm.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
+		}
+
+		private void SelectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			var vm = (WordPairsViewModel) DataContext;
+			if (_monitor.Busy)
+				return;
+
+			using (_monitor.Enter())
+			{
+				WordPairsListBox.SelectedItems.Clear();
+				foreach (WordPairViewModel wordPair in vm.SelectedWordPairs)
+					WordPairsListBox.SelectedItems.Add(wordPair);
+				if (vm.SelectedWordPairs.Count > 0)
+					WordPairsListBox.ScrollIntoView(vm.SelectedWordPairs[0]);
+			}
+		}
+
+		private void WordPairsListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var vm = (WordPairsViewModel) DataContext;
+			if (_monitor.Busy)
+				return;
+
+			using (_monitor.Enter())
+			{
+				foreach (WordPairViewModel wp in e.RemovedItems)
+					vm.SelectedWordPairs.Remove(wp);
+				foreach (WordPairViewModel wp in e.AddedItems)
+					vm.SelectedWordPairs.Add(wp);
+			}
 		}
 
 		private void MarkerClicked(object sender, MouseButtonEventArgs e)

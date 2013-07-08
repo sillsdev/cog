@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -75,11 +74,8 @@ namespace SIL.Cog.ViewModels
 			{
 				case MessageType.ViewChanged:
 					var data = (ViewChangedData) msg.Data;
-					if (data.OldViewModel == this)
-					{
-						if (_findViewModel != null)
-							_dialogService.CloseDialog(_findViewModel);
-					}
+					if (data.OldViewModel == this && _findViewModel != null)
+						_dialogService.CloseDialog(_findViewModel);
 					break;
 			}
 		}
@@ -89,7 +85,7 @@ namespace SIL.Cog.ViewModels
 			if (_varieties.Count == 0 || _senses.Count == 0 || _findViewModel != null)
 				return;
 
-			_findViewModel = new FindViewModel(FindNext);
+			_findViewModel = new FindViewModel(_dialogService, FindNext);
 			_findViewModel.PropertyChanged += (sender, args) => _startVarietySense = null;
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
@@ -106,8 +102,8 @@ namespace SIL.Cog.ViewModels
 				return;
 			}
 			WordListsVarietyViewModel variety = _currentVarietySense.Variety;
-			int senseIndex = variety.Senses.IndexOf(_currentVarietySense);
-			VarietySenseViewModel curVarietySense;
+			VarietySenseViewModel curVarietySense = _currentVarietySense;
+			int senseIndex = variety.Senses.IndexOf(curVarietySense);
 			switch (_findViewModel.Field)
 			{
 				case FindField.Word:
@@ -124,7 +120,7 @@ namespace SIL.Cog.ViewModels
 						curVarietySense = _varieties[varietyIndex].Senses[senseIndex];
 						if (curVarietySense.Words.Any(w => w.StrRep.Contains(_findViewModel.String)))
 						{
-							CurrentVarietySense = curVarietySense;
+							Set(() => CurrentVarietySense, ref _currentVarietySense, curVarietySense);
 							return;
 						}
 					} while (_startVarietySense != curVarietySense);
@@ -138,7 +134,7 @@ namespace SIL.Cog.ViewModels
 						curVarietySense = variety.Senses[senseIndex];
 						if (curVarietySense.ModelSense.Gloss.Contains(_findViewModel.String))
 						{
-							CurrentVarietySense = curVarietySense;
+							Set(() => CurrentVarietySense, ref _currentVarietySense, curVarietySense);
 							return;
 						}
 					} while (_startVarietySense != curVarietySense);
@@ -149,7 +145,7 @@ namespace SIL.Cog.ViewModels
 
 		private void SearchEnded()
 		{
-			_dialogService.ShowMessage(_findViewModel, "Find reached the starting point of the search.", "Cog");
+			_findViewModel.ShowSearchEndedMessage();
 			_startVarietySense = null;
 		}
 
@@ -205,7 +201,11 @@ namespace SIL.Cog.ViewModels
 		public VarietySenseViewModel CurrentVarietySense
 		{
 			get { return _currentVarietySense; }
-			set { Set(() => CurrentVarietySense, ref _currentVarietySense, value); }
+			set
+			{
+				if (Set(() => CurrentVarietySense, ref _currentVarietySense, value))
+					_startVarietySense = null;
+			}
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses

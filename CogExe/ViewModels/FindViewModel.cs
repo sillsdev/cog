@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using SIL.Cog.Services;
 
 namespace SIL.Cog.ViewModels
 {
@@ -19,9 +20,11 @@ namespace SIL.Cog.ViewModels
 		private string _string;
 		private FindField _field;
 		private readonly ICommand _findNextCommand;
+		private readonly IDialogService _dialogService;
 
-		public FindViewModel(Action find)
+		public FindViewModel(IDialogService dialogService, Action find)
 		{
+			_dialogService = dialogService;
 			_findNextCommand = new RelayCommand(find, () => !string.IsNullOrEmpty(_string));
 		}
 
@@ -35,6 +38,11 @@ namespace SIL.Cog.ViewModels
 		{
 			get { return _field; }
 			set { Set(() => Field, ref _field, value); }
+		}
+
+		public void ShowSearchEndedMessage()
+		{
+			_dialogService.ShowMessage(this, "Find reached the starting point of the search.", "Cog");
 		}
 
 		public ICommand FindNextCommand

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="SIL.Cog.Views.SimilarSegmentsView"
+﻿<UserControl x:Class="SIL.Cog.Views.GlobalCorrespondencesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,13 +9,13 @@
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Loaded="SimilarSegmentsView_OnLoaded"
-             d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SimilarSegmentsViewModel}">
+             d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolConverter" />
 		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
 	</UserControl.Resources>
 	<DockPanel>
-		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similar segments</TextBlock>
+		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Global correspondences</TextBlock>
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />

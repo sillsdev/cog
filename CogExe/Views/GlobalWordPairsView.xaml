@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
-             mc:Ignorable="d"
+             mc:Ignorable="d" DataContextChanged="GlobalWordPairsView_OnDataContextChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairsViewModel}">
 	<ListBox ItemsSource="{Binding WordPairsView}" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus"
 			 SelectionChanged="WordPairsListBox_OnSelectionChanged">

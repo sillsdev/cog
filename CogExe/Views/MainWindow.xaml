@@ -110,8 +110,8 @@
 											<DataTemplate DataType="{x:Type vm:GeographicalViewModel}">
 												<v:GeographicalView />
 											</DataTemplate>
-											<DataTemplate DataType="{x:Type vm:SimilarSegmentsViewModel}">
-												<v:SimilarSegmentsView />
+											<DataTemplate DataType="{x:Type vm:GlobalCorrespondencesViewModel}">
+												<v:GlobalCorrespondencesView />
 											</DataTemplate>
 											<DataTemplate DataType="{x:Type vm:SenseAlignmentViewModel}">
 												<v:SenseAlignmentView />

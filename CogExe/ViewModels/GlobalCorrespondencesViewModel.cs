@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Services;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -20,7 +21,7 @@ namespace SIL.Cog.ViewModels
 		Vowels
 	}
 
-	public class SimilarSegmentsViewModel : WorkspaceViewModelBase
+	public class GlobalCorrespondencesViewModel : WorkspaceViewModelBase
 	{
 		private static readonly Dictionary<string, VowelHeight> VowelHeightLookup = new Dictionary<string, VowelHeight>
 			{
@@ -77,13 +78,24 @@ namespace SIL.Cog.ViewModels
 		private SoundCorrespondenceType _correspondenceType;
 		private readonly BindableList<GlobalCorrespondenceViewModel> _globalCorrespondences;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
+		private readonly IDialogService _dialogService;
 
-		public SimilarSegmentsViewModel()
-			: base("Similar Segments")
+		private FindViewModel _findViewModel;
+		private WordPairViewModel _startWordPair;
+		private readonly SimpleMonitor _selectedWordPairsMonitor;
+
+		public GlobalCorrespondencesViewModel(IDialogService dialogService)
+			: base("Global Correspondences")
 		{
+			_dialogService = dialogService;
+
 			_globalSegments = new BindableList<GlobalSegmentViewModel>();
 			_globalCorrespondences = new BindableList<GlobalCorrespondenceViewModel>();
+
 			Messenger.Default.Register<Message>(this, HandleMessage);
+
+			_selectedWordPairsMonitor = new SimpleMonitor();
+
 			_generateCorrespondencesWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
 			_generateCorrespondencesWorker.DoWork += GenerateCorrespondencesAsync;
 			_generateCorrespondencesWorker.RunWorkerCompleted += GenerateCorrespondencesAsyncFinished;
@@ -97,7 +109,86 @@ namespace SIL.Cog.ViewModels
 			_correspondenceFilter.PropertyChanging += _correspondenceFilter_PropertyChanging;
 			_correspondenceFilter.PropertyChanged += _correspondenceFilter_PropertyChanged;
 			TaskAreas.Add(_correspondenceFilter);
+			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
+				new CommandViewModel("Find words", new RelayCommand(Find))));
 			_wordPairs = new WordPairsViewModel();
+			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
+		}
+
+		private void SelectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!_selectedWordPairsMonitor.Busy)
+				_startWordPair = null;
+		}
+
+		private void Find()
+		{
+			if ( _findViewModel != null)
+				return;
+
+			_findViewModel = new FindViewModel(_dialogService, FindNext);
+			_findViewModel.PropertyChanged += (sender, args) => _startWordPair = null;
+			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
+		}
+
+		private void FindNext()
+		{
+			if (_wordPairs.WordPairs.Count == 0)
+			{
+				SearchEnded();
+				return;
+			}
+			if (_wordPairs.SelectedWordPairs.Count == 0)
+			{
+				_startWordPair = _wordPairs.WordPairsView.Cast<WordPairViewModel>().Last();
+			}
+			else if (_startWordPair == null)
+			{
+				_startWordPair = _wordPairs.SelectedWordPairs[0];
+			}
+			else if (_wordPairs.SelectedWordPairs.Contains(_startWordPair))
+			{
+				SearchEnded();
+				return;
+			}
+
+			List<WordPairViewModel> wordPairs = _wordPairs.WordPairsView.Cast<WordPairViewModel>().ToList();
+			WordPairViewModel curWordPair = _wordPairs.SelectedWordPairs.Count == 0 ? _startWordPair : _wordPairs.SelectedWordPairs[0];
+			int wordPairIndex = wordPairs.IndexOf(curWordPair);
+			do
+			{
+				wordPairIndex = (wordPairIndex + 1) % wordPairs.Count;
+				curWordPair = wordPairs[wordPairIndex];
+				bool match = false;
+				switch (_findViewModel.Field)
+				{
+					case FindField.Word:
+						match = curWordPair.ModelWordPair.Word1.StrRep.Contains(_findViewModel.String)
+							|| curWordPair.ModelWordPair.Word2.StrRep.Contains(_findViewModel.String);
+						break;
+
+					case FindField.Sense:
+						match = curWordPair.Sense.Gloss.Contains(_findViewModel.String);
+						break;
+				}
+				if (match)
+				{
+					using (_selectedWordPairsMonitor.Enter())
+					{
+						_wordPairs.SelectedWordPairs.Clear();
+						_wordPairs.SelectedWordPairs.Add(curWordPair);
+					}
+					return;
+				}
+			}
+			while (_startWordPair != curWordPair);
+			SearchEnded();
+		}
+
+		private void SearchEnded()
+		{
+			_findViewModel.ShowSearchEndedMessage();
+			_startWordPair = null;
 		}
 
 		private void GenerateCorrespondencesAsync(object sender, DoWorkEventArgs e)
@@ -338,6 +429,15 @@ namespace SIL.Cog.ViewModels
 				case MessageType.ComparisonPerformed:
 					GenerateCorrespondences();
 					break;
+
+				case MessageType.ViewChanged:
+					var data = (ViewChangedData) msg.Data;
+					if (data.OldViewModel == this && _findViewModel != null)
+					{
+						_dialogService.CloseDialog(_findViewModel);
+						_findViewModel = null;
+					}
+					break;
 			}
 		}
 
@@ -365,6 +465,7 @@ namespace SIL.Cog.ViewModels
 					if (oldCorr != null)
 						oldCorr.IsSelected = false;
 					_wordPairs.WordPairs.Clear();
+					_wordPairs.SelectedWordPairs.Clear();
 					if (_selectedCorrespondence != null)
 					{
 						_selectedCorrespondence.IsSelected = true;

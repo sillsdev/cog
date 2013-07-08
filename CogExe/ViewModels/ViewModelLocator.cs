@@ -63,7 +63,7 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<HierarchicalGraphViewModel>();
 			SimpleIoc.Default.Register<NetworkGraphViewModel>();
 			SimpleIoc.Default.Register<GeographicalViewModel>();
-			SimpleIoc.Default.Register<SimilarSegmentsViewModel>();
+			SimpleIoc.Default.Register<GlobalCorrespondencesViewModel>();
 			SimpleIoc.Default.Register<SenseAlignmentViewModel>();
         }
 

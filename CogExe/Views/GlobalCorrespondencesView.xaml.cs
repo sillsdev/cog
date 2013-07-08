@@ -11,18 +11,18 @@ using SIL.Cog.ViewModels;
 namespace SIL.Cog.Views
 {
 	/// <summary>
-	/// Interaction logic for SimilarSegmentsView.xaml
+	/// Interaction logic for GlobalCorrespondencesView.xaml
 	/// </summary>
-	public partial class SimilarSegmentsView
+	public partial class GlobalCorrespondencesView
 	{
-		public SimilarSegmentsView()
+		public GlobalCorrespondencesView()
 		{
 			InitializeComponent();
 		}
 
 		private void SimilarSegmentsView_OnLoaded(object sender, RoutedEventArgs e)
 		{
-			var vm = (SimilarSegmentsViewModel) DataContext;
+			var vm = (GlobalCorrespondencesViewModel) DataContext;
 			vm.GlobalCorrespondences.CollectionChanged += GlobalCorrespondences_CollectionChanged;
 			SetGraph();
 		}
@@ -34,7 +34,7 @@ namespace SIL.Cog.Views
 
 		private void SetGraph()
 		{
-			var vm = (SimilarSegmentsViewModel) DataContext;
+			var vm = (GlobalCorrespondencesViewModel) DataContext;
 
 			if (vm.GlobalCorrespondences.Count == 0 && vm.GlobalSegments.Count == 0)
 			{
@@ -57,7 +57,7 @@ namespace SIL.Cog.Views
 			}
 		}
 
-		private void GenerateConsonantGraph(SimilarSegmentsViewModel vm)
+		private void GenerateConsonantGraph(GlobalCorrespondencesViewModel vm)
 		{
 			const int rowHeight = 35;
 			const int columnWidth = 30;
@@ -247,7 +247,7 @@ namespace SIL.Cog.Views
 			GraphLayout.Graph = graph;
 		}
 
-		private void GenerateVowelGraph(SimilarSegmentsViewModel vm)
+		private void GenerateVowelGraph(GlobalCorrespondencesViewModel vm)
 		{
 			//if (vm.GlobalCorrespondences.Count == 0)
 			//{
@@ -383,7 +383,7 @@ namespace SIL.Cog.Views
 
 		private void Edge_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			var vm = (SimilarSegmentsViewModel) DataContext;
+			var vm = (GlobalCorrespondencesViewModel) DataContext;
 			var edgeControl = (EdgeControl) sender;
 			var corr = (GlobalCorrespondenceGridEdge) edgeControl.DataContext;
 			vm.SelectedCorrespondence = vm.SelectedCorrespondence == corr.GlobalCorrespondence ? null : corr.GlobalCorrespondence;

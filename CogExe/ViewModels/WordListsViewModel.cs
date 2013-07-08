@@ -75,7 +75,10 @@ namespace SIL.Cog.ViewModels
 				case MessageType.ViewChanged:
 					var data = (ViewChangedData) msg.Data;
 					if (data.OldViewModel == this && _findViewModel != null)
+					{
 						_dialogService.CloseDialog(_findViewModel);
+						_findViewModel = null;
+					}
 					break;
 			}
 		}

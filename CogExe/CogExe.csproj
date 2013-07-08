@@ -265,7 +265,7 @@
     <Compile Include="ViewModels\ReadOnlyMirroredList.cs" />
     <Compile Include="ViewModels\SenseAlignmentViewModel.cs" />
     <Compile Include="ViewModels\SenseAlignmentWordViewModel.cs" />
-    <Compile Include="ViewModels\SimilarSegmentsViewModel.cs" />
+    <Compile Include="ViewModels\GlobalCorrespondencesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />
@@ -393,8 +393,8 @@
     <Compile Include="Views\RegionHitMarker.cs" />
     <Compile Include="Views\RegionMarker.cs" />
     <Compile Include="Views\RegionPointMarker.cs" />
-    <Compile Include="Views\SimilarSegmentsView.xaml.cs">
-      <DependentUpon>SimilarSegmentsView.xaml</DependentUpon>
+    <Compile Include="Views\GlobalCorrespondencesView.xaml.cs">
+      <DependentUpon>GlobalCorrespondencesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoundClassesView.xaml.cs">
       <DependentUpon>SoundClassesView.xaml</DependentUpon>
@@ -585,7 +585,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SimilarSegmentsView.xaml">
+    <Page Include="Views\GlobalCorrespondencesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

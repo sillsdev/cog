@@ -1,21 +1,17 @@
 ﻿using System;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
 	public class SwitchViewData
 	{
 		private readonly Type _viewModelType;
-		private readonly object _model;
+		private readonly ReadOnlyList<object> _models;
 
-		public SwitchViewData(Type viewModelType)
-			: this(viewModelType, null)
-		{
-		}
-
-		public SwitchViewData(Type viewModelType, object model)
+		public SwitchViewData(Type viewModelType, params object[] models)
 		{
 			_viewModelType = viewModelType;
-			_model = model;
+			_models = models.ToReadOnlyList();
 		}
 
 		public Type ViewModelType
@@ -23,9 +19,9 @@ namespace SIL.Cog.ViewModels
 			get { return _viewModelType; }
 		}
 
-		public object Model
+		public IReadOnlyList<object> Models
 		{
-			get { return _model; }
+			get { return _models; }
 		}
 	}
 }

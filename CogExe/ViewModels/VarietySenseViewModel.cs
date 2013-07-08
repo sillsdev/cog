@@ -2,6 +2,9 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
 using SIL.Collections;
 
@@ -14,6 +17,7 @@ namespace SIL.Cog.ViewModels
 		private readonly CogProject _project;
 		private string _strRep;
 		private readonly WordListsVarietyViewModel _variety;
+		private readonly ICommand _showInVarietiesCommand;
 
 		public VarietySenseViewModel(CogProject project, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
 			: base(sense)
@@ -25,6 +29,12 @@ namespace SIL.Cog.ViewModels
 			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, word), vm => vm.ModelWord);
 			_modelWords.CollectionChanged += ModelWordsChanged;
 			_strRep = string.Join("/", _modelWords.Select(word => word.StrRep));
+			_showInVarietiesCommand = new RelayCommand(ShowInVarieties, () => _modelWords.Count > 0);
+		}
+
+		private void ShowInVarieties()
+		{
+			Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(VarietiesViewModel), _variety.ModelVariety, ModelSense)));
 		}
 
 		public ReadOnlyObservableList<WordViewModel> Words
@@ -35,6 +45,11 @@ namespace SIL.Cog.ViewModels
 		public WordListsVarietyViewModel Variety
 		{
 			get { return _variety; }
+		}
+
+		public ICommand ShowInVarietiesCommand
+		{
+			get { return _showInVarietiesCommand; }
 		}
 
 		internal IList<Word> ModelWords

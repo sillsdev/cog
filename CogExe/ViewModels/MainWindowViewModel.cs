@@ -13,6 +13,7 @@ using SIL.Cog.Components;
 using SIL.Cog.Config;
 using SIL.Cog.Properties;
 using SIL.Cog.Services;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
@@ -136,7 +137,7 @@ namespace SIL.Cog.ViewModels
 
 				case MessageType.SwitchView:
 					var data = (SwitchViewData) msg.Data;
-					SwitchView(data.ViewModelType, data.Model);
+					SwitchView(data.ViewModelType, data.Models);
 					break;
 			}
 		}
@@ -433,7 +434,7 @@ namespace SIL.Cog.ViewModels
 			}
 			DisplayName = string.Format("{0} - Cog", name);
 			Initialize(project);
-			SwitchView(typeof(WordListsViewModel), null);
+			SwitchView(typeof(WordListsViewModel), new ReadOnlyList<object>(new object[0]));
 		}
 
 		private void SaveProject(string path)

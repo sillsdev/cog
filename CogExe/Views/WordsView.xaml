@@ -21,12 +21,6 @@
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
 						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
 					</ListBox.CommandBindings>
-					<ListBox.ContextMenu>
-						<ContextMenu>
-							<MenuItem Command="Copy" />
-							<MenuItem Command="SelectAll" />
-						</ContextMenu>
-					</ListBox.ContextMenu>
 					<ListBox.ItemContainerStyle>
 						<Style TargetType="ListBoxItem">
 							<Setter Property="Template">
@@ -34,7 +28,15 @@
 									<ControlTemplate TargetType="ListBoxItem">
 										<Grid>
 											<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
-											<Border Margin="5" Padding="3">
+											<Border Margin="5" Padding="3" Background="Transparent">
+												<Border.ContextMenu>
+													<ContextMenu>
+														<MenuItem Command="Copy" />
+														<MenuItem Command="SelectAll" />
+														<Separator />
+														<MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
+													</ContextMenu>
+												</Border.ContextMenu>
 												<ContentPresenter />
 											</Border>
 										</Grid>
@@ -61,7 +63,7 @@
 						</ControlTemplate>
 					</ListBox.Template>
 					<ListBox.ItemTemplate>
-						<DataTemplate>
+						<DataTemplate DataType="{x:Type vm:WordViewModel}">
 							<v:WordView HorizontalAlignment="Stretch" />
 						</DataTemplate>
 					</ListBox.ItemTemplate>

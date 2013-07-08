@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
@@ -63,6 +64,9 @@ namespace SIL.Cog.Views
 				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
 				textBlockFactory.SetValue(TextBlock.FontSizeProperty, 16.0);
 				textBlockFactory.SetBinding(TagProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
+				var menuItem = new MenuItem {Header = "Show in varieties"};
+				menuItem.SetBinding(MenuItem.CommandProperty, string.Format("Senses[{0}].ShowInVarietiesCommand", i));
+				textBlockFactory.SetValue(ContextMenuProperty, new ContextMenu {Items = {menuItem}});
 				textBlockFactory.Name = "textBlock";
 				var cellTemplate = new DataTemplate
 					{
@@ -235,6 +239,14 @@ namespace SIL.Cog.Views
 					vm.CurrentVarietySense = null;
 				}
 			}
+		}
+
+		private void Cell_OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			var cell = (DataCell) sender;
+			WordListsGrid.SelectedCellRanges.Clear();
+			int itemIndex = WordListsGrid.Items.IndexOf(cell.ParentRow.DataContext);
+			WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
 		}
 	}
 }

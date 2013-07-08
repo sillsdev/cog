@@ -318,11 +318,11 @@ namespace SIL.Cog.ViewModels
 			CurrentVarietyPairState = state;
 		}
 
-		public override bool SwitchView(Type viewType, object model)
+		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
 		{
-			if (base.SwitchView(viewType, model))
+			if (viewType == typeof(VarietyPairsViewModel))
 			{
-				var pair = (VarietyPair) model;
+				var pair = (VarietyPair) models[0];
 				CurrentVarietyPair = new VarietyPairViewModel(_project, pair, true);
 				Set(() => CurrentVariety1, ref _currentVariety1, _varieties[pair.Variety1]);
 				Set(() => CurrentVariety2, ref _currentVariety2, _varieties[pair.Variety2]);

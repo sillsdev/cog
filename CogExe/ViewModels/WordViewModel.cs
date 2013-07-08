@@ -1,6 +1,9 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
 using SIL.Collections;
 using SIL.Machine;
@@ -15,6 +18,7 @@ namespace SIL.Cog.ViewModels
 		private readonly SenseViewModel _sense;
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
+		private readonly ICommand _showInWordListsCommand;
 
 		public WordViewModel(CogProject project, Word word)
 		{
@@ -23,7 +27,13 @@ namespace SIL.Cog.ViewModels
 			_word = word;
 			LoadSegments();
 			_monitor = new SimpleMonitor();
+			_showInWordListsCommand = new RelayCommand(ShowInWordLists);
 			_word.PropertyChanged += WordPropertyChanged;
+		}
+
+		private void ShowInWordLists()
+		{
+			Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(WordListsViewModel), _word.Variety, _sense.ModelSense)));
 		}
 
 		private void WordPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -36,6 +46,11 @@ namespace SIL.Cog.ViewModels
 					LoadSegments();
 					break;
 			}
+		}
+
+		public ICommand ShowInWordListsCommand
+		{
+			get { return _showInWordListsCommand; }
 		}
 
 		private void LoadSegments()

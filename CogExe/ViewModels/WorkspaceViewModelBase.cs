@@ -18,7 +18,7 @@ namespace SIL.Cog.ViewModels
 			get { return _taskAreas; }
 		}
 
-		public override bool SwitchView(Type viewType, object model)
+		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
 		{
 			return viewType == GetType();
 		}

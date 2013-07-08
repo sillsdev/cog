@@ -29,6 +29,9 @@
 							</Setter.Value>
 						</Setter>
 					</Style>
+					<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
+						<EventSetter Event="MouseRightButtonUp" Handler="Cell_OnMouseRightButtonUp"></EventSetter>
+					</Style>
 				</xcdg:DataGridControl.Resources>
 				<xcdg:DataGridControl.View>
 					<xcdg:TableView HorizontalGridLineThickness="1" VerticalGridLineThickness="1" />

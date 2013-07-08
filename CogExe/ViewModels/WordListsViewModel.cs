@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -81,6 +82,21 @@ namespace SIL.Cog.ViewModels
 					}
 					break;
 			}
+		}
+
+		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
+		{
+			if (viewType == typeof(WordListsViewModel))
+			{
+				if (models.Count == 2)
+				{
+					var variety = (Variety) models[0];
+					var sense = (Sense) models[1];
+					CurrentVarietySense = _varieties[variety].Senses.Single(s => s.ModelSense == sense);
+				}
+				return true;
+			}
+			return false;
 		}
 
 		private void Find()

@@ -1,4 +1,5 @@
 ﻿using System;
+using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
@@ -11,6 +12,6 @@ namespace SIL.Cog.ViewModels
 
 		public abstract void Initialize(CogProject project);
 
-		public abstract bool SwitchView(Type viewType, object model);
+		public abstract bool SwitchView(Type viewType, IReadOnlyList<object> models);
 	}
 }

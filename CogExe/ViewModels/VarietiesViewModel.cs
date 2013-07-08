@@ -162,7 +162,7 @@ namespace SIL.Cog.ViewModels
 				var variety = new Variety(vm.Name);
 				_project.Varieties.Add(variety);
 				IsChanged = true;
-				SwitchVariety(variety);
+				CurrentVariety = _varieties[variety];
 			}
 		}
 
@@ -255,19 +255,20 @@ namespace SIL.Cog.ViewModels
 			set { Set(() => IsVarietySelected, ref _isVarietySelected, value); }
 		}
 
-		public override bool SwitchView(Type viewType, object model)
+		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
 		{
-			if (base.SwitchView(viewType, model))
+			if (viewType == typeof(VarietiesViewModel))
 			{
-				SwitchVariety((Variety) model);
+				CurrentVariety = _varieties[(Variety) models[0]];
+				if (models.Count > 1)
+				{
+					var sense = (Sense) models[1];
+					_currentVariety.Words.SelectedWords.Clear();
+					_currentVariety.Words.SelectedWords.AddRange(_currentVariety.Words.Words.Where(w => w.Sense.ModelSense == sense));
+				}
 				return true;
 			}
 			return false;
-		}
-
-		private void SwitchVariety(Variety variety)
-		{
-			CurrentVariety = _varieties.Single(vm => vm.ModelVariety == variety);
 		}
 	}
 }

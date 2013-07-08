@@ -28,15 +28,15 @@ namespace SIL.Cog.Views
 			if (vm == null)
 				return;
 
+			SelectWords();
 			vm.SelectedWords.CollectionChanged += SelectedWords_CollectionChanged;
 		}
 
-		private void SelectedWords_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void SelectWords()
 		{
 			var vm = (WordsViewModel) DataContext;
 			if (_monitor.Busy)
 				return;
-
 			using (_monitor.Enter())
 			{
 				foreach (WordViewModel word in WordsListBox.SelectedItems.Cast<WordViewModel>().Except(vm.SelectedWords))
@@ -44,9 +44,14 @@ namespace SIL.Cog.Views
 				WordsListBox.SelectedItems.Clear();
 				foreach (WordViewModel word in vm.SelectedWords)
 					WordsListBox.SelectedItems.Add(word);
-				if (vm.SelectedWords.Count > 0)
-					WordsListBox.ScrollIntoView(vm.SelectedWords[0]);
 			}
+			if (vm.SelectedWords.Count > 0)
+				WordsListBox.ScrollIntoView(vm.SelectedWords[0]);
+		}
+
+		private void SelectedWords_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			SelectWords();
 		}
 
 		private void WordsListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

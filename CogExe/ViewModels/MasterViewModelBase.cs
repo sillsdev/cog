@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Collections;
 
@@ -58,11 +59,11 @@ namespace SIL.Cog.ViewModels
 				vm.Initialize(project);
 		}
 
-		public override bool SwitchView(Type viewType, object model)
+		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
 		{
 			foreach (InitializableViewModelBase view in _views)
 			{
-				if (view.SwitchView(viewType, model))
+				if (view.SwitchView(viewType, models))
 				{
 					Set(() => CurrentView, ref _currentView, view);
 					return true;

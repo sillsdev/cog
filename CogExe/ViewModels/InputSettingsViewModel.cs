@@ -9,7 +9,8 @@ namespace SIL.Cog.ViewModels
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly IDialogService _dialogService;
 
-		public InputSettingsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService)
+		public InputSettingsViewModel(IBusyService busyService, SpanFactory<ShapeNode> spanFactory, IDialogService dialogService)
+			: base(busyService)
 		{
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;

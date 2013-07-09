@@ -8,6 +8,7 @@
 		public InputSettingsView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 	}
 }

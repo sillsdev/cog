@@ -10,6 +10,7 @@ namespace SIL.Cog.Views
 		public NetworkGraphView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void GraphLayout_OnLayoutFinished(object sender, EventArgs e)

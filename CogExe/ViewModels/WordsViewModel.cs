@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
+using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -14,11 +15,11 @@ namespace SIL.Cog.ViewModels
 		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly BindableList<WordViewModel> _selectedSegmentWords;
 
-		public WordsViewModel(CogProject project, Variety variety)
+		public WordsViewModel(IBusyService busyService, CogProject project, Variety variety)
 		{
 			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
 				{
-					var vm = new WordViewModel(project, word);
+					var vm = new WordViewModel(busyService, project, word);
 					vm.PropertyChanged += ChildPropertyChanged;
 					return vm;
 				}, vm => vm.ModelWord);

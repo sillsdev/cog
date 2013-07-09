@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Collections;
 

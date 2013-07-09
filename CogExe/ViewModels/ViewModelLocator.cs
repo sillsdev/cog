@@ -44,7 +44,7 @@ namespace SIL.Cog.ViewModels
             ////}
             SimpleIoc.Default.Register<IWindowViewModelMappings, WindowViewModelMappings>();
 			SimpleIoc.Default.Register<IDialogService, DialogService>();
-			SimpleIoc.Default.Register<IProgressService, ProgressService>();
+			SimpleIoc.Default.Register<IBusyService, BusyService>();
 			SimpleIoc.Default.Register<SpanFactory<ShapeNode>, ShapeSpanFactory>();
 			SimpleIoc.Default.Register<IExportService, ExportService>();
 			SimpleIoc.Default.Register<IImportService, ImportService>();

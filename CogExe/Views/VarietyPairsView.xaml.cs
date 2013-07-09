@@ -16,6 +16,7 @@ namespace SIL.Cog.Views
 		public VarietyPairsView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void VarietyPairsView_OnLoaded(object sender, RoutedEventArgs e)

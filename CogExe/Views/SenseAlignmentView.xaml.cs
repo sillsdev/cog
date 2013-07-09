@@ -15,6 +15,7 @@ namespace SIL.Cog.Views
 		public SenseAlignmentView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void SenseAlignmentView_OnLoaded(object sender, RoutedEventArgs e)

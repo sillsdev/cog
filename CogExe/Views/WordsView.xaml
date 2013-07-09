@@ -83,7 +83,6 @@
 									<Binding Path="." />
 									<Binding ElementName="WordsListBox" />
 									<Binding ElementName="ScrollViewer" />
-									<Binding ElementName="ScrollViewer" Path="ActualHeight" />
 								</MultiBinding>
 							</Setter.Value>
 						</Setter>

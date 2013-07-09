@@ -22,7 +22,7 @@ namespace SIL.Cog.ViewModels
 	public class VarietyPairsViewModel : WorkspaceViewModelBase
 	{
 		private CogProject _project;
-		private readonly IProgressService _progressService;
+		private readonly IBusyService _busyService;
 		private ReadOnlyMirroredList<Variety, VarietyViewModel> _varieties;
 		private ListCollectionView _varietiesView1;
 		private ListCollectionView _varietiesView2;
@@ -37,10 +37,10 @@ namespace SIL.Cog.ViewModels
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public VarietyPairsViewModel(IProgressService progressService, IDialogService dialogService, IExportService exportService)
+		public VarietyPairsViewModel(IBusyService busyService, IDialogService dialogService, IExportService exportService)
 			: base("Variety Pairs")
 		{
-			_progressService = progressService;
+			_busyService = busyService;
 			_dialogService = dialogService;
 			_exportService = exportService;
 
@@ -60,6 +60,7 @@ namespace SIL.Cog.ViewModels
 			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected)
 				return;
 
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			Messenger.Default.Send(new Message(MessageType.StartingComparison));
 			if (_currentVarietyPair != null)
 				_project.VarietyPairs.Remove(_currentVarietyPair.ModelVarietyPair);
@@ -68,11 +69,9 @@ namespace SIL.Cog.ViewModels
 			_project.VarietyPairs.Add(pair);
 
 			var pipeline = new Pipeline<VarietyPair>(_project.GetComparisonProcessors());
-			_progressService.ShowProgress(() =>
-				{
-					pipeline.Process(pair.ToEnumerable());
-					Messenger.Default.Send(new Message(MessageType.ComparisonPerformed));
-				});
+
+			pipeline.Process(pair.ToEnumerable());
+			Messenger.Default.Send(new Message(MessageType.ComparisonPerformed));
 		}
 
 		private void Find()
@@ -299,29 +298,34 @@ namespace SIL.Cog.ViewModels
 
 		private void SetCurrentVarietyPair()
 		{
-			VarietyPairViewModel vm = null;
-			var state = CurrentVarietyPairState.NotSelected;
 			if (_currentVariety1 != null && _currentVariety2 != null && _currentVariety1 != _currentVariety2)
 			{
 				VarietyPair pair;
 				if (_currentVariety1.ModelVariety.VarietyPairs.TryGetValue(_currentVariety2.ModelVariety, out pair))
 				{
-					vm = new VarietyPairViewModel(_project, pair, _currentVariety1.ModelVariety == pair.Variety1);
-					state = CurrentVarietyPairState.SelectedAndCompared;
+					_busyService.ShowBusyIndicatorUntilUpdated();
+					CurrentVarietyPair = new VarietyPairViewModel(_project, pair, _currentVariety1.ModelVariety == pair.Variety1);
+					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
 				}
 				else
 				{
-					state = CurrentVarietyPairState.SelectedAndNotCompared;
+					CurrentVarietyPair = null;
+					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
 				}
 			}
-			CurrentVarietyPair = vm;
-			CurrentVarietyPairState = state;
+			else
+			{
+				CurrentVarietyPair = null;
+				CurrentVarietyPairState = CurrentVarietyPairState.NotSelected;
+			}
 		}
 
 		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
 		{
 			if (viewType == typeof(VarietyPairsViewModel))
 			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
+
 				var pair = (VarietyPair) models[0];
 				CurrentVarietyPair = new VarietyPairViewModel(_project, pair, true);
 				Set(() => CurrentVariety1, ref _currentVariety1, _varieties[pair.Variety1]);

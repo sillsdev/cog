@@ -37,16 +37,18 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly IExportService _exportService;
+		private readonly IBusyService _busyService;
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private CogProject _project;
 
 		public MainWindowViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService, IExportService exportService,
-			InputMasterViewModel inputMasterViewModel, CompareMasterViewModel compareMasterViewModel, AnalyzeMasterViewModel analyzeMasterViewModel)
+			IBusyService busyService, InputMasterViewModel inputMasterViewModel, CompareMasterViewModel compareMasterViewModel, AnalyzeMasterViewModel analyzeMasterViewModel)
 			: base("Cog", inputMasterViewModel, compareMasterViewModel, analyzeMasterViewModel)
 		{
 			_dialogService = dialogService;
 			_importService = importService;
 			_exportService = exportService;
+			_busyService = busyService;
 
 			_spanFactory = spanFactory;
 
@@ -386,12 +388,14 @@ namespace SIL.Cog.ViewModels
 
 		private void OpenProject(string path)
 		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			CogProject project = ConfigManager.Load(_spanFactory, path);
 			SetupProject(path, Path.GetFileNameWithoutExtension(path), project);
 		}
 
 		private void NewProject()
 		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.NewProject.cogx");
 			CogProject project = ConfigManager.Load(_spanFactory, stream);
 			SetupProject(null, "New Project", project);

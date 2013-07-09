@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Services;
@@ -197,61 +198,140 @@ namespace SIL.Cog.ViewModels
 
 			var correspondenceType = (SoundCorrespondenceType) e.Argument;
 
-			var segs = new Dictionary<object, GlobalSegmentViewModel>();
-			var corrs = new Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo>();
-			int maxFreq = 0;
-			foreach (WordPair wp in _project.VarietyPairs.SelectMany(vp => vp.WordPairs).Where(wp => wp.AreCognatePredicted))
+			var tasks = new List<Task<Result>>();
+			foreach (VarietyPair vp in _project.VarietyPairs)
 			{
-				if (_generateCorrespondencesWorker.CancellationPending)
-					break;
-
-				var vm = new WordPairViewModel(_project, wp, true);
-
-				switch (correspondenceType)
-				{
-					case SoundCorrespondenceType.InitialConsonants:
-						maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, 0), maxFreq);
-						break;
-
-					case SoundCorrespondenceType.MedialConsonants:
-						for (int column = 1; column < vm.ModelAlignment.ColumnCount - 1; column++)
+				VarietyPair varietyPair = vp;
+				tasks.Add(Task<Result>.Factory.StartNew(() =>
+					{
+						var segs = new Dictionary<object, GlobalSegmentViewModel>();
+						var corrs = new Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo>();
+						foreach (WordPair wp in varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted))
 						{
 							if (_generateCorrespondencesWorker.CancellationPending)
 								break;
 
-							maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, column), maxFreq);
+							var vm = new WordPairViewModel(_project, wp, true);
+
+							switch (correspondenceType)
+							{
+								case SoundCorrespondenceType.InitialConsonants:
+									AddConsonantCorrespondence(vm, segs, corrs, 0);
+									break;
+
+								case SoundCorrespondenceType.MedialConsonants:
+									for (int column = 1; column < vm.ModelAlignment.ColumnCount - 1; column++)
+									{
+										if (_generateCorrespondencesWorker.CancellationPending)
+											break;
+
+										AddConsonantCorrespondence(vm, segs, corrs, column);
+									}
+									break;
+
+								case SoundCorrespondenceType.FinalConsonants:
+									AddConsonantCorrespondence(vm, segs, corrs, vm.ModelAlignment.ColumnCount - 1);
+									break;
+
+								case SoundCorrespondenceType.Vowels:
+									for (int column = 0; column < vm.ModelAlignment.ColumnCount; column++)
+									{
+										if (_generateCorrespondencesWorker.CancellationPending)
+											break;
+
+										AddVowelCorrespondence(vm, segs, corrs, column);
+									}
+									break;
+							}
 						}
-						break;
 
-					case SoundCorrespondenceType.FinalConsonants:
-						maxFreq = Math.Max(AddConsonantCorrespondence(vm, segs, corrs, vm.ModelAlignment.ColumnCount - 1), maxFreq);
-						break;
-
-					case SoundCorrespondenceType.Vowels:
-						for (int column = 0; column < vm.ModelAlignment.ColumnCount; column++)
-						{
-							if (_generateCorrespondencesWorker.CancellationPending)
-								break;
-
-							maxFreq = Math.Max(AddVowelCorrespondence(vm, segs, corrs, column), maxFreq);
-						}
-						break;
-				}
+						return new Result(segs, corrs, 0);
+					}));
 			}
 
 			if (_generateCorrespondencesWorker.CancellationPending)
+			{
 				e.Cancel = true;
+			}
 			else
-				e.Result = Tuple.Create(segs, corrs, maxFreq);
+			{
+				var globalSegs = new Dictionary<object, GlobalSegmentViewModel>();
+				var globalCorrs = new Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo>();
+				int maxFreq = 0;
+				foreach (Task<Result> task in tasks)
+				{
+					if (_generateCorrespondencesWorker.CancellationPending)
+						break;
+
+					Result result = task.Result;
+					foreach (KeyValuePair<object, GlobalSegmentViewModel> segKvp in result.Segments)
+					{
+						GlobalSegmentViewModel seg;
+						if (globalSegs.TryGetValue(segKvp.Key, out seg))
+							seg.StrReps.UnionWith(seg.StrReps);
+						else
+							globalSegs[segKvp.Key] = segKvp.Value;
+					}
+
+					foreach (KeyValuePair<UnorderedTuple<object, object>, CorrespondenceInfo> corrKvp in result.Correspondences)
+					{
+						CorrespondenceInfo corr;
+						if (globalCorrs.TryGetValue(corrKvp.Key, out corr))
+						{
+							corr.WordPairs.AddRange(corrKvp.Value.WordPairs);
+							corr.Frequency += corrKvp.Value.Frequency;
+							if (corr.Frequency > maxFreq)
+								maxFreq = corr.Frequency;
+						}
+						else
+						{
+							globalCorrs[corrKvp.Key] = corrKvp.Value;
+						}
+					}
+				}
+
+				if (_generateCorrespondencesWorker.CancellationPending)
+					e.Cancel = true;
+				else
+					e.Result = new Result(globalSegs, globalCorrs, maxFreq);
+			}
 			_workCompleteEvent.Set();
 		}
 
-		private static int AddConsonantCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
+		private class Result
+		{
+			private readonly Dictionary<object, GlobalSegmentViewModel> _segments;
+			private readonly Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> _correspondences;
+			private readonly int _maxFrequency;
+
+			public Result(Dictionary<object, GlobalSegmentViewModel> segments, Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> correspondences, int maxFrequency)
+			{
+				_segments = segments;
+				_correspondences = correspondences;
+				_maxFrequency = maxFrequency;
+			}
+
+			public Dictionary<object, GlobalSegmentViewModel> Segments
+			{
+				get { return _segments; }
+			}
+
+			public Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> Correspondences
+			{
+				get { return _correspondences; }
+			}
+
+			public int MaxFrequency
+			{
+				get { return _maxFrequency; }
+			}
+		}
+
+		private static void AddConsonantCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
 			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, int column)
 		{
 			AlignmentCell<ShapeNode> cell1 = wp.ModelAlignment[0, column];
 			AlignmentCell<ShapeNode> cell2 = wp.ModelAlignment[1, column];
-			int freq = 0;
 			if (!cell1.IsNull && cell1.First.Type() == CogFeatureSystem.ConsonantType && !cell2.IsNull && cell2.First.Type() == CogFeatureSystem.ConsonantType)
 			{
 				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1.SegmentPool);
@@ -266,12 +346,9 @@ namespace SIL.Cog.ViewModels
 						CorrespondenceInfo ci = corrs.GetValue(UnorderedTuple.Create(key1, key2), () => new CorrespondenceInfo());
 						ci.Frequency++;
 						ci.WordPairs.Add(wp);
-						freq = ci.Frequency;
 					}
 				}
 			}
-
-			return freq;
 		}
 
 		private static bool GetConsonant(Dictionary<object, GlobalSegmentViewModel> consonants, Segment consonant, out object key)
@@ -329,12 +406,11 @@ namespace SIL.Cog.ViewModels
 			return true;
 		}
 
-		private static int AddVowelCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
+		private static void AddVowelCorrespondence(WordPairViewModel wp, Dictionary<object, GlobalSegmentViewModel> segs,
 			Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo> corrs, int column)
 		{
 			AlignmentCell<ShapeNode> cell1 = wp.ModelAlignment[0, column];
 			AlignmentCell<ShapeNode> cell2 = wp.ModelAlignment[1, column];
-			int freq = 0;
 			if (!cell1.IsNull && cell1.First.Type() == CogFeatureSystem.VowelType && !cell2.IsNull && cell2.First.Type() == CogFeatureSystem.VowelType)
 			{
 				Ngram ngram1 = cell1.ToNgram(wp.ModelWordPair.VarietyPair.Variety1.SegmentPool);
@@ -349,12 +425,9 @@ namespace SIL.Cog.ViewModels
 						CorrespondenceInfo ci = corrs.GetValue(UnorderedTuple.Create(key1, key2), () => new CorrespondenceInfo());
 						ci.Frequency++;
 						ci.WordPairs.Add(wp);
-						freq = ci.Frequency;
 					}
 				}
 			}
-
-			return freq;
 		}
 
 		private static bool GetVowel(Dictionary<object, GlobalSegmentViewModel> vowels, Segment vowel, out object key)
@@ -390,11 +463,11 @@ namespace SIL.Cog.ViewModels
 				GeneratingCorrespondences = false;
 				if (!e.Cancelled)
 				{
-					var results = (Tuple<Dictionary<object, GlobalSegmentViewModel>, Dictionary<UnorderedTuple<object, object>, CorrespondenceInfo>, int>) e.Result;
-					_globalSegments.AddRange(results.Item1.Values);
-					_globalCorrespondences.AddRange(results.Item2
-						.Select(kvp => new GlobalCorrespondenceViewModel(results.Item1[kvp.Key.Item1], results.Item1[kvp.Key.Item2], kvp.Value.Frequency,
-							(double) kvp.Value.Frequency / results.Item3, kvp.Value.WordPairs)));
+					var results = (Result) e.Result;
+					_globalSegments.AddRange(results.Segments.Values);
+					_globalCorrespondences.AddRange(results.Correspondences
+						.Select(kvp => new GlobalCorrespondenceViewModel(results.Segments[kvp.Key.Item1], results.Segments[kvp.Key.Item2], kvp.Value.Frequency,
+							(double) kvp.Value.Frequency / results.MaxFrequency, kvp.Value.WordPairs)));
 				}
 			}
 		}

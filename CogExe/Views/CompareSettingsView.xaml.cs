@@ -8,6 +8,7 @@ namespace SIL.Cog.Views
 		public CompareSettingsView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 	}
 }

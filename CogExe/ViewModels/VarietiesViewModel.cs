@@ -17,7 +17,7 @@ namespace SIL.Cog.ViewModels
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
-		private readonly IProgressService _progressService;
+		private readonly IBusyService _busyService;
 		private ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel> _varieties;
 		private ListCollectionView _varietiesView;
 		private VarietiesVarietyViewModel _currentVariety;
@@ -28,12 +28,12 @@ namespace SIL.Cog.ViewModels
 		private WordViewModel _startWord;
 		private readonly SimpleMonitor _selectedWordsMonitor;
 
-		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService)
+		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IBusyService busyService)
 			: base("Varieties")
 		{
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
-			_progressService = progressService;
+			_busyService = busyService;
 
 			_selectedWordsMonitor = new SimpleMonitor();
 
@@ -139,7 +139,7 @@ namespace SIL.Cog.ViewModels
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(_project.Varieties,
 				variety =>
 					{
-						var vm = new VarietiesVarietyViewModel(_dialogService, _project, variety);
+						var vm = new VarietiesVarietyViewModel(_dialogService, _busyService, _project, variety);
 						vm.PropertyChanged += ChildPropertyChanged;
 						return vm;
 					}, vm => vm.ModelVariety));
@@ -206,11 +206,13 @@ namespace SIL.Cog.ViewModels
 			var vm = new RunStemmerViewModel(false);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
+
 				if (vm.Method == StemmingMethod.Automatic)
 					_currentVariety.ModelVariety.Affixes.Clear();
 
 				var pipeline = new Pipeline<Variety>(_project.GetStemmingProcessors(_spanFactory, vm.Method));
-				_progressService.ShowProgress(() => pipeline.Process(_currentVariety.ModelVariety.ToEnumerable()));
+				pipeline.Process(_currentVariety.ModelVariety.ToEnumerable());
 				IsChanged = true;
 			}
 		}

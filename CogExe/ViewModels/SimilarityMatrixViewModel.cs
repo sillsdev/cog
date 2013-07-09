@@ -13,7 +13,7 @@ namespace SIL.Cog.ViewModels
 {
 	public class SimilarityMatrixViewModel : WorkspaceViewModelBase
 	{
-		private readonly IProgressService _progressService;
+		private readonly IDialogService _dialogService;
 		private readonly IExportService _exportService;
 		private CogProject _project;
 		private ReadOnlyList<SimilarityMatrixVarietyViewModel> _varieties;
@@ -21,10 +21,10 @@ namespace SIL.Cog.ViewModels
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
 
-		public SimilarityMatrixViewModel(IProgressService progressService, IExportService exportService)
+		public SimilarityMatrixViewModel(IDialogService dialogService, IExportService exportService)
 			: base("Similarity Matrix")
 		{
-			_progressService = progressService;
+			_dialogService = dialogService;
 			_exportService = exportService;
 			_modelVarieties = new List<Variety>();
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
@@ -100,7 +100,7 @@ namespace SIL.Cog.ViewModels
 				});
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
-			_progressService.ShowProgress(this, progressVM);
+			_dialogService.ShowModalDialog(this, progressVM);
 		}
 
 		private void Export()

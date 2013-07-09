@@ -8,6 +8,7 @@
 		public SensesView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 	}
 }

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
+using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -18,15 +19,17 @@ namespace SIL.Cog.ViewModels
 		private string _strRep;
 		private readonly WordListsVarietyViewModel _variety;
 		private readonly ICommand _showInVarietiesCommand;
+		private readonly IBusyService _busyService;
 
-		public VarietySenseViewModel(CogProject project, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
+		public VarietySenseViewModel(IBusyService busyService, CogProject project, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
 			: base(sense)
 		{
+			_busyService = busyService;
 			_project = project;
 			_variety = variety;
 
 			_modelWords = new ObservableList<Word>(words);
-			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_modelWords, word => new WordViewModel(project, word), vm => vm.ModelWord);
+			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_modelWords, word => new WordViewModel(busyService, project, word), vm => vm.ModelWord);
 			_modelWords.CollectionChanged += ModelWordsChanged;
 			_strRep = string.Join("/", _modelWords.Select(word => word.StrRep));
 			_showInVarietiesCommand = new RelayCommand(ShowInVarieties, () => _modelWords.Count > 0);
@@ -68,36 +71,41 @@ namespace SIL.Cog.ViewModels
 			set
 			{
 				string val = value.Trim();
-				var wordsToRemove = new HashSet<Word>(ModelWords);
-				if (!string.IsNullOrEmpty(val))
+				if (_strRep != val)
 				{
-					int index = 0;
-					foreach (string wordStr in val.Split('/').Select(s => s.Trim()).Distinct())
+					_busyService.ShowBusyIndicatorUntilUpdated();
+					var wordsToRemove = new HashSet<Word>(ModelWords);
+					if (!string.IsNullOrEmpty(val))
 					{
-						Word word = wordsToRemove.FirstOrDefault(w => w.StrRep == wordStr);
-						if (word != null)
+						int index = 0;
+						foreach (string wordStr in val.Split('/').Select(s => s.Trim()).Distinct())
 						{
-							wordsToRemove.Remove(word);
-							int oldIndex = ModelWords.IndexOf(word);
-							if (index != oldIndex)
-								_modelWords.Move(oldIndex, index);
+							Word word = wordsToRemove.FirstOrDefault(w => w.StrRep == wordStr);
+							if (word != null)
+							{
+								wordsToRemove.Remove(word);
+								int oldIndex = ModelWords.IndexOf(word);
+								if (index != oldIndex)
+									_modelWords.Move(oldIndex, index);
+							}
+							else
+							{
+								var newWord = new Word(wordStr.Normalize(NormalizationForm.FormD), ModelSense);
+								_modelWords.Insert(index, newWord);
+								_variety.ModelVariety.Words.Add(newWord);
+							}
+							index++;
 						}
-						else
-						{
-							var newWord = new Word(wordStr.Normalize(NormalizationForm.FormD), ModelSense);
-							_modelWords.Insert(index, newWord);
-							_variety.ModelVariety.Words.Add(newWord);
-
-							var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
-							pipeline.Process(_variety.ModelVariety.ToEnumerable());
-						}
-						index++;
 					}
-				}
 
-				foreach (Word wordToRemove in wordsToRemove)
-					_variety.ModelVariety.Words.Remove(wordToRemove);
-				IsChanged = true;
+					foreach (Word wordToRemove in wordsToRemove)
+						_variety.ModelVariety.Words.Remove(wordToRemove);
+
+					var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
+					pipeline.Process(_variety.ModelVariety.ToEnumerable());
+
+					IsChanged = true;
+				}
 			}
 		}
 	}

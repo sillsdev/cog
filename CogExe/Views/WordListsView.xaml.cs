@@ -31,6 +31,7 @@ namespace SIL.Cog.Views
 			WordListsGrid.ClipboardExporters.Clear();
 			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
 			_monitor = new SimpleMonitor();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void WordListsView_OnLoaded(object sender, RoutedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -10,13 +11,13 @@ namespace SIL.Cog.ViewModels
 		private readonly VarietySenseViewModelCollection _senses;
 		private readonly ICommand _switchToVarietyCommand;
  
-		public WordListsVarietyViewModel(CogProject project, Variety variety)
+		public WordListsVarietyViewModel(IBusyService busyService, CogProject project, Variety variety)
 			: base(variety)
 		{
 			_senses = new VarietySenseViewModelCollection(project.Senses,
 				ModelVariety.Words, sense =>
 					{
-						var vm = new VarietySenseViewModel(project, this, sense, ModelVariety.Words[sense]);
+						var vm = new VarietySenseViewModel(busyService, project, this, sense, ModelVariety.Words[sense]);
 						vm.PropertyChanged += ChildPropertyChanged;
 						return vm;
 					});

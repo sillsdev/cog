@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Services;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -19,10 +20,12 @@ namespace SIL.Cog.ViewModels
 		private int _columnCount;
 		private int _currentColumn;
 		private SenseAlignmentWordViewModel _currentWord;
+		private readonly IBusyService _busyService;
 
-		public SenseAlignmentViewModel()
+		public SenseAlignmentViewModel(IBusyService busyService)
 			: base("Sense Alignment")
 		{
+			_busyService = busyService;
 			_words = new BindableList<SenseAlignmentWordViewModel>();
 			Messenger.Default.Register<Message>(this, HandleMessage);
 		}
@@ -95,6 +98,7 @@ namespace SIL.Cog.ViewModels
 			if (_project.VarietyPairs.Count == 0)
 				return;
 
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			IWordAligner aligner = _project.WordAligners["primary"];
 			var words = new List<Word>();
 			foreach (Variety variety in _project.Varieties)

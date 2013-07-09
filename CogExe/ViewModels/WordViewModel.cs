@@ -5,6 +5,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
+using SIL.Cog.Services;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -19,9 +20,11 @@ namespace SIL.Cog.ViewModels
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
 		private readonly ICommand _showInWordListsCommand;
+		private readonly IBusyService _busyService;
 
-		public WordViewModel(CogProject project, Word word)
+		public WordViewModel(IBusyService busyService, CogProject project, Word word)
 		{
+			_busyService = busyService;
 			_project = project;
 			_sense = new SenseViewModel(word.Sense);
 			_word = word;
@@ -78,6 +81,7 @@ namespace SIL.Cog.ViewModels
 			if (e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
 				return;
 
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			int i = 0;
 			int index = 0;
 			while (!_segments[i].IsBoundary)

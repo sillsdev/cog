@@ -31,10 +31,12 @@ namespace SIL.Cog.Services
 		}
 
 		private readonly IDialogService _dialogService;
+		private readonly IBusyService _busyService;
 
-		public ImportService(IDialogService dialogService)
+		public ImportService(IDialogService dialogService, IBusyService busyService)
 		{
 			_dialogService = dialogService;
+			_busyService = busyService;
 		}
 
 		public bool ImportWordLists(object ownerViewModel, CogProject project)
@@ -42,6 +44,7 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import word lists", WordListsImporters.Keys);
 			if (result.IsValid)
 			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
 				project.Senses.Clear();
 				project.Varieties.Clear();
 				try
@@ -67,6 +70,7 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import similar segments", SegmentMappingsImporters.Keys);
 			if (result.IsValid)
 			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
 				mappings = SegmentMappingsImporters[result.SelectedFileType].Import(result.FileName);
 				return true;
 			}
@@ -79,6 +83,7 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import regions", GeographicRegionsImporters.Keys);
 			if (result.IsValid)
 			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
 				GeographicRegionsImporters[result.SelectedFileType].Import(result.FileName, project);
 				return true;
 			}

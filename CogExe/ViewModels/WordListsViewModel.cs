@@ -16,23 +16,23 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly IExportService _exportService;
-		private readonly IProgressService _progressService;
 		private VarietySenseViewModel _currentVarietySense;
 		private CogProject _project;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
  		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
+		private readonly IBusyService _busyService;
 
 		private VarietySenseViewModel _startVarietySense;
 		private FindViewModel _findViewModel;
 
-		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IProgressService progressService, IImportService importService, IExportService exportService)
+		public WordListsViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IBusyService busyService, IImportService importService, IExportService exportService)
 			: base("Word lists")
 		{
 			_spanFactory = spanFactory;
 			_dialogService = dialogService;
+			_busyService = busyService;
 			_importService = importService;
-			_progressService = progressService;
 			_exportService = exportService;
 
 			Messenger.Default.Register<Message>(this, HandleMessage);
@@ -206,7 +206,7 @@ namespace SIL.Cog.ViewModels
 					});
 				pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
-				_progressService.ShowProgress(this, progressVM);
+				_dialogService.ShowModalDialog(this, progressVM);
 				IsChanged = true;
 			}
 		}
@@ -243,7 +243,7 @@ namespace SIL.Cog.ViewModels
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties, variety =>
 				{
-					var vm = new WordListsVarietyViewModel(project, variety);
+					var vm = new WordListsVarietyViewModel(_busyService, project, variety);
 					vm.PropertyChanged += ChildPropertyChanged;
 					return vm;
 				}, vm => vm.ModelVariety));

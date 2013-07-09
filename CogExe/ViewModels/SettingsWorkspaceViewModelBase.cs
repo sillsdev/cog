@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
@@ -12,10 +13,12 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _applyCommand;
 		private readonly ICommand _resetCommand;
 		private bool _isDirty;
+		private readonly IBusyService _busyService;
 
-		protected SettingsWorkspaceViewModelBase() 
+		protected SettingsWorkspaceViewModelBase(IBusyService busyService)
 			: base("Settings")
 		{
+			_busyService = busyService;
 			_components = new BindableList<ComponentSettingsViewModelBase>();
 			_applyCommand = new RelayCommand(Apply, CanApply);
 			_resetCommand = new RelayCommand(Reset);
@@ -40,6 +43,7 @@ namespace SIL.Cog.ViewModels
 
 		public void Apply()
 		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 			{
 				componentVM.UpdateComponent();
@@ -54,6 +58,7 @@ namespace SIL.Cog.ViewModels
 			if (!_isDirty)
 				return;
 
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			_components.Clear();
 			CreateComponents();
 			foreach (ComponentSettingsViewModelBase componentVM in _components)

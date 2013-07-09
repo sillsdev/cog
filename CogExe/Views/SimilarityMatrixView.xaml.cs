@@ -20,6 +20,7 @@ namespace SIL.Cog.Views
 		public SimilarityMatrixView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void SimilarityMatrixView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

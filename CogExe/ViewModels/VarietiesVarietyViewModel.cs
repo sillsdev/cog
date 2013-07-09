@@ -24,7 +24,7 @@ namespace SIL.Cog.ViewModels
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
  
-		public VarietiesVarietyViewModel(IDialogService dialogService, CogProject project, Variety variety)
+		public VarietiesVarietyViewModel(IDialogService dialogService, IBusyService busyService, CogProject project, Variety variety)
 			: base(variety)
 		{
 			_project = project;
@@ -35,7 +35,7 @@ namespace SIL.Cog.ViewModels
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.PropertyChanged += VarietyPropertyChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.ModelAffix);
-			_words = new WordsViewModel(project, variety);
+			_words = new WordsViewModel(busyService, project, variety);
 			_words.PropertyChanged += ChildPropertyChanged;
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);

@@ -10,6 +10,7 @@ namespace SIL.Cog.Views
 		public HierarchicalGraphView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void _graphLayout_OnLayoutFinished(object sender, EventArgs e)

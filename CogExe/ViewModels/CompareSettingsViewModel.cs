@@ -9,7 +9,8 @@ namespace SIL.Cog.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 
-		public CompareSettingsViewModel(IDialogService dialogService, IImportService importService)
+		public CompareSettingsViewModel(IBusyService busyService, IDialogService dialogService, IImportService importService)
+			: base(busyService)
 		{
 			_dialogService = dialogService;
 			_importService = importService;

@@ -234,10 +234,9 @@
     <Compile Include="Services\IExportService.cs" />
     <Compile Include="Services\IImportService.cs" />
     <Compile Include="Services\ImportService.cs" />
-    <Compile Include="Services\IProgressService.cs" />
+    <Compile Include="Services\IBusyService.cs" />
     <Compile Include="Services\IWindowViewModelMappings.cs" />
-    <Compile Include="Services\OverrideCursor.cs" />
-    <Compile Include="Services\ProgressService.cs" />
+    <Compile Include="Services\BusyService.cs" />
     <Compile Include="Services\ServiceExtensions.cs" />
     <Compile Include="Services\WindowViewModelMappings.cs" />
     <Compile Include="ViewModels\AddUnnaturalClassSegmentViewModel.cs" />
@@ -349,6 +348,7 @@
     <Compile Include="Views\AddUnnaturalClassSegmentDialog.xaml.cs">
       <DependentUpon>AddUnnaturalClassSegmentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\BusyCursor.cs" />
     <Compile Include="Views\DolgopolskyCognateIdentifierView.xaml.cs">
       <DependentUpon>DolgopolskyCognateIdentifierView.xaml</DependentUpon>
     </Compile>

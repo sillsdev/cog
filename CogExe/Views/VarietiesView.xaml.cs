@@ -16,6 +16,7 @@ namespace SIL.Cog.Views
 		public VarietiesView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void VarietiesView_OnLoaded(object sender, RoutedEventArgs e)
@@ -39,6 +40,10 @@ namespace SIL.Cog.Views
 			{
 				case "Varieties":
 					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
+					break;
+
+				case "CurrentVariety":
+					BusyCursor.DisplayUntilIdle();
 					break;
 			}
 		}

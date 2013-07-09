@@ -36,6 +36,7 @@ namespace SIL.Cog.Views
 		{
 			InitializeComponent();
 
+			BusyCursor.DisplayUntilIdle();
 			MapControl.DragButton = MouseButton.Left;
 			MapControl.IgnoreMarkerOnMouseWheel = true;
 		}

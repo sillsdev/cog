@@ -18,6 +18,7 @@ namespace SIL.Cog.Views
 		public GlobalCorrespondencesView()
 		{
 			InitializeComponent();
+			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void SimilarSegmentsView_OnLoaded(object sender, RoutedEventArgs e)

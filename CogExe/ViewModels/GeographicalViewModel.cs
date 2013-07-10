@@ -69,6 +69,10 @@ namespace SIL.Cog.ViewModels
 				case MessageType.ComparisonPerformed:
 					ClusterVarieties();
 					break;
+
+				case MessageType.ComparisonInvalidated:
+					ResetClusters();
+					break;
 			}
 		}
 
@@ -127,7 +131,6 @@ namespace SIL.Cog.ViewModels
 				ClusterVarieties();
 			else
 				ResetClusters();
-			project.Varieties.CollectionChanged += VarietiesChanged;
 		}
 
 		private void RegionsChanged(GeographicalVarietyViewModel variety)
@@ -139,11 +142,6 @@ namespace SIL.Cog.ViewModels
 				else
 					ClusterVarieties();
 			}
-		}
-
-		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			ResetClusters();
 		}
 
 		public override void AcceptChanges()

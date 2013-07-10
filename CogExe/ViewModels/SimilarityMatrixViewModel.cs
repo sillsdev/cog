@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -27,6 +26,9 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_exportService = exportService;
 			_modelVarieties = new List<Variety>();
+
+			Messenger.Default.Register<Message>(this, HandleMessage);
+
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
@@ -36,26 +38,22 @@ namespace SIL.Cog.ViewModels
 				new CommandViewModel("Export this matrix", new RelayCommand(Export))));
 		}
 
+		private void HandleMessage(Message msg)
+		{
+			switch (msg.Type)
+			{
+				case MessageType.ComparisonInvalidated:
+					ResetVarieties();
+					break;
+			}
+		}
+
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
 			ResetVarieties();
-			_project.Varieties.CollectionChanged += VarietiesChanged;
-			_project.Senses.CollectionChanged += SensesChanged;
 			if (_project.VarietyPairs.Count > 0)
 				CreateSimilarityMatrix();
-		}
-
-		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			ResetVarieties();
-			_project.VarietyPairs.Clear();
-		}
-
-		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			ResetVarieties();
-			_project.VarietyPairs.Clear();
 		}
 
 		private void ResetVarieties()
@@ -72,7 +70,7 @@ namespace SIL.Cog.ViewModels
 			if (_project.Varieties.Count == 0 || _project.Senses.Count == 0)
 				return;
 
-			Messenger.Default.Send(new Message(MessageType.StartingComparison));
+			Messenger.Default.Send(new Message(MessageType.ComparisonInvalidated));
 			ResetVarieties();
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);

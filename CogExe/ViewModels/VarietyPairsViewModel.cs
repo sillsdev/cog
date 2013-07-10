@@ -57,21 +57,18 @@ namespace SIL.Cog.ViewModels
 
 		private void PerformComparison()
 		{
-			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected)
+			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected || _currentVarietyPair != null)
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
-			Messenger.Default.Send(new Message(MessageType.StartingComparison));
-			if (_currentVarietyPair != null)
-				_project.VarietyPairs.Remove(_currentVarietyPair.ModelVarietyPair);
-
 			var pair = new VarietyPair(_currentVariety1.ModelVariety, _currentVariety2.ModelVariety);
 			_project.VarietyPairs.Add(pair);
 
 			var pipeline = new Pipeline<VarietyPair>(_project.GetComparisonProcessors());
-
 			pipeline.Process(pair.ToEnumerable());
-			Messenger.Default.Send(new Message(MessageType.ComparisonPerformed));
+
+			CurrentVarietyPair = new VarietyPairViewModel(_project, pair, true);
+			CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
 		}
 
 		private void Find()
@@ -178,22 +175,21 @@ namespace SIL.Cog.ViewModels
 						_findViewModel = null;
 					}
 					break;
+
+				case MessageType.ComparisonInvalidated:
+					ResetCurrentVarietyPair();
+					CurrentVarietyPair = null;
+					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
+					break;
 			}
 		}
 
 		public override void Initialize(CogProject project)
 		{
 			_project = project;
-			_project.VarietyPairs.CollectionChanged += VarietyPairsChanged;
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_project.Varieties, variety => new VarietyViewModel(variety), vm => vm.ModelVariety));
 			Set("VarietiesView1", ref _varietiesView1, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
 			Set("VarietiesView2", ref _varietiesView2, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
-			ResetCurrentVarietyPair();
-			_varieties.CollectionChanged += VarietiesChanged;
-		}
-
-		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
 			ResetCurrentVarietyPair();
 		}
 
@@ -207,21 +203,6 @@ namespace SIL.Cog.ViewModels
 				else
 					Set(() => CurrentVariety2, ref _currentVariety2, (VarietyViewModel) _varietiesView2.GetItemAt(0));
 				SetCurrentVarietyPair();
-			}
-		}
-
-		private void VarietyPairsChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Remove:
-					if (_currentVarietyPair != null && e.OldItems.Cast<VarietyPair>().Any(vp => vp == _currentVarietyPair.ModelVarietyPair))
-						CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
-					break;
-
-				case NotifyCollectionChangedAction.Reset:
-					ResetCurrentVarietyPair();
-					break;
 			}
 		}
 

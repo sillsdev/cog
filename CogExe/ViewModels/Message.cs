@@ -4,9 +4,9 @@ namespace SIL.Cog.ViewModels
 {
 	internal enum MessageType
 	{
-		StartingComparison,
 		// this message might be called in a worker thread
 		ComparisonPerformed,
+		ComparisonInvalidated,
 		SwitchView,
 		ViewChanged
 	}

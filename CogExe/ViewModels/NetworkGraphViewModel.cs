@@ -1,5 +1,4 @@
-﻿using System.Collections.Specialized;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
 using SIL.Cog.Services;
@@ -37,19 +36,6 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateNetworkGraph(_similarityMetric) : null;
-			_project.Varieties.CollectionChanged += VarietiesChanged;
-			_project.Senses.CollectionChanged += SensesChanged;
-
-		}
-
-		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			Graph = null;
-		}
-
-		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			Graph = null;
 		}
 
 		private void HandleMessage(Message msg)
@@ -58,6 +44,10 @@ namespace SIL.Cog.ViewModels
 			{
 				case MessageType.ComparisonPerformed:
 					Graph = _project.GenerateNetworkGraph(_similarityMetric);
+					break;
+
+				case MessageType.ComparisonInvalidated:
+					Graph = null;
 					break;
 			}
 		}

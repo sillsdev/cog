@@ -37,6 +37,10 @@ namespace SIL.Cog.ViewModels
 				case MessageType.ComparisonPerformed:
 					AlignWords();
 					break;
+
+				case MessageType.ComparisonInvalidated:
+					ResetAlignment();
+					break;
 			}
 		}
 
@@ -44,15 +48,15 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
-			_senses.CollectionChanged += SensesChanged;
 			Set("SensesView", ref _sensesView, new ListCollectionView(_senses) {SortDescriptions = {new SortDescription("Gloss", ListSortDirection.Ascending)}});
+			((INotifyCollectionChanged) _sensesView).CollectionChanged += SensesChanged;
 			CurrentSense = _senses.Count > 0 ? (SenseViewModel) _sensesView.GetItemAt(0) : null;
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_currentSense == null && _senses.Count > 0)
-				CurrentSense = _senses[0];
+				CurrentSense = (SenseViewModel) _sensesView.GetItemAt(0);
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses
@@ -77,7 +81,12 @@ namespace SIL.Cog.ViewModels
 			set 
 			{
 				if (Set(() => CurrentSense, ref _currentSense, value))
-					AlignWords();
+				{
+					if (_currentSense == null)
+						ResetAlignment();
+					else
+						AlignWords();
+				}
 			}
 		}
 
@@ -91,6 +100,14 @@ namespace SIL.Cog.ViewModels
 		{
 			get { return _currentWord; }
 			set { Set(() => CurrentWord, ref _currentWord, value); }
+		}
+
+		private void ResetAlignment()
+		{
+			_words.Clear();
+			ColumnCount = 0;
+			CurrentColumn = 0;
+			CurrentWord = null;
 		}
 
 		private void AlignWords()

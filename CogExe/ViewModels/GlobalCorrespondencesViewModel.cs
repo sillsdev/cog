@@ -80,14 +80,16 @@ namespace SIL.Cog.ViewModels
 		private readonly BindableList<GlobalCorrespondenceViewModel> _globalCorrespondences;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 		private readonly IDialogService _dialogService;
+		private readonly IBusyService _busyService;
 
 		private FindViewModel _findViewModel;
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public GlobalCorrespondencesViewModel(IDialogService dialogService)
+		public GlobalCorrespondencesViewModel(IBusyService busyService, IDialogService dialogService)
 			: base("Global Correspondences")
 		{
+			_busyService = busyService;
 			_dialogService = dialogService;
 
 			_globalSegments = new BindableList<GlobalSegmentViewModel>();
@@ -463,6 +465,7 @@ namespace SIL.Cog.ViewModels
 				GeneratingCorrespondences = false;
 				if (!e.Cancelled)
 				{
+					_busyService.ShowBusyIndicatorUntilUpdated();
 					var results = (Result) e.Result;
 					_globalSegments.AddRange(results.Segments.Values);
 					_globalCorrespondences.AddRange(results.Correspondences
@@ -478,27 +481,12 @@ namespace SIL.Cog.ViewModels
 			_project = project;
 			if (_project.VarietyPairs.Count > 0)
 				GenerateCorrespondences();
-			_project.Varieties.CollectionChanged += VarietiesChanged;
-			_project.Senses.CollectionChanged += SensesChanged;
-		}
-
-		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			CancelWorker();
-		}
-
-		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			CancelWorker();
 		}
 
 		private void HandleMessage(Message msg)
 		{
 			switch (msg.Type)
 			{
-				case MessageType.StartingComparison:
-					CancelWorker();
-					break;
 				case MessageType.ComparisonPerformed:
 					GenerateCorrespondences();
 					break;
@@ -510,6 +498,10 @@ namespace SIL.Cog.ViewModels
 						_dialogService.CloseDialog(_findViewModel);
 						_findViewModel = null;
 					}
+					break;
+
+				case MessageType.ComparisonInvalidated:
+					CancelWorker();
 					break;
 			}
 		}

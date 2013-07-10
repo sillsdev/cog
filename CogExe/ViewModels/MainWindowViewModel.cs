@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -67,7 +66,8 @@ namespace SIL.Cog.ViewModels
 			foreach (MasterViewModelBase childView in Views.OfType<MasterViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
 
-			PropertyChanging += MainWindowViewModel_PropertyChanging;
+			PropertyChanging += OnPropertyChanging;
+			PropertyChanged += OnPropertyChanged;
 
 			Messenger.Default.Register<Message>(this, HandleMessage);
 
@@ -92,7 +92,7 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
-		private void MainWindowViewModel_PropertyChanging(object sender, PropertyChangingEventArgs e)
+		private void OnPropertyChanging(object sender, PropertyChangingEventArgs e)
 		{
 			switch (e.PropertyName)
 			{
@@ -100,6 +100,20 @@ namespace SIL.Cog.ViewModels
 					var childView = CurrentView as MasterViewModelBase;
 					if (childView != null)
 						CheckSettingsWorkspace(childView);
+					break;
+			}
+		}
+
+		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "IsChanged":
+					if (IsChanged)
+					{
+						Messenger.Default.Send(new Message(MessageType.ComparisonInvalidated));
+						_project.VarietyPairs.Clear();
+					}
 					break;
 			}
 		}
@@ -132,9 +146,8 @@ namespace SIL.Cog.ViewModels
 			switch (msg.Type)
 			{
 				case MessageType.ComparisonPerformed:
-					if (ProjectFilePath == null || IsChanged)
-						return;
-					SaveComparisonCache();
+					if (ProjectFilePath != null && !IsChanged)
+						SaveComparisonCache();
 					break;
 
 				case MessageType.SwitchView:
@@ -146,22 +159,26 @@ namespace SIL.Cog.ViewModels
 
 		private void SaveComparisonCache()
 		{
-			if (_project.VarietyPairs.Count == 0)
-				return;
-
 			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
-			Directory.CreateDirectory(path);
 			string name = Path.GetFileNameWithoutExtension(ProjectFilePath);
-			Debug.Assert(name != null);
 			string cacheFileName = Path.Combine(path, name + ".cache");
-			using (FileStream fs = File.Create(cacheFileName))
+			if (_project.VarietyPairs.Count == 0)
 			{
-				Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
-
-				foreach (VarietyPair vp in _project.VarietyPairs)
+				if (File.Exists(cacheFileName))
+					File.Delete(cacheFileName);
+			}
+			else
+			{
+				Directory.CreateDirectory(path);
+				using (FileStream fs = File.Create(cacheFileName))
 				{
-					var surrogate = new VarietyPairSurrogate(vp);
-					Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
+					Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
+
+					foreach (VarietyPair vp in _project.VarietyPairs)
+					{
+						var surrogate = new VarietyPairSurrogate(vp);
+						Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
+					}
 				}
 			}
 		}

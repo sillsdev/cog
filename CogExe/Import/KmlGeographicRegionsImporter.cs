@@ -37,7 +37,12 @@ namespace SIL.Cog.Import
 			Schema.Compile();
 		}
 
-		public void Import(string path, CogProject project)
+		public object CreateImportSettingsViewModel()
+		{
+			return null;
+		}
+
+		public void Import(object importSettingsViewModel, string path, CogProject project)
 		{
 			XDocument doc;
 			if (ZipFile.IsZipFile(path))

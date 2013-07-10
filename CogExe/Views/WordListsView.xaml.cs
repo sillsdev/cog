@@ -121,7 +121,7 @@ namespace SIL.Cog.Views
 			}
 
 			var tableView = (TableView) WordListsGrid.View;
-			tableView.RowSelectorPaneWidth = maxWidth + 16;
+			tableView.RowSelectorPaneWidth = maxWidth + 18;
 		}
 
 		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)

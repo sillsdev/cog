@@ -218,6 +218,8 @@
     <Compile Include="GraphAlgorithms\StressMajorizationLayoutParameters.cs" />
     <Compile Include="GraphAlgorithms\VisibilityGraph.cs" />
     <Compile Include="GraphAlgorithms\BundleEdgeRoutingAlgorithm.cs" />
+    <Compile Include="Import\CsvReader.cs" />
+    <Compile Include="Import\IImporter.cs" />
     <Compile Include="Import\ImportException.cs" />
     <Compile Include="Import\KmlGeographicRegionsImporter.cs" />
     <Compile Include="Import\IGeographicRegionsImporter.cs" />
@@ -225,7 +227,8 @@
     <Compile Include="Import\IWordListsImporter.cs" />
     <Compile Include="Import\TextSegmentMappingsImporter.cs" />
     <Compile Include="Import\TextWordListsImporter.cs" />
-    <Compile Include="Import\WordSurvWordListsImporter.cs" />
+    <Compile Include="Import\WordSurv6WordListsImporter.cs" />
+    <Compile Include="Import\WordSurv7WordListsImporter.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\FileDialogResult.cs" />
@@ -259,6 +262,7 @@
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
+    <Compile Include="ViewModels\ImportTextWordListsViewModel.cs" />
     <Compile Include="ViewModels\Message.cs" />
     <Compile Include="ViewModels\ReadOnlyMirroredCollection.cs" />
     <Compile Include="ViewModels\ReadOnlyMirroredList.cs" />
@@ -379,6 +383,9 @@
     <Compile Include="Views\HeaderGridVertex.cs" />
     <Compile Include="Views\HierarchicalGraphView.xaml.cs">
       <DependentUpon>HierarchicalGraphView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImportTextWordListsDialog.xaml.cs">
+      <DependentUpon>ImportTextWordListsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\IntermediateRegionMarker.cs" />
     <Compile Include="Views\GeographicalView.xaml.cs">
@@ -578,6 +585,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditRegionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ImportTextWordListsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using SIL.Cog.Components;
 using SIL.Cog.Import;
 using SIL.Cog.ViewModels;
@@ -15,13 +16,16 @@ namespace SIL.Cog.Services
 		{
 			WordListsImporters = new Dictionary<FileType, IWordListsImporter>
 				{
-					{new FileType("Tab-delimited Text", ".txt"), new TextWordListsImporter()},
-					{new FileType("WordSurv XML", ".xml"), new WordSurvWordListsImporter()}
+					{new FileType("Tab-delimited Text", ".txt"), new TextWordListsImporter('\t')},
+					{new FileType("Comma-delimited Text", ".csv"), new TextWordListsImporter(',')},
+					{new FileType("WordSurv 6 XML", ".xml"), new WordSurv6WordListsImporter()},
+					{new FileType("WordSurv 7 CSV", ".csv"), new WordSurv7WordListsImporter()}
 				};
 
 			SegmentMappingsImporters = new Dictionary<FileType, ISegmentMappingsImporter>
 				{
-					{new FileType("Tab-delimited Text", ".txt"), new TextSegmentMappingsImporter()}
+					{new FileType("Tab-delimited Text", ".txt"), new TextSegmentMappingsImporter('\t')},
+					{new FileType("Comma-delimited Text", ".csv"), new TextSegmentMappingsImporter(',')}
 				};
 
 			GeographicRegionsImporters = new Dictionary<FileType, IGeographicRegionsImporter>
@@ -44,22 +48,14 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import word lists", WordListsImporters.Keys);
 			if (result.IsValid)
 			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
-				project.Senses.Clear();
-				project.Varieties.Clear();
-				try
+				IWordListsImporter importer = WordListsImporters[result.SelectedFileType];
+
+				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
 				{
-					WordListsImporters[result.SelectedFileType].Import(result.FileName, project);
 					var pipeline = new MultiThreadedPipeline<Variety>(project.GetVarietyInitProcessors());
 					pipeline.Process(project.Varieties);
 					pipeline.WaitForComplete();
 					return true;
-				}
-				catch (ImportException ie)
-				{
-					project.Senses.Clear();
-					project.Varieties.Clear();
-					_dialogService.ShowError(ownerViewModel, ie.Message, "Import Error");
 				}
 			}
 			return false;
@@ -70,9 +66,13 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import similar segments", SegmentMappingsImporters.Keys);
 			if (result.IsValid)
 			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
-				mappings = SegmentMappingsImporters[result.SelectedFileType].Import(result.FileName);
-				return true;
+				ISegmentMappingsImporter importer = SegmentMappingsImporters[result.SelectedFileType];
+				IEnumerable<Tuple<string, string>> importedMappings = null;
+				if (Import(importer, ownerViewModel, importSettingsViewModel => importedMappings = importer.Import(importSettingsViewModel, result.FileName)))
+				{
+					mappings = importedMappings;
+					return true;
+				}
 			}
 			mappings = null;
 			return false;
@@ -83,11 +83,43 @@ namespace SIL.Cog.Services
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import regions", GeographicRegionsImporters.Keys);
 			if (result.IsValid)
 			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
-				GeographicRegionsImporters[result.SelectedFileType].Import(result.FileName, project);
-				return true;
+				IGeographicRegionsImporter importer = GeographicRegionsImporters[result.SelectedFileType];
+				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
+					return true;
 			}
 			return false;
+		}
+
+		private bool Import(IImporter importer, object ownerViewModel, Action<object> importAction)
+		{
+			object importSettingsViewModel;
+			if (GetImportSettings(ownerViewModel, importer, out importSettingsViewModel))
+			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
+				try
+				{
+					importAction(importSettingsViewModel);
+					return true;
+				}
+				catch (ImportException ie)
+				{
+					_dialogService.ShowError(ownerViewModel, ie.Message, "Cog");
+				}
+				catch (IOException ioe)
+				{
+					_dialogService.ShowError(ownerViewModel, ioe.Message, "Cog");
+				}
+			}
+			return false;
+		}
+
+		private bool GetImportSettings(object ownerViewModel, IImporter importer, out object importSettingsViewModel)
+		{
+			importSettingsViewModel = importer.CreateImportSettingsViewModel();
+			if (importSettingsViewModel == null)
+				return true;
+
+			return _dialogService.ShowModalDialog(ownerViewModel, importSettingsViewModel) == true;
 		}
 	}
 }

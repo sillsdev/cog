@@ -1,62 +1,143 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Import
 {
 	public class TextWordListsImporter : IWordListsImporter
 	{
-		public void Import(string path, CogProject project)
+		private readonly char _delimiter;
+
+		public TextWordListsImporter(char delimiter)
+		{
+			_delimiter = delimiter;
+		}
+
+		public object CreateImportSettingsViewModel()
+		{
+			return new ImportTextWordListsViewModel();
+		}
+
+		public void Import(object importSettingsViewModel, string path, CogProject project)
+		{
+			var vm = (ImportTextWordListsViewModel) importSettingsViewModel;
+
+			switch (vm.Format)
+			{
+				case TextWordListsFormat.VarietyRows:
+					ImportVarietyRows(path, project, vm.CategoriesIncluded);
+					break;
+
+				case TextWordListsFormat.SenseRows:
+					ImportSenseRows(path, project, vm.CategoriesIncluded);
+					break;
+			}
+		}
+
+		private void ImportVarietyRows(string path, CogProject project, bool categoriesIncluded)
 		{
 			using (var file = new StreamReader(path))
 			{
-				string line = file.ReadLine();
-				if (line == null)
+				var reader = new CsvReader(file, _delimiter);
+
+				IList<string> glosses;
+				if (!reader.ReadRow(out glosses))
 					return;
-
-				string[] glosses = line.Split('\t');
-
-				line = file.ReadLine();
-				if (line == null)
-					return;
-
-				string[] categories = line.Split('\t');
+				IList<string> categories = null;
+				if (categoriesIncluded)
+				{
+					if (!reader.ReadRow(out categories))
+						return;
+				}
 
 				var senses = new Dictionary<string, Sense>();
-				for (int i = 1; i < glosses.Length; i++)
+				for (int i = 1; i < glosses.Count; i++)
 				{
 					string gloss = glosses[i].Trim();
 					if (senses.ContainsKey(gloss))
 						throw new ImportException(string.Format("The gloss, \"{0}\", is not unique.", gloss));
-					senses[gloss] = new Sense(gloss, categories.Length <= i ? null : categories[i].Trim());
+					string category = null;
+					if (categories != null)
+						category = categories[i].Trim();
+					senses[gloss] = new Sense(gloss, string.IsNullOrEmpty(category) ? null : category);
 				}
-				project.Senses.AddRange(senses.Values);
 
-				using (project.Varieties.BulkUpdate())
+				var varieties = new Dictionary<string, Variety>();
+				IList<string> varietyRow;
+				while (reader.ReadRow(out varietyRow))
 				{
-					while ((line = file.ReadLine()) != null)
+					string name = varietyRow[0].Trim();
+					if (varieties.ContainsKey(name))
+						throw new ImportException(string.Format("The variety name, \"{0}\", is not unique.", name));
+					var variety = new Variety(name);
+					for (int j = 1; j < varietyRow.Count; j++)
 					{
-						string[] wordStrs = line.Split('\t');
-						string name = wordStrs[0].Trim();
-						if (project.Varieties.Contains(name))
-							throw new ImportException(string.Format("The variety name, \"{0}\", is not unique.", name));
-						var variety = new Variety(name);
-						for (int i = 1; i < wordStrs.Length; i++)
+						string wordStr = varietyRow[j].Trim();
+						if (!string.IsNullOrEmpty(wordStr))
 						{
-							string wordStr = wordStrs[i].Trim();
-							if (!string.IsNullOrEmpty(wordStr))
+							foreach (string w in wordStr.Split(','))
 							{
-								foreach (string w in wordStr.Split(','))
-								{
-									string str = w.Trim().Normalize(NormalizationForm.FormD);
-									variety.Words.Add(new Word(str, senses[glosses[i].Trim()]));
-								}
+								string str = w.Trim().Normalize(NormalizationForm.FormD);
+								variety.Words.Add(new Word(str, senses[glosses[j].Trim()]));
 							}
 						}
+					}
+					varieties[name] = variety;
+				}
 
-						project.Varieties.Add(variety);
+				project.Senses.ReplaceAll(senses.Values);
+				project.Varieties.ReplaceAll(varieties.Values);
+			}
+		}
+
+		private void ImportSenseRows(string path, CogProject project, bool categoriesIncluded)
+		{
+			using (var file = new StreamReader(path))
+			{
+				var reader = new CsvReader(file, _delimiter);
+
+				IList<string> varietyNames;
+				if (!reader.ReadRow(out varietyNames))
+					return;
+				var varieties = new Dictionary<string, Variety>();
+				for (int i = (categoriesIncluded ? 2 : 1); i < varietyNames.Count; i++)
+				{
+					string name = varietyNames[i].Trim();
+					if (varieties.ContainsKey(name))
+						throw new ImportException(string.Format("The variety name, \"{0}\", is not unique.", name));
+					varieties[name] = new Variety(name);
+				}
+
+				var senses = new Dictionary<string, Sense>();
+				IList<string> glossRow;
+				while (reader.ReadRow(out glossRow))
+				{
+					int column = 0;
+					string gloss = glossRow[column++].Trim();
+					if (senses.ContainsKey(gloss))
+						throw new ImportException(string.Format("The gloss, \"{0}\", is not unique.", gloss));
+					string category = null;
+					if (categoriesIncluded)
+						category = glossRow[column++].Trim();
+					var sense = new Sense(gloss, string.IsNullOrEmpty(category) ? null : category);
+					senses[gloss] = sense;
+					for (int j = column; j < glossRow.Count; j++)
+					{
+						string wordStr = glossRow[j].Trim();
+						if (!string.IsNullOrEmpty(wordStr))
+						{
+							foreach (string w in wordStr.Split(','))
+							{
+								string str = w.Trim().Normalize(NormalizationForm.FormD);
+								varieties[varietyNames[j].Trim()].Words.Add(new Word(str, sense));
+							}
+						}
 					}
 				}
+
+				project.Senses.ReplaceAll(senses.Values);
+				project.Varieties.ReplaceAll(varieties.Values);
 			}
 		}
 	}

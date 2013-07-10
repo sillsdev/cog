@@ -143,15 +143,15 @@ namespace SIL.Cog.ViewModels
 						vm.PropertyChanged += ChildPropertyChanged;
 						return vm;
 					}, vm => vm.ModelVariety));
-			_varieties.CollectionChanged += VarietiesChanged;
 			Set("VarietiesView", ref _varietiesView, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
+			((INotifyCollectionChanged) _varietiesView).CollectionChanged += VarietiesChanged;
 			CurrentVariety = _varietiesView.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_currentVariety == null && _varieties.Count > 0)
-				CurrentVariety = _varieties[0];
+				CurrentVariety = (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0);
 		}
 
 		private void AddNewVariety()

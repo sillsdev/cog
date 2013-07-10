@@ -6,20 +6,28 @@ namespace SIL.Cog.Import
 {
 	public class TextSegmentMappingsImporter : ISegmentMappingsImporter
 	{
-		public IEnumerable<Tuple<string, string>> Import(string path)
+		private readonly char _delimiter;
+
+		public TextSegmentMappingsImporter(char delimiter)
+		{
+			_delimiter = delimiter;
+		}
+
+		public object CreateImportSettingsViewModel()
+		{
+			return null;
+		}
+
+		public IEnumerable<Tuple<string, string>> Import(object importSettingsViewModel, string path)
 		{
 			var mappings = new List<Tuple<string, string>>();
 			using (var file = new StreamReader(path))
 			{
-				string line;
-				while ((line = file.ReadLine()) != null)
+				var reader = new CsvReader(file, _delimiter);
+				IList<string> mapping;
+				while (reader.ReadRow(out mapping))
 				{
-					line = line.Trim();
-					if (string.IsNullOrEmpty(line))
-						continue;
-
-					string[] mapping = line.Split('\t');
-					if (mapping.Length >= 2)
+					if (mapping.Count >= 2)
 					{
 						mappings.Add(Tuple.Create(mapping[0].Trim(), mapping[1].Trim()));
 					}

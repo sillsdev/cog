@@ -146,6 +146,9 @@ namespace SIL.Cog.ViewModels
 
 		private void SaveComparisonCache()
 		{
+			if (_project.VarietyPairs.Count == 0)
+				return;
+
 			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
 			Directory.CreateDirectory(path);
 			string name = Path.GetFileNameWithoutExtension(ProjectFilePath);
@@ -194,6 +197,10 @@ namespace SIL.Cog.ViewModels
 					catch (ConfigException)
 					{
 						_dialogService.ShowError(this, "The specified file is not a valid Cog configuration file.", "Cog");
+					}
+					catch (IOException ioe)
+					{
+						_dialogService.ShowError(this, ioe.Message, "Cog");
 					}
 				}
 			}
@@ -445,6 +452,7 @@ namespace SIL.Cog.ViewModels
 		{
 			ConfigManager.Save(_project, path);
 			ProjectFilePath = path;
+			DisplayName = string.Format("{0} - Cog", Path.GetFileNameWithoutExtension(path));
 			SaveComparisonCache();
 			AcceptChanges();
 		}

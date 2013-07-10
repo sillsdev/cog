@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace SIL.Cog.Import
 {
-	public interface ISegmentMappingsImporter
+	public interface ISegmentMappingsImporter : IImporter
 	{
-		IEnumerable<Tuple<string, string>> Import(string path);
+		IEnumerable<Tuple<string, string>> Import(object importSettingsViewModel, string path);
 	}
 }

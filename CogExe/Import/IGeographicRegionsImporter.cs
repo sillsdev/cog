@@ -1,7 +1,7 @@
 ﻿namespace SIL.Cog.Import
 {
-	public interface IGeographicRegionsImporter
+	public interface IGeographicRegionsImporter : IImporter
 	{
-		void Import(string path, CogProject project);
+		void Import(object importSettingsViewModel, string path, CogProject project);
 	}
 }

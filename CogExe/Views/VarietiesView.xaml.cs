@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace SIL.Cog.Views
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
-					AddVarieties((IEnumerable<VarietiesVarietyViewModel>) sender);
+					AddVarieties(((IEnumerable) sender).Cast<VarietiesVarietyViewModel>());
 					break;
 			}
 			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);

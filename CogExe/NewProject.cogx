@@ -1331,16 +1331,21 @@
 					</NaturalClass>
 				</SonorityClass>
 				<SonorityClass sonority="5">
+					<NaturalClass name="Trill" type="consonant">
+						<FeatureValue feature="manner" value="trill" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="6">
 					<NaturalClass name="Lateral" type="consonant">
 						<FeatureValue feature="lateral" value="lateral+" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="6">
+				<SonorityClass sonority="7">
 					<NaturalClass name="Flap" type="consonant">
 						<FeatureValue feature="manner" value="flap" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="7">
+				<SonorityClass sonority="8">
 					<UnnaturalClass name="Glide">
 						<Segment>j</Segment>
 						<Segment>ɥ</Segment>
@@ -1348,24 +1353,24 @@
 						<Segment>w</Segment>
 					</UnnaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="7">
+				<SonorityClass sonority="8">
 					<NaturalClass name="Non-syllabic vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic-" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="8">
+				<SonorityClass sonority="9">
 					<NaturalClass name="Close vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="manner" value="close-vowel" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="9">
+				<SonorityClass sonority="10">
 					<NaturalClass name="Mid vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="manner" value="mid-vowel" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="10">
+				<SonorityClass sonority="11">
 					<NaturalClass name="Open vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="manner" value="open-vowel" />

@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.ViewModels;
 
@@ -13,16 +14,35 @@ namespace SIL.Cog.Views
 	/// </summary>
 	public partial class VarietyPairsView
 	{
+		private InputBinding _findBinding;
+
 		public VarietyPairsView()
 		{
 			InitializeComponent();
 			BusyCursor.DisplayUntilIdle();
 		}
 
-		private void VarietyPairsView_OnLoaded(object sender, RoutedEventArgs e)
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var vm = (VarietyPairsViewModel) DataContext;
+			var vm = DataContext as VarietyPairsViewModel;
+			if (vm == null)
+				return;
+
 			vm.PropertyChanged += ViewModel_PropertyChanged;
+			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
+		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var window = this.FindVisualAncestor<Window>();
+			if (IsVisible)
+				window.InputBindings.Add(_findBinding);
+			else
+				window.InputBindings.Remove(_findBinding);
+		}
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
 			SetupVarieties();
 			SetupVarietiesView1();
 			SetupVarietiesView2();

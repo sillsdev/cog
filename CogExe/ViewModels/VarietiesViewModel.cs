@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
@@ -23,6 +24,10 @@ namespace SIL.Cog.ViewModels
 		private VarietiesVarietyViewModel _currentVariety;
 		private CogProject _project;
 		private bool _isVarietySelected;
+		private readonly ICommand _findCommand;
+		
+		private string _sortPropertyName;
+		private ListSortDirection _sortDirection;
 
 		private FindViewModel _findViewModel;
 		private WordViewModel _startWord;
@@ -37,16 +42,43 @@ namespace SIL.Cog.ViewModels
 
 			_selectedWordsMonitor = new SimpleMonitor();
 
+			_sortPropertyName = "Sense.Gloss";
+			_sortDirection = ListSortDirection.Ascending;
+
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
+
+			_findCommand = new RelayCommand(Find);
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
 					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
 					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety)),
-					new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
+					new TaskAreaCommandViewModel("Find words", _findCommand),
+					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
+						new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
+						new TaskAreaCommandViewModel("Word", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
 				new TaskAreaCommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
+		}
+
+		private void SortWordsBy(string propertyName, ListSortDirection sortDirection)
+		{
+			_sortPropertyName = propertyName;
+			_sortDirection = sortDirection;
+
+			if (_currentVariety != null)
+				ChangeWordsSort();
+		}
+
+		private void ChangeWordsSort()
+		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
+			var sortDesc = new SortDescription(_sortPropertyName, _sortDirection);
+			if (_currentVariety.Words.WordsView.SortDescriptions.Count == 0)
+				_currentVariety.Words.WordsView.SortDescriptions.Add(sortDesc);
+			else
+				_currentVariety.Words.WordsView.SortDescriptions[0] = sortDesc;
 		}
 
 		private void HandleViewChanged(ViewChangedMessage msg)
@@ -196,6 +228,11 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
+		public ICommand FindCommand
+		{
+			get { return _findCommand; }
+		}
+
 		public ReadOnlyObservableList<VarietiesVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
@@ -218,7 +255,10 @@ namespace SIL.Cog.ViewModels
 					if (oldCurVariety != null)
 						oldCurVariety.Words.SelectedWords.CollectionChanged -= SelectedWordsChanged;
 					if (_currentVariety != null)
+					{
+						ChangeWordsSort();
 						_currentVariety.Words.SelectedWords.CollectionChanged += SelectedWordsChanged;
+					}
 				}
 				IsVarietySelected = _currentVariety != null;
 			}

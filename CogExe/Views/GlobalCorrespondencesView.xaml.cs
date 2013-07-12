@@ -15,16 +15,35 @@ namespace SIL.Cog.Views
 	/// </summary>
 	public partial class GlobalCorrespondencesView
 	{
+		private InputBinding _findBinding;
+
 		public GlobalCorrespondencesView()
 		{
 			InitializeComponent();
 			BusyCursor.DisplayUntilIdle();
 		}
 
-		private void SimilarSegmentsView_OnLoaded(object sender, RoutedEventArgs e)
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var vm = (GlobalCorrespondencesViewModel) DataContext;
+			var vm = DataContext as GlobalCorrespondencesViewModel;
+			if (vm == null)
+				return;
+
 			vm.GlobalCorrespondences.CollectionChanged += GlobalCorrespondences_CollectionChanged;
+			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
+		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var window = this.FindVisualAncestor<Window>();
+			if (IsVisible)
+				window.InputBindings.Add(_findBinding);
+			else
+				window.InputBindings.Remove(_findBinding);
+		}
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
 			SetGraph();
 		}
 

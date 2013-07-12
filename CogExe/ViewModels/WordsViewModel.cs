@@ -73,10 +73,7 @@ namespace SIL.Cog.ViewModels
 			get
 			{
 				if (_wordsView == null)
-				{
 					_wordsView = new ListCollectionView(_words);
-					_wordsView.SortDescriptions.Add(new SortDescription("Sense.Gloss", ListSortDirection.Ascending));
-				}
 				return _wordsView;
 			}
 		}

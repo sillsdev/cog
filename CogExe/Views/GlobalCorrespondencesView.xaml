@@ -8,7 +8,7 @@
              xmlns:ga="clr-namespace:SIL.Cog.GraphAlgorithms" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:vm="clr-namespace:SIL.Cog.ViewModels" xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Loaded="SimilarSegmentsView_OnLoaded"
+             mc:Ignorable="d" Loaded="OnLoaded" DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolConverter" />

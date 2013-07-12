@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Services;
@@ -81,6 +82,7 @@ namespace SIL.Cog.ViewModels
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
+		private readonly ICommand _findCommand;
 
 		private FindViewModel _findViewModel;
 		private WordPairViewModel _startWordPair;
@@ -101,6 +103,8 @@ namespace SIL.Cog.ViewModels
 
 			_selectedWordPairsMonitor = new SimpleMonitor();
 
+			_findCommand = new RelayCommand(Find);
+
 			_generateCorrespondencesWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
 			_generateCorrespondencesWorker.DoWork += GenerateCorrespondencesAsync;
 			_generateCorrespondencesWorker.RunWorkerCompleted += GenerateCorrespondencesAsyncFinished;
@@ -115,9 +119,24 @@ namespace SIL.Cog.ViewModels
 			_correspondenceFilter.PropertyChanged += _correspondenceFilter_PropertyChanged;
 			TaskAreas.Add(_correspondenceFilter);
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
-				new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
+				new TaskAreaCommandViewModel("Find words", _findCommand),
+				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
+					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending))),
+					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending)))))
+				));
 			_wordPairs = new WordPairsViewModel();
+			SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending);
 			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
+		}
+
+		private void SortWordPairsBy(string propertyName, ListSortDirection sortDirection)
+		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
+			var sortDesc = new SortDescription(propertyName, sortDirection);
+			if (_wordPairs.WordPairsView.SortDescriptions.Count == 0)
+				_wordPairs.WordPairsView.SortDescriptions.Add(sortDesc);
+			else
+				_wordPairs.WordPairsView.SortDescriptions[0] = sortDesc;
 		}
 
 		private void SelectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -505,6 +524,11 @@ namespace SIL.Cog.ViewModels
 			{
 				RunWorker();
 			}
+		}
+
+		public ICommand FindCommand
+		{
+			get { return _findCommand; }
 		}
 
 		public GlobalCorrespondenceViewModel SelectedCorrespondence

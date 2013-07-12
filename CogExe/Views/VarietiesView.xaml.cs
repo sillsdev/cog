@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.ViewModels;
 
@@ -13,24 +14,43 @@ namespace SIL.Cog.Views
 	/// </summary>
 	public partial class VarietiesView
 	{
+		private InputBinding _findBinding;
+
 		public VarietiesView()
 		{
 			InitializeComponent();
 			BusyCursor.DisplayUntilIdle();
 		}
 
-		private void VarietiesView_OnLoaded(object sender, RoutedEventArgs e)
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var vm = (VarietiesViewModel) DataContext;
+			var vm = DataContext as VarietiesViewModel;
+			if (vm == null)
+				return;
+
 			vm.PropertyChanged += ViewModel_PropertyChanged;
+			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
+		}
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
 			SetupVarieties();
+		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var window = this.FindVisualAncestor<Window>();
+			if (IsVisible)
+				window.InputBindings.Add(_findBinding);
+			else
+				window.InputBindings.Remove(_findBinding);
 		}
 
 		private void SetupVarieties()
 		{
 			var vm = (VarietiesViewModel) DataContext;
-			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
-			AddVarieties(vm.Varieties);
+			vm.VarietiesView.CollectionChanged += VarietiesView_CollectionChanged;
+			AddVarieties(vm.VarietiesView.Cast<VarietiesVarietyViewModel>());
 			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
 		}
 
@@ -38,7 +58,7 @@ namespace SIL.Cog.Views
 		{
 			switch (e.PropertyName)
 			{
-				case "Varieties":
+				case "VarietiesView":
 					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
 					break;
 
@@ -48,7 +68,7 @@ namespace SIL.Cog.Views
 			}
 		}
 
-		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void VarietiesView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			switch (e.Action)
 			{

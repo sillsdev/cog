@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
@@ -32,6 +33,10 @@ namespace SIL.Cog.ViewModels
 		private CurrentVarietyPairState _currentVarietyPairState;
 		private readonly IExportService _exportService;
 		private readonly IDialogService _dialogService;
+		private readonly ICommand _findCommand;
+
+		private string _sortPropertyName;
+		private ListSortDirection _sortDirection;
 
 		private FindViewModel _findViewModel;
 		private WordPairViewModel _startWordPair;
@@ -44,18 +49,49 @@ namespace SIL.Cog.ViewModels
 			_dialogService = dialogService;
 			_exportService = exportService;
 
+			_sortPropertyName = "PhoneticSimilarityScore";
+			_sortDirection = ListSortDirection.Descending;
+
 			_selectedWordPairsMonitor = new SimpleMonitor();
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 			Messenger.Default.Register<ModelChangingMessage>(this, HandleModelChanging);
 
+			_findCommand = new RelayCommand(Find);
+
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
 				new TaskAreaCommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison)),
-				new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
+				new TaskAreaCommandViewModel("Find words", _findCommand),
+				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
+					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending))),
+					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending)))))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
+		}
+
+		private void SortWordPairsBy(string propertyName, ListSortDirection sortDirection)
+		{
+			_sortPropertyName = propertyName;
+			_sortDirection = sortDirection;
+			if (_currentVarietyPair != null)
+				ChangeWordPairsSort();
+		}
+
+		private void ChangeWordPairsSort()
+		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
+			var sortDesc = new SortDescription(_sortPropertyName, _sortDirection);
+			if (_currentVarietyPair.Cognates.WordPairsView.SortDescriptions.Count == 0)
+				_currentVarietyPair.Cognates.WordPairsView.SortDescriptions.Add(sortDesc);
+			else
+				_currentVarietyPair.Cognates.WordPairsView.SortDescriptions[0] = sortDesc;
+
+			if (_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions.Count == 0)
+				_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions.Add(sortDesc);
+			else
+				_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions[0] = sortDesc;
 		}
 
 		private void HandleModelChanging(ModelChangingMessage modelChangingMessage)
@@ -206,6 +242,11 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
+		public ICommand FindCommand
+		{
+			get { return _findCommand; }
+		}
+
 		public ReadOnlyObservableList<VarietyViewModel> Varieties
 		{
 			get { return _varieties; }
@@ -258,6 +299,7 @@ namespace SIL.Cog.ViewModels
 
 					if (_currentVarietyPair != null)
 					{
+						ChangeWordPairsSort();
 						_currentVarietyPair.Cognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
 						_currentVarietyPair.Noncognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
 					}

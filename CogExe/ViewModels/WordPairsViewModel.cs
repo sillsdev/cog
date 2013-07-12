@@ -50,10 +50,7 @@ namespace SIL.Cog.ViewModels
 			get
 			{
 				if (_wordPairsView == null)
-				{
 					_wordPairsView = new ListCollectionView(_wordPairs);
-					_wordPairsView.SortDescriptions.Add(new SortDescription("PhoneticSimilarityScore", ListSortDirection.Descending));
-				}
 				return _wordPairsView;
 			}
 		}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
@@ -22,6 +23,7 @@ namespace SIL.Cog.ViewModels
  		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 		private readonly IBusyService _busyService;
+		private readonly ICommand _findCommand;
 
 		private VarietySenseViewModel _startVarietySense;
 		private FindViewModel _findViewModel;
@@ -37,10 +39,12 @@ namespace SIL.Cog.ViewModels
 
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 
+			_findCommand = new RelayCommand(Find);
+
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
  					new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
-					new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
+					new TaskAreaCommandViewModel("Find words", _findCommand)));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import)),
@@ -95,7 +99,7 @@ namespace SIL.Cog.ViewModels
 
 		private void Find()
 		{
-			if (_varieties.Count == 0 || _senses.Count == 0 || _findViewModel != null)
+			if (_findViewModel != null)
 				return;
 
 			_findViewModel = new FindViewModel(_dialogService, FindNext);
@@ -218,6 +222,11 @@ namespace SIL.Cog.ViewModels
 				if (Set(() => CurrentVarietySense, ref _currentVarietySense, value))
 					_startVarietySense = null;
 			}
+		}
+
+		public ICommand FindCommand
+		{
+			get { return _findCommand; }
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses

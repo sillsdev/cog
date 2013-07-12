@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:v="clr-namespace:SIL.Cog.Views"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:vm="clr-namespace:SIL.Cog.ViewModels"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="VarietyPairsView_OnLoaded"
+             mc:Ignorable="d" DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
+             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded"
              d:DataContext="{d:DesignInstance vm:VarietyPairsViewModel}">
     <UserControl.Resources>
         <cnvtrs:EnumMatchToVisibilityConverter x:Key="EnumConverter" />

@@ -138,6 +138,7 @@
     <Compile Include="Behaviors\TextBlockBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaviors.cs" />
     <Compile Include="Behaviors\UIElementBehaviors.cs" />
+    <Compile Include="Behaviors\VirtualizingStackPanelBehaviors.cs" />
     <Compile Include="Controls\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>

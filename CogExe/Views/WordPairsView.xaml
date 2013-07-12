@@ -15,7 +15,7 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="18" />
 			</Grid.ColumnDefinitions>
-			<ScrollViewer Grid.Column="0" Name="ScrollViewer">
+			<ScrollViewer Grid.Column="0" Name="ScrollViewer" CanContentScroll="False">
 				<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordPairsListBox" ItemsSource="{Binding WordPairsView}" AlternationCount="2" SelectionChanged="WordPairsListBox_OnSelectionChanged">
 					<ListBox.CommandBindings>
 						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />

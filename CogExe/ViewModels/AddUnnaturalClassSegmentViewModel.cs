@@ -1,16 +1,16 @@
 ﻿using System.ComponentModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class AddUnnaturalClassSegmentViewModel : CogViewModelBase, IDataErrorInfo
+	public class AddUnnaturalClassSegmentViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private string _segment;
 		private readonly CogProject _project;
 
 		public AddUnnaturalClassSegmentViewModel(CogProject project)
-			: base("Add Segment")
 		{
 			_project = project;
 		}

@@ -1,17 +1,19 @@
 ﻿using System.ComponentModel;
+using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public class EditAffixViewModel : CogViewModelBase, IDataErrorInfo
+	public class EditAffixViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private readonly CogProject _project;
 		private string _strRep;
 		private AffixViewModelType _type;
 		private string _category;
+		private readonly string _title;
 
 		public EditAffixViewModel(CogProject project, Affix affix)
-			: base("Edit Affix")
 		{
+			_title = "Edit Affix";
 			_project = project;
 			_strRep = affix.StrRep;
 			switch (affix.Type)
@@ -27,9 +29,14 @@ namespace SIL.Cog.ViewModels
 		}
 
 		public EditAffixViewModel(CogProject project)
-			: base("New Affix")
 		{
+			_title = "New Affix";
 			_project = project;
+		}
+
+		public string Title
+		{
+			get { return _title; }
 		}
 
 		public string StrRep

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -17,10 +18,10 @@ namespace SIL.Cog.ViewModels
 			: base("Senses")
 		{
 			_dialogService = dialogService;
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
-				new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
-				new CommandViewModel("Edit selected sense", new RelayCommand(EditSelectedSense)), 
-				new CommandViewModel("Remove selected sense", new RelayCommand(RemoveCurrentSense))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
+				new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
+				new TaskAreaCommandViewModel("Edit selected sense", new RelayCommand(EditSelectedSense)), 
+				new TaskAreaCommandViewModel("Remove selected sense", new RelayCommand(RemoveCurrentSense))));
 		}
 
 		private void AddNewSense()
@@ -29,9 +30,9 @@ namespace SIL.Cog.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var newSense = new Sense(vm.Gloss, vm.Category);
+				Messenger.Default.Send(new ModelChangingMessage());
 				_project.Senses.Add(newSense);
 				CurrentSense = _senses.Single(s => s.ModelSense == newSense);
-				IsChanged = true;
 			}
 		}
 
@@ -45,7 +46,6 @@ namespace SIL.Cog.ViewModels
 			{
 				_currentSense.ModelSense.Gloss = vm.Gloss;
 				_currentSense.ModelSense.Category = vm.Category;
-				IsChanged = true;
 			}
 		}
 
@@ -54,14 +54,14 @@ namespace SIL.Cog.ViewModels
 			if (_currentSense == null)
 				return;
 
-			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this sense?", null))
+			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this sense?", "Cog"))
 			{
+				Messenger.Default.Send(new ModelChangingMessage());
 				int index = _senses.IndexOf(_currentSense);
 				_project.Senses.Remove(_currentSense.ModelSense);
 				if (index == _senses.Count)
 					index--;
 				CurrentSense = _senses.Count > 0 ?  _senses[index] : null;
-				IsChanged = true;
 			}
 		}
 
@@ -75,8 +75,8 @@ namespace SIL.Cog.ViewModels
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (_currentSense == null && _senses.Count > 0)
-				CurrentSense = _senses[0];
+			if (_currentSense == null || !_senses.Contains(_currentSense))
+				CurrentSense = _senses.Count > 0 ? _senses[0] : null;
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses

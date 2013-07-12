@@ -8,20 +8,20 @@ using SIL.Cog.ViewModels;
 namespace SIL.Cog.Views
 {
 	/// <summary>
-	/// Interaction logic for SenseAlignmentView.xaml
+	/// Interaction logic for MultipleWordAlignmentView.xaml
 	/// </summary>
-	public partial class SenseAlignmentView
+	public partial class MultipleWordAlignmentView
 	{
-		public SenseAlignmentView()
+		public MultipleWordAlignmentView()
 		{
 			InitializeComponent();
 			BusyCursor.DisplayUntilIdle();
 		}
 
-		private void SenseAlignmentView_OnLoaded(object sender, RoutedEventArgs e)
+		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			LoadColumns();
-			var vm = (SenseAlignmentViewModel) DataContext;
+			var vm = (MultipleWordAlignmentViewModel) DataContext;
 			vm.Words.CollectionChanged += WordsChanged;
 		}
 
@@ -32,7 +32,7 @@ namespace SIL.Cog.Views
 
 		private void LoadColumns()
 		{
-			var vm = (SenseAlignmentViewModel) DataContext;
+			var vm = (MultipleWordAlignmentViewModel) DataContext;
 			AlignmentGrid.Columns.Clear();
 			var prefixColumn = new DataGridTextColumn
 				{
@@ -86,12 +86,12 @@ namespace SIL.Cog.Views
 
 		private void AlignmentGrid_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
 		{
-			var vm = (SenseAlignmentViewModel) DataContext;
+			var vm = (MultipleWordAlignmentViewModel) DataContext;
 			if (e.AddedCells.Count == 1)
 			{
 				DataGridCellInfo ci = e.AddedCells[0];
 				vm.CurrentColumn = ci.Column.DisplayIndex - 1;
-				vm.CurrentWord = (SenseAlignmentWordViewModel) ci.Item;
+				vm.CurrentWord = (MultipleWordAlignmentWordViewModel) ci.Item;
 			}
 			else
 			{

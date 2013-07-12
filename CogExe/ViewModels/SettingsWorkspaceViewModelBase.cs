@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -44,12 +45,12 @@ namespace SIL.Cog.ViewModels
 		public void Apply()
 		{
 			_busyService.ShowBusyIndicatorUntilUpdated();
+			Messenger.Default.Send(new ModelChangingMessage());
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 			{
 				componentVM.UpdateComponent();
 				componentVM.AcceptChanges();
 			}
-			IsChanged = true;
 			_isDirty = false;
 		}
 

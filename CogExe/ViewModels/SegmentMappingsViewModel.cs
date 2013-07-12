@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
-	public class SegmentMappingsViewModel : ViewModelBase
+	public class SegmentMappingsViewModel : ChangeTrackingViewModelBase
 	{
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
@@ -44,12 +43,14 @@ namespace SIL.Cog.ViewModels
 				var mapping = new SegmentMappingViewModel(_project, vm.Segment1, vm.Segment2);
 				_mappings.Add(mapping);
 				CurrentMapping = mapping;
+				IsChanged = true;
 			}
 		}
 
 		private void RemoveMapping()
 		{
 			_mappings.Remove(_currentMapping);
+			IsChanged = true;
 		}
 
 		private bool CanRemoveMapping()
@@ -65,6 +66,7 @@ namespace SIL.Cog.ViewModels
 				_mappings.Clear();
 				foreach (Tuple<string, string> mapping in mappings)
 					_mappings.Add(new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2));
+				IsChanged = true;
 			}
 		}
 

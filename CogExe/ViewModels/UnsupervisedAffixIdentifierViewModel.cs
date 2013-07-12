@@ -22,31 +22,19 @@ namespace SIL.Cog.ViewModels
 		public double Threshold
 		{
 			get { return _threshold; }
-			set
-			{
-				Set(() => Threshold, ref _threshold, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => Threshold, ref _threshold, value); }
 		}
 
 		public int MaxAffixLength
 		{
 			get { return _maxAffixLength; }
-			set
-			{
-				Set(() => MaxAffixLength, ref _maxAffixLength, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => MaxAffixLength, ref _maxAffixLength, value); }
 		}
 
 		public bool CategoryRequired
 		{
 			get { return _categoryRequired; }
-			set
-			{
-				Set(() => CategoryRequired, ref _categoryRequired, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => CategoryRequired, ref _categoryRequired, value); }
 		}
 
 		public override object UpdateComponent()

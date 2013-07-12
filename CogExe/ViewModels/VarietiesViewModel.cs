@@ -37,30 +37,24 @@ namespace SIL.Cog.ViewModels
 
 			_selectedWordsMonitor = new SimpleMonitor();
 
-			Messenger.Default.Register<Message>(this, HandleMessage);
+			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
-					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
-					new CommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
-					new CommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety)),
-					new CommandViewModel("Find words", new RelayCommand(Find))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
+					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
+					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
+					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety)),
+					new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
 
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks", 
-				new CommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
+				new TaskAreaCommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
 		}
 
-		private void HandleMessage(Message msg)
+		private void HandleViewChanged(ViewChangedMessage msg)
 		{
-			switch (msg.Type)
+			if (msg.OldViewModel == this && _findViewModel != null)
 			{
-				case MessageType.ViewChanged:
-					var data = (ViewChangedData) msg.Data;
-					if (data.OldViewModel == this && _findViewModel != null)
-					{
-						_dialogService.CloseDialog(_findViewModel);
-						_findViewModel = null;
-					}
-					break;
+				_dialogService.CloseDialog(_findViewModel);
+				_findViewModel = null;
 			}
 		}
 
@@ -137,21 +131,16 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(_project.Varieties,
-				variety =>
-					{
-						var vm = new VarietiesVarietyViewModel(_dialogService, _busyService, _project, variety);
-						vm.PropertyChanged += ChildPropertyChanged;
-						return vm;
-					}, vm => vm.ModelVariety));
+				variety => new VarietiesVarietyViewModel(_dialogService, _busyService, _project, variety), vm => vm.ModelVariety));
 			Set("VarietiesView", ref _varietiesView, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
 			((INotifyCollectionChanged) _varietiesView).CollectionChanged += VarietiesChanged;
-			CurrentVariety = _varietiesView.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
+			CurrentVariety = _varieties.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (_currentVariety == null && _varieties.Count > 0)
-				CurrentVariety = (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0);
+			if (_currentVariety == null || !_varieties.Contains(_currentVariety))
+				CurrentVariety = _varieties.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
 		}
 
 		private void AddNewVariety()
@@ -160,16 +149,10 @@ namespace SIL.Cog.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var variety = new Variety(vm.Name);
+				Messenger.Default.Send(new ModelChangingMessage());
 				_project.Varieties.Add(variety);
-				IsChanged = true;
 				CurrentVariety = _varieties[variety];
 			}
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			ChildrenAcceptChanges(_varieties);
 		}
 
 		private void RenameCurrentVariety()
@@ -179,10 +162,7 @@ namespace SIL.Cog.ViewModels
 
 			var vm = new EditVarietyViewModel(_project, _currentVariety.ModelVariety);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-			{
 				_currentVariety.Name = vm.Name;
-				IsChanged = true;
-			}
 		}
 
 		private void RemoveCurrentVariety()
@@ -193,11 +173,11 @@ namespace SIL.Cog.ViewModels
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this variety?", "Cog"))
 			{
 				int index = _varieties.IndexOf(_currentVariety);
+				Messenger.Default.Send(new ModelChangingMessage());
 				_project.Varieties.Remove(_currentVariety.ModelVariety);
 				if (index == _varieties.Count)
 					index--;
 				CurrentVariety = _varieties.Count > 0 ? _varieties[index] : null;
-				IsChanged = true;
 			}
 		}
 
@@ -207,13 +187,12 @@ namespace SIL.Cog.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_busyService.ShowBusyIndicatorUntilUpdated();
-
+				Messenger.Default.Send(new ModelChangingMessage());
 				if (vm.Method == StemmingMethod.Automatic)
 					_currentVariety.ModelVariety.Affixes.Clear();
 
 				var pipeline = new Pipeline<Variety>(_project.GetStemmingProcessors(_spanFactory, vm.Method));
 				pipeline.Process(_currentVariety.ModelVariety.ToEnumerable());
-				IsChanged = true;
 			}
 		}
 

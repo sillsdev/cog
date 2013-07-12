@@ -1,8 +1,6 @@
-﻿using GalaSoft.MvvmLight;
-
-namespace SIL.Cog.ViewModels
+﻿namespace SIL.Cog.ViewModels
 {
-	public class SoundClassViewModel : ViewModelBase
+	public class SoundClassViewModel : ChangeTrackingViewModelBase
 	{
 		private readonly SoundClass _soundClass;
 		private int _sonority;
@@ -26,7 +24,7 @@ namespace SIL.Cog.ViewModels
 		public int Sonority
 		{
 			get { return _sonority; }
-			set { Set(() => Sonority, ref _sonority, value); }
+			set { SetChanged(() => Sonority, ref _sonority, value); }
 		}
 
 		public string Type

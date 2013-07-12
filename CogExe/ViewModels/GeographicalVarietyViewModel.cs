@@ -12,12 +12,7 @@ namespace SIL.Cog.ViewModels
 			: base(variety)
 		{
 			_regions = new ReadOnlyMirroredList<GeographicRegion, GeographicalRegionViewModel>(variety.Regions,
-				region =>
-					{
-						var newRegion = new GeographicalRegionViewModel(dialogService, project, this, region);
-						newRegion.PropertyChanged += ChildPropertyChanged;
-						return newRegion;
-					}, vm => vm.ModelRegion);
+				region => new GeographicalRegionViewModel(dialogService, project, this, region), vm => vm.ModelRegion);
 			_clusterIndex = -1;
 		}
 

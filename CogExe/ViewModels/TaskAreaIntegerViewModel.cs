@@ -1,6 +1,6 @@
 ﻿namespace SIL.Cog.ViewModels
 {
-	public class TaskAreaIntegerViewModel : CogViewModelBase
+	public class TaskAreaIntegerViewModel : TaskAreaViewModelBase
 	{
 		private int _value; 
 

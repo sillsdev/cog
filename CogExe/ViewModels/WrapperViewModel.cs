@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using ObservableObject = SIL.Collections.ObservableObject;
 
 namespace SIL.Cog.ViewModels
 {
-	public class WrapperViewModel : CogViewModelBase
+	public class WrapperViewModel : ViewModelBase
 	{
 		/// <summary>
 		/// Stores all properties of the object we are wrapping
@@ -22,25 +25,14 @@ namespace SIL.Cog.ViewModels
 		}
 
 		private readonly Type _type;
-		private INotifyPropertyChanged _wrappedObject;
+		private ObservableObject _wrappedObject;
 
 		public WrapperViewModel()
-			: this(null, null)
+			: this(null)
 		{
 		}
 
-		public WrapperViewModel(INotifyPropertyChanged wrappedObject)
-			: this(wrappedObject, null)
-		{
-		}
-
-		public WrapperViewModel(string displayName)
-			: this(null, displayName)
-		{
-		}
-
-		public WrapperViewModel(INotifyPropertyChanged wrappedObject, string displayName)
-			: base(displayName)
+		public WrapperViewModel(ObservableObject wrappedObject)
 		{
 			_type = GetType();
 			//if we have already added the properties for this object dont readd them
@@ -62,19 +54,19 @@ namespace SIL.Cog.ViewModels
 		/// <summary>
 		/// Gets and Sets the Wrapped Object
 		/// </summary>
-		protected INotifyPropertyChanged WrappedObject
+		protected ObservableObject WrappedObject
 		{
 			get { return _wrappedObject; }
 			set
 			{
 				if (_wrappedObject != value)
 				{
-               
 					//if we currently have one
 					if (_wrappedObject != null)
 					{
 						//unsubscribe to notification changed
-						_wrappedObject.PropertyChanged -= WrapperViewModel_PropertyChanged;
+						_wrappedObject.PropertyChanging -= OnPropertyChanging;
+						_wrappedObject.PropertyChanged -= OnPropertyChanged;
 					}
 
 					//assign
@@ -83,21 +75,30 @@ namespace SIL.Cog.ViewModels
 					if (_wrappedObject != null)
 					{
 						//subscribe to notification changed
-						_wrappedObject.PropertyChanged += WrapperViewModel_PropertyChanged;
+						_wrappedObject.PropertyChanging += OnPropertyChanging;
+						_wrappedObject.PropertyChanged += OnPropertyChanged;
 					}
 				}
 			}
 		}
 
-		private void WrapperViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void OnPropertyChanging(object sender, PropertyChangingEventArgs e)
 		{
 			//if this object, and any that derive from it have a property by the same name as the one
 			//in the NotifyPropertyChanged EventArgs, then raise Property Changed with the same PropertyName
 			if (PropertyDictionary[_type].Contains(e.PropertyName))
 			{
-				RaisePropertyChanged(e.PropertyName);
-				IsChanged = true;
+				Messenger.Default.Send(new ModelChangingMessage());
+				RaisePropertyChanging(e.PropertyName);
 			}
+		}
+
+		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			//if this object, and any that derive from it have a property by the same name as the one
+			//in the NotifyPropertyChanged EventArgs, then raise Property Changed with the same PropertyName
+			if (PropertyDictionary[_type].Contains(e.PropertyName))
+				RaisePropertyChanged(e.PropertyName);
 		}
 	}
 }

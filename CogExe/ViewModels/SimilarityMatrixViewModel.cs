@@ -27,25 +27,15 @@ namespace SIL.Cog.ViewModels
 			_exportService = exportService;
 			_modelVarieties = new List<Variety>();
 
-			Messenger.Default.Register<Message>(this, HandleMessage);
+			Messenger.Default.Register<ModelChangingMessage>(this, msg => ResetVarieties());
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
-				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
-				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
-				new CommandViewModel("Perform comparison", new RelayCommand(PerformComparison))));
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
-				new CommandViewModel("Export this matrix", new RelayCommand(Export))));
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ComparisonInvalidated:
-					ResetVarieties();
-					break;
-			}
+				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
+				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
+				new TaskAreaCommandViewModel("Perform comparison", new RelayCommand(PerformComparison))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Export this matrix", new RelayCommand(Export))));
 		}
 
 		public override void Initialize(CogProject project)
@@ -70,7 +60,6 @@ namespace SIL.Cog.ViewModels
 			if (_project.Varieties.Count == 0 || _project.Senses.Count == 0)
 				return;
 
-			Messenger.Default.Send(new Message(MessageType.ComparisonInvalidated));
 			ResetVarieties();
 			var generator = new VarietyPairGenerator();
 			generator.Process(_project);
@@ -94,7 +83,7 @@ namespace SIL.Cog.ViewModels
 						return;
 					vm.Text = "Analyzing results...";
 					CreateSimilarityMatrix();
-					Messenger.Default.Send(new Message(MessageType.ComparisonPerformed));
+					Messenger.Default.Send(new ComparisonPerformedMessage());
 				});
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 

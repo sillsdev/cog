@@ -55,7 +55,7 @@
 					</DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <TextBlock Margin="3,23,3,0" Text="Click New to add a mapping">
+            <TextBlock Margin="3,23,3,0" Text="Click New to add a correspondence">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Collapsed" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
 using SIL.Cog.Import;
 using SIL.Cog.ViewModels;
@@ -45,12 +46,12 @@ namespace SIL.Cog.Services
 
 		public bool ImportWordLists(object ownerViewModel, CogProject project)
 		{
-			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import word lists", WordListsImporters.Keys);
+			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import Word Lists", WordListsImporters.Keys);
 			if (result.IsValid)
 			{
 				IWordListsImporter importer = WordListsImporters[result.SelectedFileType];
 
-				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
+				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
 				{
 					var pipeline = new MultiThreadedPipeline<Variety>(project.GetVarietyInitProcessors());
 					pipeline.Process(project.Varieties);
@@ -63,12 +64,12 @@ namespace SIL.Cog.Services
 
 		public bool ImportSegmentMappings(object ownerViewModel, out IEnumerable<Tuple<string, string>> mappings)
 		{
-			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import similar segments", SegmentMappingsImporters.Keys);
+			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import Correspondences", SegmentMappingsImporters.Keys);
 			if (result.IsValid)
 			{
 				ISegmentMappingsImporter importer = SegmentMappingsImporters[result.SelectedFileType];
 				IEnumerable<Tuple<string, string>> importedMappings = null;
-				if (Import(importer, ownerViewModel, importSettingsViewModel => importedMappings = importer.Import(importSettingsViewModel, result.FileName)))
+				if (Import(importer, ownerViewModel, false, importSettingsViewModel => importedMappings = importer.Import(importSettingsViewModel, result.FileName)))
 				{
 					mappings = importedMappings;
 					return true;
@@ -80,17 +81,17 @@ namespace SIL.Cog.Services
 
 		public bool ImportGeographicRegions(object ownerViewModel, CogProject project)
 		{
-			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import regions", GeographicRegionsImporters.Keys);
+			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import Regions", GeographicRegionsImporters.Keys);
 			if (result.IsValid)
 			{
 				IGeographicRegionsImporter importer = GeographicRegionsImporters[result.SelectedFileType];
-				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
+				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
 					return true;
 			}
 			return false;
 		}
 
-		private bool Import(IImporter importer, object ownerViewModel, Action<object> importAction)
+		private bool Import(IImporter importer, object ownerViewModel, bool sendMessage, Action<object> importAction)
 		{
 			object importSettingsViewModel;
 			if (GetImportSettings(ownerViewModel, importer, out importSettingsViewModel))
@@ -98,6 +99,8 @@ namespace SIL.Cog.Services
 				_busyService.ShowBusyIndicatorUntilUpdated();
 				try
 				{
+					if (sendMessage)
+						Messenger.Default.Send(new ModelChangingMessage());
 					importAction(importSettingsViewModel);
 					return true;
 				}

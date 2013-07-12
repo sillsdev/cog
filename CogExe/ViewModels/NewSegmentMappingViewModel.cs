@@ -1,17 +1,17 @@
 ﻿using System.ComponentModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
 using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class NewSegmentMappingViewModel : CogViewModelBase, IDataErrorInfo
+	public class NewSegmentMappingViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private readonly CogProject _project;
 		private string _segment1;
 		private string _segment2;
 
 		public NewSegmentMappingViewModel(CogProject project)
-			: base("New Correspondence")
 		{
 			_project = project;
 		}

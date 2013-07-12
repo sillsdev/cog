@@ -24,6 +24,8 @@ namespace SIL.Cog.Views
 			var vm = (VarietyPairsViewModel) DataContext;
 			vm.PropertyChanged += ViewModel_PropertyChanged;
 			SetupVarieties();
+			SetupVarietiesView1();
+			SetupVarietiesView2();
 		}
 
 		private void SetupVarieties()
@@ -31,7 +33,19 @@ namespace SIL.Cog.Views
 			var vm = (VarietyPairsViewModel) DataContext;
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
+		}
+
+		private void SetupVarietiesView1()
+		{
+			var vm = (VarietyPairsViewModel) DataContext;
+			vm.VarietiesView1.CollectionChanged += (sender, e) => Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
+		}
+
+		private void SetupVarietiesView2()
+		{
+			var vm = (VarietyPairsViewModel) DataContext;
+			vm.VarietiesView2.CollectionChanged += (sender, e) => Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 		}
 
@@ -41,6 +55,14 @@ namespace SIL.Cog.Views
 			{
 				case "Varieties":
 					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
+					break;
+
+				case "VarietiesView1":
+					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarietiesView1);
+					break;
+
+				case "VarietiesView2":
+					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarietiesView2);
 					break;
 			}
 		}
@@ -66,8 +88,6 @@ namespace SIL.Cog.Views
 					AddVarieties((IEnumerable<VarietyViewModel>) sender);
 					break;
 			}
-			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
-			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 		}
 
 		private void AddVarieties(IEnumerable<VarietyViewModel> varieties)

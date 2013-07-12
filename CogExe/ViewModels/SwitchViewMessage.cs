@@ -1,14 +1,15 @@
 ﻿using System;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
-	public class SwitchViewData
+	internal class SwitchViewMessage : MessageBase
 	{
 		private readonly Type _viewModelType;
 		private readonly ReadOnlyList<object> _models;
 
-		public SwitchViewData(Type viewModelType, params object[] models)
+		public SwitchViewMessage(Type viewModelType, params object[] models)
 		{
 			_viewModelType = viewModelType;
 			_models = models.ToReadOnlyList();

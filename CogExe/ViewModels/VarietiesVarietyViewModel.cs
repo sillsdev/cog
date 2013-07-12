@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -36,7 +37,6 @@ namespace SIL.Cog.ViewModels
 			variety.PropertyChanged += VarietyPropertyChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(ModelVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.ModelAffix);
 			_words = new WordsViewModel(busyService, project, variety);
-			_words.PropertyChanged += ChildPropertyChanged;
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
@@ -70,10 +70,10 @@ namespace SIL.Cog.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
+				Messenger.Default.Send(new ModelChangingMessage());
 				ModelVariety.Affixes.Add(affix);
 				_project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
-				IsChanged = true;
 			}
 		}
 
@@ -89,28 +89,22 @@ namespace SIL.Cog.ViewModels
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = ModelVariety.Affixes.IndexOf(_currentAffix.ModelAffix);
+				Messenger.Default.Send(new ModelChangingMessage());
 				ModelVariety.Affixes[index] = affix;
 				_project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.ModelAffix == affix);
-				IsChanged = true;
 			}
 		}
 
 		private void RemoveAffix()
 		{
+			Messenger.Default.Send(new ModelChangingMessage());
 			ModelVariety.Affixes.Remove(CurrentAffix.ModelAffix);
-			IsChanged = true;
 		}
 
 		private bool CanRemoveAffix()
 		{
 			return CurrentAffix != null;
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			_words.AcceptChanges();
 		}
 
 		public double MaxSegmentProbability

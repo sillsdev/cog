@@ -35,18 +35,27 @@ namespace SIL.Cog.ViewModels
 			_importService = importService;
 			_exportService = exportService;
 
-			Messenger.Default.Register<Message>(this, HandleMessage);
+			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
-					new CommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
- 					new CommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
-					new CommandViewModel("Find words", new RelayCommand(Find))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
+					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
+ 					new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
+					new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
 
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
-					new CommandViewModel("Import word lists", new RelayCommand(Import)),
-					new CommandViewModel("Export word lists", new RelayCommand(Export)),
-					new CommandViewModel("Run stemmer", new RelayCommand(RunStemmer))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import)),
+					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export)),
+					new TaskAreaCommandViewModel("Run stemmer", new RelayCommand(RunStemmer))));
 			_isEmpty = true;
+		}
+
+		private void HandleViewChanged(ViewChangedMessage msg)
+		{
+			if (msg.OldViewModel == this && _findViewModel != null)
+			{
+				_dialogService.CloseDialog(_findViewModel);
+				_findViewModel = null;
+			}
 		}
 
 		private void AddNewVariety()
@@ -54,8 +63,8 @@ namespace SIL.Cog.ViewModels
 			var vm = new EditVarietyViewModel(_project);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
+				Messenger.Default.Send(new ModelChangingMessage());
 				_project.Varieties.Add(new Variety(vm.Name));
-				IsChanged = true;
 			}
 		}
 
@@ -64,23 +73,8 @@ namespace SIL.Cog.ViewModels
 			var vm = new EditSenseViewModel(_project);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
+				Messenger.Default.Send(new ModelChangingMessage());
 				_project.Senses.Add(new Sense(vm.Gloss, vm.Category));
-				IsChanged = true;
-			}
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ViewChanged:
-					var data = (ViewChangedData) msg.Data;
-					if (data.OldViewModel == this && _findViewModel != null)
-					{
-						_dialogService.CloseDialog(_findViewModel);
-						_findViewModel = null;
-					}
-					break;
 			}
 		}
 
@@ -170,8 +164,7 @@ namespace SIL.Cog.ViewModels
 
 		private void Import()
 		{
-			if (_importService.ImportWordLists(this, _project))
-				IsChanged = true;
+			_importService.ImportWordLists(this, _project);
 		}
 
 		private void Export()
@@ -184,6 +177,7 @@ namespace SIL.Cog.ViewModels
 			var vm = new RunStemmerViewModel(true);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
+				Messenger.Default.Send(new ModelChangingMessage());
 				if (vm.Method == StemmingMethod.Automatic)
 				{
 					foreach (Variety variety in _project.Varieties)
@@ -207,7 +201,6 @@ namespace SIL.Cog.ViewModels
 				pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
 				_dialogService.ShowModalDialog(this, progressVM);
-				IsChanged = true;
 			}
 		}
 
@@ -241,21 +234,11 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.ModelSense));
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties, variety =>
-				{
-					var vm = new WordListsVarietyViewModel(_busyService, project, variety);
-					vm.PropertyChanged += ChildPropertyChanged;
-					return vm;
-				}, vm => vm.ModelVariety));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties,
+				variety => new WordListsVarietyViewModel(_busyService, project, variety), vm => vm.ModelVariety));
 			SetIsEmpty();
 			_project.Varieties.CollectionChanged += VarietiesChanged;
 			_project.Senses.CollectionChanged += SensesChanged;
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			ChildrenAcceptChanges(_varieties);
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)

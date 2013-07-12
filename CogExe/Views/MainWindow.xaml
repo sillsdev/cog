@@ -69,8 +69,8 @@
 												<DataTemplate DataType="{x:Type vm:TaskAreaCommandGroupViewModel}">
 													<v:TaskAreaCommandGroupView />
 												</DataTemplate>
-												<DataTemplate DataType="{x:Type vm:TaskAreaCommandsViewModel}">
-													<v:TaskAreaCommandsView />
+												<DataTemplate DataType="{x:Type vm:TaskAreaItemsViewModel}">
+													<v:TaskAreaItemsView />
 												</DataTemplate>
 												<DataTemplate DataType="{x:Type vm:TaskAreaIntegerViewModel}">
 													<v:TaskAreaIntegerView />
@@ -113,8 +113,8 @@
 											<DataTemplate DataType="{x:Type vm:GlobalCorrespondencesViewModel}">
 												<v:GlobalCorrespondencesView />
 											</DataTemplate>
-											<DataTemplate DataType="{x:Type vm:SenseAlignmentViewModel}">
-												<v:SenseAlignmentView />
+											<DataTemplate DataType="{x:Type vm:MultipleWordAlignmentViewModel}">
+												<v:MultipleWordAlignmentView />
 											</DataTemplate>
 										</ContentPresenter.Resources>
                                     </ContentPresenter>

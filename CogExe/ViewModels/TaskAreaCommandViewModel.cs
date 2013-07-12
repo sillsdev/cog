@@ -2,11 +2,11 @@
 
 namespace SIL.Cog.ViewModels
 {
-	public class CommandViewModel : CogViewModelBase
+	public class TaskAreaCommandViewModel : TaskAreaViewModelBase
 	{
 		private readonly ICommand _command;
 
-		public CommandViewModel(string displayName, ICommand command)
+		public TaskAreaCommandViewModel(string displayName, ICommand command)
 			: base(displayName)
 		{
 			_command = command;

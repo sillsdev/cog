@@ -318,6 +318,20 @@
 					</Setter.Value>
 				</Setter>
 			</Style>
+			
+			<Style x:Key="TaskAreaSeparatorStyle" TargetType="Separator">
+				<Setter Property="MinWidth" Value="1" />
+				<Setter Property="MinHeight" Value="1" />
+				<Setter Property="Margin" Value="16,2,4,2" />
+				<Setter Property="Background" Value="Black" />
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type Separator}">
+							<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True" />
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
 
 			<DataTemplate DataType="{x:Type vm:HierarchicalGraphVertex}">
 				<TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" />

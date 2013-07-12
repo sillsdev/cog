@@ -39,6 +39,7 @@ namespace SIL.Cog.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private CogProject _project;
+		private bool _isChanged;
 
 		public MainWindowViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IImportService importService, IExportService exportService,
 			IBusyService busyService, InputMasterViewModel inputMasterViewModel, CompareMasterViewModel compareMasterViewModel, AnalyzeMasterViewModel analyzeMasterViewModel)
@@ -67,9 +68,10 @@ namespace SIL.Cog.ViewModels
 				childView.PropertyChanging += childView_PropertyChanging;
 
 			PropertyChanging += OnPropertyChanging;
-			PropertyChanged += OnPropertyChanged;
 
-			Messenger.Default.Register<Message>(this, HandleMessage);
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, HandleComparisonChanged);
+			Messenger.Default.Register<ModelChangingMessage>(this, HandleModelChanging);
+			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			string[] args = Environment.GetCommandLineArgs();
 			if (args.Length > 1)
@@ -92,6 +94,23 @@ namespace SIL.Cog.ViewModels
 			}
 		}
 
+		private void HandleSwitchView(SwitchViewMessage msg)
+		{
+			SwitchView(msg.ViewModelType, msg.Models);
+		}
+
+		private void HandleModelChanging(ModelChangingMessage msg)
+		{
+			_isChanged = true;
+			_project.VarietyPairs.Clear();
+		}
+
+		private void HandleComparisonChanged(ComparisonPerformedMessage msg)
+		{
+			if (ProjectFilePath != null && !_isChanged)
+				SaveComparisonCache();
+		}
+
 		private void OnPropertyChanging(object sender, PropertyChangingEventArgs e)
 		{
 			switch (e.PropertyName)
@@ -100,20 +119,6 @@ namespace SIL.Cog.ViewModels
 					var childView = CurrentView as MasterViewModelBase;
 					if (childView != null)
 						CheckSettingsWorkspace(childView);
-					break;
-			}
-		}
-
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case "IsChanged":
-					if (IsChanged)
-					{
-						Messenger.Default.Send(new Message(MessageType.ComparisonInvalidated));
-						_project.VarietyPairs.Clear();
-					}
 					break;
 			}
 		}
@@ -138,22 +143,6 @@ namespace SIL.Cog.ViewModels
 					settingsWorkspace.Apply();
 				else
 					settingsWorkspace.Reset();
-			}
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ComparisonPerformed:
-					if (ProjectFilePath != null && !IsChanged)
-						SaveComparisonCache();
-					break;
-
-				case MessageType.SwitchView:
-					var data = (SwitchViewData) msg.Data;
-					SwitchView(data.ViewModelType, data.Models);
-					break;
 			}
 		}
 
@@ -225,7 +214,7 @@ namespace SIL.Cog.ViewModels
 
 		private bool CanSave()
 		{
-			return IsChanged;
+			return _isChanged;
 		}
 
 		private void Save()
@@ -257,8 +246,7 @@ namespace SIL.Cog.ViewModels
 
 		private void ImportWordLists()
 		{
-			if (_importService.ImportWordLists(this, _project))
-				IsChanged = true;
+			_importService.ImportWordLists(this, _project);
 		}
 
 		private void ImportGeographicRegions()
@@ -326,8 +314,7 @@ namespace SIL.Cog.ViewModels
 		{
 			if (CanCloseProject())
 			{
-				if (IsChanged)
-					AcceptChanges();
+				_isChanged = false;
 				return true;
 			}
 			return false;
@@ -338,7 +325,7 @@ namespace SIL.Cog.ViewModels
 			var childView = CurrentView as MasterViewModelBase;
 			if (childView != null)
 				CheckSettingsWorkspace(childView);
-			if (IsChanged)
+			if (_isChanged)
 			{
 				bool? res = _dialogService.ShowQuestion(this, "Do you want to save the changes to this project?", "Cog");
 				if (res == true)
@@ -427,8 +414,7 @@ namespace SIL.Cog.ViewModels
 
 		private void SetupProject(string path, string name, CogProject project)
 		{
-			if (IsChanged)
-				AcceptChanges();
+			_isChanged = false;
 			ProjectFilePath = path;
 			_project = project;
 
@@ -471,7 +457,7 @@ namespace SIL.Cog.ViewModels
 			ProjectFilePath = path;
 			DisplayName = string.Format("{0} - Cog", Path.GetFileNameWithoutExtension(path));
 			SaveComparisonCache();
-			AcceptChanges();
+			_isChanged = false;
 		}
 	}
 }

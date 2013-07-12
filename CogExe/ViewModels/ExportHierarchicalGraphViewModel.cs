@@ -1,15 +1,12 @@
-﻿namespace SIL.Cog.ViewModels
+﻿using GalaSoft.MvvmLight;
+
+namespace SIL.Cog.ViewModels
 {
-	public class ExportHierarchicalGraphViewModel : CogViewModelBase
+	public class ExportHierarchicalGraphViewModel : ViewModelBase
 	{
 		private HierarchicalGraphType _graphType;
 		private ClusteringMethod _clusteringMethod;
 		private SimilarityMetric _similarityMetric;
-
-		public ExportHierarchicalGraphViewModel()
-			: base("Export hierarchical graph")
-		{
-		}
 
 		public HierarchicalGraphType GraphType
 		{

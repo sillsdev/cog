@@ -17,7 +17,7 @@ namespace SIL.Cog.Views
 		private void Hyperlink_Click(object sender, RoutedEventArgs e)
 		{
 			var hyperlink = (Hyperlink) sender;
-			var command = (CommandViewModel) hyperlink.DataContext;
+			var command = (TaskAreaCommandViewModel) hyperlink.DataContext;
 
 			var vm = (TaskAreaCommandGroupViewModel) DataContext;
 			vm.CurrentCommand = command;

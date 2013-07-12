@@ -15,11 +15,7 @@ namespace SIL.Cog.ViewModels
 		public double InitialAlignmentThreshold
 		{
 			get { return _initialAlignmentThreshold; }
-			set
-			{
-				Set(() => InitialAlignmentThreshold, ref _initialAlignmentThreshold, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => InitialAlignmentThreshold, ref _initialAlignmentThreshold, value); }
 		}
 
 		public override object UpdateComponent()

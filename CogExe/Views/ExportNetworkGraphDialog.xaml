@@ -4,7 +4,7 @@
 		xmlns:v="clr-namespace:SIL.Cog.Views" xmlns:c="clr-namespace:SIL.Cog.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
-        Title="{Binding DisplayName}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
+        Title="Export Network Graph" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
 		SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=SimilarityMetricComboBox}"
         d:DataContext="{d:DesignInstance vm:ExportNetworkGraphViewModel}">
 	<Grid Margin="10">

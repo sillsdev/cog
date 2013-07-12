@@ -17,13 +17,15 @@ namespace SIL.Cog.ViewModels
 			: base("Network Graph")
 		{
 			_exportService = exportService;
-			Messenger.Default.Register<Message>(this, HandleMessage);
+
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _project.GenerateNetworkGraph(_similarityMetric));
+			Messenger.Default.Register<ModelChangingMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
-				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
-				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
-				new CommandViewModel("Export this graph", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
+				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export))));
 			_similarityScoreFilter = 0.7;
 		}
 
@@ -36,20 +38,6 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateNetworkGraph(_similarityMetric) : null;
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ComparisonPerformed:
-					Graph = _project.GenerateNetworkGraph(_similarityMetric);
-					break;
-
-				case MessageType.ComparisonInvalidated:
-					Graph = null;
-					break;
-			}
 		}
 
 		public SimilarityMetric SimilarityMetric

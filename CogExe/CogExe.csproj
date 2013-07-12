@@ -164,6 +164,7 @@
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
+    <Compile Include="Converters\DataGridFirstGroupRowConverter.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\DoubleToLog10Converter.cs" />
     <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
@@ -182,10 +183,9 @@
     <Compile Include="Converters\ProbabilityToWidthConverter.cs" />
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsControlScrollbarMarkerPositionConverter.cs" />
-    <Compile Include="Converters\SenseAlignmentHighlightSegmentConverter.cs" />
+    <Compile Include="Converters\MultipleWordAlignmentHighlightSegmentConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\WordsToInlinesConverter.cs" />
-    <Compile Include="Export\CognateSetsExporterBase.cs" />
     <Compile Include="Export\ICognateSetsExporter.cs" />
     <Compile Include="Export\ISimilarityMatrixExporter.cs" />
     <Compile Include="Export\IVarietyPairExporter.cs" />
@@ -244,6 +244,8 @@
     <Compile Include="Services\WindowViewModelMappings.cs" />
     <Compile Include="ViewModels\AddUnnaturalClassSegmentViewModel.cs" />
     <Compile Include="ViewModels\BindableList.cs" />
+    <Compile Include="ViewModels\ChangeTrackingViewModelBase.cs" />
+    <Compile Include="ViewModels\ComparisonPerformedMessage.cs" />
     <Compile Include="ViewModels\ConsonantGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\DolgopolskyCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\EditNaturalClassViewModel.cs" />
@@ -263,11 +265,11 @@
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
     <Compile Include="ViewModels\ImportTextWordListsViewModel.cs" />
-    <Compile Include="ViewModels\Message.cs" />
+    <Compile Include="ViewModels\ModelChangingMessage.cs" />
     <Compile Include="ViewModels\ReadOnlyMirroredCollection.cs" />
     <Compile Include="ViewModels\ReadOnlyMirroredList.cs" />
-    <Compile Include="ViewModels\SenseAlignmentViewModel.cs" />
-    <Compile Include="ViewModels\SenseAlignmentWordViewModel.cs" />
+    <Compile Include="ViewModels\MultipleWordAlignmentViewModel.cs" />
+    <Compile Include="ViewModels\MultipleWordAlignmentWordViewModel.cs" />
     <Compile Include="ViewModels\GlobalCorrespondencesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
@@ -279,7 +281,9 @@
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\AlineViewModel.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
-    <Compile Include="ViewModels\CommandViewModel.cs" />
+    <Compile Include="ViewModels\SwitchViewMessage.cs" />
+    <Compile Include="ViewModels\TaskAreaBooleanViewModel.cs" />
+    <Compile Include="ViewModels\TaskAreaCommandViewModel.cs" />
     <Compile Include="ViewModels\CompareMasterViewModel.cs" />
     <Compile Include="ViewModels\CompareSettingsViewModel.cs" />
     <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
@@ -292,7 +296,6 @@
     <Compile Include="ViewModels\InitializableViewModelBase.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MasterViewModelBase.cs" />
-    <Compile Include="ViewModels\CogViewModelBase.cs" />
     <Compile Include="ViewModels\EditAffixViewModel.cs" />
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
@@ -301,6 +304,7 @@
     <Compile Include="ViewModels\SoundContextSurrogate.cs" />
     <Compile Include="ViewModels\SspSyllabifierViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaIntegerViewModel.cs" />
+    <Compile Include="ViewModels\TaskAreaViewModelBase.cs" />
     <Compile Include="ViewModels\VarietyPairSurrogate.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
@@ -317,13 +321,12 @@
     <Compile Include="ViewModels\ThresholdSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
     <Compile Include="ViewModels\SoundChangeViewModel.cs" />
-    <Compile Include="ViewModels\TaskAreaCommandsViewModel.cs" />
+    <Compile Include="ViewModels\TaskAreaItemsViewModel.cs" />
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairViewModel.cs" />
     <Compile Include="ViewModels\GeographicalRegionViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModel.cs" />
-    <Compile Include="ViewModels\SwitchViewData.cs" />
     <Compile Include="ViewModels\InputMasterViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixVarietyViewModel.cs" />
@@ -331,7 +334,7 @@
     <Compile Include="ViewModels\VarietiesVarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
-    <Compile Include="ViewModels\ViewChangedData.cs" />
+    <Compile Include="ViewModels\ViewChangedMessage.cs" />
     <Compile Include="ViewModels\VowelGlobalSegmentViewModel.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
@@ -394,8 +397,8 @@
     <Compile Include="Views\EditRegionDialog.xaml.cs">
       <DependentUpon>EditRegionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SenseAlignmentView.xaml.cs">
-      <DependentUpon>SenseAlignmentView.xaml</DependentUpon>
+    <Compile Include="Views\MultipleWordAlignmentView.xaml.cs">
+      <DependentUpon>MultipleWordAlignmentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RegionHitMarker.cs" />
     <Compile Include="Views\RegionMarker.cs" />
@@ -457,8 +460,8 @@
     <Compile Include="Views\TaskAreaCommandGroupView.xaml.cs">
       <DependentUpon>TaskAreaCommandGroupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TaskAreaCommandsView.xaml.cs">
-      <DependentUpon>TaskAreaCommandsView.xaml</DependentUpon>
+    <Compile Include="Views\TaskAreaItemsView.xaml.cs">
+      <DependentUpon>TaskAreaItemsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ItemsControlDragDrop.cs" />
     <Compile Include="Views\DraggedAdorner.cs" />
@@ -592,7 +595,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SenseAlignmentView.xaml">
+    <Page Include="Views\MultipleWordAlignmentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -680,7 +683,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TaskAreaCommandsView.xaml">
+    <Page Include="Views\TaskAreaItemsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

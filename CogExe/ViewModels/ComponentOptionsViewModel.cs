@@ -26,11 +26,7 @@ namespace SIL.Cog.ViewModels
 		public ComponentSettingsViewModelBase CurrentOption
 		{
 			get { return _currentOption; }
-			set
-			{
-				Set(() => CurrentOption, ref _currentOption, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => CurrentOption, ref _currentOption, value); }
 		}
 
 		public override void AcceptChanges()

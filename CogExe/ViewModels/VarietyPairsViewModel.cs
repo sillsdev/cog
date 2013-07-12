@@ -46,13 +46,32 @@ namespace SIL.Cog.ViewModels
 
 			_selectedWordPairsMonitor = new SimpleMonitor();
 
-			Messenger.Default.Register<Message>(this, HandleMessage);
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
+			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
+			Messenger.Default.Register<ModelChangingMessage>(this, HandleModelChanging);
+
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks", 
-				new CommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison)),
-				new CommandViewModel("Find words", new RelayCommand(Find))));
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
-				new CommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
+				new TaskAreaCommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison)),
+				new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
+		}
+
+		private void HandleModelChanging(ModelChangingMessage modelChangingMessage)
+		{
+			ResetCurrentVarietyPair();
+			CurrentVarietyPair = null;
+			CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
+		}
+
+		private void HandleViewChanged(ViewChangedMessage msg)
+		{
+			if (msg.OldViewModel == this && _findViewModel != null)
+			{
+				_dialogService.CloseDialog(_findViewModel);
+				_findViewModel = null;
+			}
 		}
 
 		private void PerformComparison()
@@ -153,35 +172,10 @@ namespace SIL.Cog.ViewModels
 
 		private void ExportVarietyPair()
 		{
-			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected)
+			if (_currentVarietyPairState != CurrentVarietyPairState.SelectedAndCompared)
 				return;
 
 			_exportService.ExportVarietyPair(this, _project, _currentVarietyPair.ModelVarietyPair);
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ComparisonPerformed:
-					SetCurrentVarietyPair();
-					break;
-
-				case MessageType.ViewChanged:
-					var data = (ViewChangedData) msg.Data;
-					if (data.OldViewModel == this && _findViewModel != null)
-					{
-						_dialogService.CloseDialog(_findViewModel);
-						_findViewModel = null;
-					}
-					break;
-
-				case MessageType.ComparisonInvalidated:
-					ResetCurrentVarietyPair();
-					CurrentVarietyPair = null;
-					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
-					break;
-			}
 		}
 
 		public override void Initialize(CogProject project)
@@ -202,6 +196,12 @@ namespace SIL.Cog.ViewModels
 					Set(() => CurrentVariety2, ref _currentVariety2, (VarietyViewModel) _varietiesView2.GetItemAt(1));
 				else
 					Set(() => CurrentVariety2, ref _currentVariety2, (VarietyViewModel) _varietiesView2.GetItemAt(0));
+				SetCurrentVarietyPair();
+			}
+			else
+			{
+				Set(() => CurrentVariety1, ref _currentVariety1, null);
+				Set(() => CurrentVariety2, ref _currentVariety2, null);
 				SetCurrentVarietyPair();
 			}
 		}

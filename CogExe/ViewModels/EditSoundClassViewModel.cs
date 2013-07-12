@@ -1,25 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public abstract class EditSoundClassViewModel : CogViewModelBase, IDataErrorInfo
+	public abstract class EditSoundClassViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private string _name;
 		private readonly HashSet<string> _soundClassNames;
+		private readonly string _title;
 
-		protected EditSoundClassViewModel(string displayName, IEnumerable<SoundClass> soundClasses)
-			: base(displayName)
+		protected EditSoundClassViewModel(string title, IEnumerable<SoundClass> soundClasses)
 		{
+			_title = title;
 			_soundClassNames = new HashSet<string>(soundClasses.Select(nc => nc.Name));
 		}
 
-		protected EditSoundClassViewModel(string displayName, IEnumerable<SoundClass> soundClasses, SoundClass soundClass)
-			: base(displayName)
+		protected EditSoundClassViewModel(string title, IEnumerable<SoundClass> soundClasses, SoundClass soundClass)
 		{
+			_title = title;
 			_name = soundClass.Name;
 			_soundClassNames = new HashSet<string>(soundClasses.Where(nc => nc != soundClass).Select(nc => nc.Name));
+		}
+
+		public string Title
+		{
+			get { return _title; }
 		}
 
 		public string Name

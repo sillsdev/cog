@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using SIL.Cog.Components;
@@ -57,32 +56,19 @@ namespace SIL.Cog.ViewModels
 			}
 			_expansionCompressionEnabled = aligner.Settings.ExpansionCompressionEnabled;
 			_soundClasses = new SoundClassesViewModel(dialogService, project, aligner.ContextualSoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
-			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;
-		}
-
-		private void SoundClassesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			IsChanged = true;
+			_soundClasses.PropertyChanged += ChildPropertyChanged;
 		}
 
 		public AlineMode Mode
 		{
 			get { return _mode; }
-			set
-			{
-				if (Set(() => Mode, ref _mode, value))
-					IsChanged = true;
-			}
+			set { SetChanged(() => Mode, ref _mode, value); }
 		}
 
 		public bool ExpansionCompressionEnabled
 		{
 			get { return _expansionCompressionEnabled; }
-			set
-			{
-				if (Set(() => ExpansionCompressionEnabled, ref _expansionCompressionEnabled, value))
-					IsChanged = true;
-			}
+			set { SetChanged(() => ExpansionCompressionEnabled, ref _expansionCompressionEnabled, value); }
 		}
 
 		public ReadOnlyList<RelevantFeatureViewModel> Features
@@ -98,8 +84,8 @@ namespace SIL.Cog.ViewModels
 		public override void AcceptChanges()
 		{
 			base.AcceptChanges();
-			foreach (RelevantFeatureViewModel relevantFeature in _features)
-				relevantFeature.AcceptChanges();
+			_soundClasses.AcceptChanges();
+			ChildrenAcceptChanges(_features);
 		}
 
 		public override object UpdateComponent()

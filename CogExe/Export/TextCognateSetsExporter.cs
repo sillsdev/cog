@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using SIL.Cog.Clusterers;
 
 namespace SIL.Cog.Export
 {
-	public class TextCognateSetsExporter : CognateSetsExporterBase
+	public class TextCognateSetsExporter : ICognateSetsExporter
 	{
-		public override void Export(string path, CogProject project)
+		public void Export(string path, CogProject project)
 		{
-			IDictionary<Sense, IList<ISet<Variety>>> cognateSets = GetCognateSets(project);
 			using (var writer = new StreamWriter(path))
 			{
 				foreach (Sense sense in project.Senses)
@@ -30,14 +29,16 @@ namespace SIL.Cog.Export
 					foreach (Sense sense in project.Senses)
 					{
 						writer.Write("\t");
-						IList<ISet<Variety>> clusters = cognateSets[sense];
-						for (int i = 0; i < clusters.Count; i++)
+						var clusterer = new CognateSetsClusterer(sense, 0.5);
+						int i = 1;
+						foreach (Cluster<Variety> set in clusterer.GenerateClusters(project.Varieties))
 						{
-							if (clusters[i].Contains(variety))
+							if (set.DataObjects.Contains(variety))
 							{
-								writer.Write(i + 1);
+								writer.Write(i);
 								break;
 							}
+							i++;
 						}
 					}
 					writer.WriteLine();

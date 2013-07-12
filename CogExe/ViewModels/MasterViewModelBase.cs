@@ -15,14 +15,6 @@ namespace SIL.Cog.ViewModels
 			_views = new ReadOnlyList<InitializableViewModelBase>(views);
 			if (_views.Count > 0)
 				CurrentView = _views[0];
-			foreach (InitializableViewModelBase view in _views)
-				view.PropertyChanged += ChildPropertyChanged;
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			ChildrenAcceptChanges(_views);
 		}
 
 		public ReadOnlyList<InitializableViewModelBase> Views
@@ -46,7 +38,7 @@ namespace SIL.Cog.ViewModels
 					}
 					else
 					{
-						Messenger.Default.Send(new Message(MessageType.ViewChanged, new ViewChangedData(oldView, _currentView)));
+						Messenger.Default.Send(new ViewChangedMessage(oldView, _currentView));
 					}
 				}
 			}

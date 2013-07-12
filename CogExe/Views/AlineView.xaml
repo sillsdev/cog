@@ -40,7 +40,7 @@
 		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=FeaturesTreeListView}">Features</Label>
 		<c:TreeListView x:Name="FeaturesTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
 			<c:TreeListView.Columns>
-				<GridViewColumn Header="Name" DisplayMemberBinding="{Binding DisplayName}" Width="Auto" />
+				<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Description}" Width="Auto" />
 				<GridViewColumn Header="Weight" Width="Auto">
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>

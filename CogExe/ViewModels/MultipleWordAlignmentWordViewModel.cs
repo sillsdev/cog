@@ -6,19 +6,33 @@ using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class SenseAlignmentWordViewModel : ViewModelBase
+	public class MultipleWordAlignmentWordViewModel : ViewModelBase
 	{
 		private readonly VarietyViewModel _variety;
 		private readonly string _prefix;
 		private readonly ReadOnlyList<string> _columns;
 		private readonly string _suffix;
+		private readonly int _cognateSetIndex;
+		private readonly Word _word;
 
-		public SenseAlignmentWordViewModel(Word word, AlignmentCell<ShapeNode> prefix, IEnumerable<AlignmentCell<ShapeNode>> columns, AlignmentCell<ShapeNode> suffix)
+		public MultipleWordAlignmentWordViewModel(Word word, AlignmentCell<ShapeNode> prefix, IEnumerable<AlignmentCell<ShapeNode>> columns, AlignmentCell<ShapeNode> suffix, int cognateSetIndex)
 		{
+			_word = word;
 			_variety = new VarietyViewModel(word.Variety);
 			_prefix = prefix.StrRep();
 			_columns = new ReadOnlyList<string>(columns.Select(cell => cell.IsNull ? "-" : cell.StrRep()).ToArray());
 			_suffix = suffix.StrRep();
+			_cognateSetIndex = cognateSetIndex;
+		}
+
+		public string StrRep
+		{
+			get { return _word.StrRep; }
+		}
+
+		public int CognateSetIndex
+		{
+			get { return _cognateSetIndex; }
 		}
 
 		public VarietyViewModel Variety

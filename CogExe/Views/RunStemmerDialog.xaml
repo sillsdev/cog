@@ -4,7 +4,7 @@
         xmlns:cnvtrs="clr-namespace:SIL.Cog.Converters" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.ViewModels" mc:Ignorable="d"
-        Title="{Binding DisplayName}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+        Title="Run Stemmer" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:RunStemmerViewModel}">
     <Window.Resources>
         <cnvtrs:EnumMatchToBooleanConverter x:Key="EnumConverter" />

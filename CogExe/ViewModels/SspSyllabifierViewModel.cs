@@ -43,34 +43,21 @@ namespace SIL.Cog.ViewModels
 
 		private SoundClassesViewModel CreateSonorityClasses(IDialogService dialogService, CogProject project, IEnumerable<SonorityClass> sonorityScale)
 		{
-			var soundClasses = new SoundClassesViewModel(dialogService, project, sonorityScale.Select(sc =>
-				{
-					var vm = new SoundClassViewModel(sc.SoundClass, sc.Sonority);
-					vm.PropertyChanged += SonorityClassChanged;
-					return vm;
-				}), true);
-			soundClasses.SoundClasses.CollectionChanged += SonorityClassesChanged;
+			var soundClasses = new SoundClassesViewModel(dialogService, project, sonorityScale.Select(sc => new SoundClassViewModel(sc.SoundClass, sc.Sonority)), true);
+			soundClasses.PropertyChanged += ChildPropertyChanged;
 			return soundClasses;
 		}
 
-		private void SonorityClassChanged(object sender, PropertyChangedEventArgs e)
+		public override void AcceptChanges()
 		{
-			IsChanged = true;
-		}
-
-		private void SonorityClassesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			IsChanged = true;
+			base.AcceptChanges();
+			_sonorityClasses.AcceptChanges();
 		}
 
 		public bool SyllabificationEnabled
 		{
 			get { return _syllabificationEnabled; }
-			set
-			{
-				if (Set(() => SyllabificationEnabled, ref _syllabificationEnabled, value))
-					IsChanged = true;
-			}
+			set { SetChanged(() => SyllabificationEnabled, ref _syllabificationEnabled, value); }
 		}
 
 		public SoundClassesViewModel SonorityClasses

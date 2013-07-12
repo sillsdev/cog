@@ -60,24 +60,26 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type GroupItem}">
                                                 <StackPanel>
-                                                    <TextBlock Padding="2,0,2,0" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
-                                                        <Run Text="{Binding Name.Target, Mode=OneWay}">
-															<Run.Style>
-																<Style TargetType="Run">
-																	<Style.Triggers>
-																		<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
-																			<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
-																		</DataTrigger>
-																		<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
-																			<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
-																		</DataTrigger>
-																	</Style.Triggers>
-																</Style>
-															</Run.Style>
-                                                        </Run>
-                                                        <Run Foreground="{StaticResource HeaderTextBrush}"> &#x2192; ?</Run>
-                                                        <Run Text="{Binding Name.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
-                                                    </TextBlock>
+													<Border Background="{StaticResource DataGridGroupingBrush}" BorderThickness="0,0,0,1" BorderBrush="LightGray">
+														<TextBlock Padding="2" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
+															<Run Text="{Binding Name.Target, Mode=OneWay}">
+																<Run.Style>
+																	<Style TargetType="Run">
+																		<Style.Triggers>
+																			<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
+																				<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
+																			</DataTrigger>
+																			<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
+																				<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
+																			</DataTrigger>
+																		</Style.Triggers>
+																	</Style>
+																</Run.Style>
+															</Run>
+															<Run Foreground="{StaticResource HeaderTextBrush}"> &#x2192; ?</Run>
+															<Run Text="{Binding Name.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
+														</TextBlock>
+													</Border>
                                                     <ItemsPresenter />
                                                 </StackPanel>
                                             </ControlTemplate>
@@ -96,6 +98,7 @@
 						<DataGridTextColumn Header="Segment" Binding="{Binding Correspondence}" Width="*" FontSize="16">
 							<DataGridTextColumn.ElementStyle>
 								<Style TargetType="TextBlock">
+									<Setter Property="Margin" Value="2,0,0,0" />
 									<Style.Triggers>
 										<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
 											<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />

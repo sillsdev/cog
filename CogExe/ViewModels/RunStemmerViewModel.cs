@@ -1,4 +1,6 @@
-﻿namespace SIL.Cog.ViewModels
+﻿using GalaSoft.MvvmLight;
+
+namespace SIL.Cog.ViewModels
 {
 	public enum StemmingMethod
 	{
@@ -7,13 +9,12 @@
 		Manual
 	}
 
-	public class RunStemmerViewModel : CogViewModelBase
+	public class RunStemmerViewModel : ViewModelBase
 	{
 		private StemmingMethod _method;
 		private readonly bool _isHybridAvailable;
 
 		public RunStemmerViewModel(bool isHybridAvailable)
-			: base("Run Stemmer")
 		{
 			_isHybridAvailable = isHybridAvailable;
 		}

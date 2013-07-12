@@ -31,15 +31,18 @@ namespace SIL.Cog.ViewModels
 			_exportService = exportService;
 			_newRegionCommand = new RelayCommand<IEnumerable<Tuple<double, double>>>(AddNewRegion);
 			_currentClusters = new List<Cluster<Variety>>();
-			Messenger.Default.Register<Message>(this, HandleMessage);
+
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => ClusterVarieties());
+			Messenger.Default.Register<ModelChangingMessage>(this, msg => ResetClusters());
+
 			_similarityScoreThreshold = 0.7;
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
-				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
-				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
-				new CommandViewModel("Import regions", new RelayCommand(ImportRegions)),
-				new CommandViewModel("Export this map", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
+				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Import regions", new RelayCommand(ImportRegions)),
+				new TaskAreaCommandViewModel("Export this map", new RelayCommand(Export))));
 		}
 
 		private void ImportRegions()
@@ -59,20 +62,6 @@ namespace SIL.Cog.ViewModels
 			{
 				var region = new GeographicRegion(coordinates.Select(coord => new GeographicCoordinate(coord.Item1, coord.Item2))) {Description = vm.Description};
 				vm.CurrentVariety.ModelVariety.Regions.Add(region);
-			}
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ComparisonPerformed:
-					ClusterVarieties();
-					break;
-
-				case MessageType.ComparisonInvalidated:
-					ResetClusters();
-					break;
 			}
 		}
 
@@ -124,7 +113,6 @@ namespace SIL.Cog.ViewModels
 					{
 						var newVariety = new GeographicalVarietyViewModel(_dialogService, project, variety);
 						((INotifyCollectionChanged) newVariety.Regions).CollectionChanged += (sender, e) => RegionsChanged(newVariety);
-						newVariety.PropertyChanged += ChildPropertyChanged;
 						return newVariety;
 					}, vm => vm.ModelVariety));
 			if (_project.VarietyPairs.Count > 0)
@@ -142,12 +130,6 @@ namespace SIL.Cog.ViewModels
 				else
 					ClusterVarieties();
 			}
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			ChildrenAcceptChanges(_varieties);
 		}
 
 		public ReadOnlyObservableList<GeographicalVarietyViewModel> Varieties

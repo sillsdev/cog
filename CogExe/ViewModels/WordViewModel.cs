@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Components;
@@ -11,7 +12,7 @@ using SIL.Machine;
 
 namespace SIL.Cog.ViewModels
 {
-	public class WordViewModel : CogViewModelBase, IDataErrorInfo
+	public class WordViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private readonly CogProject _project; 
 		private readonly Word _word;
@@ -36,7 +37,7 @@ namespace SIL.Cog.ViewModels
 
 		private void ShowInWordLists()
 		{
-			Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(WordListsViewModel), _word.Variety, _sense.ModelSense)));
+			Messenger.Default.Send(new SwitchViewMessage(typeof(WordListsViewModel), _word.Variety, _sense.ModelSense));
 		}
 
 		private void WordPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -82,6 +83,7 @@ namespace SIL.Cog.ViewModels
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
+			Messenger.Default.Send(new ModelChangingMessage());
 			int i = 0;
 			int index = 0;
 			while (!_segments[i].IsBoundary)
@@ -100,8 +102,6 @@ namespace SIL.Cog.ViewModels
 
 			var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
 			pipeline.Process(_word.Variety.ToEnumerable());
-
-			IsChanged = true;
 		}
 
 		public SenseViewModel Sense

@@ -21,11 +21,7 @@ namespace SIL.Cog.ViewModels
 		public double Threshold
 		{
 			get { return _threshold; }
-			set
-			{
-				Set(() => Threshold, ref _threshold, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => Threshold, ref _threshold, value); }
 		}
 
 		public override object UpdateComponent()

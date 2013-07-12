@@ -28,7 +28,7 @@ namespace SIL.Cog.ViewModels
 		private void SwitchToVarietyPair()
 		{
 			if (_varietyPair != null)
-				Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(VarietyPairsViewModel), _varietyPair)));
+				Messenger.Default.Send(new SwitchViewMessage(typeof(VarietyPairsViewModel), _varietyPair));
 		}
 
 		public string OtherVarietyName

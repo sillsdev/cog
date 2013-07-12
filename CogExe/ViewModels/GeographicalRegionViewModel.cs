@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Services;
 using SIL.Collections;
 
@@ -33,6 +34,7 @@ namespace SIL.Cog.ViewModels
 
 		private void CoordinatesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			Messenger.Default.Send(new ModelChangingMessage());
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
@@ -57,7 +59,6 @@ namespace SIL.Cog.ViewModels
 					_region.Coordinates.Clear();
 					break;
 			}
-			IsChanged = true;
 		}
 
 		private void EditRegion()
@@ -66,9 +67,9 @@ namespace SIL.Cog.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_region.Description = vm.Description;
-				IsChanged = true;
 				if (vm.CurrentVariety.ModelVariety != _variety.ModelVariety)
 				{
+					Messenger.Default.Send(new ModelChangingMessage());
 					_variety.ModelVariety.Regions.Remove(_region);
 					vm.CurrentVariety.ModelVariety.Regions.Add(_region);
 				}
@@ -77,6 +78,7 @@ namespace SIL.Cog.ViewModels
 
 		private void RemoveRegion()
 		{
+			Messenger.Default.Send(new ModelChangingMessage());
 			_variety.ModelVariety.Regions.Remove(_region);
 		}
 

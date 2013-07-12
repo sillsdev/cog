@@ -2,31 +2,31 @@
 
 namespace SIL.Cog.ViewModels
 {
-	public class RelevantValueViewModel : CogViewModelBase
+	public class RelevantValueViewModel : ChangeTrackingViewModelBase
 	{
 		private readonly FeatureSymbol _symbol;
 		private int _metric;
 
 		public RelevantValueViewModel(FeatureSymbol symbol, int metric)
-			: base(symbol.Description)
 		{
 			_symbol = symbol;
 			_metric = metric;
 		}
 
-		internal FeatureSymbol ModelSymbol
+		public string Description
 		{
-			get { return _symbol; }
+			get { return _symbol.Description; }
 		}
 
 		public int Metric
 		{
 			get { return _metric; }
-			set
-			{
-				if (Set(() => Metric, ref _metric, value))
-					IsChanged = true;
-			}
+			set { SetChanged(() => Metric, ref _metric, value); }
+		}
+
+		internal FeatureSymbol ModelSymbol
+		{
+			get { return _symbol; }
 		}
 	}
 }

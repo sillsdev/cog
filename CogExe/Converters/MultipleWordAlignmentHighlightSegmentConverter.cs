@@ -6,19 +6,19 @@ using SIL.Cog.ViewModels;
 
 namespace SIL.Cog.Converters
 {
-	public class SenseAlignmentHighlightSegmentConverter : IMultiValueConverter
+	public class MultipleWordAlignmentHighlightSegmentConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (values[2] == DependencyProperty.UnsetValue || values[3] == DependencyProperty.UnsetValue)
 				return false;
 
-			var word = (SenseAlignmentWordViewModel) values[0];
+			var word = (MultipleWordAlignmentWordViewModel) values[0];
 			int wordColumn = ((int) values[1]) - 1;
 			var currentColumn = (int) values[2];
-			var currentWord = (SenseAlignmentWordViewModel) values[3];
+			var currentWord = (MultipleWordAlignmentWordViewModel) values[3];
 
-			return currentWord != null && currentWord != word && wordColumn == currentColumn && word.Columns[wordColumn] == currentWord.Columns[currentColumn];
+			return currentColumn != -1 && currentWord != null && currentWord != word && wordColumn == currentColumn && word.Columns[wordColumn] == currentWord.Columns[currentColumn];
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

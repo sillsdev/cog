@@ -1,5 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.Linq;
+﻿using System.Linq;
 using SIL.Cog.Components;
 using SIL.Cog.Services;
 
@@ -28,7 +27,7 @@ namespace SIL.Cog.ViewModels
  					new UnnaturalClass("W", new[] {"w", "ʋ", "v", "ʙ"}, true, project.Segmenter)
 				};
 			_soundClasses = new SoundClassesViewModel(dialogService, project, soundClasses.Select(sc => new SoundClassViewModel(sc)), false);
-			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;
+			_soundClasses.PropertyChanged += ChildPropertyChanged;
 		}
 
 		public DolgopolskyCognateIdentifierViewModel(IDialogService dialogService, CogProject project, DolgopolskyCognateIdentifier cognateIdentifier)
@@ -36,22 +35,19 @@ namespace SIL.Cog.ViewModels
 		{
 			_initialEquivalenceThreshold = cognateIdentifier.InitialEquivalenceThreshold;
 			_soundClasses = new SoundClassesViewModel(dialogService, project, cognateIdentifier.SoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
-			_soundClasses.SoundClasses.CollectionChanged += SoundClassesChanged;
-		}
-
-		private void SoundClassesChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			IsChanged = true;
+			_soundClasses.PropertyChanged += ChildPropertyChanged;
 		}
 
 		public int InitialEquivalenceThreshold
 		{
 			get { return _initialEquivalenceThreshold; }
-			set
-			{
-				Set(() => InitialEquivalenceThreshold, ref _initialEquivalenceThreshold, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => InitialEquivalenceThreshold, ref _initialEquivalenceThreshold, value); }
+		}
+
+		public override void AcceptChanges()
+		{
+			base.AcceptChanges();
+			_soundClasses.AcceptChanges();
 		}
 
 		public SoundClassesViewModel SoundClasses

@@ -26,21 +26,13 @@ namespace SIL.Cog.ViewModels
 		public int VowelThreshold
 		{
 			get { return _vowelThreshold; }
-			set
-			{
-				if (Set(() => VowelThreshold, ref _vowelThreshold, value))
-					IsChanged = true;
-			}
+			set { SetChanged(() => VowelThreshold, ref _vowelThreshold, value); }
 		}
 
 		public int ConsonantThreshold
 		{
 			get { return _consThreshold; }
-			set
-			{
-				if (Set(() => ConsonantThreshold, ref _consThreshold, value))
-					IsChanged = true;
-			}
+			set { SetChanged(() => ConsonantThreshold, ref _consThreshold, value); }
 		}
 
 		public override object UpdateComponent()

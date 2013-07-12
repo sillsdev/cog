@@ -1,12 +1,13 @@
-﻿namespace SIL.Cog.ViewModels
+﻿using GalaSoft.MvvmLight;
+
+namespace SIL.Cog.ViewModels
 {
-	public class ExportNetworkGraphViewModel : CogViewModelBase
+	public class ExportNetworkGraphViewModel : ViewModelBase
 	{
 		private SimilarityMetric _similarityMetric;
 		private double _similarityScoreFilter;
 
 		public ExportNetworkGraphViewModel()
-			: base("Export network graph")
 		{
 			_similarityScoreFilter = 0.7;
 		}

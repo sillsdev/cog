@@ -54,6 +54,7 @@
     <Compile Include="AlignmentCell.cs" />
     <Compile Include="Cluster.cs" />
     <Compile Include="ClusterEdge.cs" />
+    <Compile Include="Clusterers\CognateSetsClusterer.cs" />
     <Compile Include="Clusterers\FlatUpgmaClusterer.cs" />
     <Compile Include="Clusterers\NeighborJoiningClusterer.cs" />
     <Compile Include="Clusterers\OpticsRootedHierarchicalClusterer.cs" />

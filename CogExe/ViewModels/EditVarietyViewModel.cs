@@ -1,26 +1,33 @@
 ﻿using System.ComponentModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
 
 namespace SIL.Cog.ViewModels
 {
-	public class EditVarietyViewModel : CogViewModelBase, IDataErrorInfo
+	public class EditVarietyViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private readonly CogProject _project;
 		private readonly Variety _variety;
 		private string _name;
+		private readonly string _title;
 
 		public EditVarietyViewModel(CogProject project)
-			: base("New Variety")
 		{
+			_title = "New Variety";
 			_project = project;
 		}
 
 		public EditVarietyViewModel(CogProject project, Variety variety)
-			: base("Rename Variety")
 		{
+			_title = "Rename Variety";
 			_project = project;
 			_variety = variety;
 			_name = variety.Name;
+		}
+
+		public string Title
+		{
+			get { return _title; }
 		}
 
 		public string Name

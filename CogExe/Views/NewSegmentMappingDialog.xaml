@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.ViewModels" mc:Ignorable="d"
-        Title="{Binding DisplayName}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
+        Title="New Correspondence" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=Seg1TextBox}"
         d:DataContext="{d:DesignInstance vm:NewSegmentMappingViewModel}">
     <Grid Margin="10">

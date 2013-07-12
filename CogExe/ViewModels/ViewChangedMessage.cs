@@ -1,11 +1,13 @@
-﻿namespace SIL.Cog.ViewModels
+﻿using GalaSoft.MvvmLight.Messaging;
+
+namespace SIL.Cog.ViewModels
 {
-	public class ViewChangedData
+	internal class ViewChangedMessage : MessageBase
 	{
 		private readonly object _oldViewModel;
 		private readonly object _newViewModel;
 
-		public ViewChangedData(object oldViewModel, object newViewModel)
+		public ViewChangedMessage(object oldViewModel, object newViewModel)
 		{
 			_oldViewModel = oldViewModel;
 			_newViewModel = newViewModel;

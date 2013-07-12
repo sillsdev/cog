@@ -35,19 +35,21 @@ namespace SIL.Cog.ViewModels
 			: base("Hierarchical Graph")
 		{
 			_exportService = exportService;
-			Messenger.Default.Register<Message>(this, HandleMessage);
+
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
+			Messenger.Default.Register<ModelChangingMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
-			    new CommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),
-			    new CommandViewModel("Tree", new RelayCommand(() => GraphType = HierarchicalGraphType.Tree))));
+			    new TaskAreaCommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),
+			    new TaskAreaCommandViewModel("Tree", new RelayCommand(() => GraphType = HierarchicalGraphType.Tree))));
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Clustering method",
-				new CommandViewModel("UPGMA", new RelayCommand(() => ClusteringMethod = ClusteringMethod.Upgma)),
-				new CommandViewModel("Neighbor-joining", new RelayCommand(() => ClusteringMethod = ClusteringMethod.NeighborJoining))));
+				new TaskAreaCommandViewModel("UPGMA", new RelayCommand(() => ClusteringMethod = ClusteringMethod.Upgma)),
+				new TaskAreaCommandViewModel("Neighbor-joining", new RelayCommand(() => ClusteringMethod = ClusteringMethod.NeighborJoining))));
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
-				new CommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
-				new CommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Other tasks",
-				new CommandViewModel("Export this graph", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
+				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export))));
 			_graphType = HierarchicalGraphType.Dendrogram;
 		}
 
@@ -60,20 +62,6 @@ namespace SIL.Cog.ViewModels
 		{
 			_project = project;
 			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
-		}
-
-		private void HandleMessage(Message msg)
-		{
-			switch (msg.Type)
-			{
-				case MessageType.ComparisonPerformed:
-					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
-					break;
-
-				case MessageType.ComparisonInvalidated:
-					Graph = null;
-					break;
-			}
 		}
 
 		public HierarchicalGraphType GraphType

@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using SIL.Cog.Clusterers;
 
 namespace SIL.Cog.Export
 {
-	public class NexusCognateSetsExporter : CognateSetsExporterBase
+	public class NexusCognateSetsExporter : ICognateSetsExporter
 	{
-		public override void Export(string path, CogProject project)
+		public void Export(string path, CogProject project)
 		{
-			IDictionary<Sense, IList<ISet<Variety>>> cognateSets = GetCognateSets(project);
 			using (var writer = new StreamWriter(path))
 			{
 				writer.WriteLine("#NEXUS");
@@ -39,19 +38,20 @@ namespace SIL.Cog.Export
 					writer.Write("\t\t{0}{1} ", name, new string(' ', maxNameLen - name.Length));
 					foreach (Sense sense in project.Senses)
 					{
-						IList<ISet<Variety>> clusters = cognateSets[sense];
+						var clusterer = new CognateSetsClusterer(sense, 0.5);
 						bool found = false;
-						for (int j = 0; j < clusters.Count; j++)
+						int j = 1;
+						foreach (Cluster<Variety> set in clusterer.GenerateClusters(project.Varieties))
 						{
-							if (clusters[j].Contains(variety))
+							if (set.DataObjects.Contains(variety))
 							{
-								if (j >= 9)
+								if (j >= 10)
 								{
-									writer.Write((char) ('A' + (j - 9)));
+									writer.Write((char) ('A' + (j - 10)));
 								}
 								else
 								{
-									writer.Write(j + 1);
+									writer.Write(j);
 								}
 								found = true;
 								break;

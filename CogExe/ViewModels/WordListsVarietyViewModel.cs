@@ -14,20 +14,9 @@ namespace SIL.Cog.ViewModels
 		public WordListsVarietyViewModel(IBusyService busyService, CogProject project, Variety variety)
 			: base(variety)
 		{
-			_senses = new VarietySenseViewModelCollection(project.Senses,
-				ModelVariety.Words, sense =>
-					{
-						var vm = new VarietySenseViewModel(busyService, project, this, sense, ModelVariety.Words[sense]);
-						vm.PropertyChanged += ChildPropertyChanged;
-						return vm;
-					});
-			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(VarietiesViewModel), ModelVariety))));
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			ChildrenAcceptChanges(_senses);
+			_senses = new VarietySenseViewModelCollection(project.Senses, ModelVariety.Words,
+				sense => new VarietySenseViewModel(busyService, project, this, sense, ModelVariety.Words[sense]));
+			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), ModelVariety)));
 		}
 
 		public ReadOnlyObservableList<VarietySenseViewModel> Senses

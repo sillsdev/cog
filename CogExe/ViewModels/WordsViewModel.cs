@@ -3,12 +3,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
+using GalaSoft.MvvmLight;
 using SIL.Cog.Services;
 using SIL.Collections;
 
 namespace SIL.Cog.ViewModels
 {
-	public class WordsViewModel : CogViewModelBase
+	public class WordsViewModel : ViewModelBase
 	{
 		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
 		private ListCollectionView _wordsView;
@@ -17,12 +18,7 @@ namespace SIL.Cog.ViewModels
 
 		public WordsViewModel(IBusyService busyService, CogProject project, Variety variety)
 		{
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
-				{
-					var vm = new WordViewModel(busyService, project, word);
-					vm.PropertyChanged += ChildPropertyChanged;
-					return vm;
-				}, vm => vm.ModelWord);
+			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => new WordViewModel(busyService, project, word), vm => vm.ModelWord);
 			variety.Words.CollectionChanged += WordsChanged;
 			_selectedWords = new BindableList<WordViewModel>();
 			_selectedSegmentWords = new BindableList<WordViewModel>();
@@ -36,12 +32,6 @@ namespace SIL.Cog.ViewModels
 				if (word.Segments.Any(s => s.IsSelected))
 					_selectedWords.Add(word);
 			}
-		}
-
-		public override void AcceptChanges()
-		{
-			base.AcceptChanges();
-			ChildrenAcceptChanges(_words);
 		}
 
 		public string SelectedWordsText

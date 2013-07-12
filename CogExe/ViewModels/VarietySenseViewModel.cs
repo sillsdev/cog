@@ -37,7 +37,7 @@ namespace SIL.Cog.ViewModels
 
 		private void ShowInVarieties()
 		{
-			Messenger.Default.Send(new Message(MessageType.SwitchView, new SwitchViewData(typeof(VarietiesViewModel), _variety.ModelVariety, ModelSense)));
+			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _variety.ModelVariety, ModelSense));
 		}
 
 		public ReadOnlyObservableList<WordViewModel> Words
@@ -74,6 +74,7 @@ namespace SIL.Cog.ViewModels
 				if (_strRep != val)
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();
+					Messenger.Default.Send(new ModelChangingMessage());
 					var wordsToRemove = new HashSet<Word>(ModelWords);
 					if (!string.IsNullOrEmpty(val))
 					{
@@ -103,8 +104,6 @@ namespace SIL.Cog.ViewModels
 
 					var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
 					pipeline.Process(_variety.ModelVariety.ToEnumerable());
-
-					IsChanged = true;
 				}
 			}
 		}

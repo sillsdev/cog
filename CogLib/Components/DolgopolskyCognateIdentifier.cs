@@ -40,6 +40,7 @@ namespace SIL.Cog.Components
 			IWordAligner aligner = Project.WordAligners[_alignerID];
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
+				wp.AlignmentNotes.Clear();
 				IWordAlignerResult alignerResult = aligner.Compute(wp);
 				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 				wp.PhoneticSimilarityScore = alignment.NormalizedScore;

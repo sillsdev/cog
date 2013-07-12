@@ -58,7 +58,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportSimilarityMatrix(object ownerViewModel, CogProject project, SimilarityMetric similarityMetric)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export similarity matrix", SimilarityMatrixExporters.Keys);
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Similarity Matrix", SimilarityMatrixExporters.Keys);
 			if (result.IsValid)
 			{
 				SimilarityMatrixExporters[result.SelectedFileType].Export(result.FileName, project, similarityMetric);
@@ -69,7 +69,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportWordLists(object ownerViewModel, CogProject project)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export word lists", WordListsExporters.Keys);
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Word Lists", WordListsExporters.Keys);
 			if (result.IsValid)
 			{
 				WordListsExporters[result.SelectedFileType].Export(result.FileName, project);
@@ -80,7 +80,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportCognateSets(object ownerViewModel, CogProject project)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export cognate sets", CognateSetsExporters.Keys);
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Cognate Sets", CognateSetsExporters.Keys);
 			if (result.IsValid)
 			{
 				CognateSetsExporters[result.SelectedFileType].Export(result.FileName, project);
@@ -91,7 +91,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportVarietyPair(object ownerViewModel, CogProject project, VarietyPair varietyPair)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export variety pair", VarietyPairExporters.Keys);
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Variety Pair", VarietyPairExporters.Keys);
 			if (result.IsValid)
 			{
 				VarietyPairExporters[result.SelectedFileType].Export(result.FileName, project, varietyPair);
@@ -102,7 +102,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportCurrentHierarchicalGraph(object ownerViewModel, HierarchicalGraphType type)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export hierarchical graph", ownerViewModel, new FileType("PNG image", ".png"));
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Hierarchical Graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
 				FrameworkElement graphLayout = null;
@@ -127,7 +127,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportHierarchicalGraph(object ownerViewModel, IHierarchicalBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphType graphType)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export hierarchical graph", ownerViewModel, new FileType("PNG image", ".png"));
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Hierarchical Graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
 				FrameworkElement graphLayout = null;
@@ -172,7 +172,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportCurrentNetworkGraph(object ownerViewModel)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", ownerViewModel, new FileType("PNG image", ".png"));
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Network Graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
 				var graphLayout = Application.Current.MainWindow.FindVisualChild<NetworkGraphLayout>();
@@ -187,7 +187,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportNetworkGraph(object ownerViewModel, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, double scoreFilter)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export network graph", this, new FileType("PNG image", ".png"));
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Network Graph", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
 				var graphLayout = new NetworkGraphLayout
@@ -212,7 +212,7 @@ namespace SIL.Cog.Services
 
 		public bool ExportCurrentMap(object ownerViewModel)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export map", ownerViewModel, new FileType("PNG image", ".png"));
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Map", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
 				var mapControl = Application.Current.MainWindow.FindVisualChild<GMapControl>();

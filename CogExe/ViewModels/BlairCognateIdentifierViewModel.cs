@@ -18,7 +18,7 @@ namespace SIL.Cog.ViewModels
 			: base("Blair", project)
 		{
 			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, project);
-			_ignoredMappings.Mappings.CollectionChanged += MappingsChanged;
+			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
 			_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 0,
 				new ThresholdSimilarSegmentMappingsViewModel(Project), new ListSimilarSegmentMappingsViewModel(dialogService, importService, Project));
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
@@ -31,7 +31,7 @@ namespace SIL.Cog.ViewModels
 			_regularConsEqual = cognateIdentifier.RegularConsonantEqual;
 			var ignoredMappings = (ListSegmentMappings) cognateIdentifier.IgnoredMappings;
 			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, project, ignoredMappings.Mappings);
-			_ignoredMappings.Mappings.CollectionChanged += MappingsChanged;
+			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
 
 			var similarSegments = (TypeSegmentMappings) cognateIdentifier.SimilarSegments;
 			if (similarSegments.VowelMappings is ThresholdSegmentMappings)
@@ -50,35 +50,23 @@ namespace SIL.Cog.ViewModels
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
 		}
 
-		private void MappingsChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			IsChanged = true;
-		}
-
 		public override void AcceptChanges()
 		{
 			base.AcceptChanges();
+			_ignoredMappings.AcceptChanges();
 			_similarSegments.AcceptChanges();
 		}
 
 		public bool IgnoreRegularInsertionDeletion
 		{
 			get { return _ignoreRegularInsertionDeletion; }
-			set
-			{
-				Set(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, value); }
 		}
 
 		public bool RegularConsonantsEqual
 		{
 			get { return _regularConsEqual; }
-			set
-			{
-				Set(() => RegularConsonantsEqual, ref _regularConsEqual, value);
-				IsChanged = true;
-			}
+			set { SetChanged(() => RegularConsonantsEqual, ref _regularConsEqual, value); }
 		}
 
 		public SegmentMappingsViewModel IgnoredMappings

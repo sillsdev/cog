@@ -64,7 +64,7 @@ namespace SIL.Cog.ViewModels
 			SimpleIoc.Default.Register<NetworkGraphViewModel>();
 			SimpleIoc.Default.Register<GeographicalViewModel>();
 			SimpleIoc.Default.Register<GlobalCorrespondencesViewModel>();
-			SimpleIoc.Default.Register<SenseAlignmentViewModel>();
+			SimpleIoc.Default.Register<MultipleWordAlignmentViewModel>();
         }
 
         public MainWindowViewModel Main

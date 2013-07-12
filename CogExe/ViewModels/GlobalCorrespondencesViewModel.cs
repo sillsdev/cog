@@ -95,7 +95,9 @@ namespace SIL.Cog.ViewModels
 			_globalSegments = new BindableList<GlobalSegmentViewModel>();
 			_globalCorrespondences = new BindableList<GlobalCorrespondenceViewModel>();
 
-			Messenger.Default.Register<Message>(this, HandleMessage);
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => GenerateCorrespondences());
+			Messenger.Default.Register<ModelChangingMessage>(this, msg => CancelWorker());
+			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 
 			_selectedWordPairsMonitor = new SimpleMonitor();
 
@@ -104,16 +106,16 @@ namespace SIL.Cog.ViewModels
 			_generateCorrespondencesWorker.RunWorkerCompleted += GenerateCorrespondencesAsyncFinished;
 			_workCompleteEvent = new ManualResetEvent(true);
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Correspondence type",
-				new CommandViewModel("Initial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.InitialConsonants)),
-				new CommandViewModel("Medial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.MedialConsonants)),
-				new CommandViewModel("Final consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.FinalConsonants)),
-				new CommandViewModel("Vowels", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Vowels))));
+				new TaskAreaCommandViewModel("Initial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.InitialConsonants)),
+				new TaskAreaCommandViewModel("Medial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.MedialConsonants)),
+				new TaskAreaCommandViewModel("Final consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.FinalConsonants)),
+				new TaskAreaCommandViewModel("Vowels", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Vowels))));
 			_correspondenceFilter = new TaskAreaIntegerViewModel("Frequency threshold");
 			_correspondenceFilter.PropertyChanging += _correspondenceFilter_PropertyChanging;
 			_correspondenceFilter.PropertyChanged += _correspondenceFilter_PropertyChanged;
 			TaskAreas.Add(_correspondenceFilter);
-			TaskAreas.Add(new TaskAreaCommandsViewModel("Common tasks",
-				new CommandViewModel("Find words", new RelayCommand(Find))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
+				new TaskAreaCommandViewModel("Find words", new RelayCommand(Find))));
 			_wordPairs = new WordPairsViewModel();
 			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
 		}
@@ -483,26 +485,12 @@ namespace SIL.Cog.ViewModels
 				GenerateCorrespondences();
 		}
 
-		private void HandleMessage(Message msg)
+		private void HandleViewChanged(ViewChangedMessage msg)
 		{
-			switch (msg.Type)
+			if (msg.OldViewModel == this && _findViewModel != null)
 			{
-				case MessageType.ComparisonPerformed:
-					GenerateCorrespondences();
-					break;
-
-				case MessageType.ViewChanged:
-					var data = (ViewChangedData) msg.Data;
-					if (data.OldViewModel == this && _findViewModel != null)
-					{
-						_dialogService.CloseDialog(_findViewModel);
-						_findViewModel = null;
-					}
-					break;
-
-				case MessageType.ComparisonInvalidated:
-					CancelWorker();
-					break;
+				_dialogService.CloseDialog(_findViewModel);
+				_findViewModel = null;
 			}
 		}
 

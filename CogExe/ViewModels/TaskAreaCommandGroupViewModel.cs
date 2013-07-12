@@ -1,17 +1,32 @@
-﻿namespace SIL.Cog.ViewModels
-{
-	public class TaskAreaCommandGroupViewModel : TaskAreaCommandsViewModel
-	{
-		private CogViewModelBase _currentCommand;
+﻿using SIL.Collections;
 
-		public TaskAreaCommandGroupViewModel(string displayName, params CommandViewModel[] commands)
-			: base(displayName, commands)
+namespace SIL.Cog.ViewModels
+{
+	public class TaskAreaCommandGroupViewModel : TaskAreaViewModelBase
+	{
+		private readonly ReadOnlyList<TaskAreaCommandViewModel> _commands;
+		private TaskAreaCommandViewModel _currentCommand;
+
+		public TaskAreaCommandGroupViewModel(params TaskAreaCommandViewModel[] commands)
+			: this(null, commands)
 		{
-			if (Commands.Count > 0)
-				_currentCommand = Commands[0];
+			
+		} 
+
+		public TaskAreaCommandGroupViewModel(string displayName, params TaskAreaCommandViewModel[] commands)
+			: base(displayName)
+		{
+			_commands = new ReadOnlyList<TaskAreaCommandViewModel>(commands);
+			if (_commands.Count > 0)
+				_currentCommand = _commands[0];
 		}
 
-		public CogViewModelBase CurrentCommand
+		public ReadOnlyList<TaskAreaCommandViewModel> Commands
+		{
+			get { return _commands; }
+		}
+
+		public TaskAreaCommandViewModel CurrentCommand
 		{
 			get { return _currentCommand; }
 			set { Set(() => CurrentCommand, ref _currentCommand, value); }

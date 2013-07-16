@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="SIL.Cog.Presentation.Views.MultipleWordAlignmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
+             mc:Ignorable="d" Loaded="OnLoaded"
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:MultipleWordAlignmentViewModel}">
+	<UserControl.Resources>
+		<cnvtrs:MultipleWordAlignmentHighlightSegmentConverter x:Key="HighlightConverter" />
+		<cnvtrs:DataGridFirstGroupRowConverter x:Key="RowConverter" />
+	</UserControl.Resources>
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+			<TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Multiple word alignment" />
+			<ComboBox Name="VarietiesComboBox" Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding SensesView}" SelectedItem="{Binding CurrentSense}" DisplayMemberPath="Gloss" />
+		</StackPanel>
+		<DataGrid Margin="0,10,0,0" Name="AlignmentGrid" ItemsSource="{Binding WordsView}" AutoGenerateColumns="False" GridLinesVisibility="None" HeadersVisibility="Row" IsReadOnly="True" SelectionUnit="Cell"
+				  EnableColumnVirtualization="False" EnableRowVirtualization="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" SelectedCellsChanged="AlignmentGrid_OnSelectedCellsChanged">
+			<DataGrid.RowHeaderTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Item.Variety.Name, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" />
+				</DataTemplate>
+			</DataGrid.RowHeaderTemplate>
+			<DataGrid.GroupStyle>
+				<GroupStyle>
+					<GroupStyle.ContainerStyle>
+						<Style TargetType="{x:Type GroupItem}">
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="{x:Type GroupItem}">
+										<StackPanel>
+											<TextBlock Padding="2" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
+												<Run>Cognate set </Run>
+												<Run Text="{Binding Name, Mode=OneWay}" />
+											</TextBlock>
+											<ItemsPresenter />
+										</StackPanel>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</GroupStyle.ContainerStyle>
+					<GroupStyle.Panel>
+						<ItemsPanelTemplate>
+							<DataGridRowsPresenter />
+						</ItemsPanelTemplate>
+					</GroupStyle.Panel>
+				</GroupStyle>
+			</DataGrid.GroupStyle>
+			<DataGrid.RowHeaderStyle>
+				<Style TargetType="DataGridRowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding ., RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Converter={StaticResource RowConverter}}" Value="True">
+							<Setter Property="BorderThickness" Value="0,1,1,1" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</DataGrid.RowHeaderStyle>
+			<DataGrid.CellStyle>
+				<Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+					<Style.Setters>
+						<Setter Property="TextBlock.TextAlignment" Value="Center" />
+						<Setter Property="FontSize" Value="16" />
+					</Style.Setters>
+					<Style.Triggers>
+						<DataTrigger Value="True">
+							<DataTrigger.Binding>
+								<MultiBinding Converter="{StaticResource HighlightConverter}">
+									<Binding Path="." />
+									<Binding Path="Column.DisplayIndex" RelativeSource="{RelativeSource Self}" />
+									<Binding Path="DataContext.CurrentColumn" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}" />
+									<Binding Path="DataContext.CurrentWord" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}" />
+								</MultiBinding>
+							</DataTrigger.Binding>
+							<Setter Property="Background" Value="#FFFCEEC2" />
+							<Setter Property="BorderBrush" Value="#FFFCEEC2" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</DataGrid.CellStyle>
+		</DataGrid>
+	</DockPanel>
+</UserControl>

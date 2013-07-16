@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="SIL.Cog.Presentation.Views.SimilarityMatrixView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SimilarityMatrixViewModel}" 
+             d:DesignHeight="300" d:DesignWidth="300" DataContextChanged="SimilarityMatrixView_DataContextChanged">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
+    </UserControl.Resources>
+    <DockPanel>
+		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similarity Matrix</TextBlock>
+		<Grid>
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">Click on "Perform comparison" to calculate the similarity matrix for all variety pairs.</TextBlock>
+            <DataGrid Name="SimMatrixGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" AutoGenerateColumns="False" ItemsSource="{Binding Varieties}"
+					  SelectionUnit="Cell" EnableColumnVirtualization="False" EnableRowVirtualization="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True">
+                <DataGrid.RowHeaderStyle>
+                    <Style TargetType="DataGridRowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
+                        <Setter Property="Content" Value="{Binding}" />
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.RowHeaderStyle>
+            </DataGrid>
+        </Grid>
+    </DockPanel>
+</UserControl>

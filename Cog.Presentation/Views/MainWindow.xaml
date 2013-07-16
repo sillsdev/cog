@@ -1,0 +1,131 @@
+﻿<Window x:Class="SIL.Cog.Presentation.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+        xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+        Title="{Binding DisplayName}" Height="768" Width="1024" DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Style="{StaticResource MainWindowStyle}">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding NewCommand}" Gesture="CTRL+N" />
+        <KeyBinding Command="{Binding OpenCommand}" Gesture="CTRL+O" />
+        <KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S" />
+    </Window.InputBindings>
+    <DockPanel>
+        <Menu Height="23" DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Command="{Binding NewCommand}" InputGestureText="Ctrl+N" />
+                <MenuItem Header="_Open..." Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
+                <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
+                <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
+				<MenuItem Header="_Import">
+					<MenuItem Header="Word Lists..." Command="{Binding ImportWordListsCommand}" />
+					<MenuItem Header="Regions..." Command="{Binding ImportGeographicRegionsCommand}" />
+				</MenuItem>
+				<MenuItem Header="_Export">
+					<MenuItem Header="Word Lists..." Command="{Binding ExportWordListsCommand}" />
+					<MenuItem Header="Similarity Matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
+					<MenuItem Header="Cognate Sets..." Command="{Binding ExportCognateSetsCommand}" />
+					<MenuItem Header="Hierarchical Graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
+					<MenuItem Header="Network Graph..." Command="{Binding ExportNetworkGraphCommand}" />
+				</MenuItem>
+                <MenuItem Header="E_xit" Click="Exit_Click" InputGestureText="Alt+F4" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Cu_t" Command="Cut" />
+                <MenuItem Header="_Copy" Command="Copy" />
+                <MenuItem Header="_Paste" Command="Paste" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="About Cog" Click="AboutBox_Click" />
+            </MenuItem>
+        </Menu>
+        <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding CurrentView}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <c:TabControlEx Padding="0" Style="{StaticResource SubTabControlStyle}" TabStripPlacement="Top"
+										   ItemsSource="{Binding Views}" ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding CurrentView}">
+                        <TabControl.Template>
+                            <ControlTemplate TargetType="TabControl">
+                                <DockPanel>
+                                    <TabPanel DockPanel.Dock="Top" IsItemsHost="True" />
+                                    <Grid DockPanel.Dock="Bottom" x:Name="PART_ItemsHolder" />
+                                </DockPanel>
+                            </ControlTemplate>
+                        </TabControl.Template>
+                        <TabControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </TabControl.ItemTemplate>
+                        <TabControl.ContentTemplate>
+                            <DataTemplate DataType="{x:Type vm:WorkspaceViewModelBase}">
+                                <DockPanel Background="{StaticResource ViewBackgroundBrush}">
+                                    <Border Width="140" BorderThickness="0,0,1,0" BorderBrush="{StaticResource TaskAreaBorderBrush}" Background="{StaticResource TaskAreaBackgroundBrush}">
+                                        <ItemsControl ItemsSource="{Binding TaskAreas}">
+											<ItemsControl.Resources>
+												<DataTemplate DataType="{x:Type vm:TaskAreaCommandGroupViewModel}">
+													<v:TaskAreaCommandGroupView />
+												</DataTemplate>
+												<DataTemplate DataType="{x:Type vm:TaskAreaItemsViewModel}">
+													<v:TaskAreaItemsView />
+												</DataTemplate>
+												<DataTemplate DataType="{x:Type vm:TaskAreaIntegerViewModel}">
+													<v:TaskAreaIntegerView />
+												</DataTemplate>
+											</ItemsControl.Resources>
+                                        </ItemsControl>
+                                    </Border>
+                                    <ContentPresenter Margin="10" DockPanel.Dock="Right" Content="{Binding}">
+                                        <ContentPresenter.Resources>
+                                            <DataTemplate DataType="{x:Type vm:WordListsViewModel}">
+                                                <v:WordListsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:VarietiesViewModel}">
+                                                <v:VarietiesView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:SensesViewModel}">
+                                                <v:SensesView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:InputSettingsViewModel}">
+                                                <v:InputSettingsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:SimilarityMatrixViewModel}">
+                                                <v:SimilarityMatrixView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:VarietyPairsViewModel}">
+                                                <v:VarietyPairsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:CompareSettingsViewModel}">
+                                                <v:CompareSettingsView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:HierarchicalGraphViewModel}">
+                                                <v:HierarchicalGraphView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:NetworkGraphViewModel}">
+                                                <v:NetworkGraphView />
+                                            </DataTemplate>
+											<DataTemplate DataType="{x:Type vm:GeographicalViewModel}">
+												<v:GeographicalView />
+											</DataTemplate>
+											<DataTemplate DataType="{x:Type vm:GlobalCorrespondencesViewModel}">
+												<v:GlobalCorrespondencesView />
+											</DataTemplate>
+											<DataTemplate DataType="{x:Type vm:MultipleWordAlignmentViewModel}">
+												<v:MultipleWordAlignmentView />
+											</DataTemplate>
+										</ContentPresenter.Resources>
+                                    </ContentPresenter>
+                                </DockPanel>
+                            </DataTemplate>
+                        </TabControl.ContentTemplate>
+                    </c:TabControlEx>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </c:TabControlEx>
+    </DockPanel>
+</Window>

@@ -30,8 +30,13 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CogExe\CogExe.csproj">
-      <Name>CogExe</Name>
+    <Compile Include="..\Product.wxs">
+      <Link>Product.wxs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Cog.Presentation\Cog.Presentation.csproj">
+      <Name>Cog.Presentation</Name>
       <Project>{d5cdac30-0e8c-47a3-90ce-a2bff27adaa7}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
@@ -39,24 +44,19 @@
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Product.wxs">
-      <Link>Product.wxs</Link>
-    </Compile>
-  </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
     <!-- Read the version from the to-be-installed .exe -->
-    <GetAssemblyIdentity AssemblyFiles="..\..\CogExe\bin\$(Configuration)\Cog.exe">
+    <GetAssemblyIdentity AssemblyFiles="..\..\Cog.Presentation\bin\$(Configuration)\Cog.exe">
       <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
     </GetAssemblyIdentity>
     <!-- Create the MSBuild property $(VersionNumber) -->
     <CreateProperty Value="%(AsmInfo.Version)">
       <Output TaskParameter="Value" PropertyName="VersionNumber" />
     </CreateProperty>
-	<CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
-		<Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
-	</CreateProperty>
+    <CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
+      <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+    </CreateProperty>
     <!-- Create the WiX preprocessor variable $(var.VersionNumber) -->
     <CreateProperty Value="$(DefineConstants);VersionNumber=$(ShortVersionNumber)">
       <Output TaskParameter="Value" PropertyName="DefineConstants" />

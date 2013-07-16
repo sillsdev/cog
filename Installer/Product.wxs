@@ -41,87 +41,84 @@
 		<ComponentGroup Id="RequiredComponents" Directory="INSTALLFOLDER">
 			<!-- Cog -->
 			<Component Id="Cog.exe" Win64="$(var.Win64)">
-				<File Id="Cog.exe" Name="Cog.exe" Source="$(var.CogExe.TargetPath)" KeyPath="yes" />
+				<File Id="Cog.exe" Name="Cog.exe" Source="$(var.Cog.Presentation.TargetPath)" KeyPath="yes" />
 				<ProgId Id="Cog.Project" Description="Cog Project" Icon="Cog.exe" IconIndex="0">
 					<Extension Id="cogx">
 						<Verb Id="open" TargetFile="Cog.exe" Argument="&quot;%1&quot;"/>
 					</Extension>
 				</ProgId>
 			</Component>
-			<Component Id="SIL.Cog.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Cog.dll" Name="SIL.Cog.dll" Source="$(var.CogExe.TargetDir)SIL.Cog.dll" KeyPath="yes" />
+			<Component Id="SIL.Cog.Applications.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.Applications.dll" Name="SIL.Cog.Applications.dll" Source="$(var.Cog.Presentation.TargetDir)SIL.Cog.Applications.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="SIL.Cog.Domain.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)SIL.Cog.Domain.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- Machine -->
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Machine.dll" Name="SIL.Machine.dll" Source="$(var.CogExe.TargetDir)\SIL.Machine.dll" KeyPath="yes" />
+				<File Id="SIL.Machine.dll" Name="SIL.Machine.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Machine.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="SIL.Collections.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Collections.dll" Name="SIL.Collections.dll" Source="$(var.CogExe.TargetDir)\SIL.Collections.dll" KeyPath="yes" />
+				<File Id="SIL.Collections.dll" Name="SIL.Collections.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Collections.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- MVVM Light -->
 			<Component Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Win64="$(var.Win64)">
-				<File Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Name="GalaSoft.MvvmLight.Extras.WPF4.dll" Source="$(var.CogExe.TargetDir)\GalaSoft.MvvmLight.Extras.WPF4.dll" KeyPath="yes" />
+				<File Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Name="GalaSoft.MvvmLight.Extras.WPF4.dll" Source="$(var.Cog.Presentation.TargetDir)\GalaSoft.MvvmLight.Extras.WPF4.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="GalaSoft.MvvmLight.WPF4.dll" Win64="$(var.Win64)">
-				<File Id="GalaSoft.MvvmLight.WPF4.dll" Name="GalaSoft.MvvmLight.WPF4.dll" Source="$(var.CogExe.TargetDir)\GalaSoft.MvvmLight.WPF4.dll" KeyPath="yes" />
+				<File Id="GalaSoft.MvvmLight.WPF4.dll" Name="GalaSoft.MvvmLight.WPF4.dll" Source="$(var.Cog.Presentation.TargetDir)\GalaSoft.MvvmLight.WPF4.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="Microsoft.Practices.ServiceLocation.dll" Win64="$(var.Win64)">
-				<File Id="Microsoft.Practices.ServiceLocation.dll" Name="Microsoft.Practices.ServiceLocation.dll" Source="$(var.CogExe.TargetDir)\Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" />
-			</Component>
-			<Component Id="System.Windows.Interactivity.dll" Win64="$(var.Win64)">
-				<File Id="System.Windows.Interactivity.dll" Name="System.Windows.Interactivity.dll" Source="$(var.CogExe.TargetDir)\System.Windows.Interactivity.dll" KeyPath="yes" />
+				<File Id="Microsoft.Practices.ServiceLocation.dll" Name="Microsoft.Practices.ServiceLocation.dll" Source="$(var.Cog.Presentation.TargetDir)\Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- GMap.NET -->
 			<Component Id="GMap.NET.Core.dll" Win64="$(var.Win64)">
-				<File Id="GMap.NET.Core.dll" Name="GMap.NET.Core.dll" Source="$(var.CogExe.TargetDir)\GMap.NET.Core.dll" KeyPath="yes" />
+				<File Id="GMap.NET.Core.dll" Name="GMap.NET.Core.dll" Source="$(var.Cog.Presentation.TargetDir)\GMap.NET.Core.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="GMap.NET.WindowsPresentation.dll" Win64="$(var.Win64)">
-				<File Id="GMap.NET.WindowsPresentation.dll" Name="GMap.NET.WindowsPresentation.dll" Source="$(var.CogExe.TargetDir)\GMap.NET.WindowsPresentation.dll" KeyPath="yes" />
+				<File Id="GMap.NET.WindowsPresentation.dll" Name="GMap.NET.WindowsPresentation.dll" Source="$(var.Cog.Presentation.TargetDir)\GMap.NET.WindowsPresentation.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- Graph# -->
 			<Component Id="GraphSharp.Controls.dll" Win64="$(var.Win64)">
-				<File Id="GraphSharp.Controls.dll" Name="GraphSharp.Controls.dll" Source="$(var.CogExe.TargetDir)\GraphSharp.Controls.dll" KeyPath="yes" />
+				<File Id="GraphSharp.Controls.dll" Name="GraphSharp.Controls.dll" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.Controls.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="GraphSharp.dll" Win64="$(var.Win64)">
-				<File Id="GraphSharp.dll" Name="GraphSharp.dll" Source="$(var.CogExe.TargetDir)\GraphSharp.dll" KeyPath="yes" />
+				<File Id="GraphSharp.dll" Name="GraphSharp.dll" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="WPFExtensions.dll" Win64="$(var.Win64)">
-				<File Id="WPFExtensions.dll" Name="WPFExtensions.dll" Source="$(var.CogExe.TargetDir)\WPFExtensions.dll" KeyPath="yes" />
+				<File Id="WPFExtensions.dll" Name="WPFExtensions.dll" Source="$(var.Cog.Presentation.TargetDir)\WPFExtensions.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- DotNetZip -->
 			<Component Id="Ionic.Zip.Reduced.dll" Win64="$(var.Win64)">
-				<File Id="Ionic.Zip.Reduced.dll" Name="Ionic.Zip.Reduced.dll" Source="$(var.CogExe.TargetDir)\Ionic.Zip.Reduced.dll" KeyPath="yes" />
+				<File Id="Ionic.Zip.Reduced.dll" Name="Ionic.Zip.Reduced.dll" Source="$(var.Cog.Presentation.TargetDir)\Ionic.Zip.Reduced.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- Math.NET Numerics -->
 			<Component Id="MathNet.Numerics.dll" Win64="$(var.Win64)">
-				<File Id="MathNet.Numerics.dll" Name="MathNet.Numerics.dll" Source="$(var.CogExe.TargetDir)\MathNet.Numerics.dll" KeyPath="yes" />
-			</Component>
-			<Component Id="MathNet.Numerics.IO.dll" Win64="$(var.Win64)">
-				<File Id="MathNet.Numerics.IO.dll" Name="MathNet.Numerics.IO.dll" Source="$(var.CogExe.TargetDir)\MathNet.Numerics.IO.dll" KeyPath="yes" />
+				<File Id="MathNet.Numerics.dll" Name="MathNet.Numerics.dll" Source="$(var.Cog.Presentation.TargetDir)\MathNet.Numerics.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- QuickGraph -->
 			<Component Id="QuickGraph.dll" Win64="$(var.Win64)">
-				<File Id="QuickGraph.dll" Name="QuickGraph.dll" Source="$(var.CogExe.TargetDir)\QuickGraph.dll" KeyPath="yes" />
+				<File Id="QuickGraph.dll" Name="QuickGraph.dll" Source="$(var.Cog.Presentation.TargetDir)\QuickGraph.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- Extended WPF Toolkit -->
 			<Component Id="Xceed.Wpf.DataGrid.dll" Win64="$(var.Win64)">
-				<File Id="Xceed.Wpf.DataGrid.dll" Name="Xceed.Wpf.DataGrid.dll" Source="$(var.CogExe.TargetDir)\Xceed.Wpf.DataGrid.dll" KeyPath="yes" />
+				<File Id="Xceed.Wpf.DataGrid.dll" Name="Xceed.Wpf.DataGrid.dll" Source="$(var.Cog.Presentation.TargetDir)\Xceed.Wpf.DataGrid.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="Xceed.Wpf.Toolkit.dll" Win64="$(var.Win64)">
-				<File Id="Xceed.Wpf.Toolkit.dll" Name="Xceed.Wpf.Toolkit.dll" Source="$(var.CogExe.TargetDir)\Xceed.Wpf.Toolkit.dll" KeyPath="yes" />
+				<File Id="Xceed.Wpf.Toolkit.dll" Name="Xceed.Wpf.Toolkit.dll" Source="$(var.Cog.Presentation.TargetDir)\Xceed.Wpf.Toolkit.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- protobuf-net -->
 			<Component Id="protobuf_net.dll" Win64="$(var.Win64)">
-				<File Id="protobuf_net.dll" Name="protobuf-net.dll" Source="$(var.CogExe.TargetDir)\protobuf-net.dll" KeyPath="yes" />
+				<File Id="protobuf_net.dll" Name="protobuf-net.dll" Source="$(var.Cog.Presentation.TargetDir)\protobuf-net.dll" KeyPath="yes" />
 			</Component>
 		</ComponentGroup>
 		<Component Id="ProgramMenuShortcut" Directory="AppProgramMenuFolder" Guid="F34CBDA4-7885-49C8-8256-71148666888E" Win64="$(var.Win64)">

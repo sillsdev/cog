@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="SIL.Cog.Presentation.Views.NetworkGraphView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+             xmlns:or="clr-namespace:GraphSharp.Algorithms.OverlapRemoval;assembly=GraphSharp"
+             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:ga="clr-namespace:SIL.Cog.Applications.GraphAlgorithms;assembly=SIL.Cog.Applications"
+             xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:NetworkGraphViewModel}">
+	<Grid>
+		<c:ZoomControl x:Name="ZoomControl" ZoomBoxOpacity="0.25">
+			<c:NetworkGraphLayout x:Name="GraphLayout" Graph="{Binding Graph}" LayoutAlgorithmType="StressMajorization" OverlapRemovalAlgorithmType="FSA" HighlightAlgorithmType="Undirected"
+								  WeightFilter="{Binding SimilarityScoreFilter}" LayoutFinished="GraphLayout_OnLayoutFinished" Background="White">
+				<c:NetworkGraphLayout.Resources>
+					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource {x:Type gsc:EdgeControl}}">
+						<Style.Resources>
+							<ToolTip x:Key="ToolTipContent">
+								<TextBlock Text="{Binding Weight, StringFormat=p}" />
+							</ToolTip>
+						</Style.Resources>
+						<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
+					</Style>
+				</c:NetworkGraphLayout.Resources>
+				<c:NetworkGraphLayout.LayoutParameters>
+					<ga:StressMajorizationLayoutParameters WeightAdjustment="1.0" />
+				</c:NetworkGraphLayout.LayoutParameters>
+				<c:NetworkGraphLayout.HighlightParameters>
+					<ga:UndirectedHighlightParameters />
+				</c:NetworkGraphLayout.HighlightParameters>
+				<c:NetworkGraphLayout.OverlapRemovalParameters>
+					<or:OverlapRemovalParameters HorizontalGap="2" VerticalGap="2" />
+				</c:NetworkGraphLayout.OverlapRemovalParameters>
+			</c:NetworkGraphLayout>
+		</c:ZoomControl>
+		<Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="{StaticResource OverlayBackgroundBrush}" CornerRadius="5" Margin="10">
+			<Grid Margin="5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Label Target="{Binding ElementName=FilterSlider}" Grid.Column="0" Margin="0,0,3,0">Edge filter:</Label>
+				<c:PercentageSlider Grid.Column="1" x:Name="FilterSlider" Value="{Binding SimilarityScoreFilter}" Width="250" />
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>

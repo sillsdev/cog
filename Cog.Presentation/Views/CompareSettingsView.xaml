@@ -1,0 +1,72 @@
+<UserControl x:Class="SIL.Cog.Presentation.Views.CompareSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:CompareSettingsViewModel}">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:ComponentOptionsViewModel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=TypeComboBox}" Margin="0,3,5,5" Padding="0,0,0,5" Content="{Binding OptionDisplayName}" ContentStringFormat="{}{0}:" />
+				<ComboBox Grid.Column="1" Grid.Row="0" Name="TypeComboBox" Width="150" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding CurrentOption}" DisplayMemberPath="DisplayName" />
+                <ContentPresenter Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding CurrentOption}" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AlineViewModel}">
+            <v:AlineView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EMSoundChangeInducerViewModel}">
+            <v:EMSoundChangeInducerView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BlairCognateIdentifierViewModel}">
+            <v:BlairCognateIdentifierView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ThresholdCognateIdentifierViewModel}">
+            <v:ThresholdCognateIdentifierView />
+        </DataTemplate>
+		<DataTemplate DataType="{x:Type vm:DolgopolskyCognateIdentifierViewModel}">
+			<v:DolgopolskyCognateIdentifierView />
+		</DataTemplate>
+	</UserControl.Resources>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Comparison Settings</TextBlock>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid Grid.IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ItemsControl Grid.Row="0" ItemsSource="{Binding Components}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <HeaderedContentControl HorizontalAlignment="Left" Margin="0,10,0,0" Width="600" Style="{StaticResource SettingsAreaStyle}" Header="{Binding DisplayName}">
+                                <ContentPresenter Content="{Binding}" />
+                            </HeaderedContentControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <StackPanel Margin="0,10,0,0" Grid.Row="1" Orientation="Horizontal" DockPanel.Dock="Bottom">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="5,0,0,0" />
+                            <Setter Property="Width" Value="70" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Command="{Binding ApplyCommand}">Apply</Button>
+                    <Button Command="{Binding ResetCommand}">Reset</Button>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

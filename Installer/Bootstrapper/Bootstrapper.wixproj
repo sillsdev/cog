@@ -60,7 +60,7 @@
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
     <!-- Read the version from the to-be-installed .exe -->
-    <GetAssemblyIdentity AssemblyFiles="..\..\CogExe\bin\$(Configuration)\Cog.exe">
+    <GetAssemblyIdentity AssemblyFiles="..\..\Cog.Presentation\bin\$(Configuration)\Cog.exe">
       <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
     </GetAssemblyIdentity>
     <!-- Create the MSBuild property $(VersionNumber) -->

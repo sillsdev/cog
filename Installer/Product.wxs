@@ -64,14 +64,13 @@
 			</Component>
 
 			<!-- MVVM Light -->
-			<Component Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Win64="$(var.Win64)">
-				<File Id="GalaSoft.MvvmLight.Extras.WPF4.dll" Name="GalaSoft.MvvmLight.Extras.WPF4.dll" Source="$(var.Cog.Presentation.TargetDir)\GalaSoft.MvvmLight.Extras.WPF4.dll" KeyPath="yes" />
-			</Component>
 			<Component Id="GalaSoft.MvvmLight.WPF4.dll" Win64="$(var.Win64)">
 				<File Id="GalaSoft.MvvmLight.WPF4.dll" Name="GalaSoft.MvvmLight.WPF4.dll" Source="$(var.Cog.Presentation.TargetDir)\GalaSoft.MvvmLight.WPF4.dll" KeyPath="yes" />
 			</Component>
-			<Component Id="Microsoft.Practices.ServiceLocation.dll" Win64="$(var.Win64)">
-				<File Id="Microsoft.Practices.ServiceLocation.dll" Name="Microsoft.Practices.ServiceLocation.dll" Source="$(var.Cog.Presentation.TargetDir)\Microsoft.Practices.ServiceLocation.dll" KeyPath="yes" />
+
+			<!-- Autofac -->
+			<Component Id="Autofac.dll" Win64="$(var.Win64)">
+				<File Id="Autofac.dll" Name="Autofac.dll" Source="$(var.Cog.Presentation.TargetDir)\Autofac.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- GMap.NET -->

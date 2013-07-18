@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -10,32 +11,35 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public abstract class SettingsWorkspaceViewModelBase : WorkspaceViewModelBase
 	{
-		private CogProject _project;
+		private readonly IProjectService _projectService;
 		private readonly BindableList<ComponentSettingsViewModelBase> _components;
 		private readonly ICommand _applyCommand;
 		private readonly ICommand _resetCommand;
 		private bool _isDirty;
 		private readonly IBusyService _busyService;
 
-		protected SettingsWorkspaceViewModelBase(IBusyService busyService)
+		protected SettingsWorkspaceViewModelBase(IProjectService projectService, IBusyService busyService)
 			: base("Settings")
 		{
+			_projectService = projectService;
 			_busyService = busyService;
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
 			_components = new BindableList<ComponentSettingsViewModelBase>();
 			_applyCommand = new RelayCommand(Apply, CanApply);
 			_resetCommand = new RelayCommand(Reset);
 		}
 
-		public override void Initialize(CogProject project)
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			_project = project;
 			_isDirty = true;
 			Reset();
 		}
 
 		protected CogProject Project
 		{
-			get { return _project; }
+			get { return _projectService.Project; }
 		}
 
 		private bool CanApply()

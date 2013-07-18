@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
@@ -13,18 +14,18 @@ namespace SIL.Cog.Applications.ViewModels
 	public class GeographicalRegionViewModel : WrapperViewModel
 	{
 		private readonly IDialogService _dialogService;
-		private readonly CogProject _project;
+		private readonly ICollection<Variety> _varieties;
 		private readonly GeographicalVarietyViewModel _variety;
 		private readonly GeographicRegion _region;
 		private readonly BindableList<Tuple<double, double>> _coordinates;
 		private readonly ICommand _editCommand;
 		private readonly ICommand _removeCommand;
 
-		public GeographicalRegionViewModel(IDialogService dialogService, CogProject project, GeographicalVarietyViewModel variety, GeographicRegion region)
+		public GeographicalRegionViewModel(IDialogService dialogService, ICollection<Variety> varieties, GeographicalVarietyViewModel variety, GeographicRegion region)
 			: base(region)
 		{
 			_dialogService = dialogService;
-			_project = project;
+			_varieties = varieties;
 			_variety = variety;
 			_region = region;
 			_coordinates = new BindableList<Tuple<double, double>>(_region.Coordinates.Select(coord => Tuple.Create(coord.Latitude, coord.Longitude)));
@@ -64,7 +65,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void EditRegion()
 		{
-			var vm = new EditRegionViewModel(_project, _variety.DomainVariety, _region);
+			var vm = new EditRegionViewModel(_varieties, _variety.DomainVariety, _region);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_region.Description = vm.Description;

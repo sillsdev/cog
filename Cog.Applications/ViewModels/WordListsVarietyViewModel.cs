@@ -12,11 +12,11 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly VarietySenseViewModelCollection _senses;
 		private readonly ICommand _switchToVarietyCommand;
  
-		public WordListsVarietyViewModel(IBusyService busyService, CogProject project, Variety variety)
+		public WordListsVarietyViewModel(IBusyService busyService, IAnalysisService analysisService, IObservableList<Sense> senses, Variety variety)
 			: base(variety)
 		{
-			_senses = new VarietySenseViewModelCollection(project.Senses, DomainVariety.Words,
-				sense => new VarietySenseViewModel(busyService, project, this, sense, DomainVariety.Words[sense]));
+			_senses = new VarietySenseViewModelCollection(senses, DomainVariety.Words,
+				sense => new VarietySenseViewModel(busyService, analysisService, this, sense, DomainVariety.Words[sense]));
 			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), DomainVariety)));
 		}
 

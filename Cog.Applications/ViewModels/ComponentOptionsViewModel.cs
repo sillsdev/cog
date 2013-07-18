@@ -1,4 +1,3 @@
-using SIL.Cog.Domain;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -9,8 +8,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ReadOnlyList<ComponentSettingsViewModelBase> _options;
 		private ComponentSettingsViewModelBase _currentOption;
 
-		public ComponentOptionsViewModel(string displayName, string optionDisplayName, CogProject project, int selectedIndex, params ComponentSettingsViewModelBase[] options)
-			: base(displayName, project)
+		public ComponentOptionsViewModel(string displayName, string optionDisplayName, int selectedIndex, params ComponentSettingsViewModelBase[] options)
+			: base(displayName)
 		{
 			_optionDisplayName = optionDisplayName;
 			_options = new ReadOnlyList<ComponentSettingsViewModelBase>(options);

@@ -9,21 +9,19 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
 using SIL.Collections;
-using SIL.Machine;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class VarietiesViewModel : WorkspaceViewModelBase
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
+		private readonly IProjectService _projectService;
+		private readonly IAnalysisService _analysisService;
 		private ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel> _varieties;
 		private ListCollectionView _varietiesView;
 		private VarietiesVarietyViewModel _currentVariety;
-		private CogProject _project;
 		private bool _isVarietySelected;
 		private readonly ICommand _findCommand;
 		
@@ -34,12 +32,15 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordViewModel _startWord;
 		private readonly SimpleMonitor _selectedWordsMonitor;
 
-		public VarietiesViewModel(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IBusyService busyService)
+		public VarietiesViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService)
 			: base("Varieties")
 		{
-			_spanFactory = spanFactory;
+			_projectService = projectService;
 			_dialogService = dialogService;
 			_busyService = busyService;
+			_analysisService = analysisService;
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			_selectedWordsMonitor = new SimpleMonitor();
 
@@ -47,6 +48,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortDirection = ListSortDirection.Ascending;
 
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
+			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
 
@@ -61,6 +63,30 @@ namespace SIL.Cog.Applications.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
 				new TaskAreaCommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
+		}
+
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			CogProject project = _projectService.Project;
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(project.Varieties,
+				variety => new VarietiesVarietyViewModel(_dialogService, _busyService, _analysisService, project.Segmenter, variety), vm => vm.DomainVariety));
+			Set("VarietiesView", ref _varietiesView, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
+			((INotifyCollectionChanged) _varietiesView).CollectionChanged += VarietiesChanged;
+			CurrentVariety = _varieties.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
+		}
+
+		private void HandleSwitchView(SwitchViewMessage msg)
+		{
+			if (msg.ViewModelType == GetType())
+			{
+				CurrentVariety = _varieties[(Variety) msg.DomainModels[0]];
+				if (msg.DomainModels.Count > 1)
+				{
+					var sense = (Sense) msg.DomainModels[1];
+					_currentVariety.Words.SelectedWords.Clear();
+					_currentVariety.Words.SelectedWords.AddRange(_currentVariety.Words.Words.Where(w => w.Sense.DomainSense == sense));
+				}
+			}
 		}
 
 		private void SortWordsBy(string propertyName, ListSortDirection sortDirection)
@@ -160,16 +186,6 @@ namespace SIL.Cog.Applications.ViewModels
 			_startWord = null;
 		}
 
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(_project.Varieties,
-				variety => new VarietiesVarietyViewModel(_dialogService, _busyService, _project, variety), vm => vm.DomainVariety));
-			Set("VarietiesView", ref _varietiesView, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
-			((INotifyCollectionChanged) _varietiesView).CollectionChanged += VarietiesChanged;
-			CurrentVariety = _varieties.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;
-		}
-
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_currentVariety == null || !_varieties.Contains(_currentVariety))
@@ -178,12 +194,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AddNewVariety()
 		{
-			var vm = new EditVarietyViewModel(_project);
+			var vm = new EditVarietyViewModel(_projectService.Project.Varieties);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var variety = new Variety(vm.Name);
 				Messenger.Default.Send(new DomainModelChangingMessage());
-				_project.Varieties.Add(variety);
+				_projectService.Project.Varieties.Add(variety);
 				CurrentVariety = _varieties[variety];
 			}
 		}
@@ -193,7 +209,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_currentVariety == null)
 				return;
 
-			var vm = new EditVarietyViewModel(_project, _currentVariety.DomainVariety);
+			var vm = new EditVarietyViewModel(_projectService.Project.Varieties, _currentVariety.DomainVariety);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_currentVariety.Name = vm.Name;
 		}
@@ -207,7 +223,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				int index = _varieties.IndexOf(_currentVariety);
 				Messenger.Default.Send(new DomainModelChangingMessage());
-				_project.Varieties.Remove(_currentVariety.DomainVariety);
+				_projectService.Project.Varieties.Remove(_currentVariety.DomainVariety);
 				if (index == _varieties.Count)
 					index--;
 				CurrentVariety = _varieties.Count > 0 ? _varieties[index] : null;
@@ -216,17 +232,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void RunStemmer()
 		{
+			if (_currentVariety == null)
+				return;
+
 			var vm = new RunStemmerViewModel(false);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
-				Messenger.Default.Send(new DomainModelChangingMessage());
-				if (vm.Method == StemmingMethod.Automatic)
-					_currentVariety.DomainVariety.Affixes.Clear();
-
-				var pipeline = new Pipeline<Variety>(_project.GetStemmingProcessors(_spanFactory, vm.Method));
-				pipeline.Process(_currentVariety.DomainVariety.ToEnumerable());
-			}
+				_analysisService.Stem(vm.Method, _currentVariety.DomainVariety);
 		}
 
 		public ICommand FindCommand
@@ -275,22 +286,6 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _isVarietySelected; }
 			set { Set(() => IsVarietySelected, ref _isVarietySelected, value); }
-		}
-
-		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
-		{
-			if (viewType == typeof(VarietiesViewModel))
-			{
-				CurrentVariety = _varieties[(Variety) models[0]];
-				if (models.Count > 1)
-				{
-					var sense = (Sense) models[1];
-					_currentVariety.Words.SelectedWords.Clear();
-					_currentVariety.Words.SelectedWords.AddRange(_currentVariety.Words.Words.Where(w => w.Sense.DomainSense == sense));
-				}
-				return true;
-			}
-			return false;
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -13,13 +14,14 @@ namespace SIL.Cog.Applications.ViewModels
 	public class WordPairsViewModel : ViewModelBase
 	{
 		private readonly BindableList<WordPairViewModel> _wordPairs;
-		private ListCollectionView _wordPairsView;
+		private readonly Lazy<ListCollectionView> _wordPairsView;
 		private readonly BindableList<WordPairViewModel> _selectedWordPairs;
 		private readonly BindableList<WordPairViewModel> _selectedCorrespondenceWordPairs;
 
-		public WordPairsViewModel(CogProject project, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
-			: this(wordPairs.Select(pair => new WordPairViewModel(project, pair, areVarietiesInOrder)))
+		public WordPairsViewModel(IWordAligner aligner, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
+			: this(wordPairs.Select(pair => new WordPairViewModel(aligner, pair, areVarietiesInOrder)))
 		{
+			_wordPairsView = new Lazy<ListCollectionView>(() => new ListCollectionView(_wordPairs), false);
 		}
 
 		public WordPairsViewModel()
@@ -48,12 +50,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public ICollectionView WordPairsView
 		{
-			get
-			{
-				if (_wordPairsView == null)
-					_wordPairsView = new ListCollectionView(_wordPairs);
-				return _wordPairsView;
-			}
+			get { return _wordPairsView.Value; }
 		}
 
 		public ObservableList<WordPairViewModel> SelectedWordPairs
@@ -72,7 +69,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				int count = 0;
 				var sb = new StringBuilder();
-				foreach (WordPairViewModel pair in _wordPairsView)
+				foreach (WordPairViewModel pair in _wordPairsView.Value)
 				{
 					if (!_selectedWordPairs.Contains(pair))
 						continue;

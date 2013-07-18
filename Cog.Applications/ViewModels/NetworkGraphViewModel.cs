@@ -1,25 +1,28 @@
+using System;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
 using SIL.Cog.Applications.Services;
-using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class NetworkGraphViewModel : WorkspaceViewModelBase
 	{
 		private IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> _graph;
-		private CogProject _project;
 		private SimilarityMetric _similarityMetric;
 		private readonly IImageExportService _imageExportService;
+		private readonly IProjectService _projectService;
 		private double _similarityScoreFilter;
 
-		public NetworkGraphViewModel(IImageExportService imageExportService)
+		public NetworkGraphViewModel(IProjectService projectService, IImageExportService imageExportService)
 			: base("Network Graph")
 		{
+			_projectService = projectService;
 			_imageExportService = imageExportService;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _project.GenerateNetworkGraph(_similarityMetric));
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _projectService.Project.GenerateNetworkGraph(_similarityMetric));
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
@@ -30,15 +33,14 @@ namespace SIL.Cog.Applications.ViewModels
 			_similarityScoreFilter = 0.7;
 		}
 
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _projectService.Project.GenerateNetworkGraph(_similarityMetric) : null;
+		}
+
 		private void Export()
 		{
 			_imageExportService.ExportCurrentNetworkGraph(this);
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateNetworkGraph(_similarityMetric) : null;
 		}
 
 		public SimilarityMetric SimilarityMetric
@@ -47,7 +49,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
-					Graph = _project.GenerateNetworkGraph(_similarityMetric);
+					Graph = _projectService.Project.GenerateNetworkGraph(_similarityMetric);
 			}
 		}
 

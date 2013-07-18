@@ -1,9 +1,9 @@
+using System;
 using System.ComponentModel;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
 using SIL.Cog.Applications.Services;
-using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -25,19 +25,22 @@ namespace SIL.Cog.Applications.ViewModels
 
 	public class HierarchicalGraphViewModel : WorkspaceViewModelBase
 	{
-		private CogProject _project;
+		private readonly IProjectService _projectService;
 		private HierarchicalGraphType _graphType;
 		private ClusteringMethod _clusteringMethod;
 		private IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> _graph;
 		private readonly IImageExportService _exportService;
 		private SimilarityMetric _similarityMetric;
 
-		public HierarchicalGraphViewModel(IImageExportService exportService)
+		public HierarchicalGraphViewModel(IProjectService projectService, IImageExportService exportService)
 			: base("Hierarchical Graph")
 		{
+			_projectService = projectService;
 			_exportService = exportService;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
@@ -54,15 +57,14 @@ namespace SIL.Cog.Applications.ViewModels
 			_graphType = HierarchicalGraphType.Dendrogram;
 		}
 
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
+		}
+
 		private void Export()
 		{
 			_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Graph = _project.VarietyPairs.Count > 0 ? _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
 		}
 
 		public HierarchicalGraphType GraphType
@@ -77,7 +79,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				if (Set(() => ClusteringMethod, ref _clusteringMethod, value) && _graph != null)
-					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+					Graph = _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 			}
 		}
 
@@ -87,7 +89,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
-					Graph = _project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+					Graph = _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 			}
 		}
 

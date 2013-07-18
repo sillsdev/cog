@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
@@ -10,29 +11,40 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class SensesViewModel : WorkspaceViewModelBase
 	{
+		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
 		private SenseViewModel _currentSense;
-		private CogProject _project;
 
-		public SensesViewModel(IDialogService dialogService)
+		public SensesViewModel(IProjectService projectService, IDialogService dialogService)
 			: base("Senses")
 		{
+			_projectService = projectService;
 			_dialogService = dialogService;
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
 				new TaskAreaCommandViewModel("Edit selected sense", new RelayCommand(EditSelectedSense)), 
 				new TaskAreaCommandViewModel("Remove selected sense", new RelayCommand(RemoveCurrentSense))));
 		}
 
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			_senses.CollectionChanged += SensesChanged;
+			CurrentSense = _senses.Count > 0 ? _senses[0] : null;
+		}
+
 		private void AddNewSense()
 		{
-			var vm = new EditSenseViewModel(_project);
+			var vm = new EditSenseViewModel(_projectService.Project.Senses);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var newSense = new Sense(vm.Gloss, vm.Category);
 				Messenger.Default.Send(new DomainModelChangingMessage());
-				_project.Senses.Add(newSense);
+				_projectService.Project.Senses.Add(newSense);
 				CurrentSense = _senses.Single(s => s.DomainSense == newSense);
 			}
 		}
@@ -42,7 +54,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_currentSense == null)
 				return;
 
-			var vm = new EditSenseViewModel(_project, _currentSense.DomainSense);
+			var vm = new EditSenseViewModel(_projectService.Project.Senses, _currentSense.DomainSense);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_currentSense.DomainSense.Gloss = vm.Gloss;
@@ -59,19 +71,11 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				Messenger.Default.Send(new DomainModelChangingMessage());
 				int index = _senses.IndexOf(_currentSense);
-				_project.Senses.Remove(_currentSense.DomainSense);
+				_projectService.Project.Senses.Remove(_currentSense.DomainSense);
 				if (index == _senses.Count)
 					index--;
 				CurrentSense = _senses.Count > 0 ?  _senses[index] : null;
 			}
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
-			_senses.CollectionChanged += SensesChanged;
-			CurrentSense = _senses.Count > 0 ? _senses[0] : null;
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)

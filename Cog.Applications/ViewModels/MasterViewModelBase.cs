@@ -1,29 +1,36 @@
 using System;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using SIL.Cog.Domain;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public abstract class MasterViewModelBase : InitializableViewModelBase
+	public abstract class MasterViewModelBase : ViewModelBase
 	{
-		private InitializableViewModelBase _currentView;
-		private readonly ReadOnlyList<InitializableViewModelBase> _views;
+		private ViewModelBase _currentView;
+		private readonly ReadOnlyList<ViewModelBase> _views;
+		private string _displayName;
 
-		protected MasterViewModelBase(string displayName, params InitializableViewModelBase[] views)
-			: base(displayName)
+		protected MasterViewModelBase(string displayName, params ViewModelBase[] views)
 		{
-			_views = new ReadOnlyList<InitializableViewModelBase>(views);
+			_displayName = displayName;
+			_views = new ReadOnlyList<ViewModelBase>(views);
 			if (_views.Count > 0)
 				CurrentView = _views[0];
 		}
 
-		public ReadOnlyList<InitializableViewModelBase> Views
+		public string DisplayName
+		{
+			get { return _displayName; }
+			set { Set(() => DisplayName, ref _displayName, value); }
+		}
+
+		public ReadOnlyList<ViewModelBase> Views
 		{
 			get { return _views; }
 		}
 
-		public InitializableViewModelBase CurrentView
+		public ViewModelBase CurrentView
 		{
 			get { return _currentView; }
 			set
@@ -45,17 +52,19 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		public override void Initialize(CogProject project)
+		protected bool SwitchView(Type viewType)
 		{
-			foreach (InitializableViewModelBase vm in _views)
-				vm.Initialize(project);
-		}
-
-		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
-		{
-			foreach (InitializableViewModelBase view in _views)
+			foreach (ViewModelBase view in _views)
 			{
-				if (view.SwitchView(viewType, models))
+				var masterVM = view as MasterViewModelBase;
+				if (view.GetType() == viewType)
+				{
+					ViewModelBase oldView = _currentView;
+					Set(() => CurrentView, ref _currentView, view);
+					Messenger.Default.Send(new ViewChangedMessage(oldView, _currentView));
+					return true;
+				}
+				if (masterVM != null && masterVM.SwitchView(viewType))
 				{
 					Set(() => CurrentView, ref _currentView, view);
 					return true;

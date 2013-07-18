@@ -1,32 +1,32 @@
 using System.ComponentModel;
-using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
+using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class EditSenseViewModel : ViewModelBase, IDataErrorInfo
 	{
-		private readonly CogProject _project;
+		private readonly IKeyedCollection<string, Sense> _senses;
 		private readonly Sense _sense;
 		private readonly string _title;
 
 		private string _gloss;
 		private string _category;
 
-		public EditSenseViewModel(CogProject project, Sense sense)
+		public EditSenseViewModel(IKeyedCollection<string, Sense> senses, Sense sense)
 		{
 			_title = "Edit Sense";
-			_project = project;
+			_senses = senses;
 			_sense = sense;
 			_gloss = sense.Gloss;
 			_category = sense.Category;
 		}
 
-		public EditSenseViewModel(CogProject project)
+		public EditSenseViewModel(IKeyedCollection<string, Sense> senses)
 		{
 			_title = "New Sense";
-			_project = project;
+			_senses = senses;
 		}
 
 		public string Title
@@ -55,7 +55,8 @@ namespace SIL.Cog.Applications.ViewModels
 					case "Gloss":
 						if (string.IsNullOrEmpty(_gloss))
 							return "Please enter a gloss";
-						if (_project.Senses.Any(sense => _sense != sense && sense.Gloss == _gloss))
+						Sense sense;
+						if (_senses.TryGetValue(_gloss, out sense) && sense != _sense)
 							return "A variety with that gloss already exists";
 						break;
 				}

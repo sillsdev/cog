@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -12,24 +13,31 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly VarietyPair _varietyPair;
 		private readonly ReadOnlyList<SoundChangeViewModel> _soundChanges;
-		private ListCollectionView _soundChangesView;
+		private readonly Lazy<ListCollectionView> _soundChangesView;
 		private SoundChangeViewModel _currentSoundChange;
 		private readonly bool _areVarietiesInOrder;
-		private readonly CogProject _project;
+		private readonly IWordAligner _aligner;
 		private readonly WordPairsViewModel _cognates;
 		private readonly WordPairsViewModel _noncognates;
 
-		public VarietyPairViewModel(CogProject project, VarietyPair varietyPair, bool areVarietiesInOrder)
+		public VarietyPairViewModel(IWordAligner aligner, VarietyPair varietyPair, bool areVarietiesInOrder)
 		{
-			_project = project;
+			_aligner = aligner;
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
-			_cognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted), areVarietiesInOrder);
-			_noncognates = new WordPairsViewModel(project, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted), areVarietiesInOrder);
+			_cognates = new WordPairsViewModel(_aligner, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted), areVarietiesInOrder);
+			_noncognates = new WordPairsViewModel(_aligner, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted), areVarietiesInOrder);
 
 			_soundChanges = new ReadOnlyList<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
 				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
+			_soundChangesView = new Lazy<ListCollectionView>(() =>
+				{
+					var view = new ListCollectionView(_soundChanges);
+					Debug.Assert(view.GroupDescriptions != null);
+					view.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
+					return view;
+				}, false);
 		}
 
 		public SoundChangeViewModel CurrentSoundChange
@@ -45,7 +53,6 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
-			IWordAligner aligner = _project.WordAligners["primary"];
 			wordPairs.SelectedCorrespondenceWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{
@@ -58,7 +65,7 @@ namespace SIL.Cog.Applications.ViewModels
 					}
 					else
 					{
-						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(wordPair.DomainWordPair.VarietyPair.Variety1.SegmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, aligner.ContextualSoundClasses);
+						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(wordPair.DomainWordPair.VarietyPair.Variety1.SegmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, _aligner.ContextualSoundClasses);
 						Ngram corr = wordPair.DomainAlignment[1, node.Column].ToNgram(wordPair.DomainWordPair.VarietyPair.Variety2.SegmentPool);
 						node.IsSelected = lhs.Equals(_currentSoundChange.DomainSoundChangeLhs) && corr.Equals(_currentSoundChange.DomainCorrespondence);
 						if (node.IsSelected)
@@ -93,16 +100,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public ICollectionView SoundChangesView
 		{
-			get
-			{
-				if (_soundChangesView == null)
-				{
-					_soundChangesView = new ListCollectionView(_soundChanges);
-					Debug.Assert(_soundChangesView.GroupDescriptions != null);
-					_soundChangesView.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
-				}
-				return _soundChangesView;
-			}
+			get { return _soundChangesView.Value; }
 		}
 
 		public WordPairsViewModel Cognates

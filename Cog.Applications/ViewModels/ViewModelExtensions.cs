@@ -6,8 +6,6 @@ using QuickGraph;
 using QuickGraph.Algorithms;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Clusterers;
-using SIL.Cog.Domain.Components;
-using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -153,39 +151,6 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 			sb.Append("]");
 			return sb.ToString();
-		}
-
-		public static IEnumerable<IProcessor<VarietyPair>> GetComparisonProcessors(this CogProject project)
-		{
-			var processors = new List<IProcessor<VarietyPair>> {new WordPairGenerator(project, "primary")};
-			IProcessor<VarietyPair> similarSegmentIdentifier;
-			if (project.VarietyPairProcessors.TryGetValue("similarSegmentIdentifier", out similarSegmentIdentifier))
-				processors.Add(similarSegmentIdentifier);
-			processors.Add(project.VarietyPairProcessors["soundChangeInducer"]);
-			return processors;
-		}
-
-		public static IEnumerable<IProcessor<Variety>> GetVarietyInitProcessors(this CogProject project)
-		{
-			var processors = new List<IProcessor<Variety>> {new VarietySegmenter(project)};
-			IProcessor<Variety> syllabifier;
-			if (project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
-				processors.Add(syllabifier);
-			processors.Add(new SegmentDistributionCalculator());
-			return processors;
-		}
-
-		public static IEnumerable<IProcessor<Variety>> GetStemmingProcessors(this CogProject project, SpanFactory<ShapeNode> spanFactory, StemmingMethod method)
-		{
-			var processors = new List<IProcessor<Variety>> {new AffixStripper(project)};
-			if (method != StemmingMethod.Manual)
-				processors.Add(project.VarietyProcessors["affixIdentifier"]);
-			processors.Add(new Stemmer(spanFactory, project));
-			IProcessor<Variety> syllabifier;
-			if (project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
-				processors.Add(syllabifier);
-			processors.Add(new SegmentDistributionCalculator());
-			return processors;
 		}
 	}
 }

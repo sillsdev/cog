@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
@@ -12,17 +13,17 @@ namespace SIL.Cog.Applications.ViewModels
 		private string _description;
 		private readonly string _title;
 
-		public EditRegionViewModel(CogProject project)
+		public EditRegionViewModel(IEnumerable<Variety> varieties)
 		{
 			_title = "New Region";
-			_varieties = new ReadOnlyList<VarietyViewModel>(project.Varieties.Select(v => new VarietyViewModel(v)).OrderBy(vm => vm.Name).ToArray());
+			_varieties = new ReadOnlyList<VarietyViewModel>(varieties.Select(v => new VarietyViewModel(v)).OrderBy(vm => vm.Name).ToArray());
 			_currentVariety = _varieties[0];
 		}
 
-		public EditRegionViewModel(CogProject project, Variety variety, GeographicRegion region)
+		public EditRegionViewModel(IEnumerable<Variety> varieties, Variety variety, GeographicRegion region)
 		{
 			_title = "Edit Region";
-			_varieties = new ReadOnlyList<VarietyViewModel>(project.Varieties.Select(v => new VarietyViewModel(v)).OrderBy(vm => vm.Name).ToArray());
+			_varieties = new ReadOnlyList<VarietyViewModel>(varieties.Select(v => new VarietyViewModel(v)).OrderBy(vm => vm.Name).ToArray());
 			_currentVariety = _varieties.First(vm => vm.DomainVariety == variety);
 			_description = region.Description;
 		}

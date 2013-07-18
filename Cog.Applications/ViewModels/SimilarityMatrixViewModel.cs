@@ -6,29 +6,32 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Clusterers;
-using SIL.Cog.Domain.Components;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class SimilarityMatrixViewModel : WorkspaceViewModelBase
 	{
-		private readonly IDialogService _dialogService;
+		private readonly IProjectService _projectService;
 		private readonly IExportService _exportService;
-		private CogProject _project;
+		private readonly IAnalysisService _analysisService;
 		private ReadOnlyList<SimilarityMatrixVarietyViewModel> _varieties;
 		private readonly List<Variety> _modelVarieties;
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
 
-		public SimilarityMatrixViewModel(IDialogService dialogService, IExportService exportService)
+		public SimilarityMatrixViewModel(IProjectService projectService, IExportService exportService, IAnalysisService analysisService)
 			: base("Similarity Matrix")
 		{
-			_dialogService = dialogService;
+			_projectService = projectService;
 			_exportService = exportService;
+			_analysisService = analysisService;
 			_modelVarieties = new List<Variety>();
 
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetVarieties());
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => CreateSimilarityMatrix());
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
@@ -39,11 +42,10 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Export this matrix", new RelayCommand(Export))));
 		}
 
-		public override void Initialize(CogProject project)
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			_project = project;
 			ResetVarieties();
-			if (_project.VarietyPairs.Count > 0)
+			if (_projectService.Project.VarietyPairs.Count > 0)
 				CreateSimilarityMatrix();
 		}
 
@@ -58,43 +60,17 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void PerformComparison()
 		{
-			if (_project.Varieties.Count == 0 || _project.Senses.Count == 0)
+			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Senses.Count == 0)
 				return;
 
 			ResetVarieties();
-			var generator = new VarietyPairGenerator();
-			generator.Process(_project);
-
-			var pipeline = new MultiThreadedPipeline<VarietyPair>(_project.GetComparisonProcessors());
-
-			var progressVM = new ProgressViewModel(vm =>
-				{
-					vm.Text = "Comparing all variety pairs...";
-					pipeline.Process(_project.VarietyPairs);
-					while (!pipeline.WaitForComplete(500))
-					{
-						if (vm.Canceled)
-						{
-							pipeline.Cancel();
-							pipeline.WaitForComplete();
-							break;
-						}
-					}
-					if (vm.Canceled)
-						return;
-					vm.Text = "Analyzing results...";
-					CreateSimilarityMatrix();
-					Messenger.Default.Send(new ComparisonPerformedMessage());
-				});
-			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
-
-			_dialogService.ShowModalDialog(this, progressVM);
+			_analysisService.CompareAll(this);
 		}
 
 		private void Export()
 		{
 			if (!_isEmpty)
-				_exportService.ExportSimilarityMatrix(this, _project, _similarityMetric);
+				_exportService.ExportSimilarityMatrix(this, _similarityMetric);
 		}
 
 		private void CreateSimilarityMatrix()
@@ -113,7 +89,7 @@ namespace SIL.Cog.Applications.ViewModels
 					}
 					return Tuple.Create(pair.GetOtherVariety(variety), 1.0 - score);
 				}).Concat(Tuple.Create(variety, 0.0)), 2);
-			_modelVarieties.AddRange(optics.ClusterOrder(_project.Varieties).Select(oe => oe.DataObject));
+			_modelVarieties.AddRange(optics.ClusterOrder(_projectService.Project.Varieties).Select(oe => oe.DataObject));
 			SimilarityMatrixVarietyViewModel[] vms = _modelVarieties.Select(v => new SimilarityMatrixVarietyViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
 			Varieties = new ReadOnlyList<SimilarityMatrixVarietyViewModel>(vms);
 			IsEmpty = false;

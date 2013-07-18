@@ -24,14 +24,16 @@ namespace SIL.Cog.Applications.ViewModels
 
 	public class AlineViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly CogProject _project;
 		private AlineMode _mode;
 		private bool _expansionCompressionEnabled;
 		private readonly ReadOnlyList<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
 
 		public AlineViewModel(IDialogService dialogService, CogProject project, Aline aligner)
-			: base("Alignment", project)
+			: base("Alignment")
 		{
+			_project = project;
 			var features = new List<RelevantFeatureViewModel>();
 			foreach (KeyValuePair<SymbolicFeature, int> kvp in aligner.FeatureWeights)
 			{
@@ -56,7 +58,7 @@ namespace SIL.Cog.Applications.ViewModels
 					break;
 			}
 			_expansionCompressionEnabled = aligner.Settings.ExpansionCompressionEnabled;
-			_soundClasses = new SoundClassesViewModel(dialogService, project, aligner.ContextualSoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
+			_soundClasses = new SoundClassesViewModel(dialogService, _project.FeatureSystem, _project.Segmenter, aligner.ContextualSoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
 			_soundClasses.PropertyChanged += ChildPropertyChanged;
 		}
 
@@ -125,7 +127,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			var aligner = new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass)});
-			Project.WordAligners["primary"] = aligner;
+			_project.WordAligners["primary"] = aligner;
 			return aligner;
 		}
 	}

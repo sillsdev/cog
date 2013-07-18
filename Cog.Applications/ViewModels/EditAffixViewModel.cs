@@ -6,16 +6,16 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class EditAffixViewModel : ViewModelBase, IDataErrorInfo
 	{
-		private readonly CogProject _project;
+		private readonly Segmenter _segmenter;
 		private string _strRep;
 		private AffixViewModelType _type;
 		private string _category;
 		private readonly string _title;
 
-		public EditAffixViewModel(CogProject project, Affix affix)
+		public EditAffixViewModel(Segmenter segmenter, Affix affix)
 		{
 			_title = "Edit Affix";
-			_project = project;
+			_segmenter = segmenter;
 			_strRep = affix.StrRep;
 			switch (affix.Type)
 			{
@@ -29,10 +29,10 @@ namespace SIL.Cog.Applications.ViewModels
 			_category = affix.Category;
 		}
 
-		public EditAffixViewModel(CogProject project)
+		public EditAffixViewModel(Segmenter segmenter)
 		{
 			_title = "New Affix";
-			_project = project;
+			_segmenter = segmenter;
 		}
 
 		public string Title
@@ -67,7 +67,7 @@ namespace SIL.Cog.Applications.ViewModels
 					case "StrRep":
 						if (string.IsNullOrEmpty(_strRep))
 							return "Please specify an affix";
-						if (!_project.Segmenter.CanSegment(_strRep))
+						if (!_segmenter.CanSegment(_strRep))
 							return "The affix contains invalid segments";
 						break;
 				}

@@ -13,7 +13,7 @@ namespace SIL.Cog.Domain.Config.Components
 		{
 			XElement mappingsElem = elem.Element(ConfigManager.Cog + "Mappings");
 			var genDigraphsStr = (string) elem.Element(ConfigManager.Cog + "GenerateDigraphs") ?? "false";
-			return new ListSegmentMappings(project, ParseMappings(mappingsElem), bool.Parse(genDigraphsStr));
+			return new ListSegmentMappings(project.Segmenter, ParseMappings(mappingsElem), bool.Parse(genDigraphsStr));
 		}
 
 		private IEnumerable<Tuple<string, string>> ParseMappings(XElement elem)

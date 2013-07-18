@@ -12,12 +12,12 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class VarietiesVarietyViewModel : VarietyViewModel
 	{
-		private readonly CogProject _project;
+		private readonly Segmenter _segmenter;
 		private readonly IDialogService _dialogService;
 		private readonly BindableList<VarietySegmentViewModel> _segments;
 		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
 		private double _maxSegProb;
-		private ListCollectionView _segmentsView;
+		private readonly ListCollectionView _segmentsView;
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
@@ -26,18 +26,19 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
  
-		public VarietiesVarietyViewModel(IDialogService dialogService, IBusyService busyService, CogProject project, Variety variety)
+		public VarietiesVarietyViewModel(IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService, Segmenter segmenter, Variety variety)
 			: base(variety)
 		{
-			_project = project;
+			_segmenter = segmenter;
 			_dialogService = dialogService;
 			_segments = new BindableList<VarietySegmentViewModel>(variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<VarietySegmentViewModel>()
 				: variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
+			_segmentsView = new ListCollectionView(_segments);
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.PropertyChanged += VarietyPropertyChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
-			_words = new WordsViewModel(busyService, project, variety);
+			_words = new WordsViewModel(busyService, analysisService, variety);
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
@@ -67,13 +68,13 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void NewAffix()
 		{
-			var vm = new EditAffixViewModel(_project);
+			var vm = new EditAffixViewModel(_segmenter);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes.Add(affix);
-				_project.Segmenter.Segment(affix);
+				_segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
@@ -85,14 +86,14 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void EditAffix()
 		{
-			var vm = new EditAffixViewModel(_project, _currentAffix.DomainAffix);
+			var vm = new EditAffixViewModel(_segmenter, _currentAffix.DomainAffix);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = DomainVariety.Affixes.IndexOf(_currentAffix.DomainAffix);
 				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes[index] = affix;
-				_project.Segmenter.Segment(affix);
+				_segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
@@ -121,12 +122,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public ICollectionView SegmentsView
 		{
-			get
-			{
-				if (_segmentsView == null)
-					_segmentsView = new ListCollectionView(_segments);
-				return _segmentsView;
-			}
+			get { return _segmentsView; }
 		}
 
 		public WordsViewModel Words

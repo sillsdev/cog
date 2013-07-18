@@ -5,19 +5,22 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ThresholdSimilarSegmentMappingsViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly CogProject _project;
 		private int _vowelThreshold;
 		private int _consThreshold;
 
 		public ThresholdSimilarSegmentMappingsViewModel(CogProject project)
-			: base("Threshold", project)
+			: base("Threshold")
 		{
+			_project = project;
 			_vowelThreshold = 500;
 			_consThreshold = 600;
 		}
 
 		public ThresholdSimilarSegmentMappingsViewModel(CogProject project, TypeSegmentMappings similarSegmentMappings)
-			: base("Threshold", project)
+			: base("Threshold")
 		{
+			_project = project;
 			var vowelMappings = (ThresholdSegmentMappings) similarSegmentMappings.VowelMappings;
 			_vowelThreshold = vowelMappings.Threshold;
 			var consMappings = (ThresholdSegmentMappings) similarSegmentMappings.ConsonantMappings;
@@ -38,7 +41,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			return new TypeSegmentMappings(new ThresholdSegmentMappings(Project, _vowelThreshold, "primary"), new ThresholdSegmentMappings(Project, _consThreshold, "primary"));
+			return new TypeSegmentMappings(new ThresholdSegmentMappings(_project, _vowelThreshold, "primary"), new ThresholdSegmentMappings(_project, _consThreshold, "primary"));
 		}
 	}
 }

@@ -5,9 +5,9 @@ namespace SIL.Cog.Applications.Services
 {
 	public interface IExportService
 	{
-		bool ExportSimilarityMatrix(object ownerViewModel, CogProject project, SimilarityMetric similarityMetric);
-		bool ExportWordLists(object ownerViewModel, CogProject project);
-		bool ExportCognateSets(object ownerViewModel, CogProject project);
-		bool ExportVarietyPair(object ownerViewModel, CogProject project, VarietyPair varietyPair);
+		bool ExportSimilarityMatrix(object ownerViewModel, SimilarityMetric similarityMetric);
+		bool ExportWordLists(object ownerViewModel);
+		bool ExportCognateSets(object ownerViewModel);
+		bool ExportVarietyPair(object ownerViewModel, VarietyPair varietyPair);
 	}
 }

@@ -11,27 +11,27 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly IDialogService _dialogService;
 		private bool _ignoreModifiers;
-		private readonly CogProject _project;
+		private readonly Segmenter _segmenter;
 		private readonly BindableList<string> _segments;
 		private string _currentSegment;
 		private readonly ICommand _addSegmentCommand;
 		private readonly ICommand _removeSegmentCommand;
 
-		public EditUnnaturalClassViewModel(IDialogService dialogService, CogProject project, IEnumerable<SoundClass> soundClasses)
+		public EditUnnaturalClassViewModel(IDialogService dialogService, Segmenter segmenter, IEnumerable<SoundClass> soundClasses)
 			: base("New Unnatural Class", soundClasses)
 		{
 			_dialogService = dialogService;
-			_project = project;
+			_segmenter = segmenter;
 			_segments = new BindableList<string>();
 			_addSegmentCommand = new RelayCommand(AddSegment);
 			_removeSegmentCommand = new RelayCommand(RemoveSegment, CanRemoveSegment);
 		}
 
-		public EditUnnaturalClassViewModel(IDialogService dialogService, CogProject project, IEnumerable<SoundClass> soundClasses, UnnaturalClass unnaturalClass)
+		public EditUnnaturalClassViewModel(IDialogService dialogService, Segmenter segmenter, IEnumerable<SoundClass> soundClasses, UnnaturalClass unnaturalClass)
 			: base("Edit Unnatural Class", soundClasses, unnaturalClass)
 		{
 			_dialogService = dialogService;
-			_project = project;
+			_segmenter = segmenter;
 			_ignoreModifiers = unnaturalClass.IgnoreModifiers;
 			_segments = new BindableList<string>(unnaturalClass.Segments);
 			_addSegmentCommand = new RelayCommand(AddSegment);
@@ -40,7 +40,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AddSegment()
 		{
-			var vm = new AddUnnaturalClassSegmentViewModel(_project.Segmenter);
+			var vm = new AddUnnaturalClassSegmentViewModel(_segmenter);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_segments.Add(vm.Segment);

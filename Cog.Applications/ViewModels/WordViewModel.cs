@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
 using SIL.Collections;
 using SIL.Machine;
 
@@ -15,7 +14,7 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordViewModel : ViewModelBase, IDataErrorInfo
 	{
-		private readonly CogProject _project; 
+		private readonly IAnalysisService _analysisService; 
 		private readonly Word _word;
 		private BindableList<WordSegmentViewModel> _segments;
 		private readonly SenseViewModel _sense;
@@ -24,10 +23,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _showInWordListsCommand;
 		private readonly IBusyService _busyService;
 
-		public WordViewModel(IBusyService busyService, CogProject project, Word word)
+		public WordViewModel(IBusyService busyService, IAnalysisService analysisService, Word word)
 		{
 			_busyService = busyService;
-			_project = project;
+			_analysisService = analysisService;
 			_sense = new SenseViewModel(word.Sense);
 			_word = word;
 			LoadSegments();
@@ -101,8 +100,7 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 			_word.StemLength = index - _word.StemIndex;
 
-			var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
-			pipeline.Process(_word.Variety.ToEnumerable());
+			_analysisService.Segment(_word.Variety);
 		}
 
 		public SenseViewModel Sense

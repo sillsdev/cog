@@ -13,24 +13,24 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
-		private readonly CogProject _project;
+		private readonly Segmenter _segmenter;
 		private readonly BindableList<SegmentMappingViewModel> _mappings;
 		private SegmentMappingViewModel _currentMapping;
 		private readonly ICommand _newCommand;
 		private readonly ICommand _removeCommand;
 		private readonly ICommand _importCommand;
 
-		public SegmentMappingsViewModel(IDialogService dialogService, IImportService importService, CogProject project)
-			: this(dialogService, importService, project, Enumerable.Empty<Tuple<string, string>>())
+		public SegmentMappingsViewModel(IDialogService dialogService, IImportService importService, Segmenter segmenter)
+			: this(dialogService, importService, segmenter, Enumerable.Empty<Tuple<string, string>>())
 		{
 		}
 
-		public SegmentMappingsViewModel(IDialogService dialogService, IImportService importService, CogProject project, IEnumerable<Tuple<string, string>> mappings)
+		public SegmentMappingsViewModel(IDialogService dialogService, IImportService importService, Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings)
 		{
 			_dialogService = dialogService;
 			_importService = importService;
-			_project = project;
-			_mappings = new BindableList<SegmentMappingViewModel>(mappings.Select(mapping => new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2)));
+			_segmenter = segmenter;
+			_mappings = new BindableList<SegmentMappingViewModel>(mappings.Select(mapping => new SegmentMappingViewModel(_segmenter, mapping.Item1, mapping.Item2)));
 			_newCommand = new RelayCommand(AddMapping);
 			_removeCommand = new RelayCommand(RemoveMapping, CanRemoveMapping);
 			_importCommand = new RelayCommand(Import);
@@ -38,10 +38,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AddMapping()
 		{
-			var vm = new NewSegmentMappingViewModel(_project);
+			var vm = new NewSegmentMappingViewModel(_segmenter);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				var mapping = new SegmentMappingViewModel(_project, vm.Segment1, vm.Segment2);
+				var mapping = new SegmentMappingViewModel(_segmenter, vm.Segment1, vm.Segment2);
 				_mappings.Add(mapping);
 				CurrentMapping = mapping;
 				IsChanged = true;
@@ -66,7 +66,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				_mappings.Clear();
 				foreach (Tuple<string, string> mapping in mappings)
-					_mappings.Add(new SegmentMappingViewModel(_project, mapping.Item1, mapping.Item2));
+					_mappings.Add(new SegmentMappingViewModel(_segmenter, mapping.Item1, mapping.Item2));
 				IsChanged = true;
 			}
 		}

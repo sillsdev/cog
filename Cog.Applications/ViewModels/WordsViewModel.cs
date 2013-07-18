@@ -13,13 +13,14 @@ namespace SIL.Cog.Applications.ViewModels
 	public class WordsViewModel : ViewModelBase
 	{
 		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
-		private ListCollectionView _wordsView;
+		private readonly ListCollectionView _wordsView;
 		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly BindableList<WordViewModel> _selectedSegmentWords;
 
-		public WordsViewModel(IBusyService busyService, CogProject project, Variety variety)
+		public WordsViewModel(IBusyService busyService, IAnalysisService analysisService, Variety variety)
 		{
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => new WordViewModel(busyService, project, word), vm => vm.DomainWord);
+			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => new WordViewModel(busyService, analysisService, word), vm => vm.DomainWord);
+			_wordsView = new ListCollectionView(_words);
 			variety.Words.CollectionChanged += WordsChanged;
 			_selectedWords = new BindableList<WordViewModel>();
 			_selectedSegmentWords = new BindableList<WordViewModel>();
@@ -71,12 +72,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public ICollectionView WordsView
 		{
-			get
-			{
-				if (_wordsView == null)
-					_wordsView = new ListCollectionView(_words);
-				return _wordsView;
-			}
+			get { return _wordsView; }
 		}
 
 		public ObservableList<WordViewModel> SelectedWords

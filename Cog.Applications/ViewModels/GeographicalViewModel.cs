@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -14,24 +13,27 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class GeographicalViewModel : WorkspaceViewModelBase
 	{
+		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly IImageExportService _imageExportService;
-		private CogProject _project;
 		private readonly ICommand _newRegionCommand;
 		private readonly List<Cluster<Variety>> _currentClusters;
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
 		private ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel> _varieties;
 
-		public GeographicalViewModel(IDialogService dialogService, IImportService importService, IImageExportService imageExportService)
+		public GeographicalViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IImageExportService imageExportService)
 			: base("Geographical")
 		{
+			_projectService = projectService;
 			_dialogService = dialogService;
 			_importService = importService;
 			_imageExportService = imageExportService;
 			_newRegionCommand = new RelayCommand<IEnumerable<Tuple<double, double>>>(AddNewRegion);
 			_currentClusters = new List<Cluster<Variety>>();
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => ClusterVarieties());
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetClusters());
@@ -46,9 +48,24 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Export this map", new RelayCommand(Export))));
 		}
 
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel>(_projectService.Project.Varieties,
+				variety =>
+					{
+						var newVariety = new GeographicalVarietyViewModel(_dialogService, _projectService.Project.Varieties, variety);
+						newVariety.Regions.CollectionChanged += (s, evt) => RegionsChanged(newVariety);
+						return newVariety;
+					}, vm => vm.DomainVariety));
+			if (_projectService.Project.VarietyPairs.Count > 0)
+				ClusterVarieties();
+			else
+				ResetClusters();
+		}
+
 		private void ImportRegions()
 		{
-			_importService.ImportGeographicRegions(this, _project);
+			_importService.ImportGeographicRegions(this);
 		}
 
 		private void Export()
@@ -58,7 +75,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AddNewRegion(IEnumerable<Tuple<double, double>> coordinates)
 		{
-			var vm = new EditRegionViewModel(_project);
+			var vm = new EditRegionViewModel(_projectService.Project.Varieties);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var region = new GeographicRegion(coordinates.Select(coord => new GeographicCoordinate(coord.Item1, coord.Item2))) {Description = vm.Description};
@@ -68,7 +85,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ClusterVarieties()
 		{
-			if (_project.VarietyPairs.Count == 0)
+			if (_projectService.Project.VarietyPairs.Count == 0)
 				return;
 
 			Func<Variety, Variety, double> getDistance = null;
@@ -104,22 +121,6 @@ namespace SIL.Cog.Applications.ViewModels
 				variety.ClusterIndex = index;
 				index++;
 			}
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel>(project.Varieties,
-				variety =>
-					{
-						var newVariety = new GeographicalVarietyViewModel(_dialogService, project, variety);
-						((INotifyCollectionChanged) newVariety.Regions).CollectionChanged += (sender, e) => RegionsChanged(newVariety);
-						return newVariety;
-					}, vm => vm.DomainVariety));
-			if (_project.VarietyPairs.Count > 0)
-				ClusterVarieties();
-			else
-				ResetClusters();
 		}
 
 		private void RegionsChanged(GeographicalVarietyViewModel variety)

@@ -1,27 +1,27 @@
 using System.ComponentModel;
-using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
+using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class EditVarietyViewModel : ViewModelBase, IDataErrorInfo
 	{
-		private readonly CogProject _project;
+		private readonly IKeyedCollection<string, Variety> _varieties;
 		private readonly Variety _variety;
 		private string _name;
 		private readonly string _title;
 
-		public EditVarietyViewModel(CogProject project)
+		public EditVarietyViewModel(IKeyedCollection<string, Variety> varieties)
 		{
 			_title = "New Variety";
-			_project = project;
+			_varieties = varieties;
 		}
 
-		public EditVarietyViewModel(CogProject project, Variety variety)
+		public EditVarietyViewModel(IKeyedCollection<string, Variety> varieties, Variety variety)
 		{
 			_title = "Rename Variety";
-			_project = project;
+			_varieties = varieties;
 			_variety = variety;
 			_name = variety.Name;
 		}
@@ -46,7 +46,8 @@ namespace SIL.Cog.Applications.ViewModels
 					case "Name":
 						if (string.IsNullOrEmpty(_name))
 							return "Please enter a name";
-						if (_project.Varieties.Any(variety => variety != _variety && variety.Name == _name))
+						Variety variety;
+						if (_varieties.TryGetValue(_name, out variety) && variety != _variety)
 							return "A variety with that name already exists";
 						break;
 				}

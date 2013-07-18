@@ -5,7 +5,6 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Import;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Applications.Services
 {
@@ -36,27 +35,29 @@ namespace SIL.Cog.Applications.Services
 				};
 		}
 
+		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
+		private readonly IAnalysisService _analysisService;
 
-		public ImportService(IDialogService dialogService, IBusyService busyService)
+		public ImportService(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService)
 		{
+			_projectService = projectService;
 			_dialogService = dialogService;
 			_busyService = busyService;
+			_analysisService = analysisService;
 		}
 
-		public bool ImportWordLists(object ownerViewModel, CogProject project)
+		public bool ImportWordLists(object ownerViewModel)
 		{
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import Word Lists", WordListsImporters.Keys);
 			if (result.IsValid)
 			{
 				IWordListsImporter importer = WordListsImporters[result.SelectedFileType];
-
+				CogProject project = _projectService.Project;
 				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
 				{
-					var pipeline = new MultiThreadedPipeline<Variety>(project.GetVarietyInitProcessors());
-					pipeline.Process(project.Varieties);
-					pipeline.WaitForComplete();
+					_analysisService.SegmentAll();
 					return true;
 				}
 			}
@@ -80,13 +81,13 @@ namespace SIL.Cog.Applications.Services
 			return false;
 		}
 
-		public bool ImportGeographicRegions(object ownerViewModel, CogProject project)
+		public bool ImportGeographicRegions(object ownerViewModel)
 		{
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import Regions", GeographicRegionsImporters.Keys);
 			if (result.IsValid)
 			{
 				IGeographicRegionsImporter importer = GeographicRegionsImporters[result.SelectedFileType];
-				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
+				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, _projectService.Project)))
 					return true;
 			}
 			return false;

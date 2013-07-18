@@ -12,7 +12,7 @@ namespace SIL.Cog.Domain.Components
 
 		private readonly Dictionary<string, HashSet<string>> _mappingLookup;
 
-		public ListSegmentMappings(CogProject project, IEnumerable<Tuple<string, string>> mappings, bool generateDigraphs)
+		public ListSegmentMappings(Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings, bool generateDigraphs)
 		{
 			_mappings = mappings.ToList();
 			_generateDigraphs = generateDigraphs;
@@ -21,7 +21,7 @@ namespace SIL.Cog.Domain.Components
 			foreach (Tuple<string, string> mapping in _mappings)
 			{
 				string str1, str2;
-				if (project.Segmenter.NormalizeSegmentString(mapping.Item1, out str1) && project.Segmenter.NormalizeSegmentString(mapping.Item2, out str2))
+				if (segmenter.NormalizeSegmentString(mapping.Item1, out str1) && segmenter.NormalizeSegmentString(mapping.Item2, out str2))
 				{
 					HashSet<string> segments = _mappingLookup.GetValue(str1, () => new HashSet<string>());
 					segments.Add(str2);

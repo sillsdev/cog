@@ -8,13 +8,13 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class NewSegmentMappingViewModel : ViewModelBase, IDataErrorInfo
 	{
-		private readonly CogProject _project;
+		private readonly Segmenter _segmenter;
 		private string _segment1;
 		private string _segment2;
 
-		public NewSegmentMappingViewModel(CogProject project)
+		public NewSegmentMappingViewModel(Segmenter segmenter)
 		{
-			_project = project;
+			_segmenter = segmenter;
 		}
 
 		public string Segment1
@@ -51,7 +51,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (string.IsNullOrEmpty(segment))
 				return "Please specify a segment";
 			Shape shape;
-			if (!_project.Segmenter.TrySegment(segment, out shape))
+			if (!_segmenter.TrySegment(segment, out shape))
 				return "This is an invalid segment";
 			if (shape.Any(n => n.Type() != shape.First.Type()))
 				return "Please specify only one segment";

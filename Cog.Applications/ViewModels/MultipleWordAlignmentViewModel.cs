@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -16,21 +17,27 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class MultipleWordAlignmentViewModel : WorkspaceViewModelBase
 	{
+		private readonly IProjectService _projectService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
 		private readonly ListCollectionView _wordsView;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
 		private ListCollectionView _sensesView;
 		private SenseViewModel _currentSense;
-		private CogProject _project;
 		private int _columnCount;
 		private int _currentColumn;
 		private MultipleWordAlignmentWordViewModel _currentWord;
 		private readonly IBusyService _busyService;
 		private readonly IExportService _exportService;
 
-		public MultipleWordAlignmentViewModel(IBusyService busyService, IExportService exportService)
+		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService)
 			: base("Multiple Word Alignment")
 		{
+			_projectService = projectService;
+			_busyService = busyService;
+			_exportService = exportService;
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
 			var showCognateSets = new TaskAreaBooleanViewModel("Show cognate sets") {Value = true};
 			showCognateSets.PropertyChanged += _showCognateSets_PropertyChanged;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
@@ -41,9 +48,6 @@ namespace SIL.Cog.Applications.ViewModels
 					showCognateSets)));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
-
-			_busyService = busyService;
-			_exportService = exportService;
 
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
 			_wordsView = new ListCollectionView(_words);
@@ -56,12 +60,20 @@ namespace SIL.Cog.Applications.ViewModels
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetAlignment());
 		}
 
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			Set("SensesView", ref _sensesView, new ListCollectionView(_senses) {SortDescriptions = {new SortDescription("Gloss", ListSortDirection.Ascending)}});
+			((INotifyCollectionChanged) _sensesView).CollectionChanged += SensesChanged;
+			CurrentSense = _senses.Count > 0 ? (SenseViewModel) _sensesView.GetItemAt(0) : null;
+		}
+
 		private void ExportCognateSets()
 		{
-			if (_project.VarietyPairs.Count == 0)
+			if (_projectService.Project.VarietyPairs.Count == 0)
 				return;
 
-			_exportService.ExportCognateSets(this, _project);
+			_exportService.ExportCognateSets(this);
 		}
 
 		private void _showCognateSets_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -88,15 +100,6 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			Debug.Assert(_wordsView.GroupDescriptions != null);
 			_wordsView.SortDescriptions[_wordsView.GroupDescriptions.Count > 0 ? 1 : 0] = new SortDescription(property, ListSortDirection.Ascending);
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
-			Set("SensesView", ref _sensesView, new ListCollectionView(_senses) {SortDescriptions = {new SortDescription("Gloss", ListSortDirection.Ascending)}});
-			((INotifyCollectionChanged) _sensesView).CollectionChanged += SensesChanged;
-			CurrentSense = _senses.Count > 0 ? (SenseViewModel) _sensesView.GetItemAt(0) : null;
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -163,16 +166,16 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AlignWords()
 		{
-			if (_project.VarietyPairs.Count == 0)
+			if (_projectService.Project.VarietyPairs.Count == 0)
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
 
 			var clusterer = new CognateSetsClusterer(_currentSense.DomainSense, 0.5);
-			List<Cluster<Variety>> cognateSets = clusterer.GenerateClusters(_project.Varieties).ToList();
+			List<Cluster<Variety>> cognateSets = clusterer.GenerateClusters(_projectService.Project.Varieties).ToList();
 
 			var words = new List<Word>();
-			foreach (Variety variety in _project.Varieties)
+			foreach (Variety variety in _projectService.Project.Varieties)
 			{
 				IReadOnlyCollection<Word> varietyWords = variety.Words[_currentSense.DomainSense];
 				if (varietyWords.Count == 0)
@@ -200,7 +203,7 @@ namespace SIL.Cog.Applications.ViewModels
 				}
 			}
 
-			IWordAligner aligner = _project.WordAligners["primary"];
+			IWordAligner aligner = _projectService.Project.WordAligners["primary"];
 			IWordAlignerResult result = aligner.Compute(words);
 			Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
 

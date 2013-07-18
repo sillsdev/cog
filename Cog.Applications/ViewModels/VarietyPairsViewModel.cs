@@ -9,7 +9,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -23,8 +22,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 	public class VarietyPairsViewModel : WorkspaceViewModelBase
 	{
-		private CogProject _project;
 		private readonly IBusyService _busyService;
+		private readonly IProjectService _projectService;
+		private readonly IAnalysisService _analysisService;
 		private ReadOnlyMirroredList<Variety, VarietyViewModel> _varieties;
 		private ListCollectionView _varietiesView1;
 		private ListCollectionView _varietiesView2;
@@ -43,12 +43,16 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public VarietyPairsViewModel(IBusyService busyService, IDialogService dialogService, IExportService exportService)
+		public VarietyPairsViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IExportService exportService, IAnalysisService analysisService)
 			: base("Variety Pairs")
 		{
+			_projectService = projectService;
 			_busyService = busyService;
 			_dialogService = dialogService;
 			_exportService = exportService;
+			_analysisService = analysisService;
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			_sortPropertyName = "PhoneticSimilarityScore";
 			_sortDirection = ListSortDirection.Descending;
@@ -57,7 +61,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
-			Messenger.Default.Register<DomainModelChangingMessage>(this, HandleModelChanging);
+			Messenger.Default.Register<DomainModelChangingMessage>(this, HandleDomainModelChanging);
+			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
 
@@ -70,6 +75,29 @@ namespace SIL.Cog.Applications.ViewModels
 					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending)))))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
+		}
+
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_projectService.Project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
+			Set("VarietiesView1", ref _varietiesView1, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
+			Set("VarietiesView2", ref _varietiesView2, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
+			ResetCurrentVarietyPair();
+		}
+
+		private void HandleSwitchView(SwitchViewMessage msg)
+		{
+			if (msg.ViewModelType == GetType())
+			{
+				_busyService.ShowBusyIndicatorUntilUpdated();
+
+				var pair = (VarietyPair) msg.DomainModels[0];
+				CurrentVarietyPair = new VarietyPairViewModel(_projectService.Project.WordAligners["primary"], pair, true);
+				Set(() => CurrentVariety1, ref _currentVariety1, _varieties[pair.Variety1]);
+				Set(() => CurrentVariety2, ref _currentVariety2, _varieties[pair.Variety2]);
+				CurrentVarietyPairState = pair.Variety1.VarietyPairs.Contains(pair.Variety2)
+					? CurrentVarietyPairState.SelectedAndCompared : CurrentVarietyPairState.SelectedAndNotCompared;
+			}
 		}
 
 		private void SortWordPairsBy(string propertyName, ListSortDirection sortDirection)
@@ -95,7 +123,7 @@ namespace SIL.Cog.Applications.ViewModels
 				_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions[0] = sortDesc;
 		}
 
-		private void HandleModelChanging(DomainModelChangingMessage domainModelChangingMessage)
+		private void HandleDomainModelChanging(DomainModelChangingMessage domainModelChangingMessage)
 		{
 			ResetCurrentVarietyPair();
 			CurrentVarietyPair = null;
@@ -117,13 +145,13 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
+			CogProject project = _projectService.Project;
 			var pair = new VarietyPair(_currentVariety1.DomainVariety, _currentVariety2.DomainVariety);
-			_project.VarietyPairs.Add(pair);
+			project.VarietyPairs.Add(pair);
 
-			var pipeline = new Pipeline<VarietyPair>(_project.GetComparisonProcessors());
-			pipeline.Process(pair.ToEnumerable());
+			_analysisService.Compare(pair);
 
-			CurrentVarietyPair = new VarietyPairViewModel(_project, pair, true);
+			CurrentVarietyPair = new VarietyPairViewModel(project.WordAligners["primary"], pair, true);
 			CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
 		}
 
@@ -212,16 +240,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_currentVarietyPairState != CurrentVarietyPairState.SelectedAndCompared)
 				return;
 
-			_exportService.ExportVarietyPair(this, _project, _currentVarietyPair.DomainVarietyPair);
-		}
-
-		public override void Initialize(CogProject project)
-		{
-			_project = project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
-			Set("VarietiesView1", ref _varietiesView1, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
-			Set("VarietiesView2", ref _varietiesView2, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
-			ResetCurrentVarietyPair();
+			_exportService.ExportVarietyPair(this, _currentVarietyPair.DomainVarietyPair);
 		}
 
 		private void ResetCurrentVarietyPair()
@@ -328,7 +347,7 @@ namespace SIL.Cog.Applications.ViewModels
 				if (_currentVariety1.DomainVariety.VarietyPairs.TryGetValue(_currentVariety2.DomainVariety, out pair))
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();
-					CurrentVarietyPair = new VarietyPairViewModel(_project, pair, _currentVariety1.DomainVariety == pair.Variety1);
+					CurrentVarietyPair = new VarietyPairViewModel(_projectService.Project.WordAligners["primary"], pair, _currentVariety1.DomainVariety == pair.Variety1);
 					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
 				}
 				else
@@ -342,24 +361,6 @@ namespace SIL.Cog.Applications.ViewModels
 				CurrentVarietyPair = null;
 				CurrentVarietyPairState = CurrentVarietyPairState.NotSelected;
 			}
-		}
-
-		public override bool SwitchView(Type viewType, IReadOnlyList<object> models)
-		{
-			if (viewType == typeof(VarietyPairsViewModel))
-			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
-
-				var pair = (VarietyPair) models[0];
-				CurrentVarietyPair = new VarietyPairViewModel(_project, pair, true);
-				Set(() => CurrentVariety1, ref _currentVariety1, _varieties[pair.Variety1]);
-				Set(() => CurrentVariety2, ref _currentVariety2, _varieties[pair.Variety2]);
-				CurrentVarietyPairState = pair.Variety1.VarietyPairs.Contains(pair.Variety2)
-					? CurrentVarietyPairState.SelectedAndCompared : CurrentVarietyPairState.SelectedAndNotCompared;
-				return true;
-			}
-
-			return false;
 		}
 	}
 }

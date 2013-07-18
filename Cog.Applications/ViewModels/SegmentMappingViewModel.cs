@@ -10,13 +10,13 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly bool _isSegment1Valid;
 		private readonly bool _isSegment2Valid;
 
-		public SegmentMappingViewModel(CogProject project, string segment1, string segment2)
+		public SegmentMappingViewModel(Segmenter segmenter, string segment1, string segment2)
 		{
 			_segment1 = segment1;
 			_segment2 = segment2;
 
-			_isSegment1Valid = project.Segmenter.IsValidSegment(_segment1);
-			_isSegment2Valid = project.Segmenter.IsValidSegment(_segment2);
+			_isSegment1Valid = segmenter.IsValidSegment(_segment1);
+			_isSegment2Valid = segmenter.IsValidSegment(_segment2);
 		}
 
 		public string Segment1

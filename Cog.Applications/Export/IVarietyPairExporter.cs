@@ -4,6 +4,6 @@ namespace SIL.Cog.Applications.Export
 {
 	public interface IVarietyPairExporter
 	{
-		void Export(string path, CogProject project, VarietyPair varietyPair);
+		void Export(string path, IWordAligner aligner, VarietyPair varietyPair);
 	}
 }

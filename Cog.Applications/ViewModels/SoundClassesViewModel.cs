@@ -11,7 +11,8 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class SoundClassesViewModel : ChangeTrackingViewModelBase
 	{
-		private readonly CogProject _project;
+		private readonly FeatureSystem _featSys;
+		private readonly Segmenter _segmenter;
 		private readonly IDialogService _dialogService;
 		private readonly BindableList<SoundClassViewModel> _soundClasses;
 		private SoundClassViewModel _currentSoundClass;
@@ -23,10 +24,11 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _moveSoundClassDownCommand;
 		private readonly bool _displaySonority;
 
-		public SoundClassesViewModel(IDialogService dialogService, CogProject project, IEnumerable<SoundClassViewModel> soundClasses, bool displaySonority)
+		public SoundClassesViewModel(IDialogService dialogService, FeatureSystem featSys, Segmenter segmenter, IEnumerable<SoundClassViewModel> soundClasses, bool displaySonority)
 		{
 			_dialogService = dialogService;
-			_project = project;
+			_featSys = featSys;
+			_segmenter = segmenter;
 			_soundClasses = new BindableList<SoundClassViewModel>();
 			foreach (SoundClassViewModel soundClass in soundClasses)
 			{
@@ -47,7 +49,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void NewNaturalClass()
 		{
-			var vm = new EditNaturalClassViewModel(_project.FeatureSystem, _soundClasses.Select(nc => nc.DomainSoundClass));
+			var vm = new EditNaturalClassViewModel(_featSys, _soundClasses.Select(nc => nc.DomainSoundClass));
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var fs = new FeatureStruct();
@@ -64,10 +66,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void NewUnnaturalClass()
 		{
-			var vm = new EditUnnaturalClassViewModel(_dialogService, _project, _soundClasses.Select(nc => nc.DomainSoundClass));
+			var vm = new EditUnnaturalClassViewModel(_dialogService, _segmenter, _soundClasses.Select(nc => nc.DomainSoundClass));
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _project.Segmenter), _displaySonority ? 0 : -1);
+				var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _segmenter), _displaySonority ? 0 : -1);
 				IsChanged = true;
 				newUnnaturalClass.PropertyChanged += ChildPropertyChanged;
 				_soundClasses.Add(newUnnaturalClass);
@@ -85,7 +87,7 @@ namespace SIL.Cog.Applications.ViewModels
 			var currentNC = _currentSoundClass.DomainSoundClass as NaturalClass;
 			if (currentNC != null)
 			{
-				var vm = new EditNaturalClassViewModel(_project.FeatureSystem, _soundClasses.Select(nc => nc.DomainSoundClass), currentNC);
+				var vm = new EditNaturalClassViewModel(_featSys, _soundClasses.Select(nc => nc.DomainSoundClass), currentNC);
 				if (_dialogService.ShowModalDialog(this, vm) == true)
 				{
 					var fs = new FeatureStruct();
@@ -105,10 +107,10 @@ namespace SIL.Cog.Applications.ViewModels
 				var currentUnc = _currentSoundClass.DomainSoundClass as UnnaturalClass;
 				if (currentUnc != null)
 				{
-					var vm = new EditUnnaturalClassViewModel(_dialogService, _project, _soundClasses.Select(nc => nc.DomainSoundClass), currentUnc);
+					var vm = new EditUnnaturalClassViewModel(_dialogService, _segmenter, _soundClasses.Select(nc => nc.DomainSoundClass), currentUnc);
 					if (_dialogService.ShowModalDialog(this, vm) == true)
 					{
-						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _project.Segmenter), _currentSoundClass.Sonority);
+						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _segmenter), _currentSoundClass.Sonority);
 						int index = _soundClasses.IndexOf(_currentSoundClass);
 						IsChanged = true;
 						newUnnaturalClass.PropertyChanged += ChildPropertyChanged;

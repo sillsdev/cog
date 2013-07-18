@@ -9,7 +9,6 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordPairViewModel : ViewModelBase
 	{
-		private readonly CogProject _project;
 		private readonly WordPair _wordPair;
 
 		private readonly AlignedNodeViewModel _prefixNode;
@@ -21,16 +20,14 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly VarietyViewModel _variety2;
 		private readonly bool _areVarietiesInOrder;
 
-		public WordPairViewModel(CogProject project, WordPair wordPair, bool areVarietiesInOrder)
+		public WordPairViewModel(IWordAligner aligner, WordPair wordPair, bool areVarietiesInOrder)
 		{
-			_project = project;
 			_wordPair = wordPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 			_sense = new SenseViewModel(_wordPair.Word1.Sense);
 			_variety1 = new VarietyViewModel(_wordPair.VarietyPair.Variety1);
 			_variety2 = new VarietyViewModel(_wordPair.VarietyPair.Variety2);
 
-			IWordAligner aligner = _project.WordAligners["primary"];
 			IWordAlignerResult results = aligner.Compute(_wordPair);
 			_alignment = results.GetAlignments().First();
 			_prefixNode = new AlignedNodeViewModel(_alignment.Prefixes[0], _alignment.Prefixes[1]);

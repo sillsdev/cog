@@ -9,7 +9,7 @@ namespace SIL.Cog.Applications.Export
 {
 	public class TextVarietyPairExporter : IVarietyPairExporter
 	{
-		public void Export(string path, CogProject project, VarietyPair varietyPair)
+		public void Export(string path, IWordAligner aligner, VarietyPair varietyPair)
 		{
 			using (var writer = new StreamWriter(path))
 			{
@@ -19,7 +19,6 @@ namespace SIL.Cog.Applications.Export
 				writer.WriteLine("Phonetic: {0:p}", varietyPair.PhoneticSimilarityScore);
 				writer.WriteLine();
 
-				IWordAligner aligner = project.WordAligners["primary"];
 				writer.WriteLine("Likely cognates");
 				writer.WriteLine("--------------");
 				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));

@@ -7,12 +7,14 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class DolgopolskyCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly CogProject _project;
 		private int _initialEquivalenceThreshold;
 		private readonly SoundClassesViewModel _soundClasses;
 
 		public DolgopolskyCognateIdentifierViewModel(IDialogService dialogService, CogProject project)
-			: base("Dolgopolsky", project)
+			: base("Dolgopolsky")
 		{
+			_project = project;
 			_initialEquivalenceThreshold = 2;
 			var soundClasses = new SoundClass[]
 				{
@@ -27,15 +29,16 @@ namespace SIL.Cog.Applications.ViewModels
 					new UnnaturalClass("T", new[] {"t", "d", "ɗ", "ʈ", "ɖ", "θ", "ð"}, true, project.Segmenter),
  					new UnnaturalClass("W", new[] {"w", "ʋ", "v", "ʙ"}, true, project.Segmenter)
 				};
-			_soundClasses = new SoundClassesViewModel(dialogService, project, soundClasses.Select(sc => new SoundClassViewModel(sc)), false);
+			_soundClasses = new SoundClassesViewModel(dialogService, _project.FeatureSystem, _project.Segmenter, soundClasses.Select(sc => new SoundClassViewModel(sc)), false);
 			_soundClasses.PropertyChanged += ChildPropertyChanged;
 		}
 
 		public DolgopolskyCognateIdentifierViewModel(IDialogService dialogService, CogProject project, DolgopolskyCognateIdentifier cognateIdentifier)
-			: base("Dolgopolsky", project)
+			: base("Dolgopolsky")
 		{
+			_project = project;
 			_initialEquivalenceThreshold = cognateIdentifier.InitialEquivalenceThreshold;
-			_soundClasses = new SoundClassesViewModel(dialogService, project, cognateIdentifier.SoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
+			_soundClasses = new SoundClassesViewModel(dialogService, _project.FeatureSystem, _project.Segmenter, cognateIdentifier.SoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
 			_soundClasses.PropertyChanged += ChildPropertyChanged;
 		}
 
@@ -58,9 +61,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new DolgopolskyCognateIdentifier(Project, _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
+			var cognateIdentifier = new DolgopolskyCognateIdentifier(_project, _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
 				_initialEquivalenceThreshold, "primary");
-			Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			_project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
 			return cognateIdentifier;
 		}
 	}

@@ -72,7 +72,7 @@ namespace SIL.Cog.Applications.ViewModels
 				{"approximant", 7}
 			};
 
-		private CogProject _project;
+		private readonly IProjectService _projectService;
 		private readonly WordPairsViewModel _wordPairs;
 		private GlobalCorrespondenceEdge _selectedCorrespondence;
 		private readonly BackgroundWorker _generateCorrespondencesWorker;
@@ -90,11 +90,14 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public GlobalCorrespondencesViewModel(IBusyService busyService, IDialogService dialogService)
+		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService)
 			: base("Global Correspondences")
 		{
+			_projectService = projectService;
 			_busyService = busyService;
 			_dialogService = dialogService;
+
+			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => GenerateCorrespondences());
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => CancelWorker());
@@ -126,6 +129,13 @@ namespace SIL.Cog.Applications.ViewModels
 			_wordPairs = new WordPairsViewModel();
 			SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending);
 			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
+		}
+
+		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		{
+			CancelWorker();
+			if (_projectService.Project.VarietyPairs.Count > 0)
+				GenerateCorrespondences();
 		}
 
 		private void SortWordPairsBy(string propertyName, ListSortDirection sortDirection)
@@ -221,7 +231,7 @@ namespace SIL.Cog.Applications.ViewModels
 			var correspondenceType = (SoundCorrespondenceType) e.Argument;
 
 			var tasks = new List<Task<VarietyPairResult>>();
-			foreach (VarietyPair vp in _project.VarietyPairs)
+			foreach (VarietyPair vp in _projectService.Project.VarietyPairs)
 			{
 				VarietyPair varietyPair = vp;
 				tasks.Add(Task<VarietyPairResult>.Factory.StartNew(() =>
@@ -233,7 +243,7 @@ namespace SIL.Cog.Applications.ViewModels
 							if (_generateCorrespondencesWorker.CancellationPending)
 								break;
 
-							var vm = new WordPairViewModel(_project, wp, true);
+							var vm = new WordPairViewModel(_projectService.Project.WordAligners["primary"], wp, true);
 
 							switch (correspondenceType)
 							{
@@ -533,14 +543,6 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		public override void Initialize(CogProject project)
-		{
-			CancelWorker();
-			_project = project;
-			if (_project.VarietyPairs.Count > 0)
-				GenerateCorrespondences();
-		}
-
 		private void HandleViewChanged(ViewChangedMessage msg)
 		{
 			if (msg.OldViewModel == this && _findViewModel != null)
@@ -630,7 +632,7 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _correspondenceType; }
 			set
 			{
-				if (Set(() => CorrespondenceType, ref _correspondenceType, value) && _project.VarietyPairs.Count > 0)
+				if (Set(() => CorrespondenceType, ref _correspondenceType, value) && _projectService.Project.VarietyPairs.Count > 0)
 					GenerateCorrespondences();
 			}
 		}

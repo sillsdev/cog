@@ -4,17 +4,19 @@ using SIL.Machine;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase 
+	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly CogProject _project;
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private double _threshold;
 		private int _maxAffixLength;
 		private bool _categoryRequired;
 
 		public UnsupervisedAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, CogProject project, UnsupervisedAffixIdentifier identifier)
-			: base("Automatic stemmer", project)
+			: base("Automatic stemmer")
 		{
 			_spanFactory = spanFactory;
+			_project = project;
 			_threshold = identifier.Threshold;
 			_maxAffixLength = identifier.MaxAffixLength;
 			_categoryRequired = identifier.CategoryRequired;
@@ -41,7 +43,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public override object UpdateComponent()
 		{
 			var affixIdentifier = new UnsupervisedAffixIdentifier(_spanFactory, _threshold, _maxAffixLength, _categoryRequired);
-			Project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
+			_project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
 			return affixIdentifier;
 		}
 	}

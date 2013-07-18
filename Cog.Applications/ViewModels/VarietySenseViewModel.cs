@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -16,21 +15,21 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly ObservableList<Word> _domainWords;
 		private readonly ReadOnlyMirroredList<Word, WordViewModel> _words;
-		private readonly CogProject _project;
 		private string _strRep;
 		private readonly WordListsVarietyViewModel _variety;
 		private readonly ICommand _showInVarietiesCommand;
 		private readonly IBusyService _busyService;
+		private readonly IAnalysisService _analysisService;
 
-		public VarietySenseViewModel(IBusyService busyService, CogProject project, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
+		public VarietySenseViewModel(IBusyService busyService, IAnalysisService analysisService, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
 			: base(sense)
 		{
 			_busyService = busyService;
-			_project = project;
+			_analysisService = analysisService;
 			_variety = variety;
 
 			_domainWords = new ObservableList<Word>(words);
-			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_domainWords, word => new WordViewModel(busyService, project, word), vm => vm.DomainWord);
+			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_domainWords, word => new WordViewModel(busyService, _analysisService, word), vm => vm.DomainWord);
 			_domainWords.CollectionChanged += DomainWordsChanged;
 			_strRep = string.Join("/", _domainWords.Select(word => word.StrRep));
 			_showInVarietiesCommand = new RelayCommand(ShowInVarieties, () => _domainWords.Count > 0);
@@ -103,8 +102,7 @@ namespace SIL.Cog.Applications.ViewModels
 					foreach (Word wordToRemove in wordsToRemove)
 						_variety.DomainVariety.Words.Remove(wordToRemove);
 
-					var pipeline = new Pipeline<Variety>(_project.GetVarietyInitProcessors());
-					pipeline.Process(_variety.DomainVariety.ToEnumerable());
+					_analysisService.Segment(_variety.DomainVariety);
 				}
 			}
 		}

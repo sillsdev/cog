@@ -9,42 +9,45 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class BlairCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly CogProject _project;
 		private bool _ignoreRegularInsertionDeletion;
 		private bool _regularConsEqual;
 		private readonly ComponentOptionsViewModel _similarSegments;
 		private readonly SegmentMappingsViewModel _ignoredMappings;
 
 		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project)
-			: base("Blair", project)
+			: base("Blair")
 		{
-			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, project);
+			_project = project;
+			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, _project.Segmenter);
 			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
-			_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 0,
-				new ThresholdSimilarSegmentMappingsViewModel(Project), new ListSimilarSegmentMappingsViewModel(dialogService, importService, Project));
+			_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", 0,
+				new ThresholdSimilarSegmentMappingsViewModel(_project), new ListSimilarSegmentMappingsViewModel(dialogService, importService, _project.Segmenter));
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
 		}
 
 		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project, BlairCognateIdentifier cognateIdentifier)
-			: base("Blair", project)
+			: base("Blair")
 		{
+			_project = project;
 			_ignoreRegularInsertionDeletion = cognateIdentifier.IgnoreRegularInsertionDeletion;
 			_regularConsEqual = cognateIdentifier.RegularConsonantEqual;
 			var ignoredMappings = (ListSegmentMappings) cognateIdentifier.IgnoredMappings;
-			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, project, ignoredMappings.Mappings);
+			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, _project.Segmenter, ignoredMappings.Mappings);
 			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
 
 			var similarSegments = (TypeSegmentMappings) cognateIdentifier.SimilarSegments;
 			if (similarSegments.VowelMappings is ThresholdSegmentMappings)
 			{
-				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 0,
-					new ThresholdSimilarSegmentMappingsViewModel(Project, similarSegments),
-					new ListSimilarSegmentMappingsViewModel(dialogService, importService, Project));
+				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", 0,
+					new ThresholdSimilarSegmentMappingsViewModel(_project, similarSegments),
+					new ListSimilarSegmentMappingsViewModel(dialogService, importService, _project.Segmenter));
 			}
 			else if (similarSegments.VowelMappings is ListSegmentMappings)
 			{
-				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", project, 1,
-					new ThresholdSimilarSegmentMappingsViewModel(Project),
-					new ListSimilarSegmentMappingsViewModel(dialogService, importService, Project, similarSegments));
+				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", 1,
+					new ThresholdSimilarSegmentMappingsViewModel(_project),
+					new ListSimilarSegmentMappingsViewModel(dialogService, importService, _project.Segmenter, similarSegments));
 			}
 			Debug.Assert(_similarSegments != null);
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
@@ -81,10 +84,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new BlairCognateIdentifier(Project, _ignoreRegularInsertionDeletion, _regularConsEqual,
-				"primary", new ListSegmentMappings(Project, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
+			var cognateIdentifier = new BlairCognateIdentifier(_project, _ignoreRegularInsertionDeletion, _regularConsEqual,
+				"primary", new ListSegmentMappings(_project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
 				(ISegmentMappings) _similarSegments.UpdateComponent());
-			Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			_project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
 			return cognateIdentifier;
 		}
 	}

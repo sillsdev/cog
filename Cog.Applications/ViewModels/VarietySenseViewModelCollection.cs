@@ -7,7 +7,7 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class VarietySenseViewModelCollection : ReadOnlyMirroredList<Sense, VarietySenseViewModel>
 	{
-		public VarietySenseViewModelCollection(ObservableList<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
+		public VarietySenseViewModelCollection(IObservableList<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
 			: base(senses, viewModelFactory, vm => vm.DomainSense)
 		{
 			words.CollectionChanged += WordsChanged;

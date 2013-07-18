@@ -12,8 +12,7 @@
   See http://www.galasoft.ch/mvvm
 */
 
-using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
+using Autofac;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Presentation.Services;
@@ -27,56 +26,59 @@ namespace SIL.Cog.Presentation
     /// </summary>
     public class ViewModelLocator
     {
+	    private readonly IContainer _container;
+
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
         /// </summary>
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+			var builder = new ContainerBuilder();
 
-            ////if (ViewModelBase.IsInDesignModeStatic)
-            ////{
-            ////    // Create design time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            ////}
-            ////else
-            ////{
-            ////    // Create run time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DataService>();
-            ////}
-            SimpleIoc.Default.Register<IWindowViewModelMappings, WindowViewModelMappings>();
-			SimpleIoc.Default.Register<IDialogService, DialogService>();
-			SimpleIoc.Default.Register<IBusyService, BusyService>();
-			SimpleIoc.Default.Register<SpanFactory<ShapeNode>, ShapeSpanFactory>();
-			SimpleIoc.Default.Register<IExportService, ExportService>();
-			SimpleIoc.Default.Register<IImportService, ImportService>();
-			SimpleIoc.Default.Register<IImageExportService, ImageExportService>();
-			SimpleIoc.Default.Register<ISettingsService, SettingsService>();
+			////if (ViewModelBase.IsInDesignModeStatic)
+			////{
+			////    // Create design time view services and models
+			////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
+			////}
+			////else
+			////{
+			////    // Create run time view services and models
+			////    SimpleIoc.Default.Register<IDataService, DataService>();
+			////}
+			builder.RegisterType<AnalysisService>().As<IAnalysisService>().SingleInstance();
+			builder.RegisterType<ProjectService>().As<IProjectService>().SingleInstance();
+			builder.RegisterType<WindowViewModelMappings>().As<IWindowViewModelMappings>().SingleInstance();
+			builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
+			builder.RegisterType<BusyService>().As<IBusyService>().SingleInstance();
+			builder.RegisterType<ShapeSpanFactory>().As<SpanFactory<ShapeNode>>().SingleInstance();
+			builder.RegisterType<ExportService>().As<IExportService>().SingleInstance();
+			builder.RegisterType<ImportService>().As<IImportService>().SingleInstance();
+			builder.RegisterType<ImageExportService>().As<IImageExportService>().SingleInstance();
+			builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
 
-            SimpleIoc.Default.Register<MainWindowViewModel>();
-			SimpleIoc.Default.Register<InputMasterViewModel>();
-			SimpleIoc.Default.Register<CompareMasterViewModel>();
-			SimpleIoc.Default.Register<AnalyzeMasterViewModel>();
-			SimpleIoc.Default.Register<WordListsViewModel>();
-			SimpleIoc.Default.Register<VarietiesViewModel>();
-			SimpleIoc.Default.Register<SensesViewModel>();
-			SimpleIoc.Default.Register<InputSettingsViewModel>();
-			SimpleIoc.Default.Register<SimilarityMatrixViewModel>();
-			SimpleIoc.Default.Register<VarietyPairsViewModel>();
-			SimpleIoc.Default.Register<CompareSettingsViewModel>();
-			SimpleIoc.Default.Register<HierarchicalGraphViewModel>();
-			SimpleIoc.Default.Register<NetworkGraphViewModel>();
-			SimpleIoc.Default.Register<GeographicalViewModel>();
-			SimpleIoc.Default.Register<GlobalCorrespondencesViewModel>();
-			SimpleIoc.Default.Register<MultipleWordAlignmentViewModel>();
+			builder.RegisterType<MainWindowViewModel>().SingleInstance();
+			builder.RegisterType<InputMasterViewModel>().SingleInstance();
+			builder.RegisterType<CompareMasterViewModel>().SingleInstance();
+			builder.RegisterType<AnalyzeMasterViewModel>().SingleInstance();
+			builder.RegisterType<WordListsViewModel>().SingleInstance();
+			builder.RegisterType<VarietiesViewModel>().SingleInstance();
+			builder.RegisterType<SensesViewModel>().SingleInstance();
+			builder.RegisterType<InputSettingsViewModel>().SingleInstance();
+			builder.RegisterType<SimilarityMatrixViewModel>().SingleInstance();
+			builder.RegisterType<VarietyPairsViewModel>().SingleInstance();
+			builder.RegisterType<CompareSettingsViewModel>().SingleInstance();
+			builder.RegisterType<HierarchicalGraphViewModel>().SingleInstance();
+			builder.RegisterType<NetworkGraphViewModel>().SingleInstance();
+			builder.RegisterType<GeographicalViewModel>().SingleInstance();
+			builder.RegisterType<GlobalCorrespondencesViewModel>().SingleInstance();
+			builder.RegisterType<MultipleWordAlignmentViewModel>().SingleInstance();
+
+	        _container = builder.Build();
         }
 
         public MainWindowViewModel Main
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MainWindowViewModel>();
-            }
+            get { return _container.Resolve<MainWindowViewModel>(); }
         }
         
         public static void Cleanup()

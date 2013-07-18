@@ -34,52 +34,54 @@ namespace SIL.Cog.Applications.Services
 				};
 		}
 
+		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 
-		public ExportService(IDialogService dialogService)
+		public ExportService(IProjectService projectService, IDialogService dialogService)
 		{
+			_projectService = projectService;
 			_dialogService = dialogService;
 		}
 
-		public bool ExportSimilarityMatrix(object ownerViewModel, CogProject project, SimilarityMetric similarityMetric)
+		public bool ExportSimilarityMatrix(object ownerViewModel, SimilarityMetric similarityMetric)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Similarity Matrix", SimilarityMatrixExporters.Keys);
 			if (result.IsValid)
 			{
-				SimilarityMatrixExporters[result.SelectedFileType].Export(result.FileName, project, similarityMetric);
+				SimilarityMatrixExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project, similarityMetric);
 				return true;
 			}
 			return false;
 		}
 
-		public bool ExportWordLists(object ownerViewModel, CogProject project)
+		public bool ExportWordLists(object ownerViewModel)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Word Lists", WordListsExporters.Keys);
 			if (result.IsValid)
 			{
-				WordListsExporters[result.SelectedFileType].Export(result.FileName, project);
+				WordListsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project);
 				return true;
 			}
 			return false;
 		}
 
-		public bool ExportCognateSets(object ownerViewModel, CogProject project)
+		public bool ExportCognateSets(object ownerViewModel)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Cognate Sets", CognateSetsExporters.Keys);
 			if (result.IsValid)
 			{
-				CognateSetsExporters[result.SelectedFileType].Export(result.FileName, project);
+				CognateSetsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project);
 				return true;
 			}
 			return false;
 		}
 
-		public bool ExportVarietyPair(object ownerViewModel, CogProject project, VarietyPair varietyPair)
+		public bool ExportVarietyPair(object ownerViewModel, VarietyPair varietyPair)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Variety Pair", VarietyPairExporters.Keys);
 			if (result.IsValid)
 			{
-				VarietyPairExporters[result.SelectedFileType].Export(result.FileName, project, varietyPair);
+				VarietyPairExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project.WordAligners["primary"], varietyPair);
 				return true;
 			}
 			return false;

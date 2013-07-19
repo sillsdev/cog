@@ -131,7 +131,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				if (Set(() => CurrentSense, ref _currentSense, value))
 				{
-					if (_currentSense == null)
+					if (_currentSense == null || _projectService.Project.VarietyPairs.Count == 0)
 						ResetAlignment();
 					else
 						AlignWords();
@@ -166,9 +166,6 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AlignWords()
 		{
-			if (_projectService.Project.VarietyPairs.Count == 0)
-				return;
-
 			_busyService.ShowBusyIndicatorUntilUpdated();
 
 			var clusterer = new CognateSetsClusterer(_currentSense.DomainSense, 0.5);

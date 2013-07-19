@@ -25,6 +25,8 @@ namespace SIL.Cog.Applications.ViewModels
 			_selectedCorrespondenceWordPairs = new BindableList<WordPairViewModel>();
 		}
 
+		public bool IncludeVarietyNamesInSelectedText { get; set; }
+
 		private void _wordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			_selectedWordPairs.Clear();
@@ -65,6 +67,11 @@ namespace SIL.Cog.Applications.ViewModels
 					if (count > 0)
 						sb.AppendLine();
 
+					if (IncludeVarietyNamesInSelectedText)
+					{
+						sb.AppendFormat("{0} \u2192 {1}", pair.Variety1.Name, pair.Variety2.Name);
+						sb.AppendLine();
+					}
 					sb.Append(pair.Sense.Gloss);
 					if (!string.IsNullOrEmpty(pair.Sense.Category))
 						sb.AppendFormat(" ({0})", pair.Sense.Category);

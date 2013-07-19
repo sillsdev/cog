@@ -188,8 +188,6 @@ namespace SIL.Cog.Applications.Services
 
 			_analysisService.Value.SegmentAll();
 
-			OnProjectOpened(new EventArgs());
-
 			if (path != null)
 			{
 				string cogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
@@ -214,6 +212,8 @@ namespace SIL.Cog.Applications.Services
 						File.Delete(cacheFileName);
 				}
 			}
+
+			OnProjectOpened(new EventArgs());
 		}
 
 		private void SaveComparisonCache()

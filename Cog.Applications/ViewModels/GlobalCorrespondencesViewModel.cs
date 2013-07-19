@@ -126,7 +126,7 @@ namespace SIL.Cog.Applications.ViewModels
 					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending))),
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending)))))
 				));
-			_wordPairs = new WordPairsViewModel();
+			_wordPairs = new WordPairsViewModel {IncludeVarietyNamesInSelectedText = true};
 			SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending);
 			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
 		}

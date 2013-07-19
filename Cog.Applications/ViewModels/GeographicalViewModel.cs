@@ -17,19 +17,24 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly IImageExportService _imageExportService;
+		private readonly GeographicalVarietyViewModel.Factory _varietyFactory; 
+
 		private readonly ICommand _newRegionCommand;
 		private readonly List<Cluster<Variety>> _currentClusters;
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
 		private ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel> _varieties;
 
-		public GeographicalViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IImageExportService imageExportService)
+		public GeographicalViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IImageExportService imageExportService,
+			GeographicalVarietyViewModel.Factory varietyFactory)
 			: base("Geographical")
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
 			_importService = importService;
 			_imageExportService = imageExportService;
+			_varietyFactory = varietyFactory;
+
 			_newRegionCommand = new RelayCommand<IEnumerable<Tuple<double, double>>>(AddNewRegion);
 			_currentClusters = new List<Cluster<Variety>>();
 
@@ -53,7 +58,7 @@ namespace SIL.Cog.Applications.ViewModels
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel>(_projectService.Project.Varieties,
 				variety =>
 					{
-						var newVariety = new GeographicalVarietyViewModel(_dialogService, _projectService.Project.Varieties, variety);
+						var newVariety = _varietyFactory(variety);
 						newVariety.Regions.CollectionChanged += (s, evt) => RegionsChanged(newVariety);
 						return newVariety;
 					}, vm => vm.DomainVariety));

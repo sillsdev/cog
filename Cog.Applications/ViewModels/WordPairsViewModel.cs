@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
@@ -18,19 +16,9 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly BindableList<WordPairViewModel> _selectedWordPairs;
 		private readonly BindableList<WordPairViewModel> _selectedCorrespondenceWordPairs;
 
-		public WordPairsViewModel(IWordAligner aligner, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
-			: this(wordPairs.Select(pair => new WordPairViewModel(aligner, pair, areVarietiesInOrder)))
-		{
-		}
-
 		public WordPairsViewModel()
-			: this(Enumerable.Empty<WordPairViewModel>())
 		{
-		}
-
-		private WordPairsViewModel(IEnumerable<WordPairViewModel> wordPairs)
-		{
-			_wordPairs = new BindableList<WordPairViewModel>(wordPairs);
+			_wordPairs = new BindableList<WordPairViewModel>();
 			_wordPairs.CollectionChanged += _wordPairs_CollectionChanged;
 			_wordPairsView = new Lazy<ListCollectionView>(() => new ListCollectionView(_wordPairs), false);
 			_selectedWordPairs = new BindableList<WordPairViewModel>();

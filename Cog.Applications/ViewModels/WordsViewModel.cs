@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
-using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
@@ -12,14 +11,16 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordsViewModel : ViewModelBase
 	{
+		public delegate WordsViewModel Factory(Variety variety);
+
 		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
 		private readonly ListCollectionView _wordsView;
 		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly BindableList<WordViewModel> _selectedSegmentWords;
 
-		public WordsViewModel(IBusyService busyService, IAnalysisService analysisService, Variety variety)
+		public WordsViewModel(WordViewModel.Factory wordFactory, Variety variety)
 		{
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => new WordViewModel(busyService, analysisService, word), vm => vm.DomainWord);
+			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => wordFactory(word), vm => vm.DomainWord);
 			_wordsView = new ListCollectionView(_words);
 			variety.Words.CollectionChanged += WordsChanged;
 			_selectedWords = new BindableList<WordViewModel>();

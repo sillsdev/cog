@@ -19,6 +19,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly IProjectService _projectService;
 		private readonly IAnalysisService _analysisService;
+		private readonly VarietiesVarietyViewModel.Factory _varietyFactory;
+
 		private ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel> _varieties;
 		private ListCollectionView _varietiesView;
 		private VarietiesVarietyViewModel _currentVariety;
@@ -32,13 +34,15 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordViewModel _startWord;
 		private readonly SimpleMonitor _selectedWordsMonitor;
 
-		public VarietiesViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService)
+		public VarietiesViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService,
+			VarietiesVarietyViewModel.Factory varietyFactory)
 			: base("Varieties")
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
 			_busyService = busyService;
 			_analysisService = analysisService;
+			_varietyFactory = varietyFactory;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -68,8 +72,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(project.Varieties,
-				variety => new VarietiesVarietyViewModel(_dialogService, _busyService, _analysisService, project.Segmenter, variety), vm => vm.DomainVariety));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 			Set("VarietiesView", ref _varietiesView, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
 			((INotifyCollectionChanged) _varietiesView).CollectionChanged += VarietiesChanged;
 			CurrentVariety = _varieties.Count > 0 ? (VarietiesVarietyViewModel) _varietiesView.GetItemAt(0) : null;

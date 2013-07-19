@@ -11,8 +11,10 @@ using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class VarietySenseViewModel : SenseViewModel
+	public class WordListsVarietySenseViewModel : SenseViewModel
 	{
+		public delegate WordListsVarietySenseViewModel Factory(WordListsVarietyViewModel variety, Sense sense);
+
 		private readonly ObservableList<Word> _domainWords;
 		private readonly ReadOnlyMirroredList<Word, WordViewModel> _words;
 		private string _strRep;
@@ -21,15 +23,15 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly IAnalysisService _analysisService;
 
-		public VarietySenseViewModel(IBusyService busyService, IAnalysisService analysisService, WordListsVarietyViewModel variety, Sense sense, IEnumerable<Word> words)
+		public WordListsVarietySenseViewModel(IBusyService busyService, IAnalysisService analysisService, WordViewModel.Factory wordFactory, WordListsVarietyViewModel variety, Sense sense)
 			: base(sense)
 		{
 			_busyService = busyService;
 			_analysisService = analysisService;
 			_variety = variety;
 
-			_domainWords = new ObservableList<Word>(words);
-			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_domainWords, word => new WordViewModel(busyService, _analysisService, word), vm => vm.DomainWord);
+			_domainWords = new ObservableList<Word>(variety.DomainVariety.Words[sense]);
+			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_domainWords, word => wordFactory(word), vm => vm.DomainWord);
 			_domainWords.CollectionChanged += DomainWordsChanged;
 			_strRep = string.Join("/", _domainWords.Select(word => word.StrRep));
 			_showInVarietiesCommand = new RelayCommand(ShowInVarieties, () => _domainWords.Count > 0);

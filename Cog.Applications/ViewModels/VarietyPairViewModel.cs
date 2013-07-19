@@ -26,8 +26,12 @@ namespace SIL.Cog.Applications.ViewModels
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
-			_cognates = new WordPairsViewModel(_aligner, _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted), areVarietiesInOrder);
-			_noncognates = new WordPairsViewModel(_aligner, _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted), areVarietiesInOrder);
+			_cognates = new WordPairsViewModel();
+			foreach (WordPair wp in _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted))
+				_cognates.WordPairs.Add(new WordPairViewModel(_aligner, wp, _areVarietiesInOrder));
+			_noncognates = new WordPairsViewModel();
+			foreach (WordPair wp in _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted))
+				_noncognates.WordPairs.Add(new WordPairViewModel(_aligner, wp, _areVarietiesInOrder));
 
 			_soundChanges = new ReadOnlyList<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
 				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());

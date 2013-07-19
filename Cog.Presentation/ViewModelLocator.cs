@@ -88,6 +88,15 @@ namespace SIL.Cog.Presentation
 	        builder.RegisterType<BlairCognateIdentifierViewModel>().SingleInstance();
 	        builder.RegisterType<ThresholdCognateIdentifierViewModel>().SingleInstance();
 	        builder.RegisterType<DolgopolskyCognateIdentifierViewModel>().SingleInstance();
+
+			// Multiple instance view models
+			builder.RegisterType<WordListsVarietyViewModel>();
+	        builder.RegisterType<WordListsVarietySenseViewModel>();
+	        builder.RegisterType<WordViewModel>();
+	        builder.RegisterType<VarietiesVarietyViewModel>();
+	        builder.RegisterType<WordsViewModel>();
+	        builder.RegisterType<GeographicalVarietyViewModel>();
+	        builder.RegisterType<GeographicalRegionViewModel>();
 	        builder.RegisterType<SimilarSegmentMappingsOptionsViewModel>();
 	        builder.RegisterType<ThresholdSimilarSegmentMappingsViewModel>();
 	        builder.RegisterType<ListSimilarSegmentMappingsViewModel>();

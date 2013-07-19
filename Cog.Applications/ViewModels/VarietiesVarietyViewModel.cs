@@ -12,7 +12,9 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class VarietiesVarietyViewModel : VarietyViewModel
 	{
-		private readonly Segmenter _segmenter;
+		public delegate VarietiesVarietyViewModel Factory(Variety variety);
+
+		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly BindableList<VarietySegmentViewModel> _segments;
 		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
@@ -26,10 +28,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
  
-		public VarietiesVarietyViewModel(IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService, Segmenter segmenter, Variety variety)
+		public VarietiesVarietyViewModel(IProjectService projectService, IDialogService dialogService, WordsViewModel.Factory wordsFactory, Variety variety)
 			: base(variety)
 		{
-			_segmenter = segmenter;
+			_projectService = projectService;
 			_dialogService = dialogService;
 			_segments = new BindableList<VarietySegmentViewModel>(variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<VarietySegmentViewModel>()
 				: variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
@@ -38,7 +40,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.PropertyChanged += VarietyPropertyChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
-			_words = new WordsViewModel(busyService, analysisService, variety);
+			_words = wordsFactory(variety);
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
@@ -68,13 +70,13 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void NewAffix()
 		{
-			var vm = new EditAffixViewModel(_segmenter);
+			var vm = new EditAffixViewModel(_projectService.Project.Segmenter);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes.Add(affix);
-				_segmenter.Segment(affix);
+				_projectService.Project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
@@ -86,14 +88,14 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void EditAffix()
 		{
-			var vm = new EditAffixViewModel(_segmenter, _currentAffix.DomainAffix);
+			var vm = new EditAffixViewModel(_projectService.Project.Segmenter, _currentAffix.DomainAffix);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = DomainVariety.Affixes.IndexOf(_currentAffix.DomainAffix);
 				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes[index] = affix;
-				_segmenter.Segment(affix);
+				_projectService.Project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}

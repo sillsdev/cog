@@ -216,7 +216,7 @@
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
-    <Compile Include="ViewModels\VarietySenseViewModel.cs" />
+    <Compile Include="ViewModels\WordListsVarietySenseViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\ViewChangedMessage.cs" />

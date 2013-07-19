@@ -17,26 +17,26 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IImportService _importService;
 		private readonly IExportService _exportService;
 		private readonly IAnalysisService _analysisService;
-		private VarietySenseViewModel _currentVarietySense;
+		private readonly WordListsVarietyViewModel.Factory _varietyFactory; 
+		private WordListsVarietySenseViewModel _currentVarietySense;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
  		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
-		private readonly IBusyService _busyService;
 		private readonly ICommand _findCommand;
 
-		private VarietySenseViewModel _startVarietySense;
+		private WordListsVarietySenseViewModel _startVarietySense;
 		private FindViewModel _findViewModel;
 
-		public WordListsViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IImportService importService,
-			IExportService exportService, IAnalysisService analysisService)
+		public WordListsViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService,
+			IExportService exportService, IAnalysisService analysisService, WordListsVarietyViewModel.Factory varietyFactory)
 			: base("Word lists")
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
-			_busyService = busyService;
 			_importService = importService;
 			_exportService = exportService;
 			_analysisService = analysisService;
+			_varietyFactory = varietyFactory;
 
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
@@ -61,8 +61,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			CogProject project = _projectService.Project;
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties,
-				variety => new WordListsVarietyViewModel(_busyService, _analysisService, _projectService.Project.Senses, variety), vm => vm.DomainVariety));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 			SetIsEmpty();
 			project.Varieties.CollectionChanged += VarietiesChanged;
 			project.Senses.CollectionChanged += SensesChanged;
@@ -132,7 +131,7 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 			}
 			WordListsVarietyViewModel variety = _currentVarietySense.Variety;
-			VarietySenseViewModel curVarietySense = _currentVarietySense;
+			WordListsVarietySenseViewModel curVarietySense = _currentVarietySense;
 			int senseIndex = variety.Senses.IndexOf(curVarietySense);
 			switch (_findViewModel.Field)
 			{
@@ -202,7 +201,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public VarietySenseViewModel CurrentVarietySense
+		public WordListsVarietySenseViewModel CurrentVarietySense
 		{
 			get { return _currentVarietySense; }
 			set

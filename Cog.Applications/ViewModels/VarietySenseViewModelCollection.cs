@@ -5,9 +5,9 @@ using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class VarietySenseViewModelCollection : ReadOnlyMirroredList<Sense, VarietySenseViewModel>
+	public class VarietySenseViewModelCollection : ReadOnlyMirroredList<Sense, WordListsVarietySenseViewModel>
 	{
-		public VarietySenseViewModelCollection(IObservableList<Sense> senses, WordCollection words, Func<Sense, VarietySenseViewModel> viewModelFactory)
+		public VarietySenseViewModelCollection(IObservableList<Sense> senses, WordCollection words, Func<Sense, WordListsVarietySenseViewModel> viewModelFactory)
 			: base(senses, viewModelFactory, vm => vm.DomainSense)
 		{
 			words.CollectionChanged += WordsChanged;
@@ -20,7 +20,7 @@ namespace SIL.Cog.Applications.ViewModels
 				case NotifyCollectionChangedAction.Add:
 					foreach (Word word in e.NewItems)
 					{
-						VarietySenseViewModel vm = this[word.Sense];
+						WordListsVarietySenseViewModel vm = this[word.Sense];
 						if (!vm.DomainWords.Contains(word))
 							vm.DomainWords.Add(word);
 					}
@@ -29,13 +29,13 @@ namespace SIL.Cog.Applications.ViewModels
 				case NotifyCollectionChangedAction.Remove:
 					foreach (Word word in e.OldItems)
 					{
-						VarietySenseViewModel vm = this[word.Sense];
+						WordListsVarietySenseViewModel vm = this[word.Sense];
 						vm.DomainWords.Remove(word);
 					}
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
-					foreach (VarietySenseViewModel vm in this)
+					foreach (WordListsVarietySenseViewModel vm in this)
 						vm.DomainWords.Clear();
 					break;
 			}

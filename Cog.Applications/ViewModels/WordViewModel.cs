@@ -14,6 +14,8 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordViewModel : ViewModelBase, IDataErrorInfo
 	{
+		public delegate WordViewModel Factory(Word word);
+
 		private readonly IAnalysisService _analysisService; 
 		private readonly Word _word;
 		private BindableList<WordSegmentViewModel> _segments;

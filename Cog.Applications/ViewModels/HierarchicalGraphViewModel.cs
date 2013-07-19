@@ -26,21 +26,23 @@ namespace SIL.Cog.Applications.ViewModels
 	public class HierarchicalGraphViewModel : WorkspaceViewModelBase
 	{
 		private readonly IProjectService _projectService;
+		private readonly IGraphService _graphService; 
 		private HierarchicalGraphType _graphType;
 		private ClusteringMethod _clusteringMethod;
 		private IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> _graph;
 		private readonly IImageExportService _exportService;
 		private SimilarityMetric _similarityMetric;
 
-		public HierarchicalGraphViewModel(IProjectService projectService, IImageExportService exportService)
+		public HierarchicalGraphViewModel(IProjectService projectService, IImageExportService exportService, IGraphService graphService)
 			: base("Hierarchical Graph")
 		{
 			_projectService = projectService;
 			_exportService = exportService;
+			_graphService = graphService;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
@@ -59,7 +61,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
+			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
 		}
 
 		private void Export()
@@ -79,7 +81,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				if (Set(() => ClusteringMethod, ref _clusteringMethod, value) && _graph != null)
-					Graph = _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+					Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 			}
 		}
 
@@ -89,7 +91,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
-					Graph = _projectService.Project.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+					Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
 			}
 		}
 

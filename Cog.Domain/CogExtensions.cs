@@ -371,5 +371,36 @@ namespace SIL.Cog.Domain
 		    }
 		    return maxDepth + len;
 		}
+
+		public static string GetString(this FeatureStruct fs)
+		{
+			var sb = new StringBuilder();
+			sb.Append("[");
+			bool firstFeature = true;
+			foreach (SymbolicFeature feature in fs.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
+			{
+				if (!firstFeature)
+					sb.Append(",");
+				sb.Append(feature.Description);
+				sb.Append(":");
+				SymbolicFeatureValue fv = fs.GetValue(feature);
+				FeatureSymbol[] symbols = fv.Values.ToArray();
+				if (symbols.Length > 1)
+					sb.Append("{");
+				bool firstSymbol = true;
+				foreach (FeatureSymbol symbol in symbols)
+				{
+					if (!firstSymbol)
+						sb.Append(",");
+					sb.Append(symbol.Description);
+					firstSymbol = false;
+				}
+				if (symbols.Length > 1)
+					sb.Append("}");
+				firstFeature = false;
+			}
+			sb.Append("]");
+			return sb.ToString();
+		}
 	}
 }

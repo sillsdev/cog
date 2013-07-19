@@ -12,17 +12,19 @@ namespace SIL.Cog.Applications.ViewModels
 		private SimilarityMetric _similarityMetric;
 		private readonly IImageExportService _imageExportService;
 		private readonly IProjectService _projectService;
+		private readonly IGraphService _graphService;
 		private double _similarityScoreFilter;
 
-		public NetworkGraphViewModel(IProjectService projectService, IImageExportService imageExportService)
+		public NetworkGraphViewModel(IProjectService projectService, IImageExportService imageExportService, IGraphService graphService)
 			: base("Network Graph")
 		{
 			_projectService = projectService;
 			_imageExportService = imageExportService;
+			_graphService = graphService;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _projectService.Project.GenerateNetworkGraph(_similarityMetric));
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _graphService.GenerateNetworkGraph(_similarityMetric));
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
@@ -35,7 +37,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _projectService.Project.GenerateNetworkGraph(_similarityMetric) : null;
+			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _graphService.GenerateNetworkGraph(_similarityMetric) : null;
 		}
 
 		private void Export()
@@ -49,7 +51,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				if (Set(() => SimilarityMetric, ref _similarityMetric, value) && _graph != null)
-					Graph = _projectService.Project.GenerateNetworkGraph(_similarityMetric);
+					Graph = _graphService.GenerateNetworkGraph(_similarityMetric);
 			}
 		}
 

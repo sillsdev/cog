@@ -112,10 +112,12 @@
     <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\FileDialogResult.cs" />
     <Compile Include="Services\FileType.cs" />
+    <Compile Include="Services\GraphService.cs" />
     <Compile Include="Services\IAnalysisService.cs" />
     <Compile Include="Services\IBusyService.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\IExportService.cs" />
+    <Compile Include="Services\IGraphService.cs" />
     <Compile Include="Services\IImageExportService.cs" />
     <Compile Include="Services\IImportService.cs" />
     <Compile Include="Services\ImportService.cs" />
@@ -218,7 +220,6 @@
     <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\ViewChangedMessage.cs" />
-    <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />
     <Compile Include="ViewModels\WordPairSurrogate.cs" />

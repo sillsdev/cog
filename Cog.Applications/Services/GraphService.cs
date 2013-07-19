@@ -1,18 +1,24 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using QuickGraph;
 using QuickGraph.Algorithms;
+using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Clusterers;
-using SIL.Machine.FeatureModel;
 
-namespace SIL.Cog.Applications.ViewModels
+namespace SIL.Cog.Applications.Services
 {
-	public static class ViewModelExtensions
+	public class GraphService : IGraphService
 	{
-		public static IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> GenerateHierarchicalGraph(this CogProject project, HierarchicalGraphType graphType,
+		private readonly IProjectService _projectService;
+
+		public GraphService(IProjectService projectService)
+		{
+			_projectService = projectService;
+		}
+
+		public IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> GenerateHierarchicalGraph(HierarchicalGraphType graphType,
 			ClusteringMethod clusteringMethod, SimilarityMetric similarityMetric)
 		{
 			switch (clusteringMethod)
@@ -30,7 +36,7 @@ namespace SIL.Cog.Applications.ViewModels
 					}
 
 					var upgma = new UpgmaClusterer<Variety>(upgmaGetDistance);
-					IBidirectionalGraph<Cluster<Variety>, ClusterEdge<Variety>> upgmaTree = upgma.GenerateClusters(project.Varieties);
+					IBidirectionalGraph<Cluster<Variety>, ClusterEdge<Variety>> upgmaTree = upgma.GenerateClusters(_projectService.Project.Varieties);
 					return BuildHierarchicalGraph(upgmaTree);
 
 				case ClusteringMethod.NeighborJoining:
@@ -45,7 +51,7 @@ namespace SIL.Cog.Applications.ViewModels
 							break;
 					}
 					var nj = new NeighborJoiningClusterer<Variety>(njGetDistance);
-					IUndirectedGraph<Cluster<Variety>, ClusterEdge<Variety>> njTree = nj.GenerateClusters(project.Varieties);
+					IUndirectedGraph<Cluster<Variety>, ClusterEdge<Variety>> njTree = nj.GenerateClusters(_projectService.Project.Varieties);
 					switch (graphType)
 					{
 						case HierarchicalGraphType.Dendrogram:
@@ -106,51 +112,21 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		public static IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> GenerateNetworkGraph(this CogProject project, SimilarityMetric similarityMetric)
+		public IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> GenerateNetworkGraph(SimilarityMetric similarityMetric)
 		{
 			var graph = new BidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge>();
 			var dict = new Dictionary<Variety, NetworkGraphVertex>();
-			foreach (Variety variety in project.Varieties)
+			foreach (Variety variety in _projectService.Project.Varieties)
 			{
 				var vertex = new NetworkGraphVertex(variety);
 				graph.AddVertex(vertex);
 				dict[variety] = vertex;
 			}
-			foreach (VarietyPair pair in project.VarietyPairs)
+			foreach (VarietyPair pair in _projectService.Project.VarietyPairs)
 				graph.AddEdge(new NetworkGraphEdge(dict[pair.Variety1], dict[pair.Variety2], pair, similarityMetric));
 
 			return graph;
 		}
 
-		public static string GetString(this FeatureStruct fs)
-		{
-			var sb = new StringBuilder();
-			sb.Append("[");
-			bool firstFeature = true;
-			foreach (SymbolicFeature feature in fs.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
-			{
-				if (!firstFeature)
-					sb.Append(",");
-				sb.Append(feature.Description);
-				sb.Append(":");
-				SymbolicFeatureValue fv = fs.GetValue(feature);
-				FeatureSymbol[] symbols = fv.Values.ToArray();
-				if (symbols.Length > 1)
-					sb.Append("{");
-				bool firstSymbol = true;
-				foreach (FeatureSymbol symbol in symbols)
-				{
-					if (!firstSymbol)
-						sb.Append(",");
-					sb.Append(symbol.Description);
-					firstSymbol = false;
-				}
-				if (symbols.Length > 1)
-					sb.Append("}");
-				firstFeature = false;
-			}
-			sb.Append("]");
-			return sb.ToString();
-		}
 	}
 }

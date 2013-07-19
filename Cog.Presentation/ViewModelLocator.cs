@@ -57,6 +57,7 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<ImportService>().As<IImportService>().SingleInstance();
 			builder.RegisterType<ImageExportService>().As<IImageExportService>().SingleInstance();
 			builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
+	        builder.RegisterType<GraphService>().As<IGraphService>().SingleInstance();
 
 			// Master view models
 			builder.RegisterType<MainWindowViewModel>().SingleInstance();

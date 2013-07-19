@@ -191,7 +191,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			var vm = new ExportHierarchicalGraphViewModel();
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-				_imageExportService.ExportHierarchicalGraph(this, _projectService.Project.GenerateHierarchicalGraph(vm.GraphType, vm.ClusteringMethod, vm.SimilarityMetric), vm.GraphType);
+				_imageExportService.ExportHierarchicalGraph(this, vm.GraphType, vm.ClusteringMethod, vm.SimilarityMetric);
 		}
 
 		private bool CanExportNetworkGraph()
@@ -203,7 +203,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			var vm = new ExportNetworkGraphViewModel();
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-				_imageExportService.ExportNetworkGraph(this, _projectService.Project.GenerateNetworkGraph(vm.SimilarityMetric), vm.SimilarityScoreFilter);
+				_imageExportService.ExportNetworkGraph(this, vm.SimilarityMetric, vm.SimilarityScoreFilter);
 		}
 
 		public bool CanExit()

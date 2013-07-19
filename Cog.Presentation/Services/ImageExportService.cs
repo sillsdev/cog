@@ -21,10 +21,12 @@ namespace SIL.Cog.Presentation.Services
 	public class ImageExportService : IImageExportService
 	{
 		private readonly IDialogService _dialogService;
+		private readonly IGraphService _graphService;
 
-		public ImageExportService(IDialogService dialogService)
+		public ImageExportService(IDialogService dialogService, IGraphService graphService)
 		{
 			_dialogService = dialogService;
+			_graphService = graphService;
 		}
 
 		public bool ExportCurrentHierarchicalGraph(object ownerViewModel, HierarchicalGraphType type)
@@ -52,11 +54,13 @@ namespace SIL.Cog.Presentation.Services
 			return false;
 		}
 
-		public bool ExportHierarchicalGraph(object ownerViewModel, IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph, HierarchicalGraphType graphType)
+		public bool ExportHierarchicalGraph(object ownerViewModel, HierarchicalGraphType graphType, ClusteringMethod clusteringMethod, SimilarityMetric similarityMetric)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Hierarchical Graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
+				IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> graph = _graphService.GenerateHierarchicalGraph(graphType, clusteringMethod, similarityMetric);
+
 				FrameworkElement graphLayout = null;
 				switch (graphType)
 				{
@@ -112,11 +116,13 @@ namespace SIL.Cog.Presentation.Services
 			return false;
 		}
 
-		public bool ExportNetworkGraph(object ownerViewModel, IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph, double scoreFilter)
+		public bool ExportNetworkGraph(object ownerViewModel, SimilarityMetric similarityMetric, double scoreFilter)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Network Graph", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
+				IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> graph = _graphService.GenerateNetworkGraph(similarityMetric);
+
 				var graphLayout = new NetworkGraphLayout
 					{
 						IsAnimationEnabled = false,

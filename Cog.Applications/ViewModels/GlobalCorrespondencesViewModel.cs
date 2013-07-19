@@ -73,6 +73,7 @@ namespace SIL.Cog.Applications.ViewModels
 			};
 
 		private readonly IProjectService _projectService;
+		private readonly IImageExportService _imageExportService;
 		private readonly WordPairsViewModel _wordPairs;
 		private GlobalCorrespondenceEdge _selectedCorrespondence;
 		private readonly BackgroundWorker _generateCorrespondencesWorker;
@@ -90,12 +91,13 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService)
+		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IImageExportService imageExportService)
 			: base("Global Correspondences")
 		{
 			_projectService = projectService;
 			_busyService = busyService;
 			_dialogService = dialogService;
+			_imageExportService = imageExportService;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -126,6 +128,8 @@ namespace SIL.Cog.Applications.ViewModels
 					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending))),
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending)))))
 				));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart))));
 			_wordPairs = new WordPairsViewModel {IncludeVarietyNamesInSelectedText = true};
 			SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending);
 			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
@@ -152,6 +156,11 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (!_selectedWordPairsMonitor.Busy)
 				_startWordPair = null;
+		}
+
+		private void ExportChart()
+		{
+			_imageExportService.ExportCurrentGlobalCorrespondencesChart(this);
 		}
 
 		private void Find()

@@ -9,5 +9,6 @@ namespace SIL.Cog.Applications.Services
 		bool ExportCurrentNetworkGraph(object ownerViewModel);
 		bool ExportNetworkGraph(object ownerViewModel, SimilarityMetric similarityMetric, double scoreFilter);
 		bool ExportCurrentMap(object ownerViewModel);
+		bool ExportCurrentGlobalCorrespondencesChart(object ownerViewModel);
 	}
 }

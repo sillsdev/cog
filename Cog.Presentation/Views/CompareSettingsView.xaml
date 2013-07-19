@@ -40,7 +40,7 @@
 		</DataTemplate>
 	</UserControl.Resources>
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Comparison Settings</TextBlock>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Comparison settings</TextBlock>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Grid.IsSharedSizeScope="True">
                 <Grid.RowDefinitions>

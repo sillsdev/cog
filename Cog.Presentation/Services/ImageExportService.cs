@@ -161,6 +161,21 @@ namespace SIL.Cog.Presentation.Services
 			return false;
 		}
 
+		public bool ExportCurrentGlobalCorrespondencesChart(object ownerViewModel)
+		{
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", ownerViewModel, new FileType("PNG image", ".png"));
+			if (result.IsValid)
+			{
+				var graphLayout = Application.Current.MainWindow.FindVisualChild<GlobalCorrespondencesGraphLayout>();
+				if (graphLayout == null)
+					throw new InvalidOperationException();
+
+				SaveElement(graphLayout, result.FileName);
+				return true;
+			}
+			return false;
+		}
+
 		private void SaveElement(FrameworkElement elem, string path)
 		{
 			RenderTargetBitmap rtb;

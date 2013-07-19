@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
@@ -9,48 +8,46 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class BlairCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
-		private readonly CogProject _project;
+		private readonly IProjectService _projectService;
+
 		private bool _ignoreRegularInsertionDeletion;
 		private bool _regularConsEqual;
-		private readonly ComponentOptionsViewModel _similarSegments;
+		private readonly SimilarSegmentMappingsOptionsViewModel _similarSegments;
 		private readonly SegmentMappingsViewModel _ignoredMappings;
 
-		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project)
+		public BlairCognateIdentifierViewModel(IProjectService projectService, SegmentMappingsViewModel ignoredMappings, SimilarSegmentMappingsOptionsViewModel similarSegments)
 			: base("Blair")
 		{
-			_project = project;
-			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, _project.Segmenter);
+			_projectService = projectService;
+			_ignoredMappings = ignoredMappings;
 			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
-			_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", 0,
-				new ThresholdSimilarSegmentMappingsViewModel(_project), new ListSimilarSegmentMappingsViewModel(dialogService, importService, _project.Segmenter));
+			_similarSegments = similarSegments;
 			_similarSegments.PropertyChanged += ChildPropertyChanged;
 		}
 
-		public BlairCognateIdentifierViewModel(IDialogService dialogService, IImportService importService, CogProject project, BlairCognateIdentifier cognateIdentifier)
-			: base("Blair")
+		public override void Setup()
 		{
-			_project = project;
-			_ignoreRegularInsertionDeletion = cognateIdentifier.IgnoreRegularInsertionDeletion;
-			_regularConsEqual = cognateIdentifier.RegularConsonantEqual;
-			var ignoredMappings = (ListSegmentMappings) cognateIdentifier.IgnoredMappings;
-			_ignoredMappings = new SegmentMappingsViewModel(dialogService, importService, _project.Segmenter, ignoredMappings.Mappings);
-			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
+			_ignoredMappings.CurrentMapping = null;
+			_ignoredMappings.Mappings.Clear();
 
-			var similarSegments = (TypeSegmentMappings) cognateIdentifier.SimilarSegments;
-			if (similarSegments.VowelMappings is ThresholdSegmentMappings)
+			IProcessor<VarietyPair> cognateIdentifier = _projectService.Project.VarietyPairProcessors["cognateIdentifier"];
+			var blair = cognateIdentifier as BlairCognateIdentifier;
+			if (blair == null)
 			{
-				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", 0,
-					new ThresholdSimilarSegmentMappingsViewModel(_project, similarSegments),
-					new ListSimilarSegmentMappingsViewModel(dialogService, importService, _project.Segmenter));
+				Set(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, false);
+				Set(() => RegularConsonantsEqual, ref _regularConsEqual, false);
+				_similarSegments.SegmentMappings = null;
 			}
-			else if (similarSegments.VowelMappings is ListSegmentMappings)
+			else
 			{
-				_similarSegments = new ComponentOptionsViewModel("Similar segments", "Type", 1,
-					new ThresholdSimilarSegmentMappingsViewModel(_project),
-					new ListSimilarSegmentMappingsViewModel(dialogService, importService, _project.Segmenter, similarSegments));
+				Set(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, blair.IgnoreRegularInsertionDeletion);
+				Set(() => RegularConsonantsEqual, ref _regularConsEqual, blair.RegularConsonantEqual);
+				var ignoredMappings = (ListSegmentMappings) blair.IgnoredMappings;
+				foreach (Tuple<string, string> mapping in ignoredMappings.Mappings)
+					_ignoredMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+				_similarSegments.SegmentMappings = (TypeSegmentMappings) blair.SimilarSegments;
 			}
-			Debug.Assert(_similarSegments != null);
-			_similarSegments.PropertyChanged += ChildPropertyChanged;
+			_similarSegments.Setup();
 		}
 
 		public override void AcceptChanges()
@@ -84,10 +81,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new BlairCognateIdentifier(_project, _ignoreRegularInsertionDeletion, _regularConsEqual,
-				"primary", new ListSegmentMappings(_project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
+			var cognateIdentifier = new BlairCognateIdentifier(_projectService.Project, _ignoreRegularInsertionDeletion, _regularConsEqual,
+				"primary", new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
 				(ISegmentMappings) _similarSegments.UpdateComponent());
-			_project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			_projectService.Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
 			return cognateIdentifier;
 		}
 	}

@@ -1,40 +1,25 @@
 using System;
 using System.Linq;
 using SIL.Cog.Applications.Services;
-using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class ListSimilarSegmentMappingsViewModel : ComponentSettingsViewModelBase
 	{
-		private readonly Segmenter _segmenter;
+		private readonly IProjectService _projectService;
 		private readonly SegmentMappingsViewModel _consMappings;
 		private readonly SegmentMappingsViewModel _vowelMappings;
 		private bool _generateDiphthongs;
-
-		public ListSimilarSegmentMappingsViewModel(IDialogService dialogService, IImportService importService, Segmenter segmenter)
-			: base("List")
-		{
-			_segmenter = segmenter;
-			_consMappings = new SegmentMappingsViewModel(dialogService, importService, _segmenter);
-			_consMappings.PropertyChanged += ChildPropertyChanged;
-			_vowelMappings = new SegmentMappingsViewModel(dialogService, importService, _segmenter);
-			_vowelMappings.PropertyChanged += ChildPropertyChanged;
-			_generateDiphthongs = true;
-		}
 		
-		public ListSimilarSegmentMappingsViewModel(IDialogService dialogService, IImportService importService, Segmenter segmenter, TypeSegmentMappings similarSegmentMappings)
+		public ListSimilarSegmentMappingsViewModel(IProjectService projectService, SegmentMappingsViewModel consMappings, SegmentMappingsViewModel vowelMappings)
 			: base("List")
 		{
-			_segmenter = segmenter;
-			var consMappings = (ListSegmentMappings) similarSegmentMappings.ConsonantMappings;
-			_consMappings = new SegmentMappingsViewModel(dialogService, importService, _segmenter, consMappings.Mappings);
+			_projectService = projectService;
+			_consMappings = consMappings;
 			_consMappings.PropertyChanged += ChildPropertyChanged;
-			var vowelMappings = (ListSegmentMappings) similarSegmentMappings.VowelMappings;
-			_vowelMappings = new SegmentMappingsViewModel(dialogService, importService, _segmenter, vowelMappings.Mappings);
+			_vowelMappings = vowelMappings;
 			_vowelMappings.PropertyChanged += ChildPropertyChanged;
-			_generateDiphthongs = vowelMappings.GenerateDigraphs;
 		}
 
 		public override void AcceptChanges()
@@ -60,11 +45,36 @@ namespace SIL.Cog.Applications.ViewModels
 			set { SetChanged(() => GenerateDiphthongs, ref _generateDiphthongs, value); }
 		}
 
+		public TypeSegmentMappings SegmentMappings { get; set; }
+
+		public override void Setup()
+		{
+			_consMappings.CurrentMapping = null;
+			_consMappings.Mappings.Clear();
+			_vowelMappings.CurrentMapping = null;
+			_vowelMappings.Mappings.Clear();
+
+			if (SegmentMappings == null || !(SegmentMappings.VowelMappings is ListSegmentMappings))
+			{
+				Set(() => GenerateDiphthongs, ref _generateDiphthongs, true);
+			}
+			else
+			{
+				var consMappings = (ListSegmentMappings) SegmentMappings.ConsonantMappings;
+				foreach (Tuple<string, string> mapping in consMappings.Mappings)
+					_consMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+				var vowelMappings = (ListSegmentMappings) SegmentMappings.VowelMappings;
+				foreach (Tuple<string, string> mapping in vowelMappings.Mappings)
+					_vowelMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+				Set(() => GenerateDiphthongs, ref _generateDiphthongs, vowelMappings.GenerateDigraphs);
+			}
+		}
+
 		public override object UpdateComponent()
 		{
 			return new TypeSegmentMappings(
-				new ListSegmentMappings(_segmenter, _vowelMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), _generateDiphthongs),
-				new ListSegmentMappings(_segmenter, _consMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false));
+				new ListSegmentMappings(_projectService.Project.Segmenter, _vowelMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), _generateDiphthongs),
+				new ListSegmentMappings(_projectService.Project.Segmenter, _consMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false));
 		}
 	}
 }

@@ -131,6 +131,7 @@
     <Compile Include="ViewModels\BindableList.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ChangeTrackingViewModelBase.cs" />
+    <Compile Include="ViewModels\CognateIdentifierOptionsViewModel.cs" />
     <Compile Include="ViewModels\CompareMasterViewModel.cs" />
     <Compile Include="ViewModels\CompareSettingsViewModel.cs" />
     <Compile Include="ViewModels\ComparisonPerformedMessage.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="ViewModels\SimilarityMatrixVarietyViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMetric.cs" />
+    <Compile Include="ViewModels\SimilarSegmentMappingsOptionsViewModel.cs" />
     <Compile Include="ViewModels\SoundChangeLhsViewModel.cs" />
     <Compile Include="ViewModels\SoundChangeViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />

@@ -2,20 +2,19 @@ using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class ComponentOptionsViewModel : ComponentSettingsViewModelBase
+	public abstract class ComponentOptionsViewModel : ComponentSettingsViewModelBase
 	{
 		private readonly string _optionDisplayName;
 		private readonly ReadOnlyList<ComponentSettingsViewModelBase> _options;
 		private ComponentSettingsViewModelBase _currentOption;
 
-		public ComponentOptionsViewModel(string displayName, string optionDisplayName, int selectedIndex, params ComponentSettingsViewModelBase[] options)
+		protected ComponentOptionsViewModel(string displayName, string optionDisplayName, params ComponentSettingsViewModelBase[] options)
 			: base(displayName)
 		{
 			_optionDisplayName = optionDisplayName;
 			_options = new ReadOnlyList<ComponentSettingsViewModelBase>(options);
 			foreach (ComponentSettingsViewModelBase option in _options)
 				option.PropertyChanged += ChildPropertyChanged;
-			_currentOption = _options[selectedIndex];
 		}
 
 		public string OptionDisplayName
@@ -38,6 +37,12 @@ namespace SIL.Cog.Applications.ViewModels
 		public ReadOnlyList<ComponentSettingsViewModelBase> Options
 		{
 			get { return _options; }
+		}
+
+		public override void Setup()
+		{
+			foreach (ComponentSettingsViewModelBase option in _options)
+				option.Setup();
 		}
 
 		public override object UpdateComponent()

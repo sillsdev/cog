@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -11,8 +12,7 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class SoundClassesViewModel : ChangeTrackingViewModelBase
 	{
-		private readonly FeatureSystem _featSys;
-		private readonly Segmenter _segmenter;
+		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly BindableList<SoundClassViewModel> _soundClasses;
 		private SoundClassViewModel _currentSoundClass;
@@ -22,21 +22,14 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _removeSoundClassCommand;
 		private readonly ICommand _moveSoundClassUpCommand;
 		private readonly ICommand _moveSoundClassDownCommand;
-		private readonly bool _displaySonority;
+		private bool _displaySonority;
 
-		public SoundClassesViewModel(IDialogService dialogService, FeatureSystem featSys, Segmenter segmenter, IEnumerable<SoundClassViewModel> soundClasses, bool displaySonority)
+		public SoundClassesViewModel(IProjectService projectService, IDialogService dialogService)
 		{
+			_projectService = projectService;
 			_dialogService = dialogService;
-			_featSys = featSys;
-			_segmenter = segmenter;
 			_soundClasses = new BindableList<SoundClassViewModel>();
-			foreach (SoundClassViewModel soundClass in soundClasses)
-			{
-				_soundClasses.Add(soundClass);
-				soundClass.PropertyChanged += ChildPropertyChanged;
-			}
-			if (_soundClasses.Count > 0)
-				_currentSoundClass = _soundClasses[0];
+			_soundClasses.CollectionChanged += _soundClasses_CollectionChanged;
 
 			_newNaturalClassCommand = new RelayCommand(NewNaturalClass);
 			_newUnnaturalClassCommand = new RelayCommand(NewUnnaturalClass);
@@ -44,12 +37,46 @@ namespace SIL.Cog.Applications.ViewModels
 			_removeSoundClassCommand = new RelayCommand(RemoveSoundClass, CanRemoveSoundClass);
 			_moveSoundClassUpCommand = new RelayCommand(MoveSoundClassUp, CanMoveSoundClassUp);
 			_moveSoundClassDownCommand = new RelayCommand(MoveSoundClassDown, CanMoveSoundClassDown);
-			_displaySonority = displaySonority;
+		}
+
+		private void _soundClasses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddSoundClasses(e.NewItems.Cast<SoundClassViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					RemoveSoundClasses(e.OldItems.Cast<SoundClassViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Replace:
+					RemoveSoundClasses(e.OldItems.Cast<SoundClassViewModel>());
+					AddSoundClasses(e.NewItems.Cast<SoundClassViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Reset:
+					AddSoundClasses(_soundClasses);
+					break;
+			}
+		}
+
+		private void AddSoundClasses(IEnumerable<SoundClassViewModel> soundClasses)
+		{
+			foreach (SoundClassViewModel soundClass in soundClasses)
+				soundClass.PropertyChanged += ChildPropertyChanged;
+		}
+
+		private void RemoveSoundClasses(IEnumerable<SoundClassViewModel> soundClasses)
+		{
+			foreach (SoundClassViewModel soundClass in soundClasses)
+				soundClass.PropertyChanged -= ChildPropertyChanged;
 		}
 
 		private void NewNaturalClass()
 		{
-			var vm = new EditNaturalClassViewModel(_featSys, _soundClasses.Select(nc => nc.DomainSoundClass));
+			var vm = new EditNaturalClassViewModel(_projectService.Project.FeatureSystem, _soundClasses.Select(nc => nc.DomainSoundClass));
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var fs = new FeatureStruct();
@@ -58,7 +85,6 @@ namespace SIL.Cog.Applications.ViewModels
 					fs.AddValue(feature.DomainFeature, feature.CurrentValue.DomainSymbol);
 				var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _displaySonority ? 0 : -1);
 				IsChanged = true;
-				newNaturalClass.PropertyChanged += ChildPropertyChanged;
 				_soundClasses.Add(newNaturalClass);
 				CurrentSoundClass = newNaturalClass;
 			}
@@ -66,12 +92,11 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void NewUnnaturalClass()
 		{
-			var vm = new EditUnnaturalClassViewModel(_dialogService, _segmenter, _soundClasses.Select(nc => nc.DomainSoundClass));
+			var vm = new EditUnnaturalClassViewModel(_dialogService, _projectService.Project.Segmenter, _soundClasses.Select(nc => nc.DomainSoundClass));
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _segmenter), _displaySonority ? 0 : -1);
+				var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _projectService.Project.Segmenter), _displaySonority ? 0 : -1);
 				IsChanged = true;
-				newUnnaturalClass.PropertyChanged += ChildPropertyChanged;
 				_soundClasses.Add(newUnnaturalClass);
 				CurrentSoundClass = newUnnaturalClass;
 			}
@@ -87,7 +112,7 @@ namespace SIL.Cog.Applications.ViewModels
 			var currentNC = _currentSoundClass.DomainSoundClass as NaturalClass;
 			if (currentNC != null)
 			{
-				var vm = new EditNaturalClassViewModel(_featSys, _soundClasses.Select(nc => nc.DomainSoundClass), currentNC);
+				var vm = new EditNaturalClassViewModel(_projectService.Project.FeatureSystem, _soundClasses.Select(nc => nc.DomainSoundClass), currentNC);
 				if (_dialogService.ShowModalDialog(this, vm) == true)
 				{
 					var fs = new FeatureStruct();
@@ -97,7 +122,6 @@ namespace SIL.Cog.Applications.ViewModels
 					var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _currentSoundClass.Sonority);
 					int index = _soundClasses.IndexOf(_currentSoundClass);
 					IsChanged = true;
-					newNaturalClass.PropertyChanged += ChildPropertyChanged;
 					_soundClasses[index] = newNaturalClass;
 					CurrentSoundClass = newNaturalClass;
 				}
@@ -107,13 +131,12 @@ namespace SIL.Cog.Applications.ViewModels
 				var currentUnc = _currentSoundClass.DomainSoundClass as UnnaturalClass;
 				if (currentUnc != null)
 				{
-					var vm = new EditUnnaturalClassViewModel(_dialogService, _segmenter, _soundClasses.Select(nc => nc.DomainSoundClass), currentUnc);
+					var vm = new EditUnnaturalClassViewModel(_dialogService, _projectService.Project.Segmenter, _soundClasses.Select(nc => nc.DomainSoundClass), currentUnc);
 					if (_dialogService.ShowModalDialog(this, vm) == true)
 					{
-						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _segmenter), _currentSoundClass.Sonority);
+						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _projectService.Project.Segmenter), _currentSoundClass.Sonority);
 						int index = _soundClasses.IndexOf(_currentSoundClass);
 						IsChanged = true;
-						newUnnaturalClass.PropertyChanged += ChildPropertyChanged;
 						_soundClasses[index] = newUnnaturalClass;
 						CurrentSoundClass = newUnnaturalClass;
 					}
@@ -176,6 +199,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public bool DisplaySonority
 		{
 			get { return _displaySonority; }
+			set { Set(() => DisplaySonority, ref _displaySonority, value); }
 		}
 
 		public ObservableList<SoundClassViewModel> SoundClasses

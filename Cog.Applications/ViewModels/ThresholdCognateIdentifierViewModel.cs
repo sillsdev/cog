@@ -1,3 +1,4 @@
+using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 
@@ -5,21 +6,13 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ThresholdCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly IProjectService _projectService;
 		private double _threshold;
-		private readonly CogProject _project;
 
-		public ThresholdCognateIdentifierViewModel(CogProject project)
+		public ThresholdCognateIdentifierViewModel(IProjectService projectService)
 			: base("Phonetic")
 		{
-			_project = project;
-			_threshold = 0.75;
-		}
-
-		public ThresholdCognateIdentifierViewModel(CogProject project, ThresholdCognateIdentifier cognateIdentifier)
-			: base("Phonetic")
-		{
-			_project = project;
-			_threshold = cognateIdentifier.Threshold;
+			_projectService = projectService;
 		}
 
 		public double Threshold
@@ -28,10 +21,17 @@ namespace SIL.Cog.Applications.ViewModels
 			set { SetChanged(() => Threshold, ref _threshold, value); }
 		}
 
+		public override void Setup()
+		{
+			IProcessor<VarietyPair> cognateIdentifier = _projectService.Project.VarietyPairProcessors["cognateIdentifier"];
+			var threshold = cognateIdentifier as ThresholdCognateIdentifier;
+			Set(() => Threshold, ref _threshold, threshold == null ? 0.75 : threshold.Threshold);
+		}
+
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new ThresholdCognateIdentifier(_project, _threshold, "primary");
-			_project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			var cognateIdentifier = new ThresholdCognateIdentifier(_projectService.Project, _threshold, "primary");
+			_projectService.Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
 			return cognateIdentifier;
 		}
 	}

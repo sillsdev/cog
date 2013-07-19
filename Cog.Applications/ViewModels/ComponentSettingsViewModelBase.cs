@@ -14,6 +14,8 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _displayName; }
 		}
 
+		public abstract void Setup();
+
 		public abstract object UpdateComponent();
 	}
 }

@@ -24,16 +24,23 @@ namespace SIL.Cog.Applications.ViewModels
 
 	public class AlineViewModel : ComponentSettingsViewModelBase
 	{
-		private readonly CogProject _project;
+		private readonly IProjectService _projectService;
 		private AlineMode _mode;
 		private bool _expansionCompressionEnabled;
-		private readonly ReadOnlyList<RelevantFeatureViewModel> _features;
+		private ReadOnlyList<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
 
-		public AlineViewModel(IDialogService dialogService, CogProject project, Aline aligner)
+		public AlineViewModel(IProjectService projectService, SoundClassesViewModel soundClasses)
 			: base("Alignment")
 		{
-			_project = project;
+			_projectService = projectService;
+			_soundClasses = soundClasses;
+			_soundClasses.PropertyChanged += ChildPropertyChanged;
+		}
+
+		public override void Setup()
+		{
+			var aligner = (Aline) _projectService.Project.WordAligners["primary"];
 			var features = new List<RelevantFeatureViewModel>();
 			foreach (KeyValuePair<SymbolicFeature, int> kvp in aligner.FeatureWeights)
 			{
@@ -41,25 +48,28 @@ namespace SIL.Cog.Applications.ViewModels
 				vm.PropertyChanged += ChildPropertyChanged;
 				features.Add(vm);
 			}
-			_features = new ReadOnlyList<RelevantFeatureViewModel>(features);
+			Set(() => Features, ref _features, new ReadOnlyList<RelevantFeatureViewModel>(features));
 			switch (aligner.Settings.Mode)
 			{
 				case AlignmentMode.Local:
-					_mode = AlineMode.Local;
+					Set(() => Mode, ref _mode, AlineMode.Local);
 					break;
 				case AlignmentMode.Global:
-					_mode = AlineMode.Global;
+					Set(() => Mode, ref _mode, AlineMode.Global);
 					break;
 				case AlignmentMode.SemiGlobal:
-					_mode = AlineMode.SemiGlobal;
+					Set(() => Mode, ref _mode, AlineMode.SemiGlobal);
 					break;
 				case AlignmentMode.HalfLocal:
-					_mode = AlineMode.HalfLocal;
+					Set(() => Mode, ref _mode, AlineMode.HalfLocal);
 					break;
 			}
-			_expansionCompressionEnabled = aligner.Settings.ExpansionCompressionEnabled;
-			_soundClasses = new SoundClassesViewModel(dialogService, _project.FeatureSystem, _project.Segmenter, aligner.ContextualSoundClasses.Select(sc => new SoundClassViewModel(sc)), false);
-			_soundClasses.PropertyChanged += ChildPropertyChanged;
+			Set(() => ExpansionCompressionEnabled, ref _expansionCompressionEnabled, aligner.Settings.ExpansionCompressionEnabled);
+
+			_soundClasses.CurrentSoundClass = null;
+			_soundClasses.SoundClasses.Clear();
+			foreach (SoundClass soundClass in aligner.ContextualSoundClasses)
+				_soundClasses.SoundClasses.Add(new SoundClassViewModel(soundClass));
 		}
 
 		public AlineMode Mode
@@ -127,7 +137,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			var aligner = new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass)});
-			_project.WordAligners["primary"] = aligner;
+			_projectService.Project.WordAligners["primary"] = aligner;
 			return aligner;
 		}
 	}

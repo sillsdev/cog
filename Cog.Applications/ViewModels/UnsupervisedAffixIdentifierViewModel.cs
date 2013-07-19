@@ -1,4 +1,4 @@
-using SIL.Cog.Domain;
+using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain.Components;
 using SIL.Machine;
 
@@ -6,20 +6,25 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase
 	{
-		private readonly CogProject _project;
+		private readonly IProjectService _projectService;
 		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private double _threshold;
 		private int _maxAffixLength;
 		private bool _categoryRequired;
 
-		public UnsupervisedAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, CogProject project, UnsupervisedAffixIdentifier identifier)
+		public UnsupervisedAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, IProjectService projectService)
 			: base("Automatic stemmer")
 		{
 			_spanFactory = spanFactory;
-			_project = project;
-			_threshold = identifier.Threshold;
-			_maxAffixLength = identifier.MaxAffixLength;
-			_categoryRequired = identifier.CategoryRequired;
+			_projectService = projectService;
+		}
+
+		public override void Setup()
+		{
+			var identifier = (UnsupervisedAffixIdentifier) _projectService.Project.VarietyProcessors["affixIdentifier"];
+			Set(() => Threshold, ref _threshold, identifier.Threshold);
+			Set(() => MaxAffixLength, ref _maxAffixLength, identifier.MaxAffixLength);
+			Set(() => CategoryRequired, ref _categoryRequired, identifier.CategoryRequired);
 		}
 
 		public double Threshold
@@ -43,7 +48,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public override object UpdateComponent()
 		{
 			var affixIdentifier = new UnsupervisedAffixIdentifier(_spanFactory, _threshold, _maxAffixLength, _categoryRequired);
-			_project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
+			_projectService.Project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
 			return affixIdentifier;
 		}
 	}

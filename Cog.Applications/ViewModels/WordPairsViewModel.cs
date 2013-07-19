@@ -21,7 +21,6 @@ namespace SIL.Cog.Applications.ViewModels
 		public WordPairsViewModel(IWordAligner aligner, IEnumerable<WordPair> wordPairs, bool areVarietiesInOrder)
 			: this(wordPairs.Select(pair => new WordPairViewModel(aligner, pair, areVarietiesInOrder)))
 		{
-			_wordPairsView = new Lazy<ListCollectionView>(() => new ListCollectionView(_wordPairs), false);
 		}
 
 		public WordPairsViewModel()
@@ -33,6 +32,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_wordPairs = new BindableList<WordPairViewModel>(wordPairs);
 			_wordPairs.CollectionChanged += _wordPairs_CollectionChanged;
+			_wordPairsView = new Lazy<ListCollectionView>(() => new ListCollectionView(_wordPairs), false);
 			_selectedWordPairs = new BindableList<WordPairViewModel>();
 			_selectedCorrespondenceWordPairs = new BindableList<WordPairViewModel>();
 		}

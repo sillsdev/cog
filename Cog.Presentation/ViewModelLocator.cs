@@ -45,6 +45,8 @@ namespace SIL.Cog.Presentation
 			////    // Create run time view services and models
 			////    SimpleIoc.Default.Register<IDataService, DataService>();
 			////}
+			
+			// Services
 			builder.RegisterType<AnalysisService>().As<IAnalysisService>().SingleInstance();
 			builder.RegisterType<ProjectService>().As<IProjectService>().SingleInstance();
 			builder.RegisterType<WindowViewModelMappings>().As<IWindowViewModelMappings>().SingleInstance();
@@ -56,10 +58,13 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<ImageExportService>().As<IImageExportService>().SingleInstance();
 			builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
 
+			// Master view models
 			builder.RegisterType<MainWindowViewModel>().SingleInstance();
 			builder.RegisterType<InputMasterViewModel>().SingleInstance();
 			builder.RegisterType<CompareMasterViewModel>().SingleInstance();
 			builder.RegisterType<AnalyzeMasterViewModel>().SingleInstance();
+
+			// Workspace view models
 			builder.RegisterType<WordListsViewModel>().SingleInstance();
 			builder.RegisterType<VarietiesViewModel>().SingleInstance();
 			builder.RegisterType<SensesViewModel>().SingleInstance();
@@ -72,6 +77,21 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<GeographicalViewModel>().SingleInstance();
 			builder.RegisterType<GlobalCorrespondencesViewModel>().SingleInstance();
 			builder.RegisterType<MultipleWordAlignmentViewModel>().SingleInstance();
+
+			// Component settings view models
+	        builder.RegisterType<SspSyllabifierViewModel>().SingleInstance();
+	        builder.RegisterType<UnsupervisedAffixIdentifierViewModel>().SingleInstance();
+	        builder.RegisterType<AlineViewModel>().SingleInstance();
+	        builder.RegisterType<EMSoundChangeInducerViewModel>().SingleInstance();
+	        builder.RegisterType<CognateIdentifierOptionsViewModel>().SingleInstance();
+	        builder.RegisterType<BlairCognateIdentifierViewModel>().SingleInstance();
+	        builder.RegisterType<ThresholdCognateIdentifierViewModel>().SingleInstance();
+	        builder.RegisterType<DolgopolskyCognateIdentifierViewModel>().SingleInstance();
+	        builder.RegisterType<SimilarSegmentMappingsOptionsViewModel>();
+	        builder.RegisterType<ThresholdSimilarSegmentMappingsViewModel>();
+	        builder.RegisterType<ListSimilarSegmentMappingsViewModel>();
+	        builder.RegisterType<SoundClassesViewModel>();
+	        builder.RegisterType<SegmentMappingsViewModel>();
 
 	        _container = builder.Build();
         }

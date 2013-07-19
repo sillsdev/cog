@@ -195,7 +195,7 @@ namespace SIL.Cog.Applications.ViewModels
 				bool match = false;
 				switch (_findViewModel.Field)
 				{
-					case FindField.Word:
+					case FindField.Form:
 						match = curWordPair.DomainWordPair.Word1.StrRep.Contains(_findViewModel.String)
 							|| curWordPair.DomainWordPair.Word2.StrRep.Contains(_findViewModel.String);
 						break;

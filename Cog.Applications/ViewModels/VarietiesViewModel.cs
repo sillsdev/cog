@@ -63,7 +63,7 @@ namespace SIL.Cog.Applications.ViewModels
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
 						new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
-						new TaskAreaCommandViewModel("Word", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
+						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
 				new TaskAreaCommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
@@ -161,7 +161,7 @@ namespace SIL.Cog.Applications.ViewModels
 				bool match = false;
 				switch (_findViewModel.Field)
 				{
-					case FindField.Word:
+					case FindField.Form:
 						match = curWord.StrRep.Contains(_findViewModel.String);
 						break;
 

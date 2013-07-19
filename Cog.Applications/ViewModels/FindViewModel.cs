@@ -9,8 +9,8 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public enum FindField
 	{
-		[Description("Word")]
-		Word,
+		[Description("Form")]
+		Form,
 		[Description("Sense")]
 		Sense
 	}

@@ -43,8 +43,8 @@ namespace SIL.Cog.Applications.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaItemsViewModel("Sort words by",
 					new TaskAreaCommandGroupViewModel(
-						new TaskAreaCommandViewModel("Variety", new RelayCommand(() => SortBy("Variety.Name"))),
-						new TaskAreaCommandViewModel("Word", new RelayCommand(() => SortBy("StrRep")))),
+						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortBy("StrRep", ListSortDirection.Ascending))),
+						new TaskAreaCommandViewModel("Variety", new RelayCommand(() => SortBy("Variety.Name", ListSortDirection.Ascending)))),
 					showCognateSets)));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
@@ -54,7 +54,7 @@ namespace SIL.Cog.Applications.ViewModels
 			Debug.Assert(_wordsView.GroupDescriptions != null);
 			_wordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
 			_wordsView.SortDescriptions.Add(new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
-			_wordsView.SortDescriptions.Add(new SortDescription("Variety.Name", ListSortDirection.Ascending));
+			_wordsView.SortDescriptions.Add(new SortDescription("StrRep", ListSortDirection.Ascending));
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetAlignment());
@@ -96,10 +96,10 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		private void SortBy(string property)
+		private void SortBy(string property, ListSortDirection sortDirection)
 		{
 			Debug.Assert(_wordsView.GroupDescriptions != null);
-			_wordsView.SortDescriptions[_wordsView.GroupDescriptions.Count > 0 ? 1 : 0] = new SortDescription(property, ListSortDirection.Ascending);
+			_wordsView.SortDescriptions[_wordsView.GroupDescriptions.Count > 0 ? 1 : 0] = new SortDescription(property, sortDirection);
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)

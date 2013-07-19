@@ -135,7 +135,7 @@ namespace SIL.Cog.Applications.ViewModels
 			int senseIndex = variety.Senses.IndexOf(curVarietySense);
 			switch (_findViewModel.Field)
 			{
-				case FindField.Word:
+				case FindField.Form:
 					int varietyIndex = _varieties.IndexOf(variety);
 					do
 					{

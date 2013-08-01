@@ -36,11 +36,13 @@ namespace SIL.Cog.Applications.Services
 
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
+		private readonly IBusyService _busyService;
 
-		public ExportService(IProjectService projectService, IDialogService dialogService)
+		public ExportService(IProjectService projectService, IDialogService dialogService, IBusyService busyService)
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
+			_busyService = busyService;
 		}
 
 		public bool ExportSimilarityMatrix(object ownerViewModel, SimilarityMetric similarityMetric)
@@ -48,7 +50,7 @@ namespace SIL.Cog.Applications.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Similarity Matrix", SimilarityMatrixExporters.Keys);
 			if (result.IsValid)
 			{
-				SimilarityMatrixExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project, similarityMetric);
+				_busyService.ShowBusyIndicator(() => SimilarityMatrixExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project, similarityMetric));
 				return true;
 			}
 			return false;
@@ -59,7 +61,7 @@ namespace SIL.Cog.Applications.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Word Lists", WordListsExporters.Keys);
 			if (result.IsValid)
 			{
-				WordListsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project);
+				_busyService.ShowBusyIndicator(() => WordListsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project));
 				return true;
 			}
 			return false;
@@ -70,7 +72,7 @@ namespace SIL.Cog.Applications.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Cognate Sets", CognateSetsExporters.Keys);
 			if (result.IsValid)
 			{
-				CognateSetsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project);
+				_busyService.ShowBusyIndicator(() => CognateSetsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project));
 				return true;
 			}
 			return false;
@@ -81,7 +83,7 @@ namespace SIL.Cog.Applications.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Variety Pair", VarietyPairExporters.Keys);
 			if (result.IsValid)
 			{
-				VarietyPairExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project.WordAligners["primary"], varietyPair);
+				_busyService.ShowBusyIndicator(() => VarietyPairExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project.WordAligners["primary"], varietyPair));
 				return true;
 			}
 			return false;

@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.Threading;
+﻿using System;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Presentation.Views;
 
@@ -8,7 +8,13 @@ namespace SIL.Cog.Presentation.Services
 	{
 		public void ShowBusyIndicatorUntilUpdated()
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(BusyCursor.DisplayUntilIdle);
+			BusyCursor.DisplayUntilIdle();
+		}
+
+		public void ShowBusyIndicator(Action action)
+		{
+			using (BusyCursor.Display())
+				action();
 		}
 	}
 }

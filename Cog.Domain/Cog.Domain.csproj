@@ -60,6 +60,7 @@
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
     <Compile Include="Components\SegmentDistributionCalculator.cs" />
     <Compile Include="Components\SonorityClass.cs" />
+    <Compile Include="Components\SimpleSyllabifier.cs" />
     <Compile Include="Components\VarietySegmenter.cs" />
     <Compile Include="Components\SspSyllabifier.cs" />
     <Compile Include="Components\WordAlignerBase.cs" />

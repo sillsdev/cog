@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SIL.Collections;
@@ -120,28 +121,41 @@ namespace SIL.Cog.Domain
 			Annotation<ShapeNode> prefixAnn = Prefix;
 			if (prefixAnn != null)
 			{
-				sb.Append(prefixAnn.OriginalStrRep());
+				sb.Append(string.Concat(GetOriginalStrRep(prefixAnn)));
 				sb.Append(" ");
 			}
 			sb.Append("|");
-			bool first = true;
-			foreach (ShapeNode node in _shape.GetNodes(Stem.Span))
-			{
-				if (!first)
-					sb.Append(" ");
-				sb.Append(node.OriginalStrRep());
-				first = false;
-			}
+			sb.Append(string.Join(" ", GetOriginalStrRep(Stem)));
 			sb.Append("|");
 
 			Annotation<ShapeNode> suffixAnn = Suffix;
 			if (suffixAnn != null)
 			{
 				sb.Append(" ");
-				sb.Append(suffixAnn.OriginalStrRep());
+				sb.Append(string.Concat(GetOriginalStrRep(suffixAnn)));
 			}
 
 			return sb.ToString();
+		}
+
+		private IEnumerable<string> GetOriginalStrRep(Annotation<ShapeNode> ann)
+		{
+			foreach (Annotation<ShapeNode> child in ann.Children)
+			{
+				foreach (ShapeNode node in _shape.GetNodes(child.Span))
+				{
+					string strRep = node.OriginalStrRep();
+					if (string.IsNullOrEmpty(strRep))
+						continue;
+
+					yield return strRep;
+				}
+				if (child.Type() == CogFeatureSystem.SyllableType && child.Span.End != ann.Span.End
+					&& !child.Span.End.Next.Type().IsOneOf(CogFeatureSystem.BoundaryType, CogFeatureSystem.ToneLetterType))
+				{
+					yield return ".";
+				}
+			}
 		}
 	}
 }

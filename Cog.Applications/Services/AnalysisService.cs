@@ -45,6 +45,8 @@ namespace SIL.Cog.Applications.Services
 			IProcessor<Variety> syllabifier;
 			if (project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
 				processors.Add(syllabifier);
+			else
+				processors.Add(new SimpleSyllabifier());
 			processors.Add(new SegmentDistributionCalculator());
 			return processors;
 		}

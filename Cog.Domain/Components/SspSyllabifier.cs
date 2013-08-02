@@ -7,12 +7,14 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class SspSyllabifier : IProcessor<Variety>
+	public class SspSyllabifier : SimpleSyllabifier
 	{
 		private readonly List<SonorityClass> _sonorityScale;
+		private readonly HashSet<string> _initialOnsets; 
 
 		public SspSyllabifier(IEnumerable<SonorityClass> sonorityScale)
 		{
+			_initialOnsets = new HashSet<string>();
 			_sonorityScale = sonorityScale.ToList();
 		}
 
@@ -21,21 +23,20 @@ namespace SIL.Cog.Domain.Components
 			get { return _sonorityScale; }
 		}
 
-		public void Process(Variety data)
+		public override void Process(Variety data)
 		{
-			var initialOnsets = new HashSet<string>();
+			_initialOnsets.Clear();
 			foreach (Word word in data.Words.Where(w => w.IsValid))
 			{
 				string prefixOnset = GetInitialOnset(word.Prefix);
 				if (prefixOnset != null)
-					initialOnsets.Add(prefixOnset);
+					_initialOnsets.Add(prefixOnset);
 				string stemOnset = GetInitialOnset(word.Stem);
 				if (stemOnset != null)
-					initialOnsets.Add(stemOnset);
+					_initialOnsets.Add(stemOnset);
 			}
 
-			foreach (Word word in data.Words)
-				Syllabify(initialOnsets, word);
+			base.Process(data);
 		}
 
 		private string GetInitialOnset(Annotation<ShapeNode> ann)
@@ -53,153 +54,42 @@ namespace SIL.Cog.Domain.Components
 			return ann.Span.Start.GetNodes(node.Prev).StrRep();
 		}
 
-		private void Syllabify(HashSet<string> initialOnsets, Word word)
+		protected override void SyllabifyUnmarkedAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			Shape newShape = null;
-			ShapeNode start = null;
-			IEnumerable<ShapeNode> nodes;
-			if (SyllabifyAnnotation(initialOnsets, word, word.Prefix, out nodes))
-			{
-				newShape = CreateEmptyShape(word.Shape.SpanFactory);
-				newShape.AddRange(nodes);
-				newShape.Annotations.Add(newShape.First, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.PrefixType).Value);
-				start = newShape.Last;
-			}
-			if (SyllabifyAnnotation(initialOnsets, word, word.Stem, out nodes))
-			{
-				if (newShape == null)
-				{
-					newShape = CreateEmptyShape(word.Shape.SpanFactory);
-					if (word.Prefix != null)
-						word.Shape.CopyTo(word.Prefix.Span, newShape);
-					start = newShape.End.Prev;
-				}
-				newShape.AddRange(nodes);
-				newShape.Annotations.Add(start.Next, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.StemType).Value);
-				start = newShape.Last;
-			}
-			else if (newShape != null)
-			{
-				word.Shape.CopyTo(word.Stem.Span, newShape);
-			}
-			if (SyllabifyAnnotation(initialOnsets, word, word.Suffix, out nodes))
-			{
-				if (newShape == null)
-				{
-					newShape = CreateEmptyShape(word.Shape.SpanFactory);
-					if (word.Prefix != null)
-						word.Shape.CopyTo(word.Prefix.Span, newShape);
-					word.Shape.CopyTo(word.Stem.Span, newShape);
-					start = newShape.End.Prev;
-				}
-				newShape.AddRange(nodes);
-				newShape.Annotations.Add(start.Next, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SuffixType).Value);
-			}
-			else if (word.Suffix != null && newShape != null)
-			{
-				word.Shape.CopyTo(word.Suffix.Span, newShape);
-			}
-
-			if (newShape != null)
-			{
-				newShape.Freeze();
-				word.Shape = newShape;
-			}
-		}
-
-		private static Shape CreateEmptyShape(SpanFactory<ShapeNode> spanFactory)
-		{
-			return new Shape(spanFactory, begin => new ShapeNode(spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
-		}
-
-		private bool SyllabifyAnnotation(HashSet<string> initialOnsets, Word word, Annotation<ShapeNode> ann, out IEnumerable<ShapeNode> nodes)
-		{
-			if (ann == null)
-			{
-				nodes = null;
-				return false;
-			}
-
-			var clusters = new List<Span<ShapeNode>>();
 			ShapeNode[] annNodes = word.Shape.GetNodes(ann.Span).ToArray();
-			if (annNodes.Any(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType)))
+			ShapeNode syllableStart = null;
+			int prevSonority = -1, curSonority = -1, nextSonority = -1;
+			foreach (ShapeNode node in annNodes)
 			{
-				ShapeNode syllableStart = annNodes[0];
-				ShapeNode node = syllableStart.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
-				while (ann.Span.Contains(node))
+				ShapeNode nextNode = node.Next;
+				if (ann.Span.Contains(nextNode))
 				{
-					ProcessSyllable(initialOnsets, word, clusters, syllableStart, node.Prev);
-					syllableStart = node.Next;
-					node = node.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
-				}
-				ProcessSyllable(initialOnsets, word, clusters, syllableStart, ann.Span.End);
-			}
-			else
-			{
-				ShapeNode syllableStart = null;
-				int prevSonority = -1, curSonority = -1, nextSonority = -1;
-				foreach (ShapeNode node in annNodes)
-				{
-					ShapeNode nextNode = node.Next;
-					if (ann.Span.Contains(nextNode))
+					nextSonority = GetSonority(word.Variety.SegmentPool, nextNode);
+					if (curSonority == -1)
 					{
-						nextSonority = GetSonority(word.Variety.SegmentPool, nextNode);
-						if (curSonority == -1)
-						{
-							curSonority = GetSonority(word.Variety.SegmentPool, node);
-						}
-						else if ((curSonority < prevSonority && curSonority < nextSonority) || (curSonority == prevSonority))
-						{
-							ProcessSyllable(initialOnsets, word, clusters, syllableStart, node.Prev);
-							syllableStart = null;
-						}
+						curSonority = GetSonority(word.Variety.SegmentPool, node);
 					}
-					if (syllableStart == null)
-						syllableStart = node;
-					prevSonority = curSonority;
-					curSonority = nextSonority;
-				}
-				ProcessSyllable(initialOnsets, word, clusters, syllableStart, ann.Span.End);
-			}
-
-			if (clusters.Count > 0)
-			{
-				var nodesList = new List<ShapeNode>();
-				ShapeNode node = ann.Span.Start;
-				foreach (Span<ShapeNode> cluster in clusters)
-				{
-					while (node != cluster.Start)
+					else if ((curSonority < prevSonority && curSonority < nextSonority) || (curSonority == prevSonority))
 					{
-						nodesList.Add(node.DeepClone());
-						node = node.Next;
+						ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
+						syllableStart = null;
 					}
-					nodesList.Add(Combine(cluster));
-					node = cluster.End.Next;
 				}
-
-				while (node != ann.Span.End.Next)
-				{
-					nodesList.Add(node.DeepClone());
-					node = node.Next;
-				}
-
-				nodes = nodesList;
-				return true;
+				if (syllableStart == null)
+					syllableStart = node;
+				prevSonority = curSonority;
+				curSonority = nextSonority;
 			}
-
-			nodes = null;
-			return false;
+			ProcessSyllableWithMaximalOnset(syllableStart, ann.Span.End, newShape);
 		}
 
-		private void ProcessSyllable(HashSet<string> initialOnsets, Word word, List<Span<ShapeNode>> clusters, ShapeNode startNode, ShapeNode endNode)
+		private void ProcessSyllableWithMaximalOnset(ShapeNode startNode, ShapeNode endNode, Shape newShape)
 		{
 			ShapeNode node = startNode;
 			ShapeNode onsetStart = node;
 			while (node.Type() == CogFeatureSystem.ConsonantType && node != endNode.Next)
 				node = node.Next;
 			ShapeNode onsetEnd = node.Prev;
-			SpanFactory<ShapeNode> spanFactory = word.Shape.SpanFactory;
-
 			if (onsetStart != node && onsetStart != onsetEnd)
 			{
 				ShapeNode n = onsetStart;
@@ -208,11 +98,11 @@ namespace SIL.Cog.Domain.Components
 					for (; n != onsetEnd.Next; n = n.Next)
 					{
 						string onsetStr = n.GetNodes(onsetEnd).StrRep();
-						if (initialOnsets.Contains(onsetStr))
+						if (_initialOnsets.Contains(onsetStr))
 							break;
 					}
 
-					// TODO: ambiguous onset, what should we do?
+					// TODO: ambiguous onset, what should we do? For now, we just assume maximal onset
 					if (n == onsetEnd.Next)
 						n = onsetStart;
 				}
@@ -220,61 +110,38 @@ namespace SIL.Cog.Domain.Components
 				{
 					if (onsetStart.Prev.Type() == CogFeatureSystem.ConsonantType)
 					{
-						if (clusters.Count > 0 && clusters[clusters.Count - 1].End == onsetStart.Prev)
-							clusters[clusters.Count - 1] = spanFactory.Create(clusters[clusters.Count - 1].Start, n.Prev);
-						else
-							clusters.Add(spanFactory.Create(onsetStart.Prev, n.Prev));
+						CombineWith(onsetStart.Prev, onsetStart, n.Prev);
 					}
-					else if (n.Prev != onsetStart)
+					else
 					{
-						clusters.Add(spanFactory.Create(onsetStart, n.Prev));
+						newShape.Add(onsetStart != n.Prev ? Combine(newShape.SpanFactory, onsetStart, n.Prev) : onsetStart.DeepClone());
+						Annotation<ShapeNode> prevSyllableAnn = newShape.Annotations.Last(ann => ann.Type() == CogFeatureSystem.SyllableType);
+						prevSyllableAnn.Remove();
+						newShape.Annotations.Add(prevSyllableAnn.Span.Start, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
 					}
+					startNode = n;
 				}
-				if (n != onsetEnd)
-					clusters.Add(spanFactory.Create(n, onsetEnd));
 			}
 
-			if (node != endNode.Next)
-			{
-				ShapeNode nucleusStart = node;
-				while (node.Type() == CogFeatureSystem.VowelType && node != endNode.Next)
-					node = node.Next;
-				ShapeNode nucleusEnd = node.Prev;
-
-				if (nucleusStart != nucleusEnd)
-					clusters.Add(spanFactory.Create(nucleusStart, nucleusEnd));
-			}
-
-			if (node != endNode.Next)
-			{
-				ShapeNode codaStart = node;
-				while (node.Type() == CogFeatureSystem.ConsonantType && node != endNode.Next)
-					node = node.Next;
-				ShapeNode codaEnd = node.Prev;
-
-				if (codaStart != codaEnd)
-					clusters.Add(spanFactory.Create(codaStart, codaEnd));
-			}
+			ProcessSyllable(startNode, endNode, newShape);
 		}
 
-		private ShapeNode Combine(Span<ShapeNode> span)
+		private void CombineWith(ShapeNode node, ShapeNode start, ShapeNode end)
 		{
-			var fs = span.Start.Annotation.FeatureStruct.DeepClone();
 			var strRep = new StringBuilder();
 			var origStrRep = new StringBuilder();
-			strRep.Append(span.Start.StrRep());
-			origStrRep.Append(span.Start.OriginalStrRep());
-			ShapeNode node = span.Start.Next;
-			while (node != span.End.Next)
+			strRep.Append(node.StrRep());
+			origStrRep.Append(node.OriginalStrRep());
+			ShapeNode n = start;
+			while (n != end.Next)
 			{
-				strRep.Append(node.StrRep());
-				origStrRep.Append(node.OriginalStrRep());
-				fs.Add(node.Annotation.FeatureStruct);
-				node = node.Next;
+				strRep.Append(n.StrRep());
+				origStrRep.Append(n.OriginalStrRep());
+				node.Annotation.FeatureStruct.Add(n.Annotation.FeatureStruct);
+				n = n.Next;
 			}
-			fs.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
-			fs.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
-			return new ShapeNode(span.SpanFactory, fs);
+			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
+			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
 		}
 
 		private int GetSonority(SegmentPool segmentPool, ShapeNode node)

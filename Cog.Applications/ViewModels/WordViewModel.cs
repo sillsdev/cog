@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -66,17 +66,31 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				Annotation<ShapeNode> prefixAnn = _word.Prefix;
 				if (prefixAnn != null)
-					segments.AddRange(_word.Shape.GetNodes(prefixAnn.Span).Select(node => new WordSegmentViewModel(node)));
-				segments.Add(new WordSegmentViewModel());
-				segments.AddRange(_word.Shape.GetNodes(_word.Stem.Span).Select(node => new WordSegmentViewModel(node)));
-				segments.Add(new WordSegmentViewModel());
+					segments.AddRange(GetSegments(prefixAnn));
+				segments.Add(new WordSegmentViewModel("|"));
+				segments.AddRange(GetSegments(_word.Stem));
+				segments.Add(new WordSegmentViewModel("|"));
 				Annotation<ShapeNode> suffixAnn = _word.Suffix;
 				if (suffixAnn != null)
-					segments.AddRange(_word.Shape.GetNodes(suffixAnn.Span).Select(node => new WordSegmentViewModel(node)));
+					segments.AddRange(GetSegments(suffixAnn));
 			}
 			segments.CollectionChanged += SegmentsChanged;
 			Set("Segments", ref _segments, segments);
 			IsValid = _word.Shape != null && _word.Shape.Count > 0;
+		}
+
+		private IEnumerable<WordSegmentViewModel> GetSegments(Annotation<ShapeNode> ann)
+		{
+			foreach (Annotation<ShapeNode> child in ann.Children)
+			{
+				foreach (ShapeNode node in _word.Shape.GetNodes(child.Span))
+					yield return new WordSegmentViewModel(node);
+				if (child.Type() == CogFeatureSystem.SyllableType && child.Span.End != ann.Span.End
+					&& !child.Span.End.Next.Type().IsOneOf(CogFeatureSystem.BoundaryType, CogFeatureSystem.ToneLetterType))
+				{
+					yield return new WordSegmentViewModel(".");
+				}
+			}
 		}
 
 		private void SegmentsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -90,14 +104,16 @@ namespace SIL.Cog.Applications.ViewModels
 			int index = 0;
 			while (!_segments[i].IsBoundary)
 			{
-				index += _segments[i].OriginalStrRep.Length;
+				if (!_segments[i].IsNotInOriginal)
+					index += _segments[i].DomainNode.OriginalStrRep().Length;
 				i++;
 			}
 			_word.StemIndex = index;
 			i++;
 			while (!_segments[i].IsBoundary)
 			{
-				index += _segments[i].OriginalStrRep.Length;
+				if (!_segments[i].IsNotInOriginal)
+					index += _segments[i].DomainNode.OriginalStrRep().Length;
 				i++;
 			}
 			_word.StemLength = index - _word.StemIndex;

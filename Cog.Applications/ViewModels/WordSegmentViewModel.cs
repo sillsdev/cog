@@ -6,25 +6,21 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordSegmentViewModel : ViewModelBase
 	{
-		private readonly string _originalStrRep;
 		private readonly string _strRep;
 		private bool _isSelected;
+		private readonly ShapeNode _node;
+		private readonly bool _isNotInOriginal;
 
 		public WordSegmentViewModel(ShapeNode node)
 		{
-			_originalStrRep = node.OriginalStrRep();
-			_strRep = node.StrRep();
+			_node = node;
+			_strRep = node.OriginalStrRep();
 		}
 
-		public WordSegmentViewModel()
+		public WordSegmentViewModel(string strRep)
 		{
-			_originalStrRep = "|";
-			_strRep = "|";
-		}
-
-		public string OriginalStrRep
-		{
-			get { return _originalStrRep; }
+			_strRep = strRep;
+			_isNotInOriginal = true;
 		}
 
 		public string StrRep
@@ -34,7 +30,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public bool IsBoundary
 		{
-			get { return _originalStrRep == "|"; }
+			get { return _strRep == "|"; }
+		}
+
+		public bool IsNotInOriginal
+		{
+			get { return _isNotInOriginal; }
 		}
 
 		public bool IsSelected
@@ -43,9 +44,14 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => IsSelected, ref _isSelected, value); }
 		}
 
+		internal ShapeNode DomainNode
+		{
+			get { return _node; }
+		}
+
 		public override string ToString()
 		{
-			return _originalStrRep;
+			return _strRep;
 		}
 	}
 }

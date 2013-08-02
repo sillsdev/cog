@@ -154,9 +154,9 @@ namespace SIL.Cog.Applications.ViewModels
 					foreach (WordViewModel word in _words.Words)
 					{
 						bool selected = false;
-						foreach (WordSegmentViewModel segment in word.Segments)
+						foreach (WordSegmentViewModel segment in word.Segments.Where(s => !s.IsBoundary))
 						{
-							segment.IsSelected = _currentSegment != null && segment.StrRep == _currentSegment.StrRep;
+							segment.IsSelected = _currentSegment != null && segment.DomainNode.StrRep() == _currentSegment.StrRep;
 							if (segment.IsSelected)
 								selected = true;
 						}

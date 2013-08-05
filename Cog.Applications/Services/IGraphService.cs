@@ -1,4 +1,5 @@
 ﻿using QuickGraph;
+using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Applications.Services
@@ -9,5 +10,7 @@ namespace SIL.Cog.Applications.Services
 			ClusteringMethod clusteringMethod, SimilarityMetric similarityMetric);
 
 		IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> GenerateNetworkGraph(SimilarityMetric similarityMetric);
+
+		IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SoundCorrespondenceType correspondenceType);
 	}
 }

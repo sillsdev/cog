@@ -125,9 +125,6 @@
     <Compile Include="Controls\DendrogramLayout.cs" />
     <Compile Include="Controls\DropDownButton.cs" />
     <Compile Include="Controls\HierarchicalGraphLayout.cs" />
-    <Compile Include="Controls\LoadingAnimation.xaml.cs">
-      <DependentUpon>LoadingAnimation.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\NetworkGraphLayout.cs" />
     <Compile Include="Controls\PercentageSlider.xaml.cs">
       <DependentUpon>PercentageSlider.xaml</DependentUpon>
@@ -344,10 +341,6 @@
       <DependentUpon>WordListsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\Block.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\LoadingAnimation.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

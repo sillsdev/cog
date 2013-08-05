@@ -57,8 +57,8 @@
 				<TextBlock Grid.Column="0" Grid.Row="0" Padding="0,3,3,3" Text="{Binding PrefixNode.StrRep1}" Style="{StaticResource Node1TextBlockStyle}" />
 				<TextBlock Grid.Column="0" Grid.Row="1" Padding="0,3,3,3" Text="{Binding PrefixNode.StrRep2}" Style="{StaticResource Node2TextBlockStyle}" />
 				<TextBlock Grid.Column="0" Grid.Row="2" Padding="0,3,3,3" Text="{Binding PrefixNode.Note}" Style="{StaticResource OtherTextBlockStyle}" />
-				<TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
-				<TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="1" Grid.Row="0" Foreground="Gray" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="1" Grid.Row="1" Foreground="Gray" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
 				<TextBlock Grid.Column="1" Grid.Row="2" Style="{StaticResource OtherTextBlockStyle}" />
 			</Grid>
 			<ItemsControl ItemsSource="{Binding AlignedNodes}">
@@ -98,8 +98,8 @@
 					<RowDefinition SharedSizeGroup="strRep2" />
 					<RowDefinition SharedSizeGroup="note" />
 				</Grid.RowDefinitions>
-				<TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
-				<TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="0" Grid.Row="0" Foreground="Gray" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
+				<TextBlock Grid.Column="0" Grid.Row="1" Foreground="Gray" Style="{StaticResource OtherTextBlockStyle}">|</TextBlock>
 				<TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource OtherTextBlockStyle}" />
 				<TextBlock Grid.Column="1" Grid.Row="0" Padding="3,3,0,3" Text="{Binding SuffixNode.StrRep1}" Style="{StaticResource Node1TextBlockStyle}" />
 				<TextBlock Grid.Column="1" Grid.Row="1" Padding="3,3,0,3" Text="{Binding SuffixNode.StrRep2}" Style="{StaticResource Node2TextBlockStyle}" />

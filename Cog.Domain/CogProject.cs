@@ -15,6 +15,13 @@ namespace SIL.Cog.Domain
 		private readonly KeyedBulkObservableList<string, Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
+		private readonly GlobalSoundCorrespondenceCollection _stemInitialConsCorrespondences;
+		private readonly GlobalSoundCorrespondenceCollection _stemMedialConsCorrespondences;
+		private readonly GlobalSoundCorrespondenceCollection _stemFinalConsCorrespondences;
+		private readonly GlobalSoundCorrespondenceCollection _onsetConsCorrespondences;
+		private readonly GlobalSoundCorrespondenceCollection _codaConsCorrespondences;
+		private readonly GlobalSoundCorrespondenceCollection _vowelCorrespondences;
+
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners; 
 
 		private readonly ObservableDictionary<string, IProcessor<CogProject>> _projectProcessors; 
@@ -29,6 +36,13 @@ namespace SIL.Cog.Domain
 			_varieties = new KeyedBulkObservableList<string, Variety>(variety => variety.Name);
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
+
+			_stemInitialConsCorrespondences = new GlobalSoundCorrespondenceCollection();
+			_stemMedialConsCorrespondences = new GlobalSoundCorrespondenceCollection();
+			_stemFinalConsCorrespondences = new GlobalSoundCorrespondenceCollection();
+			_onsetConsCorrespondences = new GlobalSoundCorrespondenceCollection();
+			_codaConsCorrespondences = new GlobalSoundCorrespondenceCollection();
+			_vowelCorrespondences = new GlobalSoundCorrespondenceCollection();
 
 			_wordAligners = new ObservableDictionary<string, IWordAligner>();
 
@@ -103,6 +117,36 @@ namespace SIL.Cog.Domain
 		public BulkObservableList<VarietyPair> VarietyPairs
 		{
 			get { return _varietyPairs; }
+		}
+
+		public GlobalSoundCorrespondenceCollection StemInitialConsonantCorrespondences
+		{
+			get { return _stemInitialConsCorrespondences; }
+		}
+
+		public GlobalSoundCorrespondenceCollection StemMedialConsonantCorrespondences
+		{
+			get { return _stemMedialConsCorrespondences; }
+		}
+
+		public GlobalSoundCorrespondenceCollection StemFinalConsonantCorrespondences
+		{
+			get { return _stemFinalConsCorrespondences; }
+		}
+
+		public GlobalSoundCorrespondenceCollection OnsetConsonantCorrespondences
+		{
+			get { return _onsetConsCorrespondences; }
+		}
+
+		public GlobalSoundCorrespondenceCollection CodaConsonantCorrespondences
+		{
+			get { return _codaConsCorrespondences; }
+		}
+
+		public GlobalSoundCorrespondenceCollection VowelCorrespondences
+		{
+			get { return _vowelCorrespondences; }
 		}
 
 		public ObservableDictionary<string, IWordAligner> WordAligners

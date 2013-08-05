@@ -31,6 +31,11 @@ namespace SIL.Cog.Domain
 			return segment;
 		}
 
+		public Segment GetExisting(ShapeNode node)
+		{
+			return GetExisting(node.StrRep());
+		}
+
 		public Segment GetExisting(string strRep)
 		{
 			return _segments[strRep];

@@ -62,7 +62,7 @@ namespace SIL.Cog.Domain
 			SoundClass rightEnv;
 			if (!soundClasses.TryGetMatchingSoundClass(segmentPool, nextNode, out rightEnv))
 				rightEnv = null;
-			return new SoundContext(leftEnv, segmentPool.Get(node), rightEnv);
+			return new SoundContext(leftEnv, segmentPool.GetExisting(node), rightEnv);
 		}
 
 		public static bool TryGetMatchingSoundClass(this IEnumerable<SoundClass> soundClasses, SegmentPool segmentPool, ShapeNode node, out SoundClass soundClass)
@@ -76,7 +76,7 @@ namespace SIL.Cog.Domain
 					left = stemAnn.Span.Contains(leftNode) ? leftNode : node.List.Begin;
 			}
 
-			Ngram target = stemAnn.Span.Contains(node) ? segmentPool.Get(node) : Segment.Anchor;
+			Ngram target = stemAnn.Span.Contains(node) ? segmentPool.GetExisting(node) : Segment.Anchor;
 
 			ShapeNode right = null;
 			if (stemAnn.Span.Contains(node) || node.Annotation.CompareTo(stemAnn) < 0)
@@ -174,7 +174,7 @@ namespace SIL.Cog.Domain
 
 		public static Ngram ToNgram(this IEnumerable<ShapeNode> nodes, SegmentPool segmentPool)
 		{
-			return new Ngram(nodes.Select(segmentPool.Get));
+			return new Ngram(nodes.Select(segmentPool.GetExisting));
 		}
 
 		public static string ToString(this Alignment<Word, ShapeNode> alignment, IEnumerable<string> notes)

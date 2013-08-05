@@ -148,6 +148,7 @@ namespace SIL.Cog.Applications.Services
 			if (project.VarietyPairProcessors.TryGetValue("similarSegmentIdentifier", out similarSegmentIdentifier))
 				processors.Add(similarSegmentIdentifier);
 			processors.Add(project.VarietyPairProcessors["soundChangeInducer"]);
+			processors.Add(new GlobalSoundCorrespondenceIdentifier(project, "primary"));
 			return processors;
 		}
 	}

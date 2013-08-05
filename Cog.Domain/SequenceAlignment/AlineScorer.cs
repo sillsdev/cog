@@ -110,7 +110,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			}
 			else
 			{
-				Ngram corr = word.Variety.SegmentPool.Get(node);
+				Ngram corr = word.Variety.SegmentPool.GetExisting(node);
 				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 			}
 			return (int) (MaxSoundChangeScore * prob);
@@ -192,8 +192,8 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			}
 			else
 			{
-				Segment targetSegment = varietyPair.Variety1.SegmentPool.Get(p1);
-				target = p2 == null ? targetSegment : new Ngram(targetSegment, varietyPair.Variety1.SegmentPool.Get(p2));
+				Segment targetSegment = varietyPair.Variety1.SegmentPool.GetExisting(p1);
+				target = p2 == null ? targetSegment : new Ngram(targetSegment, varietyPair.Variety1.SegmentPool.GetExisting(p2));
 			}
 
 			Ngram corr;
@@ -203,8 +203,8 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			}
 			else
 			{
-				Segment corrSegment = varietyPair.Variety2.SegmentPool.Get(q1);
-				corr = q2 == null ? corrSegment : new Ngram(corrSegment, varietyPair.Variety2.SegmentPool.Get(q2));
+				Segment corrSegment = varietyPair.Variety2.SegmentPool.GetExisting(q1);
+				corr = q2 == null ? corrSegment : new Ngram(corrSegment, varietyPair.Variety2.SegmentPool.GetExisting(q2));
 			}
 
 			ShapeNode leftNode = p1 == null ? p2 : p1.GetPrev(NodeFilter);

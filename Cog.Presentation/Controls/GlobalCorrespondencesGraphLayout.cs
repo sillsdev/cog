@@ -23,6 +23,8 @@ namespace SIL.Cog.Presentation.Controls
 				case SoundCorrespondenceType.InitialConsonants:
 				case SoundCorrespondenceType.MedialConsonants:
 				case SoundCorrespondenceType.FinalConsonants:
+				case SoundCorrespondenceType.OnsetConsonants:
+				case SoundCorrespondenceType.CodaConsonants:
 					graphLayout.SetConsonantLayoutParameters();
 					break;
 

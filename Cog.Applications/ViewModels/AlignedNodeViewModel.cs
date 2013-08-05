@@ -60,5 +60,15 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _column; }
 		}
+
+		internal AlignmentCell<ShapeNode> DomainCell1
+		{
+			get { return _cell1; }
+		}
+
+		internal AlignmentCell<ShapeNode> DomainCell2
+		{
+			get { return _cell2; }
+		}
 	}
 }

@@ -1,4 +1,3 @@
-using GraphSharp;
 using GraphSharp.Algorithms.Highlight;
 using QuickGraph;
 
@@ -49,7 +48,7 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 			//semi-highlight the in-edges, and the neighbours on their other side
 			foreach (TEdge edge in Controller.Graph.InEdges(vertex))
 			{
-				var weightedEdge = edge as WeightedEdge<TVertex>;
+				var weightedEdge = edge as IWeightedEdge<TVertex>;
 				if (weightedEdge != null && weightedEdge.Weight < Parameters.WeightFilter)
 					continue;
 
@@ -63,7 +62,7 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 			//semi-highlight the out-edges
 			foreach (TEdge edge in Controller.Graph.OutEdges(vertex))
 			{
-				var weightedEdge = edge as WeightedEdge<TVertex>;
+				var weightedEdge = edge as IWeightedEdge<TVertex>;
 				if (weightedEdge != null && weightedEdge.Weight < Parameters.WeightFilter)
 					continue;
 

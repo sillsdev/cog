@@ -79,7 +79,7 @@ namespace SIL.Cog.Domain.NgramModeling
 					_categories.Add(word.Sense.Category);
 				foreach (ShapeNode startNode in word.Shape.GetNodes(word.Span).Where(Filter))
 				{
-					var ngram = new Ngram(startNode.GetNodes(word.Shape.End).Where(Filter).Take(_ngramSize).Select(variety.SegmentPool.Get));
+					var ngram = new Ngram(startNode.GetNodes(word.Shape.End).Where(Filter).Take(_ngramSize).Select(variety.SegmentPool.GetExisting));
 					if (ngram.Count != _ngramSize)
 						break;
 

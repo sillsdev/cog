@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Applications.GraphAlgorithms;
+using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -9,13 +10,13 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly GlobalSegmentVertex _segment1;
 		private readonly GlobalSegmentVertex _segment2;
 		private bool _isSelected;
-		private readonly List<WordPairViewModel> _wordPairs; 
+		private readonly List<WordPair> _wordPairs; 
 
 		public GlobalCorrespondenceEdge(GlobalSegmentVertex segment1, GlobalSegmentVertex segment2)
 		{
 			_segment1 = segment1;
 			_segment2 = segment2;
-			_wordPairs = new List<WordPairViewModel>();
+			_wordPairs = new List<WordPair>();
 		}
 
 		public GridVertex Source
@@ -43,7 +44,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => IsSelected, ref _isSelected, value); }
 		}
 
-		internal IList<WordPairViewModel> WordPairs
+		internal IList<WordPair> DomainWordPairs
 		{
 			get { return _wordPairs; }
 		}

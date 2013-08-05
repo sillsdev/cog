@@ -12,7 +12,6 @@
              mc:Ignorable="d" DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
 	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="BoolConverter" />
 		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
 	</UserControl.Resources>
 	<Grid>
@@ -67,7 +66,6 @@
 						</c:GlobalCorrespondencesGraphLayout.HighlightParameters>
 					</c:GlobalCorrespondencesGraphLayout>
 				</ScrollViewer>
-				<c:LoadingAnimation HorizontalAlignment="Center" VerticalAlignment="Center" Loading="{Binding GeneratingCorrespondences}" Visibility="{Binding GeneratingCorrespondences, Converter={StaticResource BoolConverter}}" />
 			</Grid>
 		</StackPanel>
 		<HeaderedContentControl Grid.Row="1" Header="Observed word pairs">

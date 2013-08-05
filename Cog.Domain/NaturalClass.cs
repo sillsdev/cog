@@ -28,7 +28,7 @@ namespace SIL.Cog.Domain
 		{
 			foreach (Segment seg in target)
 			{
-				if (_fs.Subsumes(seg.FeatureStruct))
+				if (_fs.IsUnifiable(seg.FeatureStruct))
 					return true;
 			}
 			return false;

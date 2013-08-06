@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace SIL.Cog.Presentation.Views
+namespace SIL.Cog.Presentation.Behaviors
 {
 	public class ItemsControlDragDrop
 	{
@@ -29,97 +28,6 @@ namespace SIL.Cog.Presentation.Views
 		private Vector _initialMouseOffset;
 		private FrameworkElement _sourceItemContainer;
 		private Point _initialMousePosition;
-
-		private readonly Dictionary<ItemsControl, ItemsControlDrag> _dragHelpers;
-		private readonly Dictionary<ItemsControl, ItemsControlDrop> _dropHelpers; 
-
-		private ItemsControlDragDrop()
-		{
-			_dragHelpers = new Dictionary<ItemsControl, ItemsControlDrag>();
-			_dropHelpers = new Dictionary<ItemsControl, ItemsControlDrop>();
-		}
-
-		public static bool GetIsDragSource(DependencyObject obj)
-		{
-			return (bool)obj.GetValue(IsDragSourceProperty);
-		}
-
-		public static void SetIsDragSource(DependencyObject obj, bool value)
-		{
-			obj.SetValue(IsDragSourceProperty, value);
-		}
-
-		public static readonly DependencyProperty IsDragSourceProperty =
-			DependencyProperty.RegisterAttached("IsDragSource", typeof(bool), typeof(ItemsControlDragDrop), new UIPropertyMetadata(false, IsDragSourceChanged));
-
-
-		public static bool GetIsDropTarget(DependencyObject obj)
-		{
-			return (bool)obj.GetValue(IsDropTargetProperty);
-		}
-
-		public static void SetIsDropTarget(DependencyObject obj, bool value)
-		{
-			obj.SetValue(IsDropTargetProperty, value);
-		}
-
-		public static readonly DependencyProperty IsDropTargetProperty =
-			DependencyProperty.RegisterAttached("IsDropTarget", typeof(bool), typeof(ItemsControlDragDrop), new UIPropertyMetadata(false, IsDropTargetChanged));
-
-		public static DataTemplate GetDragDropTemplate(DependencyObject obj)
-		{
-			return (DataTemplate)obj.GetValue(DragDropTemplateProperty);
-		}
-
-		public static void SetDragDropTemplate(DependencyObject obj, DataTemplate value)
-		{
-			obj.SetValue(DragDropTemplateProperty, value);
-		}
-
-		public static readonly DependencyProperty DragDropTemplateProperty =
-			DependencyProperty.RegisterAttached("DragDropTemplate", typeof(DataTemplate), typeof(ItemsControlDragDrop), new UIPropertyMetadata(null));
-
-		private static void IsDragSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var dragSource = obj as ItemsControl;
-			if (dragSource != null)
-			{
-				if (Equals(e.NewValue, true))
-				{
-					_instance._dragHelpers[dragSource] = new ItemsControlDrag(dragSource);
-				}
-				else
-				{
-					ItemsControlDrag drag;
-					if (_instance._dragHelpers.TryGetValue(dragSource, out drag))
-					{
-						drag.Dispose();
-						_instance._dragHelpers.Remove(dragSource);
-					}
-				}
-			}
-		}
-
-		private static void IsDropTargetChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var dropTarget = obj as ItemsControl;
-			if (dropTarget != null)
-			{
-				if (Equals(e.NewValue, true))
-				{
-					_instance._dropHelpers[dropTarget] = new ItemsControlDrop(dropTarget);
-				}
-				else
-				{
-					ItemsControlDrop drop;
-					if (_instance._dropHelpers.TryGetValue(dropTarget, out drop))
-					{
-						drop.Dispose();
-						_instance._dropHelpers.Remove(dropTarget);
-					}
-				}
-			}
-		}
 
 		public void StartDragDrop(ItemsControl source, FrameworkElement sourceItemContainer, object draggedData, Point initialMousePosition)
 		{
@@ -263,7 +171,7 @@ namespace SIL.Cog.Presentation.Views
 				if (_draggedAdorner == null)
 				{
 					var adornerLayer = AdornerLayer.GetAdornerLayer(_source);
-					_draggedAdorner = new DraggedAdorner(draggedData, GetDragDropTemplate(_source), _sourceItemContainer, adornerLayer);
+					_draggedAdorner = new DraggedAdorner(draggedData, ItemsControlBehaviors.GetDragDropTemplate(_source), _sourceItemContainer, adornerLayer);
 				}
 				_draggedAdorner.SetPosition(currentPosition.X - _initialMousePosition.X + _initialMouseOffset.X, currentPosition.Y - _initialMousePosition.Y + _initialMouseOffset.Y);
 			}

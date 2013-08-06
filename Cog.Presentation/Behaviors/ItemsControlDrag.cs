@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace SIL.Cog.Presentation.Views
+namespace SIL.Cog.Presentation.Behaviors
 {
 	public class ItemsControlDrag : IDisposable
 	{
@@ -13,17 +13,10 @@ namespace SIL.Cog.Presentation.Views
 		private Point _initialMousePosition;
 		private FrameworkElement _sourceItemContainer;
 		private object _draggedData;
-		private readonly Func<FrameworkElement, bool> _canDrag; 
 
 		public ItemsControlDrag(ItemsControl source)
-			: this(source, element => true)
-		{
-		}
-
-		public ItemsControlDrag(ItemsControl source, Func<FrameworkElement, bool> canDrag)
 		{
 			_source = source;
-			_canDrag = canDrag;
 
 			_topWindow = Window.GetWindow(_source);
 			_source.PreviewMouseLeftButtonDown += PreviewMouseLeftButtonDown;
@@ -47,10 +40,15 @@ namespace SIL.Cog.Presentation.Views
 			if (_draggedData != null)
 			{
 				// Only drag when user moved the mouse by a reasonable amount.
-				if (IsMovementBigEnough(_initialMousePosition, e.GetPosition(_topWindow)) && _canDrag(_sourceItemContainer))
+				if (IsMovementBigEnough(_initialMousePosition, e.GetPosition(_topWindow)))
 				{
-					ItemsControlDragDrop.Instance.StartDragDrop(_source, _sourceItemContainer, _draggedData, _initialMousePosition);
-					_draggedData = null;
+					var draggingItem = new CanDragItemEventArgs(_sourceItemContainer);
+					_source.RaiseEvent(draggingItem);
+					if (draggingItem.CanDrag)
+					{
+						ItemsControlDragDrop.Instance.StartDragDrop(_source, _sourceItemContainer, _draggedData, _initialMousePosition);
+						_draggedData = null;
+					}
 				}
 			}
 		}

@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace SIL.Cog.Presentation.Views
+namespace SIL.Cog.Presentation.Behaviors
 {
 	public class DraggedAdorner : Adorner
 	{

@@ -6,7 +6,7 @@
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordViewModel}">
     <UserControl.Resources>
@@ -49,7 +49,8 @@
 				</TextBlock.TextDecorations>
 			</TextBlock>
 			<ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
-					 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" v:ItemsControlDragDrop.DragDropTemplate="{StaticResource BlankTemplate}">
+					 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" b:ItemsControlBehaviors.IsDragSource="True" b:ItemsControlBehaviors.CanDragItem="ListBox_OnCanDragItem"
+					 b:ItemsControlBehaviors.IsDropTarget="True" b:ItemsControlBehaviors.CanDropItem="ListBox_OnCanDropItem" b:ItemsControlBehaviors.DragDropTemplate="{StaticResource BlankTemplate}">
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal" />

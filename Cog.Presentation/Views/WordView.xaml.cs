@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Presentation.Behaviors;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -11,27 +11,12 @@ namespace SIL.Cog.Presentation.Views
 	/// </summary>
 	public partial class WordView
 	{
-		private readonly ItemsControlDrag _drag;
-		private readonly ItemsControlDrop _drop;
 		private WordSegmentViewModel _prevSelectedItem;
 
 		public WordView()
 		{
 			InitializeComponent();
-			_drag = new ItemsControlDrag(ListBox, CanDrag);
-			_drop = new ItemsControlDrop(ListBox, CanDrop);
 			ListBox.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler((sender, args) => args.Handled = false), true);
-		}
-
-		private bool CanDrag(FrameworkElement itemContainer)
-		{
-			return ((WordSegmentViewModel) itemContainer.DataContext).IsBoundary;
-		}
-
-		private bool CanDrop(object draggedItem, int index)
-		{
-			var segs = (IList<WordSegmentViewModel>) ListBox.ItemsSource;
-			return (index == segs.Count || !segs[index].IsBoundary) && (index == 0 || !segs[index - 1].IsBoundary);
 		}
 
 		private void _listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -41,6 +26,19 @@ namespace SIL.Cog.Presentation.Views
 				_prevSelectedItem = vm;
 			else
 				ListBox.SelectedItem = _prevSelectedItem;
+			e.Handled = true;
+		}
+
+		private void ListBox_OnCanDragItem(object sender, CanDragItemEventArgs e)
+		{
+			e.CanDrag = ((WordSegmentViewModel) e.ItemContainer.DataContext).IsBoundary;
+			e.Handled = true;
+		}
+
+		private void ListBox_OnCanDropItem(object sender, CanDropItemEventArgs e)
+		{
+			var segs = (IList<WordSegmentViewModel>) ListBox.ItemsSource;
+			e.CanDrop = (e.Index == segs.Count || !segs[e.Index].IsBoundary) && (e.Index == 0 || !segs[e.Index - 1].IsBoundary);
 			e.Handled = true;
 		}
 	}

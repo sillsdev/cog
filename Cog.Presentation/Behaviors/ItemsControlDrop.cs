@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace SIL.Cog.Presentation.Views
+namespace SIL.Cog.Presentation.Behaviors
 {
 	public class ItemsControlDrop : IDisposable
 	{
@@ -15,17 +15,10 @@ namespace SIL.Cog.Presentation.Views
 		private int _insertionIndex;
 		private bool _isInFirstHalf;
 		private InsertionAdorner _insertionAdorner;
-		private readonly Func<object, int, bool> _canDrop; 
 
 		public ItemsControlDrop(ItemsControl target)
-			: this(target, (obj, index) => true)
-		{
-		}
-
-		public ItemsControlDrop(ItemsControl target, Func<object, int, bool> canDrop)
 		{
 			_target = target;
-			_canDrop = canDrop;
 
 			_target.AllowDrop = true;
 			_target.PreviewDrop += PreviewDrop;
@@ -104,7 +97,10 @@ namespace SIL.Cog.Presentation.Views
 					_insertionIndex = 0;
 				}
 
-				if (!_canDrop(draggedItem, _insertionIndex))
+				var droppingItem = new CanDropItemEventArgs(draggedItem, _insertionIndex);
+				_target.RaiseEvent(droppingItem);
+
+				if (!droppingItem.CanDrop)
 				{
 					_targetItemContainer = null;
 					_insertionIndex = -1;

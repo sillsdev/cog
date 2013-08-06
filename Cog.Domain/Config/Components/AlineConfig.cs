@@ -11,7 +11,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class AlineConfig : WordAlignerConfigBase
 	{
-		public override IWordAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public override IWordAligner Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			WordPairAlignerSettings settings = LoadSettings(project.Segmenter, project.FeatureSystem, elem);
 			XElement relevantFeaturesElem = elem.Element(ConfigManager.Cog + "RelevantFeatures");
@@ -39,7 +39,7 @@ namespace SIL.Cog.Domain.Config.Components
 				}
 			}
 
-			return new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
+			return new Aline(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
 		}
 
 		public override void Save(IWordAligner component, XElement elem)

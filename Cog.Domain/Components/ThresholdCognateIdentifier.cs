@@ -2,14 +2,15 @@ using SIL.Machine;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class ThresholdCognateIdentifier : ProcessorBase<VarietyPair>
+	public class ThresholdCognateIdentifier : IProcessor<VarietyPair>
 	{
+		private readonly CogProject _project;
 		private readonly double _threshold;
 		private readonly string _alignerID;
 
 		public ThresholdCognateIdentifier(CogProject project, double threshold, string alignerID)
-			: base(project)
 		{
+			_project = project;
 			_threshold = threshold;
 			_alignerID = alignerID;
 		}
@@ -24,11 +25,11 @@ namespace SIL.Cog.Domain.Components
 			get { return _alignerID; }
 		}
 
-		public override void Process(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
-			IWordAligner aligner = Project.WordAligners[_alignerID];
+			IWordAligner aligner = _project.WordAligners[_alignerID];
 			foreach (WordPair wordPair in varietyPair.WordPairs)
 			{
 				IWordAlignerResult alignerResult = aligner.Compute(wordPair);

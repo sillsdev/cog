@@ -1,19 +1,21 @@
 ﻿namespace SIL.Cog.Domain.Components
 {
-	public class VarietySegmenter : ProcessorBase<Variety>
+	public class VarietySegmenter : IProcessor<Variety>
 	{
-		public VarietySegmenter(CogProject project)
-			: base(project)
+		private readonly Segmenter _segmenter;
+
+		public VarietySegmenter(Segmenter segmenter)
 		{
+			_segmenter = segmenter;
 		}
 
-		public override void Process(Variety data)
+		public void Process(Variety data)
 		{
 			foreach (Word word in data.Words)
-				Project.Segmenter.Segment(word);
+				_segmenter.Segment(word);
 
 			foreach (Affix affix in data.Affixes)
-				Project.Segmenter.Segment(affix);
+				_segmenter.Segment(affix);
 		}
 	}
 }

@@ -9,52 +9,52 @@ namespace SIL.Cog.Domain.NgramModeling
 {
 	public class NgramModel
 	{
-		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety)
+		public static IEnumerable<NgramModel> TrainAll(SegmentPool segmentPool, int maxNgramSize, Variety variety)
 		{
-			return TrainAll(maxNgramSize, variety, Direction.LeftToRight);
+			return TrainAll(segmentPool, maxNgramSize, variety, Direction.LeftToRight);
 		}
 
-		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety, Direction dir)
+		public static IEnumerable<NgramModel> TrainAll(SegmentPool segmentPool, int maxNgramSize, Variety variety, Direction dir)
 		{
-			return TrainAll(maxNgramSize, variety, dir, () => new ModifiedKneserNeySmoother());
+			return TrainAll(segmentPool, maxNgramSize, variety, dir, () => new ModifiedKneserNeySmoother());
 		}
 
-		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety, Func<INgramModelSmoother> smootherFactory)
+		public static IEnumerable<NgramModel> TrainAll(SegmentPool segmentPool, int maxNgramSize, Variety variety, Func<INgramModelSmoother> smootherFactory)
 		{
-			return TrainAll(maxNgramSize, variety, Direction.LeftToRight, smootherFactory);
+			return TrainAll(segmentPool, maxNgramSize, variety, Direction.LeftToRight, smootherFactory);
 		}
 
-		public static IEnumerable<NgramModel> TrainAll(int maxNgramSize, Variety variety, Direction dir, Func<INgramModelSmoother> smootherFactory)
+		public static IEnumerable<NgramModel> TrainAll(SegmentPool segmentPool, int maxNgramSize, Variety variety, Direction dir, Func<INgramModelSmoother> smootherFactory)
 		{
-			var model = new NgramModel(maxNgramSize, variety, dir, smootherFactory());
+			var model = new NgramModel(segmentPool, maxNgramSize, variety, dir, smootherFactory());
 			var models = new NgramModel[maxNgramSize];
 			for (int i = maxNgramSize - 1; i >= 0; i--)
 			{
 				models[i] = model;
 				if (i > 0)
-					model = model.Smoother.LowerOrderModel ?? new NgramModel(i, variety, dir, smootherFactory());
+					model = model.Smoother.LowerOrderModel ?? new NgramModel(segmentPool, i, variety, dir, smootherFactory());
 			}
 			return models;
 		}
 
-		public static NgramModel Train(int ngramSize, Variety variety)
+		public static NgramModel Train(SegmentPool segmentPool, int ngramSize, Variety variety)
 		{
-			return Train(ngramSize, variety, Direction.LeftToRight);
+			return Train(segmentPool, ngramSize, variety, Direction.LeftToRight);
 		}
 
-		public static NgramModel Train(int ngramSize, Variety variety, Direction dir)
+		public static NgramModel Train(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir)
 		{
-			return Train(ngramSize, variety, dir, new ModifiedKneserNeySmoother());
+			return Train(segmentPool, ngramSize, variety, dir, new ModifiedKneserNeySmoother());
 		}
 
-		public static NgramModel Train(int ngramSize, Variety variety, INgramModelSmoother smoother)
+		public static NgramModel Train(SegmentPool segmentPool, int ngramSize, Variety variety, INgramModelSmoother smoother)
 		{
-			return Train(ngramSize, variety, Direction.LeftToRight, smoother);
+			return Train(segmentPool, ngramSize, variety, Direction.LeftToRight, smoother);
 		}
 
-		public static NgramModel Train(int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
+		public static NgramModel Train(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
 		{
-			return new NgramModel(ngramSize, variety, dir, smoother);
+			return new NgramModel(segmentPool, ngramSize, variety, dir, smoother);
 		}
 
 		private readonly int _ngramSize;
@@ -64,7 +64,7 @@ namespace SIL.Cog.Domain.NgramModeling
 		private readonly Variety _variety;
 		private readonly Direction _dir;
 
-		internal NgramModel(int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
+		internal NgramModel(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir, INgramModelSmoother smoother)
 		{
 			_ngramSize = ngramSize;
 			_variety = variety;
@@ -79,7 +79,7 @@ namespace SIL.Cog.Domain.NgramModeling
 					_categories.Add(word.Sense.Category);
 				foreach (ShapeNode startNode in word.Shape.GetNodes(word.Span).Where(Filter))
 				{
-					var ngram = new Ngram(startNode.GetNodes(word.Shape.End).Where(Filter).Take(_ngramSize).Select(variety.SegmentPool.GetExisting));
+					var ngram = new Ngram(startNode.GetNodes(word.Shape.End).Where(Filter).Take(_ngramSize).Select(segmentPool.GetExisting));
 					if (ngram.Count != _ngramSize)
 						break;
 
@@ -93,7 +93,7 @@ namespace SIL.Cog.Domain.NgramModeling
 				}
 			}
 
-			_smoother.Smooth(ngramSize, variety, dir, cfd);
+			_smoother.Smooth(segmentPool, ngramSize, variety, dir, cfd);
 		}
 
 		public Direction Direction

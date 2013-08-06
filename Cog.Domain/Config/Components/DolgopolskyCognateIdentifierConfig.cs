@@ -8,7 +8,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class DolgopolskyCognateIdentifierConfig : IComponentConfig<IProcessor<VarietyPair>>
 	{
-		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement soundClassesElem = elem.Element(ConfigManager.Cog + "SoundClasses");
 			Debug.Assert(soundClassesElem != null);
@@ -17,7 +17,7 @@ namespace SIL.Cog.Domain.Config.Components
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
 			var thresholdStr = (string) elem.Element(ConfigManager.Cog + "InitialEquivalenceThreshold");
-			return new DolgopolskyCognateIdentifier(project, soundClasses, int.Parse(thresholdStr), alignerID);
+			return new DolgopolskyCognateIdentifier(segmentPool, project, soundClasses, int.Parse(thresholdStr), alignerID);
 		}
 
 		public void Save(IProcessor<VarietyPair> component, XElement elem)

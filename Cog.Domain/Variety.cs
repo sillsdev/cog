@@ -12,7 +12,6 @@ namespace SIL.Cog.Domain
 		private readonly BulkObservableList<GeographicRegion> _regions;
 		private FrequencyDistribution<Segment> _segmentFreqDist;
 		private IProbabilityDistribution<Segment> _segmentProbDist;
-		private readonly SegmentPool _segmentPool;
 
 		public Variety(string name)
 		{
@@ -21,7 +20,6 @@ namespace SIL.Cog.Domain
 			_varietyPairs = new VarietyVarietyPairCollection(this);
 			_affixes = new BulkObservableList<Affix>();
 			_regions = new BulkObservableList<GeographicRegion>();
-			_segmentPool = new SegmentPool();
 		}
 
 		public string Name
@@ -60,11 +58,6 @@ namespace SIL.Cog.Domain
 		{
 			get { return _segmentProbDist; }
 			set { Set(() => SegmentProbabilityDistribution, ref _segmentProbDist, value); }
-		}
-
-		public SegmentPool SegmentPool
-		{
-			get { return _segmentPool; }
 		}
 
 		public override string ToString()

@@ -9,7 +9,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class SspSyllabifierConfig : IComponentConfig<IProcessor<Variety>>
 	{
-		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement scaleElem = elem.Element(ConfigManager.Cog + "SonorityScale");
 			Debug.Assert(scaleElem != null);
@@ -20,7 +20,7 @@ namespace SIL.Cog.Domain.Config.Components
 				SoundClass soundClass = ConfigManager.LoadSoundClass(project.Segmenter, project.FeatureSystem, scElem.Elements().First());
 				sonorityScale.Add(new SonorityClass(sonority, soundClass));
 			}
-			return new SspSyllabifier(sonorityScale);
+			return new SspSyllabifier(segmentPool, sonorityScale);
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)

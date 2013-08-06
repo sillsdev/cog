@@ -8,17 +8,18 @@ using SIL.Machine.Rules;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class Stemmer : ProcessorBase<Variety>
+	public class Stemmer : IProcessor<Variety>
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory;
+		private readonly Segmenter _segmenter;
 
-		public Stemmer(SpanFactory<ShapeNode> spanFactory, CogProject project)
-			: base(project)
+		public Stemmer(SpanFactory<ShapeNode> spanFactory, Segmenter segmenter)
 		{
 			_spanFactory = spanFactory;
+			_segmenter = segmenter;
 		}
 
-		public override void Process(Variety variety)
+		public void Process(Variety variety)
 		{
 			StemWords(Direction.LeftToRight, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Prefix));
 			StemWords(Direction.RightToLeft, variety.Words, variety.Affixes.Where(a => a.Type == AffixType.Suffix));
@@ -98,7 +99,7 @@ namespace SIL.Cog.Domain.Components
 				index += len;
 			}
 
-			Project.Segmenter.Segment(output);
+			_segmenter.Segment(output);
 			return null;
 		}
 	}

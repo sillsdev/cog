@@ -19,7 +19,7 @@ namespace SIL.Cog.Domain.NgramModeling
 			_discounts = new Dictionary<string, Tuple<double, double, double>>();
 		}
 
-		public void Smooth(int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
+		public void Smooth(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
 		{
 			_cfd = cfd;
 			_dir = dir;
@@ -67,7 +67,7 @@ namespace SIL.Cog.Domain.NgramModeling
 			}
 
 			if (ngramSize > 1)
-				_lowerOrderModel = new NgramModel(ngramSize - 1, variety, dir, new ModifiedKneserNeySmoother());
+				_lowerOrderModel = new NgramModel(segmentPool, ngramSize - 1, variety, dir, new ModifiedKneserNeySmoother());
 		}
 
 		public double GetProbability(Segment seg, Ngram context, string category)

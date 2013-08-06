@@ -8,6 +8,7 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class BlairCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 
 		private bool _ignoreRegularInsertionDeletion;
@@ -15,9 +16,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly SimilarSegmentMappingsOptionsViewModel _similarSegments;
 		private readonly SegmentMappingsViewModel _ignoredMappings;
 
-		public BlairCognateIdentifierViewModel(IProjectService projectService, SegmentMappingsViewModel ignoredMappings, SimilarSegmentMappingsOptionsViewModel similarSegments)
+		public BlairCognateIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService, SegmentMappingsViewModel ignoredMappings, SimilarSegmentMappingsOptionsViewModel similarSegments)
 			: base("Blair")
 		{
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 			_ignoredMappings = ignoredMappings;
 			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
@@ -81,7 +83,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new BlairCognateIdentifier(_projectService.Project, _ignoreRegularInsertionDeletion, _regularConsEqual,
+			var cognateIdentifier = new BlairCognateIdentifier(_segmentPool, _projectService.Project, _ignoreRegularInsertionDeletion, _regularConsEqual,
 				"primary", new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
 				(ISegmentMappings) _similarSegments.UpdateComponent());
 			_projectService.Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;

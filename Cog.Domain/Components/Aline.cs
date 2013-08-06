@@ -10,17 +10,17 @@ namespace SIL.Cog.Domain.Components
 	{
 		private readonly AlineScorer _scorer;
 
-		public Aline(IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
+		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
 			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics)
-			: this(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new WordPairAlignerSettings())
+			: this(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new WordPairAlignerSettings())
 		{
 		}
 
-		public Aline(IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
+		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
 			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, WordPairAlignerSettings settings)
 			: base(settings)
 		{
-			_scorer = new AlineScorer(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings.ContextualSoundClasses);
+			_scorer = new AlineScorer(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings.ContextualSoundClasses);
 		}
 
 		public IReadOnlySet<SymbolicFeature> RelevantVowelFeatures

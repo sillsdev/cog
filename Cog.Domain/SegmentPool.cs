@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
 
@@ -6,11 +6,11 @@ namespace SIL.Cog.Domain
 {
 	public class SegmentPool
 	{
-		private readonly Dictionary<string, Segment> _segments;
+		private readonly ConcurrentDictionary<string, Segment> _segments;
 
 		public SegmentPool()
 		{
-			_segments = new Dictionary<string, Segment>();
+			_segments = new ConcurrentDictionary<string, Segment>();
 			_segments["#"] = Segment.Anchor;
 		}
 
@@ -19,16 +19,13 @@ namespace SIL.Cog.Domain
 			if (node == null)
 				return null;
 
-			Segment segment;
-			if (!_segments.TryGetValue(node.StrRep(), out segment))
-			{
-				FeatureStruct fs = node.Annotation.FeatureStruct.DeepClone();
-				fs.RemoveValue(CogFeatureSystem.OriginalStrRep);
-				fs.Freeze();
-				segment = new Segment(fs);
-				_segments[node.StrRep()] = segment;
-			}
-			return segment;
+			return _segments.GetOrAdd(node.StrRep(), s =>
+				{
+					FeatureStruct fs = node.Annotation.FeatureStruct.DeepClone();
+					fs.RemoveValue(CogFeatureSystem.OriginalStrRep);
+					fs.Freeze();
+					return new Segment(fs);
+				});
 		}
 
 		public Segment GetExisting(ShapeNode node)
@@ -44,6 +41,12 @@ namespace SIL.Cog.Domain
 		public bool TryGetExisting(string strRep, out Segment segment)
 		{
 			return _segments.TryGetValue(strRep, out segment);
+		}
+
+		public void Reset()
+		{
+			_segments.Clear();
+			_segments["#"] = Segment.Anchor;
 		}
 	}
 }

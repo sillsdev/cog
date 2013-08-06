@@ -7,7 +7,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class BlairCognateIdentifierConfig : IComponentConfig<IProcessor<VarietyPair>>
 	{
-		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
 			Debug.Assert(alignerElem != null);
@@ -15,10 +15,10 @@ namespace SIL.Cog.Domain.Config.Components
 			var ignoreRegularInsertionDeletionStr = (string) elem.Element(ConfigManager.Cog + "IgnoreRegularInsertionDeletion");
 			var regularConsEqualStr = (string) elem.Element(ConfigManager.Cog + "RegularConsonantsAreEqual");
 
-			var ignoredMappings = ConfigManager.LoadComponent<ISegmentMappings>(spanFactory, project, elem.Element(ConfigManager.Cog + "IgnoredCorrespondences"));
-			var similarSegments = ConfigManager.LoadComponent<ISegmentMappings>(spanFactory, project, elem.Element(ConfigManager.Cog + "SimilarSegments"));
+			var ignoredMappings = ConfigManager.LoadComponent<ISegmentMappings>(spanFactory, segmentPool, project, elem.Element(ConfigManager.Cog + "IgnoredCorrespondences"));
+			var similarSegments = ConfigManager.LoadComponent<ISegmentMappings>(spanFactory, segmentPool, project, elem.Element(ConfigManager.Cog + "SimilarSegments"));
 
-			return new BlairCognateIdentifier(project, ignoreRegularInsertionDeletionStr != null && bool.Parse(ignoreRegularInsertionDeletionStr),
+			return new BlairCognateIdentifier(segmentPool, project, ignoreRegularInsertionDeletionStr != null && bool.Parse(ignoreRegularInsertionDeletionStr),
 				regularConsEqualStr != null && bool.Parse(regularConsEqualStr), alignerID, ignoredMappings, similarSegments);
 		}
 

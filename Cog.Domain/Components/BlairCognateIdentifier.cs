@@ -6,18 +6,21 @@ using SIL.Machine;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class BlairCognateIdentifier : ProcessorBase<VarietyPair>
+	public class BlairCognateIdentifier : IProcessor<VarietyPair>
 	{
+		private readonly SegmentPool _segmentPool;
+		private readonly CogProject _project;
 		private readonly bool _ignoreRegularInsertionDeletion;
 		private readonly bool _regularConsEqual;
 		private readonly string _alignerID;
 		private readonly ISegmentMappings _ignoredMappings;
 		private readonly ISegmentMappings _similarSegments;
 
-		public BlairCognateIdentifier(CogProject project, bool ignoreRegularInsertionDeletion, bool regularConsEqual, string alignerID,
+		public BlairCognateIdentifier(SegmentPool segmentPool, CogProject project, bool ignoreRegularInsertionDeletion, bool regularConsEqual, string alignerID,
 			ISegmentMappings ignoredMappings, ISegmentMappings similarSegments)
-			: base(project)
 		{
+			_segmentPool = segmentPool;
+			_project = project;
 			_ignoreRegularInsertionDeletion = ignoreRegularInsertionDeletion;
 			_regularConsEqual = regularConsEqual;
 			_alignerID = alignerID;
@@ -50,9 +53,9 @@ namespace SIL.Cog.Domain.Components
 			get { return _similarSegments; }
 		}
 
-		public override void Process(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
-			IWordAligner aligner = Project.WordAligners[_alignerID];
+			IWordAligner aligner = _project.WordAligners[_alignerID];
 			var correspondences = new HashSet<Tuple<string, string>>(varietyPair.SoundChangeFrequencyDistribution.Conditions
 				.SelectMany(cond => varietyPair.SoundChangeFrequencyDistribution[cond].ObservedSamples.Where(ngram => varietyPair.SoundChangeFrequencyDistribution[cond][ngram] >= 3),
 				(lhs, ngram) => Tuple.Create(lhs.Target.ToString(), ngram.ToString())));
@@ -68,8 +71,8 @@ namespace SIL.Cog.Domain.Components
 				int totalCount = 0;
 				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
-					Ngram u = alignment[0, column].ToNgram(varietyPair.Variety1.SegmentPool);
-					Ngram v = alignment[1, column].ToNgram(varietyPair.Variety2.SegmentPool);
+					Ngram u = alignment[0, column].ToNgram(_segmentPool);
+					Ngram v = alignment[1, column].ToNgram(_segmentPool);
 					string uStr = u.ToString();
 					string vStr = v.ToString();
 					int cat = 3;

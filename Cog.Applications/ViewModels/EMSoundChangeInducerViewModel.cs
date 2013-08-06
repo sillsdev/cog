@@ -1,16 +1,19 @@
 using SIL.Cog.Applications.Services;
+using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class EMSoundChangeInducerViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private double _initialAlignmentThreshold;
 
-		public EMSoundChangeInducerViewModel(IProjectService projectService)
+		public EMSoundChangeInducerViewModel(SegmentPool segmentPool, IProjectService projectService)
 			: base("Sound correspondence induction")
 		{
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 		}
 
@@ -28,7 +31,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var soundChangeInducer = new EMSoundChangeInducer(_projectService.Project, _initialAlignmentThreshold, "primary", "cognateIdentifier");
+			var soundChangeInducer = new EMSoundChangeInducer(_segmentPool, _projectService.Project, _initialAlignmentThreshold, "primary", "cognateIdentifier");
 			_projectService.Project.VarietyPairProcessors["soundChangeInducer"] = soundChangeInducer;
 			return soundChangeInducer;
 		}

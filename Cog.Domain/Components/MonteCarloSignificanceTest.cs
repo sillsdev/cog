@@ -4,23 +4,24 @@ using System.Linq;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class MonteCarloSignificanceTest : ProcessorBase<VarietyPair>
+	public class MonteCarloSignificanceTest : IProcessor<VarietyPair>
 	{
+		private readonly CogProject _project;
 		private readonly string[] _processorIDs; 
 		private readonly int _iterationCount;
 
 		public MonteCarloSignificanceTest(CogProject project, IEnumerable<string> processorIDs, int iterationCount)
-			: base(project)
 		{
+			_project = project;
 			_processorIDs = processorIDs.ToArray();
 			_iterationCount = iterationCount;
 		}
 
-		public override void Process(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
 			int num = 0;
 
-			IProcessor<VarietyPair>[] processors = _processorIDs.Select(id => Project.VarietyPairProcessors[id]).ToArray();
+			IProcessor<VarietyPair>[] processors = _processorIDs.Select(id => _project.VarietyPairProcessors[id]).ToArray();
 
 			for (int n = 0; n < _iterationCount; n++)
 			{

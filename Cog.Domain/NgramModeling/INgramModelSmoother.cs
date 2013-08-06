@@ -6,7 +6,7 @@ namespace SIL.Cog.Domain.NgramModeling
 {
 	public interface INgramModelSmoother
 	{
-		void Smooth(int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd);
+		void Smooth(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd);
 
 		double GetProbability(Segment seg, Ngram context, string category);
 

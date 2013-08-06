@@ -25,6 +25,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly IProjectService _projectService;
 		private readonly IAnalysisService _analysisService;
+		private readonly VarietyPairViewModel.Factory _varietyPairFactory;
 		private ReadOnlyMirroredList<Variety, VarietyViewModel> _varieties;
 		private ListCollectionView _varietiesView1;
 		private ListCollectionView _varietiesView2;
@@ -43,7 +44,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public VarietyPairsViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IExportService exportService, IAnalysisService analysisService)
+		public VarietyPairsViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IExportService exportService, IAnalysisService analysisService,
+			VarietyPairViewModel.Factory varietyPairFactory)
 			: base("Variety Pairs")
 		{
 			_projectService = projectService;
@@ -51,6 +53,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_dialogService = dialogService;
 			_exportService = exportService;
 			_analysisService = analysisService;
+			_varietyPairFactory = varietyPairFactory;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -92,7 +95,7 @@ namespace SIL.Cog.Applications.ViewModels
 				_busyService.ShowBusyIndicatorUntilUpdated();
 
 				var pair = (VarietyPair) msg.DomainModels[0];
-				CurrentVarietyPair = new VarietyPairViewModel(_projectService.Project.WordAligners["primary"], pair, true);
+				CurrentVarietyPair = _varietyPairFactory(pair, true);
 				Set(() => CurrentVariety1, ref _currentVariety1, _varieties[pair.Variety1]);
 				Set(() => CurrentVariety2, ref _currentVariety2, _varieties[pair.Variety2]);
 				CurrentVarietyPairState = pair.Variety1.VarietyPairs.Contains(pair.Variety2)
@@ -151,7 +154,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_analysisService.Compare(pair);
 
-			CurrentVarietyPair = new VarietyPairViewModel(project.WordAligners["primary"], pair, true);
+			CurrentVarietyPair = _varietyPairFactory(pair, true);
 			CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
 		}
 
@@ -347,7 +350,7 @@ namespace SIL.Cog.Applications.ViewModels
 				if (_currentVariety1.DomainVariety.VarietyPairs.TryGetValue(_currentVariety2.DomainVariety, out pair))
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();
-					CurrentVarietyPair = new VarietyPairViewModel(_projectService.Project.WordAligners["primary"], pair, _currentVariety1.DomainVariety == pair.Variety1);
+					CurrentVarietyPair = _varietyPairFactory(pair, _currentVariety1.DomainVariety == pair.Variety1);
 					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
 				}
 				else

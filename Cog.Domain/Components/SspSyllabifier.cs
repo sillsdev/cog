@@ -9,11 +9,13 @@ namespace SIL.Cog.Domain.Components
 {
 	public class SspSyllabifier : SimpleSyllabifier
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly List<SonorityClass> _sonorityScale;
 		private readonly HashSet<string> _initialOnsets; 
 
-		public SspSyllabifier(IEnumerable<SonorityClass> sonorityScale)
+		public SspSyllabifier(SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
 		{
+			_segmentPool = segmentPool;
 			_initialOnsets = new HashSet<string>();
 			_sonorityScale = sonorityScale.ToList();
 		}
@@ -64,10 +66,10 @@ namespace SIL.Cog.Domain.Components
 				ShapeNode nextNode = node.Next;
 				if (ann.Span.Contains(nextNode))
 				{
-					nextSonority = GetSonority(word.Variety.SegmentPool, nextNode);
+					nextSonority = GetSonority(nextNode);
 					if (curSonority == -1)
 					{
-						curSonority = GetSonority(word.Variety.SegmentPool, node);
+						curSonority = GetSonority(node);
 					}
 					else if ((curSonority < prevSonority && curSonority < nextSonority) || (curSonority == prevSonority))
 					{
@@ -144,10 +146,10 @@ namespace SIL.Cog.Domain.Components
 			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
 		}
 
-		private int GetSonority(SegmentPool segmentPool, ShapeNode node)
+		private int GetSonority(ShapeNode node)
 		{
 			ShapeNode prevNode = node.Prev;
-			Ngram target = segmentPool.Get(node);
+			Ngram target = _segmentPool.Get(node);
 			ShapeNode nextNode = node.Next;
 
 			foreach (SonorityClass level in _sonorityScale)

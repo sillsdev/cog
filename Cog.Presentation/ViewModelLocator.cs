@@ -15,6 +15,7 @@
 using Autofac;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Domain;
 using SIL.Cog.Presentation.Services;
 using SIL.Machine;
 
@@ -58,6 +59,7 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<ImageExportService>().As<IImageExportService>().SingleInstance();
 			builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
 	        builder.RegisterType<GraphService>().As<IGraphService>().SingleInstance();
+	        builder.RegisterType<SegmentPool>().SingleInstance();
 
 			// Master view models
 			builder.RegisterType<MainWindowViewModel>().SingleInstance();
@@ -102,6 +104,7 @@ namespace SIL.Cog.Presentation
 	        builder.RegisterType<ListSimilarSegmentMappingsViewModel>();
 	        builder.RegisterType<SoundClassesViewModel>();
 	        builder.RegisterType<SegmentMappingsViewModel>();
+	        builder.RegisterType<VarietyPairViewModel>();
 
 	        _container = builder.Build();
         }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
+using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
@@ -11,27 +12,32 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class VarietyPairViewModel : ViewModelBase
 	{
+		public delegate VarietyPairViewModel Factory(VarietyPair varietyPair, bool areVarietiesInOrder);
+
+		private readonly SegmentPool _segmentPool;
+		private readonly IProjectService _projectService;
 		private readonly VarietyPair _varietyPair;
 		private readonly ReadOnlyList<SoundChangeViewModel> _soundChanges;
 		private readonly Lazy<ListCollectionView> _soundChangesView;
 		private SoundChangeViewModel _currentSoundChange;
 		private readonly bool _areVarietiesInOrder;
-		private readonly IWordAligner _aligner;
 		private readonly WordPairsViewModel _cognates;
 		private readonly WordPairsViewModel _noncognates;
 
-		public VarietyPairViewModel(IWordAligner aligner, VarietyPair varietyPair, bool areVarietiesInOrder)
+		public VarietyPairViewModel(SegmentPool segmentPool, IProjectService projectService, VarietyPair varietyPair, bool areVarietiesInOrder)
 		{
-			_aligner = aligner;
+			_segmentPool = segmentPool;
+			_projectService = projectService;
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
+			IWordAligner aligner = projectService.Project.WordAligners["primary"];
 			_cognates = new WordPairsViewModel();
 			foreach (WordPair wp in _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted))
-				_cognates.WordPairs.Add(new WordPairViewModel(_aligner, wp, _areVarietiesInOrder));
+				_cognates.WordPairs.Add(new WordPairViewModel(aligner, wp, _areVarietiesInOrder));
 			_noncognates = new WordPairsViewModel();
 			foreach (WordPair wp in _varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted))
-				_noncognates.WordPairs.Add(new WordPairViewModel(_aligner, wp, _areVarietiesInOrder));
+				_noncognates.WordPairs.Add(new WordPairViewModel(aligner, wp, _areVarietiesInOrder));
 
 			_soundChanges = new ReadOnlyList<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
 				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
@@ -57,6 +63,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
+			IWordAligner aligner = _projectService.Project.WordAligners["primary"];
 			wordPairs.SelectedCorrespondenceWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{
@@ -69,8 +76,8 @@ namespace SIL.Cog.Applications.ViewModels
 					}
 					else
 					{
-						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(wordPair.DomainWordPair.VarietyPair.Variety1.SegmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, _aligner.ContextualSoundClasses);
-						Ngram corr = wordPair.DomainAlignment[1, node.Column].ToNgram(wordPair.DomainWordPair.VarietyPair.Variety2.SegmentPool);
+						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(_segmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, aligner.ContextualSoundClasses);
+						Ngram corr = wordPair.DomainAlignment[1, node.Column].ToNgram(_segmentPool);
 						node.IsSelected = lhs.Equals(_currentSoundChange.DomainSoundChangeLhs) && corr.Equals(_currentSoundChange.DomainCorrespondence);
 						if (node.IsSelected)
 							selected = true;

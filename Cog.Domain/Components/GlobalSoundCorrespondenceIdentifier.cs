@@ -5,13 +5,16 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class GlobalSoundCorrespondenceIdentifier : ProcessorBase<VarietyPair>
+	public class GlobalSoundCorrespondenceIdentifier : IProcessor<VarietyPair>
 	{
+		private readonly SegmentPool _segmentPool;
+		private readonly CogProject _project;
 		private readonly string _alignerID;
 
-		public GlobalSoundCorrespondenceIdentifier(CogProject project, string alignerID)
-			: base(project)
+		public GlobalSoundCorrespondenceIdentifier(SegmentPool segmentPool, CogProject project, string alignerID)
 		{
+			_segmentPool = segmentPool;
+			_project = project;
 			_alignerID = alignerID;
 		}
 
@@ -48,9 +51,9 @@ namespace SIL.Cog.Domain.Components
 				|| cell2.Last.Annotation.Parent.Children.Last == cell2.Last.Annotation;
 		}
 
-		public override void Process(VarietyPair data)
+		public void Process(VarietyPair data)
 		{
-			IWordAligner aligner = Project.WordAligners[_alignerID];
+			IWordAligner aligner = _project.WordAligners[_alignerID];
 
 			var identifiers = new[]
 				{
@@ -70,16 +73,16 @@ namespace SIL.Cog.Domain.Components
 				for (int i = 0; i < alignment.ColumnCount; i++)
 				{
 					foreach (CorrespondenceIdentifier identifier in identifiers)
-						identifier.ProcessColumn(wordPair, alignment, i);
+						identifier.ProcessColumn(_segmentPool, wordPair, alignment, i);
 				}
 			}
 
-			MergeCorrespondences(identifiers[0].Correspondences, Project.StemInitialConsonantCorrespondences);
-			MergeCorrespondences(identifiers[1].Correspondences, Project.StemMedialConsonantCorrespondences);
-			MergeCorrespondences(identifiers[2].Correspondences, Project.StemFinalConsonantCorrespondences);
-			MergeCorrespondences(identifiers[3].Correspondences, Project.OnsetConsonantCorrespondences);
-			MergeCorrespondences(identifiers[4].Correspondences, Project.CodaConsonantCorrespondences);
-			MergeCorrespondences(identifiers[5].Correspondences, Project.VowelCorrespondences);
+			MergeCorrespondences(identifiers[0].Correspondences, _project.StemInitialConsonantCorrespondences);
+			MergeCorrespondences(identifiers[1].Correspondences, _project.StemMedialConsonantCorrespondences);
+			MergeCorrespondences(identifiers[2].Correspondences, _project.StemFinalConsonantCorrespondences);
+			MergeCorrespondences(identifiers[3].Correspondences, _project.OnsetConsonantCorrespondences);
+			MergeCorrespondences(identifiers[4].Correspondences, _project.CodaConsonantCorrespondences);
+			MergeCorrespondences(identifiers[5].Correspondences, _project.VowelCorrespondences);
 		}
 
 		private void MergeCorrespondences(GlobalSoundCorrespondenceCollection source, GlobalSoundCorrespondenceCollection target)
@@ -123,14 +126,14 @@ namespace SIL.Cog.Domain.Components
 				get { return _correspondences; }
 			}
 
-			public void ProcessColumn(WordPair wp, Alignment<Word, ShapeNode> alignment, int column)
+			public void ProcessColumn(SegmentPool segmentPool, WordPair wp, Alignment<Word, ShapeNode> alignment, int column)
 			{
 				AlignmentCell<ShapeNode> cell1 = alignment[0, column];
 				AlignmentCell<ShapeNode> cell2 = alignment[1, column];
 				if (!cell1.IsNull && cell1.First.Type() == _type && !cell2.IsNull && cell2.First.Type() == _type && _filter(alignment, column))
 				{
-					Ngram ngram1 = cell1.ToNgram(wp.Word1.Variety.SegmentPool);
-					Ngram ngram2 = cell2.ToNgram(wp.Word2.Variety.SegmentPool);
+					Ngram ngram1 = cell1.ToNgram(segmentPool);
+					Ngram ngram2 = cell2.ToNgram(segmentPool);
 					if (ngram1.Count == 1 && ngram2.Count == 1)
 					{
 						Segment seg1 = ngram1.First;

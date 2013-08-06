@@ -9,7 +9,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public abstract class WordAlignerConfigBase : IComponentConfig<IWordAligner>
 	{
-		public abstract IWordAligner Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem);
+		public abstract IWordAligner Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem);
 
 		protected WordPairAlignerSettings LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem)
 		{

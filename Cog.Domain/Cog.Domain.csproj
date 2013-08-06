@@ -77,7 +77,6 @@
     <Compile Include="Components\MultiThreadedPipeline.cs" />
     <Compile Include="Components\Pipeline.cs" />
     <Compile Include="Components\PrecisionRecallCalculator.cs" />
-    <Compile Include="Components\ProcessorBase.cs" />
     <Compile Include="Components\ProgressEventArgs.cs" />
     <Compile Include="Components\Stemmer.cs" />
     <Compile Include="Components\ThresholdCognateIdentifier.cs" />

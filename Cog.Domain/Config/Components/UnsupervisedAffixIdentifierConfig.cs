@@ -6,12 +6,12 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class UnsupervisedAffixIdentifierConfig : IComponentConfig<IProcessor<Variety>>
 	{
-		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var stemThresholdStr = (string) elem.Element(ConfigManager.Cog + "AffixThreshold");
 			var maxAffixLenStr = (string) elem.Element(ConfigManager.Cog + "MaxAffixLength");
 			var catRequired = (string) elem.Element(ConfigManager.Cog + "CategoryRequired");
-			return new UnsupervisedAffixIdentifier(spanFactory, double.Parse(stemThresholdStr), int.Parse(maxAffixLenStr), catRequired != null && bool.Parse(catRequired));
+			return new UnsupervisedAffixIdentifier(spanFactory, segmentPool, double.Parse(stemThresholdStr), int.Parse(maxAffixLenStr), catRequired != null && bool.Parse(catRequired));
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)

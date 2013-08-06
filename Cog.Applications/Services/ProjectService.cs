@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using GalaSoft.MvvmLight.Messaging;
@@ -18,7 +17,8 @@ namespace SIL.Cog.Applications.Services
 
 		public event EventHandler<EventArgs> ProjectOpened;
 
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
+		private readonly SpanFactory<ShapeNode> _spanFactory;
+		private readonly SegmentPool _segmentPool;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
 		private readonly ISettingsService _settingsService;
@@ -28,9 +28,11 @@ namespace SIL.Cog.Applications.Services
 		private string _projectName;
 		private bool _isChanged;
 
-		public ProjectService(SpanFactory<ShapeNode> spanFactory, IDialogService dialogService, IBusyService busyService, ISettingsService settingsService, Lazy<IAnalysisService> analysisService)
+		public ProjectService(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IDialogService dialogService, IBusyService busyService,
+			ISettingsService settingsService, Lazy<IAnalysisService> analysisService)
 		{
 			_spanFactory = spanFactory;
+			_segmentPool = segmentPool;
 			_dialogService = dialogService;
 			_busyService = busyService;
 			_settingsService = settingsService;
@@ -90,7 +92,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			_busyService.ShowBusyIndicatorUntilUpdated();
 			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Applications.NewProject.cogx");
-			CogProject project = ConfigManager.Load(_spanFactory, stream);
+			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
 			SetupProject(null, "New Project", project);
 		}
 
@@ -136,7 +138,7 @@ namespace SIL.Cog.Applications.Services
 		private void OpenProject(string path)
 		{
 			_busyService.ShowBusyIndicatorUntilUpdated();
-			CogProject project = ConfigManager.Load(_spanFactory, path);
+			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, path);
 			SetupProject(path, Path.GetFileNameWithoutExtension(path), project);
 		}
 
@@ -200,8 +202,8 @@ namespace SIL.Cog.Applications.Services
 						var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
 						if (hash == CalcProjectHash())
 						{
-							_project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
-								.Select(surrogate => surrogate.ToVarietyPair(_project)));
+							var cache = Serializer.DeserializeWithLengthPrefix<ComparisonCache>(fs, PrefixStyle.Base128, 1);
+							cache.Load(_segmentPool, _project);
 						}
 						else
 						{
@@ -232,12 +234,7 @@ namespace SIL.Cog.Applications.Services
 				using (FileStream fs = File.Create(cacheFileName))
 				{
 					Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
-
-					foreach (VarietyPair vp in _project.VarietyPairs)
-					{
-						var surrogate = new VarietyPairSurrogate(vp);
-						Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
-					}
+					Serializer.SerializeWithLengthPrefix(fs, new ComparisonCache(_project), PrefixStyle.Base128, 1);
 				}
 			}
 		}

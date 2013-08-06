@@ -8,13 +8,15 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class DolgopolskyCognateIdentifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private int _initialEquivalenceThreshold;
 		private readonly SoundClassesViewModel _soundClasses;
 
-		public DolgopolskyCognateIdentifierViewModel(IProjectService projectService, SoundClassesViewModel soundClassesViewModel)
+		public DolgopolskyCognateIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService, SoundClassesViewModel soundClassesViewModel)
 			: base("Dolgopolsky")
 		{
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 			_soundClasses = soundClassesViewModel;
 			_soundClasses.PropertyChanged += ChildPropertyChanged;
@@ -76,7 +78,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new DolgopolskyCognateIdentifier(_projectService.Project, _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
+			var cognateIdentifier = new DolgopolskyCognateIdentifier(_segmentPool, _projectService.Project, _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
 				_initialEquivalenceThreshold, "primary");
 			_projectService.Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
 			return cognateIdentifier;

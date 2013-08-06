@@ -8,7 +8,7 @@ namespace SIL.Cog.Domain.NgramModeling
 	{
 		private ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> _cfd;
 
-		public void Smooth(int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
+		public void Smooth(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
 		{
 			_cfd = cfd;
 		}

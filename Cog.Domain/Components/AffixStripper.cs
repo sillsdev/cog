@@ -2,20 +2,22 @@
 
 namespace SIL.Cog.Domain.Components
 {
-	public class AffixStripper : ProcessorBase<Variety>
+	public class AffixStripper : IProcessor<Variety>
 	{
-		public AffixStripper(CogProject project)
-			: base(project)
+		private readonly Segmenter _segmenter;
+
+		public AffixStripper(Segmenter segmenter)
 		{
+			_segmenter = segmenter;
 		}
 
-		public override void Process(Variety data)
+		public void Process(Variety data)
 		{
 			foreach (Word word in data.Words.Where(w => w.Shape.Count > 0 && (w.Prefix != null || w.Suffix != null)))
 			{
 				word.StemIndex = 0;
 				word.StemLength = word.StrRep.Length;
-				Project.Segmenter.Segment(word);
+				_segmenter.Segment(word);
 			}
 		}
 	}

@@ -136,6 +136,7 @@
     <Compile Include="ViewModels\CognateIdentifierOptionsViewModel.cs" />
     <Compile Include="ViewModels\CompareMasterViewModel.cs" />
     <Compile Include="ViewModels\CompareSettingsViewModel.cs" />
+    <Compile Include="ViewModels\ComparisonCache.cs" />
     <Compile Include="ViewModels\ComparisonPerformedMessage.cs" />
     <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
     <Compile Include="ViewModels\ComponentSettingsViewModelBase.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="ViewModels\GlobalCorrespondencesViewModel.cs" />
     <Compile Include="ViewModels\GlobalCorrespondenceEdge.cs" />
     <Compile Include="ViewModels\GlobalSegmentVertex.cs" />
+    <Compile Include="ViewModels\GlobalSoundCorrespondenceSurrogate.cs" />
     <Compile Include="ViewModels\HeaderGridVertex.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />

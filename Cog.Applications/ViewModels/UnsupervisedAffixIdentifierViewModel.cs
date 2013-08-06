@@ -1,4 +1,5 @@
 using SIL.Cog.Applications.Services;
+using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Machine;
 
@@ -7,15 +8,17 @@ namespace SIL.Cog.Applications.ViewModels
 	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase
 	{
 		private readonly IProjectService _projectService;
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
+		private readonly SpanFactory<ShapeNode> _spanFactory;
+		private readonly SegmentPool _segmentPool;
 		private double _threshold;
 		private int _maxAffixLength;
 		private bool _categoryRequired;
 
-		public UnsupervisedAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, IProjectService projectService)
+		public UnsupervisedAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService)
 			: base("Automatic stemmer")
 		{
 			_spanFactory = spanFactory;
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 		}
 
@@ -47,7 +50,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var affixIdentifier = new UnsupervisedAffixIdentifier(_spanFactory, _threshold, _maxAffixLength, _categoryRequired);
+			var affixIdentifier = new UnsupervisedAffixIdentifier(_spanFactory, _segmentPool, _threshold, _maxAffixLength, _categoryRequired);
 			_projectService.Project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
 			return affixIdentifier;
 		}

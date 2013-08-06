@@ -9,7 +9,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class ListSegmentMappingsConfig : IComponentConfig<ISegmentMappings>
 	{
-		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement mappingsElem = elem.Element(ConfigManager.Cog + "Mappings");
 			var genDigraphsStr = (string) elem.Element(ConfigManager.Cog + "GenerateDigraphs") ?? "false";

@@ -10,14 +10,16 @@ namespace SIL.Cog.Applications.Services
 {
 	public class AnalysisService : IAnalysisService
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
+		private readonly SpanFactory<ShapeNode> _spanFactory;
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
 
-		public AnalysisService(SpanFactory<ShapeNode> spanFactory, IProjectService projectService, IDialogService dialogService, IBusyService busyService)
+		public AnalysisService(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService, IDialogService dialogService, IBusyService busyService)
 		{
 			_spanFactory = spanFactory;
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 			_dialogService = dialogService;
 			_busyService = busyService;
@@ -41,13 +43,13 @@ namespace SIL.Cog.Applications.Services
 		private IEnumerable<IProcessor<Variety>> GetSegmentProcessors()
 		{
 			CogProject project = _projectService.Project;
-			var processors = new List<IProcessor<Variety>> {new VarietySegmenter(project)};
+			var processors = new List<IProcessor<Variety>> {new VarietySegmenter(project.Segmenter)};
 			IProcessor<Variety> syllabifier;
 			if (project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
 				processors.Add(syllabifier);
 			else
 				processors.Add(new SimpleSyllabifier());
-			processors.Add(new SegmentDistributionCalculator());
+			processors.Add(new SegmentDistributionCalculator(_segmentPool));
 			return processors;
 		}
 
@@ -92,14 +94,15 @@ namespace SIL.Cog.Applications.Services
 
 		public IEnumerable<IProcessor<Variety>> GetStemProcessors(StemmingMethod method)
 		{
-			var processors = new List<IProcessor<Variety>> {new AffixStripper(_projectService.Project)};
+			CogProject project = _projectService.Project;
+			var processors = new List<IProcessor<Variety>> {new AffixStripper(project.Segmenter)};
 			if (method != StemmingMethod.Manual)
 				processors.Add(_projectService.Project.VarietyProcessors["affixIdentifier"]);
-			processors.Add(new Stemmer(_spanFactory, _projectService.Project));
+			processors.Add(new Stemmer(_spanFactory, project.Segmenter));
 			IProcessor<Variety> syllabifier;
 			if (_projectService.Project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
 				processors.Add(syllabifier);
-			processors.Add(new SegmentDistributionCalculator());
+			processors.Add(new SegmentDistributionCalculator(_segmentPool));
 			return processors;
 		}
 
@@ -148,7 +151,7 @@ namespace SIL.Cog.Applications.Services
 			if (project.VarietyPairProcessors.TryGetValue("similarSegmentIdentifier", out similarSegmentIdentifier))
 				processors.Add(similarSegmentIdentifier);
 			processors.Add(project.VarietyPairProcessors["soundChangeInducer"]);
-			processors.Add(new GlobalSoundCorrespondenceIdentifier(project, "primary"));
+			processors.Add(new GlobalSoundCorrespondenceIdentifier(_segmentPool, project, "primary"));
 			return processors;
 		}
 	}

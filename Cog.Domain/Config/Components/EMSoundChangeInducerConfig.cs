@@ -7,7 +7,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class EMSoundChangeInducerConfig : IComponentConfig<IProcessor<VarietyPair>>
 	{
-		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var soundChangeThresholdStr = (string) elem.Element(ConfigManager.Cog + "InitialAlignmentThreshold");
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
@@ -16,7 +16,7 @@ namespace SIL.Cog.Domain.Config.Components
 			XElement cognateIdentifierElem = elem.Element(ConfigManager.Cog + "CognateIdentifier");
 			Debug.Assert(cognateIdentifierElem != null);
 			var cognateIdentifierID = (string) cognateIdentifierElem.Attribute("ref");
-			return new EMSoundChangeInducer(project, double.Parse(soundChangeThresholdStr), alignerID, cognateIdentifierID);
+			return new EMSoundChangeInducer(segmentPool, project, double.Parse(soundChangeThresholdStr), alignerID, cognateIdentifierID);
 		}
 
 		public void Save(IProcessor<VarietyPair> component, XElement elem)

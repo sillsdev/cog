@@ -7,7 +7,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public class ThresholdSegmentMappingsConfig : IComponentConfig<ISegmentMappings>
 	{
-		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, CogProject project, XElement elem)
+		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var thresholdStr = (string) elem.Element(ConfigManager.Cog + "Threshold");
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");

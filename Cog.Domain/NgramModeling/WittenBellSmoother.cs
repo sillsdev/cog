@@ -11,13 +11,13 @@ namespace SIL.Cog.Domain.NgramModeling
 		private int _vocabularySize;
 		private Direction _dir;
 
-		public void Smooth(int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
+		public void Smooth(SegmentPool segmentPool, int ngramSize, Variety variety, Direction dir, ConditionalFrequencyDistribution<Tuple<Ngram, string>, Segment> cfd)
 		{
 			_cfd = cfd;
 			_dir = dir;
 			_vocabularySize = variety.SegmentFrequencyDistribution.ObservedSamples.Count + 1;
 			if (ngramSize > 1)
-				_lowerOrderModel = new NgramModel(ngramSize - 1, variety, dir, new WittenBellSmoother());
+				_lowerOrderModel = new NgramModel(segmentPool, ngramSize - 1, variety, dir, new WittenBellSmoother());
 		}
 
 		public double GetProbability(Segment seg, Ngram context, string category)

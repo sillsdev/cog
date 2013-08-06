@@ -9,14 +9,16 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class SspSyllabifierViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private readonly IAnalysisService _analysisService;
 		private bool _syllabificationEnabled;
 		private readonly SoundClassesViewModel _sonorityClasses;
 
-		public SspSyllabifierViewModel(IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
+		public SspSyllabifierViewModel(SegmentPool segmentPool, IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
 			: base("Syllabification")
 		{
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 			_analysisService = analysisService;
 			_sonorityClasses = sonorityClasses;
@@ -83,7 +85,7 @@ namespace SIL.Cog.Applications.ViewModels
 			SspSyllabifier syllabifier;
 			if (_syllabificationEnabled)
 			{
-				syllabifier = new SspSyllabifier(_sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)));
+				syllabifier = new SspSyllabifier(_segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)));
 				_projectService.Project.VarietyProcessors["syllabifier"] = syllabifier;
 			}
 			else

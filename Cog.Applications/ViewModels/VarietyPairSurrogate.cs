@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
+using SIL.Collections;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Statistics;
 
@@ -19,11 +20,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
 		}
 
-		public VarietyPairSurrogate(VarietyPair vp)
+		public VarietyPairSurrogate(Dictionary<WordPair, WordPairSurrogate> wordPairSurrogates, VarietyPair vp)
 		{
 			Variety1 = vp.Variety1.Name;
 			Variety2 = vp.Variety2.Name;
-			_wordPairs = vp.WordPairs.Select(wp => new WordPairSurrogate(wp)).ToList();
+			_wordPairs = vp.WordPairs.Select(wp => wordPairSurrogates.GetValue(wp, () => new WordPairSurrogate(wp))).ToList();
 			PhoneticSimilarityScore = vp.PhoneticSimilarityScore;
 			LexicalSimilarityScore = vp.LexicalSimilarityScore;
 			DefaultCorrespondenceProbability = vp.DefaultCorrespondenceProbability;
@@ -40,7 +41,7 @@ namespace SIL.Cog.Applications.ViewModels
 		[ProtoMember(2)]
 		public string Variety2 { get; set; }
 
-		[ProtoMember(3)]
+		[ProtoMember(3, AsReference = true)]
 		public List<WordPairSurrogate> WordPairs
 		{
 			get { return _wordPairs; }
@@ -58,7 +59,7 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _soundChanges; }
 		}
 
-		public VarietyPair ToVarietyPair(CogProject project)
+		public VarietyPair ToVarietyPair(SegmentPool segmentPool, Dictionary<WordPairSurrogate, WordPair> wordPairs, CogProject project)
 		{
 			var vp = new VarietyPair(project.Varieties[Variety1], project.Varieties[Variety2])
 				{
@@ -66,15 +67,15 @@ namespace SIL.Cog.Applications.ViewModels
 					LexicalSimilarityScore = LexicalSimilarityScore,
 					DefaultCorrespondenceProbability = DefaultCorrespondenceProbability
 				};
-			vp.WordPairs.AddRange(_wordPairs.Select(surrogate => surrogate.ToWordPair(project, vp)));
+			vp.WordPairs.AddRange(_wordPairs.Select(surrogate => wordPairs.GetValue(surrogate, () => surrogate.ToWordPair(project, vp))));
 			var soundChanges = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
 			foreach (KeyValuePair<SoundContextSurrogate, Tuple<string[], int>[]> fd in _soundChanges)
 			{
-				SoundContext ctxt = fd.Key.ToSoundContext(project, vp.Variety1.SegmentPool);
+				SoundContext ctxt = fd.Key.ToSoundContext(project, segmentPool);
 				FrequencyDistribution<Ngram> freqDist = soundChanges[ctxt];
 				foreach (Tuple<string[], int> sample in fd.Value)
 				{
-					Ngram corr = sample.Item1 == null ? new Ngram() : new Ngram(sample.Item1.Select(s => vp.Variety2.SegmentPool.GetExisting(s)));
+					Ngram corr = sample.Item1 == null ? new Ngram() : new Ngram(sample.Item1.Select(segmentPool.GetExisting));
 					freqDist.Increment(corr, sample.Item2);
 				}
 			}

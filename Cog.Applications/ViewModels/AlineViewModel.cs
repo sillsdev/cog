@@ -24,15 +24,17 @@ namespace SIL.Cog.Applications.ViewModels
 
 	public class AlineViewModel : ComponentSettingsViewModelBase
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private AlineMode _mode;
 		private bool _expansionCompressionEnabled;
 		private ReadOnlyList<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
 
-		public AlineViewModel(IProjectService projectService, SoundClassesViewModel soundClasses)
+		public AlineViewModel(SegmentPool segmentPool, IProjectService projectService, SoundClassesViewModel soundClasses)
 			: base("Alignment")
 		{
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 			_soundClasses = soundClasses;
 			_soundClasses.PropertyChanged += ChildPropertyChanged;
@@ -135,7 +137,7 @@ namespace SIL.Cog.Applications.ViewModels
 					valueMetrics[value.DomainSymbol] = value.Metric;
 			}
 
-			var aligner = new Aline(relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
+			var aligner = new Aline(_segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass)});
 			_projectService.Project.WordAligners["primary"] = aligner;
 			return aligner;

@@ -15,15 +15,17 @@ namespace SIL.Cog.Domain.SequenceAlignment
 		private const int IndelCost = 1000;
 		private const int VowelCost = 0;
 
+		private readonly SegmentPool _segmentPool;
 		private readonly IReadOnlySet<SymbolicFeature> _relevantConsFeatures;
 		private readonly IReadOnlySet<SymbolicFeature> _relevantVowelFeatures; 
 		private readonly IReadOnlyDictionary<SymbolicFeature, int> _featureWeights;
 		private readonly IReadOnlyDictionary<FeatureSymbol, int> _valueMetrics;
 		private readonly SoundClass[] _contextualSoundClasses;
 
-		public AlineScorer(IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
+		public AlineScorer(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
 			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, IEnumerable<SoundClass> contextualSoundClasses)
 		{
+			_segmentPool = segmentPool;
 			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures).ToReadOnlySet();
 			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures).ToReadOnlySet();
 			_featureWeights = new Dictionary<SymbolicFeature, int>(featureWeights).ToReadOnlyDictionary();
@@ -102,7 +104,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			double prob;
 			if (varietyPair.Variety1 == word.Variety)
 			{
-				SoundContext lhs = node.ToSoundContext(word.Variety.SegmentPool, _contextualSoundClasses);
+				SoundContext lhs = node.ToSoundContext(_segmentPool, _contextualSoundClasses);
 				prob = varietyPair.DefaultCorrespondenceProbability;
 				IProbabilityDistribution<Ngram> probDist;
 				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
@@ -110,7 +112,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			}
 			else
 			{
-				Ngram corr = word.Variety.SegmentPool.GetExisting(node);
+				Ngram corr = _segmentPool.GetExisting(node);
 				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 			}
 			return (int) (MaxSoundChangeScore * prob);
@@ -192,8 +194,8 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			}
 			else
 			{
-				Segment targetSegment = varietyPair.Variety1.SegmentPool.GetExisting(p1);
-				target = p2 == null ? targetSegment : new Ngram(targetSegment, varietyPair.Variety1.SegmentPool.GetExisting(p2));
+				Segment targetSegment = _segmentPool.GetExisting(p1);
+				target = p2 == null ? targetSegment : new Ngram(targetSegment, _segmentPool.GetExisting(p2));
 			}
 
 			Ngram corr;
@@ -203,18 +205,18 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			}
 			else
 			{
-				Segment corrSegment = varietyPair.Variety2.SegmentPool.GetExisting(q1);
-				corr = q2 == null ? corrSegment : new Ngram(corrSegment, varietyPair.Variety2.SegmentPool.GetExisting(q2));
+				Segment corrSegment = _segmentPool.GetExisting(q1);
+				corr = q2 == null ? corrSegment : new Ngram(corrSegment, _segmentPool.GetExisting(q2));
 			}
 
 			ShapeNode leftNode = p1 == null ? p2 : p1.GetPrev(NodeFilter);
 			SoundClass leftEnv;
-			if (leftNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(varietyPair.Variety1.SegmentPool, leftNode, out leftEnv))
+			if (leftNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(_segmentPool, leftNode, out leftEnv))
 				leftEnv = null;
 			ShapeNode pRight = p2 ?? p1;
 			ShapeNode rightNode = pRight == null ? null : pRight.GetNext(NodeFilter);
 			SoundClass rightEnv;
-			if (rightNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(varietyPair.Variety1.SegmentPool, rightNode, out rightEnv))
+			if (rightNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(_segmentPool, rightNode, out rightEnv))
 				rightEnv = null;
 
 			var lhs = new SoundContext(leftEnv, target, rightEnv);

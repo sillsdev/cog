@@ -4,15 +4,18 @@ using SIL.Machine;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class DolgopolskyCognateIdentifier : ProcessorBase<VarietyPair>
+	public class DolgopolskyCognateIdentifier : IProcessor<VarietyPair>
 	{
+		private readonly SegmentPool _segmentPool;
+		private readonly CogProject _project;
 		private readonly List<SoundClass> _soundClasses;
 		private readonly string _alignerID;
 		private readonly int _initialEquivalenceThreshold;
 
-		public DolgopolskyCognateIdentifier(CogProject project, IEnumerable<SoundClass> soundClasses, int initialEquivalenceThreshold, string alignerID)
-			: base(project)
+		public DolgopolskyCognateIdentifier(SegmentPool segmentPool, CogProject project, IEnumerable<SoundClass> soundClasses, int initialEquivalenceThreshold, string alignerID)
 		{
+			_segmentPool = segmentPool;
+			_project = project;
 			_soundClasses = soundClasses.ToList();
 			_alignerID = alignerID;
 			_initialEquivalenceThreshold = initialEquivalenceThreshold;
@@ -33,11 +36,11 @@ namespace SIL.Cog.Domain.Components
 			get { return _initialEquivalenceThreshold; }
 		}
 
-		public override void Process(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
 			double totalScore = 0.0;
 			int totalCognateCount = 0;
-			IWordAligner aligner = Project.WordAligners[_alignerID];
+			IWordAligner aligner = _project.WordAligners[_alignerID];
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
 				wp.AlignmentNotes.Clear();
@@ -66,10 +69,10 @@ namespace SIL.Cog.Domain.Components
 						else
 						{
 							SoundClass sc1;
-							if (!_soundClasses.TryGetMatchingSoundClass(varietyPair.Variety1.SegmentPool, alignment, 0, column, wp.Word1, out sc1))
+							if (!_soundClasses.TryGetMatchingSoundClass(_segmentPool, alignment, 0, column, wp.Word1, out sc1))
 								sc1 = null;
 							SoundClass sc2;
-							if (!_soundClasses.TryGetMatchingSoundClass(varietyPair.Variety2.SegmentPool, alignment, 1, column, wp.Word2, out sc2))
+							if (!_soundClasses.TryGetMatchingSoundClass(_segmentPool, alignment, 1, column, wp.Word2, out sc2))
 								sc2 = null;
 							if (sc1 != null && sc2 != null && sc1 == sc2)
 							{

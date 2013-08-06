@@ -588,6 +588,10 @@
       <Project>{9711E2C2-1804-441B-9EBC-AE7DE7521EA7}</Project>
       <Name>Cog.Applications</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
+      <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
+      <Name>Cog.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
       <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
       <Name>Collections</Name>

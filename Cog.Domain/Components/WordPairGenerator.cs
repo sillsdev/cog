@@ -3,13 +3,14 @@ using SIL.Collections;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class WordPairGenerator : ProcessorBase<VarietyPair>
+	public class WordPairGenerator : IProcessor<VarietyPair>
 	{
+		private readonly CogProject _project;
 		private readonly string _alignerID;
 
 		public WordPairGenerator(CogProject project, string alignerID)
-			: base(project)
 		{
+			_project = project;
 			_alignerID = alignerID;
 		}
 
@@ -18,9 +19,9 @@ namespace SIL.Cog.Domain.Components
 			get { return _alignerID; }
 		}
 
-		public override void Process(VarietyPair varietyPair)
+		public void Process(VarietyPair varietyPair)
 		{
-			IWordAligner aligner = Project.WordAligners[_alignerID];
+			IWordAligner aligner = _project.WordAligners[_alignerID];
 			varietyPair.WordPairs.Clear();
 			foreach (Sense sense in varietyPair.Variety1.Words.Senses)
 			{

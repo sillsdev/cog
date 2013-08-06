@@ -186,6 +186,9 @@
       <DependentUpon>EditUnnaturalClassDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EnumerationExtension.cs" />
+    <Compile Include="Views\ExportGlobalCorrespondencesChartDialog.xaml.cs">
+      <DependentUpon>ExportGlobalCorrespondencesChartDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ExportHierarchicalGraphDialog.xaml.cs">
       <DependentUpon>ExportHierarchicalGraphDialog.xaml</DependentUpon>
     </Compile>
@@ -369,6 +372,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditUnnaturalClassDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExportGlobalCorrespondencesChartDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

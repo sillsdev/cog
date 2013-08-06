@@ -161,6 +161,34 @@ namespace SIL.Cog.Presentation.Services
 			return false;
 		}
 
+		public bool ExportGlobalCorrespondencesChart(object ownerViewModel, SoundCorrespondenceType correspondenceType, int frequencyFilter)
+		{
+			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", this, new FileType("PNG image", ".png"));
+			if (result.IsValid)
+			{
+				IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> graph = _graphService.GenerateGlobalCorrespondencesGraph(correspondenceType);
+
+				var graphLayout = new GlobalCorrespondencesGraphLayout
+					{
+						IsAnimationEnabled = false,
+						CreationTransition = null,
+						DestructionTransition = null,
+						LayoutAlgorithmType = "Grid",
+						EdgeRoutingAlgorithmType = "Bundle",
+						EdgeRoutingParameters = new BundleEdgeRoutingParameters {InkCoefficient = 0, LengthCoefficient = 1, VertexMargin = 2},
+						Graph = graph,
+						Background = Brushes.White,
+						WeightFilter = frequencyFilter,
+						CorrespondenceType = correspondenceType
+					};
+				graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["GlobalCorrespondenceEdgeControlStyle"];
+				SaveElement(graphLayout, result.FileName);
+				return true;
+			}
+
+			return false;
+		}
+
 		public bool ExportCurrentGlobalCorrespondencesChart(object ownerViewModel)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", ownerViewModel, new FileType("PNG image", ".png"));

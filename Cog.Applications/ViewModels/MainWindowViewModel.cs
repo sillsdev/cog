@@ -20,6 +20,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _exportCognateSetsCommand;
 		private readonly ICommand _exportHierarchicalGraphCommand;
 		private readonly ICommand _exportNetworkGraphCommand;
+		private readonly ICommand _exportGlobalCorrespondencesChartCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
@@ -48,6 +49,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
 			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
 			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
+			_exportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
 
 			foreach (MasterViewModelBase childView in Views.OfType<MasterViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
@@ -206,6 +208,18 @@ namespace SIL.Cog.Applications.ViewModels
 				_imageExportService.ExportNetworkGraph(this, vm.SimilarityMetric, vm.SimilarityScoreFilter);
 		}
 
+		private bool CanExportGlobalCorrespondencesChart()
+		{
+			return _projectService.Project.VarietyPairs.Count > 0;
+		}
+
+		private void ExportGlobalCorrespondencesChart()
+		{
+			var vm = new ExportGlobalCorrespondencesChartViewModel();
+			if (_dialogService.ShowModalDialog(this, vm) == true)
+				_imageExportService.ExportGlobalCorrespondencesChart(this, vm.CorrespondenceType, vm.FrequencyFilter);
+		}
+
 		public bool CanExit()
 		{
 			return _projectService.Close();
@@ -264,6 +278,11 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICommand ExportNetworkGraphCommand
 		{
 			get { return _exportNetworkGraphCommand; }
+		}
+
+		public ICommand ExportGlobalCorrespondencesChartCommand
+		{
+			get { return _exportGlobalCorrespondencesChartCommand; }
 		}
 	}
 }

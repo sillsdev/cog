@@ -14,16 +14,6 @@ using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public enum SoundCorrespondenceType
-	{
-		InitialConsonants,
-		MedialConsonants,
-		FinalConsonants,
-		OnsetConsonants,
-		CodaConsonants,
-		Vowels
-	}
-
 	public class GlobalCorrespondencesViewModel : WorkspaceViewModelBase
 	{
 		private readonly IProjectService _projectService;

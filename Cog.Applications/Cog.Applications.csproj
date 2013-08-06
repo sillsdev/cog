@@ -149,6 +149,7 @@
     <Compile Include="ViewModels\EditUnnaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
     <Compile Include="ViewModels\EMSoundChangeInducerViewModel.cs" />
+    <Compile Include="ViewModels\ExportGlobalCorrespondencesChartViewModel.cs" />
     <Compile Include="ViewModels\ExportHierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\ExportNetworkGraphViewModel.cs" />
     <Compile Include="ViewModels\ExportSimilarityMatrixViewModel.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
     <Compile Include="ViewModels\SoundContextSurrogate.cs" />
+    <Compile Include="ViewModels\SoundCorrespondenceType.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
     <Compile Include="ViewModels\SspSyllabifierViewModel.cs" />
     <Compile Include="ViewModels\SwitchViewMessage.cs" />

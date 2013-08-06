@@ -30,7 +30,8 @@ namespace SIL.Cog.Presentation.Services
 				{typeof(AddUnnaturalClassSegmentViewModel), typeof(AddUnnaturalClassSegmentDialog)},
 				{typeof(EditRegionViewModel), typeof(EditRegionDialog)},
 				{typeof(FindViewModel), typeof(FindDialog)},
-				{typeof(ImportTextWordListsViewModel), typeof(ImportTextWordListsDialog)}
+				{typeof(ImportTextWordListsViewModel), typeof(ImportTextWordListsDialog)},
+				{typeof(ExportGlobalCorrespondencesChartViewModel), typeof(ExportGlobalCorrespondencesChartDialog)}
 			};
 		}
 

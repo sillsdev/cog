@@ -88,7 +88,5 @@ namespace SIL.Cog.Applications.Services
 			}
 			return false;
 		}
-
-
 	}
 }

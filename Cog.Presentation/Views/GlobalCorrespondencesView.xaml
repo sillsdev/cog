@@ -4,16 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:ga="clr-namespace:SIL.Cog.Applications.GraphAlgorithms;assembly=SIL.Cog.Applications"
-             xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              mc:Ignorable="d" DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
-	<UserControl.Resources>
-		<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
-	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -25,30 +20,13 @@
 					<c:GlobalCorrespondencesGraphLayout x:Name="GraphLayout" LayoutAlgorithmType="Grid" Background="White" HighlightAlgorithmType="Undirected" EdgeRoutingAlgorithmType="Bundle"
 														Graph="{Binding Graph}" WeightFilter="{Binding CorrespondenceFilter}" CorrespondenceType="{Binding CorrespondenceType}">
 						<c:GlobalCorrespondencesGraphLayout.Resources>
-							<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource {x:Type gsc:EdgeControl}}">
+							<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource GlobalCorrespondenceEdgeControlStyle}">
 								<Style.Resources>
 									<ToolTip x:Key="ToolTipContent">
 										<TextBlock Text="{Binding Frequency}" />
 									</ToolTip>
 								</Style.Resources>
 								<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
-								<Setter Property="StrokeThickness">
-									<Setter.Value>
-										<MultiBinding Converter="{StaticResource StrokeThicknessConverter}">
-											<Binding Path="NormalizedFrequency" />
-											<Binding>
-												<Binding.Source>
-													<sys:Int32>5</sys:Int32>
-												</Binding.Source>
-											</Binding>
-											<Binding>
-												<Binding.Source>
-													<sys:Int32>1</sys:Int32>
-												</Binding.Source>
-											</Binding>
-										</MultiBinding>
-									</Setter.Value>
-								</Setter>
 								<EventSetter Event="PreviewMouseDown" Handler="Edge_OnPreviewMouseDown" />
 								<Style.Triggers>
 									<DataTrigger Binding="{Binding IsSelected}" Value="True">

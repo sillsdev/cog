@@ -19,8 +19,8 @@
 							<ColumnDefinition Width="10" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<Ellipse Name="circle" Margin="0,3,0,0" VerticalAlignment="Center" Grid.Column="0" Width="5" Height="5" Fill="Black" Visibility="Collapsed" />
-						<TextBlock Grid.Column="1" Margin="0,3,0,0" TextWrapping="Wrap">
+						<Ellipse Name="circle" Margin="0,11,0,0" Grid.Column="0" VerticalAlignment="Top" Width="5" Height="5" Fill="Black" Visibility="Collapsed" />
+						<TextBlock Grid.Column="1" Margin="0,5,0,0" TextWrapping="Wrap">
 							<Hyperlink Style="{StaticResource TaskAreaHyperlinkStyle}" Command="{Binding Command}" Click="Hyperlink_Click">
 								<Run Text="{Binding DisplayName, Mode=OneWay}" />
 							</Hyperlink>

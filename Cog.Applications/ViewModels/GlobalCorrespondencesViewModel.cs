@@ -52,11 +52,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_findCommand = new RelayCommand(Find);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Correspondence type",
-				new TaskAreaCommandViewModel("Initial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.InitialConsonants)),
-				new TaskAreaCommandViewModel("Medial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.MedialConsonants)),
-				new TaskAreaCommandViewModel("Final consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.FinalConsonants)),
-				new TaskAreaCommandViewModel("Onset consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.OnsetConsonants)),
-				new TaskAreaCommandViewModel("Coda consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.CodaConsonants)),
+				new TaskAreaCommandViewModel("Stem-initial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.StemInitialConsonants)),
+				new TaskAreaCommandViewModel("Stem-medial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.StemMedialConsonants)),
+				new TaskAreaCommandViewModel("Stem-final consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.StemFinalConsonants)),
+				new TaskAreaCommandViewModel("Onsets", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Onsets)),
+				new TaskAreaCommandViewModel("Codas", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Codas)),
 				new TaskAreaCommandViewModel("Vowels", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Vowels))));
 			_correspondenceFilter = new TaskAreaIntegerViewModel("Frequency threshold");
 			_correspondenceFilter.PropertyChanging += _correspondenceFilter_PropertyChanging;
@@ -223,17 +223,17 @@ namespace SIL.Cog.Applications.ViewModels
 							var vm = new WordPairViewModel(aligner, wp, true);
 							switch (_correspondenceType)
 							{
-								case SoundCorrespondenceType.InitialConsonants:
+								case SoundCorrespondenceType.StemInitialConsonants:
 									vm.AlignedNodes[0].IsSelected = true;
 									break;
-								case SoundCorrespondenceType.MedialConsonants:
+								case SoundCorrespondenceType.StemMedialConsonants:
 									for (int i = 1; i < vm.AlignedNodes.Count - 1; i++)
 										CheckAlignedNodeSelected(vm.AlignedNodes[i]);
 									break;
-								case SoundCorrespondenceType.FinalConsonants:
+								case SoundCorrespondenceType.StemFinalConsonants:
 									vm.AlignedNodes[vm.AlignedNodes.Count - 1].IsSelected = true;
 									break;
-								case SoundCorrespondenceType.OnsetConsonants:
+								case SoundCorrespondenceType.Onsets:
 									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
 									{
 										if ((!an.DomainCell1.IsNull && an.DomainCell1.First.Annotation.Parent.Children.First == an.DomainCell1.First.Annotation)
@@ -243,7 +243,7 @@ namespace SIL.Cog.Applications.ViewModels
 										}
 									}
 									break;
-								case SoundCorrespondenceType.CodaConsonants:
+								case SoundCorrespondenceType.Codas:
 									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
 									{
 										if ((!an.DomainCell1.IsNull && an.DomainCell1.Last.Annotation.Parent.Children.Last == an.DomainCell1.Last.Annotation)

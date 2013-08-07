@@ -237,19 +237,19 @@ namespace SIL.Cog.Applications.Services
 				GlobalSoundCorrespondenceCollection corrs = null;
 				switch (correspondenceType)
 				{
-					case SoundCorrespondenceType.InitialConsonants:
+					case SoundCorrespondenceType.StemInitialConsonants:
 						corrs = project.StemInitialConsonantCorrespondences;
 						break;
-					case SoundCorrespondenceType.MedialConsonants:
+					case SoundCorrespondenceType.StemMedialConsonants:
 						corrs = project.StemMedialConsonantCorrespondences;
 						break;
-					case SoundCorrespondenceType.FinalConsonants:
+					case SoundCorrespondenceType.StemFinalConsonants:
 						corrs = project.StemFinalConsonantCorrespondences;
 						break;
-					case SoundCorrespondenceType.OnsetConsonants:
+					case SoundCorrespondenceType.Onsets:
 						corrs = project.OnsetConsonantCorrespondences;
 						break;
-					case SoundCorrespondenceType.CodaConsonants:
+					case SoundCorrespondenceType.Codas:
 						corrs = project.CodaConsonantCorrespondences;
 						break;
 				}

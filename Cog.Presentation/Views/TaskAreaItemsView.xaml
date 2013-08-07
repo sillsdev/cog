@@ -9,7 +9,7 @@
         <ItemsControl ItemsSource="{Binding Items}">
 			<ItemsControl.Resources>
 				<DataTemplate DataType="{x:Type vm:TaskAreaCommandViewModel}">
-					<TextBlock Margin="0,3,0,0" TextWrapping="Wrap">
+					<TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
                         <Hyperlink Style="{StaticResource TaskAreaHyperlinkStyle}" Command="{Binding Command}">
                             <Run Text="{Binding DisplayName, Mode=OneWay}" />
                         </Hyperlink>
@@ -21,12 +21,12 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Margin="0,3,0,0" TextWrapping="Wrap">
+						<TextBlock Grid.Column="0" Margin="0,5,0,0" TextWrapping="Wrap">
                             <Hyperlink Style="{StaticResource TaskAreaHyperlinkStyle}" Click="Hyperlink_Click">
                                 <Run Text="{Binding DisplayName, Mode=OneWay}" />
                             </Hyperlink>
 						</TextBlock>
-						<Polygon Grid.Column="1" Margin="2,5,0,0" VerticalAlignment="Center" Fill="{StaticResource HeaderTextBrush}" Points="0,0 0,8 4,4" />
+						<Polygon Grid.Column="1" Margin="2,7,0,0" VerticalAlignment="Center" Fill="{StaticResource HeaderTextBrush}" Points="0,0 0,8 4,4" />
 					</Grid>
 				</DataTemplate>
 			</ItemsControl.Resources>

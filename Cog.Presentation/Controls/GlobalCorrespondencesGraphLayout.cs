@@ -13,18 +13,18 @@ namespace SIL.Cog.Presentation.Controls
 		}
 
 		public static readonly DependencyProperty CorrespondenceTypeProperty = DependencyProperty.Register("CorrespondenceType", typeof(SoundCorrespondenceType),
-			typeof(GlobalCorrespondencesGraphLayout), new UIPropertyMetadata(SoundCorrespondenceType.InitialConsonants, CorrespondenceTypePropertyChanged));
+			typeof(GlobalCorrespondencesGraphLayout), new UIPropertyMetadata(SoundCorrespondenceType.StemInitialConsonants, CorrespondenceTypePropertyChanged));
 
 		private static void CorrespondenceTypePropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
 		{
 			var graphLayout = (GlobalCorrespondencesGraphLayout) depObj;
 			switch (graphLayout.CorrespondenceType)
 			{
-				case SoundCorrespondenceType.InitialConsonants:
-				case SoundCorrespondenceType.MedialConsonants:
-				case SoundCorrespondenceType.FinalConsonants:
-				case SoundCorrespondenceType.OnsetConsonants:
-				case SoundCorrespondenceType.CodaConsonants:
+				case SoundCorrespondenceType.StemInitialConsonants:
+				case SoundCorrespondenceType.StemMedialConsonants:
+				case SoundCorrespondenceType.StemFinalConsonants:
+				case SoundCorrespondenceType.Onsets:
+				case SoundCorrespondenceType.Codas:
 					graphLayout.SetConsonantLayoutParameters();
 					break;
 

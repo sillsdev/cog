@@ -4,16 +4,16 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public enum SoundCorrespondenceType
 	{
-		[Description("Initial consonants")]
-		InitialConsonants,
-		[Description("Medial consonants")]
-		MedialConsonants,
-		[Description("Final consonants")]
-		FinalConsonants,
-		[Description("Onset consonants")]
-		OnsetConsonants,
-		[Description("Coda consonants")]
-		CodaConsonants,
+		[Description("Stem-initial consonants")]
+		StemInitialConsonants,
+		[Description("Stem-medial consonants")]
+		StemMedialConsonants,
+		[Description("Stem-final consonants")]
+		StemFinalConsonants,
+		[Description("Onsets")]
+		Onsets,
+		[Description("Codas")]
+		Codas,
 		[Description("Vowels")]
 		Vowels
 	}

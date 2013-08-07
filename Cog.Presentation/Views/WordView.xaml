@@ -50,7 +50,8 @@
 			</TextBlock>
 			<ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
 					 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" b:ItemsControlBehaviors.IsDragSource="True" b:ItemsControlBehaviors.CanDragItem="ListBox_OnCanDragItem"
-					 b:ItemsControlBehaviors.IsDropTarget="True" b:ItemsControlBehaviors.CanDropItem="ListBox_OnCanDropItem" b:ItemsControlBehaviors.DragDropTemplate="{StaticResource BlankTemplate}">
+					 b:ItemsControlBehaviors.IsDropTarget="True" b:ItemsControlBehaviors.CanDropItem="ListBox_OnCanDropItem" b:ItemsControlBehaviors.DragDropTemplate="{StaticResource BlankTemplate}"
+					 GiveFeedback="ListBox_OnGiveFeedback" PreviewMouseLeftButtonDown="ListBox_OnPreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_OnPreviewMouseLeftButtonUp">
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal" />
@@ -77,12 +78,6 @@
 														  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 														  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 									</Border>
-									<ControlTemplate.Triggers>
-										<Trigger Property="IsSelected" Value="True">
-											<Setter TargetName="Bd" Property="Background" Value="#FF3399FF" />
-											<Setter Property="Foreground" Value="White" />
-										</Trigger>
-									</ControlTemplate.Triggers>
 								</ControlTemplate>
 							</Setter.Value>
 						</Setter>
@@ -92,6 +87,9 @@
 							</DataTrigger>
 							<DataTrigger Binding="{Binding IsNotInOriginal}" Value="True">
 								<Setter Property="Foreground" Value="Gray" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding IsBoundary}" Value="True">
+								<Setter Property="Cursor" Value="../Images/openhand.cur" />
 							</DataTrigger>
 						</Style.Triggers>
 					</Style>

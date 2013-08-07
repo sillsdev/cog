@@ -52,7 +52,12 @@ namespace SIL.Cog.Presentation.Behaviors
 
 			object draggedItem = e.Data.GetData(ItemsControlDragDrop.Format.Name);
 			if (draggedItem != null)
-				UpdateInsertionAdornerPosition();
+			{
+				if (_targetItemContainer == null)
+					RemoveInsertionAdorner();
+				else
+					UpdateInsertionAdornerPosition();
+			}
 			e.Handled = true;
 		}
 
@@ -212,6 +217,10 @@ namespace SIL.Cog.Presentation.Behaviors
 			{
 				_insertionAdorner.IsInFirstHalf = _isInFirstHalf;
 				_insertionAdorner.InvalidateVisual();
+			}
+			else
+			{
+				CreateInsertionAdorner();
 			}
 		}
 

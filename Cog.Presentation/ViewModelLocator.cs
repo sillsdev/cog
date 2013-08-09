@@ -80,6 +80,7 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<GeographicalViewModel>().SingleInstance();
 			builder.RegisterType<GlobalCorrespondencesViewModel>().SingleInstance();
 			builder.RegisterType<MultipleWordAlignmentViewModel>().SingleInstance();
+	        builder.RegisterType<SegmentsViewModel>().SingleInstance();
 
 			// Component settings view models
 	        builder.RegisterType<SspSyllabifierViewModel>().SingleInstance();

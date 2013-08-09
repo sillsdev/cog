@@ -188,10 +188,6 @@
 				<Setter Property="FontSize" Value="20" />
 			</Style>
 
-			<Style x:Key="ViewStyle" TargetType="UserControl">
-				<Setter Property="Background" Value="{StaticResource ViewBackgroundBrush}" />
-			</Style>
-
 			<Style x:Key="TaskAreaContextMenuStyle" TargetType="ContextMenu">
 				<Setter Property="Background" Value="{StaticResource ContextMenuBackgroundBrush}" />
 				<Setter Property="BorderBrush" Value="{StaticResource ContextMenuBorderBrush}" />

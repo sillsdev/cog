@@ -243,6 +243,24 @@ namespace SIL.Cog.Domain
 			return false;
 		}
 
+		public bool IsValidSegment(string str)
+		{
+			Shape shape;
+			return TrySegment(str, out shape) && shape.All(n => n.Type() == shape.First.Type());
+		}
+
+		public bool NormalizeSegmentString(string str, out string normalizedStr)
+		{
+			Shape shape;
+			if (TrySegment(str, out shape) && shape.All(n => n.Type() == shape.First.Type()))
+			{
+				normalizedStr = shape.StrRep();
+				return true;
+			}
+			normalizedStr = null;
+			return false;
+		}
+
 		private bool SegmentString(Shape shape, string str)
 		{
 			if (_regex == null)

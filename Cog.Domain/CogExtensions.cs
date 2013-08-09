@@ -250,24 +250,6 @@ namespace SIL.Cog.Domain
 			return len;
 		}
 
-		public static bool IsValidSegment(this Segmenter segmenter, string str)
-		{
-			Shape shape;
-			return segmenter.TrySegment(str, out shape) && shape.All(n => n.Type() == shape.First.Type());
-		}
-
-		public static bool NormalizeSegmentString(this Segmenter segmenter, string str, out string normalizedStr)
-		{
-			Shape shape;
-			if (segmenter.TrySegment(str, out shape) && shape.All(n => n.Type() == shape.First.Type()))
-			{
-				normalizedStr = shape.StrRep();
-				return true;
-			}
-			normalizedStr = null;
-			return false;
-		}
-
 		public static IEnumerable<T> GetAllDataObjects<T>(this IBidirectionalGraph<Cluster<T>, ClusterEdge<T>> tree, Cluster<T> cluster)
 		{
 			if (tree.IsOutEdgesEmpty(cluster))

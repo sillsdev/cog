@@ -288,7 +288,7 @@ namespace SIL.Cog.Applications.Services
 
 		private static bool GetConsonant(Dictionary<Tuple<int, int>, GlobalSegmentVertex> vertices, Segment consonant, out GlobalSegmentVertex vertex)
 		{
-			if (consonant.StrRep.DisplayLength() > 1)
+			if (consonant.IsComplex())
 			{
 				vertex = null;
 				return false;
@@ -337,7 +337,7 @@ namespace SIL.Cog.Applications.Services
 
 		private static bool GetVowel(Dictionary<Tuple<int, int>, GlobalSegmentVertex> vertices, Segment vowel, out GlobalSegmentVertex vertex)
 		{
-			if (vowel.StrRep.DisplayLength() > 1)
+			if (vowel.IsComplex())
 			{
 				vertex = null;
 				return false;

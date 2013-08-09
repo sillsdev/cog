@@ -141,6 +141,7 @@
     <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
     <Compile Include="ViewModels\ComponentSettingsViewModelBase.cs" />
     <Compile Include="ViewModels\DolgopolskyCognateIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\DomainExtensions.cs" />
     <Compile Include="ViewModels\EditAffixViewModel.cs" />
     <Compile Include="ViewModels\EditNaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
@@ -186,8 +187,12 @@
     <Compile Include="ViewModels\RelevantFeatureViewModel.cs" />
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
     <Compile Include="ViewModels\RunStemmerViewModel.cs" />
+    <Compile Include="ViewModels\SegmentCategoryViewModel.cs" />
     <Compile Include="ViewModels\SegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\SegmentMappingViewModel.cs" />
+    <Compile Include="ViewModels\SegmentViewModel.cs" />
+    <Compile Include="ViewModels\SegmentsVarietyViewModel.cs" />
+    <Compile Include="ViewModels\SegmentsViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />

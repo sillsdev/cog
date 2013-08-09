@@ -7,7 +7,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              mc:Ignorable="d"  DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
-             d:DesignHeight="300" d:DesignWidth="300" Style="{StaticResource ViewStyle}"
+             d:DesignHeight="300" d:DesignWidth="300"
              Loaded="OnLoaded" d:DataContext="{d:DesignInstance vm:WordListsViewModel}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
@@ -35,7 +35,13 @@
 					</Style>
 				</xcdg:DataGridControl.Resources>
 				<xcdg:DataGridControl.View>
-					<xcdg:TableView HorizontalGridLineThickness="1" VerticalGridLineThickness="1" />
+					<xcdg:TableView HorizontalGridLineThickness="1" VerticalGridLineThickness="1" UseDefaultHeadersFooters="False">
+						<xcdg:TableView.FixedHeaders>
+							<DataTemplate>
+								<xcdg:ColumnManagerRow AllowColumnReorder="False" />
+							</DataTemplate>
+						</xcdg:TableView.FixedHeaders>
+					</xcdg:TableView>
 				</xcdg:DataGridControl.View>
 			</xcdg:DataGridControl>
         </Grid>

@@ -227,6 +227,7 @@ namespace SIL.Cog.Presentation.Views
 		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			LoadColumns();
+			LoadCollectionView();
 		}
 
 		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

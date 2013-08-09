@@ -119,6 +119,9 @@
 											<DataTemplate DataType="{x:Type vm:MultipleWordAlignmentViewModel}">
 												<v:MultipleWordAlignmentView />
 											</DataTemplate>
+											<DataTemplate DataType="{x:Type vm:SegmentsViewModel}">
+												<v:SegmentsView />
+											</DataTemplate>
 										</ContentPresenter.Resources>
                                     </ContentPresenter>
                                 </DockPanel>

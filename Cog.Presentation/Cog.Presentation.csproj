@@ -131,6 +131,9 @@
     <Compile Include="Controls\DendrogramLayout.cs" />
     <Compile Include="Controls\DropDownButton.cs" />
     <Compile Include="Controls\HierarchicalGraphLayout.cs" />
+    <Compile Include="Controls\MergedHeader.cs" />
+    <Compile Include="Controls\MergedHeaderCell.cs" />
+    <Compile Include="Controls\MergedHeadersPanel.cs" />
     <Compile Include="Controls\NetworkGraphLayout.cs" />
     <Compile Include="Controls\PercentageSlider.xaml.cs">
       <DependentUpon>PercentageSlider.xaml</DependentUpon>
@@ -231,6 +234,9 @@
     <Compile Include="Views\RegionPointMarker.cs" />
     <Compile Include="Views\GlobalCorrespondencesView.xaml.cs">
       <DependentUpon>GlobalCorrespondencesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SegmentsView.xaml.cs">
+      <DependentUpon>SegmentsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoundClassesView.xaml.cs">
       <DependentUpon>SoundClassesView.xaml</DependentUpon>
@@ -423,6 +429,10 @@
     <Page Include="Views\GlobalCorrespondencesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SegmentsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SoundClassesView.xaml">
       <SubType>Designer</SubType>

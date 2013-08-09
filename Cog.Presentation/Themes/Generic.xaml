@@ -562,16 +562,6 @@
 		</Setter>
 	</Style>
 
-	<Style TargetType="xcdg:GroupLevelIndicatorPane">
-		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowVerticalBorder" Value="False" />
-		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowIndicators" Value="False" />
-	</Style>
-	
-	<Style TargetType="xcdg:HierarchicalGroupByControl">
-		<Setter Property="AllowGroupingModification" Value="False" />
-		<Setter Property="Visibility" Value="Collapsed" />
-	</Style>
-
 	<Style TargetType="c:TreeListView">
 		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="Background" Value="White" />
@@ -982,5 +972,27 @@
 				<Setter Property="Canvas.ZIndex" Value="100" />
 			</Trigger>
 		</Style.Triggers>
+	</Style>
+	
+	<Style TargetType="c:MergedHeaderCell">
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
+		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
+		<Setter Property="Padding" Value="8,2,8,2" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
+		<Setter Property="BorderThickness" Value="0,0,1,1" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="c:MergedHeaderCell">
+					<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+												BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+							<ContentPresenter Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+											  ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
+											  Content="{TemplateBinding Content}" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 	</Style>
 </ResourceDictionary>

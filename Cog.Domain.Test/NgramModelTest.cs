@@ -39,7 +39,7 @@ namespace SIL.Cog.Domain.Test
 			AddWord("unproduce");
 
 			_segmentPool = new SegmentPool();
-			var segDistCalc = new SegmentDistributionCalculator(_segmentPool);
+			var segDistCalc = new SegmentFrequencyDistributionCalculator(_segmentPool);
 			segDistCalc.Process(_variety);
 		}
 

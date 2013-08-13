@@ -10,8 +10,8 @@
              d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded" DataContextChanged="OnDataContextChanged">
 	<DockPanel>
 		<TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Segments</TextBlock>
-		<xcdg:DataGridControl x:Name="SegmentsDataGrid" Margin="0,10,0,0" SynchronizeSelectionWithCurrent="True" SynchronizeCurrent="True"
-							  SelectionUnit="Cell" SelectionMode="Single" AutoCreateColumns="False" ItemScrollingBehavior="Immediate" ReadOnly="True">
+		<xcdg:DataGridControl x:Name="SegmentsDataGrid" Margin="0,10,0,0" SelectionUnit="Cell" SelectionMode="Single" AutoCreateColumns="False"
+							  ItemScrollingBehavior="Immediate" ReadOnly="True" SynchronizeCurrent="True">
 			<xcdg:DataGridControl.Resources>
 				<Style TargetType="xcdg:RowSelector" BasedOn="{StaticResource {x:Type xcdg:RowSelector}}" >
 					<Setter Property="Content" Value="{Binding DataContext}" />
@@ -20,6 +20,49 @@
 							<DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
 								<TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
 							</DataTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+				<Style TargetType="xcdg:ColumnManagerCell" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
+					<Setter Property="FontSize" Value="16" />
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="xcdg:ColumnManagerCell">
+								<Grid>
+									<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+											BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+										<Grid>
+											<ContentPresenter Grid.Column="0" Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                Content="{TemplateBinding Content}" />
+											<Grid Width="12" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{TemplateBinding Background}">
+												<Polygon Name="UpArrow" Style="{StaticResource DataGrid_UpArrowStyle}" />
+												<Polygon Name="DownArrow" Style="{StaticResource DataGrid_DownArrowStyle}" />
+											</Grid>
+										</Grid>
+									</Border>
+									<Thumb x:Name="PART_ColumnResizerThumbLeft" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="-4,0,0,0" HorizontalAlignment="Left" />
+									<Thumb x:Name="PART_ColumnResizerThumb" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="0,0,-4,0" HorizontalAlignment="Right" />
+								</Grid>
+								<ControlTemplate.Triggers>
+									<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}" Value="Ascending">
+										<Setter TargetName="UpArrow" Property="Visibility" Value="Visible" />
+									</DataTrigger>
+									<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}" Value="Descending">
+										<Setter TargetName="DownArrow" Property="Visibility" Value="Visible" />
+									</DataTrigger>
+									<DataTrigger Value="True">
+										<DataTrigger.Binding>
+											<MultiBinding Converter="{StaticResource EqualityConverter}">
+												<Binding RelativeSource="{RelativeSource Self}" Path="ParentColumn" />
+												<Binding RelativeSource="{RelativeSource Self}" Path="ParentColumn.DataGridControl.CurrentColumn" />
+											</MultiBinding>
+										</DataTrigger.Binding>
+										<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
+									</DataTrigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
 						</Setter.Value>
 					</Setter>
 				</Style>

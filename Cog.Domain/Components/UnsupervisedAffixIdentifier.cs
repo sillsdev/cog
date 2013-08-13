@@ -152,8 +152,8 @@ namespace SIL.Cog.Domain.Components
 						category = candidateCategory;
 				}
 				NgramModel higherOrderModel = ngramModels[candidate.Count];
-				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => higherOrderModel.GetProbability(seg, candidate, category)),
-					variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => ngramModels[0].GetProbability(seg, new Ngram(), category)));
+				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => higherOrderModel.GetProbability(seg, candidate, category)),
+					variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => ngramModels[0].GetProbability(seg, new Ngram(), category)));
 
 				double affixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)][candidate];
 				Ngram nonaffix = dir == Direction.LeftToRight ? new Ngram(Dash.ToEnumerable().Concat(candidate.SkipFirst())) : candidate.TakeAllExceptLast().Concat(Dash);

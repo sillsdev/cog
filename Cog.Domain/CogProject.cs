@@ -15,12 +15,7 @@ namespace SIL.Cog.Domain
 		private readonly KeyedBulkObservableList<string, Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
-		private readonly GlobalSoundCorrespondenceCollection _stemInitialConsCorrespondences;
-		private readonly GlobalSoundCorrespondenceCollection _stemMedialConsCorrespondences;
-		private readonly GlobalSoundCorrespondenceCollection _stemFinalConsCorrespondences;
-		private readonly GlobalSoundCorrespondenceCollection _onsetConsCorrespondences;
-		private readonly GlobalSoundCorrespondenceCollection _codaConsCorrespondences;
-		private readonly GlobalSoundCorrespondenceCollection _vowelCorrespondences;
+		private readonly ReadOnlyDictionary<SyllablePosition, GlobalSoundCorrespondenceCollection> _globalSoundCorrespondenceCollections;
 
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners; 
 
@@ -37,12 +32,12 @@ namespace SIL.Cog.Domain
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
 
-			_stemInitialConsCorrespondences = new GlobalSoundCorrespondenceCollection();
-			_stemMedialConsCorrespondences = new GlobalSoundCorrespondenceCollection();
-			_stemFinalConsCorrespondences = new GlobalSoundCorrespondenceCollection();
-			_onsetConsCorrespondences = new GlobalSoundCorrespondenceCollection();
-			_codaConsCorrespondences = new GlobalSoundCorrespondenceCollection();
-			_vowelCorrespondences = new GlobalSoundCorrespondenceCollection();
+			_globalSoundCorrespondenceCollections = new ReadOnlyDictionary<SyllablePosition, GlobalSoundCorrespondenceCollection>(new Dictionary<SyllablePosition, GlobalSoundCorrespondenceCollection>
+				{
+					{SyllablePosition.Onset, new GlobalSoundCorrespondenceCollection()},
+					{SyllablePosition.Nucleus, new GlobalSoundCorrespondenceCollection()},
+					{SyllablePosition.Coda, new GlobalSoundCorrespondenceCollection()}
+				});
 
 			_wordAligners = new ObservableDictionary<string, IWordAligner>();
 
@@ -119,34 +114,9 @@ namespace SIL.Cog.Domain
 			get { return _varietyPairs; }
 		}
 
-		public GlobalSoundCorrespondenceCollection StemInitialConsonantCorrespondences
+		public ReadOnlyDictionary<SyllablePosition, GlobalSoundCorrespondenceCollection> GlobalSoundCorrespondenceCollections
 		{
-			get { return _stemInitialConsCorrespondences; }
-		}
-
-		public GlobalSoundCorrespondenceCollection StemMedialConsonantCorrespondences
-		{
-			get { return _stemMedialConsCorrespondences; }
-		}
-
-		public GlobalSoundCorrespondenceCollection StemFinalConsonantCorrespondences
-		{
-			get { return _stemFinalConsCorrespondences; }
-		}
-
-		public GlobalSoundCorrespondenceCollection OnsetConsonantCorrespondences
-		{
-			get { return _onsetConsCorrespondences; }
-		}
-
-		public GlobalSoundCorrespondenceCollection CodaConsonantCorrespondences
-		{
-			get { return _codaConsCorrespondences; }
-		}
-
-		public GlobalSoundCorrespondenceCollection VowelCorrespondences
-		{
-			get { return _vowelCorrespondences; }
+			get { return _globalSoundCorrespondenceCollections; }
 		}
 
 		public ObservableDictionary<string, IWordAligner> WordAligners

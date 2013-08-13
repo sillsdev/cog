@@ -15,6 +15,7 @@
                     <DataGridTextColumn Header="Segment 1" Binding="{Binding Segment1}" Width="*">
 						<DataGridTextColumn.ElementStyle>
 							<Style TargetType="TextBlock">
+								<Setter Property="FontSize" Value="16" />
 								<Style.Triggers>
 									<DataTrigger Binding="{Binding IsSegment1Valid}" Value="False">
 										<Setter Property="TextDecorations">
@@ -36,6 +37,7 @@
                     <DataGridTextColumn Header="Segment 2" Binding="{Binding Segment2}" Width="*">
 						<DataGridTextColumn.ElementStyle>
 							<Style TargetType="TextBlock">
+								<Setter Property="FontSize" Value="16" />
 								<Style.Triggers>
 									<DataTrigger Binding="{Binding IsSegment2Valid}" Value="False">
 										<Setter Property="TextDecorations">

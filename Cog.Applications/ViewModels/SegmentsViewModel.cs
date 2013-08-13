@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -29,6 +30,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private readonly static Dictionary<string, int> CategorySortOrderLookup = new Dictionary<string, int>
 			{
+				{"Vowel", 0},
 				{"Labial", 0},
 				{"Coronal", 1},
 				{"Dorsal", 2},
@@ -42,11 +44,17 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly BindableList<SegmentCategoryViewModel> _categories;
 		private readonly ReadOnlyObservableList<SegmentCategoryViewModel> _readonlyCategories;
 		private ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel> _varieties;
+		private ViewModelSyllablePosition _syllablePosition;
 
 		public SegmentsViewModel(IProjectService projectService)
 			: base("Segments")
 		{
 			_projectService = projectService;
+
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Syllable position",
+				new TaskAreaCommandViewModel("Onset", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Onset)),
+				new TaskAreaCommandViewModel("Nucleus", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Nucleus)),
+				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Coda))));
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -60,7 +68,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel>(project.Varieties, variety => new SegmentsVarietyViewModel(variety, _domainSegments), vm => vm.DomainVariety));
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel>(project.Varieties, variety => new SegmentsVarietyViewModel(this, variety), vm => vm.DomainVariety));
 			PopulateSegments();
 		}
 
@@ -71,20 +79,24 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				_domainSegments.Clear();
 				_segments.Clear();
-				foreach (Segment segment in _projectService.Project.Varieties.SelectMany(v => v.SegmentFrequencyDistribution.ObservedSamples.Where(s => s.Type == CogFeatureSystem.ConsonantType)).Distinct()
-					.Where(s => !s.IsComplex()).OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s.StrRep))
+				foreach (Segment segment in _projectService.Project.Varieties
+					.SelectMany(v => v.SegmentFrequencyDistributions[DomainSyllablePosition].ObservedSamples)
+					.Distinct().Where(s => !s.IsComplex()).OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s.StrRep))
 				{
 					_domainSegments.Add(segment);
 					_segments.Add(new SegmentViewModel(segment));
 				}
 			}
 
-			_categories.ReplaceAll(_segments.GroupBy(s => GetCategory(s.DomainSegment)).OrderBy(g => CategorySortOrderLookup[g.Key]).Select(g => new SegmentCategoryViewModel(g.Key, g)));
+			if (_syllablePosition == ViewModelSyllablePosition.Nucleus)
+				_categories.Clear();
+			else
+				_categories.ReplaceAll(_segments.GroupBy(s => GetCategory(s.DomainSegment)).OrderBy(g => CategorySortOrderLookup[g.Key]).Select(g => new SegmentCategoryViewModel(g.Key, g)));
 		}
 
 		private string GetCategory(Segment segment)
 		{
-			return segment.Type == CogFeatureSystem.VowelType ? null
+			return segment.Type == CogFeatureSystem.VowelType ? "Vowel"
 				: PlaceCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("place")).ID];
 		}
 
@@ -101,6 +113,38 @@ namespace SIL.Cog.Applications.ViewModels
 		public ReadOnlyObservableList<SegmentsVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
+		}
+
+		public ViewModelSyllablePosition SyllablePosition
+		{
+			get { return _syllablePosition; }
+			set
+			{
+				if (Set(() => SyllablePosition, ref _syllablePosition, value))
+					PopulateSegments();
+			}
+		}
+
+		internal SyllablePosition DomainSyllablePosition
+		{
+			get
+			{
+				switch (_syllablePosition)
+				{
+					case ViewModelSyllablePosition.Onset:
+						return Domain.SyllablePosition.Onset;
+					case ViewModelSyllablePosition.Nucleus:
+						return Domain.SyllablePosition.Nucleus;
+					case ViewModelSyllablePosition.Coda:
+						return Domain.SyllablePosition.Coda;
+				}
+				return Domain.SyllablePosition.Anywhere;
+			}
+		}
+
+		internal ObservableList<Segment> DomainSegments
+		{
+			get { return _domainSegments; }
 		}
 	}
 }

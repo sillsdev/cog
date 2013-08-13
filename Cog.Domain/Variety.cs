@@ -10,8 +10,7 @@ namespace SIL.Cog.Domain
 		private readonly BulkObservableList<Affix> _affixes;
 		private string _name;
 		private readonly BulkObservableList<GeographicRegion> _regions;
-		private FrequencyDistribution<Segment> _segmentFreqDist;
-		private IProbabilityDistribution<Segment> _segmentProbDist;
+		private readonly ObservableDictionary<SyllablePosition, FrequencyDistribution<Segment>> _segmentFreqDists;
 
 		public Variety(string name)
 		{
@@ -20,6 +19,7 @@ namespace SIL.Cog.Domain
 			_varietyPairs = new VarietyVarietyPairCollection(this);
 			_affixes = new BulkObservableList<Affix>();
 			_regions = new BulkObservableList<GeographicRegion>();
+			_segmentFreqDists = new ObservableDictionary<SyllablePosition, FrequencyDistribution<Segment>>();
 		}
 
 		public string Name
@@ -48,16 +48,9 @@ namespace SIL.Cog.Domain
 			get { return _regions; }
 		}
 
-		public FrequencyDistribution<Segment> SegmentFrequencyDistribution
+		public ObservableDictionary<SyllablePosition, FrequencyDistribution<Segment>> SegmentFrequencyDistributions
 		{
-			get { return _segmentFreqDist; }
-			set { Set(() => SegmentFrequencyDistribution, ref _segmentFreqDist, value); }
-		}
-
-		public IProbabilityDistribution<Segment> SegmentProbabilityDistribution
-		{
-			get { return _segmentProbDist; }
-			set { Set(() => SegmentProbabilityDistribution, ref _segmentProbDist, value); }
+			get { return _segmentFreqDists; }
 		}
 
 		public override string ToString()

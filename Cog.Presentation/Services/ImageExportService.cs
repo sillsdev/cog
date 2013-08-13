@@ -161,12 +161,12 @@ namespace SIL.Cog.Presentation.Services
 			return false;
 		}
 
-		public bool ExportGlobalCorrespondencesChart(object ownerViewModel, SoundCorrespondenceType correspondenceType, int frequencyFilter)
+		public bool ExportGlobalCorrespondencesChart(object ownerViewModel, ViewModelSyllablePosition syllablePosition, int frequencyFilter)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> graph = _graphService.GenerateGlobalCorrespondencesGraph(correspondenceType);
+				IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> graph = _graphService.GenerateGlobalCorrespondencesGraph(syllablePosition);
 
 				var graphLayout = new GlobalCorrespondencesGraphLayout
 					{
@@ -179,7 +179,7 @@ namespace SIL.Cog.Presentation.Services
 						Graph = graph,
 						Background = Brushes.White,
 						WeightFilter = frequencyFilter,
-						CorrespondenceType = correspondenceType
+						SyllablePosition = syllablePosition
 					};
 				graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["GlobalCorrespondenceEdgeControlStyle"];
 				SaveElement(graphLayout, result.FileName);

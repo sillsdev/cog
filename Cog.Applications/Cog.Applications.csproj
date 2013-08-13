@@ -206,7 +206,7 @@
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
     <Compile Include="ViewModels\SoundContextSurrogate.cs" />
-    <Compile Include="ViewModels\SoundCorrespondenceType.cs" />
+    <Compile Include="ViewModels\ViewModelSyllablePosition.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
     <Compile Include="ViewModels\SspSyllabifierViewModel.cs" />
     <Compile Include="ViewModels\SwitchViewMessage.cs" />

@@ -12,23 +12,20 @@ namespace SIL.Cog.Presentation.Controls
 			SetConsonantLayoutParameters();
 		}
 
-		public static readonly DependencyProperty CorrespondenceTypeProperty = DependencyProperty.Register("CorrespondenceType", typeof(SoundCorrespondenceType),
-			typeof(GlobalCorrespondencesGraphLayout), new UIPropertyMetadata(SoundCorrespondenceType.StemInitialConsonants, CorrespondenceTypePropertyChanged));
+		public static readonly DependencyProperty SyllablePositionProperty = DependencyProperty.Register("SyllablePosition", typeof(ViewModelSyllablePosition),
+			typeof(GlobalCorrespondencesGraphLayout), new UIPropertyMetadata(ViewModelSyllablePosition.Onset, SyllablePositionPropertyChanged));
 
-		private static void CorrespondenceTypePropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		private static void SyllablePositionPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
 		{
 			var graphLayout = (GlobalCorrespondencesGraphLayout) depObj;
-			switch (graphLayout.CorrespondenceType)
+			switch (graphLayout.SyllablePosition)
 			{
-				case SoundCorrespondenceType.StemInitialConsonants:
-				case SoundCorrespondenceType.StemMedialConsonants:
-				case SoundCorrespondenceType.StemFinalConsonants:
-				case SoundCorrespondenceType.Onsets:
-				case SoundCorrespondenceType.Codas:
+				case ViewModelSyllablePosition.Onset:
+				case ViewModelSyllablePosition.Coda:
 					graphLayout.SetConsonantLayoutParameters();
 					break;
 
-				case SoundCorrespondenceType.Vowels:
+				case ViewModelSyllablePosition.Nucleus:
 					graphLayout.SetVowelLayoutParameters();
 					break;
 			}
@@ -168,10 +165,10 @@ namespace SIL.Cog.Presentation.Controls
 				};
 		}
 
-		public SoundCorrespondenceType CorrespondenceType
+		public ViewModelSyllablePosition SyllablePosition
 		{
-			get { return (SoundCorrespondenceType) GetValue(CorrespondenceTypeProperty); }
-			set { SetValue(CorrespondenceTypeProperty, value); }
+			get { return (ViewModelSyllablePosition) GetValue(SyllablePositionProperty); }
+			set { SetValue(SyllablePositionProperty, value); }
 		}
 
 		public override bool CanAnimate

@@ -22,6 +22,7 @@
                             <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*">
 								<DataGridTextColumn.ElementStyle>
 									<Style TargetType="TextBlock">
+										<Setter Property="FontSize" Value="16" />
 										<Style.Triggers>
 											<DataTrigger Binding="{Binding IsValid}" Value="False">
 												<Setter Property="TextDecorations">

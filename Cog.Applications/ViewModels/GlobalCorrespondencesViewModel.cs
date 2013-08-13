@@ -20,7 +20,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IImageExportService _imageExportService;
 		private readonly WordPairsViewModel _wordPairs;
 		private GlobalCorrespondenceEdge _selectedCorrespondence;
-		private SoundCorrespondenceType _correspondenceType;
+		private ViewModelSyllablePosition _syllablePosition;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
@@ -51,13 +51,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_findCommand = new RelayCommand(Find);
 
-			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Correspondence type",
-				new TaskAreaCommandViewModel("Stem-initial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.StemInitialConsonants)),
-				new TaskAreaCommandViewModel("Stem-medial consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.StemMedialConsonants)),
-				new TaskAreaCommandViewModel("Stem-final consonants", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.StemFinalConsonants)),
-				new TaskAreaCommandViewModel("Onsets", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Onsets)),
-				new TaskAreaCommandViewModel("Codas", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Codas)),
-				new TaskAreaCommandViewModel("Vowels", new RelayCommand(() => CorrespondenceType = SoundCorrespondenceType.Vowels))));
+			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Syllable position",
+				new TaskAreaCommandViewModel("Onset", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Onset)),
+				new TaskAreaCommandViewModel("Nucleus", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Nucleus)),
+				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Coda))));
 			_correspondenceFilter = new TaskAreaIntegerViewModel("Frequency threshold");
 			_correspondenceFilter.PropertyChanging += _correspondenceFilter_PropertyChanging;
 			_correspondenceFilter.PropertyChanged += _correspondenceFilter_PropertyChanged;
@@ -186,7 +183,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void GenerateGraph()
 		{
 			SelectedCorrespondence = null;
-			Graph = _graphService.GenerateGlobalCorrespondencesGraph(_correspondenceType);
+			Graph = _graphService.GenerateGlobalCorrespondencesGraph(_syllablePosition);
 		}
 
 		private void ClearGraph()
@@ -221,19 +218,9 @@ namespace SIL.Cog.Applications.ViewModels
 						foreach (WordPair wp in _selectedCorrespondence.DomainWordPairs)
 						{
 							var vm = new WordPairViewModel(aligner, wp, true);
-							switch (_correspondenceType)
+							switch (_syllablePosition)
 							{
-								case SoundCorrespondenceType.StemInitialConsonants:
-									vm.AlignedNodes[0].IsSelected = true;
-									break;
-								case SoundCorrespondenceType.StemMedialConsonants:
-									for (int i = 1; i < vm.AlignedNodes.Count - 1; i++)
-										CheckAlignedNodeSelected(vm.AlignedNodes[i]);
-									break;
-								case SoundCorrespondenceType.StemFinalConsonants:
-									vm.AlignedNodes[vm.AlignedNodes.Count - 1].IsSelected = true;
-									break;
-								case SoundCorrespondenceType.Onsets:
+								case ViewModelSyllablePosition.Onset:
 									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
 									{
 										if ((!an.DomainCell1.IsNull && an.DomainCell1.First.Annotation.Parent.Children.First == an.DomainCell1.First.Annotation)
@@ -243,7 +230,11 @@ namespace SIL.Cog.Applications.ViewModels
 										}
 									}
 									break;
-								case SoundCorrespondenceType.Codas:
+								case ViewModelSyllablePosition.Nucleus:
+									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
+										CheckAlignedNodeSelected(an);
+									break;
+								case ViewModelSyllablePosition.Coda:
 									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
 									{
 										if ((!an.DomainCell1.IsNull && an.DomainCell1.Last.Annotation.Parent.Children.Last == an.DomainCell1.Last.Annotation)
@@ -252,10 +243,6 @@ namespace SIL.Cog.Applications.ViewModels
 											CheckAlignedNodeSelected(an);
 										}
 									}
-									break;
-								case SoundCorrespondenceType.Vowels:
-									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
-										CheckAlignedNodeSelected(an);
 									break;
 							}
 							_wordPairs.WordPairs.Add(vm);
@@ -279,12 +266,12 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _wordPairs; }
 		}
 
-		public SoundCorrespondenceType CorrespondenceType
+		public ViewModelSyllablePosition SyllablePosition
 		{
-			get { return _correspondenceType; }
+			get { return _syllablePosition; }
 			set
 			{
-				if (Set(() => CorrespondenceType, ref _correspondenceType, value) && _graph != null)
+				if (Set(() => SyllablePosition, ref _syllablePosition, value) && _graph != null)
 					GenerateGraph();
 			}
 		}

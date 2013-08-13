@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SIL.Machine;
-using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -18,28 +18,22 @@ namespace SIL.Cog.Domain.Components
 			_alignerID = alignerID;
 		}
 
-		private static bool IsStemInitial(Alignment<Word, ShapeNode> alignment, int column)
-		{
-			return column == 0;
-		}
-
-		private static bool IsStemMedial(Alignment<Word, ShapeNode> alignment, int column)
-		{
-			return column > 0 && column < alignment.ColumnCount - 1;
-		}
-
-		private static bool IsStemFinal(Alignment<Word, ShapeNode> alignment, int column)
-		{
-			return column == alignment.ColumnCount - 1;
-		}
-
 		private static bool IsOnset(Alignment<Word, ShapeNode> alignment, int column)
 		{
 			AlignmentCell<ShapeNode> cell1 = alignment[0, column];
 			AlignmentCell<ShapeNode> cell2 = alignment[1, column];
 
-			return cell1.First.Annotation.Parent.Children.First == cell1.First.Annotation
-				|| cell2.First.Annotation.Parent.Children.First == cell2.First.Annotation;
+			return cell1.First.Type() == CogFeatureSystem.ConsonantType && cell2.First.Type() == CogFeatureSystem.ConsonantType
+				&& cell1.First.Annotation.Parent.Children.First == cell1.First.Annotation
+				&& cell2.First.Annotation.Parent.Children.First == cell2.First.Annotation;
+		}
+
+		private static bool IsNucleus(Alignment<Word, ShapeNode> alignment, int column)
+		{
+			AlignmentCell<ShapeNode> cell1 = alignment[0, column];
+			AlignmentCell<ShapeNode> cell2 = alignment[1, column];
+
+			return cell1.First.Type() == CogFeatureSystem.VowelType && cell2.First.Type() == CogFeatureSystem.VowelType;
 		}
 
 		private static bool IsCoda(Alignment<Word, ShapeNode> alignment, int column)
@@ -47,24 +41,20 @@ namespace SIL.Cog.Domain.Components
 			AlignmentCell<ShapeNode> cell1 = alignment[0, column];
 			AlignmentCell<ShapeNode> cell2 = alignment[1, column];
 
-			return cell1.Last.Annotation.Parent.Children.Last == cell1.Last.Annotation
-				|| cell2.Last.Annotation.Parent.Children.Last == cell2.Last.Annotation;
+			return cell1.First.Type() == CogFeatureSystem.ConsonantType && cell2.First.Type() == CogFeatureSystem.ConsonantType
+				&& cell1.Last.Annotation.Parent.Children.Last == cell1.Last.Annotation
+				&& cell2.Last.Annotation.Parent.Children.Last == cell2.Last.Annotation;
 		}
 
 		public void Process(VarietyPair data)
 		{
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 
-			var identifiers = new[]
+			var identifiers = new Dictionary<SyllablePosition, Identifier>
 				{
-					new CorrespondenceIdentifier(CogFeatureSystem.ConsonantType, IsStemInitial),
-					new CorrespondenceIdentifier(CogFeatureSystem.ConsonantType, IsStemMedial),
-					new CorrespondenceIdentifier(CogFeatureSystem.ConsonantType, IsStemFinal),
-
-					new CorrespondenceIdentifier(CogFeatureSystem.ConsonantType, IsOnset),
-					new CorrespondenceIdentifier(CogFeatureSystem.ConsonantType, IsCoda),
-
-					new CorrespondenceIdentifier(CogFeatureSystem.VowelType, (alignment, i) => true)
+					{SyllablePosition.Onset, new Identifier(IsOnset)},
+					{SyllablePosition.Nucleus, new Identifier(IsNucleus)},
+					{SyllablePosition.Coda, new Identifier(IsCoda)},
 				};
 
 			foreach (WordPair wordPair in data.WordPairs.Where(wp => wp.AreCognatePredicted))
@@ -72,24 +62,21 @@ namespace SIL.Cog.Domain.Components
 				Alignment<Word, ShapeNode> alignment = aligner.Compute(wordPair).GetAlignments().First();
 				for (int i = 0; i < alignment.ColumnCount; i++)
 				{
-					foreach (CorrespondenceIdentifier identifier in identifiers)
+					foreach (Identifier identifier in identifiers.Values)
 						identifier.ProcessColumn(_segmentPool, wordPair, alignment, i);
 				}
 			}
 
-			MergeCorrespondences(identifiers[0].Correspondences, _project.StemInitialConsonantCorrespondences);
-			MergeCorrespondences(identifiers[1].Correspondences, _project.StemMedialConsonantCorrespondences);
-			MergeCorrespondences(identifiers[2].Correspondences, _project.StemFinalConsonantCorrespondences);
-			MergeCorrespondences(identifiers[3].Correspondences, _project.OnsetConsonantCorrespondences);
-			MergeCorrespondences(identifiers[4].Correspondences, _project.CodaConsonantCorrespondences);
-			MergeCorrespondences(identifiers[5].Correspondences, _project.VowelCorrespondences);
+			foreach (KeyValuePair<SyllablePosition, Identifier> kvp in identifiers)
+				MergeCorrespondences(kvp.Key, kvp.Value.Correspondences);
 		}
 
-		private void MergeCorrespondences(GlobalSoundCorrespondenceCollection source, GlobalSoundCorrespondenceCollection target)
+		private void MergeCorrespondences(SyllablePosition position, GlobalSoundCorrespondenceCollection source)
 		{
 			if (source.Count == 0)
 				return;
 
+			GlobalSoundCorrespondenceCollection target = _project.GlobalSoundCorrespondenceCollections[position];
 			lock (target)
 			{
 				foreach (GlobalSoundCorrespondence sourceCorr in source)
@@ -108,16 +95,14 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		private class CorrespondenceIdentifier
+		private class Identifier
 		{
 			private readonly GlobalSoundCorrespondenceCollection _correspondences;
-			private readonly FeatureSymbol _type;
 			private readonly Func<Alignment<Word, ShapeNode>, int, bool> _filter;
 
-			public CorrespondenceIdentifier(FeatureSymbol type, Func<Alignment<Word, ShapeNode>, int, bool> filter)
+			public Identifier(Func<Alignment<Word, ShapeNode>, int, bool> filter)
 			{
 				_correspondences = new GlobalSoundCorrespondenceCollection();
-				_type = type;
 				_filter = filter;
 			}
 
@@ -130,7 +115,7 @@ namespace SIL.Cog.Domain.Components
 			{
 				AlignmentCell<ShapeNode> cell1 = alignment[0, column];
 				AlignmentCell<ShapeNode> cell2 = alignment[1, column];
-				if (!cell1.IsNull && cell1.First.Type() == _type && !cell2.IsNull && cell2.First.Type() == _type && _filter(alignment, column))
+				if (!cell1.IsNull && !cell2.IsNull && _filter(alignment, column))
 				{
 					Ngram ngram1 = cell1.ToNgram(segmentPool);
 					Ngram ngram2 = cell2.ToNgram(segmentPool);

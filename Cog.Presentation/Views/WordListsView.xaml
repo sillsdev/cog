@@ -17,7 +17,7 @@
         <TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Word lists</TextBlock>
         <Grid>
             <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">To get started, click on "Add a new variety" or "Add a new sense" to begin creating word lists, or click on "Import word lists" if you have already created word lists in another application.</TextBlock>
-			<xcdg:DataGridControl x:Name="WordListsGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" SynchronizeSelectionWithCurrent="True" SynchronizeCurrent="True"
+			<xcdg:DataGridControl x:Name="WordListsGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" SynchronizeCurrent="True"
 								  SelectionUnit="Cell" SelectionMode="Single" AutoCreateColumns="False" ItemScrollingBehavior="Immediate" SelectionChanged="WordListsGrid_OnSelectionChanged">
 				<xcdg:DataGridControl.Resources>
 					<Style TargetType="xcdg:RowSelector" BasedOn="{StaticResource {x:Type xcdg:RowSelector}}" >
@@ -35,7 +35,7 @@
 					</Style>
 				</xcdg:DataGridControl.Resources>
 				<xcdg:DataGridControl.View>
-					<xcdg:TableView HorizontalGridLineThickness="1" VerticalGridLineThickness="1" UseDefaultHeadersFooters="False">
+					<xcdg:TableView UseDefaultHeadersFooters="False">
 						<xcdg:TableView.FixedHeaders>
 							<DataTemplate>
 								<xcdg:ColumnManagerRow AllowColumnReorder="False" />

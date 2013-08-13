@@ -59,7 +59,7 @@
     <Compile Include="Components\AffixStripper.cs" />
     <Compile Include="Components\GlobalSoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
-    <Compile Include="Components\SegmentDistributionCalculator.cs" />
+    <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />
     <Compile Include="Components\SonorityClass.cs" />
     <Compile Include="Components\SimpleSyllabifier.cs" />
     <Compile Include="Components\VarietySegmenter.cs" />
@@ -161,6 +161,7 @@
     <Compile Include="WordCollection.cs" />
     <Compile Include="WordPair.cs" />
     <Compile Include="WordPairCollection.cs" />
+    <Compile Include="SyllablePosition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">

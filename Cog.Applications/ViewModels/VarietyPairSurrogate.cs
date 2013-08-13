@@ -81,7 +81,7 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 			vp.SoundChangeFrequencyDistribution = soundChanges;
 			IWordAligner aligner = project.WordAligners["primary"];
-			int segmentCount = vp.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
+			int segmentCount = vp.Variety2.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(soundChanges,
 				freqDist => new WittenBellProbabilityDistribution<Ngram>(freqDist, possCorrCount));

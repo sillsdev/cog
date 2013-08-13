@@ -9,7 +9,7 @@ namespace SIL.Cog.Applications.Services
 		bool ExportCurrentNetworkGraph(object ownerViewModel);
 		bool ExportNetworkGraph(object ownerViewModel, SimilarityMetric similarityMetric, double scoreFilter);
 		bool ExportCurrentMap(object ownerViewModel);
-		bool ExportGlobalCorrespondencesChart(object ownerViewModel, SoundCorrespondenceType correspondenceType, int frequencyFilter);
+		bool ExportGlobalCorrespondencesChart(object ownerViewModel, ViewModelSyllablePosition syllablePosition, int frequencyFilter);
 		bool ExportCurrentGlobalCorrespondencesChart(object ownerViewModel);
 	}
 }

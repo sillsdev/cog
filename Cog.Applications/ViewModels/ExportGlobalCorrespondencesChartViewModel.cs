@@ -4,13 +4,13 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ExportGlobalCorrespondencesChartViewModel : ViewModelBase
 	{
-		private SoundCorrespondenceType _correspondenceType;
+		private ViewModelSyllablePosition _syllablePosition;
 		private int _frequencyFilter;
 
-		public SoundCorrespondenceType CorrespondenceType
+		public ViewModelSyllablePosition SyllablePosition
 		{
-			get { return _correspondenceType; }
-			set { Set(() => CorrespondenceType, ref _correspondenceType, value); }
+			get { return _syllablePosition; }
+			set { Set(() => SyllablePosition, ref _syllablePosition, value); }
 		}
 
 		public int FrequencyFilter

@@ -176,7 +176,7 @@ namespace SIL.Cog.Applications.Services
 			return graph;
 		}
 
-		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SoundCorrespondenceType correspondenceType)
+		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(ViewModelSyllablePosition syllablePosition)
 		{
 			CogProject project = _projectService.Project;
 			var graph = new BidirectionalGraph<GridVertex, GlobalCorrespondenceEdge>();
@@ -184,7 +184,7 @@ namespace SIL.Cog.Applications.Services
 			var vertices = new Dictionary<Tuple<int, int>, GlobalSegmentVertex>();
 			var edges = new Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge>();
 			int maxFreq = 0;
-			if (correspondenceType == SoundCorrespondenceType.Vowels)
+			if (syllablePosition == ViewModelSyllablePosition.Nucleus)
 			{
 				graph.AddVertexRange(new []
 					{
@@ -198,7 +198,7 @@ namespace SIL.Cog.Applications.Services
 						new HeaderGridVertex("Open") {Row = 7, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left}
 					});
 
-				foreach (GlobalSoundCorrespondence corr in project.VowelCorrespondences)
+				foreach (GlobalSoundCorrespondence corr in project.GlobalSoundCorrespondenceCollections[SyllablePosition.Nucleus])
 				{
 					GlobalSegmentVertex vertex1, vertex2;
 					if (GetVowel(vertices, corr.Segment1, out vertex1) && GetVowel(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
@@ -235,22 +235,13 @@ namespace SIL.Cog.Applications.Services
 					});
 
 				GlobalSoundCorrespondenceCollection corrs = null;
-				switch (correspondenceType)
+				switch (syllablePosition)
 				{
-					case SoundCorrespondenceType.StemInitialConsonants:
-						corrs = project.StemInitialConsonantCorrespondences;
+					case ViewModelSyllablePosition.Onset:
+						corrs = project.GlobalSoundCorrespondenceCollections[SyllablePosition.Onset];
 						break;
-					case SoundCorrespondenceType.StemMedialConsonants:
-						corrs = project.StemMedialConsonantCorrespondences;
-						break;
-					case SoundCorrespondenceType.StemFinalConsonants:
-						corrs = project.StemFinalConsonantCorrespondences;
-						break;
-					case SoundCorrespondenceType.Onsets:
-						corrs = project.OnsetConsonantCorrespondences;
-						break;
-					case SoundCorrespondenceType.Codas:
-						corrs = project.CodaConsonantCorrespondences;
+					case ViewModelSyllablePosition.Coda:
+						corrs = project.GlobalSoundCorrespondenceCollections[SyllablePosition.Coda];
 						break;
 				}
 				Debug.Assert(corrs != null);

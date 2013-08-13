@@ -11,6 +11,6 @@ namespace SIL.Cog.Applications.Services
 
 		IBidirectionalGraph<NetworkGraphVertex, NetworkGraphEdge> GenerateNetworkGraph(SimilarityMetric similarityMetric);
 
-		IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SoundCorrespondenceType correspondenceType);
+		IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(ViewModelSyllablePosition syllablePosition);
 	}
 }

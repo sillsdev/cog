@@ -49,7 +49,7 @@ namespace SIL.Cog.Applications.Services
 				processors.Add(syllabifier);
 			else
 				processors.Add(new SimpleSyllabifier());
-			processors.Add(new SegmentDistributionCalculator(_segmentPool));
+			processors.Add(new SegmentFrequencyDistributionCalculator(_segmentPool));
 			return processors;
 		}
 
@@ -102,7 +102,7 @@ namespace SIL.Cog.Applications.Services
 			IProcessor<Variety> syllabifier;
 			if (_projectService.Project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
 				processors.Add(syllabifier);
-			processors.Add(new SegmentDistributionCalculator(_segmentPool));
+			processors.Add(new SegmentFrequencyDistributionCalculator(_segmentPool));
 			return processors;
 		}
 

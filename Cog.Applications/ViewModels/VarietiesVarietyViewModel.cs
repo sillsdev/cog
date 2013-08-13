@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
@@ -6,6 +8,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
+using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -33,12 +36,19 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
-			_segments = new BindableList<VarietySegmentViewModel>(variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<VarietySegmentViewModel>()
-				: variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
+
+			IEnumerable<Segment> segments;
+			FrequencyDistribution<Segment> freqDist;
+			if (variety.SegmentFrequencyDistributions.TryGetValue(SyllablePosition.Anywhere, out freqDist))
+				segments = freqDist.ObservedSamples;
+			else
+				segments = Enumerable.Empty<Segment>();
+
+			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(variety, seg, SyllablePosition.Anywhere)));
 			_segmentsView = new ListCollectionView(_segments);
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
-			variety.PropertyChanged += VarietyPropertyChanged;
+			variety.SegmentFrequencyDistributions.CollectionChanged += SegmentFrequencyDistributionsChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
 			_words = wordsFactory(variety);
 			_newAffixCommand = new RelayCommand(NewAffix);
@@ -46,25 +56,21 @@ namespace SIL.Cog.Applications.ViewModels
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
 		}
 
-		private void VarietyPropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void SegmentFrequencyDistributionsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			switch (e.PropertyName)
+			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
-				case "SegmentProbabilityDistribution":
-					var variety = (Variety) sender;
+				KeyValuePair<SyllablePosition, FrequencyDistribution<Segment>> kvp = e.NewItems.Cast<KeyValuePair<SyllablePosition, FrequencyDistribution<Segment>>>().Single();
+				if (kvp.Key == SyllablePosition.Anywhere)
+				{
 					Segment curSeg = null;
 					if (CurrentSegment != null)
 						curSeg = CurrentSegment.DomainSegment;
-					using (_segments.BulkUpdate())
-					{
-						_segments.Clear();
-						if (variety.SegmentFrequencyDistribution != null)
-							_segments.AddRange(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(variety, seg)));
-					}
+					_segments.ReplaceAll(kvp.Value.ObservedSamples.Select(seg => new VarietySegmentViewModel(DomainVariety, seg, SyllablePosition.Anywhere)));
 					MaxSegmentProbability = _segments.Select(seg => seg.Probability).Concat(0).Max();
 					if (curSeg != null)
 						CurrentSegment = _segments.FirstOrDefault(vm => vm.DomainSegment.Equals(curSeg));
-					break;
+				}
 			}
 		}
 
@@ -74,9 +80,9 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
+				_projectService.Project.Segmenter.Segment(affix);
 				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes.Add(affix);
-				_projectService.Project.Segmenter.Segment(affix);
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}

@@ -37,9 +37,9 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=CorrespondenceTypeComboBox}">Correspondence type:</Label>
-		<ComboBox Name="CorrespondenceTypeComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SoundCorrespondenceType}}}"
-				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding CorrespondenceType}" />
+		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=SyllablePositionComboBox}">Syllable position:</Label>
+		<ComboBox Name="SyllablePositionComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:ViewModelSyllablePosition}}}"
+				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding SyllablePosition}" />
 		<Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=FrequencyFilterUpDown}">Frequency filter:</Label>
 		<xctk:IntegerUpDown Name="FrequencyFilterUpDown" Grid.Column="1" Grid.Row="1" Minimum="0" Increment="10" Value="{Binding FrequencyFilter}" />
 		<StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">

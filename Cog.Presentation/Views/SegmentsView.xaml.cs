@@ -91,7 +91,7 @@ namespace SIL.Cog.Presentation.Views
 						FieldName = vm.Segments[i].StrRep,
 						Title = vm.Segments[i].StrRep,
 						DisplayMemberBindingInfo = new DataGridBindingInfo { Path = new PropertyPath(string.Format("Segments[{0}].Frequency", i)), ReadOnly = true},
-						Width = new ColumnWidth(45),
+						Width = new ColumnWidth(60),
 						CellHorizontalContentAlignment = HorizontalAlignment.Center
 					};
 				SegmentsDataGrid.Columns.Add(c);

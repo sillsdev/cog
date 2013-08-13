@@ -114,13 +114,22 @@
 	</Style>
 
 	<Style x:Key="DataGrid_ArrowStyle" TargetType="Polygon">
-		<Setter Property="Grid.Column" Value="1" />
 		<Setter Property="HorizontalAlignment" Value="Right" />
 		<Setter Property="VerticalAlignment" Value="Bottom" />
 		<Setter Property="StrokeThickness" Value="1" />
 		<Setter Property="Stroke" Value="Black" />
 		<Setter Property="Fill" Value="Gray" />
 		<Setter Property="Visibility" Value="Hidden" />
+	</Style>
+	
+	<Style x:Key="DataGrid_UpArrowStyle" TargetType="Polygon" BasedOn="{StaticResource DataGrid_ArrowStyle}">
+		<Setter Property="Margin" Value="0,0,0,2" />
+		<Setter Property="Points" Value="0,0 8,0 4,-6 0,0" />
+	</Style>
+
+	<Style x:Key="DataGrid_DownArrowStyle" TargetType="Polygon" BasedOn="{StaticResource DataGrid_ArrowStyle}">
+		<Setter Property="Margin" Value="0,0,0,1" />
+		<Setter Property="Points" Value="0,0 8,0 4,5 0,0" />
 	</Style>
 
 	<Style TargetType="DataGridColumnHeader">
@@ -144,8 +153,8 @@
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                   ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
                                                   Content="{TemplateBinding Content}" />
-								<Polygon Name="UpArrow" Style="{StaticResource DataGrid_ArrowStyle}" Margin="0,0,0,2" Points="0,0 8,0 4,-6 0,0" />
-								<Polygon Name="DownArrow" Margin="0,0,0,1" Style="{StaticResource DataGrid_ArrowStyle}" Points="0,0 8,0 4,5 0,0" />
+								<Polygon Name="UpArrow" Style="{StaticResource DataGrid_UpArrowStyle}" Grid.Column="1" />
+								<Polygon Name="DownArrow" Style="{StaticResource DataGrid_DownArrowStyle}" Grid.Column="1" />
 							</Grid>
 						</Border>
 						<Thumb x:Name="PART_LeftHeaderGripper" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="-4,0,0,0" HorizontalAlignment="Left" />
@@ -367,8 +376,8 @@
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                   ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
                                                   Content="{TemplateBinding Content}" />
-								<Polygon Name="UpArrow" Style="{StaticResource DataGrid_ArrowStyle}" Margin="0,0,0,2" Points="0,0 8,0 4,-6 0,0" />
-								<Polygon Name="DownArrow" Margin="0,0,0,1" Style="{StaticResource DataGrid_ArrowStyle}" Points="0,0 8,0 4,5 0,0" />
+								<Polygon Name="UpArrow" Style="{StaticResource DataGrid_UpArrowStyle}" Grid.Column="1" />
+								<Polygon Name="DownArrow" Style="{StaticResource DataGrid_DownArrowStyle}" Grid.Column="1" />
 							</Grid>
 						</Border>
 						<Thumb x:Name="PART_ColumnResizerThumbLeft" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="-4,0,0,0" HorizontalAlignment="Left" />
@@ -560,6 +569,33 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+	</Style>
+
+	<Style TargetType="c:MergedHeaderCell">
+		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
+		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
+		<Setter Property="Padding" Value="8,2,8,2" />
+		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
+		<Setter Property="BorderThickness" Value="0,0,1,1" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="c:MergedHeaderCell">
+					<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+												BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+						<ContentPresenter Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+											  ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
+											  Content="{TemplateBinding Content}" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="xcdg:GroupLevelIndicatorPane">
+		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowVerticalBorder" Value="False" />
+		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowIndicators" Value="False" />
 	</Style>
 
 	<Style TargetType="c:TreeListView">
@@ -972,27 +1008,5 @@
 				<Setter Property="Canvas.ZIndex" Value="100" />
 			</Trigger>
 		</Style.Triggers>
-	</Style>
-	
-	<Style TargetType="c:MergedHeaderCell">
-		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
-		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
-		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
-		<Setter Property="BorderThickness" Value="0,0,1,1" />
-		<Setter Property="HorizontalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="c:MergedHeaderCell">
-					<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
-												BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
-							<ContentPresenter Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-											  ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
-											  Content="{TemplateBinding Content}" />
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
 	</Style>
 </ResourceDictionary>

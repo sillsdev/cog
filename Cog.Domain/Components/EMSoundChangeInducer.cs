@@ -77,7 +77,7 @@ namespace SIL.Cog.Domain.Components
 		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts)
 		{
 			IWordAligner aligner = _project.WordAligners[_alignerID];
-			int segmentCount = pair.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
+			int segmentCount = pair.Variety2.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
 

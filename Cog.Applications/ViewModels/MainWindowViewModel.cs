@@ -217,7 +217,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			var vm = new ExportGlobalCorrespondencesChartViewModel();
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-				_imageExportService.ExportGlobalCorrespondencesChart(this, vm.CorrespondenceType, vm.FrequencyFilter);
+				_imageExportService.ExportGlobalCorrespondencesChart(this, vm.SyllablePosition, vm.FrequencyFilter);
 		}
 
 		public bool CanExit()

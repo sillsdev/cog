@@ -5,31 +5,82 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SimilarityMatrixViewModel}" 
              d:DesignHeight="300" d:DesignWidth="300" DataContextChanged="SimilarityMatrixView_DataContextChanged">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
+		<cnvtrs:PercentageToSpectrumColorConverter x:Key="ColorConverter" />
+		<cnvtrs:StringFormatConverter x:Key="StringFormatConverter" />
+		<xcdg:DataGridCollectionViewSource x:Key="VarietiesSource" Source="{Binding Varieties}" AutoCreateItemProperties="False" />
     </UserControl.Resources>
     <DockPanel>
 		<TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Similarity Matrix</TextBlock>
 		<Grid>
             <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">Click on "Perform comparison" to calculate the similarity matrix for all variety pairs.</TextBlock>
-            <DataGrid Name="SimMatrixGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" AutoGenerateColumns="False" ItemsSource="{Binding Varieties}"
-					  SelectionUnit="Cell" EnableColumnVirtualization="False" EnableRowVirtualization="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True">
-                <DataGrid.RowHeaderStyle>
-                    <Style TargetType="DataGridRowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
-                        <Setter Property="Content" Value="{Binding}" />
-                        <Setter Property="ContentTemplate">
-                            <Setter.Value>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.RowHeaderStyle>
-            </DataGrid>
+            <xcdg:DataGridControl Name="SimMatrixGrid" ItemsSource="{Binding Source={StaticResource VarietiesSource}}" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}"
+								  Margin="0,10,0,0" ReadOnly="True" NavigationBehavior="None" SelectionUnit="Cell">
+                <xcdg:DataGridControl.Resources>
+					<Style TargetType="xcdg:RowSelector" BasedOn="{StaticResource {x:Type xcdg:RowSelector}}" >
+						<Setter Property="Content" Value="{Binding DataContext}" />
+						<Setter Property="ContentTemplate">
+							<Setter.Value>
+								<DataTemplate DataType="vm:SimilarityMatrixVarietyViewModel">
+									<TextBlock Text="{Binding Name}" />
+								</DataTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+					<Style TargetType="xcdg:ColumnManagerCell" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
+						<Setter Property="Padding" Value="6,2,6,2" />
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="xcdg:ColumnManagerCell">
+									<Grid>
+										<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+											<TextBlock Text="{TemplateBinding Content}" Margin="0,3,0,3" VerticalAlignment="Bottom">
+												<TextBlock.LayoutTransform>
+													<RotateTransform Angle="270" />
+												</TextBlock.LayoutTransform>
+											</TextBlock>
+										</Border>
+									</Grid>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+					<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
+						<Setter Property="ContentTemplate">
+							<Setter.Value>
+								<DataTemplate DataType="vm:SimilarityMatrixVarietyPairViewModel">
+									<TextBlock Padding="3,1,3,1" Background="{Binding SimilarityScore, Converter={StaticResource ColorConverter}}" TextAlignment="Center">
+										<TextBlock.ToolTip>
+											<MultiBinding Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0} &#x2194; {1}">
+												<Binding Path="ThisVarietyName" />
+												<Binding Path="OtherVarietyName" />
+											</MultiBinding>
+										</TextBlock.ToolTip>
+										<Hyperlink Style="{StaticResource BlackHyperlinkStyle}" Command="{Binding SwitchToVarietyPairCommand}">
+											<Run Text="{Binding SimilarityScore, Mode=OneWay, StringFormat={}{0:#0; ;0}}" />
+										</Hyperlink>
+									</TextBlock>
+								</DataTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</xcdg:DataGridControl.Resources>
+				<xcdg:DataGridControl.View>
+					<xcdg:TableView UseDefaultHeadersFooters="False" AllowRowResize="False">
+						<xcdg:TableView.FixedHeaders>
+							<DataTemplate>
+								<xcdg:ColumnManagerRow AllowColumnReorder="False" AllowColumnResize="False" AllowSort="False" />
+							</DataTemplate>
+						</xcdg:TableView.FixedHeaders>
+					</xcdg:TableView>
+				</xcdg:DataGridControl.View>
+            </xcdg:DataGridControl>
         </Grid>
     </DockPanel>
 </UserControl>

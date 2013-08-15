@@ -42,6 +42,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private FindViewModel _findViewModel;
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
+		private bool _deferredResetCurrentVarietyPair;
 
 		public VarietyPairsViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IExportService exportService, IAnalysisService analysisService,
 			VarietyPairViewModel.Factory varietyPairFactory)
@@ -82,6 +83,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_projectService.Project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
+			_deferredResetCurrentVarietyPair = true;
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -232,14 +234,21 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ResetCurrentVarietyPair()
 		{
-			if (_varieties.Count > 0 && _varietiesView1 != null && _varietiesView2 != null)
+			if (_varieties.Count > 0)
 			{
-				Set(() => CurrentVariety1, ref _currentVariety1, _varietiesView1.Cast<VarietyViewModel>().First());
-				if (_varieties.Count > 1)
-					Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().ElementAt(1));
+				if (_varietiesView1 == null || _varietiesView2 == null)
+				{
+					_deferredResetCurrentVarietyPair = true;
+				}
 				else
-					Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().First());
-				SetCurrentVarietyPair();
+				{
+					Set(() => CurrentVariety1, ref _currentVariety1, _varietiesView1.Cast<VarietyViewModel>().First());
+					if (_varieties.Count > 1)
+						Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().ElementAt(1));
+					else
+						Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().First());
+					SetCurrentVarietyPair();
+				}
 			}
 			else
 			{
@@ -267,7 +276,8 @@ namespace SIL.Cog.Applications.ViewModels
 				if (Set(() => VarietiesView1, ref _varietiesView1, value))
 				{
 					_varietiesView1.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-					ResetCurrentVarietyPair();
+					if (_deferredResetCurrentVarietyPair)
+						ResetCurrentVarietyPair();
 				}
 			}
 		}
@@ -290,7 +300,8 @@ namespace SIL.Cog.Applications.ViewModels
 				if (Set(() => VarietiesView2, ref _varietiesView2, value))
 				{
 					_varietiesView2.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-					ResetCurrentVarietyPair();
+					if (_deferredResetCurrentVarietyPair)
+						ResetCurrentVarietyPair();
 				}
 			}
 		}
@@ -313,6 +324,7 @@ namespace SIL.Cog.Applications.ViewModels
 				VarietyPairViewModel oldCurVarietyPair = _currentVarietyPair;
 				if (Set(() => CurrentVarietyPair, ref _currentVarietyPair, value))
 				{
+					_deferredResetCurrentVarietyPair = false;
 					_startWordPair = null;
 					if (oldCurVarietyPair != null)
 					{

@@ -1,17 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
-using SIL.Cog.Presentation.Behaviors;
-using SIL.Cog.Presentation.Converters;
 using SIL.Collections;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
@@ -31,8 +28,18 @@ namespace SIL.Cog.Presentation.Views
 			InitializeComponent();
 			WordListsGrid.ClipboardExporters.Clear();
 			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
+			WordListsGrid.Columns.CollectionChanged += Columns_CollectionChanged;
 			_monitor = new SimpleMonitor();
 			BusyCursor.DisplayUntilIdle();
+		}
+
+		private void Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				foreach (Column c in e.NewItems)
+					c.Width = 100;
+			}
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -58,64 +65,9 @@ namespace SIL.Cog.Presentation.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			LoadColumns();
 			LoadCollectionView();
 			SizeRowSelectorPaneToFit();
-			SelectFirstCell();
-		}
-
-		private void LoadColumns()
-		{
-			var vm = (WordListsViewModel) DataContext;
-
-			WordListsGrid.Columns.Clear();
-			for (int i = 0; i < vm.Senses.Count; i++)
-			{
-				var pen = new Pen(new SolidColorBrush(Colors.Red), 2) {DashStyle = DashStyles.Dash};
-				var textDecoration = new TextDecoration {Location = TextDecorationLocation.Underline, Pen = pen, PenOffset = 1};
-				var textDecorations = new TextDecorationCollection {textDecoration};
-
-				var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-				var textBinding = new Binding(string.Format("Senses[{0}].Words", i)) {Converter = new WordsToInlinesConverter(), ConverterParameter = textDecorations};
-				textBlockFactory.SetBinding(TextBlockBehaviors.InlinesListProperty, textBinding);
-				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
-				textBlockFactory.SetValue(TextBlock.FontSizeProperty, 16.0);
-				textBlockFactory.SetBinding(TagProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
-				var menuItem = new MenuItem {Header = "Show in varieties"};
-				menuItem.SetBinding(MenuItem.CommandProperty, string.Format("Senses[{0}].ShowInVarietiesCommand", i));
-				textBlockFactory.SetValue(ContextMenuProperty, new ContextMenu {Items = {menuItem}});
-				textBlockFactory.Name = "textBlock";
-				var cellTemplate = new DataTemplate
-					{
-						VisualTree = textBlockFactory,
-						Triggers =
-							{
-								new Trigger {SourceName = "textBlock", Property = TextBlockBehaviors.IsTextTrimmedProperty, Value = true, Setters =
-									{
-										new Setter(ToolTipProperty, new Binding(string.Format("Senses[{0}].StrRep", i)), "textBlock")
-									}}
-							}
-					};
-
-				var textBoxFactory = new FrameworkElementFactory(typeof(TextBox));
-				textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(string.Format("Senses[{0}].StrRep", i)));
-				textBoxFactory.SetValue(BorderThicknessProperty, new Thickness(0));
-				textBoxFactory.SetValue(FontSizeProperty, 16.0);
-				textBoxFactory.Name = "textBox";
-				var cellEditTemplate = new DataTemplate {VisualTree = textBoxFactory};
-
-				var c = new Column
-					{
-						FieldName = vm.Senses[i].Gloss,
-						Title = vm.Senses[i].Gloss,
-						DisplayMemberBindingInfo = new DataGridBindingInfo { Path = new PropertyPath(".") },
-						CellContentTemplate = cellTemplate,
-						CellEditor = new CellEditor { EditTemplate = cellEditTemplate },
-						Width = new ColumnWidth(100)
-					};
-
-				WordListsGrid.Columns.Add(c);
-			}
+			Dispatcher.BeginInvoke(new Action(SelectFirstCell), DispatcherPriority.ApplicationIdle);
 		}
 
 		private void SizeRowSelectorPaneToFit()
@@ -132,7 +84,6 @@ namespace SIL.Cog.Presentation.Views
 					new Typeface(WordListsGrid.FontFamily, WordListsGrid.FontStyle, WordListsGrid.FontWeight, WordListsGrid.FontStretch), WordListsGrid.FontSize, textBrush);
 				if (formattedText.Width > maxWidth)
 					maxWidth = formattedText.Width;
-				variety.PropertyChanged -= variety_PropertyChanged;
 				variety.PropertyChanged += variety_PropertyChanged;
 			}
 
@@ -156,21 +107,17 @@ namespace SIL.Cog.Presentation.Views
 			switch (e.PropertyName)
 			{
 				case "Senses":
-					DispatcherHelper.CheckBeginInvokeOnUI(() =>
-						{
-							LoadColumns();
-							vm.Senses.CollectionChanged += Senses_CollectionChanged;
-						});
+					vm.Senses.CollectionChanged += Senses_CollectionChanged;
 					break;
 
 				case "Varieties":
+					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
 							LoadCollectionView();
 							SizeRowSelectorPaneToFit();
-							vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 						});
-					WordListsGrid.Dispatcher.BeginInvoke(new Action(SelectFirstCell));
+					Dispatcher.BeginInvoke(new Action(SelectFirstCell), DispatcherPriority.ApplicationIdle);
 					break;
 
 				case "CurrentVarietySense":
@@ -215,18 +162,22 @@ namespace SIL.Cog.Presentation.Views
 		private void LoadCollectionView()
 		{
 			var vm = (WordListsViewModel) DataContext;
-			if (vm == null)
-				return;
-
-			var source = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
-			for (int i = 0; i < vm.Senses.Count; i++)
-				source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}].StrRep", i), typeof(string)));
-			WordListsGrid.ItemsSource = source;
+			var source = (DataGridCollectionViewSource) Resources["VarietiesSource"];
+			using (source.DeferRefresh())
+			{
+				IComparer sortComparer = ProjectionComparer<WordListsVarietySenseViewModel>.Create(sense => sense.StrRep);
+				source.ItemProperties.Clear();
+				for (int i = 0; i < vm.Senses.Count; i++)
+					source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}]", i), typeof (WordListsVarietySenseViewModel))
+						{
+							Title = vm.Senses[i].Gloss,
+							SortComparer = sortComparer
+						});
+			}
 		}
 
 		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			LoadColumns();
 			LoadCollectionView();
 		}
 

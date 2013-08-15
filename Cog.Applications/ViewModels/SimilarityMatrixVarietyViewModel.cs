@@ -15,7 +15,7 @@ namespace SIL.Cog.Applications.ViewModels
 			foreach (Variety v in varieties)
 			{
 				VarietyPair vp;
-				varietyPairs.Add(variety.VarietyPairs.TryGetValue(v, out vp) ? new SimilarityMatrixVarietyPairViewModel(similarityMetric, v, vp) : new SimilarityMatrixVarietyPairViewModel(v));
+				varietyPairs.Add(variety.VarietyPairs.TryGetValue(v, out vp) ? new SimilarityMatrixVarietyPairViewModel(similarityMetric, variety, vp) : new SimilarityMatrixVarietyPairViewModel(variety, v));
 			}
 			_varietyPairs = new ReadOnlyList<SimilarityMatrixVarietyPairViewModel>(varietyPairs);
 		}

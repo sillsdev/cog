@@ -9,19 +9,22 @@ namespace SIL.Cog.Applications.ViewModels
 	public class SimilarityMatrixVarietyPairViewModel : ViewModelBase
 	{
 		private readonly VarietyPair _varietyPair;
+		private readonly Variety _thisVariety;
 		private readonly Variety _otherVariety;
 		private readonly ICommand _switchToVarietyPairCommand;
 		private readonly SimilarityMetric _similarityMetric;
 
-		public SimilarityMatrixVarietyPairViewModel(Variety otherVariety)
+		public SimilarityMatrixVarietyPairViewModel(Variety thisVariety, Variety otherVariety)
 		{
+			_thisVariety = thisVariety;
 			_otherVariety = otherVariety;
 		}
 
-		public SimilarityMatrixVarietyPairViewModel(SimilarityMetric similarityMetric, Variety otherVariety, VarietyPair varietyPair)
+		public SimilarityMatrixVarietyPairViewModel(SimilarityMetric similarityMetric, Variety thisVariety, VarietyPair varietyPair)
 		{
 			_varietyPair = varietyPair;
-			_otherVariety = otherVariety;
+			_thisVariety = thisVariety;
+			_otherVariety = _varietyPair.GetOtherVariety(_thisVariety);
 			_switchToVarietyPairCommand = new RelayCommand(SwitchToVarietyPair);
 			_similarityMetric = similarityMetric;
 		}
@@ -30,6 +33,11 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (_varietyPair != null)
 				Messenger.Default.Send(new SwitchViewMessage(typeof(VarietyPairsViewModel), _varietyPair));
+		}
+
+		public string ThisVarietyName
+		{
+			get { return _thisVariety.Name; }
 		}
 
 		public string OtherVarietyName
@@ -58,11 +66,6 @@ namespace SIL.Cog.Applications.ViewModels
 		internal VarietyPair DomainVarietyPair
 		{
 			get { return _varietyPair; }
-		}
-
-		internal Variety DomainOtherVariety
-		{
-			get { return _otherVariety; }
 		}
 
 		public ICommand SwitchToVarietyPairCommand

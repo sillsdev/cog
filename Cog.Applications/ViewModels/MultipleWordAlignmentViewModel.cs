@@ -181,6 +181,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void AlignWords()
 		{
+			if (_currentSense == null)
+				return;
+
 			_busyService.ShowBusyIndicatorUntilUpdated();
 
 			var clusterer = new CognateSetsClusterer(_currentSense.DomainSense, 0.5);

@@ -6,19 +6,22 @@
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
+             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d"  DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300"
              Loaded="OnLoaded" d:DataContext="{d:DesignInstance vm:WordListsViewModel}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
+		<cnvtrs:WordsToInlinesConverter x:Key="InlinesConverter" />
+		<xcdg:DataGridCollectionViewSource x:Key="VarietiesSource" Source="{Binding Varieties}" AutoCreateItemProperties="False" />
 	</UserControl.Resources>
     <DockPanel>
         <TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Word lists</TextBlock>
         <Grid>
             <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">To get started, click on "Add a new variety" or "Add a new sense" to begin creating word lists, or click on "Import word lists" if you have already created word lists in another application.</TextBlock>
-			<xcdg:DataGridControl x:Name="WordListsGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}" Margin="0,10,0,0" SynchronizeCurrent="True"
-								  SelectionUnit="Cell" SelectionMode="Single" AutoCreateColumns="False" ItemScrollingBehavior="Immediate" SelectionChanged="WordListsGrid_OnSelectionChanged">
+			<xcdg:DataGridControl x:Name="WordListsGrid" ItemsSource="{Binding Source={StaticResource VarietiesSource}}" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}"
+								  Margin="0,10,0,0" SynchronizeCurrent="False" SelectionUnit="Cell" SelectionMode="Single" SelectionChanged="WordListsGrid_OnSelectionChanged">
 				<xcdg:DataGridControl.Resources>
 					<Style TargetType="xcdg:RowSelector" BasedOn="{StaticResource {x:Type xcdg:RowSelector}}" >
 						<Setter Property="Content" Value="{Binding DataContext}" />
@@ -32,8 +35,48 @@
 					</Style>
 					<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
 						<EventSetter Event="MouseRightButtonUp" Handler="Cell_OnMouseRightButtonUp"></EventSetter>
+						<Setter Property="ContentTemplate">
+							<Setter.Value>
+								<DataTemplate DataType="vm:WordListsVarietySenseViewModel">
+									<TextBlock Name="ContentTextBlock" FontSize="16" Padding="3,1,3,1" Tag="{Binding StrRep}">
+										<b:TextBlockBehaviors.InlinesList>
+											<Binding Path="Words" Converter="{StaticResource InlinesConverter}">
+												<Binding.ConverterParameter>
+													<TextDecorationCollection>
+														<TextDecoration Location="Underline" PenOffset="1">
+															<TextDecoration.Pen>
+																<Pen DashStyle="{x:Static DashStyles.Dash}" Thickness="2" Brush="Red" />
+															</TextDecoration.Pen>
+														</TextDecoration>
+													</TextDecorationCollection>
+												</Binding.ConverterParameter>
+											</Binding>
+										</b:TextBlockBehaviors.InlinesList>
+										<TextBlock.ContextMenu>
+											<ContextMenu>
+												<MenuItem Header="Show in varieties" Command="{Binding ShowInVarietiesCommand}" />
+											</ContextMenu>
+										</TextBlock.ContextMenu>
+									</TextBlock>
+									<DataTemplate.Triggers>
+										<Trigger SourceName="ContentTextBlock" Property="b:TextBlockBehaviors.IsTextTrimmed" Value="True">
+											<Setter TargetName="ContentTextBlock" Property="ToolTip" Value="{Binding StrRep}" />
+										</Trigger>
+									</DataTemplate.Triggers>
+								</DataTemplate>
+							</Setter.Value>
+						</Setter>
 					</Style>
 				</xcdg:DataGridControl.Resources>
+				<xcdg:DataGridControl.DefaultCellEditors>
+					<xcdg:CellEditor x:Key="{x:Type vm:WordListsVarietySenseViewModel}">
+						<xcdg:CellEditor.EditTemplate>
+							<DataTemplate DataType="vm:WordListsVarietySenseViewModel">
+								<TextBox BorderThickness="0" FontSize="16" Text="{Binding StrRep}" />
+							</DataTemplate>
+						</xcdg:CellEditor.EditTemplate>
+					</xcdg:CellEditor>
+				</xcdg:DataGridControl.DefaultCellEditors>
 				<xcdg:DataGridControl.View>
 					<xcdg:TableView UseDefaultHeadersFooters="False">
 						<xcdg:TableView.FixedHeaders>

@@ -108,5 +108,10 @@ namespace SIL.Cog.Applications.ViewModels
 				}
 			}
 		}
+
+		public override string ToString()
+		{
+			return StrRep;
+		}
 	}
 }

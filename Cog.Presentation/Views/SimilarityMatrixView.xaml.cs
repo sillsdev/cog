@@ -1,14 +1,12 @@
-﻿using System;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
-using SIL.Cog.Presentation.Converters;
+using Xceed.Wpf.DataGrid;
+using Xceed.Wpf.DataGrid.Views;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -20,7 +18,17 @@ namespace SIL.Cog.Presentation.Views
 		public SimilarityMatrixView()
 		{
 			InitializeComponent();
+			SimMatrixGrid.Columns.CollectionChanged += Columns_CollectionChanged;
 			BusyCursor.DisplayUntilIdle();
+		}
+
+		private void Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				foreach (Column c in e.NewItems)
+					c.Width = 30;
+			}
 		}
 
 		private void SimilarityMatrixView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -28,65 +36,42 @@ namespace SIL.Cog.Presentation.Views
 			var vm = e.NewValue as SimilarityMatrixViewModel;
 			if (vm != null)
 			{
-				LoadColumns();
+				LoadCollectionView();
+				SizeRowSelectorPaneToFit();
 				vm.PropertyChanged += ViewModel_PropertyChanged;
 			}
 		}
 
-		private void LoadColumns()
+		private void LoadCollectionView()
+		{
+			var vm = (SimilarityMatrixViewModel) DataContext;
+			var source = (DataGridCollectionViewSource) Resources["VarietiesSource"];
+			using (source.DeferRefresh())
+			{
+				source.ItemProperties.Clear();
+				for (int i = 0; i < vm.Varieties.Count; i++)
+					source.ItemProperties.Add(new DataGridItemProperty(vm.Varieties[i].Name, string.Format("VarietyPairs[{0}]", i), typeof (SimilarityMatrixVarietyPairViewModel)) {Title = vm.Varieties[i].Name});
+			}
+		}
+
+		private void SizeRowSelectorPaneToFit()
 		{
 			var vm = (SimilarityMatrixViewModel) DataContext;
 			if (vm == null)
 				return;
 
-			SimMatrixGrid.Columns.Clear();
-
-			double width = 0.0;
+			var textBrush = (Brush) Application.Current.FindResource("HeaderTextBrush");
+			double maxWidth = 0;
 			foreach (SimilarityMatrixVarietyViewModel variety in vm.Varieties)
 			{
-				var typeface = new Typeface(SimMatrixGrid.FontFamily, SimMatrixGrid.FontStyle, SimMatrixGrid.FontWeight, SimMatrixGrid.FontStretch);
-				var text = new FormattedText(variety.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, SimMatrixGrid.FontSize, SimMatrixGrid.Foreground);
-				width = Math.Max(text.Width, width);
+				var formattedText = new FormattedText(variety.Name, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+					new Typeface(SimMatrixGrid.FontFamily, SimMatrixGrid.FontStyle, SimMatrixGrid.FontWeight, SimMatrixGrid.FontStretch), SimMatrixGrid.FontSize, textBrush);
+				if (formattedText.Width > maxWidth)
+					maxWidth = formattedText.Width;
 			}
 
-			for (int i = 0; i < vm.Varieties.Count; i++)
-			{
-				var runFactory = new FrameworkElementFactory(typeof(Run));
-				var textBinding = new Binding(string.Format("VarietyPairs[{0}].SimilarityScore", i)) {StringFormat = "{0:#0; ;0}", Mode = BindingMode.OneWay};
-				runFactory.SetBinding(Run.TextProperty, textBinding);
-				var hyperlinkFactory = new FrameworkElementFactory(typeof(Hyperlink));
-				var commandBinding = new Binding(string.Format("VarietyPairs[{0}].SwitchToVarietyPairCommand", i));
-				hyperlinkFactory.SetBinding(Hyperlink.CommandProperty, commandBinding);
-				hyperlinkFactory.SetValue(FrameworkContentElement.StyleProperty, Application.Current.Resources["BlackHyperlinkStyle"]);
-				hyperlinkFactory.AppendChild(runFactory);
-				var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-				textBlockFactory.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
-				textBlockFactory.AppendChild(hyperlinkFactory);
-				var backgroundBinding = new Binding(string.Format("VarietyPairs[{0}].SimilarityScore", i)) {Converter = new PercentageToSpectrumColorConverter()};
-				textBlockFactory.SetBinding(TextBlock.BackgroundProperty, backgroundBinding);
-				textBlockFactory.SetValue(TextBlock.PaddingProperty, new Thickness(3, 1, 3, 1));
-				var tooltipBinding = new MultiBinding();
-				tooltipBinding.Bindings.Add(new Binding("Name"));
-				tooltipBinding.Bindings.Add(new Binding(string.Format("VarietyPairs[{0}].OtherVarietyName", i)));
-				tooltipBinding.Converter = new StringFormatConverter();
-				tooltipBinding.ConverterParameter = "{0} <-> {1}";
-				textBlockFactory.SetValue(ToolTipProperty, tooltipBinding);
-				var cellTemplate = new DataTemplate {VisualTree = textBlockFactory};
-
-				textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-				textBlockFactory.SetValue(TextBlock.TextProperty, vm.Varieties[i].Name);
-				textBlockFactory.SetValue(MarginProperty, new Thickness(0, 3, 0, 3));
-				textBlockFactory.SetValue(LayoutTransformProperty, new RotateTransform(270.0));
-				textBlockFactory.SetValue(VerticalAlignmentProperty, VerticalAlignment.Bottom);
-				var gridFactory = new FrameworkElementFactory(typeof(Grid));
-				gridFactory.SetValue(HeightProperty, width + 6.0);
-				gridFactory.AppendChild(textBlockFactory);
-				var headerTemplate = new DataTemplate {VisualTree = gridFactory};
-
-				var column = new DataGridTemplateColumn {HeaderTemplate = headerTemplate, CellTemplate = cellTemplate, Width = new DataGridLength(30)};
-
-				SimMatrixGrid.Columns.Add(column);
-			}
+			var tableView = (TableView) SimMatrixGrid.View;
+			tableView.RowSelectorPaneWidth = maxWidth + 18;
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -94,7 +79,11 @@ namespace SIL.Cog.Presentation.Views
 			switch (e.PropertyName)
 			{
 				case "Varieties":
-					DispatcherHelper.CheckBeginInvokeOnUI(LoadColumns);
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							LoadCollectionView();
+							SizeRowSelectorPaneToFit();
+						});
 					break;
 			}
 		}

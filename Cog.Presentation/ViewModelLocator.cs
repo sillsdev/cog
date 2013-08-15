@@ -106,6 +106,7 @@ namespace SIL.Cog.Presentation
 	        builder.RegisterType<SoundClassesViewModel>();
 	        builder.RegisterType<SegmentMappingsViewModel>();
 	        builder.RegisterType<VarietyPairViewModel>();
+	        builder.RegisterType<WordPairsViewModel>();
 
 	        _container = builder.Build();
         }

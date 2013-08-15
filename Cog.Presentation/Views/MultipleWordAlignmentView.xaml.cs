@@ -1,8 +1,11 @@
 ﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Views
@@ -22,7 +25,33 @@ namespace SIL.Cog.Presentation.Views
 		{
 			LoadColumns();
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
+			vm.WordsView = CollectionViewSource.GetDefaultView(vm.Words);
+			if (vm.GroupByCognateSet)
+			{
+				Debug.Assert(vm.WordsView.GroupDescriptions != null);
+				vm.WordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
+			}
 			vm.Words.CollectionChanged += WordsChanged;
+			vm.SensesView = CollectionViewSource.GetDefaultView(vm.Senses);
+			vm.PropertyChanged += vm_PropertyChanged;
+		}
+
+		private void vm_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var vm = (MultipleWordAlignmentViewModel) DataContext;
+			switch (e.PropertyName)
+			{
+				case "Senses":
+					DispatcherHelper.CheckBeginInvokeOnUI(() => vm.SensesView = CollectionViewSource.GetDefaultView(vm.Senses));
+					break;
+
+				case "GroupByCognateSet":
+					if (vm.GroupByCognateSet)
+						vm.WordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
+					else
+						vm.WordsView.GroupDescriptions.Clear();
+					break;
+			}
 		}
 
 		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)

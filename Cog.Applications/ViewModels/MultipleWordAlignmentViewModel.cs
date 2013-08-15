@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
@@ -19,15 +17,16 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly IProjectService _projectService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
-		private readonly ListCollectionView _wordsView;
+		private ICollectionView _wordsView;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
-		private ListCollectionView _sensesView;
+		private ICollectionView _sensesView;
 		private SenseViewModel _currentSense;
 		private int _columnCount;
 		private int _currentColumn;
 		private MultipleWordAlignmentWordViewModel _currentWord;
 		private readonly IBusyService _busyService;
 		private readonly IExportService _exportService;
+		private bool _groupByCognateSet;
 
 		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService)
 			: base("Multiple Word Alignment")
@@ -50,11 +49,8 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
 
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
-			_wordsView = new ListCollectionView(_words);
-			Debug.Assert(_wordsView.GroupDescriptions != null);
-			_wordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
-			_wordsView.SortDescriptions.Add(new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
-			_wordsView.SortDescriptions.Add(new SortDescription("StrRep", ListSortDirection.Ascending));
+
+			_groupByCognateSet = true;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
 			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetAlignment());
@@ -63,9 +59,6 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
-			Set("SensesView", ref _sensesView, new ListCollectionView(_senses) {SortDescriptions = {new SortDescription("Gloss", ListSortDirection.Ascending)}});
-			((INotifyCollectionChanged) _sensesView).CollectionChanged += SensesChanged;
-			CurrentSense = _senses.Count > 0 ? (SenseViewModel) _sensesView.GetItemAt(0) : null;
 		}
 
 		private void ExportCognateSets()
@@ -81,31 +74,20 @@ namespace SIL.Cog.Applications.ViewModels
 			switch (e.PropertyName)
 			{
 				case "Value":
-					Debug.Assert(_wordsView.GroupDescriptions != null);
-					if (_wordsView.GroupDescriptions.Count > 0)
-					{
-						_wordsView.GroupDescriptions.Clear();
-						_wordsView.SortDescriptions.RemoveAt(0);
-					}
-					else
-					{
-						_wordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
-						_wordsView.SortDescriptions.Insert(0, new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
-					}
+					GroupByCognateSet = !GroupByCognateSet;
 					break;
 			}
 		}
 
 		private void SortBy(string property, ListSortDirection sortDirection)
 		{
-			Debug.Assert(_wordsView.GroupDescriptions != null);
-			_wordsView.SortDescriptions[_wordsView.GroupDescriptions.Count > 0 ? 1 : 0] = new SortDescription(property, sortDirection);
+			_wordsView.SortDescriptions[_groupByCognateSet ? 1 : 0] = new SortDescription(property, sortDirection);
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_currentSense == null || !_senses.Contains(_currentSense))
-				CurrentSense = _senses.Count > 0 ? (SenseViewModel) _sensesView.GetItemAt(0) : null;
+				CurrentSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses
@@ -116,6 +98,15 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICollectionView SensesView
 		{
 			get { return _sensesView; }
+			set
+			{
+				if (Set(() => SensesView, ref _sensesView, value))
+				{
+					_sensesView.SortDescriptions.Add(new SortDescription("Gloss", ListSortDirection.Ascending));
+					_sensesView.CollectionChanged += SensesChanged;
+					CurrentSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
+				}
+			}
 		}
 
 		public int ColumnCount
@@ -142,6 +133,15 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICollectionView WordsView
 		{
 			get { return _wordsView; }
+			set
+			{
+				if (Set(() => WordsView, ref _wordsView, value))
+				{
+					if (_groupByCognateSet)
+						_wordsView.SortDescriptions.Add(new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
+					_wordsView.SortDescriptions.Add(new SortDescription("StrRep", ListSortDirection.Ascending));
+				}
+			}
 		}
 
 		public int CurrentColumn
@@ -154,6 +154,21 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _currentWord; }
 			set { Set(() => CurrentWord, ref _currentWord, value); }
+		}
+
+		public bool GroupByCognateSet
+		{
+			get { return _groupByCognateSet; }
+			set
+			{
+				if (Set(() => GroupByCognateSet, ref _groupByCognateSet, value))
+				{
+					if (_groupByCognateSet)
+						_wordsView.SortDescriptions.Insert(0, new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
+					else
+						_wordsView.SortDescriptions.RemoveAt(0);
+				}
+			}
 		}
 
 		private void ResetAlignment()

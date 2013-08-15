@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
@@ -44,8 +45,6 @@ namespace SIL.Cog.Presentation.Views
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			SetupVarieties();
-			SetupVarietiesView1();
-			SetupVarietiesView2();
 		}
 
 		private void SetupVarieties()
@@ -53,18 +52,12 @@ namespace SIL.Cog.Presentation.Views
 			var vm = (VarietyPairsViewModel) DataContext;
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
-		}
 
-		private void SetupVarietiesView1()
-		{
-			var vm = (VarietyPairsViewModel) DataContext;
+			vm.VarietiesView1 = new ListCollectionView(vm.Varieties);
 			vm.VarietiesView1.CollectionChanged += (sender, e) => Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 			Varieties1ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
-		}
 
-		private void SetupVarietiesView2()
-		{
-			var vm = (VarietyPairsViewModel) DataContext;
+			vm.VarietiesView2 = new ListCollectionView(vm.Varieties);
 			vm.VarietiesView2.CollectionChanged += (sender, e) => Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 			Varieties2ComboBox.SetWidthToFit<VarietyViewModel>(variety => variety.Name);
 		}
@@ -75,14 +68,6 @@ namespace SIL.Cog.Presentation.Views
 			{
 				case "Varieties":
 					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
-					break;
-
-				case "VarietiesView1":
-					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarietiesView1);
-					break;
-
-				case "VarietiesView2":
-					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarietiesView2);
 					break;
 			}
 		}

@@ -52,7 +52,7 @@
 				<v:WordPairsView DataContext="{Binding Noncognates}" />
 			</HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound changes">
-                <DataGrid Name="CorrespondenceDataGrid" ItemsSource="{Binding SoundChangesView, NotifyOnTargetUpdated=True}" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column"
+                <DataGrid Name="CorrespondenceDataGrid" ItemsSource="{Binding SoundChanges, NotifyOnTargetUpdated=True}" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column"
 						  HorizontalScrollBarVisibility="Disabled" AlternatingRowBackground="White" IsReadOnly="True" SelectedItem="{Binding CurrentSoundChange}" Sorting="CorrespondenceDataGrid_Sorting" TargetUpdated="CorrespondenceDataGrid_OnTargetUpdated">
                     <DataGrid.GroupStyle>
                         <GroupStyle>

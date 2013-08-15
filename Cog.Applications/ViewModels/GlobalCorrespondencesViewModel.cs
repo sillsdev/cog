@@ -32,7 +32,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordPairViewModel _startWordPair;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
-		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IImageExportService imageExportService, IGraphService graphService)
+		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IImageExportService imageExportService, IGraphService graphService,
+			WordPairsViewModel.Factory wordPairsFactory)
 			: base("Global Correspondences")
 		{
 			_projectService = projectService;
@@ -62,13 +63,14 @@ namespace SIL.Cog.Applications.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
-					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending))),
-					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending)))))
+					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => _wordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
+					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _wordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending)))))
 				));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart))));
-			_wordPairs = new WordPairsViewModel {IncludeVarietyNamesInSelectedText = true};
-			SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending);
+			_wordPairs = wordPairsFactory();
+			_wordPairs.IncludeVarietyNamesInSelectedText = true;
+			_wordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending);
 			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
 		}
 
@@ -78,16 +80,6 @@ namespace SIL.Cog.Applications.ViewModels
 				GenerateGraph();
 			else
 				ClearGraph();
-		}
-
-		private void SortWordPairsBy(string propertyName, ListSortDirection sortDirection)
-		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
-			var sortDesc = new SortDescription(propertyName, sortDirection);
-			if (_wordPairs.WordPairsView.SortDescriptions.Count == 0)
-				_wordPairs.WordPairsView.SortDescriptions.Add(sortDesc);
-			else
-				_wordPairs.WordPairsView.SortDescriptions[0] = sortDesc;
 		}
 
 		private void SelectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

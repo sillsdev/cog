@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
@@ -50,6 +51,7 @@ namespace SIL.Cog.Presentation.Views
 		private void SetupVarieties()
 		{
 			var vm = (VarietiesViewModel) DataContext;
+			vm.VarietiesView = CollectionViewSource.GetDefaultView(vm.Varieties);
 			vm.VarietiesView.CollectionChanged += VarietiesView_CollectionChanged;
 			AddVarieties(vm.VarietiesView.Cast<VarietiesVarietyViewModel>());
 			VarietiesComboBox.SetWidthToFit<VarietiesVarietyViewModel>(variety => variety.Name);
@@ -59,7 +61,7 @@ namespace SIL.Cog.Presentation.Views
 		{
 			switch (e.PropertyName)
 			{
-				case "VarietiesView":
+				case "Varieties":
 					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
 					break;
 

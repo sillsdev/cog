@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -18,12 +17,12 @@ namespace SIL.Cog.Presentation.Views
 
 		private void CorrespondenceDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
 		{
-			var vm = (VarietyPairViewModel) DataContext;
-			using (vm.SoundChangesView.DeferRefresh())
+			ICollectionView soundChangesView = CollectionViewSource.GetDefaultView(CorrespondenceDataGrid.Items);
+			using (soundChangesView.DeferRefresh())
 			{
-				vm.SoundChangesView.SortDescriptions.Clear();
-				vm.SoundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
-				vm.SoundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
+				soundChangesView.SortDescriptions.Clear();
+				soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
+				soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
 
 				ListSortDirection direction = e.Column.SortDirection != ListSortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending;
 
@@ -41,7 +40,7 @@ namespace SIL.Cog.Presentation.Views
 						path = "Frequency";
 						break;
 				}
-				vm.SoundChangesView.SortDescriptions.Add(new SortDescription(path, direction));
+				soundChangesView.SortDescriptions.Add(new SortDescription(path, direction));
 			}
 			e.Handled = true;
 		}
@@ -50,19 +49,19 @@ namespace SIL.Cog.Presentation.Views
 		{
 			if (e.Property == ItemsControl.ItemsSourceProperty)
 			{
-				var vm = (VarietyPairViewModel) DataContext;
-				if (vm != null)
+				ICollectionView soundChangesView = CollectionViewSource.GetDefaultView(CorrespondenceDataGrid.Items);
+				using (soundChangesView.DeferRefresh())
 				{
-					using (vm.SoundChangesView.DeferRefresh())
-					{
-						vm.SoundChangesView.SortDescriptions.Clear();
-						vm.SoundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
-						vm.SoundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
-						vm.SoundChangesView.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
-					}
-					CorrespondenceDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
-					Dispatcher.BeginInvoke(new Action(() => CorrespondenceDataGrid.UnselectAll()));
+					if (soundChangesView.GroupDescriptions.Count == 0)
+						soundChangesView.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
+
+					soundChangesView.SortDescriptions.Clear();
+					soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
+					soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
+					soundChangesView.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
 				}
+				CorrespondenceDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
+				Dispatcher.BeginInvoke(new Action(() => CorrespondenceDataGrid.UnselectAll()));
 			}
 		}
 	}

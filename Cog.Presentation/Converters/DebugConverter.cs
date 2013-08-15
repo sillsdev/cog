@@ -15,7 +15,8 @@ namespace SIL.Cog.Presentation.Converters
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+			Debug.WriteLine(value);
+			return value;
 		}
 	}
 }

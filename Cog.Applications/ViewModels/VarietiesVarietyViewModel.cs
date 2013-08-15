@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -22,7 +20,6 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly BindableList<VarietySegmentViewModel> _segments;
 		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
 		private double _maxSegProb;
-		private readonly ListCollectionView _segmentsView;
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
@@ -45,7 +42,6 @@ namespace SIL.Cog.Applications.ViewModels
 				segments = Enumerable.Empty<Segment>();
 
 			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(variety, seg, SyllablePosition.Anywhere)));
-			_segmentsView = new ListCollectionView(_segments);
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.SegmentFrequencyDistributions.CollectionChanged += SegmentFrequencyDistributionsChanged;
@@ -126,11 +122,6 @@ namespace SIL.Cog.Applications.ViewModels
 		public ReadOnlyObservableList<VarietySegmentViewModel> Segments
 		{
 			get { return _readOnlySegments; }
-		}
-
-		public ICollectionView SegmentsView
-		{
-			get { return _segmentsView; }
 		}
 
 		public WordsViewModel Words

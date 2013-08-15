@@ -5,11 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d" DataContextChanged="WordsView_OnDataContextChanged" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordsViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:ItemsControlScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
+		<!--CollectionViewSource x:Key="WordsSource" Source="{Binding Words}">
+			<b:DependencyObjectBehaviors.PushBindings>
+				<b:PushBinding TargetProperty="" Path="WordsView"/>
+			</b:DependencyObjectBehaviors.PushBindings>
+		</CollectionViewSource-->
 	</UserControl.Resources>
 	<Border BorderThickness="1" BorderBrush="{StaticResource ListBorderBrush}">
 		<Grid>

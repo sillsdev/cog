@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -20,17 +19,14 @@ namespace SIL.Cog.Presentation.Views
 		{
 			if (e.Property == ItemsControl.ItemsSourceProperty)
 			{
-				var vm = (VarietiesVarietyViewModel) DataContext;
-				if (vm != null)
+				ICollectionView segmentsView = CollectionViewSource.GetDefaultView(SegmentsDataGrid.Items);
+				using (segmentsView.DeferRefresh())
 				{
-					using (vm.SegmentsView.DeferRefresh())
-					{
-						vm.SegmentsView.SortDescriptions.Clear();
-						vm.SegmentsView.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
-					}
-					SegmentsDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
-					Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.UnselectAll()));
+					segmentsView.SortDescriptions.Clear();
+					segmentsView.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
 				}
+				SegmentsDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
+				Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.UnselectAll()));
 			}
 		}
 	}

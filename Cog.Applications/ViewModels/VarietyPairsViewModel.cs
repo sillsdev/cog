@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -27,8 +26,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IAnalysisService _analysisService;
 		private readonly VarietyPairViewModel.Factory _varietyPairFactory;
 		private ReadOnlyMirroredList<Variety, VarietyViewModel> _varieties;
-		private ListCollectionView _varietiesView1;
-		private ListCollectionView _varietiesView2;
+		private ICollectionView _varietiesView1;
+		private ICollectionView _varietiesView2;
 		private VarietyViewModel _currentVariety1;
 		private VarietyViewModel _currentVariety2;
 		private VarietyPairViewModel _currentVarietyPair;
@@ -83,9 +82,6 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_projectService.Project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
-			Set("VarietiesView1", ref _varietiesView1, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
-			Set("VarietiesView2", ref _varietiesView2, new ListCollectionView(_varieties) {SortDescriptions = {new SortDescription("Name", ListSortDirection.Ascending)}});
-			ResetCurrentVarietyPair();
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -108,22 +104,10 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortPropertyName = propertyName;
 			_sortDirection = sortDirection;
 			if (_currentVarietyPair != null)
-				ChangeWordPairsSort();
-		}
-
-		private void ChangeWordPairsSort()
-		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
-			var sortDesc = new SortDescription(_sortPropertyName, _sortDirection);
-			if (_currentVarietyPair.Cognates.WordPairsView.SortDescriptions.Count == 0)
-				_currentVarietyPair.Cognates.WordPairsView.SortDescriptions.Add(sortDesc);
-			else
-				_currentVarietyPair.Cognates.WordPairsView.SortDescriptions[0] = sortDesc;
-
-			if (_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions.Count == 0)
-				_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions.Add(sortDesc);
-			else
-				_currentVarietyPair.Noncognates.WordPairsView.SortDescriptions[0] = sortDesc;
+			{
+				_currentVarietyPair.Cognates.UpdateSort(_sortPropertyName, _sortDirection);
+				_currentVarietyPair.Noncognates.UpdateSort(_sortPropertyName, _sortDirection);
+			}
 		}
 
 		private void HandleDomainModelChanging(DomainModelChangingMessage domainModelChangingMessage)
@@ -248,13 +232,13 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ResetCurrentVarietyPair()
 		{
-			if (_varieties.Count > 0)
+			if (_varieties.Count > 0 && _varietiesView1 != null && _varietiesView2 != null)
 			{
-				Set(() => CurrentVariety1, ref _currentVariety1, (VarietyViewModel) _varietiesView1.GetItemAt(0));
+				Set(() => CurrentVariety1, ref _currentVariety1, _varietiesView1.Cast<VarietyViewModel>().First());
 				if (_varieties.Count > 1)
-					Set(() => CurrentVariety2, ref _currentVariety2, (VarietyViewModel) _varietiesView2.GetItemAt(1));
+					Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().ElementAt(1));
 				else
-					Set(() => CurrentVariety2, ref _currentVariety2, (VarietyViewModel) _varietiesView2.GetItemAt(0));
+					Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().First());
 				SetCurrentVarietyPair();
 			}
 			else
@@ -278,6 +262,14 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICollectionView VarietiesView1
 		{
 			get { return _varietiesView1; }
+			set
+			{
+				if (Set(() => VarietiesView1, ref _varietiesView1, value))
+				{
+					_varietiesView1.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+					ResetCurrentVarietyPair();
+				}
+			}
 		}
 
 		public VarietyViewModel CurrentVariety1
@@ -293,6 +285,14 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICollectionView VarietiesView2
 		{
 			get { return _varietiesView2; }
+			set
+			{
+				if (Set(() => VarietiesView2, ref _varietiesView2, value))
+				{
+					_varietiesView2.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+					ResetCurrentVarietyPair();
+				}
+			}
 		}
 
 		public VarietyViewModel CurrentVariety2
@@ -322,7 +322,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 					if (_currentVarietyPair != null)
 					{
-						ChangeWordPairsSort();
+						_currentVarietyPair.Cognates.UpdateSort(_sortPropertyName, _sortDirection);
+						_currentVarietyPair.Noncognates.UpdateSort(_sortPropertyName, _sortDirection);
 						_currentVarietyPair.Cognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
 						_currentVarietyPair.Noncognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
 					}

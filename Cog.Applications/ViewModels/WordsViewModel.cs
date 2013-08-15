@@ -2,8 +2,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Windows.Data;
 using GalaSoft.MvvmLight;
+using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
@@ -13,15 +13,17 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		public delegate WordsViewModel Factory(Variety variety);
 
+		private readonly IBusyService _busyService;
 		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
-		private readonly ListCollectionView _wordsView;
+		private ICollectionView _wordsView;
 		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly BindableList<WordViewModel> _selectedSegmentWords;
+		private SortDescription? _deferredSortDesc;
 
-		public WordsViewModel(WordViewModel.Factory wordFactory, Variety variety)
+		public WordsViewModel(IBusyService busyService, WordViewModel.Factory wordFactory, Variety variety)
 		{
+			_busyService = busyService;
 			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => wordFactory(word), vm => vm.DomainWord);
-			_wordsView = new ListCollectionView(_words);
 			variety.Words.CollectionChanged += WordsChanged;
 			_selectedWords = new BindableList<WordViewModel>();
 			_selectedSegmentWords = new BindableList<WordViewModel>();
@@ -35,6 +37,24 @@ namespace SIL.Cog.Applications.ViewModels
 				if (word.Segments.Any(s => s.IsSelected))
 					_selectedWords.Add(word);
 			}
+		}
+
+		internal void UpdateSort(string propertyName, ListSortDirection sortDirection)
+		{
+			var sortDesc = new SortDescription(propertyName, sortDirection);
+			if (_wordsView == null)
+				_deferredSortDesc = sortDesc;
+			else
+				UpdateSort(sortDesc);
+		}
+
+		private void UpdateSort(SortDescription sortDesc)
+		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
+			if (_wordsView.SortDescriptions.Count == 0)
+				_wordsView.SortDescriptions.Add(sortDesc);
+			else
+				_wordsView.SortDescriptions[0] = sortDesc;
 		}
 
 		public string SelectedWordsText
@@ -74,6 +94,14 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICollectionView WordsView
 		{
 			get { return _wordsView; }
+			set
+			{
+				if (Set(() => WordsView, ref _wordsView, value) && _deferredSortDesc != null)
+				{
+					UpdateSort(_deferredSortDesc.Value);
+					_deferredSortDesc = null;
+				}
+			}
 		}
 
 		public ObservableList<WordViewModel> SelectedWords

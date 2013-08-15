@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Collections;
@@ -26,6 +27,7 @@ namespace SIL.Cog.Presentation.Views
 			if (vm == null)
 				return;
 
+			vm.WordPairsView = CollectionViewSource.GetDefaultView(vm.WordPairs);
 			vm.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
 		}
 

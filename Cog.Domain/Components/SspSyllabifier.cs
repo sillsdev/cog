@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
@@ -11,13 +12,13 @@ namespace SIL.Cog.Domain.Components
 	{
 		private readonly SegmentPool _segmentPool;
 		private readonly List<SonorityClass> _sonorityScale;
-		private readonly HashSet<string> _initialOnsets; 
+		private readonly ThreadLocal<HashSet<string>> _initialOnsets; 
 
 		public SspSyllabifier(SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
 		{
 			_segmentPool = segmentPool;
-			_initialOnsets = new HashSet<string>();
 			_sonorityScale = sonorityScale.ToList();
+			_initialOnsets = new ThreadLocal<HashSet<string>>();
 		}
 
 		public IEnumerable<SonorityClass> SonorityScale
@@ -27,18 +28,21 @@ namespace SIL.Cog.Domain.Components
 
 		public override void Process(Variety data)
 		{
-			_initialOnsets.Clear();
+			var initialOnsets = new HashSet<string>();
 			foreach (Word word in data.Words.Where(w => w.IsValid))
 			{
 				string prefixOnset = GetInitialOnset(word.Prefix);
 				if (prefixOnset != null)
-					_initialOnsets.Add(prefixOnset);
+					initialOnsets.Add(prefixOnset);
 				string stemOnset = GetInitialOnset(word.Stem);
 				if (stemOnset != null)
-					_initialOnsets.Add(stemOnset);
+					initialOnsets.Add(stemOnset);
 			}
+			_initialOnsets.Value = initialOnsets;
 
 			base.Process(data);
+
+			_initialOnsets.Value = null;
 		}
 
 		private string GetInitialOnset(Annotation<ShapeNode> ann)
@@ -100,7 +104,7 @@ namespace SIL.Cog.Domain.Components
 					for (; n != onsetEnd.Next; n = n.Next)
 					{
 						string onsetStr = n.GetNodes(onsetEnd).StrRep();
-						if (_initialOnsets.Contains(onsetStr))
+						if (_initialOnsets.Value.Contains(onsetStr))
 							break;
 					}
 

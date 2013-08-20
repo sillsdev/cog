@@ -101,9 +101,9 @@ namespace SIL.Cog.Applications.Services
 				_busyService.ShowBusyIndicatorUntilUpdated();
 				try
 				{
-					if (sendMessage)
-						Messenger.Default.Send(new DomainModelChangingMessage());
 					importAction(importSettingsViewModel);
+					if (sendMessage)
+						Messenger.Default.Send(new DomainModelChangedMessage());
 					return true;
 				}
 				catch (ImportException ie)

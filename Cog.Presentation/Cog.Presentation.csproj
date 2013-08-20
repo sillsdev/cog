@@ -113,12 +113,12 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\DataGridBehaviors.cs" />
-    <Compile Include="Behaviors\DraggedAdorner.cs" />
-    <Compile Include="Behaviors\InsertionAdorner.cs" />
+    <Compile Include="Behaviors\DataGridControlBehaviors.cs" />
     <Compile Include="Behaviors\ItemsControlBehaviors.cs" />
     <Compile Include="Behaviors\ItemsControlDrag.cs" />
     <Compile Include="Behaviors\ItemsControlDragDrop.cs" />
     <Compile Include="Behaviors\ItemsControlDrop.cs" />
+    <Compile Include="Behaviors\MergedHeader.cs" />
     <Compile Include="Behaviors\TextBlockBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaviors.cs" />
     <Compile Include="Behaviors\UIElementBehaviors.cs" />
@@ -129,16 +129,19 @@
     <Compile Include="Controls\CogGraphLayout.cs" />
     <Compile Include="Controls\ContentSizeChangedEventArgs.cs" />
     <Compile Include="Controls\DendrogramLayout.cs" />
+    <Compile Include="Controls\DraggedAdorner.cs" />
     <Compile Include="Controls\DropDownButton.cs" />
     <Compile Include="Controls\HierarchicalGraphLayout.cs" />
-    <Compile Include="Controls\MergedHeader.cs" />
+    <Compile Include="Controls\InsertionAdorner.cs" />
     <Compile Include="Controls\MergedHeaderCell.cs" />
     <Compile Include="Controls\MergedHeadersPanel.cs" />
+    <Compile Include="Controls\MergedHeadersSubPanel.cs" />
     <Compile Include="Controls\NetworkGraphLayout.cs" />
     <Compile Include="Controls\PercentageSlider.xaml.cs">
       <DependentUpon>PercentageSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GlobalCorrespondencesGraphLayout.cs" />
+    <Compile Include="Controls\ScrollingMergedHeaderCellDecorator.cs" />
     <Compile Include="Controls\TabControlEx.cs" />
     <Compile Include="Controls\TreeGridViewRowPresenter.cs" />
     <Compile Include="Controls\TreeListView.cs" />
@@ -149,7 +152,7 @@
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />
-    <Compile Include="Converters\DataGridFirstGroupRowConverter.cs" />
+    <Compile Include="Converters\FirstGroupRowConverter.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\DoubleToLog10Converter.cs" />
     <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
@@ -177,6 +180,7 @@
     <Compile Include="Services\BusyService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\WindowViewModelMappings.cs" />
+    <Compile Include="PresentationExtensions.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Views\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
@@ -327,7 +331,6 @@
     <Compile Include="Views\GeographicalRegionView.xaml.cs">
       <DependentUpon>GeographicalRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ViewExtensions.cs" />
     <Compile Include="Views\VarietiesView.xaml.cs">
       <DependentUpon>VarietiesView.xaml</DependentUpon>
     </Compile>

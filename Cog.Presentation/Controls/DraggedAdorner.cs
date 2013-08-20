@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace SIL.Cog.Presentation.Behaviors
+namespace SIL.Cog.Presentation.Controls
 {
 	public class DraggedAdorner : Adorner
 	{

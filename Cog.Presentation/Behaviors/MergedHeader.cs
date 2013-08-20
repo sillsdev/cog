@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows;
 
-namespace SIL.Cog.Presentation.Controls
+namespace SIL.Cog.Presentation.Behaviors
 {
 	public class MergedHeader : DependencyObject
 	{

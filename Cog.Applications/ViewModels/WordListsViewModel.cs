@@ -94,8 +94,8 @@ namespace SIL.Cog.Applications.ViewModels
 			var vm = new EditVarietyViewModel(_projectService.Project.Varieties);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				_projectService.Project.Varieties.Add(new Variety(vm.Name));
+				Messenger.Default.Send(new DomainModelChangedMessage());
 			}
 		}
 
@@ -104,8 +104,8 @@ namespace SIL.Cog.Applications.ViewModels
 			var vm = new EditSenseViewModel(_projectService.Project.Senses);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				_projectService.Project.Senses.Add(new Sense(vm.Gloss, vm.Category));
+				Messenger.Default.Send(new DomainModelChangedMessage());
 			}
 		}
 

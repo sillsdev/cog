@@ -1,12 +1,11 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Presentation.Behaviors;
+using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -23,16 +22,12 @@ namespace SIL.Cog.Presentation.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			LoadColumns();
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
-			vm.WordsView = CollectionViewSource.GetDefaultView(vm.Words);
-			if (vm.GroupByCognateSet)
-			{
-				Debug.Assert(vm.WordsView.GroupDescriptions != null);
-				vm.WordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
-			}
-			vm.Words.CollectionChanged += WordsChanged;
 			vm.SensesView = CollectionViewSource.GetDefaultView(vm.Senses);
+			LoadCollectionView();
+			if (vm.GroupByCognateSet)
+				vm.WordsView.GroupDescriptions.Add(new DataGridGroupDescription("CognateSetIndex"));
+			vm.Words.CollectionChanged += WordsChanged;
 			vm.PropertyChanged += vm_PropertyChanged;
 		}
 
@@ -56,77 +51,61 @@ namespace SIL.Cog.Presentation.Views
 
 		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			LoadColumns();
+			LoadCollectionView();
 		}
 
-		private void LoadColumns()
+		private void LoadCollectionView()
 		{
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
+
+			var view = new DataGridCollectionView(vm.Words, typeof(MultipleWordAlignmentWordViewModel), false, false);
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Variety.Name", typeof(string)));
+			view.ItemProperties.Add(new DataGridItemProperty("StrRep", "StrRep", typeof(string)));
+			view.ItemProperties.Add(new DataGridItemProperty("CognateSetIndex", "CognateSetIndex", typeof(int)));
+			view.ItemProperties.Add(new DataGridItemProperty("Prefix", "Prefix", typeof(string)));
+			for (int i = 0; i < vm.ColumnCount; i++)
+				view.ItemProperties.Add(new DataGridItemProperty("Column" + i, string.Format("Columns[{0}]", i), typeof(string)));
+			view.ItemProperties.Add(new DataGridItemProperty("Suffix", "Suffix", typeof(string)));
+			vm.WordsView = view;
+
 			AlignmentGrid.Columns.Clear();
-			var prefixColumn = new DataGridTextColumn
-				{
-					Binding = new Binding("Prefix"),
-					ClipboardContentBinding = new Binding("Prefix"),
-					CellStyle = new Style(typeof(DataGridCell), AlignmentGrid.CellStyle) {Setters =
-						{
-							new Setter(BorderThicknessProperty, new Thickness(0, 0, 1, 0)),
-							new Setter(BorderBrushProperty, new SolidColorBrush(Colors.LightGray)),
-							new Setter(IsEnabledProperty, false),
-						}},
-					MinWidth = 0,
-					Width = new DataGridLength(0, DataGridLengthUnitType.SizeToCells),
-					ElementStyle = new Style(typeof(TextBlock)) {Setters =
-						{
-							new Setter(ForegroundProperty, new SolidColorBrush(Colors.Gray)),
-							new Setter(MarginProperty, new Thickness(5, 0, 5, 0))
-						}}
-				};
+			var headerColumn = new Column {FieldName = "Variety"};
+			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
+			AlignmentGrid.Columns.Add(headerColumn);
+			headerColumn.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Variety.Name, 18);
+			var prefixColumn = new Column {FieldName = "Prefix", ReadOnly = true, CanBeCurrentWhenReadOnly = false};
 			AlignmentGrid.Columns.Add(prefixColumn);
+			prefixColumn.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Prefix, 9, 16);
 			for (int i = 0; i < vm.ColumnCount; i++)
 			{
-				var column = new DataGridTextColumn
-					{
-						Binding = new Binding(string.Format("Columns[{0}]", i)),
-						ClipboardContentBinding = new Binding(string.Format("Columns[{0}]", i)),
-						Width = new DataGridLength(0, DataGridLengthUnitType.SizeToCells)
-					};
+				var column = new Column {FieldName = "Column" + i};
 				AlignmentGrid.Columns.Add(column);
+				column.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Columns[i], 9, 16);
 			}
-			var suffixColumn = new DataGridTextColumn
-				{
-					Binding = new Binding("Suffix"),
-					ClipboardContentBinding = new Binding("Suffix"),
-					CellStyle = new Style(typeof(DataGridCell), AlignmentGrid.CellStyle) {Setters =
-						{
-							new Setter(BorderThicknessProperty, new Thickness(1, 0, 0, 0)),
-							new Setter(BorderBrushProperty, new SolidColorBrush(Colors.LightGray)),
-							new Setter(IsEnabledProperty, false),
-						}},
-					MinWidth = 0,
-					Width = new DataGridLength(0, DataGridLengthUnitType.SizeToCells),
-					ElementStyle = new Style(typeof(TextBlock)) {Setters =
-						{
-							new Setter(ForegroundProperty, new SolidColorBrush(Colors.Gray)),
-							new Setter(MarginProperty, new Thickness(5, 0, 5, 0))
-						}}
-				};
+			var suffixColumn = new Column {FieldName = "Suffix", ReadOnly = true, CanBeCurrentWhenReadOnly = false};
 			AlignmentGrid.Columns.Add(suffixColumn);
+			suffixColumn.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Suffix, 9, 16);
+
+			AlignmentGrid.CurrentItem = null;
 		}
 
-		private void AlignmentGrid_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+		private void AlignmentGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
-			if (e.AddedCells.Count == 1)
+			if (e.SelectionInfos.Count == 1 && e.SelectionInfos[0].AddedCellRanges.Count == 1)
 			{
-				DataGridCellInfo ci = e.AddedCells[0];
-				vm.CurrentColumn = ci.Column.DisplayIndex - 1;
-				vm.CurrentWord = (MultipleWordAlignmentWordViewModel) ci.Item;
+				SelectionCellRange range = e.SelectionInfos[0].AddedCellRanges[0];
+				vm.CurrentColumn = range.ColumnRange.StartIndex - 2;
+				vm.CurrentWord = (MultipleWordAlignmentWordViewModel) AlignmentGrid.Items[range.ItemRange.StartIndex];
 			}
 			else
 			{
 				vm.CurrentColumn = -1;
 				vm.CurrentWord = null;
+				AlignmentGrid.CurrentItem = null;
 			}
 		}
+
+
 	}
 }

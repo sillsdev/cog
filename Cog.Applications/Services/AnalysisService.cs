@@ -55,7 +55,6 @@ namespace SIL.Cog.Applications.Services
 
 		public void StemAll(object ownerViewModel, StemmingMethod method)
 		{
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			if (method == StemmingMethod.Automatic)
 			{
 				foreach (Variety variety in _projectService.Project.Varieties)
@@ -79,17 +78,18 @@ namespace SIL.Cog.Applications.Services
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
 			_dialogService.ShowModalDialog(ownerViewModel, progressVM);
+			Messenger.Default.Send(new DomainModelChangedMessage());
 		}
 
 		public void Stem(StemmingMethod method, Variety variety)
 		{
 			_busyService.ShowBusyIndicatorUntilUpdated();
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			if (method == StemmingMethod.Automatic)
 				variety.Affixes.Clear();
 
 			var pipeline = new Pipeline<Variety>(GetStemProcessors(method));
 			pipeline.Process(variety.ToEnumerable());
+			Messenger.Default.Send(new DomainModelChangedMessage());
 		}
 
 		public IEnumerable<IProcessor<Variety>> GetStemProcessors(StemmingMethod method)

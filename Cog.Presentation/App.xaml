@@ -35,25 +35,14 @@
 				<GradientStop Color="#FF3164a5" Offset="1"/>
 				<GradientStop Color="#FF8AAED4" Offset="0"/>
 			</LinearGradientBrush>
-			<LinearGradientBrush x:Key="ControlPanelBackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,1">
-				<GradientStop Color="#FF96BFEB" Offset="1"/>
-				<GradientStop Color="#FFB5D2F0" Offset="0"/>
-			</LinearGradientBrush>
+			<SolidColorBrush x:Key="ControlPanelBackgroundBrush" Color="#FFB5D2F0" />
 			<SolidColorBrush x:Key="TaskAreaHeaderLineBrush" Color="#FF88B0E4" />
 			<SolidColorBrush x:Key="SettingsAreaBackgroundBrush" Color="#FFEFF7FD" />
-			<LinearGradientBrush x:Key="DataGridGroupingBrush" StartPoint="0.5,0" EndPoint="0.5,1">
-				<GradientStop Color="#FFE4F1FB" Offset="0" />
-				<GradientStop Color="#FFD2E6F9" Offset="1" />
-			</LinearGradientBrush>
 			<SolidColorBrush x:Key="Variety1Brush" Color="DarkOrange" />
 			<SolidColorBrush x:Key="Variety2Brush" Color="DarkOrchid" />
 			<SolidColorBrush x:Key="ContextMenuBackgroundBrush" Color="#FFD2E8FD" />
 			<SolidColorBrush x:Key="ContextMenuBorderBrush" Color="#FFA9B4BF" />
 			<SolidColorBrush x:Key="ContextMenuHighlightedBrush" Color="#FF98C0EB" />
-			<LinearGradientBrush x:Key="OverlayControlPanelBackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,1">
-				<GradientStop Color="#8896BFEB" Offset="1"/>
-				<GradientStop Color="#88B5D2F0" Offset="0"/>
-			</LinearGradientBrush>
 			
 			<Style x:Key="MainWindowStyle" TargetType="Window">
 				<Setter Property="Background" Value="{StaticResource MainWindowBrush}" />

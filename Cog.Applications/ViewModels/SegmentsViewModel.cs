@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -57,6 +58,8 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Coda))));
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
+
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => PopulateSegments());
 
 			_domainSegments = new BulkObservableList<Segment>();
 			_segments = new BindableList<SegmentViewModel>();

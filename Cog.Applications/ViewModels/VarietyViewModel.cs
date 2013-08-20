@@ -22,5 +22,10 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _variety; }
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }

@@ -76,7 +76,6 @@ namespace SIL.Cog.Applications.ViewModels
 				if (_strRep != val)
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();
-					Messenger.Default.Send(new DomainModelChangingMessage());
 					var wordsToRemove = new HashSet<Word>(DomainWords);
 					if (!string.IsNullOrEmpty(val))
 					{
@@ -105,6 +104,7 @@ namespace SIL.Cog.Applications.ViewModels
 						_variety.DomainVariety.Words.Remove(wordToRemove);
 
 					_analysisService.Segment(_variety.DomainVariety);
+					Messenger.Default.Send(new DomainModelChangedMessage());
 				}
 			}
 		}

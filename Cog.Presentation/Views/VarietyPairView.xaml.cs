@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -15,53 +17,35 @@ namespace SIL.Cog.Presentation.Views
 			InitializeComponent();
 		}
 
-		private void CorrespondenceDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
-		{
-			ICollectionView soundChangesView = CollectionViewSource.GetDefaultView(CorrespondenceDataGrid.Items);
-			using (soundChangesView.DeferRefresh())
-			{
-				soundChangesView.SortDescriptions.Clear();
-				soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
-				soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
-
-				ListSortDirection direction = e.Column.SortDirection != ListSortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending;
-
-				e.Column.SortDirection = direction;
-				string path = null;
-				switch ((string) e.Column.Header)
-				{
-					case "Segment":
-						path = "Correspondence";
-						break;
-					case "Probability":
-						path = "Probability";
-						break;
-					case "Frequency":
-						path = "Frequency";
-						break;
-				}
-				soundChangesView.SortDescriptions.Add(new SortDescription(path, direction));
-			}
-			e.Handled = true;
-		}
-
 		private void CorrespondenceDataGrid_OnTargetUpdated(object sender, DataTransferEventArgs e)
 		{
 			if (e.Property == ItemsControl.ItemsSourceProperty)
 			{
-				ICollectionView soundChangesView = CollectionViewSource.GetDefaultView(CorrespondenceDataGrid.Items);
-				using (soundChangesView.DeferRefresh())
+				var view = CorrespondenceDataGrid.ItemsSource as DataGridCollectionView;
+				if (view != null)
 				{
-					if (soundChangesView.GroupDescriptions.Count == 0)
-						soundChangesView.GroupDescriptions.Add(new PropertyGroupDescription("Lhs"));
-
-					soundChangesView.SortDescriptions.Clear();
-					soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Target", ListSortDirection.Ascending));
-					soundChangesView.SortDescriptions.Add(new SortDescription("Lhs.Environment", ListSortDirection.Ascending));
-					soundChangesView.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
+					using (view.DeferRefresh())
+					{
+						view.SortDescriptions.Clear();
+						view.SortDescriptions.Add(new SortDescription("Lhs", ListSortDirection.Ascending));
+						view.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
+					}
+					((INotifyCollectionChanged) view.SortDescriptions).CollectionChanged += OnSortChanged;
+					Dispatcher.BeginInvoke(new Action(() =>
+						{
+							CorrespondenceDataGrid.CurrentItem = null;
+							CorrespondenceDataGrid.SelectedItem = null;
+						}));
 				}
-				CorrespondenceDataGrid.Columns[1].SortDirection = ListSortDirection.Descending;
-				Dispatcher.BeginInvoke(new Action(() => CorrespondenceDataGrid.UnselectAll()));
+			}
+		}
+
+		private void OnSortChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Reset)
+			{
+				var sortDescs = (SortDescriptionCollection) sender;
+				sortDescs.Add(new SortDescription("Lhs", ListSortDirection.Ascending));
 			}
 		}
 	}

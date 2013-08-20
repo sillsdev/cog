@@ -25,7 +25,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _graphService.GenerateNetworkGraph(_similarityMetric));
-			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => Graph = null);
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
 				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),

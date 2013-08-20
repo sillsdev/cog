@@ -12,6 +12,7 @@
 	<xcdg:ThicknessConverter x:Key="ThicknessConverter" />
 	<cnvtrs:EqualityConverter x:Key="EqualityConverter" />
 	<cnvtrs:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
+	<cnvtrs:FirstGroupRowConverter x:Key="GroupRowConverter" />
 
 	<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFCE8AA" />
 	<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
@@ -23,6 +24,7 @@
 	<SolidColorBrush x:Key="DataGridHeaderBrush" Color="#FFCFDDF0" />
 	<SolidColorBrush x:Key="DataGridHeaderSelectedBrush" Color="#FFBBCFE9" />
 	<SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#88D0D0D0" />
+	<SolidColorBrush x:Key="DataGridGroupingBrush" Color="#FFE4F1FB" />
 
 	<Style TargetType="HeaderedContentControl">
 		<Setter Property="BorderBrush" Value="Silver" />
@@ -341,7 +343,7 @@
 		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
 		<Setter Property="Background" Value="White" />
 		<Setter Property="ItemScrollingBehavior" Value="Immediate" />
-		<Setter Property="AutoCreateColumns" Value="True" />
+		<Setter Property="AutoCreateColumns" Value="False" />
 	</Style>
 	
 	<Style TargetType="xcdg:TableView">
@@ -350,6 +352,8 @@
 		<Setter Property="IsAlternatingRowStyleEnabled" Value="True" />
 		<Setter Property="VerticalGridLineThickness" Value="1" />
 		<Setter Property="HorizontalGridLineThickness" Value="1" />
+		<Setter Property="ShowRowSelectorPane" Value="False" />
+		<Setter Property="UseDefaultHeadersFooters" Value="False" />
 	</Style>
 	
 	<Style TargetType="xcdg:ColumnManagerRow">
@@ -425,65 +429,104 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-
-	<Style TargetType="xcdg:RowSelector">
-		<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
-		<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
-		<Setter Property="Padding" Value="8,2,8,2" />
-		<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
-		<Setter Property="BorderThickness" Value="0,0,1,1" />
-		<Setter Property="HorizontalContentAlignment" Value="Left" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="xcdg:RowSelector">
-					<Grid>
-						<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
-                                                      BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
-							<ContentPresenter Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                        ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                        Content="{TemplateBinding Content}" />
-						</Border>
-						<Thumb x:Name="PART_RowResizerThumb" Style="{StaticResource DataGrid_RowHeaderThumbStyle}" Margin="0,0,0,-4" VerticalAlignment="Bottom" />
-					</Grid>
-					<ControlTemplate.Triggers>
-						<MultiDataTrigger>
-							<MultiDataTrigger.Conditions>
-								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.NavigationBehavior}" Value="CellOnly" />
-								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsCurrent}" Value="True" />
-							</MultiDataTrigger.Conditions>
-							<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
-						</MultiDataTrigger>
-						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).(xcdg:TableView.AllowRowResize)}" Value="False">
-							<Setter TargetName="PART_RowResizerThumb" Property="IsEnabled" Value="False" />
-						</DataTrigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-	
-	<Style TargetType="xcdg:RowSelectorPane">
-		<Setter Property="Background" Value="White" />
-		<Setter Property="Margin" Value="0" />
-	</Style>
 	
 	<Style TargetType="xcdg:DataRow">
 		<Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 		<Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).HorizontalGridLineThickness, Converter={StaticResource ThicknessConverter},ConverterParameter='Bottom'}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="xcdg:DataRow">
+					<!-- This Grid is used to layout the GroupLevelIndicatorPane placeholder and the CellsHost panel. -->
+					<Grid x:Name="rootGrid">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+
+							<!-- CellsHost panel -->
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						
+						<Border x:Name="outerBackground" Grid.Column="2" Grid.ColumnSpan="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}" xcdg:TableView.CanScrollHorizontally="False" />
+
+						<!-- This TextBlock is used to ensure that the DesiredSize for 
+						the Row will never fall below the Height of a String using the inherited font size and face-->
+						<TextBlock Text="" Visibility="Hidden" Grid.Column="3" Margin="{TemplateBinding BorderThickness}" />
+
+						<!-- The PART_CellsHost part designates the Panel to which this Row's Cells should be added.-->
+						<xcdg:FixedCellPanel x:Name="PART_CellsHost" Grid.Column="3"
+											 ColumnStretchMinWidth="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).ColumnStretchMinWidth}"
+											 ColumnStretchMode="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).ColumnStretchMode}"
+											 FixedCellCount="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).FixedColumnCount, Mode=TwoWay}"
+											 FixedColumnDropMarkPen="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).FixedColumnDropMarkPen}"
+			                                 TextElement.Foreground="{TemplateBinding Foreground}" />
+
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<!-- This trigger is used to display the Active Selection look -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.IsKeyboardFocusWithin}" Value="True" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="outerBackground" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectionBackground}" />
+						</MultiDataTrigger>
+
+						<!-- This trigger is used to display the Inactive Selection look -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.IsKeyboardFocusWithin}" Value="False" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.HideSelection}" Value="False" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="outerBackground" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveSelectionBackground}" />
+						</MultiDataTrigger>
+
+						<!-- This trigger is used to display Mouse Over look -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.SelectionUnit}" Value="Row" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="outerBackground" Property="Background" Value="{StaticResource ListMouseOverBrush}" />
+						</MultiDataTrigger>
+
+						<!-- This trigger is used to display Mouse Over + Selected look -->
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.SelectionUnit}" Value="Row" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="outerBackground" Property="Background" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectionBackground}" />
+						</MultiDataTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 		<Style.Triggers>
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
 					<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).IsAlternatingRowStyleEnabled}" Value="True" />
 					<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridVirtualizingPanel.ItemIndex), Converter={x:Static xcdg:IndexToOddConverter.Singleton}}" Value="True" />
 				</MultiDataTrigger.Conditions>
-				
 				<Setter Property="Background" Value="{StaticResource AlternatingRowBrush}" />
 			</MultiDataTrigger>
 		</Style.Triggers>
 	</Style>
+
+	<ControlTemplate x:Key="RowHeaderCell" TargetType="xcdg:DataCell">
+		<Grid>
+			<Border Name="HeaderBorder" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+				<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+								  ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}"
+								  Content="{TemplateBinding Content}" />
+			</Border>
+		</Grid>
+	</ControlTemplate>
 
 	<Style TargetType="xcdg:DataCell">
 		<Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
@@ -492,7 +535,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="xcdg:Cell">
-					<Grid>
+					<Grid Margin="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).HorizontalGridLineThickness, Converter={StaticResource ThicknessConverter},ConverterParameter='Bottom'}">
 						<Border x:Name="rootBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
 								Padding="{TemplateBinding Padding}">
 							<xcdg:CellContentPresenter x:Name="PART_CellContentPresenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -597,6 +640,70 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding Path=ParentColumn.(b:DataGridControlBehaviors.IsRowHeader), RelativeSource={RelativeSource Self}}" Value="True">
+				<Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
+				<Setter Property="Background" Value="{StaticResource DataGridHeaderBrush}" />
+				<Setter Property="Padding" Value="8,2,8,2" />
+				<Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
+				<Setter Property="BorderThickness" Value="0,0,1,1" />
+				<Setter Property="HorizontalContentAlignment" Value="Left" />
+				<Setter Property="VerticalContentAlignment" Value="Center" />
+				<Setter Property="xcdg:DataGridControl.NavigationBehavior" Value="None" />
+				<Setter Property="Template" Value="{StaticResource RowHeaderCell}" />
+			</DataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding Path=ParentColumn.(b:DataGridControlBehaviors.IsRowHeader), RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Binding="{Binding Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.NavigationBehavior, RelativeSource={RelativeSource Self}}" Value="CellOnly" />
+					<Condition Binding="{Binding Path=ParentRow.IsCurrent, RelativeSource={RelativeSource Self}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
+			</MultiDataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding Path=ParentColumn.(b:DataGridControlBehaviors.IsRowHeader), RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Value="True">
+						<Condition.Binding>
+							<MultiBinding Converter="{StaticResource GroupRowConverter}">
+								<Binding Path="(xcdg:DataGridControl.DataGridContext).Items.Groups" RelativeSource="{RelativeSource Self}" />
+								<Binding Path="ParentRow.(xcdg:DataGridVirtualizingPanel.ItemIndex)" RelativeSource="{RelativeSource Self}" />
+								<Binding Path="(xcdg:DataGridControl.DataGridContext).Items.GroupDescriptions.Count" RelativeSource="{RelativeSource Self}" />
+							</MultiBinding>
+						</Condition.Binding>
+					</Condition>
+				</MultiDataTrigger.Conditions>
+				<Setter Property="BorderThickness" Value="0,1,1,1" />
+			</MultiDataTrigger>
+		</Style.Triggers>
+	</Style>
+	
+	<Style TargetType="xcdg:GroupHeaderControl">
+		<Setter Property="Background" Value="{StaticResource DataGridGroupingBrush}" />
+		<Setter Property="BorderBrush" Value="LightGray" />
+		<Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).HorizontalGridLineThickness, Converter={StaticResource ThicknessConverter},ConverterParameter='Bottom'}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="xcdg:GroupHeaderControl">
+					<Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+							Padding="{TemplateBinding Padding}" Focusable="True" FocusVisualStyle="{TemplateBinding FocusVisualStyle}">
+						<!-- ContentPresenter in charge of displaying this GroupHeaderControl's Content, which is a Group by default. -->
+						<ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+										  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="xcdg:DataGridControl.NavigationBehavior" Value="None">
+							<Setter TargetName="mainBorder" Property="Focusable" Value="False" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+	<Style TargetType="xcdg:GroupLevelIndicatorPane">
+		<Setter Property="Visibility" Value="Collapsed" />
 	</Style>
 
 	<Style TargetType="c:MergedHeaderCell">
@@ -619,11 +726,6 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-	</Style>
-
-	<Style TargetType="xcdg:GroupLevelIndicatorPane">
-		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowVerticalBorder" Value="False" />
-		<Setter Property="xcdg:GroupLevelIndicatorPane.ShowIndicators" Value="False" />
 	</Style>
 
 	<Style TargetType="c:TreeListView">

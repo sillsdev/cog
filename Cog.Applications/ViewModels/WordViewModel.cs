@@ -99,7 +99,6 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			int i = 0;
 			int index = 0;
 			while (!_segments[i].IsBoundary)
@@ -119,6 +118,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_word.StemLength = index - _word.StemIndex;
 
 			_analysisService.Segment(_word.Variety);
+			Messenger.Default.Send(new DomainModelChangedMessage());
 		}
 
 		public SenseViewModel Sense

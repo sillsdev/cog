@@ -5,81 +5,63 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d" Loaded="OnLoaded"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:MultipleWordAlignmentViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:MultipleWordAlignmentHighlightSegmentConverter x:Key="HighlightConverter" />
-		<cnvtrs:DataGridFirstGroupRowConverter x:Key="RowConverter" />
 	</UserControl.Resources>
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 			<TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Multiple word alignment" />
 			<ComboBox Name="VarietiesComboBox" Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding SensesView}" SelectedItem="{Binding CurrentSense}" DisplayMemberPath="Gloss" />
 		</StackPanel>
-		<DataGrid Margin="0,10,0,0" Name="AlignmentGrid" ItemsSource="{Binding WordsView}" AutoGenerateColumns="False" GridLinesVisibility="None" HeadersVisibility="Row" IsReadOnly="True" SelectionUnit="Cell"
-				  EnableColumnVirtualization="False" EnableRowVirtualization="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" SelectedCellsChanged="AlignmentGrid_OnSelectedCellsChanged">
-			<DataGrid.RowHeaderTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Item.Variety.Name, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" />
+		<xcdg:DataGridControl Margin="0,10,0,0" Name="AlignmentGrid" ItemsSource="{Binding WordsView}" ReadOnly="True" SelectionUnit="Cell"
+							  SelectionChanged="AlignmentGrid_OnSelectionChanged">
+			<xcdg:DataGridControl.Resources>
+				<DataTemplate DataType="{x:Type xcdg:Group}">
+					<TextBlock Padding="2" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
+						<Run>Cognate set </Run>
+						<Run Text="{Binding Value, Mode=OneWay}" />
+					</TextBlock>
 				</DataTemplate>
-			</DataGrid.RowHeaderTemplate>
-			<DataGrid.GroupStyle>
-				<GroupStyle>
-					<GroupStyle.ContainerStyle>
-						<Style TargetType="{x:Type GroupItem}">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="{x:Type GroupItem}">
-										<StackPanel>
-											<TextBlock Padding="2" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
-												<Run>Cognate set </Run>
-												<Run Text="{Binding Name, Mode=OneWay}" />
-											</TextBlock>
-											<ItemsPresenter />
-										</StackPanel>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-					</GroupStyle.ContainerStyle>
-					<GroupStyle.Panel>
-						<ItemsPanelTemplate>
-							<DataGridRowsPresenter />
-						</ItemsPanelTemplate>
-					</GroupStyle.Panel>
-				</GroupStyle>
-			</DataGrid.GroupStyle>
-			<DataGrid.RowHeaderStyle>
-				<Style TargetType="DataGridRowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding ., RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Converter={StaticResource RowConverter}}" Value="True">
-							<Setter Property="BorderThickness" Value="0,1,1,1" />
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</DataGrid.RowHeaderStyle>
-			<DataGrid.CellStyle>
-				<Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
-					<Style.Setters>
-						<Setter Property="TextBlock.TextAlignment" Value="Center" />
-						<Setter Property="FontSize" Value="16" />
-					</Style.Setters>
+				<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
 					<Style.Triggers>
 						<DataTrigger Value="True">
 							<DataTrigger.Binding>
 								<MultiBinding Converter="{StaticResource HighlightConverter}">
 									<Binding Path="." />
-									<Binding Path="Column.DisplayIndex" RelativeSource="{RelativeSource Self}" />
-									<Binding Path="DataContext.CurrentColumn" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}" />
-									<Binding Path="DataContext.CurrentWord" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}" />
+									<Binding Path="ParentColumn.Index" RelativeSource="{RelativeSource Self}" />
+									<Binding Path="DataContext.CurrentColumn" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type xcdg:DataGridControl}}" />
+									<Binding Path="DataContext.CurrentWord" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type xcdg:DataGridControl}}" />
 								</MultiBinding>
 							</DataTrigger.Binding>
 							<Setter Property="Background" Value="#FFFCEEC2" />
 							<Setter Property="BorderBrush" Value="#FFFCEEC2" />
 						</DataTrigger>
+						<DataTrigger Binding="{Binding ParentColumn.VisiblePosition, RelativeSource={RelativeSource Self}}" Value="1">
+							<Setter Property="BorderThickness" Value="0,0,1,0" />
+							<Setter Property="BorderBrush" Value="LightGray" />
+							<Setter Property="IsEnabled" Value="False" />
+							<Setter Property="Foreground" Value="Gray" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding ParentColumn.IsLastVisible, RelativeSource={RelativeSource Self}}" Value="True">
+							<Setter Property="BorderThickness" Value="1,0,0,0" />
+							<Setter Property="BorderBrush" Value="LightGray" />
+							<Setter Property="IsEnabled" Value="False" />
+							<Setter Property="Foreground" Value="Gray" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding ParentColumn.IsFirstVisible, RelativeSource={RelativeSource Self}}" Value="False">
+							<Setter Property="FontSize" Value="16" />
+							<Setter Property="HorizontalContentAlignment" Value="Center" />
+						</DataTrigger>
 					</Style.Triggers>
 				</Style>
-			</DataGrid.CellStyle>
-		</DataGrid>
+			</xcdg:DataGridControl.Resources>
+			<xcdg:DataGridControl.View>
+				<xcdg:TableView AllowRowResize="False" HorizontalGridLineThickness="0" VerticalGridLineThickness="0" FixedColumnCount="1" />
+			</xcdg:DataGridControl.View>
+		</xcdg:DataGridControl>
 	</DockPanel>
 </UserControl>

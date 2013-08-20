@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using SIL.Cog.Presentation.Behaviors;
 
 namespace SIL.Cog.Presentation.Controls
 {

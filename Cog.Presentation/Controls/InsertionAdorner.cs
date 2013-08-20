@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace SIL.Cog.Presentation.Behaviors
+namespace SIL.Cog.Presentation.Controls
 {
 	public class InsertionAdorner : Adorner
 	{

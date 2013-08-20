@@ -46,13 +46,13 @@ namespace SIL.Cog.Applications.ViewModels
 		public void Apply()
 		{
 			_busyService.ShowBusyIndicatorUntilUpdated();
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 			{
 				componentVM.UpdateComponent();
 				componentVM.AcceptChanges();
 				componentVM.Setup();
 			}
+			Messenger.Default.Send(new DomainModelChangedMessage());
 			_isDirty = false;
 		}
 

@@ -14,7 +14,7 @@ namespace SIL.Cog.Presentation.Converters
 				return false;
 
 			var word = (MultipleWordAlignmentWordViewModel) values[0];
-			int wordColumn = ((int) values[1]) - 1;
+			int wordColumn = ((int) values[1]) - 2;
 			var currentColumn = (int) values[2];
 			var currentWord = (MultipleWordAlignmentWordViewModel) values[3];
 

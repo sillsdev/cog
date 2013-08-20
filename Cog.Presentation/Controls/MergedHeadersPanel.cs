@@ -2,33 +2,87 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
+using System.Windows.Data;
+using System.Windows.Media;
+using SIL.Cog.Presentation.Behaviors;
 using Xceed.Wpf.DataGrid;
+using Xceed.Wpf.DataGrid.Views;
 
 namespace SIL.Cog.Presentation.Controls
 {
 	public class MergedHeadersPanel : Panel
 	{
-		private static readonly DependencyPropertyKey MergedHeadersPropertyKey = DependencyProperty.RegisterAttachedReadOnly("MergedHeaders", typeof(ObservableCollection<MergedHeader>),
-			typeof(MergedHeadersPanel), new FrameworkPropertyMetadata(new ObservableCollection<MergedHeader>()));
+		private readonly MergedHeadersSubPanel _fixedSubPanel;
+		private readonly ScrollingMergedHeaderCellDecorator _scrollingDecorator;
+		private readonly MergedHeadersSubPanel _scrollingSubPanel;
+		private bool _fixedTransformApplied;
 
-		public static readonly DependencyProperty MergedHeadersProperty = MergedHeadersPropertyKey.DependencyProperty;
+		private DataGridContext _context;
 
-		public static ObservableCollection<MergedHeader> GetMergedHeaders(DataGridControl dataGrid)
+		public MergedHeadersPanel()
 		{
-			return (ObservableCollection<MergedHeader>) dataGrid.GetValue(MergedHeadersProperty);
+			_fixedSubPanel = new MergedHeadersSubPanel(true);
+			InternalChildren.Add(_fixedSubPanel);
+
+			_scrollingSubPanel = new MergedHeadersSubPanel(false);
+			_scrollingDecorator = new ScrollingMergedHeaderCellDecorator {Child = _scrollingSubPanel};
+			InternalChildren.Add(_scrollingDecorator);
 		}
 
-		protected override void OnInitialized(EventArgs e)
+		public override void EndInit()
 		{
-			base.OnInitialized(e);
-			DataGridContext ctxt = DataGridControl.GetDataGridContext(this);
-			ObservableCollection<MergedHeader> mergedHeaders = GetMergedHeaders(ctxt.DataGridControl);
+			base.EndInit();
+			_context = DataGridControl.GetDataGridContext(this);
+			_context.DataGridControl.Columns.CollectionChanged += Columns_CollectionChanged;
+			AddColumns(_context.DataGridControl.Columns);
+			ObservableCollection<MergedHeader> mergedHeaders = DataGridControlBehaviors.GetMergedHeaders(_context.DataGridControl);
 			mergedHeaders.CollectionChanged += mergedHeaders_CollectionChanged;
-			foreach (MergedHeader header in mergedHeaders)
-				Children.Add(new MergedHeaderCell {MergedHeader = header, Content = header.Title});
+			AddMergedHeaders(mergedHeaders);
+		}
+
+		private void Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddColumns(e.NewItems.Cast<ColumnBase>());
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					RemoveColumns(e.OldItems.Cast<ColumnBase>());
+					break;
+				case NotifyCollectionChangedAction.Replace:
+					RemoveColumns(e.OldItems.Cast<ColumnBase>());
+					AddColumns(e.NewItems.Cast<ColumnBase>());
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					AddColumns((IEnumerable<ColumnBase>) sender);
+					break;
+			}
+		}
+
+		private void AddColumns(IEnumerable<ColumnBase> columns)
+		{
+			DependencyPropertyDescriptor dpd = DependencyPropertyDescriptor.FromProperty(ColumnBase.ActualWidthProperty, typeof(ColumnBase));
+			foreach (ColumnBase column in columns)
+				dpd.AddValueChanged(column, Column_OnActualWidthChanged);
+		}
+
+		private void RemoveColumns(IEnumerable<ColumnBase> columns)
+		{
+			DependencyPropertyDescriptor dpd = DependencyPropertyDescriptor.FromProperty(ColumnBase.ActualWidthProperty, typeof(ColumnBase));
+			foreach (ColumnBase column in columns)
+				dpd.RemoveValueChanged(column, Column_OnActualWidthChanged);
+		}
+
+		private void Column_OnActualWidthChanged(object sender, EventArgs e)
+		{
+			InvalidateMeasure();
+			_fixedSubPanel.InvalidateMeasure();
+			_scrollingDecorator.InvalidateMeasure();
 		}
 
 		private void mergedHeaders_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -36,40 +90,66 @@ namespace SIL.Cog.Presentation.Controls
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					int addIndex = e.NewStartingIndex;
-					foreach (MergedHeader header in e.NewItems)
-						Children.Insert(addIndex++, new MergedHeaderCell {MergedHeader = header, Content = header.Title});
+					AddMergedHeaders(e.NewItems.Cast<MergedHeader>());
 					break;
 				case NotifyCollectionChangedAction.Remove:
-					for (int i = 0; i < e.OldItems.Count; i++)
-						Children.RemoveAt(e.OldStartingIndex);
+					RemoveMergedHeaders(e.OldItems.Cast<MergedHeader>());
 					break;
-				case NotifyCollectionChangedAction.Move:
-					throw new NotSupportedException();
 				case NotifyCollectionChangedAction.Replace:
-					int replaceIndex = e.OldStartingIndex;
-					foreach (MergedHeader header in e.NewItems)
-						Children[replaceIndex++] = new MergedHeaderCell {MergedHeader = header, Content = header.Title};
+					RemoveMergedHeaders(e.OldItems.Cast<MergedHeader>());
+					AddMergedHeaders(e.NewItems.Cast<MergedHeader>());
 					break;
 				case NotifyCollectionChangedAction.Reset:
-					Children.Clear();
+					_fixedSubPanel.Children.Clear();
+					_scrollingSubPanel.Children.Clear();
 					break;
+			}
+		}
+
+		private void AddMergedHeaders(IEnumerable<MergedHeader> mergedHeaders)
+		{
+			int fixedCount = TableView.GetFixedColumnCount(_context);
+			foreach (MergedHeader header in mergedHeaders)
+			{
+				MergedHeadersSubPanel subPanel = _context.Columns[header.ColumnNames[0]].VisiblePosition < fixedCount ? _fixedSubPanel : _scrollingSubPanel;
+				subPanel.Children.Add(new MergedHeaderCell {MergedHeader = header, Content = header.Title});
+			}
+		}
+
+		private void RemoveMergedHeaders(IEnumerable<MergedHeader> mergedHeaders)
+		{
+			int fixedCount = TableView.GetFixedColumnCount(_context);
+			foreach (MergedHeader header in mergedHeaders)
+			{
+				MergedHeadersSubPanel subPanel = _context.Columns[header.ColumnNames[0]].VisiblePosition < fixedCount ? _fixedSubPanel : _scrollingSubPanel;
+				MergedHeaderCell cell = subPanel.Children.Cast<MergedHeaderCell>().Single(c => c.MergedHeader == header);
+				subPanel.Children.Remove(cell);
 			}
 		}
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			DataGridContext ctxt = DataGridControl.GetDataGridContext(this);
+			if (!_fixedTransformApplied)
+			{
+				var parentScrollViewer = this.FindVisualAncestor<ScrollViewer>();
+				if (parentScrollViewer != null)
+				{
+					var fixedTranslation = new TranslateTransform();
+					var horizontalOffsetBinding = new Binding {Source = parentScrollViewer, Path = new PropertyPath(ScrollViewer.HorizontalOffsetProperty)};
+					BindingOperations.SetBinding(fixedTranslation, TranslateTransform.XProperty, horizontalOffsetBinding);
+					_fixedSubPanel.RenderTransform = fixedTranslation;
+					_scrollingDecorator.RenderTransform = fixedTranslation;
+					_fixedTransformApplied = true;
+				}
+			}
 
-			Dictionary<string, double> columnWidths = ctxt.VisibleColumns.ToDictionary(c => c.FieldName, c => c.ActualWidth);
 			double width = 0;
 			double maxHeight = 0;
-			foreach (MergedHeaderCell cell in InternalChildren)
+			foreach (UIElement subPanel in InternalChildren)
 			{
-				double headerWidth = cell.MergedHeader.ColumnNames.Sum(name => columnWidths[name]);
-				cell.Measure(new Size(headerWidth, availableSize.Height));
-				width += headerWidth;
-				maxHeight = Math.Max(cell.DesiredSize.Height, maxHeight);
+				subPanel.Measure(availableSize);
+				width += subPanel.DesiredSize.Width;
+				maxHeight = Math.Max(subPanel.DesiredSize.Height, maxHeight);
 			}
 
 			return new Size(width, maxHeight);
@@ -77,29 +157,12 @@ namespace SIL.Cog.Presentation.Controls
 
 		protected override Size ArrangeOverride(Size finalSize)
 		{
-			DataGridContext ctxt = DataGridControl.GetDataGridContext(this);
-			double curWidth = 0;
-			var columnWidths = new Dictionary<string, double>();
-			var columnOffsets = new Dictionary<string, double>();
-			foreach (ColumnBase column in ctxt.VisibleColumns.OrderBy(c => c.VisiblePosition))
+			double offset = 0;
+			foreach (UIElement subPanel in InternalChildren)
 			{
-				columnOffsets[column.FieldName] = curWidth;
-				columnWidths[column.FieldName] = column.ActualWidth;
-				curWidth += column.ActualWidth;
-			}
-
-			foreach (MergedHeaderCell cell in InternalChildren)
-			{
-				double x1 = double.MaxValue;
-				double x2 = 0;
-				foreach (string columnName in cell.MergedHeader.ColumnNames)
-				{
-					double offset = columnOffsets[columnName];
-					x1 = Math.Min(offset, x1);
-					x2 = Math.Max(offset + columnWidths[columnName], x2);
-				}
-
-				cell.Arrange(new Rect(x1, 0, x2 - x1, Math.Max(finalSize.Height, cell.DesiredSize.Height)));
+				var rect = new Rect(offset, 0, subPanel.DesiredSize.Width, Math.Max(finalSize.Height, subPanel.DesiredSize.Height));
+				subPanel.Arrange(rect);
+				offset += rect.Width;
 			}
 
 			return finalSize;

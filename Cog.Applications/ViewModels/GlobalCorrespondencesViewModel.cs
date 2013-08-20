@@ -45,7 +45,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => GenerateGraph());
-			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ClearGraph());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ClearGraph());
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 
 			_selectedWordPairsMonitor = new SimpleMonitor();

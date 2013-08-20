@@ -64,7 +64,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
-			Messenger.Default.Register<DomainModelChangingMessage>(this, HandleDomainModelChanging);
+			Messenger.Default.Register<DomainModelChangedMessage>(this, HandleDomainModelChanged);
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
@@ -112,7 +112,7 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		private void HandleDomainModelChanging(DomainModelChangingMessage domainModelChangingMessage)
+		private void HandleDomainModelChanged(DomainModelChangedMessage msg)
 		{
 			ResetCurrentVarietyPair();
 			CurrentVarietyPair = null;

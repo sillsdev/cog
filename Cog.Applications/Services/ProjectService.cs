@@ -38,11 +38,11 @@ namespace SIL.Cog.Applications.Services
 			_settingsService = settingsService;
 			_analysisService = analysisService;
 
-			Messenger.Default.Register<DomainModelChangingMessage>(this, HandleDomainModelChanging);
+			Messenger.Default.Register<DomainModelChangedMessage>(this, HandleDomainModelChanged);
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, HandleComparisonPerformed);
 		}
 
-		private void HandleDomainModelChanging(DomainModelChangingMessage msg)
+		private void HandleDomainModelChanged(DomainModelChangedMessage msg)
 		{
 			_isChanged = true;
 			_project.VarietyPairs.Clear();

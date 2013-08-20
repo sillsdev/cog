@@ -43,7 +43,7 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaItemsViewModel("Sort words by",
 					new TaskAreaCommandGroupViewModel(
 						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortBy("StrRep", ListSortDirection.Ascending))),
-						new TaskAreaCommandViewModel("Variety", new RelayCommand(() => SortBy("Variety.Name", ListSortDirection.Ascending)))),
+						new TaskAreaCommandViewModel("Variety", new RelayCommand(() => SortBy("Variety", ListSortDirection.Ascending)))),
 					showCognateSets)));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
@@ -53,7 +53,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_groupByCognateSet = true;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
-			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetAlignment());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetAlignment());
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

@@ -21,6 +21,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
+			if (Updating)
+				return;
+
 			NotifyCollectionChangedEventHandler collectionChanged = CollectionChanged;
 			if (collectionChanged != null)
 			{

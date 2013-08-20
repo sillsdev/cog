@@ -7,11 +7,22 @@
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:VarietyPairViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <cnvtrs:ProbabilityToWidthConverter x:Key="ProbConverter" />
         <s:Double x:Key="MaxProbability">1.0</s:Double>
+		<xcdg:DataGridCollectionViewSource x:Key="SoundChangesSource" Source="{Binding SoundChanges}" AutoCreateItemProperties="False">
+			<xcdg:DataGridCollectionViewSource.ItemProperties>
+				<xcdg:DataGridItemProperty Name="Segment" ValuePath="Correspondence" DataType="{x:Type s:String}" />
+				<xcdg:DataGridItemProperty Name="Probability" ValuePath="Probability" DataType="{x:Type s:Double}" />
+				<xcdg:DataGridItemProperty Name="Frequency" ValuePath="Frequency" DataType="{x:Type s:Int32}" />
+			</xcdg:DataGridCollectionViewSource.ItemProperties>
+			<xcdg:DataGridCollectionViewSource.GroupDescriptions>
+				<xcdg:DataGridGroupDescription PropertyName="Lhs" />
+			</xcdg:DataGridCollectionViewSource.GroupDescriptions>
+		</xcdg:DataGridCollectionViewSource>
 	</UserControl.Resources>
     <DockPanel>
         <HeaderedContentControl Header="Similarity" Margin="0,10,0,10" DockPanel.Dock="Top">
@@ -52,86 +63,75 @@
 				<v:WordPairsView DataContext="{Binding Noncognates}" />
 			</HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound changes">
-                <DataGrid Name="CorrespondenceDataGrid" ItemsSource="{Binding SoundChanges, NotifyOnTargetUpdated=True}" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column"
-						  HorizontalScrollBarVisibility="Disabled" AlternatingRowBackground="White" IsReadOnly="True" SelectedItem="{Binding CurrentSoundChange}" Sorting="CorrespondenceDataGrid_Sorting" TargetUpdated="CorrespondenceDataGrid_OnTargetUpdated">
-                    <DataGrid.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.ContainerStyle>
-                                <Style TargetType="{x:Type GroupItem}">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                <StackPanel>
-													<Border Background="{StaticResource DataGridGroupingBrush}" BorderThickness="0,0,0,1" BorderBrush="LightGray">
-														<TextBlock Padding="2" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
-															<Run Text="{Binding Name.Target, Mode=OneWay}">
-																<Run.Style>
-																	<Style TargetType="Run">
-																		<Style.Triggers>
-																			<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
-																				<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
-																			</DataTrigger>
-																			<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
-																				<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
-																			</DataTrigger>
-																		</Style.Triggers>
-																	</Style>
-																</Run.Style>
-															</Run>
-															<Run Foreground="{StaticResource HeaderTextBrush}"> &#x2192; ?</Run>
-															<Run Text="{Binding Name.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
-														</TextBlock>
-													</Border>
-                                                    <ItemsPresenter />
-                                                </StackPanel>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.ContainerStyle>
-                            <GroupStyle.Panel>
-                                <ItemsPanelTemplate>
-                                    <DataGridRowsPresenter />
-                                </ItemsPanelTemplate>
-                            </GroupStyle.Panel>
-                        </GroupStyle>
-                    </DataGrid.GroupStyle>
-                    <DataGrid.Columns>
-						<DataGridTextColumn Header="Segment" Binding="{Binding Correspondence}" Width="*" FontSize="16">
-							<DataGridTextColumn.ElementStyle>
-								<Style TargetType="TextBlock">
-									<Setter Property="Margin" Value="2,0,0,0" />
-									<Style.Triggers>
+                <xcdg:DataGridControl Name="CorrespondenceDataGrid" ItemsSource="{Binding Source={StaticResource SoundChangesSource}, NotifyOnTargetUpdated=True}" TargetUpdated="CorrespondenceDataGrid_OnTargetUpdated" AutoCreateColumns="False" SelectionUnit="Row"
+						  ReadOnly="True" SelectedItem="{Binding CurrentSoundChange}">
+					<xcdg:DataGridControl.Resources>
+						<DataTemplate DataType="{x:Type xcdg:Group}">
+							<TextBlock FontSize="16" Margin="2,0,0,0" Foreground="{StaticResource HeaderTextBrush}">
+								<Run Text="{Binding Value.Target, Mode=OneWay}">
+									<Run.Style>
+										<Style TargetType="Run">
+											<Style.Triggers>
+												<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
+													<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
+												</DataTrigger>
+												<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
+													<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
+												</DataTrigger>
+											</Style.Triggers>
+										</Style>
+									</Run.Style>
+								</Run>
+								<Run Foreground="{StaticResource HeaderTextBrush}"> &#x2192; ?</Run>
+								<Run Text="{Binding Value.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
+							</TextBlock>
+						</DataTemplate>
+					</xcdg:DataGridControl.Resources>
+					<xcdg:DataGridControl.View>
+						<xcdg:TableView ShowRowSelectorPane="False" UseDefaultHeadersFooters="False">
+							<xcdg:TableView.FixedHeaders>
+								<DataTemplate>
+									<xcdg:ColumnManagerRow />
+								</DataTemplate>
+							</xcdg:TableView.FixedHeaders>
+						</xcdg:TableView>
+					</xcdg:DataGridControl.View>
+                    <xcdg:DataGridControl.Columns>
+						<xcdg:Column FieldName="Segment" Title="Segment" Width="*">
+							<xcdg:Column.CellContentTemplate>
+								<DataTemplate>
+									<TextBlock Name="ContentTextBlock" FontSize="16" Margin="4,0,0,0" Text="{Binding}" />
+									<DataTemplate.Triggers>
 										<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
-											<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
+											<Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety2Brush}" />
 										</DataTrigger>
 										<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
-											<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
+											<Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety1Brush}" />
 										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</DataGridTextColumn.ElementStyle>
-						</DataGridTextColumn>
-                        <DataGridTemplateColumn Header="Probability" Width="*" ClipboardContentBinding="{Binding Probability, StringFormat=p}" SortMemberPath="Probability">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate DataType="vm:SoundChangeViewModel">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Rectangle Fill="{StaticResource HeaderTextBrush}" Margin="1">
-                                            <Rectangle.Width>
-                                                <MultiBinding Converter="{StaticResource ProbConverter}" ConverterParameter="80">
-                                                    <Binding Mode="OneWay" Path="Probability" />
-                                                    <Binding Mode="OneWay" Source="{StaticResource MaxProbability}" />
-                                                </MultiBinding>
-                                            </Rectangle.Width>
-                                        </Rectangle>
-                                        <TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-						<DataGridTextColumn Header="Frequency" Width="Auto" Binding="{Binding Frequency}" />
-                    </DataGrid.Columns>
-                </DataGrid>
+									</DataTemplate.Triggers>
+								</DataTemplate>
+							</xcdg:Column.CellContentTemplate>
+						</xcdg:Column>
+						<xcdg:Column FieldName="Probability" Title="Probability" Width="*">
+							<xcdg:Column.CellContentTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Rectangle Fill="{StaticResource HeaderTextBrush}" Margin="1">
+											<Rectangle.Width>
+												<MultiBinding Converter="{StaticResource ProbConverter}" ConverterParameter="80">
+													<Binding Mode="OneWay" />
+													<Binding Mode="OneWay" Source="{StaticResource MaxProbability}" />
+												</MultiBinding>
+											</Rectangle.Width>
+										</Rectangle>
+										<TextBlock Margin="1" Text="{Binding Mode=OneWay, StringFormat=p}" />
+									</StackPanel>
+								</DataTemplate>
+							</xcdg:Column.CellContentTemplate>
+						</xcdg:Column>
+						<xcdg:Column FieldName="Frequency" Title="Frequency" Width="85" />
+                    </xcdg:DataGridControl.Columns>
+                </xcdg:DataGridControl>
             </HeaderedContentControl>
         </Grid>
     </DockPanel>

@@ -87,10 +87,7 @@ namespace SIL.Cog.Applications.ViewModels
 			//if this object, and any that derive from it have a property by the same name as the one
 			//in the NotifyPropertyChanged EventArgs, then raise Property Changed with the same PropertyName
 			if (PropertyDictionary[_type].Contains(e.PropertyName))
-			{
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				RaisePropertyChanging(e.PropertyName);
-			}
 		}
 
 		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -98,7 +95,10 @@ namespace SIL.Cog.Applications.ViewModels
 			//if this object, and any that derive from it have a property by the same name as the one
 			//in the NotifyPropertyChanged EventArgs, then raise Property Changed with the same PropertyName
 			if (PropertyDictionary[_type].Contains(e.PropertyName))
+			{
 				RaisePropertyChanged(e.PropertyName);
+				Messenger.Default.Send(new DomainModelChangedMessage());
+			}
 		}
 	}
 }

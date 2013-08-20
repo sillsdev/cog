@@ -77,8 +77,8 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				_projectService.Project.Segmenter.Segment(affix);
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes.Add(affix);
+				Messenger.Default.Send(new DomainModelChangedMessage());
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
@@ -95,17 +95,17 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = DomainVariety.Affixes.IndexOf(_currentAffix.DomainAffix);
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				DomainVariety.Affixes[index] = affix;
 				_projectService.Project.Segmenter.Segment(affix);
+				Messenger.Default.Send(new DomainModelChangedMessage());
 				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
 
 		private void RemoveAffix()
 		{
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			DomainVariety.Affixes.Remove(CurrentAffix.DomainAffix);
+			Messenger.Default.Send(new DomainModelChangedMessage());
 		}
 
 		private bool CanRemoveAffix()

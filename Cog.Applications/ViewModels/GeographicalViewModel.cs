@@ -41,7 +41,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => ClusterVarieties());
-			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetClusters());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetClusters());
 
 			_similarityScoreThreshold = 0.7;
 

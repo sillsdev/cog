@@ -4,7 +4,7 @@ using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class SoundChangeLhsViewModel : ViewModelBase, IEquatable<SoundChangeLhsViewModel>
+	public class SoundChangeLhsViewModel : ViewModelBase, IEquatable<SoundChangeLhsViewModel>, IComparable<SoundChangeLhsViewModel>, IComparable
 	{
 		private readonly SoundContext _lhs;
 
@@ -40,6 +40,11 @@ namespace SIL.Cog.Applications.ViewModels
 			return _lhs.Equals(other._lhs);
 		}
 
+		public int CompareTo(SoundChangeLhsViewModel other)
+		{
+			return string.Compare(Target + Environment, other.Target + other.Environment, StringComparison.Ordinal);
+		}
+
 		public override bool Equals(object obj)
 		{
 			var lhs = obj as SoundChangeLhsViewModel;
@@ -49,6 +54,13 @@ namespace SIL.Cog.Applications.ViewModels
 		public override int GetHashCode()
 		{
 			return _lhs.GetHashCode();
+		}
+
+		public int CompareTo(object obj)
+		{
+			if (!(obj is SoundChangeLhsViewModel))
+				throw new ArgumentException("The type of the specified argument is incorrect.", "obj");
+			return CompareTo((SoundChangeLhsViewModel) obj);
 		}
 	}
 }

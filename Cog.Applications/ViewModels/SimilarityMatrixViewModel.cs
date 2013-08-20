@@ -30,7 +30,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			Messenger.Default.Register<DomainModelChangingMessage>(this, msg => ResetVarieties());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetVarieties());
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => CreateSimilarityMatrix());
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",

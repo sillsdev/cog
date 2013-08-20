@@ -184,8 +184,8 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var variety = new Variety(vm.Name);
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				_projectService.Project.Varieties.Add(variety);
+				Messenger.Default.Send(new DomainModelChangedMessage());
 				CurrentVariety = _varieties[variety];
 			}
 		}
@@ -208,8 +208,8 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this variety?", "Cog"))
 			{
 				int index = _varieties.IndexOf(_currentVariety);
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				_projectService.Project.Varieties.Remove(_currentVariety.DomainVariety);
+				Messenger.Default.Send(new DomainModelChangedMessage());
 				if (index == _varieties.Count)
 					index--;
 				CurrentVariety = _varieties.Count > 0 ? _varieties[index] : null;
@@ -245,7 +245,8 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					_varietiesView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 					_varietiesView.CollectionChanged += VarietiesChanged;
-					CurrentVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
+					if (_currentVariety == null)
+						CurrentVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
 				}
 			}
 		}

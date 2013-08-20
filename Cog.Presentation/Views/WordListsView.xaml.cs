@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Presentation.Behaviors;
 using SIL.Collections;
 using Xceed.Wpf.DataGrid;
-using Xceed.Wpf.DataGrid.Views;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -28,18 +28,8 @@ namespace SIL.Cog.Presentation.Views
 			InitializeComponent();
 			WordListsGrid.ClipboardExporters.Clear();
 			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
-			WordListsGrid.Columns.CollectionChanged += Columns_CollectionChanged;
 			_monitor = new SimpleMonitor();
 			BusyCursor.DisplayUntilIdle();
-		}
-
-		private void Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (e.Action == NotifyCollectionChangedAction.Add)
-			{
-				foreach (Column c in e.NewItems)
-					c.Width = 100;
-			}
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -51,6 +41,7 @@ namespace SIL.Cog.Presentation.Views
 			vm.PropertyChanged += ViewModel_PropertyChanged;
 			vm.Senses.CollectionChanged += Senses_CollectionChanged;
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+			AddVarieties(vm.Varieties);
 			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
 		}
 
@@ -66,39 +57,7 @@ namespace SIL.Cog.Presentation.Views
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			LoadCollectionView();
-			SizeRowSelectorPaneToFit();
-			Dispatcher.BeginInvoke(new Action(SelectFirstCell), DispatcherPriority.ApplicationIdle);
-		}
-
-		private void SizeRowSelectorPaneToFit()
-		{
-			var vm = (WordListsViewModel) DataContext;
-			if (vm == null)
-				return;
-
-			var textBrush = (Brush) Application.Current.FindResource("HeaderTextBrush");
-			double maxWidth = 0;
-			foreach (WordListsVarietyViewModel variety in vm.Varieties)
-			{
-				var formattedText = new FormattedText(variety.Name, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
-					new Typeface(WordListsGrid.FontFamily, WordListsGrid.FontStyle, WordListsGrid.FontWeight, WordListsGrid.FontStretch), WordListsGrid.FontSize, textBrush);
-				if (formattedText.Width > maxWidth)
-					maxWidth = formattedText.Width;
-				variety.PropertyChanged += variety_PropertyChanged;
-			}
-
-			var tableView = (TableView) WordListsGrid.View;
-			tableView.RowSelectorPaneWidth = maxWidth + 18;
-		}
-
-		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case "Name":
-					DispatcherHelper.CheckBeginInvokeOnUI(SizeRowSelectorPaneToFit);
-					break;
-			}
+			WordListsGrid.SelectFirstCell();
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -112,12 +71,12 @@ namespace SIL.Cog.Presentation.Views
 
 				case "Varieties":
 					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
+					AddVarieties(vm.Varieties);
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
 							LoadCollectionView();
-							SizeRowSelectorPaneToFit();
+							WordListsGrid.SelectFirstCell();
 						});
-					Dispatcher.BeginInvoke(new Action(SelectFirstCell), DispatcherPriority.ApplicationIdle);
 					break;
 
 				case "CurrentVarietySense":
@@ -144,7 +103,7 @@ namespace SIL.Cog.Presentation.Views
 											    Cell cell = row.Cells[columnIndex];
 											    cell.BringIntoView();
 										    }
-									    }), DispatcherPriority.ApplicationIdle);
+									    }), DispatcherPriority.Background);
 								}
 							}
 						});
@@ -152,28 +111,24 @@ namespace SIL.Cog.Presentation.Views
 			}
 		}
 
-		private void SelectFirstCell()
-		{
-			if (WordListsGrid.Items.Count > 0)
-				WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(0, 0));
-			WordListsGrid.Focus();
-		}
-
 		private void LoadCollectionView()
 		{
 			var vm = (WordListsViewModel) DataContext;
-			var source = (DataGridCollectionViewSource) Resources["VarietiesSource"];
-			using (source.DeferRefresh())
-			{
-				IComparer sortComparer = ProjectionComparer<WordListsVarietySenseViewModel>.Create(sense => sense.StrRep);
-				source.ItemProperties.Clear();
-				for (int i = 0; i < vm.Senses.Count; i++)
-					source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}]", i), typeof (WordListsVarietySenseViewModel))
-						{
-							Title = vm.Senses[i].Gloss,
-							SortComparer = sortComparer
-						});
-			}
+			var source = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
+			source.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)) {IsReadOnly = true});
+			IComparer sortComparer = ProjectionComparer<WordListsVarietySenseViewModel>.Create(sense => sense.StrRep);
+			for (int i = 0; i < vm.Senses.Count; i++)
+				source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}]", i), typeof(WordListsVarietySenseViewModel)) {SortComparer = sortComparer});
+			WordListsGrid.ItemsSource = source;
+			WordListsGrid.Items.SortDescriptions.Clear();
+
+			WordListsGrid.Columns.Clear();
+			var headerColumn = new Column {FieldName = "Variety"};
+			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
+			WordListsGrid.Columns.Add(headerColumn);
+			headerColumn.SetWidthToFit<WordListsVarietyViewModel>(v => v.Name, 18);
+			foreach (SenseViewModel sense in vm.Senses)
+				WordListsGrid.Columns.Add(new Column {FieldName = sense.Gloss, Title = sense.Gloss, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof(WordListsVarietySenseViewModel)]});
 		}
 
 		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -183,8 +138,49 @@ namespace SIL.Cog.Presentation.Views
 
 		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			WordListsGrid.Items.Refresh();
-			SizeRowSelectorPaneToFit();
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddVarieties(e.NewItems.Cast<WordListsVarietyViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					RemoveVarieties(e.OldItems.Cast<WordListsVarietyViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Replace:
+					RemoveVarieties(e.OldItems.Cast<WordListsVarietyViewModel>());
+					AddVarieties(e.NewItems.Cast<WordListsVarietyViewModel>());
+					break;
+
+				case NotifyCollectionChangedAction.Reset:
+					AddVarieties(((IEnumerable) sender).Cast<WordListsVarietyViewModel>());
+					break;
+			}
+
+			Dispatcher.BeginInvoke(new Action(() => WordListsGrid.Columns[0].SetWidthToFit<WordListsVarietyViewModel>(v => v.Name, 18)));
+		}
+
+		private void AddVarieties(IEnumerable<WordListsVarietyViewModel> varieties)
+		{
+			foreach (WordListsVarietyViewModel variety in varieties)
+				variety.PropertyChanged += variety_PropertyChanged;
+		}
+
+		private void RemoveVarieties(IEnumerable<WordListsVarietyViewModel> varieties)
+		{
+			foreach (WordListsVarietyViewModel variety in varieties)
+				variety.PropertyChanged -= variety_PropertyChanged;
+		}
+
+		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "Name":
+					DispatcherHelper.CheckBeginInvokeOnUI(() => WordListsGrid.Columns[0].SetWidthToFit<WordListsVarietyViewModel>(v => v.Name, 18));
+					break;
+			}
 		}
 
 		private void WordListsGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)

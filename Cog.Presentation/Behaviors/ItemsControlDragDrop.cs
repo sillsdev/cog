@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using SIL.Cog.Presentation.Controls;
 
 namespace SIL.Cog.Presentation.Behaviors
 {

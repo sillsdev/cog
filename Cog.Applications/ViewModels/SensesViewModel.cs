@@ -43,8 +43,8 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var newSense = new Sense(vm.Gloss, vm.Category);
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				_projectService.Project.Senses.Add(newSense);
+				Messenger.Default.Send(new DomainModelChangedMessage());
 				CurrentSense = _senses.Single(s => s.DomainSense == newSense);
 			}
 		}
@@ -69,9 +69,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this sense?", "Cog"))
 			{
-				Messenger.Default.Send(new DomainModelChangingMessage());
 				int index = _senses.IndexOf(_currentSense);
 				_projectService.Project.Senses.Remove(_currentSense.DomainSense);
+				Messenger.Default.Send(new DomainModelChangedMessage());
 				if (index == _senses.Count)
 					index--;
 				CurrentSense = _senses.Count > 0 ?  _senses[index] : null;

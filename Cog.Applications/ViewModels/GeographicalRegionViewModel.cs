@@ -38,7 +38,6 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void CoordinatesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
@@ -63,6 +62,7 @@ namespace SIL.Cog.Applications.ViewModels
 					_region.Coordinates.Clear();
 					break;
 			}
+			Messenger.Default.Send(new DomainModelChangedMessage());
 		}
 
 		private void EditRegion()
@@ -73,17 +73,17 @@ namespace SIL.Cog.Applications.ViewModels
 				_region.Description = vm.Description;
 				if (vm.CurrentVariety.DomainVariety != _variety.DomainVariety)
 				{
-					Messenger.Default.Send(new DomainModelChangingMessage());
 					_variety.DomainVariety.Regions.Remove(_region);
 					vm.CurrentVariety.DomainVariety.Regions.Add(_region);
+					Messenger.Default.Send(new DomainModelChangedMessage());
 				}
 			}
 		}
 
 		private void RemoveRegion()
 		{
-			Messenger.Default.Send(new DomainModelChangingMessage());
 			_variety.DomainVariety.Regions.Remove(_region);
+			Messenger.Default.Send(new DomainModelChangedMessage());
 		}
 
 		public ObservableList<Tuple<double, double>> Coordinates

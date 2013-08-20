@@ -1,13 +1,16 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
+using SIL.Cog.Presentation.Behaviors;
+using Xceed.Wpf.DataGrid;
 
-namespace SIL.Cog.Presentation.Views
+namespace SIL.Cog.Presentation
 {
-	public static class ViewExtensions
+	public static class PresentationExtensions
 	{
 		public static bool Validate(this DependencyObject dp)
 		{
@@ -59,6 +62,45 @@ namespace SIL.Cog.Presentation.Views
 					maxWidth = formattedText.Width;
 			}
 			comboBox.Width = maxWidth + 25;
+		}
+
+		public static void SetWidthToFit<T>(this ColumnBase column, Func<T, string> stringAccessor, double padding)
+		{
+			DataGridControl dataGrid = column.DataGridControl;
+			column.SetWidthToFit(stringAccessor, padding, dataGrid.FontSize);
+		}
+
+		public static void SetWidthToFit<T>(this ColumnBase column, Func<T, string> stringAccessor, double padding, double fontSize)
+		{
+			DataGridControl dataGrid = column.DataGridControl;
+
+			var brush = new SolidColorBrush(Colors.Black);
+			double maxWidth = 0;
+			foreach (T item in dataGrid.ItemsSource)
+			{
+				string str = stringAccessor(item);
+				var formattedText = new FormattedText(str, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+					new Typeface(dataGrid.FontFamily, dataGrid.FontStyle, dataGrid.FontWeight, dataGrid.FontStretch), fontSize, brush);
+				if (formattedText.Width > maxWidth)
+					maxWidth = formattedText.Width;
+			}
+			column.Width = maxWidth + padding;
+		}
+
+		public static void SelectFirstCell(this DataGridControl dataGrid)
+		{
+			dataGrid.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					if (dataGrid.Items.Count > 0)
+					{
+						ColumnBase column = dataGrid.VisibleColumns.OrderBy(c => c.VisiblePosition).FirstOrDefault(c => !DataGridControlBehaviors.GetIsRowHeader(c));
+						if (column != null)
+						{
+							dataGrid.SelectedCellRanges.Add(new SelectionCellRange(0, column.Index));
+							dataGrid.Focus();
+						}
+					}
+				}), DispatcherPriority.Background);
 		}
 	}
 }

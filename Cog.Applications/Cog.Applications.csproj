@@ -173,7 +173,7 @@
     <Compile Include="ViewModels\ListSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MasterViewModelBase.cs" />
-    <Compile Include="ViewModels\DomainModelChangingMessage.cs" />
+    <Compile Include="ViewModels\DomainModelChangedMessage.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModel.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentWordViewModel.cs" />
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />

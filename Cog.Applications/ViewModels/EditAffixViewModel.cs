@@ -66,9 +66,9 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					case "StrRep":
 						if (string.IsNullOrEmpty(_strRep))
-							return "Please specify an affix";
+							return "Please specify an affix.";
 						if (!_segmenter.CanSegment(_strRep))
-							return "The affix contains invalid segments";
+							return "The affix contains invalid segments.";
 						break;
 				}
 

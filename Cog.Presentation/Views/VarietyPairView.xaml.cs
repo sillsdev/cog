@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -15,38 +14,20 @@ namespace SIL.Cog.Presentation.Views
 		public VarietyPairView()
 		{
 			InitializeComponent();
+			((INotifyCollectionChanged) CorrespondenceDataGrid.Items.SortDescriptions).CollectionChanged += OnSortChanged;
 		}
 
 		private void CorrespondenceDataGrid_OnTargetUpdated(object sender, DataTransferEventArgs e)
 		{
 			if (e.Property == ItemsControl.ItemsSourceProperty)
-			{
-				var view = CorrespondenceDataGrid.ItemsSource as DataGridCollectionView;
-				if (view != null)
-				{
-					using (view.DeferRefresh())
-					{
-						view.SortDescriptions.Clear();
-						view.SortDescriptions.Add(new SortDescription("Lhs", ListSortDirection.Ascending));
-						view.SortDescriptions.Add(new SortDescription("Probability", ListSortDirection.Descending));
-					}
-					((INotifyCollectionChanged) view.SortDescriptions).CollectionChanged += OnSortChanged;
-					Dispatcher.BeginInvoke(new Action(() =>
-						{
-							CorrespondenceDataGrid.CurrentItem = null;
-							CorrespondenceDataGrid.SelectedItem = null;
-						}));
-				}
-			}
+				Dispatcher.BeginInvoke(new Action(() => CorrespondenceDataGrid.SelectedItem = null));
 		}
 
 		private void OnSortChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Reset)
-			{
-				var sortDescs = (SortDescriptionCollection) sender;
+			var sortDescs = (SortDescriptionCollection) sender;
+			if (e.Action == NotifyCollectionChangedAction.Reset && sortDescs.Count == 0)
 				sortDescs.Add(new SortDescription("Lhs", ListSortDirection.Ascending));
-			}
 		}
 	}
 }

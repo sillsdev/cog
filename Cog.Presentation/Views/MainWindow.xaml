@@ -42,14 +42,14 @@
         </Menu>
         <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding CurrentView}">
             <TabControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="{x:Type vm:MasterViewModelBase}">
                     <TextBlock Text="{Binding DisplayName}" />
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <c:TabControlEx Padding="0" Style="{StaticResource SubTabControlStyle}" TabStripPlacement="Top"
-										   ItemsSource="{Binding Views}" ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding CurrentView}">
+                    <c:TabControlEx Padding="0" Style="{StaticResource SubTabControlStyle}" TabStripPlacement="Top" ItemsSource="{Binding Views}"
+									ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding CurrentView}">
                         <TabControl.Template>
                             <ControlTemplate TargetType="TabControl">
                                 <DockPanel>
@@ -59,7 +59,7 @@
                             </ControlTemplate>
                         </TabControl.Template>
                         <TabControl.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate DataType="{x:Type vm:WorkspaceViewModelBase}">
                                 <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
                         </TabControl.ItemTemplate>
@@ -92,17 +92,14 @@
                                             <DataTemplate DataType="{x:Type vm:SensesViewModel}">
                                                 <v:SensesView />
                                             </DataTemplate>
-                                            <DataTemplate DataType="{x:Type vm:InputSettingsViewModel}">
-                                                <v:InputSettingsView />
+                                            <DataTemplate DataType="{x:Type vm:SettingsWorkspaceViewModelBase}">
+                                                <v:SettingsView />
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type vm:SimilarityMatrixViewModel}">
                                                 <v:SimilarityMatrixView />
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type vm:VarietyPairsViewModel}">
                                                 <v:VarietyPairsView />
-                                            </DataTemplate>
-                                            <DataTemplate DataType="{x:Type vm:CompareSettingsViewModel}">
-                                                <v:CompareSettingsView />
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type vm:HierarchicalGraphViewModel}">
                                                 <v:HierarchicalGraphView />

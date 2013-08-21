@@ -45,10 +45,10 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					case "Name":
 						if (string.IsNullOrEmpty(_name))
-							return "Please enter a name";
+							return "Please enter a name.";
 						Variety variety;
 						if (_varieties.TryGetValue(_name, out variety) && variety != _variety)
-							return "A variety with that name already exists";
+							return "A variety with that name already exists.";
 						break;
 				}
 

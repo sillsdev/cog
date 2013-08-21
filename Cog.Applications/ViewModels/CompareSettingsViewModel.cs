@@ -6,7 +6,7 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		public CompareSettingsViewModel(IProjectService projectService, IBusyService busyService, AlineViewModel alineViewModel,
 			EMSoundChangeInducerViewModel soundChangeInducerViewModel, CognateIdentifierOptionsViewModel cognateIdentifierOptionsViewModel)
-			: base(projectService, busyService, alineViewModel, soundChangeInducerViewModel, cognateIdentifierOptionsViewModel)
+			: base("Comparison", projectService, busyService, alineViewModel, soundChangeInducerViewModel, cognateIdentifierOptionsViewModel)
 		{
 		}
 	}

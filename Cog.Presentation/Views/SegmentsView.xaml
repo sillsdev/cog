@@ -6,7 +6,7 @@
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
-             mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentsViewModel}"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentsViewModel}" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded" DataContextChanged="OnDataContextChanged">
 	<DockPanel>
 		<TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Segments</TextBlock>

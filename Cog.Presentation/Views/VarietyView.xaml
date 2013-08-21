@@ -5,46 +5,45 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors" xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="500"
              d:DataContext="{d:DesignInstance vm:VarietiesVarietyViewModel}">
     <UserControl.Resources>
-        <cnvtrs:ProbabilityToWidthConverter x:Key="ProbConverter" />
 		<cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
+		<xcdg:DataGridCollectionViewSource x:Key="SegmentsSource" Source="{Binding Segments}">
+			<xcdg:DataGridCollectionViewSource.SortDescriptions>
+				<scm:SortDescription PropertyName="Probability" Direction="Descending" />
+			</xcdg:DataGridCollectionViewSource.SortDescriptions>
+		</xcdg:DataGridCollectionViewSource>
     </UserControl.Resources>
     <DockPanel>
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
             <StackPanel>
                 <Grid>
-                    <DataGrid ItemsSource="{Binding Affixes}" b:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentAffix}"
-							  AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Affix" Binding="{Binding StrRep}" Width="*">
-								<DataGridTextColumn.ElementStyle>
-									<Style TargetType="TextBlock">
-										<Setter Property="FontSize" Value="16" />
-										<Style.Triggers>
-											<DataTrigger Binding="{Binding IsValid}" Value="False">
-												<Setter Property="TextDecorations">
-													<Setter.Value>
-														<TextDecorationCollection>
-															<TextDecoration Location="Underline" PenOffset="1">
-																<TextDecoration.Pen>
-																	<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
-																</TextDecoration.Pen>
-															</TextDecoration>
-														</TextDecorationCollection>
-													</Setter.Value>
-												</Setter>
-											</DataTrigger>
-										</Style.Triggers>
-									</Style>
-								</DataGridTextColumn.ElementStyle>
-							</DataGridTextColumn>
-                            <DataGridTextColumn Header="Type" Binding="{Binding Type, Converter={StaticResource EnumConverter}}" Width="*" />
-                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <xcdg:DataGridControl ItemsSource="{Binding Affixes}" Height="125" SelectedItem="{Binding CurrentAffix}" ReadOnly="True" b:DataGridControlBehaviors.AutoScrollOnSelection="True">
+                        <xcdg:DataGridControl.Columns>
+							<xcdg:Column FieldName="StrRep" Title="Affix" Width="200" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
+							<xcdg:Column FieldName="Type" Title="Type" Width="70">
+								<xcdg:Column.DisplayMemberBindingInfo>
+									<xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
+								</xcdg:Column.DisplayMemberBindingInfo>
+							</xcdg:Column>
+							<xcdg:Column FieldName="Category" Title="Category" Width="*" />
+                        </xcdg:DataGridControl.Columns>
+						<xcdg:DataGridControl.View>
+							<xcdg:TableView>
+								<xcdg:TableView.FixedHeaders>
+									<DataTemplate>
+										<xcdg:ColumnManagerRow />
+									</DataTemplate>
+								</xcdg:TableView.FixedHeaders>
+							</xcdg:TableView>
+						</xcdg:DataGridControl.View>
+					</xcdg:DataGridControl>
                     <TextBlock Margin="3,23,3,0" Text="Click New to add an affix">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -58,7 +57,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-				<Border Background="{StaticResource ControlPanelBackgroundBrush}">
+				<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{StaticResource ListBorderBrush}">
 					<Border.Resources>
 						<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 							<Setter Property="Margin" Value="0,3,5,3" />
@@ -97,32 +96,41 @@
 				<v:WordsView DataContext="{Binding Words}" />
             </HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Header="Segments">
-				<DataGrid Name="SegmentsDataGrid" AutoGenerateColumns="False" HeadersVisibility="Column" ItemsSource="{Binding Segments, NotifyOnTargetUpdated=True}" TargetUpdated="SegmentsDataGrid_OnTargetUpdated"
-                        SelectionUnit="FullRow" SelectedItem="{Binding CurrentSegment}" IsReadOnly="True" SelectionMode="Single">
-					<DataGrid.Columns>
-						<DataGridTextColumn Width="Auto" Header="Segment" FontSize="16" Binding="{Binding StrRep}" />
-						<DataGridTemplateColumn Width="Auto" Header="Probability" SortMemberPath="Probability" ClipboardContentBinding="{Binding Probability, StringFormat=p}">
-							<DataGridTemplateColumn.CellTemplate>
+				<xcdg:DataGridControl Name="SegmentsDataGrid" ItemsSource="{Binding Source={StaticResource SegmentsSource}, NotifyOnTargetUpdated=True}" TargetUpdated="SegmentsDataGrid_OnTargetUpdated"
+                        SelectedItem="{Binding CurrentSegment}" ReadOnly="True">
+					<xcdg:DataGridControl.Columns>
+						<xcdg:Column FieldName="StrRep" Title="Segment" Width="80">
+							<xcdg:Column.CellContentTemplate>
 								<DataTemplate>
-									<StackPanel Margin="1" Orientation="Horizontal">
-										<Rectangle Fill="{StaticResource HeaderTextBrush}" Margin="1">
-											<Rectangle.Width>
-												<MultiBinding Converter="{StaticResource ProbConverter}" ConverterParameter="80">
-													<Binding Mode="OneWay" Path="Probability" />
-													<Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}" Path="DataContext.MaxSegmentProbability" />
-												</MultiBinding>
-											</Rectangle.Width>
-										</Rectangle>
-										<TextBlock Margin="1" Text="{Binding Probability, Mode=OneWay, StringFormat=p}" />
-									</StackPanel>
+									<TextBlock FontSize="16" Text="{Binding}" />
 								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-						</DataGridTemplateColumn>
-						<DataGridTextColumn Width="Auto" Header="Frequency" Binding="{Binding Frequency}" />
-						<DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding Type, Converter={StaticResource EnumConverter}}" />
-						<DataGridTextColumn Width="Auto" Header="Features" Binding="{Binding FeatureStructure}" />
-					</DataGrid.Columns>
-				</DataGrid>
+							</xcdg:Column.CellContentTemplate>
+						</xcdg:Column>
+						<xcdg:Column FieldName="Probability" Title="Probability" Width="135">
+							<xcdg:Column.CellContentTemplate>
+								<DataTemplate>
+									<c:PercentageControl MaxPercentage="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=DataContext.MaxSegmentProbability}" />
+								</DataTemplate>
+							</xcdg:Column.CellContentTemplate>
+						</xcdg:Column>
+						<xcdg:Column FieldName="Frequency" Title="Frequency" Width="85" />
+						<xcdg:Column FieldName="Type" Title="Type" Width="70">
+							<xcdg:Column.DisplayMemberBindingInfo>
+								<xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
+							</xcdg:Column.DisplayMemberBindingInfo>
+						</xcdg:Column>
+						<xcdg:Column FieldName="FeatureStructure" Title="Features" Width="500" />
+					</xcdg:DataGridControl.Columns>
+					<xcdg:DataGridControl.View>
+						<xcdg:TableView>
+							<xcdg:TableView.FixedHeaders>
+								<DataTemplate>
+									<xcdg:ColumnManagerRow />
+								</DataTemplate>
+							</xcdg:TableView.FixedHeaders>
+						</xcdg:TableView>
+					</xcdg:DataGridControl.View>
+				</xcdg:DataGridControl>
             </HeaderedContentControl>
         </Grid>
     </DockPanel>

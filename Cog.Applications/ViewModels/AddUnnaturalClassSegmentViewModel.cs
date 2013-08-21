@@ -30,15 +30,15 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					case "Segment":
 						if (string.IsNullOrEmpty(_segment))
-							return "Please specify a segment";
+							return "Please specify a segment.";
 						string seg = _segment.Trim('#');
 						if (seg.Length > 0 && seg != "-")
 						{
 							Shape shape;
 							if (!_segmenter.TrySegment(seg, out shape))
-								return "This is an invalid segment";
+								return "This is an invalid segment.";
 							if (shape.Any(n => n.Type() != shape.First.Type()))
-								return "Please specify only one segment";
+								return "Please specify only one segment.";
 						}
 						break;
 				}

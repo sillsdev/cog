@@ -1,6 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Threading;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
 
@@ -84,41 +85,46 @@ namespace SIL.Cog.Presentation.Behaviors
 			return (bool) dataGrid.GetValue(IsRowVirtualizationEnabledProperty);
 		}
 
-		public static readonly DependencyProperty IsGroupingProperty = DependencyProperty.RegisterAttached("IsGrouping", typeof(bool), typeof(DataGridControlBehaviors),
-			new UIPropertyMetadata(false, OnIsGroupingChanged));
+		public static readonly DependencyProperty AutoScrollOnSelectionProperty =
+			DependencyProperty.RegisterAttached(
+				"AutoScrollOnSelection", 
+				typeof(bool), 
+				typeof(DataGridControlBehaviors), 
+				new UIPropertyMetadata(false, OnAutoScrollOnSelectionChanged));
 
-		private static void OnIsGroupingChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		private static void OnAutoScrollOnSelectionChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
 		{
-			var dataGrid = (DataGridControl) obj;
+			var dataGrid = depObj as DataGridControl;
+			if (dataGrid == null)
+				return;
+
+			if (!(e.NewValue is bool))
+				return;
+
 			if ((bool) e.NewValue)
-				((INotifyCollectionChanged) dataGrid.Items.Groups).CollectionChanged += GroupsChanged;
+				dataGrid.SelectionChanged += DataGrid_SelectionChanged;
 			else
-				((INotifyCollectionChanged) dataGrid.Items.Groups).CollectionChanged -= GroupsChanged;
+				dataGrid.SelectionChanged -= DataGrid_SelectionChanged;
 		}
 
-		private static void GroupsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private static void DataGrid_SelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
-
+			var dataGrid = (DataGridControl) sender;
+			if (dataGrid != null && dataGrid.IsLoaded && dataGrid.SelectedItem != null)
+			{
+				dataGrid.Focus();
+				dataGrid.Dispatcher.BeginInvoke(new Action(() => dataGrid.BringItemIntoView(dataGrid.SelectedItem)), DispatcherPriority.Background);
+			}
 		}
 
-		public static void SetIsGrouping(DataGridControl dataGrid, bool value)
+		public static bool GetAutoScrollOnSelection(DataGridControl datagrid)
 		{
-			dataGrid.SetValue(IsGroupingProperty, value);
+			return (bool) datagrid.GetValue(AutoScrollOnSelectionProperty);
 		}
 
-		public static bool GetIsGrouping(DataGridControl dataGrid)
+		public static void SetAutoScrollOnSelection(DataGridControl datagrid, bool value)
 		{
-			return (bool) dataGrid.GetValue(IsGroupingProperty);
-		}
-
-		private static readonly DependencyPropertyKey IsFirstInGroupPropertyKey = DependencyProperty.RegisterAttachedReadOnly("IsFirstInGroup", typeof(bool),
-			typeof(DataGridControlBehaviors), new FrameworkPropertyMetadata(false));
-
-		public static readonly DependencyProperty IsFirstInGroupProperty = IsFirstInGroupPropertyKey.DependencyProperty;
-
-		public static bool GetIsFirstInGroup(DependencyObject obj)
-		{
-			return (bool) obj.GetValue(IsFirstInGroupProperty);
+			datagrid.SetValue(AutoScrollOnSelectionProperty, value);
 		}
 	}
 }

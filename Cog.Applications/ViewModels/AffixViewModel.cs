@@ -12,7 +12,7 @@ namespace SIL.Cog.Applications.ViewModels
 		Suffix
 	}
 
-	public class AffixViewModel : ViewModelBase
+	public class AffixViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private readonly Affix _affix;
 		private bool _isValid;
@@ -29,7 +29,8 @@ namespace SIL.Cog.Applications.ViewModels
 			switch (e.PropertyName)
 			{
 				case "Shape":
-					IsValid = _affix.Shape.Count > 0;
+					_isValid = _affix.Shape.Count > 0;
+					RaisePropertyChanged("Item[]");
 					break;
 			}
 		}
@@ -54,10 +55,25 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _affix; }
 		}
 
-		public bool IsValid
+		string IDataErrorInfo.this[string columnName]
 		{
-			get { return _isValid; }
-			set { Set(() => IsValid, ref _isValid, value); }
+			get
+			{
+				switch (columnName)
+				{
+					case "StrRep":
+						if (!_isValid)
+							return "The affix contains invalid segments.";
+						break;
+				}
+
+				return null;
+			}
+		}
+
+		string IDataErrorInfo.Error
+		{
+			get { return null; }
 		}
 	}
 }

@@ -5,59 +5,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SegmentMappingsViewModel}">
     <StackPanel>
         <Grid>
-            <DataGrid ItemsSource="{Binding Mappings}" b:DataGridBehaviors.AutoScrollOnSelection="True" Height="125" HorizontalScrollBarVisibility="Disabled" SelectedItem="{Binding CurrentMapping}"
-					  AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow" HeadersVisibility="Column" >
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Segment 1" Binding="{Binding Segment1}" Width="*">
-						<DataGridTextColumn.ElementStyle>
-							<Style TargetType="TextBlock">
-								<Setter Property="FontSize" Value="16" />
-								<Style.Triggers>
-									<DataTrigger Binding="{Binding IsSegment1Valid}" Value="False">
-										<Setter Property="TextDecorations">
-											<Setter.Value>
-												<TextDecorationCollection>
-													<TextDecoration Location="Underline" PenOffset="1">
-														<TextDecoration.Pen>
-															<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
-														</TextDecoration.Pen>
-													</TextDecoration>
-												</TextDecorationCollection>
-											</Setter.Value>
-										</Setter>
-									</DataTrigger>
-								</Style.Triggers>
-							</Style>
-						</DataGridTextColumn.ElementStyle>
-					</DataGridTextColumn>
-                    <DataGridTextColumn Header="Segment 2" Binding="{Binding Segment2}" Width="*">
-						<DataGridTextColumn.ElementStyle>
-							<Style TargetType="TextBlock">
-								<Setter Property="FontSize" Value="16" />
-								<Style.Triggers>
-									<DataTrigger Binding="{Binding IsSegment2Valid}" Value="False">
-										<Setter Property="TextDecorations">
-											<Setter.Value>
-												<TextDecorationCollection>
-													<TextDecoration Location="Underline" PenOffset="1">
-														<TextDecoration.Pen>
-															<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
-														</TextDecoration.Pen>
-													</TextDecoration>
-												</TextDecorationCollection>
-											</Setter.Value>
-										</Setter>
-									</DataTrigger>
-								</Style.Triggers>
-							</Style>
-						</DataGridTextColumn.ElementStyle>
-					</DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <xcdg:DataGridControl ItemsSource="{Binding Mappings}" b:DataGridControlBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentMapping}" ReadOnly="True">
+                <xcdg:DataGridControl.Columns>
+					<xcdg:Column FieldName="Segment1" Title="Segment 1" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
+					<xcdg:Column FieldName="Segment2" Title="Segment 2" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
+                </xcdg:DataGridControl.Columns>
+				<xcdg:DataGridControl.View>
+					<xcdg:TableView>
+						<xcdg:TableView.FixedHeaders>
+							<DataTemplate>
+								<xcdg:ColumnManagerRow />
+							</DataTemplate>
+						</xcdg:TableView.FixedHeaders>
+					</xcdg:TableView>
+				</xcdg:DataGridControl.View>
+			</xcdg:DataGridControl>
             <TextBlock Margin="3,23,3,0" Text="Click New to add a correspondence">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
@@ -71,7 +38,7 @@
                 </TextBlock.Style>
             </TextBlock>
         </Grid>
-		<Border Background="{StaticResource ControlPanelBackgroundBrush}">
+		<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
 			<Border.Resources>
 				<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 					<Setter Property="Margin" Value="0,3,5,3" />

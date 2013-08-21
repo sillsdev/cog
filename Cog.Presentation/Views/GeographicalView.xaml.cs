@@ -41,6 +41,12 @@ namespace SIL.Cog.Presentation.Views
 			MapControl.IgnoreMarkerOnMouseWheel = true;
 		}
 
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (IsVisible)
+				Dispatcher.BeginInvoke(new Action(() => SearchTextBox.Focus()));
+		}
+
 		private void GeographicalView_OnLoaded(object sender, RoutedEventArgs e)
 		{
 			var vm = DataContext as GeographicalViewModel;

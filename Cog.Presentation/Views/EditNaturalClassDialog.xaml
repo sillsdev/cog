@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+		xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
         xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" mc:Ignorable="d"
         Title="{Binding Title}"  WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" SizeToContent="WidthAndHeight"
@@ -55,19 +56,31 @@
 				<Button Command="{Binding RemoveCommand}">Remove</Button>
 			</StackPanel>
 			<Label Grid.Column="2" Grid.Row="0" Target="{Binding ElementName=SelectedFeaturesDataGrid}">Selected features:</Label>
-			<DataGrid Name="SelectedFeaturesDataGrid" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding SelectedFeatures}" AutoGenerateColumns="False" Height="250" Width="200"
-					  HeadersVisibility="Column" SelectionUnit="FullRow" SelectedItem="{Binding CurrentSelectedFeature}" IsReadOnly="True">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Feature" Binding="{Binding Name}" Width="*" />
-					<DataGridTemplateColumn Header="Value" Width="*">
-						<DataGridTemplateColumn.CellTemplate>
+			<xcdg:DataGridControl Name="SelectedFeaturesDataGrid" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding SelectedFeatures}" Height="250" Width="240"
+								  SelectedItem="{Binding CurrentSelectedFeature}" ReadOnly="True">
+				<xcdg:DataGridControl.Columns>
+					<xcdg:Column FieldName="Name" Title="Feature" Width="*" />
+					<xcdg:Column FieldName="CurrentValue" Title="Value" Width="*">
+						<xcdg:Column.DisplayMemberBindingInfo>
+							<xcdg:DataGridBindingInfo Path="." />
+						</xcdg:Column.DisplayMemberBindingInfo>
+						<xcdg:Column.CellContentTemplate>
 							<DataTemplate DataType="{x:Type vm:FeatureViewModel}">
 								<ComboBox ItemsSource="{Binding Values}" SelectedItem="{Binding CurrentValue, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
 							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-			</DataGrid>
+						</xcdg:Column.CellContentTemplate>
+					</xcdg:Column>
+				</xcdg:DataGridControl.Columns>
+				<xcdg:DataGridControl.View>
+					<xcdg:TableView>
+						<xcdg:TableView.FixedHeaders>
+							<DataTemplate>
+								<xcdg:ColumnManagerRow AllowSort="False" />
+							</DataTemplate>
+						</xcdg:TableView.FixedHeaders>
+					</xcdg:TableView>
+				</xcdg:DataGridControl.View>
+			</xcdg:DataGridControl>
 		</Grid>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 			<StackPanel.Resources>

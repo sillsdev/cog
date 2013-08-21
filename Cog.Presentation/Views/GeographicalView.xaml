@@ -8,7 +8,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
-             mc:Ignorable="d" Loaded="GeographicalView_OnLoaded"
+             mc:Ignorable="d" Loaded="GeographicalView_OnLoaded" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:GeographicalViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:IndexToColorConverter x:Key="IndexConverter" />

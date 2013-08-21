@@ -29,9 +29,18 @@ namespace SIL.Cog.Applications.ViewModels
 				{"glottal", "Guttural"}
 			};
 
+		private readonly static Dictionary<string, string> HeightCategoryLookup = new Dictionary<string, string>
+			{
+				{"close-vowel", "Close"},
+				{"mid-vowel", "Mid"},
+				{"open-vowel", "Open"}
+			};
+
 		private readonly static Dictionary<string, int> CategorySortOrderLookup = new Dictionary<string, int>
 			{
-				{"Vowel", 0},
+				{"Close", 0},
+				{"Mid", 1},
+				{"Open", 2},
 				{"Labial", 0},
 				{"Coronal", 1},
 				{"Dorsal", 2},
@@ -91,15 +100,12 @@ namespace SIL.Cog.Applications.ViewModels
 				}
 			}
 
-			if (_syllablePosition == ViewModelSyllablePosition.Nucleus)
-				_categories.Clear();
-			else
-				_categories.ReplaceAll(_segments.GroupBy(s => GetCategory(s.DomainSegment)).OrderBy(g => CategorySortOrderLookup[g.Key]).Select(g => new SegmentCategoryViewModel(g.Key, g)));
+			_categories.ReplaceAll(_segments.GroupBy(s => GetCategory(s.DomainSegment)).OrderBy(g => CategorySortOrderLookup[g.Key]).Select(g => new SegmentCategoryViewModel(g.Key, g)));
 		}
 
 		private string GetCategory(Segment segment)
 		{
-			return segment.Type == CogFeatureSystem.VowelType ? "Vowel"
+			return segment.Type == CogFeatureSystem.VowelType ? HeightCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("manner")).ID]
 				: PlaceCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("place")).ID];
 		}
 

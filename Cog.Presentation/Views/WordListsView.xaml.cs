@@ -49,9 +49,14 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var window = this.FindVisualAncestor<Window>();
 			if (IsVisible)
+			{
 				window.InputBindings.Add(_findBinding);
+				Dispatcher.BeginInvoke(new Action(() => WordListsGrid.Focus()));
+			}
 			else
+			{
 				window.InputBindings.Remove(_findBinding);
+			}
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)

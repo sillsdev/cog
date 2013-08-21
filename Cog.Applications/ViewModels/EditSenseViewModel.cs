@@ -54,10 +54,10 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					case "Gloss":
 						if (string.IsNullOrEmpty(_gloss))
-							return "Please enter a gloss";
+							return "Please enter a gloss.";
 						Sense sense;
 						if (_senses.TryGetValue(_gloss, out sense) && sense != _sense)
-							return "A variety with that gloss already exists";
+							return "A variety with that gloss already exists.";
 						break;
 				}
 

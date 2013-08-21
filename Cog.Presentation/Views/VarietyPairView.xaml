@@ -3,25 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
-             xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:VarietyPairViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <cnvtrs:ProbabilityToWidthConverter x:Key="ProbConverter" />
-        <s:Double x:Key="MaxProbability">1.0</s:Double>
-		<xcdg:DataGridCollectionViewSource x:Key="SoundChangesSource" Source="{Binding SoundChanges}" AutoCreateItemProperties="False">
-			<xcdg:DataGridCollectionViewSource.ItemProperties>
-				<xcdg:DataGridItemProperty Name="Segment" ValuePath="Correspondence" DataType="{x:Type s:String}" />
-				<xcdg:DataGridItemProperty Name="Probability" ValuePath="Probability" DataType="{x:Type s:Double}" />
-				<xcdg:DataGridItemProperty Name="Frequency" ValuePath="Frequency" DataType="{x:Type s:Int32}" />
-			</xcdg:DataGridCollectionViewSource.ItemProperties>
+		<xcdg:DataGridCollectionViewSource x:Key="SoundChangesSource" Source="{Binding SoundChanges}">
 			<xcdg:DataGridCollectionViewSource.GroupDescriptions>
 				<xcdg:DataGridGroupDescription PropertyName="Lhs" />
 			</xcdg:DataGridCollectionViewSource.GroupDescriptions>
+			<xcdg:DataGridCollectionViewSource.SortDescriptions>
+				<scm:SortDescription PropertyName="Lhs" Direction="Ascending" />
+				<scm:SortDescription PropertyName="Probability" Direction="Descending" />
+			</xcdg:DataGridCollectionViewSource.SortDescriptions>
 		</xcdg:DataGridCollectionViewSource>
 	</UserControl.Resources>
     <DockPanel>
@@ -87,17 +84,8 @@
 							</TextBlock>
 						</DataTemplate>
 					</xcdg:DataGridControl.Resources>
-					<xcdg:DataGridControl.View>
-						<xcdg:TableView ShowRowSelectorPane="False" UseDefaultHeadersFooters="False">
-							<xcdg:TableView.FixedHeaders>
-								<DataTemplate>
-									<xcdg:ColumnManagerRow />
-								</DataTemplate>
-							</xcdg:TableView.FixedHeaders>
-						</xcdg:TableView>
-					</xcdg:DataGridControl.View>
                     <xcdg:DataGridControl.Columns>
-						<xcdg:Column FieldName="Segment" Title="Segment" Width="*">
+						<xcdg:Column FieldName="Correspondence" Title="Segment" Width="80">
 							<xcdg:Column.CellContentTemplate>
 								<DataTemplate>
 									<TextBlock Name="ContentTextBlock" FontSize="16" Margin="4,0,0,0" Text="{Binding}" />
@@ -112,25 +100,24 @@
 								</DataTemplate>
 							</xcdg:Column.CellContentTemplate>
 						</xcdg:Column>
-						<xcdg:Column FieldName="Probability" Title="Probability" Width="*">
+						<xcdg:Column FieldName="Probability" Title="Probability" Width="135">
 							<xcdg:Column.CellContentTemplate>
 								<DataTemplate>
-									<StackPanel Orientation="Horizontal">
-										<Rectangle Fill="{StaticResource HeaderTextBrush}" Margin="1">
-											<Rectangle.Width>
-												<MultiBinding Converter="{StaticResource ProbConverter}" ConverterParameter="80">
-													<Binding Mode="OneWay" />
-													<Binding Mode="OneWay" Source="{StaticResource MaxProbability}" />
-												</MultiBinding>
-											</Rectangle.Width>
-										</Rectangle>
-										<TextBlock Margin="1" Text="{Binding Mode=OneWay, StringFormat=p}" />
-									</StackPanel>
+									<c:PercentageControl />
 								</DataTemplate>
 							</xcdg:Column.CellContentTemplate>
 						</xcdg:Column>
-						<xcdg:Column FieldName="Frequency" Title="Frequency" Width="85" />
+						<xcdg:Column FieldName="Frequency" Title="Frequency" Width="*" />
                     </xcdg:DataGridControl.Columns>
+					<xcdg:DataGridControl.View>
+						<xcdg:TableView>
+							<xcdg:TableView.FixedHeaders>
+								<DataTemplate>
+									<xcdg:ColumnManagerRow />
+								</DataTemplate>
+							</xcdg:TableView.FixedHeaders>
+						</xcdg:TableView>
+					</xcdg:DataGridControl.View>
                 </xcdg:DataGridControl>
             </HeaderedContentControl>
         </Grid>

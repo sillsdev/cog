@@ -5,30 +5,38 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
-             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
-             mc:Ignorable="d" DataContextChanged="SoundClassesView_OnDataContextChanged"
+			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+             mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SoundClassesViewModel}">
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="VisConverter" />
-	</UserControl.Resources>
 	<StackPanel>
 		<Grid>
-			<DataGrid Name="SoundClassesGrid" AutoGenerateColumns="False" SelectionUnit="FullRow" HeadersVisibility="Column" Height="125"
-					  ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding CurrentSoundClass}" IsReadOnly="True" b:DataGridBehaviors.DataContextForColumns="{Binding}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" />
-					<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" />
-					<DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
-					<DataGridTemplateColumn Header="Sonority" Width="Auto" Visibility="{Binding DataContext.DisplaySonority, RelativeSource={RelativeSource Self}, Converter={StaticResource VisConverter}}">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate DataType="{x:Type vm:SoundClassViewModel}">
-								<xctk:IntegerUpDown Value="{Binding Sonority, UpdateSourceTrigger=PropertyChanged}" Minimum="0" />
+			<xcdg:DataGridControl Name="SoundClassesGrid" Height="125" ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding CurrentSoundClass}" ReadOnly="True"
+								  b:DataGridControlBehaviors.AutoScrollOnSelection="True">
+				<xcdg:DataGridControl.Columns>
+					<xcdg:Column FieldName="Name" Title="Name" Width="150" />
+					<xcdg:Column FieldName="Type" Title="Type" Width="70" />
+					<xcdg:Column FieldName="Description" Title="Description" Width="*" />
+					<xcdg:Column FieldName="Sonority" Title="Sonority" Width="80"
+								 Visible="{Binding Path=DataGridControl.DataContext.DisplaySonority, RelativeSource={RelativeSource Self}}">
+						<xcdg:Column.CellContentTemplate>
+							<DataTemplate>
+								<xctk:IntegerUpDown Value="{Binding ., UpdateSourceTrigger=PropertyChanged}" Minimum="0" />
 							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-			</DataGrid>
+						</xcdg:Column.CellContentTemplate>
+					</xcdg:Column>
+				</xcdg:DataGridControl.Columns>
+				<xcdg:DataGridControl.View>
+					<xcdg:TableView>
+						<xcdg:TableView.FixedHeaders>
+							<DataTemplate>
+								<xcdg:ColumnManagerRow />
+							</DataTemplate>
+						</xcdg:TableView.FixedHeaders>
+					</xcdg:TableView>
+				</xcdg:DataGridControl.View>
+			</xcdg:DataGridControl>
 			<TextBlock Margin="3,23,3,0" Text="Click New to add a sound class">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
@@ -42,7 +50,7 @@
                 </TextBlock.Style>
 			</TextBlock>
 		</Grid>
-		<Border Background="{StaticResource ControlPanelBackgroundBrush}">
+		<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
 			<Border.Resources>
 				<Style TargetType="c:DropDownButton" BasedOn="{StaticResource ToolbarDropDownButtonStyle}">
 					<Setter Property="Margin" Value="0,3,5,3" />

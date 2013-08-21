@@ -16,10 +16,12 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _resetCommand;
 		private bool _isDirty;
 		private readonly IBusyService _busyService;
+		private readonly string _title;
 
-		protected SettingsWorkspaceViewModelBase(IProjectService projectService, IBusyService busyService, params ComponentSettingsViewModelBase[] components)
+		protected SettingsWorkspaceViewModelBase(string title, IProjectService projectService, IBusyService busyService, params ComponentSettingsViewModelBase[] components)
 			: base("Settings")
 		{
+			_title = title;
 			_projectService = projectService;
 			_busyService = busyService;
 
@@ -41,6 +43,11 @@ namespace SIL.Cog.Applications.ViewModels
 		private bool CanApply()
 		{
 			return _isDirty;
+		}
+
+		public string Title
+		{
+			get { return _title; }
 		}
 
 		public void Apply()

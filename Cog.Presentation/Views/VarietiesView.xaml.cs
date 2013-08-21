@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -43,9 +44,14 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var window = this.FindVisualAncestor<Window>();
 			if (IsVisible)
+			{
 				window.InputBindings.Add(_findBinding);
+				Dispatcher.BeginInvoke(new Action(() => VarietiesComboBox.Focus()));
+			}
 			else
+			{
 				window.InputBindings.Remove(_findBinding);
+			}
 		}
 
 		private void SetupVarieties()

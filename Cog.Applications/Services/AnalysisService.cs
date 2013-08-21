@@ -127,9 +127,14 @@ namespace SIL.Cog.Applications.Services
 						}
 					}
 					if (vm.Canceled)
-						return;
-					vm.Text = "Analyzing results...";
-					Messenger.Default.Send(new ComparisonPerformedMessage());
+					{
+						_projectService.Project.VarietyPairs.Clear();
+					}
+					else
+					{
+						vm.Text = "Analyzing results...";
+						Messenger.Default.Send(new ComparisonPerformedMessage());
+					}
 				});
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 

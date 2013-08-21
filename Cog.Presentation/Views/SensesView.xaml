@@ -3,15 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications" mc:Ignorable="d" 
+			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             mc:Ignorable="d" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SensesViewModel}">
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Senses</TextBlock>
-        <DataGrid Margin="0,5,0,0" ItemsSource="{Binding Senses}" SelectedItem="{Binding CurrentSense}" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" HeadersVisibility="Column" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Gloss" Binding="{Binding Gloss}" Width="*" />
-                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <xcdg:DataGridControl Name="SensesGrid" Margin="0,5,0,0" ItemsSource="{Binding Senses}" SelectedItem="{Binding CurrentSense}" ReadOnly="True">
+            <xcdg:DataGridControl.Columns>
+				<xcdg:Column FieldName="Gloss" Title="Gloss" Width="200" />
+				<xcdg:Column FieldName="Category" Title="Category" Width="*" />
+            </xcdg:DataGridControl.Columns>
+			<xcdg:DataGridControl.View>
+				<xcdg:TableView>
+					<xcdg:TableView.FixedHeaders>
+						<DataTemplate>
+							<xcdg:ColumnManagerRow />
+						</DataTemplate>
+					</xcdg:TableView.FixedHeaders>
+				</xcdg:TableView>
+			</xcdg:DataGridControl.View>
+        </xcdg:DataGridControl>
     </DockPanel>
 </UserControl>

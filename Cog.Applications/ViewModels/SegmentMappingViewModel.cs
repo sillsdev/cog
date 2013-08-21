@@ -1,9 +1,10 @@
+using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class SegmentMappingViewModel : ViewModelBase
+	public class SegmentMappingViewModel : ViewModelBase, IDataErrorInfo
 	{
 		private readonly string _segment1;
 		private readonly string _segment2;
@@ -29,14 +30,30 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _segment2; }
 		}
 
-		public bool IsSegment1Valid
+		string IDataErrorInfo.this[string columnName]
 		{
-			get { return _isSegment1Valid; }
+			get
+			{
+				switch (columnName)
+				{
+					case "Segment1":
+						if (!_isSegment1Valid)
+							return "This is an invalid segment.";
+						break;
+
+					case "Segment2":
+						if (!_isSegment2Valid)
+							return "This is an invalid segment.";
+						break;
+				}
+
+				return null;
+			}
 		}
 
-		public bool IsSegment2Valid
+		string IDataErrorInfo.Error
 		{
-			get { return _isSegment2Valid; }
+			get { return null; }
 		}
 	}
 }

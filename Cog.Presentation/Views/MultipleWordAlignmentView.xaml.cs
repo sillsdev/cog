@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
@@ -18,6 +19,12 @@ namespace SIL.Cog.Presentation.Views
 		{
 			InitializeComponent();
 			BusyCursor.DisplayUntilIdle();
+		}
+
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (IsVisible)
+				Dispatcher.BeginInvoke(new Action(() => SensesComboBox.Focus()));
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -105,7 +112,5 @@ namespace SIL.Cog.Presentation.Views
 				AlignmentGrid.CurrentItem = null;
 			}
 		}
-
-
 	}
 }

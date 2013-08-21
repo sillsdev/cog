@@ -7,7 +7,7 @@
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
-             mc:Ignorable="d" Loaded="OnLoaded"
+             mc:Ignorable="d" Loaded="OnLoaded" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:MultipleWordAlignmentViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:MultipleWordAlignmentHighlightSegmentConverter x:Key="HighlightConverter" />
@@ -15,7 +15,7 @@
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 			<TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Multiple word alignment" />
-			<ComboBox Name="VarietiesComboBox" Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding SensesView}" SelectedItem="{Binding CurrentSense}" DisplayMemberPath="Gloss" />
+			<ComboBox Name="SensesComboBox" Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding SensesView}" SelectedItem="{Binding CurrentSense}" DisplayMemberPath="Gloss" />
 		</StackPanel>
 		<xcdg:DataGridControl Margin="0,10,0,0" Name="AlignmentGrid" ItemsSource="{Binding WordsView}" ReadOnly="True" SelectionUnit="Cell"
 							  SelectionChanged="AlignmentGrid_OnSelectionChanged">

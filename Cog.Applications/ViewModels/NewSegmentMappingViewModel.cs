@@ -49,12 +49,12 @@ namespace SIL.Cog.Applications.ViewModels
 		private string GetErrorInfo(string segment)
 		{
 			if (string.IsNullOrEmpty(segment))
-				return "Please specify a segment";
+				return "Please specify a segment.";
 			Shape shape;
 			if (!_segmenter.TrySegment(segment, out shape))
-				return "This is an invalid segment";
+				return "This is an invalid segment.";
 			if (shape.Any(n => n.Type() != shape.First.Type()))
-				return "Please specify only one segment";
+				return "Please specify only one segment.";
 			return null;
 		}
 

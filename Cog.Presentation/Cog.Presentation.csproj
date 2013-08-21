@@ -112,7 +112,6 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Behaviors\DataGridBehaviors.cs" />
     <Compile Include="Behaviors\DataGridControlBehaviors.cs" />
     <Compile Include="Behaviors\ItemsControlBehaviors.cs" />
     <Compile Include="Behaviors\ItemsControlDrag.cs" />
@@ -137,6 +136,9 @@
     <Compile Include="Controls\MergedHeadersPanel.cs" />
     <Compile Include="Controls\MergedHeadersSubPanel.cs" />
     <Compile Include="Controls\NetworkGraphLayout.cs" />
+    <Compile Include="Controls\PercentageControl.xaml.cs">
+      <DependentUpon>PercentageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PercentageSlider.xaml.cs">
       <DependentUpon>PercentageSlider.xaml</DependentUpon>
     </Compile>
@@ -168,7 +170,7 @@
     <Compile Include="Converters\PercentageToGradientColorConverter.cs" />
     <Compile Include="Converters\PercentageToStrokeThicknessConverter.cs" />
     <Compile Include="Converters\PercentageToSpectrumColorConverter.cs" />
-    <Compile Include="Converters\ProbabilityToWidthConverter.cs" />
+    <Compile Include="Converters\PercentageToWidthConverter.cs" />
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsControlScrollbarMarkerPositionConverter.cs" />
     <Compile Include="Converters\MultipleWordAlignmentHighlightSegmentConverter.cs" />
@@ -257,11 +259,8 @@
     <Compile Include="Views\BlairCognateIdentifierView.xaml.cs">
       <DependentUpon>BlairCognateIdentifierView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CompareSettingsView.xaml.cs">
-      <DependentUpon>CompareSettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\InputSettingsView.xaml.cs">
-      <DependentUpon>InputSettingsView.xaml</DependentUpon>
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditSenseDialog.xaml.cs">
       <DependentUpon>EditSenseDialog.xaml</DependentUpon>
@@ -356,6 +355,10 @@
     <Page Include="Controls\Block.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PercentageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PercentageSlider.xaml">
       <SubType>Designer</SubType>
@@ -457,13 +460,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CompareSettingsView.xaml">
+    <Page Include="Views\SettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\InputSettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditSenseDialog.xaml">
       <SubType>Designer</SubType>

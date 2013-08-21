@@ -150,7 +150,7 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					case "StrRep":
 						if (_word.Shape.Count == 0)
-							return "The word contains invalid segments";
+							return "The word contains invalid segments.";
 						break;
 				}
 

@@ -1,23 +1,24 @@
-﻿using System;
+using System;
 using System.Windows;
 
 namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
-	/// Interaction logic for SensesView.xaml
+	/// Interaction logic for SettingsView.xaml
 	/// </summary>
-	public partial class SensesView
+	public partial class SettingsView
 	{
-		public SensesView()
+		public SettingsView()
 		{
 			InitializeComponent();
 			BusyCursor.DisplayUntilIdle();
 		}
 
+
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (IsVisible)
-				Dispatcher.BeginInvoke(new Action(() => SensesGrid.Focus()));
+				Dispatcher.BeginInvoke(new Action(() => ComponentSettingsControl.Focus()));
 		}
 	}
 }

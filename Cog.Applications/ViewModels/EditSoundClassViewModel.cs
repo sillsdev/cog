@@ -44,9 +44,9 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					case "Name":
 						if (string.IsNullOrEmpty(_name))
-							return "Please enter a name";
+							return "Please enter a name.";
 						if (_soundClassNames.Contains(_name))
-							return "A natural class with that name already exists";
+							return "A natural class with that name already exists.";
 						break;
 				}
 

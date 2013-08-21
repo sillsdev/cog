@@ -222,6 +222,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public bool CanExit()
 		{
+			CheckSettingsWorkspace(CurrentView);
 			return _projectService.Close();
 		}
 

@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace SIL.Cog.Presentation.Converters
 {
-	public class ProbabilityToWidthConverter : IMultiValueConverter
+	public class PercentageToWidthConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{

@@ -6,6 +6,7 @@
              xmlns:p="clr-namespace:SIL.Cog.Presentation"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:sys="clr-namespace:System;assembly=mscorlib"
+			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              mc:Ignorable="d" StartupUri="Views\MainWindow.xaml"
              x:Class="SIL.Cog.Presentation.App">
     <Application.Resources>
@@ -403,6 +404,25 @@
 					</Setter.Value>
 				</Setter>
 			</Style>
+
+			<DataTemplate x:Key="PhoneticCellContentTemplate">
+				<TextBlock Name="CellContent" Text="{Binding}" FontSize="16" />
+				<DataTemplate.Triggers>
+					<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type xcdg:DataCell}}, Path=HasValidationError}" Value="True">
+						<Setter TargetName="CellContent" Property="TextDecorations">
+							<Setter.Value>
+								<TextDecorationCollection>
+									<TextDecoration Location="Underline" PenOffset="1">
+										<TextDecoration.Pen>
+											<Pen Thickness="2" Brush="Red" DashStyle="{x:Static DashStyles.Dash}" />
+										</TextDecoration.Pen>
+									</TextDecoration>
+								</TextDecorationCollection>
+							</Setter.Value>
+						</Setter>
+					</DataTrigger>
+				</DataTemplate.Triggers>
+			</DataTemplate>
 		</ResourceDictionary>
     </Application.Resources>
 </Application>

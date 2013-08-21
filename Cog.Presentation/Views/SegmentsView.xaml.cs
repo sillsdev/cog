@@ -31,6 +31,12 @@ namespace SIL.Cog.Presentation.Views
 			SegmentsDataGrid.SelectFirstCell();
 		}
 
+		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (IsVisible)
+				Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.Focus()));
+		}
+
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var vm = DataContext as SegmentsViewModel;

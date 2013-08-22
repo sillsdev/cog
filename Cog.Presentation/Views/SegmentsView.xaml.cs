@@ -21,6 +21,7 @@ namespace SIL.Cog.Presentation.Views
 		public SegmentsView()
 		{
 			InitializeComponent();
+			SegmentsDataGrid.ClipboardExporters.Clear();
 			BusyCursor.DisplayUntilIdle();
 		}
 

@@ -46,6 +46,8 @@ namespace SIL.Cog.Applications.Services
 		{
 			_isChanged = true;
 			_project.VarietyPairs.Clear();
+			foreach (GlobalSoundCorrespondenceCollection corrs in _project.GlobalSoundCorrespondenceCollections.Values)
+				corrs.Clear();
 		}
 
 		private void HandleComparisonPerformed(ComparisonPerformedMessage msg)

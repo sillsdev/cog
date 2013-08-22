@@ -10,7 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded" DataContextChanged="OnDataContextChanged">
 	<DockPanel>
 		<TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Segments</TextBlock>
-		<xcdg:DataGridControl x:Name="SegmentsDataGrid" Margin="0,10,0,0" SelectionUnit="Cell" SelectionMode="Single" ReadOnly="True">
+		<xcdg:DataGridControl x:Name="SegmentsDataGrid" Margin="0,10,0,0" SelectionUnit="Cell" ReadOnly="True">
 			<xcdg:DataGridControl.Resources>
 				<DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
 					<TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>

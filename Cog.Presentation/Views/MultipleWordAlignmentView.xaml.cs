@@ -18,6 +18,7 @@ namespace SIL.Cog.Presentation.Views
 		public MultipleWordAlignmentView()
 		{
 			InitializeComponent();
+			AlignmentGrid.ClipboardExporters.Clear();
 			BusyCursor.DisplayUntilIdle();
 		}
 

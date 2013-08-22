@@ -15,6 +15,7 @@ namespace SIL.Cog.Presentation.Views
 		public SimilarityMatrixView()
 		{
 			InitializeComponent();
+			SimMatrixGrid.ClipboardExporters.Clear();
 			BusyCursor.DisplayUntilIdle();
 		}
 

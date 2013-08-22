@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -14,13 +11,8 @@ namespace SIL.Cog.Presentation.Views
 		public VarietyPairView()
 		{
 			InitializeComponent();
+			CorrespondenceDataGrid.ClipboardExporters.Clear();
 			((INotifyCollectionChanged) CorrespondenceDataGrid.Items.SortDescriptions).CollectionChanged += OnSortChanged;
-		}
-
-		private void CorrespondenceDataGrid_OnTargetUpdated(object sender, DataTransferEventArgs e)
-		{
-			if (e.Property == ItemsControl.ItemsSourceProperty)
-				Dispatcher.BeginInvoke(new Action(() => CorrespondenceDataGrid.SelectedItem = null));
 		}
 
 		private void OnSortChanged(object sender, NotifyCollectionChangedEventArgs e)

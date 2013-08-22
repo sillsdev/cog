@@ -6,7 +6,6 @@
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d" Loaded="OnLoaded" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:MultipleWordAlignmentViewModel}">
 	<UserControl.Resources>

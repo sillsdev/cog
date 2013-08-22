@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
-using System.Windows.Data;
-
-namespace SIL.Cog.Presentation.Views
+﻿namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
 	/// Interaction logic for VarietyView.xaml
@@ -12,12 +8,8 @@ namespace SIL.Cog.Presentation.Views
 		public VarietyView()
 		{
 			InitializeComponent();
-		}
-
-		private void SegmentsDataGrid_OnTargetUpdated(object sender, DataTransferEventArgs e)
-		{
-			if (e.Property == ItemsControl.ItemsSourceProperty)
-				Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.SelectedItem = null));
+			AffixesGrid.ClipboardExporters.Clear();
+			SegmentsDataGrid.ClipboardExporters.Clear();
 		}
 	}
 }

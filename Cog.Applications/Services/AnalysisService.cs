@@ -110,6 +110,8 @@ namespace SIL.Cog.Applications.Services
 		{
 			var generator = new VarietyPairGenerator();
 			generator.Process(_projectService.Project);
+			foreach (GlobalSoundCorrespondenceCollection corrs in _projectService.Project.GlobalSoundCorrespondenceCollections.Values)
+				corrs.Clear();
 
 			var pipeline = new MultiThreadedPipeline<VarietyPair>(GetCompareProcessors());
 
@@ -129,6 +131,8 @@ namespace SIL.Cog.Applications.Services
 					if (vm.Canceled)
 					{
 						_projectService.Project.VarietyPairs.Clear();
+						foreach (GlobalSoundCorrespondenceCollection corrs in _projectService.Project.GlobalSoundCorrespondenceCollections.Values)
+							corrs.Clear();
 					}
 					else
 					{

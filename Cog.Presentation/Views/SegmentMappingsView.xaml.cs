@@ -8,6 +8,7 @@
 		public SegmentMappingsView()
 		{
 			InitializeComponent();
+			MappingsGrid.ClipboardExporters.Clear();
 		}
 	}
 }

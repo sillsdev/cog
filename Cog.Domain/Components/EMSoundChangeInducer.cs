@@ -59,15 +59,18 @@ namespace SIL.Cog.Domain.Components
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
-				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
-				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
-				if ((pair.SoundChangeProbabilityDistribution == null && alignment.NormalizedScore >= _initialAlignmentThreshold) || (pair.SoundChangeProbabilityDistribution != null && wordPair.AreCognatePredicted))
+				if (pair.SoundChangeProbabilityDistribution == null || wordPair.AreCognatePredicted)
 				{
-					for (int column = 0; column < alignment.ColumnCount; column++)
+					IWordAlignerResult alignerResult = aligner.Compute(wordPair);
+					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
+					if (pair.SoundChangeProbabilityDistribution != null || alignment.NormalizedScore >= _initialAlignmentThreshold)
 					{
-						SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, wordPair.Word1, aligner.ContextualSoundClasses);
-						Ngram corr = alignment[1, column].ToNgram(_segmentPool);
-						expectedCounts[lhs].Increment(corr);
+						for (int column = 0; column < alignment.ColumnCount; column++)
+						{
+							SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, wordPair.Word1, aligner.ContextualSoundClasses);
+							Ngram corr = alignment[1, column].ToNgram(_segmentPool);
+							expectedCounts[lhs].Increment(corr);
+						}
 					}
 				}
 			}

@@ -10,6 +10,7 @@ namespace SIL.Cog.Presentation.Views
 		public EditNaturalClassDialog()
 		{
 			InitializeComponent();
+			SelectedFeaturesDataGrid.ClipboardExporters.Clear();
 		}
 
 		private void okButton_Click(object sender, RoutedEventArgs e)

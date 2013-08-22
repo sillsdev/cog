@@ -20,7 +20,7 @@
         <Grid>
             <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">To get started, click on "Add a new variety" or "Add a new sense" to begin creating word lists, or click on "Import word lists" if you have already created word lists in another application.</TextBlock>
 			<xcdg:DataGridControl x:Name="WordListsGrid" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}"
-								  Margin="0,10,0,0" SelectionUnit="Cell" SelectionMode="Single" SelectionChanged="WordListsGrid_OnSelectionChanged">
+								  Margin="0,10,0,0" SelectionUnit="Cell" SelectionChanged="WordListsGrid_OnSelectionChanged">
 				<xcdg:DataGridControl.Resources>
 					<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
 						<EventSetter Event="MouseRightButtonUp" Handler="Cell_OnMouseRightButtonUp" />
@@ -45,6 +45,8 @@
 							</b:TextBlockBehaviors.InlinesList>
 							<TextBlock.ContextMenu>
 								<ContextMenu>
+									<MenuItem Command="Copy" />
+									<Separator />
 									<MenuItem Header="Show in varieties" Command="{Binding ShowInVarietiesCommand}" />
 								</ContextMenu>
 							</TextBlock.ContextMenu>

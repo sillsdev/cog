@@ -126,5 +126,43 @@ namespace SIL.Cog.Presentation.Behaviors
 		{
 			datagrid.SetValue(AutoScrollOnSelectionProperty, value);
 		}
+
+		public static readonly DependencyProperty IsInitialSelectionDisabledProperty =
+			DependencyProperty.RegisterAttached(
+				"IsInitialSelectionDisabled", 
+				typeof(bool), 
+				typeof(DataGridControlBehaviors), 
+				new UIPropertyMetadata(false, OnIsInitialSelectionDisabledChanged));
+
+		private static void OnIsInitialSelectionDisabledChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		{
+			var dataGrid = depObj as DataGridControl;
+			if (dataGrid == null)
+				return;
+
+			if (!(e.NewValue is bool))
+				return;
+
+			if ((bool) e.NewValue)
+				dataGrid.ItemsSourceChangeCompleted += DataGrid_ItemsSourceChangeCompleted;
+			else
+				dataGrid.ItemsSourceChangeCompleted -= DataGrid_ItemsSourceChangeCompleted;
+		}
+
+		private static void DataGrid_ItemsSourceChangeCompleted(object sender, EventArgs e)
+		{
+			var dataGrid = (DataGridControl) sender;
+			dataGrid.SelectedItem = null;
+		}
+
+		public static void SetIsInitialSelectionDisabled(DataGridControl dataGrid, bool value)
+		{
+			dataGrid.SetValue(IsInitialSelectionDisabledProperty, value);
+		}
+
+		public static bool GetIsInitialSelectionDisabled(DataGridControl dataGrid)
+		{
+			return (bool) dataGrid.GetValue(IsInitialSelectionDisabledProperty);
+		}
 	}
 }

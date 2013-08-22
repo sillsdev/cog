@@ -24,7 +24,7 @@
         <HeaderedContentControl DockPanel.Dock="Top" Margin="0,10,0,10" Header="Affixes">
             <StackPanel>
                 <Grid>
-                    <xcdg:DataGridControl ItemsSource="{Binding Affixes}" Height="125" SelectedItem="{Binding CurrentAffix}" ReadOnly="True" b:DataGridControlBehaviors.AutoScrollOnSelection="True">
+                    <xcdg:DataGridControl Name="AffixesGrid" ItemsSource="{Binding Affixes}" Height="125" SelectedItem="{Binding CurrentAffix}" ReadOnly="True" b:DataGridControlBehaviors.AutoScrollOnSelection="True">
                         <xcdg:DataGridControl.Columns>
 							<xcdg:Column FieldName="StrRep" Title="Affix" Width="200" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
 							<xcdg:Column FieldName="Type" Title="Type" Width="70">
@@ -96,8 +96,7 @@
 				<v:WordsView DataContext="{Binding Words}" />
             </HeaderedContentControl>
             <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Header="Segments">
-				<xcdg:DataGridControl Name="SegmentsDataGrid" ItemsSource="{Binding Source={StaticResource SegmentsSource}, NotifyOnTargetUpdated=True}" TargetUpdated="SegmentsDataGrid_OnTargetUpdated"
-                        SelectedItem="{Binding CurrentSegment}" ReadOnly="True">
+				<xcdg:DataGridControl Name="SegmentsDataGrid" ItemsSource="{Binding Source={StaticResource SegmentsSource}}" SelectedItem="{Binding CurrentSegment}" ReadOnly="True">
 					<xcdg:DataGridControl.Columns>
 						<xcdg:Column FieldName="StrRep" Title="Segment" Width="80">
 							<xcdg:Column.CellContentTemplate>

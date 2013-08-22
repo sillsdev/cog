@@ -116,6 +116,8 @@
 		<Setter Property="ItemScrollingBehavior" Value="Immediate" />
 		<Setter Property="AutoCreateColumns" Value="False" />
 		<Setter Property="CellErrorStyle" Value="{x:Null}" />
+		<Setter Property="b:DataGridControlBehaviors.IsInitialSelectionDisabled" Value="True" />
+		<Setter Property="SelectionMode" Value="Single" />
 	</Style>
 	
 	<Style TargetType="xcdg:TableView">

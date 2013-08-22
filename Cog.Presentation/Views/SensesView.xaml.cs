@@ -11,6 +11,7 @@ namespace SIL.Cog.Presentation.Views
 		public SensesView()
 		{
 			InitializeComponent();
+			SensesGrid.ClipboardExporters.Clear();
 			BusyCursor.DisplayUntilIdle();
 		}
 

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using SIL.Cog.Applications.ViewModels;
-
-namespace SIL.Cog.Presentation.Views
+﻿namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
 	/// Interaction logic for SoundClassesView.xaml
@@ -15,6 +8,7 @@ namespace SIL.Cog.Presentation.Views
 		public SoundClassesView()
 		{
 			InitializeComponent();
+			SoundClassesGrid.ClipboardExporters.Clear();
 		}
 	}
 }

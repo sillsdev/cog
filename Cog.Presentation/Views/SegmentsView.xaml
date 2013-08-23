@@ -19,6 +19,7 @@
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="0.6*" />
 			</Grid.RowDefinitions>
 			<HeaderedContentControl Grid.Row="0" Margin="0,10,0,0" Header="Segment frequencies">
@@ -49,7 +50,8 @@
 					</xcdg:DataGridControl>
 				</Grid>
 			</HeaderedContentControl>
-			<HeaderedContentControl Grid.Row="1" Margin="0,10,0,0" Header="Observed words">
+			<GridSplitter Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="4" Margin="0,5,0,1" />
+			<HeaderedContentControl Grid.Row="2" Header="Observed words">
 				<v:SegmentsWordsView DataContext="{Binding ObservedWords}" />
 			</HeaderedContentControl>
 		</Grid>

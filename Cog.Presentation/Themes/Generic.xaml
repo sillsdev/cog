@@ -958,4 +958,14 @@
 			</Trigger>
 		</Style.Triggers>
 	</Style>
+	
+	<Style TargetType="GridSplitter">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="ShowsPreview" Value="True" />
+		<Style.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter Property="Background" Value="LightGray" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
 </ResourceDictionary>

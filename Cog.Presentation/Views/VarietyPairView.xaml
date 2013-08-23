@@ -22,7 +22,7 @@
 		</xcdg:DataGridCollectionViewSource>
 	</UserControl.Resources>
     <DockPanel>
-        <HeaderedContentControl Header="Similarity" Margin="0,10,0,10" DockPanel.Dock="Top">
+        <HeaderedContentControl Header="Similarity" Margin="0,10,0,0" DockPanel.Dock="Top">
             <Grid>
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
@@ -47,19 +47,23 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
-			<HeaderedContentControl Grid.Column="0" Grid.Row="0" Margin="0,10,10,0" Header="Likely cognates">
+			<HeaderedContentControl Grid.Column="0" Grid.Row="0" Margin="0,10,0,0" Header="Likely cognates">
 				<v:WordPairsView DataContext="{Binding Cognates}" />
 			</HeaderedContentControl>
-			<HeaderedContentControl Grid.Column="0" Grid.Row="1" Margin="0,10,10,0" Header="Likely non-cognates">
+			<GridSplitter Grid.Row="1" Height="4" Margin="0,5,0,1" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+			<HeaderedContentControl Grid.Column="0" Grid.Row="2" Header="Likely non-cognates">
 				<v:WordPairsView DataContext="{Binding Noncognates}" />
 			</HeaderedContentControl>
-            <HeaderedContentControl Margin="10,10,0,0" Grid.Column="1" Grid.RowSpan="2" Header="Sound changes">
+			<GridSplitter Grid.Column="1" Grid.RowSpan="3" Margin="3,10,3,0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="4" />
+            <HeaderedContentControl Margin="0,10,0,0" Grid.Column="2" Grid.RowSpan="3" Header="Sound changes">
                 <xcdg:DataGridControl Name="CorrespondenceDataGrid" ItemsSource="{Binding Source={StaticResource SoundChangesSource}}" AutoCreateColumns="False"
 									  ReadOnly="True" SelectedItem="{Binding CurrentSoundChange}">
 					<xcdg:DataGridControl.Resources>

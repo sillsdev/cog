@@ -5,13 +5,15 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class VarietySegmentViewModel : SegmentViewModel
 	{
+		private readonly VarietyViewModel _variety;
 		private readonly int _frequency;
 		private readonly double _probability;
 
-		public VarietySegmentViewModel(Variety variety, Segment segment, SyllablePosition position)
+		public VarietySegmentViewModel(VarietyViewModel variety, Segment segment, SyllablePosition position)
 			: base(segment)
 		{
-			FrequencyDistribution<Segment> freqDist = variety.SegmentFrequencyDistributions[position];
+			_variety = variety;
+			FrequencyDistribution<Segment> freqDist = variety.DomainVariety.SegmentFrequencyDistributions[position];
 			_frequency = freqDist[segment];
 			_probability = (double) _frequency / freqDist.SampleOutcomeCount;
 		}
@@ -24,6 +26,11 @@ namespace SIL.Cog.Applications.ViewModels
 		public int Frequency
 		{
 			get { return _frequency; }
+		}
+
+		public VarietyViewModel Variety
+		{
+			get { return _variety; }
 		}
 	}
 }

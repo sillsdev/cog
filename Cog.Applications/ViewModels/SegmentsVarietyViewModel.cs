@@ -15,7 +15,7 @@ namespace SIL.Cog.Applications.ViewModels
 			: base(variety)
 		{
 			_segments = new ReadOnlyMirroredList<Segment, VarietySegmentViewModel>(segmentsViewModel.DomainSegments,
-				segment => new VarietySegmentViewModel(variety, segment, segmentsViewModel.DomainSyllablePosition), viewModel => viewModel.DomainSegment);
+				segment => new VarietySegmentViewModel(this, segment, segmentsViewModel.DomainSyllablePosition), viewModel => viewModel.DomainSegment);
 			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), DomainVariety)));
 		}
 

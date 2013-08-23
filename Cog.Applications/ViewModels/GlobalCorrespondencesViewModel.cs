@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -10,7 +7,6 @@ using QuickGraph;
 using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -18,7 +14,7 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly IProjectService _projectService;
 		private readonly IImageExportService _imageExportService;
-		private readonly WordPairsViewModel _wordPairs;
+		private readonly WordPairsViewModel _observedWordPairs;
 		private GlobalCorrespondenceEdge _selectedCorrespondence;
 		private ViewModelSyllablePosition _syllablePosition;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
@@ -29,8 +25,6 @@ namespace SIL.Cog.Applications.ViewModels
 		private IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> _graph; 
 
 		private FindViewModel _findViewModel;
-		private WordPairViewModel _startWordPair;
-		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
 		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IImageExportService imageExportService, IGraphService graphService,
 			WordPairsViewModel.Factory wordPairsFactory)
@@ -48,8 +42,6 @@ namespace SIL.Cog.Applications.ViewModels
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ClearGraph());
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 
-			_selectedWordPairsMonitor = new SimpleMonitor();
-
 			_findCommand = new RelayCommand(Find);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Syllable position",
@@ -63,15 +55,14 @@ namespace SIL.Cog.Applications.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
-					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => _wordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
-					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _wordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending)))))
+					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => _observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
+					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _observedWordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending)))))
 				));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart))));
-			_wordPairs = wordPairsFactory();
-			_wordPairs.IncludeVarietyNamesInSelectedText = true;
-			_wordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending);
-			_wordPairs.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
+			_observedWordPairs = wordPairsFactory();
+			_observedWordPairs.IncludeVarietyNamesInSelectedText = true;
+			_observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending);
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -80,12 +71,6 @@ namespace SIL.Cog.Applications.ViewModels
 				GenerateGraph();
 			else
 				ClearGraph();
-		}
-
-		private void SelectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (!_selectedWordPairsMonitor.Busy)
-				_startWordPair = null;
 		}
 
 		private void ExportChart()
@@ -99,68 +84,14 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 
 			_findViewModel = new FindViewModel(_dialogService, FindNext);
-			_findViewModel.PropertyChanged += (sender, args) => _startWordPair = null;
+			_findViewModel.PropertyChanged += (sender, args) => _observedWordPairs.ResetSearch();
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
 
 		private void FindNext()
 		{
-			if (_wordPairs.WordPairs.Count == 0)
-			{
-				SearchEnded();
-				return;
-			}
-			if (_wordPairs.SelectedWordPairs.Count == 0)
-			{
-				_startWordPair = _wordPairs.WordPairsView.Cast<WordPairViewModel>().Last();
-			}
-			else if (_startWordPair == null)
-			{
-				_startWordPair = _wordPairs.SelectedWordPairs[0];
-			}
-			else if (_wordPairs.SelectedWordPairs.Contains(_startWordPair))
-			{
-				SearchEnded();
-				return;
-			}
-
-			List<WordPairViewModel> wordPairs = _wordPairs.WordPairsView.Cast<WordPairViewModel>().ToList();
-			WordPairViewModel curWordPair = _wordPairs.SelectedWordPairs.Count == 0 ? _startWordPair : _wordPairs.SelectedWordPairs[0];
-			int wordPairIndex = wordPairs.IndexOf(curWordPair);
-			do
-			{
-				wordPairIndex = (wordPairIndex + 1) % wordPairs.Count;
-				curWordPair = wordPairs[wordPairIndex];
-				bool match = false;
-				switch (_findViewModel.Field)
-				{
-					case FindField.Form:
-						match = curWordPair.DomainWordPair.Word1.StrRep.Contains(_findViewModel.String)
-							|| curWordPair.DomainWordPair.Word2.StrRep.Contains(_findViewModel.String);
-						break;
-
-					case FindField.Sense:
-						match = curWordPair.Sense.Gloss.Contains(_findViewModel.String);
-						break;
-				}
-				if (match)
-				{
-					using (_selectedWordPairsMonitor.Enter())
-					{
-						_wordPairs.SelectedWordPairs.Clear();
-						_wordPairs.SelectedWordPairs.Add(curWordPair);
-					}
-					return;
-				}
-			}
-			while (_startWordPair != curWordPair);
-			SearchEnded();
-		}
-
-		private void SearchEnded()
-		{
-			_findViewModel.ShowSearchEndedMessage();
-			_startWordPair = null;
+			if (!_observedWordPairs.FindNext(_findViewModel.Field, _findViewModel.String, true, false))
+				_findViewModel.ShowSearchEndedMessage();
 		}
 
 		private void HandleViewChanged(ViewChangedMessage msg)
@@ -200,62 +131,52 @@ namespace SIL.Cog.Applications.ViewModels
 					_busyService.ShowBusyIndicatorUntilUpdated();
 					if (oldCorr != null)
 						oldCorr.IsSelected = false;
-					_wordPairs.WordPairs.Clear();
-					_wordPairs.SelectedWordPairs.Clear();
+					_observedWordPairs.WordPairs.Clear();
 					if (_selectedCorrespondence != null)
 					{
 						_selectedCorrespondence.IsSelected = true;
 
+						var seg1 = (GlobalSegmentVertex) _selectedCorrespondence.Source;
+						var seg2 = (GlobalSegmentVertex) _selectedCorrespondence.Target;
 						IWordAligner aligner = _projectService.Project.WordAligners["primary"];
 						foreach (WordPair wp in _selectedCorrespondence.DomainWordPairs)
 						{
 							var vm = new WordPairViewModel(aligner, wp, true);
-							switch (_syllablePosition)
+							foreach (AlignedNodeViewModel an in vm.AlignedNodes)
 							{
-								case ViewModelSyllablePosition.Onset:
-									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
+								if ((seg1.StrReps.Contains(an.StrRep1) && seg2.StrReps.Contains(an.StrRep2))
+								    || (seg1.StrReps.Contains(an.StrRep2) && seg2.StrReps.Contains(an.StrRep1)))
+								{
+									bool correctPosition = false;
+									switch (_syllablePosition)
 									{
-										if ((!an.DomainCell1.IsNull && an.DomainCell1.First.Annotation.Parent.Children.First == an.DomainCell1.First.Annotation)
-										    || (!an.DomainCell2.IsNull && an.DomainCell2.First.Annotation.Parent.Children.First == an.DomainCell2.First.Annotation))
-										{
-											CheckAlignedNodeSelected(an);
-										}
+										case ViewModelSyllablePosition.Onset:
+											correctPosition = (!an.DomainCell1.IsNull && an.DomainCell1.First.Annotation.Parent.Children.First == an.DomainCell1.First.Annotation)
+												|| (!an.DomainCell2.IsNull && an.DomainCell2.First.Annotation.Parent.Children.First == an.DomainCell2.First.Annotation);
+											break;
+										case ViewModelSyllablePosition.Nucleus:
+											correctPosition = true;
+											break;
+										case ViewModelSyllablePosition.Coda:
+											correctPosition = (!an.DomainCell1.IsNull && an.DomainCell1.Last.Annotation.Parent.Children.Last == an.DomainCell1.Last.Annotation)
+											    || (!an.DomainCell2.IsNull && an.DomainCell2.Last.Annotation.Parent.Children.Last == an.DomainCell2.Last.Annotation);
+											break;
 									}
-									break;
-								case ViewModelSyllablePosition.Nucleus:
-									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
-										CheckAlignedNodeSelected(an);
-									break;
-								case ViewModelSyllablePosition.Coda:
-									foreach (AlignedNodeViewModel an in vm.AlignedNodes)
-									{
-										if ((!an.DomainCell1.IsNull && an.DomainCell1.Last.Annotation.Parent.Children.Last == an.DomainCell1.Last.Annotation)
-										    || (!an.DomainCell2.IsNull && an.DomainCell2.Last.Annotation.Parent.Children.Last == an.DomainCell2.Last.Annotation))
-										{
-											CheckAlignedNodeSelected(an);
-										}
-									}
-									break;
+
+									if (correctPosition)
+										an.IsSelected = true;
+								}
 							}
-							_wordPairs.WordPairs.Add(vm);
+							_observedWordPairs.WordPairs.Add(vm);
 						}
 					}
 				}
 			}
 		}
 
-		private void CheckAlignedNodeSelected(AlignedNodeViewModel an)
+		public WordPairsViewModel ObservedWordPairs
 		{
-			var seg1 = (GlobalSegmentVertex) _selectedCorrespondence.Source;
-			var seg2 = (GlobalSegmentVertex) _selectedCorrespondence.Target;
-
-			an.IsSelected = (seg1.StrReps.Contains(an.StrRep1) && seg2.StrReps.Contains(an.StrRep2))
-				|| (seg1.StrReps.Contains(an.StrRep2) && seg2.StrReps.Contains(an.StrRep1));
-		}
-
-		public WordPairsViewModel WordPairs
-		{
-			get { return _wordPairs; }
+			get { return _observedWordPairs; }
 		}
 
 		public ViewModelSyllablePosition SyllablePosition

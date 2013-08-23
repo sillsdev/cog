@@ -1,41 +1,80 @@
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Applications.Services;
-using SIL.Cog.Domain;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordsViewModel : ViewModelBase
 	{
-		public delegate WordsViewModel Factory(Variety variety);
+		public delegate WordsViewModel Factory(IObservableList<WordViewModel> words);
 
 		private readonly IBusyService _busyService;
-		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words;
+		private readonly ReadOnlyObservableList<WordViewModel> _words; 
 		private ICollectionView _wordsView;
 		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly BindableList<WordViewModel> _selectedSegmentWords;
 		private SortDescription? _deferredSortDesc;
+		private WordViewModel _startWord;
+		private readonly SimpleMonitor _selectedWordsMonitor;
 
-		public WordsViewModel(IBusyService busyService, WordViewModel.Factory wordFactory, Variety variety)
+		public WordsViewModel(IBusyService busyService, IObservableList<WordViewModel> words)
 		{
 			_busyService = busyService;
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word => wordFactory(word), vm => vm.DomainWord);
-			variety.Words.CollectionChanged += WordsChanged;
+			var readonlyWords = words as ReadOnlyObservableList<WordViewModel>;
+			_words = readonlyWords ?? new ReadOnlyObservableList<WordViewModel>(words);
+			words.CollectionChanged += WordsChanged;
 			_selectedWords = new BindableList<WordViewModel>();
+			_selectedWords.CollectionChanged += _selectedWords_CollectionChanged;
 			_selectedSegmentWords = new BindableList<WordViewModel>();
+			_selectedWordsMonitor = new SimpleMonitor();
 		}
 
 		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			_selectedWords.Clear();
-			foreach (WordViewModel word in _words)
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddWords(e.NewItems.Cast<WordViewModel>());
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					RemoveWords(e.OldItems.Cast<WordViewModel>());
+					break;
+				case NotifyCollectionChangedAction.Replace:
+					RemoveWords(e.OldItems.Cast<WordViewModel>());
+					AddWords(e.NewItems.Cast<WordViewModel>());
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					_selectedWords.Clear();
+					using (_selectedSegmentWords.BulkUpdate())
+					{
+						_selectedSegmentWords.Clear();
+						AddWords(_words);
+					}
+					break;
+			}
+			ResetSearch();
+		}
+
+		private void AddWords(IEnumerable<WordViewModel> words)
+		{
+			foreach (WordViewModel word in words)
 			{
 				if (word.Segments.Any(s => s.IsSelected))
-					_selectedWords.Add(word);
+					_selectedSegmentWords.Add(word);
+			}
+		}
+
+		private void RemoveWords(IEnumerable<WordViewModel> words)
+		{
+			foreach (WordViewModel word in words)
+			{
+				_selectedSegmentWords.Remove(word);
+				_selectedWords.Remove(word);
 			}
 		}
 
@@ -55,6 +94,71 @@ namespace SIL.Cog.Applications.ViewModels
 				_wordsView.SortDescriptions.Add(sortDesc);
 			else
 				_wordsView.SortDescriptions[0] = sortDesc;
+		}
+
+		internal bool FindNext(FindField field, string str)
+		{
+			if (_words.Count == 0)
+			{
+				ResetSearch();
+				return false;
+			}
+			if (_selectedWords.Count == 0)
+			{
+				_startWord = _wordsView.Cast<WordViewModel>().Last();
+			}
+			else if (_startWord == null)
+			{
+				_startWord = _selectedWords[0];
+			}
+			else if (_selectedWords.Contains(_startWord))
+			{
+				ResetSearch();
+				return false;
+			}
+
+			List<WordViewModel> words = _wordsView.Cast<WordViewModel>().ToList();
+			WordViewModel curWord = _selectedWords.Count == 0 ? _startWord : _selectedWords[0];
+			int wordIndex = words.IndexOf(curWord);
+			do
+			{
+				wordIndex = (wordIndex + 1) % words.Count;
+				curWord = words[wordIndex];
+				bool match = false;
+				switch (field)
+				{
+					case FindField.Form:
+						match = curWord.StrRep.Contains(str);
+						break;
+
+					case FindField.Sense:
+						match = curWord.Sense.Gloss.Contains(str);
+						break;
+				}
+				if (match && _startWord != curWord)
+				{
+					using (_selectedWordsMonitor.Enter())
+					{
+						_selectedWords.Clear();
+						_selectedWords.Add(curWord);
+					}
+					return true;
+				}
+			}
+			while (_startWord != curWord);
+			ResetSearch();
+			return false;
+		}
+
+		internal void ResetSearch()
+		{
+			_startWord = null;
+		}
+
+		private void _selectedWords_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!_selectedWordsMonitor.Busy)
+				ResetSearch();
 		}
 
 		public string SelectedWordsText

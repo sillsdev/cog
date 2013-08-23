@@ -171,15 +171,14 @@ namespace SIL.Cog.Presentation.Services
 
 		private bool FindViewModelView(DependencyObject obj, object viewModel)
 		{
+			var elem = obj as FrameworkElement;
+			if (elem != null && elem.DataContext == viewModel)
+				return true;
+
 			// Search immediate children first (breadth-first)
 			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
 			{
 				DependencyObject childObj = VisualTreeHelper.GetChild(obj, i);
-
-				var child = childObj as FrameworkElement;
-				if (child != null && child.DataContext == viewModel)
-					return true;
-
 				if (FindViewModelView(childObj, viewModel))
 					return true;
 			}

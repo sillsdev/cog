@@ -47,7 +47,7 @@
 			</Grid>
 		</StackPanel>
 		<HeaderedContentControl Grid.Row="1" Header="Observed word pairs">
-			<v:GlobalWordPairsView DataContext="{Binding WordPairs}" />
+			<v:GlobalWordPairsView DataContext="{Binding ObservedWordPairs}" />
 		</HeaderedContentControl>
 	</Grid>
 </UserControl>

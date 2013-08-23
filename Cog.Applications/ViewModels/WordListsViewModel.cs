@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -23,6 +25,7 @@ namespace SIL.Cog.Applications.ViewModels
  		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 		private readonly ICommand _findCommand;
+		private ICollectionView _varietiesView;
 
 		private WordListsVarietySenseViewModel _startVarietySense;
 		private FindViewModel _findViewModel;
@@ -136,17 +139,18 @@ namespace SIL.Cog.Applications.ViewModels
 			switch (_findViewModel.Field)
 			{
 				case FindField.Form:
-					int varietyIndex = _varieties.IndexOf(variety);
+					List<WordListsVarietyViewModel> varieties = _varietiesView.Cast<WordListsVarietyViewModel>().ToList();
+					int varietyIndex = varieties.IndexOf(variety);
 					do
 					{
 						senseIndex++;
-						if (senseIndex == _varieties[varietyIndex].Senses.Count)
+						if (senseIndex == varieties[varietyIndex].Senses.Count)
 						{
 							varietyIndex = (varietyIndex + 1) % _varieties.Count;
 							senseIndex = 0;
 						}
 
-						curVarietySense = _varieties[varietyIndex].Senses[senseIndex];
+						curVarietySense = varieties[varietyIndex].Senses[senseIndex];
 						if (curVarietySense.Words.Any(w => w.StrRep.Contains(_findViewModel.String)))
 						{
 							Set(() => CurrentVarietySense, ref _currentVarietySense, curVarietySense);
@@ -224,6 +228,12 @@ namespace SIL.Cog.Applications.ViewModels
 		public ReadOnlyObservableList<WordListsVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
+		}
+
+		public ICollectionView VarietiesView
+		{
+			get { return _varietiesView; }
+			set { Set(() => VarietiesView, ref _varietiesView, value); }
 		}
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)

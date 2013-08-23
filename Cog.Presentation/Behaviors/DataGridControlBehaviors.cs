@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
@@ -152,7 +154,19 @@ namespace SIL.Cog.Presentation.Behaviors
 		private static void DataGrid_ItemsSourceChangeCompleted(object sender, EventArgs e)
 		{
 			var dataGrid = (DataGridControl) sender;
-			dataGrid.SelectedItem = null;
+			switch (dataGrid.SelectionUnit)
+			{
+				case SelectionUnit.Cell:
+					dataGrid.Dispatcher.BeginInvoke(new Action(() =>
+						{
+							dataGrid.CurrentColumn = null;
+							dataGrid.CurrentItem = null;
+						}));
+					break;
+				case SelectionUnit.Row:
+					dataGrid.SelectedItems.Clear();
+					break;
+			}
 		}
 
 		public static void SetIsInitialSelectionDisabled(DataGridControl dataGrid, bool value)
@@ -163,6 +177,71 @@ namespace SIL.Cog.Presentation.Behaviors
 		public static bool GetIsInitialSelectionDisabled(DataGridControl dataGrid)
 		{
 			return (bool) dataGrid.GetValue(IsInitialSelectionDisabledProperty);
+		}
+
+		public static readonly DependencyProperty IsUnselectableProperty =
+			DependencyProperty.RegisterAttached(
+				"IsUnselectable", 
+				typeof(bool), 
+				typeof(DataGridControlBehaviors), 
+				new UIPropertyMetadata(false, OnIsUnselectableChanged));
+
+		private static void OnIsUnselectableChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		{
+			var dataGrid = depObj as DataGridControl;
+			if (dataGrid == null)
+				return;
+
+			if (!(e.NewValue is bool))
+				return;
+
+			if ((bool) e.NewValue)
+				dataGrid.PreviewMouseLeftButtonUp += DataGrid_PreviewMouseLeftButtonUp;
+			else
+				dataGrid.PreviewMouseLeftButtonUp -= DataGrid_PreviewMouseLeftButtonUp;
+		}
+
+		private static void DataGrid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			var dataGrid = (DataGridControl) sender;
+			if (dataGrid.SelectionMode == SelectionMode.Single && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+			{
+				var elem = (FrameworkElement) e.OriginalSource;
+
+				switch (dataGrid.SelectionUnit)
+				{
+					case SelectionUnit.Cell:
+						var cell = elem.FindVisualAncestor<DataCell>();
+						if (cell.IsSelected)
+						{
+							dataGrid.SelectedCellRanges.Clear();
+							dataGrid.CurrentColumn = null;
+							dataGrid.CurrentItem = null;
+						}
+						break;
+
+					case SelectionUnit.Row:
+						var row = elem.FindVisualAncestor<DataRow>();
+						if (row.IsSelected)
+						{
+							dataGrid.SelectedItem = null;
+							dataGrid.CurrentColumn = null;
+							dataGrid.CurrentItem = null;
+						}
+						break;
+				}
+				e.Handled = true;
+			}
+		}
+
+		public static void SetIsUnselectable(DataGridControl dataGrid, bool value)
+		{
+			dataGrid.SetValue(IsUnselectableProperty, value);
+		}
+
+		public static bool GetIsUnselectable(DataGridControl dataGrid)
+		{
+			return (bool) dataGrid.GetValue(IsUnselectableProperty);
 		}
 	}
 }

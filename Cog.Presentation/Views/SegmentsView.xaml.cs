@@ -6,9 +6,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Linq;
+using System.Windows.Input;
+using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
+using SIL.Collections;
 using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views
@@ -18,10 +21,14 @@ namespace SIL.Cog.Presentation.Views
 	/// </summary>
 	public partial class SegmentsView
 	{
+		private readonly SimpleMonitor _monitor;
+		private InputBinding _findBinding;
+
 		public SegmentsView()
 		{
 			InitializeComponent();
 			SegmentsDataGrid.ClipboardExporters.Clear();
+			_monitor = new SimpleMonitor();
 			BusyCursor.DisplayUntilIdle();
 		}
 
@@ -29,13 +36,28 @@ namespace SIL.Cog.Presentation.Views
 		{
 			LoadCollectionView();
 			LoadMergedHeaders();
-			SegmentsDataGrid.SelectFirstCell();
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			var window = this.FindVisualAncestor<Window>();
 			if (IsVisible)
-				Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.Focus()));
+			{
+				window.InputBindings.Add(_findBinding);
+				Dispatcher.BeginInvoke(new Action(() =>
+					{
+						SegmentsDataGrid.Focus();
+						if (SegmentsDataGrid.SelectedCellRanges.Count == 0)
+						{
+							SegmentsDataGrid.CurrentColumn = null;
+							SegmentsDataGrid.CurrentItem = null;
+						}
+					}));
+			}
+			else
+			{
+				window.InputBindings.Remove(_findBinding);
+			}
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -49,6 +71,7 @@ namespace SIL.Cog.Presentation.Views
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
 			vm.Categories.CollectionChanged += Categories_CollectionChanged;
+			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
 		}
 
 		private void Categories_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -59,7 +82,6 @@ namespace SIL.Cog.Presentation.Views
 		private void Segments_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			LoadCollectionView();
-			SegmentsDataGrid.SelectFirstCell();
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -70,10 +92,35 @@ namespace SIL.Cog.Presentation.Views
 				case "Varieties":
 					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 					AddVarieties(vm.Varieties);
+					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
+					break;
+
+				case "CurrentSegment":
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
-							LoadCollectionView();
-							SegmentsDataGrid.SelectFirstCell();
+							if (_monitor.Busy)
+								return;
+
+							using (_monitor.Enter())
+							{
+								SegmentsDataGrid.SelectedCellRanges.Clear();
+								if (vm.CurrentSegment != null)
+								{
+									VarietyViewModel variety = vm.CurrentSegment.Variety;
+									int itemIndex = SegmentsDataGrid.Items.IndexOf(variety);
+									SegmentsDataGrid.BringItemIntoView(variety);
+									SegmentsDataGrid.Dispatcher.BeginInvoke(new Action(() =>
+									    {
+									        var row = (DataRow) SegmentsDataGrid.GetContainerFromIndex(itemIndex);
+										    if (row != null)
+										    {
+											    Cell cell = row.Cells.Single(c => c.DataContext == vm.CurrentSegment);
+												SegmentsDataGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
+											    cell.BringIntoView();
+										    }
+									    }), DispatcherPriority.Background);
+								}
+							}
 						});
 					break;
 			}
@@ -159,6 +206,29 @@ namespace SIL.Cog.Presentation.Views
 				case "Name":
 					DispatcherHelper.CheckBeginInvokeOnUI(() => SegmentsDataGrid.Columns[0].SetWidthToFit<SegmentsVarietyViewModel>(v => v.Name, 18));
 					break;
+			}
+		}
+
+		private void SegmentsDataGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
+		{
+			var vm = (SegmentsViewModel) DataContext;
+			if (_monitor.Busy)
+				return;
+
+			using (_monitor.Enter())
+			{
+				if (SegmentsDataGrid.SelectedCellRanges.Count == 1)
+				{
+					SelectionCellRange cellRange = SegmentsDataGrid.SelectedCellRanges[0];
+					int itemIndex = cellRange.ItemRange.StartIndex;
+					var variety = (SegmentsVarietyViewModel) SegmentsDataGrid.Items[itemIndex];
+					int columnIndex = cellRange.ColumnRange.StartIndex;
+					vm.CurrentSegment = variety.Segments[columnIndex - 1];
+				}
+				else
+				{
+					vm.CurrentSegment = null;
+				}
 			}
 		}
 	}

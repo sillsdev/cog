@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Applications.Services;
@@ -18,6 +20,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly BindableList<WordPairViewModel> _selectedWordPairs;
 		private readonly BindableList<WordPairViewModel> _selectedCorrespondenceWordPairs;
 		private SortDescription? _deferredSortDesc;
+		private WordPairViewModel _startWordPair;
+		private readonly SimpleMonitor _selectedWordPairsMonitor;
 
 		public WordPairsViewModel(IBusyService busyService)
 		{
@@ -25,7 +29,9 @@ namespace SIL.Cog.Applications.ViewModels
 			_wordPairs = new BindableList<WordPairViewModel>();
 			_wordPairs.CollectionChanged += _wordPairs_CollectionChanged;
 			_selectedWordPairs = new BindableList<WordPairViewModel>();
+			_selectedWordPairs.CollectionChanged += _selectedWordPairs_CollectionChanged;
 			_selectedCorrespondenceWordPairs = new BindableList<WordPairViewModel>();
+			_selectedWordPairsMonitor = new SimpleMonitor();
 		}
 
 		public bool IncludeVarietyNamesInSelectedText { get; set; }
@@ -34,6 +40,13 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_selectedWordPairs.Clear();
 			_selectedCorrespondenceWordPairs.Clear();
+			ResetSearch();
+		}
+
+		private void _selectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (!_selectedWordPairsMonitor.Busy)
+				ResetSearch();
 		}
 
 		internal void UpdateSort(string propertyName, ListSortDirection sortDirection)
@@ -52,6 +65,91 @@ namespace SIL.Cog.Applications.ViewModels
 				_wordPairsView.SortDescriptions.Add(sortDesc);
 			else
 				_wordPairsView.SortDescriptions[0] = sortDesc;
+		}
+
+		internal bool FindNext(FindField field, string str, bool wrap, bool startAtBeginning)
+		{
+			if (_wordPairs.Count == 0)
+			{
+				ResetSearch();
+				return false;
+			}
+			if (_selectedWordPairs.Count == 0)
+			{
+				_startWordPair = _wordPairsView.Cast<WordPairViewModel>().Last();
+			}
+			else if (_startWordPair == null)
+			{
+				_startWordPair = _selectedWordPairs[0];
+			}
+			else if (!startAtBeginning && _selectedWordPairs.Contains(_startWordPair))
+			{
+				ResetSearch();
+				return false;
+			}
+
+			List<WordPairViewModel> wordPairs = _wordPairsView.Cast<WordPairViewModel>().ToList();
+			WordPairViewModel curWordPair;
+			if (startAtBeginning)
+			{
+				curWordPair = wordPairs[wordPairs.Count - 1];
+				if (_startWordPair == curWordPair)
+				{
+					ResetSearch();
+					return false;
+				}
+			}
+			else
+			{
+				curWordPair = _selectedWordPairs.Count == 0 ? _startWordPair : _selectedWordPairs[0];
+			}
+			int wordPairIndex = wordPairs.IndexOf(curWordPair);
+			do
+			{
+				wordPairIndex++;
+				if (wordPairIndex == wordPairs.Count)
+				{
+					if (!wrap && !startAtBeginning && _startWordPair != curWordPair)
+						return false;
+					wordPairIndex = 0;
+				}
+				curWordPair = wordPairs[wordPairIndex];
+				bool match = false;
+				switch (field)
+				{
+					case FindField.Form:
+						match = curWordPair.DomainWordPair.Word1.StrRep.Contains(str)
+							|| curWordPair.DomainWordPair.Word2.StrRep.Contains(str);
+						break;
+
+					case FindField.Sense:
+						match = curWordPair.Sense.Gloss.Contains(str);
+						break;
+				}
+				if (match && _startWordPair != curWordPair)
+				{
+					using (_selectedWordPairsMonitor.Enter())
+					{
+						_selectedWordPairs.Clear();
+						_selectedWordPairs.Add(curWordPair);
+					}
+					return true;
+				}
+			}
+			while (_startWordPair != curWordPair);
+			if (wrap)
+				ResetSearch();
+			return false;
+		}
+
+		internal bool IsSearching
+		{
+			get { return _startWordPair != null; }
+		}
+
+		internal void ResetSearch()
+		{
+			_startWordPair = null;
 		}
 
 		public ObservableList<WordPairViewModel> WordPairs

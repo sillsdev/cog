@@ -51,7 +51,15 @@ namespace SIL.Cog.Presentation.Views
 			if (IsVisible)
 			{
 				window.InputBindings.Add(_findBinding);
-				Dispatcher.BeginInvoke(new Action(() => WordListsGrid.Focus()));
+				Dispatcher.BeginInvoke(new Action(() =>
+					{
+						WordListsGrid.Focus();
+						if (WordListsGrid.SelectedCellRanges.Count == 0)
+						{
+							WordListsGrid.CurrentColumn = null;
+							WordListsGrid.CurrentItem = null;
+						}
+					}));
 			}
 			else
 			{
@@ -62,7 +70,6 @@ namespace SIL.Cog.Presentation.Views
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			LoadCollectionView();
-			WordListsGrid.SelectFirstCell();
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -77,11 +84,7 @@ namespace SIL.Cog.Presentation.Views
 				case "Varieties":
 					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 					AddVarieties(vm.Varieties);
-					DispatcherHelper.CheckBeginInvokeOnUI(() =>
-						{
-							LoadCollectionView();
-							WordListsGrid.SelectFirstCell();
-						});
+					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
 					break;
 
 				case "CurrentVarietySense":
@@ -96,16 +99,15 @@ namespace SIL.Cog.Presentation.Views
 								if (vm.CurrentVarietySense != null)
 								{
 									WordListsVarietyViewModel variety = vm.CurrentVarietySense.Variety;
-									int itemIndex = vm.Varieties.IndexOf(variety);
-									int columnIndex = variety.Senses.IndexOf(vm.CurrentVarietySense);
-									WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, columnIndex));
+									int itemIndex = WordListsGrid.Items.IndexOf(variety);
 									WordListsGrid.BringItemIntoView(variety);
 									WordListsGrid.Dispatcher.BeginInvoke(new Action(() =>
 									    {
 									        var row = (DataRow) WordListsGrid.GetContainerFromIndex(itemIndex);
 										    if (row != null)
 										    {
-											    Cell cell = row.Cells[columnIndex];
+											    Cell cell = row.Cells.Single(c => c.Content == vm.CurrentVarietySense);
+												WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
 											    cell.BringIntoView();
 										    }
 									    }), DispatcherPriority.Background);
@@ -119,12 +121,12 @@ namespace SIL.Cog.Presentation.Views
 		private void LoadCollectionView()
 		{
 			var vm = (WordListsViewModel) DataContext;
-			var source = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
-			source.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)) {IsReadOnly = true});
+			var view = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)) {IsReadOnly = true});
 			IComparer sortComparer = ProjectionComparer<WordListsVarietySenseViewModel>.Create(sense => sense.StrRep);
 			for (int i = 0; i < vm.Senses.Count; i++)
-				source.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}]", i), typeof(WordListsVarietySenseViewModel)) {SortComparer = sortComparer});
-			WordListsGrid.ItemsSource = source;
+				view.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}]", i), typeof(WordListsVarietySenseViewModel)) {SortComparer = sortComparer});
+			vm.VarietiesView = view;
 			WordListsGrid.Items.SortDescriptions.Clear();
 
 			WordListsGrid.Columns.Clear();
@@ -200,9 +202,9 @@ namespace SIL.Cog.Presentation.Views
 				{
 					SelectionCellRange cellRange = WordListsGrid.SelectedCellRanges[0];
 					int itemIndex = cellRange.ItemRange.StartIndex;
-					WordListsVarietyViewModel variety = vm.Varieties[itemIndex];
+					var variety = (WordListsVarietyViewModel) WordListsGrid.Items[itemIndex];
 					int columnIndex = cellRange.ColumnRange.StartIndex;
-					vm.CurrentVarietySense = variety.Senses[columnIndex];
+					vm.CurrentVarietySense = variety.Senses[columnIndex - 1];
 				}
 				else
 				{

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
-using SIL.Cog.Presentation.Behaviors;
 using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation
@@ -85,22 +83,6 @@ namespace SIL.Cog.Presentation
 					maxWidth = formattedText.Width;
 			}
 			column.Width = maxWidth + padding;
-		}
-
-		public static void SelectFirstCell(this DataGridControl dataGrid)
-		{
-			dataGrid.Dispatcher.BeginInvoke(new Action(() =>
-				{
-					if (dataGrid.Items.Count > 0)
-					{
-						ColumnBase column = dataGrid.VisibleColumns.OrderBy(c => c.VisiblePosition).FirstOrDefault(c => !DataGridControlBehaviors.GetIsRowHeader(c));
-						if (column != null)
-						{
-							dataGrid.SelectedCellRanges.Add(new SelectionCellRange(0, column.Index));
-							dataGrid.Focus();
-						}
-					}
-				}), DispatcherPriority.Background);
 		}
 	}
 }

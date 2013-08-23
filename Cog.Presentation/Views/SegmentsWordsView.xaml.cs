@@ -4,20 +4,19 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Collections;
 
 namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
-	/// Interaction logic for WordsView.xaml
+	/// Interaction logic for SegmentsWordsView.xaml
 	/// </summary>
-	public partial class WordsView
+	public partial class SegmentsWordsView
 	{
 		private readonly SimpleMonitor _monitor;
 
-		public WordsView()
+		public SegmentsWordsView()
 		{
 			InitializeComponent();
 			_monitor = new SimpleMonitor();
@@ -83,19 +82,6 @@ namespace SIL.Cog.Presentation.Views
 				if (wordListBox != null)
 					wordListBox.UnselectAll();
 			}
-		}
-
-		private void MarkerClicked(object sender, MouseButtonEventArgs e)
-		{
-			var rect = (Rectangle) sender;
-			ScrollToWordPair((WordViewModel) rect.DataContext, ScrollViewer, WordsListBox);
-		}
-
-		private void ScrollToWordPair(WordViewModel wordPair, ScrollViewer sv, ItemsControl ic)
-		{
-			var cp = (FrameworkElement) ic.ItemContainerGenerator.ContainerFromItem(wordPair);
-			var point = cp.TransformToAncestor(ic).Transform(new Point());
-			sv.ScrollToVerticalOffset((point.Y + (cp.ActualHeight / 2)) - (sv.ActualHeight / 2));
 		}
 
 		private void Copy_OnExecuted(object sender, ExecutedRoutedEventArgs e)

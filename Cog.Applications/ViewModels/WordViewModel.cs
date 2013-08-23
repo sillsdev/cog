@@ -23,6 +23,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
 		private readonly ICommand _showInWordListsCommand;
+		private readonly ICommand _showInVarietiesCommand;
 		private readonly IBusyService _busyService;
 
 		public WordViewModel(IBusyService busyService, IAnalysisService analysisService, Word word)
@@ -34,12 +35,18 @@ namespace SIL.Cog.Applications.ViewModels
 			LoadSegments();
 			_monitor = new SimpleMonitor();
 			_showInWordListsCommand = new RelayCommand(ShowInWordLists);
+			_showInVarietiesCommand = new RelayCommand(ShowInVarieties);
 			_word.PropertyChanged += WordPropertyChanged;
 		}
 
 		private void ShowInWordLists()
 		{
 			Messenger.Default.Send(new SwitchViewMessage(typeof(WordListsViewModel), _word.Variety, _sense.DomainSense));
+		}
+
+		private void ShowInVarieties()
+		{
+			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _word.Variety, _word.Sense));
 		}
 
 		private void WordPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -57,6 +64,11 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICommand ShowInWordListsCommand
 		{
 			get { return _showInWordListsCommand; }
+		}
+
+		public ICommand ShowInVarietiesCommand
+		{
+			get { return _showInVarietiesCommand; }
 		}
 
 		private void LoadSegments()

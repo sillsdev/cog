@@ -23,12 +23,13 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _currentSegment;
 		private AffixViewModel _currentAffix;
-		private readonly WordsViewModel _words;
+		private readonly WordsViewModel _wordsViewModel;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
+		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words; 
  
-		public VarietiesVarietyViewModel(IProjectService projectService, IDialogService dialogService, WordsViewModel.Factory wordsFactory, Variety variety)
+		public VarietiesVarietyViewModel(IProjectService projectService, IDialogService dialogService, WordsViewModel.Factory wordsFactory, WordViewModel.Factory wordFactory, Variety variety)
 			: base(variety)
 		{
 			_projectService = projectService;
@@ -41,12 +42,18 @@ namespace SIL.Cog.Applications.ViewModels
 			else
 				segments = Enumerable.Empty<Segment>();
 
-			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(variety, seg, SyllablePosition.Anywhere)));
+			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(this, seg, SyllablePosition.Anywhere)));
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
 			variety.SegmentFrequencyDistributions.CollectionChanged += SegmentFrequencyDistributionsChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
-			_words = wordsFactory(variety);
+			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
+				{
+					WordViewModel vm = wordFactory(word);
+					SelectWordSegments(vm);
+					return vm;
+				}, vm => vm.DomainWord);
+			_wordsViewModel = wordsFactory(_words);
 			_newAffixCommand = new RelayCommand(NewAffix);
 			_editAffixCommand = new RelayCommand(EditAffix, CanEditAffix);
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
@@ -62,7 +69,7 @@ namespace SIL.Cog.Applications.ViewModels
 					Segment curSeg = null;
 					if (CurrentSegment != null)
 						curSeg = CurrentSegment.DomainSegment;
-					_segments.ReplaceAll(kvp.Value.ObservedSamples.Select(seg => new VarietySegmentViewModel(DomainVariety, seg, SyllablePosition.Anywhere)));
+					_segments.ReplaceAll(kvp.Value.ObservedSamples.Select(seg => new VarietySegmentViewModel(this, seg, SyllablePosition.Anywhere)));
 					MaxSegmentProbability = _segments.Select(seg => seg.Probability).Concat(0).Max();
 					if (curSeg != null)
 						CurrentSegment = _segments.FirstOrDefault(vm => vm.DomainSegment.Equals(curSeg));
@@ -126,7 +133,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public WordsViewModel Words
 		{
-			get { return _words; }
+			get { return _wordsViewModel; }
 		}
 
 		public ReadOnlyObservableList<AffixViewModel> Affixes
@@ -147,22 +154,26 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				if (Set(() => CurrentSegment, ref _currentSegment, value))
 				{
-					_words.SelectedSegmentWords.Clear();
-					foreach (WordViewModel word in _words.Words)
+					_wordsViewModel.SelectedSegmentWords.Clear();
+					foreach (WordViewModel word in _words)
 					{
-						bool selected = false;
-						foreach (WordSegmentViewModel segment in word.Segments.Where(s => !s.IsBoundary))
-						{
-							segment.IsSelected = _currentSegment != null && segment.DomainNode.StrRep() == _currentSegment.StrRep;
-							if (segment.IsSelected)
-								selected = true;
-						}
-
-						if (selected)
-							_words.SelectedSegmentWords.Add(word);
+						if (SelectWordSegments(word))
+							_wordsViewModel.SelectedSegmentWords.Add(word);
 					}
 				}
 			}
+		}
+
+		private bool SelectWordSegments(WordViewModel word)
+		{
+			bool selected = false;
+			foreach (WordSegmentViewModel segment in word.Segments.Where(s => !s.IsBoundary))
+			{
+				segment.IsSelected = _currentSegment != null && segment.DomainNode.StrRep() == _currentSegment.StrRep;
+				if (segment.IsSelected)
+					selected = true;
+			}
+			return selected;
 		}
 
 		public ICommand NewAffixCommand

@@ -6,31 +6,43 @@
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentsViewModel}" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded" DataContextChanged="OnDataContextChanged">
 	<DockPanel>
 		<TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Segments</TextBlock>
-		<xcdg:DataGridControl x:Name="SegmentsDataGrid" Margin="0,10,0,0" SelectionUnit="Cell" ReadOnly="True">
-			<xcdg:DataGridControl.Resources>
-				<DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
-					<TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
-				</DataTemplate>
-				<Style TargetType="xcdg:ColumnManagerCell" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
-					<Setter Property="FontSize" Value="16" />
-				</Style>
-			</xcdg:DataGridControl.Resources>
-			<xcdg:DataGridControl.View>
-				<xcdg:TableView FixedColumnCount="1">
-					<xcdg:TableView.FixedHeaders>
-						<DataTemplate>
-							<c:MergedHeadersPanel />
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="0.7*" />
+			</Grid.RowDefinitions>
+			<HeaderedContentControl Grid.Row="0" Margin="0,10,0,0" Header="Segment frequencies">
+				<xcdg:DataGridControl x:Name="SegmentsDataGrid" SelectionUnit="Cell" ReadOnly="True" SelectionChanged="SegmentsDataGrid_OnSelectionChanged">
+					<xcdg:DataGridControl.Resources>
+						<DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
+							<TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
 						</DataTemplate>
-						<DataTemplate>
-							<xcdg:ColumnManagerRow AllowColumnReorder="False" AllowColumnResize="False" />
-						</DataTemplate>
-					</xcdg:TableView.FixedHeaders>
-				</xcdg:TableView>
-			</xcdg:DataGridControl.View>
-		</xcdg:DataGridControl>
+						<Style TargetType="xcdg:ColumnManagerCell" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
+							<Setter Property="FontSize" Value="16" />
+						</Style>
+					</xcdg:DataGridControl.Resources>
+					<xcdg:DataGridControl.View>
+						<xcdg:TableView FixedColumnCount="1">
+							<xcdg:TableView.FixedHeaders>
+								<DataTemplate>
+									<c:MergedHeadersPanel />
+								</DataTemplate>
+								<DataTemplate>
+									<xcdg:ColumnManagerRow AllowColumnReorder="False" AllowColumnResize="False" />
+								</DataTemplate>
+							</xcdg:TableView.FixedHeaders>
+						</xcdg:TableView>
+					</xcdg:DataGridControl.View>
+				</xcdg:DataGridControl>
+			</HeaderedContentControl>
+			<HeaderedContentControl Grid.Row="1" Margin="0,10,0,0" Header="Observed words">
+				<v:SegmentsWordsView DataContext="{Binding ObservedWords}" />
+			</HeaderedContentControl>
+		</Grid>
 	</DockPanel>
 </UserControl>

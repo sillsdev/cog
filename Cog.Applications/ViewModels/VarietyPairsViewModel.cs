@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -40,7 +39,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private ListSortDirection _sortDirection;
 
 		private FindViewModel _findViewModel;
-		private WordPairViewModel _startWordPair;
+		private WordPairsViewModel _startWordPairs;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 		private bool _deferredResetCurrentVarietyPair;
 
@@ -60,8 +59,6 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortPropertyName = "PhoneticSimilarityScore";
 			_sortDirection = ListSortDirection.Descending;
 
-			_selectedWordPairsMonitor = new SimpleMonitor();
-
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
 			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 			Messenger.Default.Register<DomainModelChangedMessage>(this, HandleDomainModelChanged);
@@ -69,6 +66,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_findCommand = new RelayCommand(Find);
 
+			_selectedWordPairsMonitor = new SimpleMonitor();
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
 				new TaskAreaCommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison)),
@@ -150,7 +148,7 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 
 			_findViewModel = new FindViewModel(_dialogService, FindNext);
-			_findViewModel.PropertyChanged += (sender, args) => _startWordPair = null;
+			_findViewModel.PropertyChanged += (sender, args) => ResetSearch();
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
 
@@ -161,67 +159,78 @@ namespace SIL.Cog.Applications.ViewModels
 				SearchEnded();
 				return;
 			}
+
 			WordPairsViewModel cognates = _currentVarietyPair.Cognates;
 			WordPairsViewModel noncognates = _currentVarietyPair.Noncognates;
 			if (cognates.SelectedWordPairs.Count == 0 && noncognates.SelectedWordPairs.Count == 0)
 			{
-				_startWordPair = noncognates.WordPairsView.Cast<WordPairViewModel>().Last();
+				_startWordPairs = cognates;
 			}
-			else if (_startWordPair == null)
+			else if (_startWordPairs == null)
 			{
-				_startWordPair = cognates.SelectedWordPairs.Count > 0 ? cognates.SelectedWordPairs[0] : noncognates.SelectedWordPairs[0];
-			}
-			else if (cognates.SelectedWordPairs.Contains(_startWordPair) || noncognates.SelectedWordPairs.Contains(_startWordPair))
-			{
-				SearchEnded();
-				return;
+				_startWordPairs = cognates.SelectedWordPairs.Count > 0 ? cognates : noncognates;
 			}
 
-			List<WordPairViewModel> wordPairs = cognates.WordPairsView.Cast<WordPairViewModel>().Concat(noncognates.WordPairsView.Cast<WordPairViewModel>()).ToList();
-			WordPairViewModel curWordPair;
+			WordPairsViewModel curWordPairs;
 			if (cognates.SelectedWordPairs.Count > 0)
-				curWordPair = cognates.SelectedWordPairs[0];
+				curWordPairs = cognates;
 			else if (noncognates.SelectedWordPairs.Count > 0)
-				curWordPair = noncognates.SelectedWordPairs[0];
+				curWordPairs = noncognates;
 			else
-				curWordPair = _startWordPair;
-			int wordPairIndex = wordPairs.IndexOf(curWordPair);
-			do
-			{
-				wordPairIndex = (wordPairIndex + 1) % wordPairs.Count;
-				curWordPair = wordPairs[wordPairIndex];
-				bool match = false;
-				switch (_findViewModel.Field)
-				{
-					case FindField.Form:
-						match = curWordPair.DomainWordPair.Word1.StrRep.Contains(_findViewModel.String)
-							|| curWordPair.DomainWordPair.Word2.StrRep.Contains(_findViewModel.String);
-						break;
+				curWordPairs = _startWordPairs;
 
-					case FindField.Sense:
-						match = curWordPair.Sense.Gloss.Contains(_findViewModel.String);
-						break;
-				}
-				if (match)
+			bool startAtBeginning = false;
+			while (true)
+			{
+				using (_selectedWordPairsMonitor.Enter())
 				{
-					using (_selectedWordPairsMonitor.Enter())
+					if (curWordPairs.FindNext(_findViewModel.Field, _findViewModel.String, false, startAtBeginning))
 					{
-						cognates.SelectedWordPairs.Clear();
-						noncognates.SelectedWordPairs.Clear();
-						WordPairsViewModel vm = curWordPair.AreCognate ? cognates : noncognates;
-						vm.SelectedWordPairs.Add(curWordPair);
+						WordPairsViewModel otherWordPairs = curWordPairs == cognates ? noncognates : cognates;
+						otherWordPairs.SelectedWordPairs.Clear();
+						break;
 					}
-					return;
+				}
+
+				if (curWordPairs == _startWordPairs)
+				{
+					if (_startWordPairs.IsSearching)
+					{
+						curWordPairs = _startWordPairs == cognates ? noncognates : cognates;
+					}
+					else
+					{
+						SearchEnded();
+						break;
+					}
+				}
+				else if (_startWordPairs.IsSearching)
+				{
+					curWordPairs = _startWordPairs;
+					startAtBeginning = true;
+				}
+				else
+				{
+					SearchEnded();
+					break;
 				}
 			}
-			while (_startWordPair != curWordPair);
-			SearchEnded();
+		}
+
+		private void ResetSearch()
+		{
+			_startWordPairs = null;
+			if (_currentVarietyPair != null)
+			{
+				_currentVarietyPair.Cognates.ResetSearch();
+				_currentVarietyPair.Noncognates.ResetSearch();
+			}
 		}
 
 		private void SearchEnded()
 		{
 			_findViewModel.ShowSearchEndedMessage();
-			_startWordPair = null;
+			ResetSearch();
 		}
 
 		private void ExportVarietyPair()
@@ -325,7 +334,7 @@ namespace SIL.Cog.Applications.ViewModels
 				if (Set(() => CurrentVarietyPair, ref _currentVarietyPair, value))
 				{
 					_deferredResetCurrentVarietyPair = false;
-					_startWordPair = null;
+					ResetSearch();
 					if (oldCurVarietyPair != null)
 					{
 						oldCurVarietyPair.Cognates.SelectedWordPairs.CollectionChanged -= SelectedWordPairsChanged;
@@ -346,7 +355,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void SelectedWordPairsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (!_selectedWordPairsMonitor.Busy)
-				_startWordPair = null;
+				ResetSearch();
 		}
 
 		public CurrentVarietyPairState CurrentVarietyPairState

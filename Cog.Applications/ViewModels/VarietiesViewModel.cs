@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -29,8 +28,6 @@ namespace SIL.Cog.Applications.ViewModels
 		private ListSortDirection _sortDirection;
 
 		private FindViewModel _findViewModel;
-		private WordViewModel _startWord;
-		private readonly SimpleMonitor _selectedWordsMonitor;
 
 		public VarietiesViewModel(IProjectService projectService, IDialogService dialogService, IAnalysisService analysisService, VarietiesVarietyViewModel.Factory varietyFactory)
 			: base("Varieties")
@@ -41,8 +38,6 @@ namespace SIL.Cog.Applications.ViewModels
 			_varietyFactory = varietyFactory;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
-
-			_selectedWordsMonitor = new SimpleMonitor();
 
 			_sortPropertyName = "Sense.Gloss";
 			_sortDirection = ListSortDirection.Ascending;
@@ -109,67 +104,16 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 
 			_findViewModel = new FindViewModel(_dialogService, FindNext);
-			_findViewModel.PropertyChanged += (sender, args) => _startWord = null;
+			_findViewModel.PropertyChanged += (sender, args) => _currentVariety.Words.ResetSearch();
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
 
 		private void FindNext()
 		{
-			if (_currentVariety == null || _currentVariety.Words.Words.Count == 0)
-			{
-				SearchEnded();
-				return;
-			}
-			if (_currentVariety.Words.SelectedWords.Count == 0)
-			{
-				_startWord = _currentVariety.Words.WordsView.Cast<WordViewModel>().Last();
-			}
-			else if (_startWord == null)
-			{
-				_startWord = _currentVariety.Words.SelectedWords[0];
-			}
-			else if (_currentVariety.Words.SelectedWords.Contains(_startWord))
-			{
-				SearchEnded();
-				return;
-			}
-
-			List<WordViewModel> words = _currentVariety.Words.WordsView.Cast<WordViewModel>().ToList();
-			WordViewModel curWord = _currentVariety.Words.SelectedWords.Count == 0 ? _startWord : _currentVariety.Words.SelectedWords[0];
-			int wordIndex = words.IndexOf(curWord);
-			do
-			{
-				wordIndex = (wordIndex + 1) % words.Count;
-				curWord = words[wordIndex];
-				bool match = false;
-				switch (_findViewModel.Field)
-				{
-					case FindField.Form:
-						match = curWord.StrRep.Contains(_findViewModel.String);
-						break;
-
-					case FindField.Sense:
-						match = curWord.Sense.Gloss.Contains(_findViewModel.String);
-						break;
-				}
-				if (match)
-				{
-					using (_selectedWordsMonitor.Enter())
-					{
-						_currentVariety.Words.SelectedWords.Clear();
-						_currentVariety.Words.SelectedWords.Add(curWord);
-					}
-					return;
-				}
-			}
-			while (_startWord != curWord);
-			SearchEnded();
-		}
-
-		private void SearchEnded()
-		{
-			_findViewModel.ShowSearchEndedMessage();
-			_startWord = null;
+			if (_currentVariety == null)
+				_findViewModel.ShowSearchEndedMessage();
+			else if (!_currentVariety.Words.FindNext(_findViewModel.Field, _findViewModel.String))
+				_findViewModel.ShowSearchEndedMessage();
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -256,26 +200,16 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _currentVariety; }
 			set
 			{
-				VarietiesVarietyViewModel oldCurVariety = _currentVariety;
 				if (Set(() => CurrentVariety, ref _currentVariety, value))
 				{
-					_startWord = null;
-					if (oldCurVariety != null)
-						oldCurVariety.Words.SelectedWords.CollectionChanged -= SelectedWordsChanged;
 					if (_currentVariety != null)
 					{
 						_currentVariety.Words.UpdateSort(_sortPropertyName, _sortDirection);
-						_currentVariety.Words.SelectedWords.CollectionChanged += SelectedWordsChanged;
+						_currentVariety.Words.ResetSearch();
 					}
 				}
 				IsVarietySelected = _currentVariety != null;
 			}
-		}
-
-		private void SelectedWordsChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (!_selectedWordsMonitor.Busy)
-				_startWord = null;
 		}
 
 		public bool IsVarietySelected

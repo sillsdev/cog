@@ -119,6 +119,7 @@
 		<Setter Property="b:DataGridControlBehaviors.IsInitialSelectionDisabled" Value="True" />
 		<Setter Property="SelectionMode" Value="Single" />
 		<Setter Property="b:DataGridControlBehaviors.IsUnselectable" Value="True" />
+		<Setter Property="b:DataGridControlBehaviors.AllowCurrentWhenNoSelection" Value="False" />
 	</Style>
 	
 	<Style TargetType="xcdg:TableView">

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.Services
 {

@@ -9,5 +9,6 @@ namespace SIL.Cog.Applications.Services
 		bool ExportWordLists(object ownerViewModel);
 		bool ExportCognateSets(object ownerViewModel);
 		bool ExportVarietyPair(object ownerViewModel, VarietyPair varietyPair);
+		bool ExportSegmentFrequencies(object ownerViewModel, ViewModelSyllablePosition syllablePosition);
 	}
 }

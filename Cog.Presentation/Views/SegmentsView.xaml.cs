@@ -21,14 +21,14 @@ namespace SIL.Cog.Presentation.Views
 	/// </summary>
 	public partial class SegmentsView
 	{
-		private readonly SimpleMonitor _monitor;
+		private readonly SimpleMonitor _selectMonitor;
 		private InputBinding _findBinding;
 
 		public SegmentsView()
 		{
 			InitializeComponent();
 			SegmentsDataGrid.ClipboardExporters.Clear();
-			_monitor = new SimpleMonitor();
+			_selectMonitor = new SimpleMonitor();
 			BusyCursor.DisplayUntilIdle();
 		}
 
@@ -44,15 +44,7 @@ namespace SIL.Cog.Presentation.Views
 			if (IsVisible)
 			{
 				window.InputBindings.Add(_findBinding);
-				Dispatcher.BeginInvoke(new Action(() =>
-					{
-						SegmentsDataGrid.Focus();
-						if (SegmentsDataGrid.SelectedCellRanges.Count == 0)
-						{
-							SegmentsDataGrid.CurrentColumn = null;
-							SegmentsDataGrid.CurrentItem = null;
-						}
-					}));
+				Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.Focus()));
 			}
 			else
 			{
@@ -98,10 +90,10 @@ namespace SIL.Cog.Presentation.Views
 				case "CurrentSegment":
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
-							if (_monitor.Busy)
+							if (_selectMonitor.Busy)
 								return;
 
-							using (_monitor.Enter())
+							using (_selectMonitor.Enter())
 							{
 								SegmentsDataGrid.SelectedCellRanges.Clear();
 								if (vm.CurrentSegment != null)
@@ -212,10 +204,10 @@ namespace SIL.Cog.Presentation.Views
 		private void SegmentsDataGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
 			var vm = (SegmentsViewModel) DataContext;
-			if (_monitor.Busy)
+			if (_selectMonitor.Busy)
 				return;
 
-			using (_monitor.Enter())
+			using (_selectMonitor.Enter())
 			{
 				if (SegmentsDataGrid.SelectedCellRanges.Count == 1)
 				{

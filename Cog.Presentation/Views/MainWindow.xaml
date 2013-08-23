@@ -25,6 +25,7 @@
 					<MenuItem Header="Word Lists..." Command="{Binding ExportWordListsCommand}" />
 					<MenuItem Header="Similarity Matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
 					<MenuItem Header="Cognate Sets..." Command="{Binding ExportCognateSetsCommand}" />
+					<MenuItem Header="Segment Frequencies..." Command="{Binding ExportSegmentFrequenciesCommand}" />
 					<MenuItem Header="Hierarchical Graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
 					<MenuItem Header="Network Graph..." Command="{Binding ExportNetworkGraphCommand}" />
 					<MenuItem Header="Global Correspondences Chart..." Command="{Binding ExportGlobalCorrespondencesChartCommand}" />

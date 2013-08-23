@@ -64,18 +64,22 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly WordViewModel.Factory _wordFactory;
 		private readonly ICommand _findCommand;
 		private readonly IDialogService _dialogService;
+		private readonly IExportService _exportService;
+		private bool _hasSegments;
 
 		private string _sortPropertyName;
 		private ListSortDirection _sortDirection;
 
 		private FindViewModel _findViewModel;
 
-		public SegmentsViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService, WordsViewModel.Factory wordsFactory, WordViewModel.Factory wordFactory)
+		public SegmentsViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IExportService exportService, WordsViewModel.Factory wordsFactory,
+			WordViewModel.Factory wordFactory)
 			: base("Segments")
 		{
 			_projectService = projectService;
 			_busyService = busyService;
 			_dialogService = dialogService;
+			_exportService = exportService;
 			_wordFactory = wordFactory;
 
 			_findCommand = new RelayCommand(Find);
@@ -86,10 +90,13 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Coda))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
-					new TaskAreaCommandViewModel("Find words", _findCommand),
-					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
-						new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
-						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
+				new TaskAreaCommandViewModel("Find words", _findCommand),
+				new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
+					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
+					new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
+
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Export segment frequencies", new RelayCommand(() => _exportService.ExportSegmentFrequencies(this, _syllablePosition)))));
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -152,12 +159,19 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 
 			_categories.ReplaceAll(_segments.GroupBy(s => GetCategory(s.DomainSegment)).OrderBy(g => CategorySortOrderLookup[g.Key]).Select(g => new SegmentCategoryViewModel(g.Key, g)));
+			HasSegments = _segments.Count > 0;
 		}
 
 		private string GetCategory(Segment segment)
 		{
 			return segment.Type == CogFeatureSystem.VowelType ? HeightCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("manner")).ID]
 				: PlaceCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("place")).ID];
+		}
+
+		public bool HasSegments
+		{
+			get { return _hasSegments; }
+			set { Set(() => HasSegments, ref _hasSegments, value); }
 		}
 
 		public ReadOnlyObservableList<SegmentCategoryViewModel> Categories

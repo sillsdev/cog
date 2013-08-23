@@ -63,11 +63,13 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Export\ICognateSetsExporter.cs" />
+    <Compile Include="Export\ISegmentFrequenciesExporter.cs" />
     <Compile Include="Export\ISimilarityMatrixExporter.cs" />
     <Compile Include="Export\IVarietyPairExporter.cs" />
     <Compile Include="Export\IWordListsExporter.cs" />
     <Compile Include="Export\NexusCognateSetsExporter.cs" />
     <Compile Include="Export\TextCognateSetsExporter.cs" />
+    <Compile Include="Export\TextSegmentFrequenciesExporter.cs" />
     <Compile Include="Export\TextSimilarityMatrixExporter.cs" />
     <Compile Include="Export\TextVarietyPairExporter.cs" />
     <Compile Include="Export\TextWordListsExporter.cs" />
@@ -152,6 +154,7 @@
     <Compile Include="ViewModels\ExportGlobalCorrespondencesChartViewModel.cs" />
     <Compile Include="ViewModels\ExportHierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\ExportNetworkGraphViewModel.cs" />
+    <Compile Include="ViewModels\ExportSegmentFrequenciesViewModel.cs" />
     <Compile Include="ViewModels\ExportSimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\FeatureValueViewModel.cs" />
     <Compile Include="ViewModels\FeatureViewModel.cs" />

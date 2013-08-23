@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -100,9 +101,6 @@ namespace SIL.Cog.Presentation.Behaviors
 			if (dataGrid == null)
 				return;
 
-			if (!(e.NewValue is bool))
-				return;
-
 			if ((bool) e.NewValue)
 				dataGrid.SelectionChanged += DataGrid_SelectionChanged;
 			else
@@ -140,9 +138,6 @@ namespace SIL.Cog.Presentation.Behaviors
 		{
 			var dataGrid = depObj as DataGridControl;
 			if (dataGrid == null)
-				return;
-
-			if (!(e.NewValue is bool))
 				return;
 
 			if ((bool) e.NewValue)
@@ -192,9 +187,6 @@ namespace SIL.Cog.Presentation.Behaviors
 			if (dataGrid == null)
 				return;
 
-			if (!(e.NewValue is bool))
-				return;
-
 			if ((bool) e.NewValue)
 				dataGrid.PreviewMouseLeftButtonUp += DataGrid_PreviewMouseLeftButtonUp;
 			else
@@ -206,7 +198,7 @@ namespace SIL.Cog.Presentation.Behaviors
 			var dataGrid = (DataGridControl) sender;
 			if (dataGrid.SelectionMode == SelectionMode.Single && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
 			{
-				var elem = (FrameworkElement) e.OriginalSource;
+				var elem = (DependencyObject) e.OriginalSource;
 
 				switch (dataGrid.SelectionUnit)
 				{
@@ -242,6 +234,62 @@ namespace SIL.Cog.Presentation.Behaviors
 		public static bool GetIsUnselectable(DataGridControl dataGrid)
 		{
 			return (bool) dataGrid.GetValue(IsUnselectableProperty);
+		}
+
+		public static readonly DependencyProperty AllowCurrentWhenNoSelectionProperty =
+			DependencyProperty.RegisterAttached(
+				"AllowCurrentWhenNoSelection", 
+				typeof(bool), 
+				typeof(DataGridControlBehaviors), 
+				new UIPropertyMetadata(true, OnAllowCurrentWhenNoSelectionChanged));
+
+		private static void OnAllowCurrentWhenNoSelectionChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		{
+			var dataGrid = depObj as DataGridControl;
+			if (dataGrid == null)
+				return;
+
+			if (!((bool) e.NewValue))
+				dataGrid.PropertyChanged += DataGrid_PropertyChanged;
+			else
+				dataGrid.PropertyChanged -= DataGrid_PropertyChanged;
+		}
+
+		private static void DataGrid_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var dataGrid = (DataGridControl) sender;
+			switch (e.PropertyName)
+			{
+				case "CurrentItem":
+					if (dataGrid.CurrentItem == null)
+						return;
+					dataGrid.Dispatcher.BeginInvoke(new Action(() =>
+						{
+							if (dataGrid.SelectedCellRanges.Count == 0)
+								dataGrid.CurrentItem = null;
+						}));
+					break;
+
+				case "CurrentColumn":
+					if (dataGrid.CurrentColumn == null)
+						return;
+					dataGrid.Dispatcher.BeginInvoke(new Action(() =>
+						{
+							if (dataGrid.SelectedCellRanges.Count == 0)
+								dataGrid.CurrentColumn = null;
+						}));
+					break;
+			}
+		}
+
+		public static void SetAllowCurrentWhenNoSelection(DataGridControl dataGrid, bool value)
+		{
+			dataGrid.SetValue(AllowCurrentWhenNoSelectionProperty, value);
+		}
+
+		public static bool GetAllowCurrentWhenNoSelection(DataGridControl dataGrid)
+		{
+			return (bool) dataGrid.GetValue(AllowCurrentWhenNoSelectionProperty);
 		}
 	}
 }

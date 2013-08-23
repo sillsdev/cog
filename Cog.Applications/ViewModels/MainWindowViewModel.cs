@@ -18,6 +18,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _exportWordListsCommand;
 		private readonly ICommand _exportSimilarityMatrixCommand;
 		private readonly ICommand _exportCognateSetsCommand;
+		private readonly ICommand _exportSegmentFrequenciesCommand;
 		private readonly ICommand _exportHierarchicalGraphCommand;
 		private readonly ICommand _exportNetworkGraphCommand;
 		private readonly ICommand _exportGlobalCorrespondencesChartCommand;
@@ -47,6 +48,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportWordListsCommand = new RelayCommand(ExportWordLists, CanExportWordLists);
 			_exportSimilarityMatrixCommand = new RelayCommand(ExportSimilarityMatrix, CanExportSimilarityMatrix);
 			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
+			_exportSegmentFrequenciesCommand = new RelayCommand(ExportSegmentFrequencies);
 			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
 			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
 			_exportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
@@ -184,6 +186,13 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportService.ExportCognateSets(this);
 		}
 
+		private void ExportSegmentFrequencies()
+		{
+			var vm = new ExportSegmentFrequenciesViewModel();
+			if (_dialogService.ShowModalDialog(this, vm) == true)
+				_exportService.ExportSegmentFrequencies(this, vm.SyllablePosition);
+		}
+
 		private bool CanExportHierarchicalGraph()
 		{
 			return _projectService.Project.VarietyPairs.Count > 0;
@@ -269,6 +278,11 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICommand ExportCognateSetsCommand
 		{
 			get { return _exportCognateSetsCommand; }
+		}
+
+		public ICommand ExportSegmentFrequenciesCommand
+		{
+			get { return _exportSegmentFrequenciesCommand; }
 		}
 
 		public ICommand ExportHierarchicalGraphCommand

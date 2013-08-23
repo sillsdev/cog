@@ -210,6 +210,9 @@
     <Compile Include="Views\ExportNetworkGraphDialog.xaml.cs">
       <DependentUpon>ExportNetworkGraphDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ExportSegmentFrequenciesDialog.xaml.cs">
+      <DependentUpon>ExportSegmentFrequenciesDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ExportSimilarityMatrixDialog.xaml.cs">
       <DependentUpon>ExportSimilarityMatrixDialog.xaml</DependentUpon>
     </Compile>
@@ -400,6 +403,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ExportNetworkGraphDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExportSegmentFrequenciesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -31,7 +31,8 @@ namespace SIL.Cog.Presentation.Services
 				{typeof(EditRegionViewModel), typeof(EditRegionDialog)},
 				{typeof(FindViewModel), typeof(FindDialog)},
 				{typeof(ImportTextWordListsViewModel), typeof(ImportTextWordListsDialog)},
-				{typeof(ExportGlobalCorrespondencesChartViewModel), typeof(ExportGlobalCorrespondencesChartDialog)}
+				{typeof(ExportGlobalCorrespondencesChartViewModel), typeof(ExportGlobalCorrespondencesChartDialog)},
+				{typeof(ExportSegmentFrequenciesViewModel), typeof(ExportSegmentFrequenciesDialog)}
 			};
 		}
 

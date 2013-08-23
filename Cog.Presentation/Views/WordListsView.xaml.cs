@@ -20,7 +20,7 @@ namespace SIL.Cog.Presentation.Views
 	/// </summary>
 	public partial class WordListsView
 	{
-		private readonly SimpleMonitor _monitor;
+		private readonly SimpleMonitor _selectMonitor;
 		private InputBinding _findBinding;
 
 		public WordListsView()
@@ -28,7 +28,7 @@ namespace SIL.Cog.Presentation.Views
 			InitializeComponent();
 			WordListsGrid.ClipboardExporters.Clear();
 			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
-			_monitor = new SimpleMonitor();
+			_selectMonitor = new SimpleMonitor();
 			BusyCursor.DisplayUntilIdle();
 		}
 
@@ -51,15 +51,7 @@ namespace SIL.Cog.Presentation.Views
 			if (IsVisible)
 			{
 				window.InputBindings.Add(_findBinding);
-				Dispatcher.BeginInvoke(new Action(() =>
-					{
-						WordListsGrid.Focus();
-						if (WordListsGrid.SelectedCellRanges.Count == 0)
-						{
-							WordListsGrid.CurrentColumn = null;
-							WordListsGrid.CurrentItem = null;
-						}
-					}));
+				Dispatcher.BeginInvoke(new Action(() => WordListsGrid.Focus()));
 			}
 			else
 			{
@@ -90,10 +82,10 @@ namespace SIL.Cog.Presentation.Views
 				case "CurrentVarietySense":
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
-							if (_monitor.Busy)
+							if (_selectMonitor.Busy)
 								return;
 
-							using (_monitor.Enter())
+							using (_selectMonitor.Enter())
 							{
 								WordListsGrid.SelectedCellRanges.Clear();
 								if (vm.CurrentVarietySense != null)
@@ -193,10 +185,10 @@ namespace SIL.Cog.Presentation.Views
 		private void WordListsGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
 			var vm = (WordListsViewModel) DataContext;
-			if (_monitor.Busy)
+			if (_selectMonitor.Busy)
 				return;
 
-			using (_monitor.Enter())
+			using (_selectMonitor.Enter())
 			{
 				if (WordListsGrid.SelectedCellRanges.Count == 1)
 				{

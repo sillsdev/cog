@@ -41,7 +41,7 @@ namespace SIL.Cog.Presentation.Views
 
 		private void vm_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var vm = (MultipleWordAlignmentViewModel) DataContext;
+			var vm = (MultipleWordAlignmentViewModel) sender;
 			switch (e.PropertyName)
 			{
 				case "Senses":

@@ -41,7 +41,6 @@ namespace SIL.Cog.Applications.ViewModels
 			_analysisService = analysisService;
 			_varietyFactory = varietyFactory;
 
-			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
@@ -70,12 +69,16 @@ namespace SIL.Cog.Applications.ViewModels
 			project.Senses.CollectionChanged += SensesChanged;
 		}
 
-		private void HandleViewChanged(ViewChangedMessage msg)
+		protected override void OnIsCurrentChanged()
 		{
-			if (msg.OldViewModel == this && _findViewModel != null)
+			if (IsCurrent)
+			{
+				Messenger.Default.Send(new HookFindMessage(_findCommand));
+			}
+			else
 			{
 				_dialogService.CloseDialog(_findViewModel);
-				_findViewModel = null;
+				Messenger.Default.Send(new HookFindMessage(null));
 			}
 		}
 
@@ -194,6 +197,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void RunStemmer()
 		{
+			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Senses.Count == 0)
+				return;
+
 			var vm = new RunStemmerViewModel(true);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_analysisService.StemAll(this, vm.Method);

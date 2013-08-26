@@ -54,6 +54,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetAlignment());
+			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetAlignment());
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

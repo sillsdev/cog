@@ -31,6 +31,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetVarieties());
+			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetVarieties());
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => CreateSimilarityMatrix());
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Similarity metric",
@@ -63,7 +64,6 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Senses.Count == 0)
 				return;
 
-			ResetVarieties();
 			_analysisService.CompareAll(this);
 		}
 
@@ -89,6 +89,7 @@ namespace SIL.Cog.Applications.ViewModels
 					}
 					return Tuple.Create(pair.GetOtherVariety(variety), 1.0 - score);
 				}).Concat(Tuple.Create(variety, 0.0)), 2);
+			_modelVarieties.Clear();
 			_modelVarieties.AddRange(optics.ClusterOrder(_projectService.Project.Varieties).Select(oe => oe.DataObject));
 			SimilarityMatrixVarietyViewModel[] vms = _modelVarieties.Select(v => new SimilarityMatrixVarietyViewModel(_similarityMetric, _modelVarieties, v)).ToArray();
 			Varieties = new ReadOnlyList<SimilarityMatrixVarietyViewModel>(vms);

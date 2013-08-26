@@ -63,9 +63,9 @@ namespace SIL.Cog.Presentation
 
 			// Master view models
 			builder.RegisterType<MainWindowViewModel>().SingleInstance();
-			builder.RegisterType<InputMasterViewModel>().SingleInstance();
-			builder.RegisterType<CompareMasterViewModel>().SingleInstance();
-			builder.RegisterType<AnalyzeMasterViewModel>().SingleInstance();
+			builder.RegisterType<InputViewModel>().SingleInstance();
+			builder.RegisterType<CompareViewModel>().SingleInstance();
+			builder.RegisterType<AnalyzeViewModel>().SingleInstance();
 
 			// Workspace view models
 			builder.RegisterType<WordListsViewModel>().SingleInstance();

@@ -60,8 +60,8 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortDirection = ListSortDirection.Descending;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
-			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
-			Messenger.Default.Register<DomainModelChangedMessage>(this, HandleDomainModelChanged);
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ClearComparison());
+			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ClearComparison());
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
@@ -110,19 +110,24 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		private void HandleDomainModelChanged(DomainModelChangedMessage msg)
+		private void ClearComparison()
 		{
 			ResetCurrentVarietyPair();
 			CurrentVarietyPair = null;
-			CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
+			if (CurrentVarietyPairState == CurrentVarietyPairState.SelectedAndCompared)
+				CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
 		}
 
-		private void HandleViewChanged(ViewChangedMessage msg)
+		protected override void OnIsCurrentChanged()
 		{
-			if (msg.OldViewModel == this && _findViewModel != null)
+			if (IsCurrent)
+			{
+				Messenger.Default.Send(new HookFindMessage(_findCommand));
+			}
+			else
 			{
 				_dialogService.CloseDialog(_findViewModel);
-				_findViewModel = null;
+				Messenger.Default.Send(new HookFindMessage(null));
 			}
 		}
 

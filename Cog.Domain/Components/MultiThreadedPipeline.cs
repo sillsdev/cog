@@ -44,7 +44,7 @@ namespace SIL.Cog.Domain.Components
 									processor.Process(sd);
 									countdownEvent.Signal();
 								}
-							}, token);
+							}, token, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
 					}
 
 					int lastPcnt = 0;

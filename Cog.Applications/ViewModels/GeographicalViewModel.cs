@@ -42,6 +42,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => ClusterVarieties());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetClusters());
+			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetClusters());
 
 			_similarityScoreThreshold = 0.7;
 

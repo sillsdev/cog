@@ -42,7 +42,6 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortPropertyName = "Sense.Gloss";
 			_sortDirection = ListSortDirection.Ascending;
 
-			Messenger.Default.Register<ViewChangedMessage>(this, HandleViewChanged);
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
@@ -89,12 +88,16 @@ namespace SIL.Cog.Applications.ViewModels
 				_currentVariety.Words.UpdateSort(_sortPropertyName, _sortDirection);
 		}
 
-		private void HandleViewChanged(ViewChangedMessage msg)
+		protected override void OnIsCurrentChanged()
 		{
-			if (msg.OldViewModel == this && _findViewModel != null)
+			if (IsCurrent)
+			{
+				Messenger.Default.Send(new HookFindMessage(_findCommand));
+			}
+			else
 			{
 				_dialogService.CloseDialog(_findViewModel);
-				_findViewModel = null;
+				Messenger.Default.Send(new HookFindMessage(null));
 			}
 		}
 

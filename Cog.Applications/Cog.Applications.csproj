@@ -130,12 +130,12 @@
     <Compile Include="ViewModels\AffixViewModel.cs" />
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\AlineViewModel.cs" />
-    <Compile Include="ViewModels\AnalyzeMasterViewModel.cs" />
+    <Compile Include="ViewModels\AnalyzeViewModel.cs" />
     <Compile Include="ViewModels\BindableList.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ChangeTrackingViewModelBase.cs" />
     <Compile Include="ViewModels\CognateIdentifierOptionsViewModel.cs" />
-    <Compile Include="ViewModels\CompareMasterViewModel.cs" />
+    <Compile Include="ViewModels\CompareViewModel.cs" />
     <Compile Include="ViewModels\CompareSettingsViewModel.cs" />
     <Compile Include="ViewModels\ComparisonCache.cs" />
     <Compile Include="ViewModels\ComparisonPerformedMessage.cs" />
@@ -170,12 +170,13 @@
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
+    <Compile Include="ViewModels\HookFindMessage.cs" />
     <Compile Include="ViewModels\ImportTextWordListsViewModel.cs" />
-    <Compile Include="ViewModels\InputMasterViewModel.cs" />
+    <Compile Include="ViewModels\InputViewModel.cs" />
     <Compile Include="ViewModels\InputSettingsViewModel.cs" />
     <Compile Include="ViewModels\ListSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MasterViewModelBase.cs" />
+    <Compile Include="ViewModels\ContainerViewModelBase.cs" />
     <Compile Include="ViewModels\DomainModelChangedMessage.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModel.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentWordViewModel.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="ViewModels\NetworkGraphVertex.cs" />
     <Compile Include="ViewModels\NetworkGraphViewModel.cs" />
     <Compile Include="ViewModels\NewSegmentMappingViewModel.cs" />
+    <Compile Include="ViewModels\PerformingComparisonMessage.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\ReadOnlyMirroredCollection.cs" />
     <Compile Include="ViewModels\ReadOnlyMirroredList.cs" />
@@ -195,6 +197,7 @@
     <Compile Include="ViewModels\SegmentViewModel.cs" />
     <Compile Include="ViewModels\SegmentsVarietyViewModel.cs" />
     <Compile Include="ViewModels\SegmentsViewModel.cs" />
+    <Compile Include="ViewModels\ContainerChildViewModelBase.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />
@@ -230,7 +233,6 @@
     <Compile Include="ViewModels\WordListsVarietySenseViewModel.cs" />
     <Compile Include="ViewModels\VarietySenseViewModelCollection.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
-    <Compile Include="ViewModels\ViewChangedMessage.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />
     <Compile Include="ViewModels\WordPairSurrogate.cs" />

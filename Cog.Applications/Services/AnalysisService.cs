@@ -108,6 +108,7 @@ namespace SIL.Cog.Applications.Services
 
 		public void CompareAll(object ownerViewModel)
 		{
+			Messenger.Default.Send(new PerformingComparisonMessage());
 			var generator = new VarietyPairGenerator();
 			generator.Process(_projectService.Project);
 			foreach (GlobalSoundCorrespondenceCollection corrs in _projectService.Project.GlobalSoundCorrespondenceCollections.Values)

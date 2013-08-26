@@ -7,7 +7,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:ga="clr-namespace:SIL.Cog.Applications.GraphAlgorithms;assembly=SIL.Cog.Applications"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
-             mc:Ignorable="d" DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
+             mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
 	<Grid>
 		<Grid.RowDefinitions>

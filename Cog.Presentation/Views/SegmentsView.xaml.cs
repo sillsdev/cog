@@ -6,7 +6,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Linq;
-using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
@@ -22,7 +21,6 @@ namespace SIL.Cog.Presentation.Views
 	public partial class SegmentsView
 	{
 		private readonly SimpleMonitor _selectMonitor;
-		private InputBinding _findBinding;
 
 		public SegmentsView()
 		{
@@ -40,16 +38,8 @@ namespace SIL.Cog.Presentation.Views
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var window = this.FindVisualAncestor<Window>();
 			if (IsVisible)
-			{
-				window.InputBindings.Add(_findBinding);
 				Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.Focus()));
-			}
-			else
-			{
-				window.InputBindings.Remove(_findBinding);
-			}
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -63,7 +53,6 @@ namespace SIL.Cog.Presentation.Views
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
 			vm.Categories.CollectionChanged += Categories_CollectionChanged;
-			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
 		}
 
 		private void Categories_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

@@ -7,8 +7,10 @@ using SIL.Cog.Applications.Services;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class MainWindowViewModel : MasterViewModelBase
+	public class MainWindowViewModel : ContainerViewModelBase
 	{
+		private readonly ICommand _nullCommand;
+
 		private readonly ICommand _newCommand;
 		private readonly ICommand _openCommand;
 		private readonly ICommand _saveCommand;
@@ -22,22 +24,27 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _exportHierarchicalGraphCommand;
 		private readonly ICommand _exportNetworkGraphCommand;
 		private readonly ICommand _exportGlobalCorrespondencesChartCommand;
+		private readonly ICommand _performComparisonCommand;
+		private readonly ICommand _runStemmerCommand;
+		private ICommand _findCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly IExportService _exportService;
 		private readonly IImageExportService _imageExportService;
 		private readonly IProjectService _projectService;
+		private readonly IAnalysisService _analysisService;
 
 		public MainWindowViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IExportService exportService,
-			IImageExportService imageExportService, InputMasterViewModel inputMasterViewModel, CompareMasterViewModel compareMasterViewModel, AnalyzeMasterViewModel analyzeMasterViewModel)
-			: base("Cog", inputMasterViewModel, compareMasterViewModel, analyzeMasterViewModel)
+			IImageExportService imageExportService, IAnalysisService analysisService, InputViewModel input, CompareViewModel compare, AnalyzeViewModel analyze)
+			: base("Cog", input, compare, analyze)
 		{
 			_dialogService = dialogService;
 			_importService = importService;
 			_exportService = exportService;
 			_imageExportService = imageExportService;
 			_projectService = projectService;
+			_analysisService = analysisService;
 
 			_newCommand = new RelayCommand(New);
 			_openCommand = new RelayCommand(Open);
@@ -52,16 +59,22 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
 			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
 			_exportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
+			_performComparisonCommand = new RelayCommand(PerformComparison, CanPerformComparison);
+			_runStemmerCommand = new RelayCommand(RunStemmer, CanRunStemmer);
 
-			foreach (MasterViewModelBase childView in Views.OfType<MasterViewModelBase>())
+			foreach (ContainerViewModelBase childView in Views.OfType<ContainerViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
 
 			PropertyChanging += OnPropertyChanging;
 
+			_nullCommand = new RelayCommand(() => {}, () => false);
+			_findCommand = _nullCommand;
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
+			Messenger.Default.Register<HookFindMessage>(this, msg => FindCommand = msg.FindCommand ?? _nullCommand);
 
 			_projectService.Init();
 			DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+			CurrentView = input;
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -91,7 +104,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void CheckSettingsWorkspace(object view)
 		{
-			var childView = view as MasterViewModelBase;
+			var childView = view as ContainerViewModelBase;
 			if (childView == null)
 				return;
 
@@ -235,6 +248,28 @@ namespace SIL.Cog.Applications.ViewModels
 			return _projectService.Close();
 		}
 
+		private bool CanPerformComparison()
+		{
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Senses.Count > 0;
+		}
+
+		private void PerformComparison()
+		{
+			_analysisService.CompareAll(this);
+		}
+
+		private bool CanRunStemmer()
+		{
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Senses.Count > 0;
+		}
+
+		private void RunStemmer()
+		{
+			var vm = new RunStemmerViewModel(true);
+			if (_dialogService.ShowModalDialog(this, vm) == true)
+				_analysisService.StemAll(this, vm.Method);
+		}
+
 		public ICommand NewCommand
 		{
 			get { return _newCommand; }
@@ -298,6 +333,22 @@ namespace SIL.Cog.Applications.ViewModels
 		public ICommand ExportGlobalCorrespondencesChartCommand
 		{
 			get { return _exportGlobalCorrespondencesChartCommand; }
+		}
+
+		public ICommand PerformComparisonCommand
+		{
+			get { return _performComparisonCommand; }
+		}
+
+		public ICommand RunStemmerCommand
+		{
+			get { return _runStemmerCommand; }
+		}
+
+		public ICommand FindCommand
+		{
+			get { return _findCommand; }
+			private set { Set(() => FindCommand, ref _findCommand, value); }
 		}
 	}
 }

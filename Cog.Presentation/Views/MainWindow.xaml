@@ -9,6 +9,7 @@
         <KeyBinding Command="{Binding NewCommand}" Gesture="CTRL+N" />
         <KeyBinding Command="{Binding OpenCommand}" Gesture="CTRL+O" />
         <KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S" />
+		<KeyBinding Command="{Binding FindCommand}" Gesture="CTRL+F" />
     </Window.InputBindings>
     <DockPanel>
         <Menu Height="23" DockPanel.Dock="Top">
@@ -36,14 +37,20 @@
                 <MenuItem Header="Cu_t" Command="Cut" />
                 <MenuItem Header="_Copy" Command="Copy" />
                 <MenuItem Header="_Paste" Command="Paste" />
+				<Separator />
+				<MenuItem Header="_Find..." Command="{Binding FindCommand}" InputGestureText="Ctrl+F" />
             </MenuItem>
+			<MenuItem Header="_Tools">
+				<MenuItem Header="Run Stemmer..." Command="{Binding RunStemmerCommand}" />
+				<MenuItem Header="Perform Comparison" Command="{Binding PerformComparisonCommand}" />
+			</MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="About Cog" Click="AboutBox_Click" />
             </MenuItem>
         </Menu>
         <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding CurrentView}">
             <TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:MasterViewModelBase}">
+                <DataTemplate DataType="{x:Type vm:ContainerViewModelBase}">
                     <TextBlock Text="{Binding DisplayName}" />
                 </DataTemplate>
             </TabControl.ItemTemplate>

@@ -21,7 +21,6 @@ namespace SIL.Cog.Presentation.Views
 	public partial class WordListsView
 	{
 		private readonly SimpleMonitor _selectMonitor;
-		private InputBinding _findBinding;
 
 		public WordListsView()
 		{
@@ -42,21 +41,12 @@ namespace SIL.Cog.Presentation.Views
 			vm.Senses.CollectionChanged += Senses_CollectionChanged;
 			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
 			AddVarieties(vm.Varieties);
-			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var window = this.FindVisualAncestor<Window>();
 			if (IsVisible)
-			{
-				window.InputBindings.Add(_findBinding);
 				Dispatcher.BeginInvoke(new Action(() => WordListsGrid.Focus()));
-			}
-			else
-			{
-				window.InputBindings.Remove(_findBinding);
-			}
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)

@@ -44,6 +44,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => Graph = null);
+			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
 			    new TaskAreaCommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),

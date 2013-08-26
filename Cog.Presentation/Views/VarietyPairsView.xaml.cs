@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Input;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
 
@@ -16,8 +15,6 @@ namespace SIL.Cog.Presentation.Views
 	/// </summary>
 	public partial class VarietyPairsView
 	{
-		private InputBinding _findBinding;
-
 		public VarietyPairsView()
 		{
 			InitializeComponent();
@@ -31,21 +28,12 @@ namespace SIL.Cog.Presentation.Views
 				return;
 
 			vm.PropertyChanged += ViewModel_PropertyChanged;
-			_findBinding = new InputBinding(vm.FindCommand, new KeyGesture(Key.F, ModifierKeys.Control));
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var window = this.FindVisualAncestor<Window>();
 			if (IsVisible)
-			{
-				window.InputBindings.Add(_findBinding);
 				Dispatcher.BeginInvoke(new Action(() => Varieties1ComboBox.Focus()));
-			}
-			else
-			{
-				window.InputBindings.Remove(_findBinding);
-			}
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)

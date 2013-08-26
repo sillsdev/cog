@@ -1,22 +1,15 @@
-using GalaSoft.MvvmLight;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public abstract class WorkspaceViewModelBase : ViewModelBase
+	public abstract class WorkspaceViewModelBase : ContainerChildViewModelBase
 	{
 		private readonly BindableList<TaskAreaViewModelBase> _taskAreas;
-		private readonly string _displayName;
 
 		protected WorkspaceViewModelBase(string displayName)
+			: base(displayName)
 		{
-			_displayName = displayName;
 			_taskAreas = new BindableList<TaskAreaViewModelBase>();
-		}
-
-		public string DisplayName
-		{
-			get { return _displayName; }
 		}
 
 		public ObservableList<TaskAreaViewModelBase> TaskAreas

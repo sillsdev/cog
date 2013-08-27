@@ -52,6 +52,28 @@ namespace SIL.Cog.Domain
 			return (FeatureSymbol) ann.FeatureStruct.GetValue(CogFeatureSystem.Type);
 		}
 
+		public static bool IsComplex(this ShapeNode node)
+		{
+			SymbolicFeatureValue sfv;
+			if (node.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SegmentType, out sfv))
+			{
+				var symbol = (FeatureSymbol) sfv;
+				return symbol == CogFeatureSystem.Complex;
+			}
+			return false;
+		}
+
+		public static bool IsComplex(this Annotation<ShapeNode> ann)
+		{
+			SymbolicFeatureValue sfv;
+			if (ann.FeatureStruct.TryGetValue(CogFeatureSystem.SegmentType, out sfv))
+			{
+				var symbol = (FeatureSymbol) sfv;
+				return symbol == CogFeatureSystem.Complex;
+			}
+			return false;
+		}
+
 		public static SoundContext ToSoundContext(this ShapeNode node, SegmentPool segmentPool, IEnumerable<SoundClass> soundClasses)
 		{
 			ShapeNode prevNode = node.GetPrev(NodeFilter);

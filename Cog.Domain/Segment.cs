@@ -26,6 +26,20 @@ namespace SIL.Cog.Domain
 			get { return (FeatureSymbol) _fs.GetValue(CogFeatureSystem.Type); }
 		}
 
+		public bool IsComplex
+		{
+			get
+			{
+				SymbolicFeatureValue sfv;
+				if (_fs.TryGetValue(CogFeatureSystem.SegmentType, out sfv))
+				{
+					var symbol = (FeatureSymbol) sfv;
+					return symbol == CogFeatureSystem.Complex;
+				}
+				return false;
+			}
+		}
+
 		public FeatureStruct FeatureStruct
 		{
 			get { return _fs; }

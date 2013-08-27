@@ -19,6 +19,11 @@ namespace SIL.Cog.Domain
 		public static readonly FeatureSymbol SuffixType;
 		public static readonly FeatureSymbol StemType;
 
+		public static readonly SymbolicFeature SegmentType;
+
+		public static readonly FeatureSymbol Complex;
+		public static readonly FeatureSymbol Simple;
+
 		public static readonly StringFeature OriginalStrRep;
 		public static readonly StringFeature StrRep;
 
@@ -38,6 +43,11 @@ namespace SIL.Cog.Domain
 
 			Type = new SymbolicFeature(Guid.NewGuid().ToString(), AnchorType, VowelType, ConsonantType, ToneLetterType, BoundaryType, SyllableType, StemType, PrefixType, SuffixType) {Description = "Type"};
 
+			Complex = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "complex"};
+			Simple = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "simple"};
+
+			SegmentType = new SymbolicFeature(Guid.NewGuid().ToString(), Complex, Simple) {Description = "SegmentType"};
+
 			OriginalStrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "OriginalStrRep"};
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};
 
@@ -47,6 +57,7 @@ namespace SIL.Cog.Domain
 		private CogFeatureSystem()
 		{
 			Add(Type);
+			Add(SegmentType);
 			Add(OriginalStrRep);
 			Add(StrRep);
 			Freeze();

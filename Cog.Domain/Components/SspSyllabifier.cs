@@ -116,7 +116,7 @@ namespace SIL.Cog.Domain.Components
 				{
 					if (onsetStart.Prev.Type() == CogFeatureSystem.ConsonantType)
 					{
-						CombineWith(onsetStart.Prev, onsetStart, n.Prev);
+						CombineWith(newShape.GetLast(nd => nd.Type() == CogFeatureSystem.ConsonantType), onsetStart, n.Prev);
 					}
 					else
 					{
@@ -148,6 +148,7 @@ namespace SIL.Cog.Domain.Components
 			}
 			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
 			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
+			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
 		}
 
 		private int GetSonority(ShapeNode node)

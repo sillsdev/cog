@@ -222,10 +222,34 @@ namespace SIL.Cog.Applications.ViewModels
 						words.Add(wordCounts.MaxBy(kvp => kvp.Value).Key);
 				}
 			}
+			if (words.Count == 0)
+			{
+				_words.Clear();
+				return;
+			}
 
 			IWordAligner aligner = _projectService.Project.WordAligners["primary"];
-			IWordAlignerResult result = aligner.Compute(words);
-			Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
+			Alignment<Word, ShapeNode> alignment;
+			if (words.Count == 1)
+			{
+				Word word = words[0];
+				Annotation<ShapeNode> prefixAnn = word.Prefix;
+				var prefix = new AlignmentCell<ShapeNode>(prefixAnn != null ? word.Shape.GetNodes(prefixAnn.Span).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
+				IEnumerable<AlignmentCell<ShapeNode>> columns = word.Shape.GetNodes(word.Stem.Span).Where(NodeFilter).Select(n => new AlignmentCell<ShapeNode>(n));
+				Annotation<ShapeNode> suffixAnn = word.Suffix;
+				var suffix = new AlignmentCell<ShapeNode>(suffixAnn != null ? word.Shape.GetNodes(suffixAnn.Span).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
+				alignment = new Alignment<Word, ShapeNode>(0, 0, Tuple.Create(word, prefix, columns, suffix));
+			}
+			else if (words.Count == 2)
+			{
+				IWordAlignerResult result = aligner.Compute(words[0], words[1]);
+				alignment = result.GetAlignments().First();
+			}
+			else
+			{
+				IWordAlignerResult result = aligner.Compute(words);
+				alignment = result.GetAlignments().First();
+			}
 
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
@@ -241,6 +265,11 @@ namespace SIL.Cog.Applications.ViewModels
 					_words.Add(new MultipleWordAlignmentWordViewModel(word, prefix, columns, suffix, cognateSetIndex));
 				}
 			}
+		}
+
+		private bool NodeFilter(ShapeNode n)
+		{
+			return n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType);
 		}
 
 		public ObservableList<MultipleWordAlignmentWordViewModel> Words

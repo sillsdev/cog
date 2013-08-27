@@ -155,7 +155,7 @@ namespace SIL.Cog.Applications.ViewModels
 				_segments.Clear();
 				foreach (Segment segment in _projectService.Project.Varieties
 					.SelectMany(v => v.SegmentFrequencyDistributions[DomainSyllablePosition].ObservedSamples)
-					.Distinct().Where(s => !s.IsComplex()).OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s.StrRep))
+					.Distinct().Where(s => !s.IsComplex).OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s.StrRep))
 				{
 					_domainSegments.Add(segment);
 					_segments.Add(new SegmentViewModel(segment));

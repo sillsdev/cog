@@ -100,6 +100,8 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var vm = (WordListsViewModel) DataContext;
 
+			WordListsGrid.CurrentColumn = null;
+			WordListsGrid.CurrentItem = null;
 			WordListsGrid.Columns.Clear();
 			var view = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
 			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)));

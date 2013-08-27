@@ -277,7 +277,8 @@ namespace SIL.Cog.Domain
 				{
 					string strRep;
 					FeatureStruct phonemeFS;
-					if (!TryComplexSymbol(match, _vowels, out strRep, out phonemeFS))
+					bool isComplex = false;
+					if (!TryMultipleBaseCharacterSymbol(match, _vowels, out strRep, out phonemeFS))
 					{
 						var sb = new StringBuilder();
 						Group vowelComp = match.Groups["vowelComp"];
@@ -295,6 +296,7 @@ namespace SIL.Cog.Domain
 								sb.Append(partStrRep);
 								phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
 							}
+							isComplex = true;
 						}
 						else if (vowelComp.Captures.Count > 1)
 						{
@@ -303,6 +305,7 @@ namespace SIL.Cog.Domain
 								phonemeFS.Add(BuildFeatStruct(match, vowelComp.Captures[i], "vowelBase", _vowels, out partStrRep));
 								sb.Append(partStrRep);
 							}
+							isComplex = true;
 						}
 						strRep = sb.ToString();
 					}
@@ -310,13 +313,15 @@ namespace SIL.Cog.Domain
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, strRep);
 					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
+					phonemeFS.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
 					shape.Add(phonemeFS);
 				}
 				else if (match.Groups["consSeg"].Success)
 				{
 					string strRep;
 					FeatureStruct phonemeFS;
-					if (!TryComplexSymbol(match, _consonants, out strRep, out phonemeFS))
+					bool isComplex = false;
+					if (!TryMultipleBaseCharacterSymbol(match, _consonants, out strRep, out phonemeFS))
 					{
 						var sb = new StringBuilder();
 						Group consComp = match.Groups["consComp"];
@@ -336,6 +341,7 @@ namespace SIL.Cog.Domain
 								if (joinerFs != null)
 									phonemeFS.PriorityUnion(joinerFs);
 							}
+							isComplex = true;
 						}
 						else if (consComp.Captures.Count > 1)
 						{
@@ -344,6 +350,7 @@ namespace SIL.Cog.Domain
 								phonemeFS.Add(BuildFeatStruct(match, consComp.Captures[i], "consBase", _consonants, out compStrRep));
 								sb.Append(compStrRep);
 							}
+							isComplex = true;
 						}
 						strRep = sb.ToString();
 					}
@@ -351,6 +358,7 @@ namespace SIL.Cog.Domain
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, strRep);
 					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
+					phonemeFS.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
 					shape.Add(phonemeFS);
 				}
 				else if (match.Groups["tone"].Success)
@@ -382,7 +390,7 @@ namespace SIL.Cog.Domain
 			return false;
 		}
 
-		private bool TryComplexSymbol(Match match, SymbolCollection bases, out string strRep, out FeatureStruct fs)
+		private bool TryMultipleBaseCharacterSymbol(Match match, SymbolCollection bases, out string strRep, out FeatureStruct fs)
 		{
 			Group joinerGroup = match.Groups["joiner"];
 			Group modGroup = match.Groups["mod"];

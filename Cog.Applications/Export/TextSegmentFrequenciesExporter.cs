@@ -48,7 +48,7 @@ namespace SIL.Cog.Applications.Export
 
 			Segment[] segments = project.Varieties
 				.SelectMany(v => v.SegmentFrequencyDistributions[domainSyllablePosition].ObservedSamples)
-				.Distinct().Where(s => !s.IsComplex()).OrderBy(GetSortOrder).ThenBy(s => s.StrRep).ToArray();
+				.Distinct().Where(s => !s.IsComplex).OrderBy(GetSortOrder).ThenBy(s => s.StrRep).ToArray();
 
 			using (var writer = new StreamWriter(path))
 			{

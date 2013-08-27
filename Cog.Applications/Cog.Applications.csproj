@@ -143,7 +143,6 @@
     <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
     <Compile Include="ViewModels\ComponentSettingsViewModelBase.cs" />
     <Compile Include="ViewModels\DolgopolskyCognateIdentifierViewModel.cs" />
-    <Compile Include="ViewModels\DomainExtensions.cs" />
     <Compile Include="ViewModels\EditAffixViewModel.cs" />
     <Compile Include="ViewModels\EditNaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />

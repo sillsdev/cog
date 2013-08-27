@@ -167,7 +167,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private bool SelectWordSegments(WordViewModel word)
 		{
 			bool selected = false;
-			foreach (WordSegmentViewModel segment in word.Segments.Where(s => !s.IsBoundary))
+			foreach (WordSegmentViewModel segment in word.Segments.Where(s => !s.IsBoundary && !s.IsNotInOriginal))
 			{
 				segment.IsSelected = _currentSegment != null && segment.DomainNode.StrRep() == _currentSegment.StrRep;
 				if (segment.IsSelected)

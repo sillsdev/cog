@@ -139,15 +139,18 @@ namespace SIL.Cog.Domain.Components
 			strRep.Append(start.StrRep());
 			origStrRep.Append(start.OriginalStrRep());
 			ShapeNode node = start.Next;
+			bool isComplex = false;
 			while (node != end.Next)
 			{
 				strRep.Append(node.StrRep());
 				origStrRep.Append(node.OriginalStrRep());
 				fs.Add(node.Annotation.FeatureStruct);
 				node = node.Next;
+				isComplex = true;
 			}
 			fs.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
 			fs.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
+			fs.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
 			return new ShapeNode(spanFactory, fs);
 		}
 	}

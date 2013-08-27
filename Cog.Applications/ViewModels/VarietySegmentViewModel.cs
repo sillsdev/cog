@@ -13,9 +13,12 @@ namespace SIL.Cog.Applications.ViewModels
 			: base(segment)
 		{
 			_variety = variety;
-			FrequencyDistribution<Segment> freqDist = variety.DomainVariety.SegmentFrequencyDistributions[position];
-			_frequency = freqDist[segment];
-			_probability = (double) _frequency / freqDist.SampleOutcomeCount;
+			FrequencyDistribution<Segment> freqDist;
+			if (variety.DomainVariety.SegmentFrequencyDistributions.TryGetValue(position, out freqDist))
+			{
+				_frequency = freqDist[segment];
+				_probability = (double) _frequency / freqDist.SampleOutcomeCount;
+			}
 		}
 
 		public double Probability

@@ -41,8 +41,8 @@
 				<MenuItem Header="_Find..." Command="{Binding FindCommand}" InputGestureText="Ctrl+F" />
             </MenuItem>
 			<MenuItem Header="_Tools">
-				<MenuItem Header="Run Stemmer..." Command="{Binding RunStemmerCommand}" />
-				<MenuItem Header="Perform Comparison" Command="{Binding PerformComparisonCommand}" />
+				<MenuItem Header="Remove Affixes from All Words..." Command="{Binding RunStemmerCommand}" />
+				<MenuItem Header="Compare All Variety Pairs" Command="{Binding PerformComparisonCommand}" />
 			</MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="About Cog" Click="AboutBox_Click" />

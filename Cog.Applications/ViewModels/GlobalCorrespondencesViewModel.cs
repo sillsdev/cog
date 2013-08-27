@@ -39,7 +39,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => GenerateGraph());
-			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ClearGraph());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
+				{
+					if (msg.AffectsComparison)
+						ClearGraph();
+				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ClearGraph());
 
 			_findCommand = new RelayCommand(Find);

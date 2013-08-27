@@ -14,7 +14,7 @@ using SIL.Cog.Presentation.Converters;
 
 namespace SIL.Cog.Presentation.Views
 {
-	public class RegionMarker : GMapMarker, IDisposable
+	public class RegionMarker : GMapPolygon, IDisposable
 	{
 		public event EventHandler Click;
 
@@ -26,24 +26,24 @@ namespace SIL.Cog.Presentation.Views
 		private readonly GeographicalRegionViewModel _region;
 
 		public RegionMarker(GeographicalRegionViewModel region)
-			: base(new PointLatLng())
+			: base(Enumerable.Empty<PointLatLng>())
 		{
 			_region = region;
-			Polygon.AddRange(region.Coordinates.Select(coord => new PointLatLng(coord.Item1, coord.Item2)));
-			Position = Polygon[0];
+			Points.AddRange(region.Coordinates.Select(coord => new PointLatLng(coord.Item1, coord.Item2)));
+			Position = Points[0];
 			_regionPoints = new List<RegionPointMarker>();
 			_regionMidpoints = new List<RegionPointMarker>();
 		}
 
-		public override void RegeneratePolygonShape(GMapControl map)
+		public override void RegenerateShape(GMapControl map)
 		{
 			if (map != null)
 			{
-				if (Polygon.Count > 1)
+				if (Points.Count > 1)
 				{
 					var localPath = new List<Point>();
-					var offset = map.FromLatLngToLocal(Polygon[0]);
-					foreach (var i in Polygon)
+					var offset = map.FromLatLngToLocal(Points[0]);
+					foreach (PointLatLng i in Points)
 					{
 						var p = map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
 						localPath.Add(new Point(p.X - offset.X, p.Y - offset.Y));
@@ -105,16 +105,16 @@ namespace SIL.Cog.Presentation.Views
 			{
 				var path = (Path) sender;
 				var marker = (RegionMarker) Map.Markers.First(m => m.Shape == path);
-				for (int i = 0; i < marker.Polygon.Count; i++)
+				for (int i = 0; i < marker.Points.Count; i++)
 				{
-					PointLatLng curPoint = marker.Polygon[i];
-					PointLatLng nextPoint = i == marker.Polygon.Count - 1 ? marker.Polygon[0] : marker.Polygon[i + 1];
+					PointLatLng curPoint = marker.Points[i];
+					PointLatLng nextPoint = i == marker.Points.Count - 1 ? marker.Points[0] : marker.Points[i + 1];
 					CreateMidpoint(i, curPoint, nextPoint);
 					CreatePoint(i, curPoint);
 				}
 
-				_regionHitMarker = new RegionHitMarker(marker.Polygon);
-				_regionHitMarker.RegeneratePolygonShape(Map);
+				_regionHitMarker = new RegionHitMarker(marker.Points);
+				_regionHitMarker.RegenerateShape(Map);
 				_regionHitMarker.Shape.MouseLeave += Region_MouseLeave;
 				_regionHitMarker.Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
 				Map.OnMapZoomChanged += Map_OnMapZoomChanged;
@@ -207,8 +207,8 @@ namespace SIL.Cog.Presentation.Views
 			PointLatLng pll = Map.FromLocalToLatLng((int) p.X, (int) p.Y);
 			if (_isMidpoint)
 			{
-				Polygon.Insert(_currentPointIndex + 1, pll);
-				_regionHitMarker.Polygon.Insert(_currentPointIndex + 1, pll);
+				Points.Insert(_currentPointIndex + 1, pll);
+				_regionHitMarker.Points.Insert(_currentPointIndex + 1, pll);
 				_regionPoints.Insert(_currentPointIndex + 1, _regionMidpoints[_currentPointIndex]);
 				_regionMidpoints[_currentPointIndex].IsMidpoint = false;
 				_regionMidpoints.RemoveAt(_currentPointIndex);
@@ -219,7 +219,7 @@ namespace SIL.Cog.Presentation.Views
 			{
 				if (_currentPointIndex == 0)
 					Position = pll;
-				Polygon[_currentPointIndex] = pll;
+				Points[_currentPointIndex] = pll;
 				if (_regionMidpoints.Count == _regionPoints.Count)
 				{
 					for (int i = _currentPointIndex - 1; i <= _currentPointIndex; i++)
@@ -234,9 +234,9 @@ namespace SIL.Cog.Presentation.Views
 				}
 			}
 			_regionPoints[_currentPointIndex].Position = pll;
-			RegeneratePolygonShape(Map);
-			_regionHitMarker.Polygon[_currentPointIndex] = pll;
-			_regionHitMarker.RegeneratePolygonShape(Map);
+			RegenerateShape(Map);
+			_regionHitMarker.Points[_currentPointIndex] = pll;
+			_regionHitMarker.RegenerateShape(Map);
 			_regionHitMarker.Shape.MouseLeave += Region_MouseLeave;
 			_regionHitMarker.Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
 		}
@@ -251,12 +251,12 @@ namespace SIL.Cog.Presentation.Views
 					PointLatLng nextPoint = i == _regionPoints.Count - 1 ? _regionPoints[0].Position : _regionPoints[i + 1].Position;
 					CreateMidpoint(i, curPoint, nextPoint);
 				}
-				_region.Coordinates.Insert(_currentPointIndex, Tuple.Create(Polygon[_currentPointIndex].Lat, Polygon[_currentPointIndex].Lng));
+				_region.Coordinates.Insert(_currentPointIndex, Tuple.Create(Points[_currentPointIndex].Lat, Points[_currentPointIndex].Lng));
 			}
-			else if (Math.Abs(_region.Coordinates[_currentPointIndex].Item1 - Polygon[_currentPointIndex].Lat) > double.Epsilon
-				|| Math.Abs(_region.Coordinates[_currentPointIndex].Item2 - Polygon[_currentPointIndex].Lng) > double.Epsilon)
+			else if (Math.Abs(_region.Coordinates[_currentPointIndex].Item1 - Points[_currentPointIndex].Lat) > double.Epsilon
+				|| Math.Abs(_region.Coordinates[_currentPointIndex].Item2 - Points[_currentPointIndex].Lng) > double.Epsilon)
 			{
-				_region.Coordinates[_currentPointIndex] = Tuple.Create(Polygon[_currentPointIndex].Lat, Polygon[_currentPointIndex].Lng);
+				_region.Coordinates[_currentPointIndex] = Tuple.Create(Points[_currentPointIndex].Lat, Points[_currentPointIndex].Lng);
 			}
 			else
 			{

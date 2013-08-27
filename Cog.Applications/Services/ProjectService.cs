@@ -45,9 +45,12 @@ namespace SIL.Cog.Applications.Services
 		private void HandleDomainModelChanged(DomainModelChangedMessage msg)
 		{
 			_isChanged = true;
-			_project.VarietyPairs.Clear();
-			foreach (GlobalSoundCorrespondenceCollection corrs in _project.GlobalSoundCorrespondenceCollections.Values)
-				corrs.Clear();
+			if (msg.AffectsComparison)
+			{
+				_project.VarietyPairs.Clear();
+				foreach (GlobalSoundCorrespondenceCollection corrs in _project.GlobalSoundCorrespondenceCollections.Values)
+					corrs.Clear();
+			}
 		}
 
 		private void HandleComparisonPerformed(ComparisonPerformedMessage msg)

@@ -54,9 +54,6 @@
 							</Hyperlink>
 						</TextBlock>
 					</DataTemplate>
-					<!--Style TargetType="xcdg:TableViewScrollViewer">
-						<Setter Property="CanContentScroll" Value="False" />
-					</Style-->
 				</xcdg:DataGridControl.Resources>
 				<xcdg:DataGridControl.View>
 					<xcdg:TableView AllowRowResize="False" IsColumnVirtualizationEnabled="False" FixedColumnCount="1">

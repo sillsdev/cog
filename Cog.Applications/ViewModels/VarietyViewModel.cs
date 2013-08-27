@@ -15,7 +15,6 @@ namespace SIL.Cog.Applications.ViewModels
 		public string Name
 		{
 			get { return _variety.Name; }
-			set { _variety.Name = value; }
 		}
 
 		internal Variety DomainVariety

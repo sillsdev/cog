@@ -4,6 +4,78 @@
         <name>GMap.NET.WindowsPresentation</name>
     </assembly>
     <members>
+        <member name="T:GMap.NET.WindowsPresentation.GMapMarker">
+            <summary>
+            GMap.NET marker
+            </summary>
+        </member>
+        <member name="F:GMap.NET.WindowsPresentation.GMapMarker.Tag">
+            <summary>
+            custom object
+            </summary>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.Clear">
+            <summary>
+            calls Dispose on shape if it implements IDisposable, sets shape to null and clears route
+            </summary>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.UpdateLocalPosition">
+            <summary>
+            updates marker position, internal access usualy
+            </summary>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.ForceUpdateLocalPosition(GMap.NET.WindowsPresentation.GMapControl)">
+            <summary>
+            forces to update local marker  position
+            dot not call it if you don't really need to ;}
+            </summary>
+            <param name="m"></param>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Shape">
+            <summary>
+            marker visual
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Position">
+            <summary>
+            coordinate of marker
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Map">
+            <summary>
+            the map of this marker
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Offset">
+            <summary>
+            offset of marker
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.LocalPositionX">
+            <summary>
+            local X position of marker
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.LocalPositionY">
+            <summary>
+            local Y position of marker
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.ZIndex">
+            <summary>
+            the index of Z, render order
+            </summary>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapPolygon.RegenerateShape(GMap.NET.WindowsPresentation.GMapControl)">
+            <summary>
+            regenerates shape of polygon
+            </summary>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapRoute.RegenerateShape(GMap.NET.WindowsPresentation.GMapControl)">
+            <summary>
+            regenerates shape of route
+            </summary>
+        </member>
         <member name="T:GMap.NET.WindowsPresentation.PerfTimer">
             <summary>
             This class implements a high precision timer using the Win32 QueryPerformanceCounter API.
@@ -102,99 +174,164 @@
             Reset the timer to its initial state.
             </summary>
         </member>
-        <member name="T:GMap.NET.WindowsPresentation.TilePrefetcher">
+        <member name="T:GMap.NET.WindowsPresentation.QuadTree`1">
             <summary>
-            form helping to prefetch tiles on local db
-            </summary>
-            <summary>
-            TilePrefetcher
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.TilePrefetcher.InitializeComponent">
-            <summary>
-            InitializeComponent
+            This class efficiently stores and retrieves arbitrarily sized and positioned
+            objects in a quad-tree data structure.  This can be used to do efficient hit
+            detection or visiblility checks on objects in a virtualized canvas.
+            The object does not need to implement any special interface because the Rect Bounds
+            of those objects is handled as a separate argument to Insert.
             </summary>
         </member>
-        <member name="T:GMap.NET.WindowsPresentation.GMapMarker">
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Insert(`0,System.Windows.Rect)">
             <summary>
-            GMap.NET marker
+            Insert a node with given bounds into this QuadTree.
+            </summary>
+            <param name="node">The node to insert</param>
+            <param name="bounds">The bounds of this node</param>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.GetNodesInside(System.Windows.Rect)">
+            <summary>
+            Get a list of the nodes that intersect the given bounds.
+            </summary>
+            <param name="bounds">The bounds to test</param>
+            <returns>List of zero or mode nodes found inside the given bounds</returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.HasNodesInside(System.Windows.Rect)">
+            <summary>
+            Get a list of the nodes that intersect the given bounds.
+            </summary>
+            <param name="bounds">The bounds to test</param>
+            <returns>List of zero or mode nodes found inside the given bounds</returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.GetNodes(System.Windows.Rect)">
+            <summary>
+            Get list of nodes that intersect the given bounds.
+            </summary>
+            <param name="bounds">The bounds to test</param>
+            <returns>The list of nodes intersecting the given bounds</returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Remove(`0)">
+            <summary>
+            Remove the given node from this QuadTree.
+            </summary>
+            <param name="node">The node to remove</param>
+            <returns>True if the node was found and removed.</returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.ReIndex">
+            <summary>
+            Rebuild all the Quadrants according to the current QuadTree Bounds.
             </summary>
         </member>
-        <member name="F:GMap.NET.WindowsPresentation.GMapMarker.Tag">
+        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Bounds">
             <summary>
-            custom object
+            This determines the overall quad-tree indexing strategy, changing this bounds
+            is expensive since it has to re-divide the entire thing - like a re-hash operation.
             </summary>
         </member>
-        <member name="F:GMap.NET.WindowsPresentation.GMapMarker.Route">
+        <!-- Badly formed XML comment ignored for member "T:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode" -->
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.#ctor(`0,System.Windows.Rect)">
             <summary>
-            if marker is a route that is a path of it's coordinates
+            Construct new QuadNode to wrap the given node with given bounds
+            </summary>
+            <param name="node">The node</param>
+            <param name="bounds">The bounds of that node</param>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Node">
+            <summary>
+            The node
             </summary>
         </member>
-        <member name="F:GMap.NET.WindowsPresentation.GMapMarker.Polygon">
+        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Bounds">
             <summary>
-            if marker is a polygon that is a path of it's coordinates
+            The Rect bounds of the node
             </summary>
         </member>
-        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.Clear">
+        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Next">
             <summary>
-            calls Dispose on shape if it implements IDisposable, sets shape to null and clears route
+            QuadNodes form a linked list in the Quadrant.
             </summary>
         </member>
-        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.UpdateLocalPosition">
+        <member name="T:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant">
             <summary>
-            updates marker position, internal access usualy
+            The canvas is split up into four Quadrants and objects are stored in the quadrant that contains them
+            and each quadrant is split up into four child Quadrants recurrsively.  Objects that overlap more than
+            one quadrant are stored in the _nodes list for this Quadrant.
             </summary>
         </member>
-        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.ForceUpdateLocalPosition(GMap.NET.WindowsPresentation.GMapControl)">
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.#ctor(GMap.NET.WindowsPresentation.QuadTree{`0}.Quadrant,System.Windows.Rect)">
             <summary>
-            forces to update local marker  position
-            dot not call it if you don't really need to ;}
+            Construct new Quadrant with a given bounds all nodes stored inside this quadrant
+            will fit inside this bounds.  
             </summary>
-            <param name="m"></param>
+            <param name="parent">The parent quadrant (if any)</param>
+            <param name="bounds">The bounds of this quadrant</param>
         </member>
-        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.RegenerateRouteShape(GMap.NET.WindowsPresentation.GMapControl)">
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Insert(`0,System.Windows.Rect)">
             <summary>
-            regenerates shape of route
+            Insert the given node
+            </summary>
+            <param name="node">The node </param>
+            <param name="bounds">The bounds of that node</param>
+            <returns></returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.GetIntersectingNodes(System.Collections.Generic.List{GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode},System.Windows.Rect)">
+            <summary>
+            Returns all nodes in this quadrant that intersect the given bounds.
+            The nodes are returned in pretty much random order as far as the caller is concerned.
+            </summary>
+            <param name="nodes">List of nodes found in the given bounds</param>
+            <param name="bounds">The bounds that contains the nodes you want returned</param>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.GetIntersectingNodes(GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode,System.Collections.Generic.List{GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode},System.Windows.Rect)">
+            <summary>
+            Walk the given linked list of QuadNodes and check them against the given bounds.
+            Add all nodes that intersect the bounds in to the list.
+            </summary>
+            <param name="last">The last QuadNode in a circularly linked list</param>
+            <param name="nodes">The resulting nodes are added to this list</param>
+            <param name="bounds">The bounds to test against each node</param>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.HasIntersectingNodes(System.Windows.Rect)">
+            <summary>
+            Return true if there are any nodes in this Quadrant that intersect the given bounds.
+            </summary>
+            <param name="bounds">The bounds to test</param>
+            <returns>boolean</returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.HasIntersectingNodes(GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode,System.Windows.Rect)">
+            <summary>
+            Walk the given linked list and test each node against the given bounds/
+            </summary>
+            <param name="last">The last node in the circularly linked list.</param>
+            <param name="bounds">Bounds to test</param>
+            <returns>Return true if a node in the list intersects the bounds</returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.RemoveNode(`0)">
+            <summary>
+            Remove the given node from this Quadrant.
+            </summary>
+            <param name="node">The node to remove</param>
+            <returns>Returns true if the node was found and removed.</returns>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Parent">
+            <summary>
+            The parent Quadrant or null if this is the root
             </summary>
         </member>
-        <member name="M:GMap.NET.WindowsPresentation.GMapMarker.RegeneratePolygonShape(GMap.NET.WindowsPresentation.GMapControl)">
+        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Bounds">
             <summary>
-            regenerates shape of polygon
+            The bounds of this quadrant
             </summary>
         </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Shape">
+        <member name="T:GMap.NET.WindowsPresentation.GMapImage">
             <summary>
-            marker visual
+            image abstraction
             </summary>
         </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Position">
+        <member name="T:GMap.NET.WindowsPresentation.GMapImageProxy">
             <summary>
-            coordinate of marker
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Map">
-            <summary>
-            the map of this marker
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.Offset">
-            <summary>
-            offset of marker
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.LocalPositionX">
-            <summary>
-            local X position of marker
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.LocalPositionY">
-            <summary>
-            local Y position of marker
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.GMapMarker.ZIndex">
-            <summary>
-            the index of Z, render order
+            image abstraction proxy
             </summary>
         </member>
         <member name="T:GMap.NET.WindowsPresentation.GMapControl">
@@ -503,164 +640,17 @@
             http://greatmaps.codeplex.com/workitem/16046
             </summary>
         </member>
-        <member name="T:GMap.NET.WindowsPresentation.WindowsPresentationImage">
+        <member name="T:GMap.NET.WindowsPresentation.TilePrefetcher">
             <summary>
-            image abstraction
+            form helping to prefetch tiles on local db
+            </summary>
+            <summary>
+            TilePrefetcher
             </summary>
         </member>
-        <member name="T:GMap.NET.WindowsPresentation.WindowsPresentationImageProxy">
+        <member name="M:GMap.NET.WindowsPresentation.TilePrefetcher.InitializeComponent">
             <summary>
-            image abstraction proxy
-            </summary>
-        </member>
-        <member name="T:GMap.NET.WindowsPresentation.QuadTree`1">
-            <summary>
-            This class efficiently stores and retrieves arbitrarily sized and positioned
-            objects in a quad-tree data structure.  This can be used to do efficient hit
-            detection or visiblility checks on objects in a virtualized canvas.
-            The object does not need to implement any special interface because the Rect Bounds
-            of those objects is handled as a separate argument to Insert.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Insert(`0,System.Windows.Rect)">
-            <summary>
-            Insert a node with given bounds into this QuadTree.
-            </summary>
-            <param name="node">The node to insert</param>
-            <param name="bounds">The bounds of this node</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.GetNodesInside(System.Windows.Rect)">
-            <summary>
-            Get a list of the nodes that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>List of zero or mode nodes found inside the given bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.HasNodesInside(System.Windows.Rect)">
-            <summary>
-            Get a list of the nodes that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>List of zero or mode nodes found inside the given bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.GetNodes(System.Windows.Rect)">
-            <summary>
-            Get list of nodes that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>The list of nodes intersecting the given bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Remove(`0)">
-            <summary>
-            Remove the given node from this QuadTree.
-            </summary>
-            <param name="node">The node to remove</param>
-            <returns>True if the node was found and removed.</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.ReIndex">
-            <summary>
-            Rebuild all the Quadrants according to the current QuadTree Bounds.
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Bounds">
-            <summary>
-            This determines the overall quad-tree indexing strategy, changing this bounds
-            is expensive since it has to re-divide the entire thing - like a re-hash operation.
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "T:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode" -->
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.#ctor(`0,System.Windows.Rect)">
-            <summary>
-            Construct new QuadNode to wrap the given node with given bounds
-            </summary>
-            <param name="node">The node</param>
-            <param name="bounds">The bounds of that node</param>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Node">
-            <summary>
-            The node
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Bounds">
-            <summary>
-            The Rect bounds of the node
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Next">
-            <summary>
-            QuadNodes form a linked list in the Quadrant.
-            </summary>
-        </member>
-        <member name="T:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant">
-            <summary>
-            The canvas is split up into four Quadrants and objects are stored in the quadrant that contains them
-            and each quadrant is split up into four child Quadrants recurrsively.  Objects that overlap more than
-            one quadrant are stored in the _nodes list for this Quadrant.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.#ctor(GMap.NET.WindowsPresentation.QuadTree{`0}.Quadrant,System.Windows.Rect)">
-            <summary>
-            Construct new Quadrant with a given bounds all nodes stored inside this quadrant
-            will fit inside this bounds.  
-            </summary>
-            <param name="parent">The parent quadrant (if any)</param>
-            <param name="bounds">The bounds of this quadrant</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Insert(`0,System.Windows.Rect)">
-            <summary>
-            Insert the given node
-            </summary>
-            <param name="node">The node </param>
-            <param name="bounds">The bounds of that node</param>
-            <returns></returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.GetIntersectingNodes(System.Collections.Generic.List{GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode},System.Windows.Rect)">
-            <summary>
-            Returns all nodes in this quadrant that intersect the given bounds.
-            The nodes are returned in pretty much random order as far as the caller is concerned.
-            </summary>
-            <param name="nodes">List of nodes found in the given bounds</param>
-            <param name="bounds">The bounds that contains the nodes you want returned</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.GetIntersectingNodes(GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode,System.Collections.Generic.List{GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode},System.Windows.Rect)">
-            <summary>
-            Walk the given linked list of QuadNodes and check them against the given bounds.
-            Add all nodes that intersect the bounds in to the list.
-            </summary>
-            <param name="last">The last QuadNode in a circularly linked list</param>
-            <param name="nodes">The resulting nodes are added to this list</param>
-            <param name="bounds">The bounds to test against each node</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.HasIntersectingNodes(System.Windows.Rect)">
-            <summary>
-            Return true if there are any nodes in this Quadrant that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>boolean</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.HasIntersectingNodes(GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode,System.Windows.Rect)">
-            <summary>
-            Walk the given linked list and test each node against the given bounds/
-            </summary>
-            <param name="last">The last node in the circularly linked list.</param>
-            <param name="bounds">Bounds to test</param>
-            <returns>Return true if a node in the list intersects the bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.RemoveNode(`0)">
-            <summary>
-            Remove the given node from this Quadrant.
-            </summary>
-            <param name="node">The node to remove</param>
-            <returns>Returns true if the node was found and removed.</returns>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Parent">
-            <summary>
-            The parent Quadrant or null if this is the root
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Bounds">
-            <summary>
-            The bounds of this quadrant
+            InitializeComponent
             </summary>
         </member>
     </members>

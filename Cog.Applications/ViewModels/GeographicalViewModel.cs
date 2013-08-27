@@ -41,7 +41,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => ClusterVarieties());
-			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetClusters());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
+				{
+					if (msg.AffectsComparison)
+						ResetClusters();
+				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetClusters());
 
 			_similarityScoreThreshold = 0.7;
@@ -86,6 +90,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var region = new GeographicRegion(coordinates.Select(coord => new GeographicCoordinate(coord.Item1, coord.Item2))) {Description = vm.Description};
 				vm.CurrentVariety.DomainVariety.Regions.Add(region);
+				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}
 		}
 

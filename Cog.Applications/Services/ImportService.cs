@@ -55,9 +55,10 @@ namespace SIL.Cog.Applications.Services
 			{
 				IWordListsImporter importer = WordListsImporters[result.SelectedFileType];
 				CogProject project = _projectService.Project;
-				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
+				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
 				{
 					_analysisService.SegmentAll();
+					Messenger.Default.Send(new DomainModelChangedMessage(true));
 					return true;
 				}
 			}
@@ -71,7 +72,7 @@ namespace SIL.Cog.Applications.Services
 			{
 				ISegmentMappingsImporter importer = SegmentMappingsImporters[result.SelectedFileType];
 				IEnumerable<Tuple<string, string>> importedMappings = null;
-				if (Import(importer, ownerViewModel, false, importSettingsViewModel => importedMappings = importer.Import(importSettingsViewModel, result.FileName)))
+				if (Import(importer, ownerViewModel, importSettingsViewModel => importedMappings = importer.Import(importSettingsViewModel, result.FileName)))
 				{
 					mappings = importedMappings;
 					return true;
@@ -87,13 +88,16 @@ namespace SIL.Cog.Applications.Services
 			if (result.IsValid)
 			{
 				IGeographicRegionsImporter importer = GeographicRegionsImporters[result.SelectedFileType];
-				if (Import(importer, ownerViewModel, true, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, _projectService.Project)))
+				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, _projectService.Project)))
+				{
+					Messenger.Default.Send(new DomainModelChangedMessage(false));
 					return true;
+				}
 			}
 			return false;
 		}
 
-		private bool Import(IImporter importer, object ownerViewModel, bool sendMessage, Action<object> importAction)
+		private bool Import(IImporter importer, object ownerViewModel, Action<object> importAction)
 		{
 			object importSettingsViewModel;
 			if (GetImportSettings(ownerViewModel, importer, out importSettingsViewModel))
@@ -102,8 +106,6 @@ namespace SIL.Cog.Applications.Services
 				try
 				{
 					importAction(importSettingsViewModel);
-					if (sendMessage)
-						Messenger.Default.Send(new DomainModelChangedMessage());
 					return true;
 				}
 				catch (ImportException ie)

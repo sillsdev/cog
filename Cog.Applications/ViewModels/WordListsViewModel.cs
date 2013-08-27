@@ -55,7 +55,7 @@ namespace SIL.Cog.Applications.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import)),
 					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export)),
-					new TaskAreaCommandViewModel("Run stemmer", new RelayCommand(RunStemmer))));
+					new TaskAreaCommandViewModel("Remove affixes from all words", new RelayCommand(RunStemmer))));
 			_isEmpty = true;
 		}
 
@@ -101,7 +101,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_projectService.Project.Varieties.Add(new Variety(vm.Name));
-				Messenger.Default.Send(new DomainModelChangedMessage());
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_projectService.Project.Senses.Add(new Sense(vm.Gloss, vm.Category));
-				Messenger.Default.Send(new DomainModelChangedMessage());
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
 			}
 		}
 

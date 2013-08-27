@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
@@ -34,6 +37,128 @@ namespace SIL.Cog.Presentation.Behaviors
 		public static bool GetIsRowHeader(ColumnBase column)
 		{
 			return (bool) column.GetValue(IsRowHeaderProperty);
+		}
+
+		public static readonly DependencyProperty AutoSizeProperty = DependencyProperty.RegisterAttached("AutoSize", typeof(bool), typeof(DataGridControl),
+			new UIPropertyMetadata(false, OnAutoSizeChanged));
+
+		private static void OnAutoSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			var column = (ColumnBase) obj;
+			if ((bool) e.NewValue)
+			{
+				column.PropertyChanged += column_PropertyChanged;
+				if (column.DataGridControl != null)
+				{
+					string valuePath = GetValuePath(column);
+					if (valuePath != null)
+					{
+						SetWidthToFit(column);
+						ItemPropertyChangedListener.Subscribe(column, column.DataGridControl.Items, valuePath, DataGridControl_ItemsChanged);
+					}
+				}
+			}
+			else
+			{
+				column.PropertyChanged -= column_PropertyChanged;
+				if (column.DataGridControl != null)
+					ItemPropertyChangedListener.Unsubscribe(column);
+			}
+		}
+
+		private static void column_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "DataGridControl")
+			{
+				var column = (ColumnBase) sender;
+				if (column.DataGridControl != null)
+				{
+					string valuePath = GetValuePath(column);
+					if (valuePath != null)
+					{
+						SetWidthToFit(column);
+						ItemPropertyChangedListener.Subscribe(column, column.DataGridControl.Items, valuePath, DataGridControl_ItemsChanged);
+					}
+				}
+				else
+				{
+					ItemPropertyChangedListener.Unsubscribe(column);
+				}
+			}
+		}
+
+		private static void DataGridControl_ItemsChanged(object obj)
+		{
+			var column = (ColumnBase) obj;
+			SetWidthToFit(column);
+		}
+
+		private static string GetValuePath(ColumnBase column)
+		{
+			var view = column.DataGridControl.ItemsSource as DataGridCollectionView;
+			if (view != null)
+			{
+				var property = (DataGridItemProperty) view.ItemProperties[column.FieldName];
+				return property.ValuePath;
+			}
+			return null;
+		}
+
+		private static void SetWidthToFit(ColumnBase column)
+		{
+			DataGridControl dataGrid = column.DataGridControl;
+			double fontSize = GetFontSizeHint(column);
+			if (fontSize <= 0.0)
+				fontSize = dataGrid.FontSize;
+			var brush = new SolidColorBrush(Colors.Black);
+			double maxWidth = 0;
+			string valuePath = GetValuePath(column);
+			foreach (object item in dataGrid.Items)
+			{
+				object[] values = item.GetPropertyValues(valuePath).ToArray();
+				object value = values.Length == 0 ? item : values[values.Length - 1];
+				var formattedText = new FormattedText(value.ToString(), CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+					new Typeface(dataGrid.FontFamily, dataGrid.FontStyle, dataGrid.FontWeight, dataGrid.FontStretch), fontSize, brush);
+				if (formattedText.Width > maxWidth)
+					maxWidth = formattedText.Width;
+			}
+			column.Width = maxWidth + GetAutoSizePadding(column);
+		}
+
+		public static void SetAutoSize(ColumnBase column, bool value)
+		{
+			column.SetValue(AutoSizeProperty, value);
+		}
+
+		public static bool GetAutoSize(ColumnBase column)
+		{
+			return (bool) column.GetValue(AutoSizeProperty);
+		}
+
+		public static readonly DependencyProperty FontSizeHintProperty = DependencyProperty.RegisterAttached("FontSizeHint", typeof(double), typeof(DataGridControl),
+			new UIPropertyMetadata(0.0));
+
+		public static void SetFontSizeHint(ColumnBase column, double value)
+		{
+			column.SetValue(FontSizeHintProperty, value);
+		}
+
+		public static double GetFontSizeHint(ColumnBase column)
+		{
+			return (double) column.GetValue(FontSizeHintProperty);
+		}
+
+		public static readonly DependencyProperty AutoSizePaddingProperty = DependencyProperty.RegisterAttached("AutoSizePadding", typeof(double), typeof(DataGridControl),
+			new UIPropertyMetadata(18.0));
+
+		public static void SetAutoSizePadding(ColumnBase column, double value)
+		{
+			column.SetValue(AutoSizePaddingProperty, value);
+		}
+
+		public static double GetAutoSizePadding(ColumnBase column)
+		{
+			return (double) column.GetValue(AutoSizePaddingProperty);
 		}
 
 		private static readonly DependencyPropertyKey MergedHeadersPropertyKey = DependencyProperty.RegisterAttachedReadOnly("MergedHeaders", typeof(ObservableCollection<MergedHeader>),

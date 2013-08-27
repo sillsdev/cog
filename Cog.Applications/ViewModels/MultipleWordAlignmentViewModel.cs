@@ -53,7 +53,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_groupByCognateSet = true;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
-			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetAlignment());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
+				{
+					if (msg.AffectsComparison)
+						ResetAlignment();
+				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetAlignment());
 		}
 

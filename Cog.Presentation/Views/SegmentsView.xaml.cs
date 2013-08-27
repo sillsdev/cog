@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -50,8 +48,6 @@ namespace SIL.Cog.Presentation.Views
 
 			vm.PropertyChanged += ViewModel_PropertyChanged;
 			vm.Segments.CollectionChanged += Segments_CollectionChanged;
-			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
-			AddVarieties(vm.Varieties);
 			vm.Categories.CollectionChanged += Categories_CollectionChanged;
 		}
 
@@ -71,8 +67,6 @@ namespace SIL.Cog.Presentation.Views
 			switch (e.PropertyName)
 			{
 				case "Varieties":
-					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
-					AddVarieties(vm.Varieties);
 					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
 					break;
 
@@ -107,58 +101,22 @@ namespace SIL.Cog.Presentation.Views
 			}
 		}
 
-		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					AddVarieties(e.NewItems.Cast<SegmentsVarietyViewModel>());
-					break;
-
-				case NotifyCollectionChangedAction.Remove:
-					RemoveVarieties(e.OldItems.Cast<SegmentsVarietyViewModel>());
-					break;
-
-				case NotifyCollectionChangedAction.Replace:
-					RemoveVarieties(e.OldItems.Cast<SegmentsVarietyViewModel>());
-					AddVarieties(e.NewItems.Cast<SegmentsVarietyViewModel>());
-					break;
-
-				case NotifyCollectionChangedAction.Reset:
-					AddVarieties(((IEnumerable) sender).Cast<SegmentsVarietyViewModel>());
-					break;
-			}
-
-			Dispatcher.BeginInvoke(new Action(() => SegmentsDataGrid.Columns[0].SetWidthToFit<SegmentsVarietyViewModel>(v => v.Name, 18)));
-		}
-
-		private void AddVarieties(IEnumerable<SegmentsVarietyViewModel> varieties)
-		{
-			foreach (SegmentsVarietyViewModel variety in varieties)
-				variety.PropertyChanged += variety_PropertyChanged;
-		}
-
-		private void RemoveVarieties(IEnumerable<SegmentsVarietyViewModel> varieties)
-		{
-			foreach (SegmentsVarietyViewModel variety in varieties)
-				variety.PropertyChanged -= variety_PropertyChanged;
-		}
-
 		private void LoadCollectionView()
 		{
 			var vm = (SegmentsViewModel) DataContext;
+
+			SegmentsDataGrid.Columns.Clear();
 			var view = new DataGridCollectionView(vm.Varieties, typeof(SegmentsVarietyViewModel), false, false);
-			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Name", typeof(string)));
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(SegmentsVarietyViewModel)));
 			for (int i = 0; i < vm.Segments.Count; i++)
 				view.ItemProperties.Add(new DataGridItemProperty(vm.Segments[i].StrRep, string.Format("Segments[{0}].Frequency", i), typeof(string)));
 			SegmentsDataGrid.ItemsSource = view;
 			SegmentsDataGrid.Items.SortDescriptions.Clear();
 
-			SegmentsDataGrid.Columns.Clear();
 			var headerColumn = new Column {FieldName = "Variety"};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			SegmentsDataGrid.Columns.Add(headerColumn);
-			headerColumn.SetWidthToFit<SegmentsVarietyViewModel>(v => v.Name, 18);
 			foreach (SegmentViewModel segment in vm.Segments)
 				SegmentsDataGrid.Columns.Add(new Column {FieldName = segment.StrRep, Title = segment.StrRep, Width = 60, CellHorizontalContentAlignment = HorizontalAlignment.Center});
 		}
@@ -177,16 +135,6 @@ namespace SIL.Cog.Presentation.Views
 					header.ColumnNames.AddRange(category.Segments.Select(s => s.StrRep));
 					mergedHeaders.Add(header);
 				}
-			}
-		}
-
-		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case "Name":
-					DispatcherHelper.CheckBeginInvokeOnUI(() => SegmentsDataGrid.Columns[0].SetWidthToFit<SegmentsVarietyViewModel>(v => v.Name, 18));
-					break;
 			}
 		}
 

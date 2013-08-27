@@ -8,24 +8,23 @@ using GMap.NET.WindowsPresentation;
 
 namespace SIL.Cog.Presentation.Views
 {
-	public class RegionHitMarker : GMapMarker, IDisposable
+	public class RegionHitMarker : GMapPolygon, IDisposable
 	{
 		public RegionHitMarker(IList<PointLatLng> points)
-			: base(points[0])
+			: base(points)
 		{
-			Polygon.AddRange(points);
 			ZIndex = 1;
 		}
 
-		public override void RegeneratePolygonShape(GMapControl map)
+		public override void RegenerateShape(GMapControl map)
 		{
 			if (map != null)
 			{
-				if (Polygon.Count > 1)
+				if (Points.Count > 1)
 				{
 					var localPath = new List<Point>();
-					var offset = map.FromLatLngToLocal(Polygon[0]);
-					foreach (var i in Polygon)
+					var offset = map.FromLatLngToLocal(Points[0]);
+					foreach (PointLatLng i in Points)
 					{
 						var p = map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
 						localPath.Add(new Point(p.X - offset.X, p.Y - offset.Y));

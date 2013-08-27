@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
@@ -39,8 +39,6 @@ namespace SIL.Cog.Presentation.Views
 
 			vm.PropertyChanged += ViewModel_PropertyChanged;
 			vm.Senses.CollectionChanged += Senses_CollectionChanged;
-			vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
-			AddVarieties(vm.Varieties);
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -64,8 +62,6 @@ namespace SIL.Cog.Presentation.Views
 					break;
 
 				case "Varieties":
-					vm.Varieties.CollectionChanged += Varieties_CollectionChanged;
-					AddVarieties(vm.Varieties);
 					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
 					break;
 
@@ -103,73 +99,32 @@ namespace SIL.Cog.Presentation.Views
 		private void LoadCollectionView()
 		{
 			var vm = (WordListsViewModel) DataContext;
+
+			WordListsGrid.Columns.Clear();
 			var view = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
-			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)) {IsReadOnly = true});
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)));
 			IComparer sortComparer = ProjectionComparer<WordListsVarietySenseViewModel>.Create(sense => sense.StrRep);
 			for (int i = 0; i < vm.Senses.Count; i++)
-				view.ItemProperties.Add(new DataGridItemProperty(vm.Senses[i].Gloss, string.Format("Senses[{0}]", i), typeof(WordListsVarietySenseViewModel)) {SortComparer = sortComparer});
+				view.ItemProperties.Add(new DataGridItemProperty("Sense" + i, string.Format("Senses[{0}]", i), typeof(WordListsVarietySenseViewModel)) {SortComparer = sortComparer});
 			vm.VarietiesView = view;
 			WordListsGrid.Items.SortDescriptions.Clear();
 
-			WordListsGrid.Columns.Clear();
 			var headerColumn = new Column {FieldName = "Variety"};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			WordListsGrid.Columns.Add(headerColumn);
-			headerColumn.SetWidthToFit<WordListsVarietyViewModel>(v => v.Name, 18);
-			foreach (SenseViewModel sense in vm.Senses)
-				WordListsGrid.Columns.Add(new Column {FieldName = sense.Gloss, Title = sense.Gloss, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof(WordListsVarietySenseViewModel)]});
+			for (int i = 0; i < vm.Senses.Count; i++)
+			{
+				var column = new Column {FieldName = "Sense" + i, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof (WordListsVarietySenseViewModel)]};
+				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Senses[{0}].Gloss", i)) {RelativeSource = RelativeSource.Self};
+				BindingOperations.SetBinding(column, ColumnBase.TitleProperty, titleBinding);
+				WordListsGrid.Columns.Add(column);
+			}
 		}
 
 		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			LoadCollectionView();
-		}
-
-		private void Varieties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					AddVarieties(e.NewItems.Cast<WordListsVarietyViewModel>());
-					break;
-
-				case NotifyCollectionChangedAction.Remove:
-					RemoveVarieties(e.OldItems.Cast<WordListsVarietyViewModel>());
-					break;
-
-				case NotifyCollectionChangedAction.Replace:
-					RemoveVarieties(e.OldItems.Cast<WordListsVarietyViewModel>());
-					AddVarieties(e.NewItems.Cast<WordListsVarietyViewModel>());
-					break;
-
-				case NotifyCollectionChangedAction.Reset:
-					AddVarieties(((IEnumerable) sender).Cast<WordListsVarietyViewModel>());
-					break;
-			}
-
-			Dispatcher.BeginInvoke(new Action(() => WordListsGrid.Columns[0].SetWidthToFit<WordListsVarietyViewModel>(v => v.Name, 18)));
-		}
-
-		private void AddVarieties(IEnumerable<WordListsVarietyViewModel> varieties)
-		{
-			foreach (WordListsVarietyViewModel variety in varieties)
-				variety.PropertyChanged += variety_PropertyChanged;
-		}
-
-		private void RemoveVarieties(IEnumerable<WordListsVarietyViewModel> varieties)
-		{
-			foreach (WordListsVarietyViewModel variety in varieties)
-				variety.PropertyChanged -= variety_PropertyChanged;
-		}
-
-		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			switch (e.PropertyName)
-			{
-				case "Name":
-					DispatcherHelper.CheckBeginInvokeOnUI(() => WordListsGrid.Columns[0].SetWidthToFit<WordListsVarietyViewModel>(v => v.Name, 18));
-					break;
-			}
 		}
 
 		private void WordListsGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)

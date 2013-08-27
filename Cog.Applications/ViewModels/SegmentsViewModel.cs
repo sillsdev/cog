@@ -100,7 +100,11 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => PopulateSegments());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
+				{
+					if (msg.AffectsComparison)
+						PopulateSegments();
+				});
 
 			_currentWords = new BindableList<WordViewModel>();
 			_observedWords = wordsFactory(_currentWords);

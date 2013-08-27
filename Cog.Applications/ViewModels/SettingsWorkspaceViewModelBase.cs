@@ -59,7 +59,7 @@ namespace SIL.Cog.Applications.ViewModels
 				componentVM.AcceptChanges();
 				componentVM.Setup();
 			}
-			Messenger.Default.Send(new DomainModelChangedMessage());
+			Messenger.Default.Send(new DomainModelChangedMessage(true));
 			_isDirty = false;
 		}
 

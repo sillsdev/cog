@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using GalaSoft.MvvmLight.Threading;
 using QuickGraph;
 using SIL.Cog.Applications.ViewModels;
 
@@ -54,6 +56,8 @@ namespace SIL.Cog.Presentation.Controls
 
 		private void Relayout()
 		{
+			foreach (HierarchicalGraphVertex vertex in _varietyVertices.Keys)
+				vertex.PropertyChanged -= vertex_PropertyChanged;
 			_varietyVertices.Clear();
 			_edges.Clear();
 			Children.Clear();
@@ -76,11 +80,10 @@ namespace SIL.Cog.Presentation.Controls
 			{
 				if (!vertex.IsCluster)
 				{
-					var textBlock = new TextBlock {Text = vertex.Name, TextAlignment = TextAlignment.Left, DataContext = vertex};
+					var textBlock = new TextBlock {TextAlignment = TextAlignment.Left, Text = vertex.Name, DataContext = vertex};
 					varietyTextBlocks.Add(textBlock);
 					var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
 					var text = new FormattedText(vertex.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, textBlock.FontSize, textBlock.Foreground);
-					textBlock.Width = text.Width;
 					varietyNameWidth = Math.Max(text.Width, varietyNameWidth);
 					varietyNameHeight = Math.Max(text.Height, varietyNameHeight);
 				}
@@ -89,63 +92,9 @@ namespace SIL.Cog.Presentation.Controls
 			const double originx = 3;
 
 			double maxDepth = 0;
-			//double offset = 0;
 
 			foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
 				maxDepth = Math.Max(vertex.Depth, maxDepth);
-			//double tickLabelHeight = 0;
-			//double tickLabelWidth = 0;
-			//var tickLabels = new List<TextBlock>();
-			//if (maxDepth < 0.25)
-			//{
-			//    offset = 0.25 - maxDepth;
-			//    maxDepth = 0.25;
-			//}
-			//else if (maxDepth < 0.5)
-			//{
-			//    offset = 0.5 - maxDepth;
-			//    maxDepth = 0.5;
-			//}
-			//else
-			//{
-			//    offset = 1.0 - maxDepth;
-			//    maxDepth = 1.0;
-			//}
-			//for (int i = 0; i < 6; i++)
-			//{
-			//    double depth = i * (maxDepth / 5);
-			//    var textBlock = new TextBlock {Text = string.Format("{0:p}", maxDepth - depth), TextAlignment = TextAlignment.Center};
-			//    var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
-			//    var text = new FormattedText(textBlock.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, textBlock.FontSize, textBlock.Foreground);
-			//    tickLabels.Add(textBlock);
-			//    tickLabelWidth = Math.Max(text.Width, tickLabelWidth);
-			//    tickLabelHeight = Math.Max(text.Height, tickLabelHeight);
-			//}
-
-			//originx += tickLabelWidth / 2;
-
-			//double totalHeight = tickLabelHeight + 12 + (varieties.Count * (varietyNameHeight + 5));
-			//double totalWidth = totalHeight * 1.5;
-			//_desiredSize = new Size(totalWidth, totalHeight);
-
-			//tickWidth = ((_desiredSize.Width - (varietyNameWidth + 10)) - originx) / 100;
-
-			//for (int i = 0; i < tickLabels.Count; i++)
-			//{
-			//    double depth = i * (maxDepth / 5);
-			//    tickLabels[i].Height = tickLabelHeight;
-			//    tickLabels[i].Width = tickLabelWidth;
-			//    double x = originx + (tickWidth * ((depth * 100) / maxDepth));
-			//    SetLeft(tickLabels[i], x - (tickLabels[i].Width / 2));
-			//    SetTop(tickLabels[i], 2);
-			//    Children.Add(tickLabels[i]);
-
-			//    var tickLine = new Line {Stroke = Brushes.Black, StrokeThickness = 1, X1 = x, Y1 = tickLabels[i].Height + 2, X2 = x, Y2 = tickLabels[i].Height + 7};
-			//    Children.Add(tickLine);
-			//}
-
-			//var line = new Line {Stroke = Brushes.Black, StrokeThickness = 1, X1 = originx, Y1 = tickLabelHeight + 7, X2 = _desiredSize.Width - (varietyNameWidth + 10), Y2 = tickLabelHeight + 7};
-			//Children.Add(line);
 
 			double textBlocky = 5;
 
@@ -161,7 +110,6 @@ namespace SIL.Cog.Presentation.Controls
 			{
 				var vertex = (HierarchicalGraphVertex) varietyTextBlock.DataContext;
 				varietyTextBlock.Height = varietyNameHeight;
-				//double x = originx + (tickWidth * (((offset + variety.Item1.Depth) * 100) / maxDepth));
 				double x = originx + (tickWidth * ((vertex.Depth * 100) / maxDepth));
 				var border = new Border {BorderThickness = borderThickness, BorderBrush = Brushes.Transparent, Child = varietyTextBlock};
 				border.MouseEnter += border_MouseEnter;
@@ -170,6 +118,7 @@ namespace SIL.Cog.Presentation.Controls
 				SetTop(border, textBlocky);
 				Children.Add(border);
 				_varietyVertices[vertex] = border;
+				vertex.PropertyChanged += vertex_PropertyChanged;
 				positions[vertex] = new Point(x, textBlocky + ((varietyNameHeight + borderThickness.Top + borderThickness.Bottom) / 2));
 				textBlocky += varietyNameHeight + borderThickness.Top + borderThickness.Bottom + 5;
 			}
@@ -228,6 +177,12 @@ namespace SIL.Cog.Presentation.Controls
 					}
 				}
 			}
+		}
+
+		private void vertex_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Name")
+				DispatcherHelper.CheckBeginInvokeOnUI(Relayout);
 		}
 
 		private void edgeLine_MouseEnter(object sender, MouseEventArgs e)

@@ -112,7 +112,9 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Behaviors\ComboBoxBehaviors.cs" />
     <Compile Include="Behaviors\DataGridControlBehaviors.cs" />
+    <Compile Include="Behaviors\ItemPropertyChangedListener.cs" />
     <Compile Include="Behaviors\ItemsControlBehaviors.cs" />
     <Compile Include="Behaviors\ItemsControlDrag.cs" />
     <Compile Include="Behaviors\ItemsControlDragDrop.cs" />

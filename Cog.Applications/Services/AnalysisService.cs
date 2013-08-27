@@ -78,7 +78,7 @@ namespace SIL.Cog.Applications.Services
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
 			_dialogService.ShowModalDialog(ownerViewModel, progressVM);
-			Messenger.Default.Send(new DomainModelChangedMessage());
+			Messenger.Default.Send(new DomainModelChangedMessage(true));
 		}
 
 		public void Stem(StemmingMethod method, Variety variety)
@@ -89,7 +89,7 @@ namespace SIL.Cog.Applications.Services
 
 			var pipeline = new Pipeline<Variety>(GetStemProcessors(method));
 			pipeline.Process(variety.ToEnumerable());
-			Messenger.Default.Send(new DomainModelChangedMessage());
+			Messenger.Default.Send(new DomainModelChangedMessage(true));
 		}
 
 		public IEnumerable<IProcessor<Variety>> GetStemProcessors(StemmingMethod method)

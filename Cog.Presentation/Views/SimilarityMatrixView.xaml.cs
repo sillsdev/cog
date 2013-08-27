@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using System.Windows.Data;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
@@ -32,19 +33,25 @@ namespace SIL.Cog.Presentation.Views
 		private void LoadCollectionView()
 		{
 			var vm = (SimilarityMatrixViewModel) DataContext;
-			var source = new DataGridCollectionView(vm.Varieties, typeof(SimilarityMatrixVarietyViewModel), false, false);
-			source.ItemProperties.Add(new DataGridItemProperty("Variety", "Name", typeof(string)));
-			for (int i = 0; i < vm.Varieties.Count; i++)
-				source.ItemProperties.Add(new DataGridItemProperty(vm.Varieties[i].Name, string.Format("VarietyPairs[{0}]", i), typeof (SimilarityMatrixVarietyPairViewModel)));
-			SimMatrixGrid.ItemsSource = source;
 
 			SimMatrixGrid.Columns.Clear();
-			var headerColumn = new Column {FieldName = "Variety", Title = ""};
+			var view = new DataGridCollectionView(vm.Varieties, typeof(SimilarityMatrixVarietyViewModel), false, false);
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Name", typeof(string)));
+			for (int i = 0; i < vm.Varieties.Count; i++)
+				view.ItemProperties.Add(new DataGridItemProperty("Variety" + i, string.Format("VarietyPairs[{0}]", i), typeof(SimilarityMatrixVarietyPairViewModel)));
+			SimMatrixGrid.ItemsSource = view;
+
+			var headerColumn = new Column {FieldName = "Variety", Title = "", DisplayMemberBindingInfo = new DataGridBindingInfo {Path = new PropertyPath("Name"), ReadOnly = true}};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			SimMatrixGrid.Columns.Add(headerColumn);
-			headerColumn.SetWidthToFit<SimilarityMatrixVarietyViewModel>(v => v.Name, 18);
-			foreach (SimilarityMatrixVarietyViewModel variety in vm.Varieties)
-				SimMatrixGrid.Columns.Add(new Column {FieldName = variety.Name, Title = variety.Name, Width = 32});
+			for (int i = 0; i < vm.Varieties.Count; i++)
+			{
+				var column = new Column {FieldName = "Variety" + i, Width = 32};
+				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Varieties[{0}].Name", i)) {RelativeSource = RelativeSource.Self};
+				BindingOperations.SetBinding(column, ColumnBase.TitleProperty, titleBinding);
+				SimMatrixGrid.Columns.Add(column);
+			}
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

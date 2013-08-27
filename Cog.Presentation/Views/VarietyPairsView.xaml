@@ -6,6 +6,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d" DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded"
              d:DataContext="{d:DesignInstance vm:VarietyPairsViewModel}">
@@ -16,10 +17,10 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Variety pair details" />
             <Border Background="{StaticResource Variety1Brush}" Padding="3" Margin="0,0,5,0">
-				<ComboBox Name="Varieties1ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView1}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" />    
+				<ComboBox Name="Varieties1ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView1}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" b:ComboBoxBehaviors.AutoSize="True" />    
             </Border>
             <Border Background="{StaticResource Variety2Brush}" Padding="3">
-				<ComboBox Name="Varieties2ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView2}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" />
+				<ComboBox Name="Varieties2ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView2}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" b:ComboBoxBehaviors.AutoSize="True" />
             </Border>
         </StackPanel>
         <Grid>

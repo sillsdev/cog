@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Threading;
@@ -33,8 +34,6 @@ namespace SIL.Cog.Presentation.Views
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
 			vm.SensesView = CollectionViewSource.GetDefaultView(vm.Senses);
 			LoadCollectionView();
-			if (vm.GroupByCognateSet)
-				vm.WordsView.GroupDescriptions.Add(new DataGridGroupDescription("CognateSetIndex"));
 			vm.Words.CollectionChanged += WordsChanged;
 			vm.PropertyChanged += vm_PropertyChanged;
 		}
@@ -50,7 +49,7 @@ namespace SIL.Cog.Presentation.Views
 
 				case "GroupByCognateSet":
 					if (vm.GroupByCognateSet)
-						vm.WordsView.GroupDescriptions.Add(new PropertyGroupDescription("CognateSetIndex"));
+						vm.WordsView.GroupDescriptions.Add(new DataGridGroupDescription("CognateSetIndex"));
 					else
 						vm.WordsView.GroupDescriptions.Clear();
 					break;
@@ -66,6 +65,8 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
 
+			AlignmentGrid.Columns.Clear();
+
 			var view = new DataGridCollectionView(vm.Words, typeof(MultipleWordAlignmentWordViewModel), false, false);
 			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Variety.Name", typeof(string)));
 			view.ItemProperties.Add(new DataGridItemProperty("StrRep", "StrRep", typeof(string)));
@@ -74,25 +75,35 @@ namespace SIL.Cog.Presentation.Views
 			for (int i = 0; i < vm.ColumnCount; i++)
 				view.ItemProperties.Add(new DataGridItemProperty("Column" + i, string.Format("Columns[{0}]", i), typeof(string)));
 			view.ItemProperties.Add(new DataGridItemProperty("Suffix", "Suffix", typeof(string)));
+			if (vm.GroupByCognateSet)
+			{
+				Debug.Assert(view.GroupDescriptions != null);
+				view.GroupDescriptions.Add(new DataGridGroupDescription("CognateSetIndex"));
+			}
 			vm.WordsView = view;
 
-			AlignmentGrid.Columns.Clear();
-			var headerColumn = new Column {FieldName = "Variety"};
+			var headerColumn = new Column {FieldName = "Variety", DisplayMemberBindingInfo = new DataGridBindingInfo {Path = new PropertyPath("Variety.Name"), ReadOnly = true}};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			AlignmentGrid.Columns.Add(headerColumn);
-			headerColumn.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Variety.Name, 18);
 			var prefixColumn = new Column {FieldName = "Prefix", ReadOnly = true, CanBeCurrentWhenReadOnly = false};
+			DataGridControlBehaviors.SetAutoSize(prefixColumn, true);
+			DataGridControlBehaviors.SetAutoSizePadding(prefixColumn, 9);
+			DataGridControlBehaviors.SetFontSizeHint(prefixColumn, 16);
 			AlignmentGrid.Columns.Add(prefixColumn);
-			prefixColumn.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Prefix, 9, 16);
 			for (int i = 0; i < vm.ColumnCount; i++)
 			{
 				var column = new Column {FieldName = "Column" + i};
+				DataGridControlBehaviors.SetAutoSize(column, true);
+				DataGridControlBehaviors.SetAutoSizePadding(column, 9);
+				DataGridControlBehaviors.SetFontSizeHint(column, 16);
 				AlignmentGrid.Columns.Add(column);
-				column.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Columns[i], 9, 16);
 			}
 			var suffixColumn = new Column {FieldName = "Suffix", ReadOnly = true, CanBeCurrentWhenReadOnly = false};
+			DataGridControlBehaviors.SetAutoSize(suffixColumn, true);
+			DataGridControlBehaviors.SetAutoSizePadding(suffixColumn, 9);
+			DataGridControlBehaviors.SetFontSizeHint(suffixColumn, 16);
 			AlignmentGrid.Columns.Add(suffixColumn);
-			suffixColumn.SetWidthToFit<MultipleWordAlignmentWordViewModel>(w => w.Suffix, 9, 16);
 
 			AlignmentGrid.CurrentItem = null;
 		}

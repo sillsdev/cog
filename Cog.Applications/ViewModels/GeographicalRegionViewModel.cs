@@ -23,7 +23,6 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _removeCommand;
 
 		public GeographicalRegionViewModel(IProjectService projectService, IDialogService dialogService, GeographicalVarietyViewModel variety, GeographicRegion region)
-			: base(region)
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
@@ -62,7 +61,7 @@ namespace SIL.Cog.Applications.ViewModels
 					_region.Coordinates.Clear();
 					break;
 			}
-			Messenger.Default.Send(new DomainModelChangedMessage());
+			Messenger.Default.Send(new DomainModelChangedMessage(false));
 		}
 
 		private void EditRegion()
@@ -75,15 +74,15 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					_variety.DomainVariety.Regions.Remove(_region);
 					vm.CurrentVariety.DomainVariety.Regions.Add(_region);
-					Messenger.Default.Send(new DomainModelChangedMessage());
 				}
+				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}
 		}
 
 		private void RemoveRegion()
 		{
 			_variety.DomainVariety.Regions.Remove(_region);
-			Messenger.Default.Send(new DomainModelChangedMessage());
+			Messenger.Default.Send(new DomainModelChangedMessage(false));
 		}
 
 		public ObservableList<Tuple<double, double>> Coordinates
@@ -99,7 +98,6 @@ namespace SIL.Cog.Applications.ViewModels
 		public string Description
 		{
 			get { return _region.Description; }
-			set { _region.Description = value; }
 		}
 
 		public ICommand EditCommand

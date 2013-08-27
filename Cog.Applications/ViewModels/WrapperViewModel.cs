@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
 using ObservableObject = SIL.Collections.ObservableObject;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -95,10 +94,7 @@ namespace SIL.Cog.Applications.ViewModels
 			//if this object, and any that derive from it have a property by the same name as the one
 			//in the NotifyPropertyChanged EventArgs, then raise Property Changed with the same PropertyName
 			if (PropertyDictionary[_type].Contains(e.PropertyName))
-			{
 				RaisePropertyChanged(e.PropertyName);
-				Messenger.Default.Send(new DomainModelChangedMessage());
-			}
 		}
 	}
 }

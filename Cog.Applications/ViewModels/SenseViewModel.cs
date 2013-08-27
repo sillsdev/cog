@@ -15,13 +15,11 @@ namespace SIL.Cog.Applications.ViewModels
 		public string Gloss
 		{
 			get { return _sense.Gloss; }
-			set { _sense.Gloss = value; }
 		}
 
 		public string Category
 		{
 			get { return _sense.Category; }
-			set { _sense.Category = value; }
 		}
 
 		internal Sense DomainSense

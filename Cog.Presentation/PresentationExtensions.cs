@@ -1,10 +1,11 @@
 using System;
-using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation
 {
@@ -48,41 +49,56 @@ namespace SIL.Cog.Presentation
 			return null;
 		}
 
-		public static void SetWidthToFit<T>(this ComboBox comboBox, Func<T, string> stringAccessor)
+		public static IEnumerable<string> SplitPropertyPath(this string propertyPath)
 		{
-			double maxWidth = 0;
-			foreach (T item in comboBox.ItemsSource)
+			if (string.IsNullOrEmpty(propertyPath))
+				yield break;
+
+			foreach (string property in propertyPath.Split(new [] {'.'}, StringSplitOptions.RemoveEmptyEntries))
 			{
-				string str = stringAccessor(item);
-				var formattedText = new FormattedText(str, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
-					new Typeface(comboBox.FontFamily, comboBox.FontStyle, comboBox.FontWeight, comboBox.FontStretch), comboBox.FontSize, comboBox.Foreground);
-				if (formattedText.Width > maxWidth)
-					maxWidth = formattedText.Width;
+				int bracketIndex = property.IndexOf('[');
+				if (bracketIndex > -1)
+				{
+					yield return property.Substring(0, bracketIndex);
+					yield return "Item" + property.Substring(bracketIndex);
+				}
+				else
+				{
+					yield return property;
+				}
 			}
-			comboBox.Width = maxWidth + 25;
 		}
 
-		public static void SetWidthToFit<T>(this ColumnBase column, Func<T, string> stringAccessor, double padding)
+		public static IEnumerable<object> GetPropertyValues(this object obj, string propertyPath)
 		{
-			DataGridControl dataGrid = column.DataGridControl;
-			column.SetWidthToFit(stringAccessor, padding, dataGrid.FontSize);
-		}
-
-		public static void SetWidthToFit<T>(this ColumnBase column, Func<T, string> stringAccessor, double padding, double fontSize)
-		{
-			DataGridControl dataGrid = column.DataGridControl;
-
-			var brush = new SolidColorBrush(Colors.Black);
-			double maxWidth = 0;
-			foreach (T item in dataGrid.ItemsSource)
+			object currentObject = obj;
+			foreach (string propertyStr in propertyPath.SplitPropertyPath())
 			{
-				string str = stringAccessor(item);
-				var formattedText = new FormattedText(str, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
-					new Typeface(dataGrid.FontFamily, dataGrid.FontStyle, dataGrid.FontWeight, dataGrid.FontStretch), fontSize, brush);
-				if (formattedText.Width > maxWidth)
-					maxWidth = formattedText.Width;
+				Type currentType = currentObject.GetType();
+				string prop = propertyStr;
+				int bracketIndex = propertyStr.IndexOf('[');
+				object[] indices = null;
+				if (bracketIndex > -1)
+				{
+					prop = propertyStr.Substring(0, bracketIndex);
+					string indexStr = propertyStr.Substring(bracketIndex + 1, propertyStr.Length - bracketIndex - 2);
+					int index = int.Parse(indexStr);
+					var coll = currentObject as ICollection;
+					if (coll != null && index >= coll.Count)
+						yield break;
+					indices = new object[] {index};
+				}
+
+				PropertyInfo property = currentType.GetProperty(prop);
+				if (property == null)
+					yield break;
+
+				currentObject = property.GetValue(currentObject, indices);
+				if (currentObject == null)
+					yield break;
+
+				yield return currentObject;
 			}
-			column.Width = maxWidth + padding;
 		}
 	}
 }

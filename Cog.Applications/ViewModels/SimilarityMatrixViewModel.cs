@@ -30,7 +30,11 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ResetVarieties());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
+				{
+					if (msg.AffectsComparison)
+						ResetVarieties();
+				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetVarieties());
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => CreateSimilarityMatrix());
 
@@ -38,7 +42,7 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
-				new TaskAreaCommandViewModel("Perform comparison", new RelayCommand(PerformComparison))));
+				new TaskAreaCommandViewModel("Compare all variety pairs", new RelayCommand(PerformComparison))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export this matrix", new RelayCommand(Export))));
 		}

@@ -130,7 +130,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_word.StemLength = index - _word.StemIndex;
 
 			_analysisService.Segment(_word.Variety);
-			Messenger.Default.Send(new DomainModelChangedMessage());
+			Messenger.Default.Send(new DomainModelChangedMessage(true));
 		}
 
 		public SenseViewModel Sense

@@ -44,7 +44,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var newSense = new Sense(vm.Gloss, vm.Category);
 				_projectService.Project.Senses.Add(newSense);
-				Messenger.Default.Send(new DomainModelChangedMessage());
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				CurrentSense = _senses.Single(s => s.DomainSense == newSense);
 			}
 		}
@@ -71,7 +71,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				int index = _senses.IndexOf(_currentSense);
 				_projectService.Project.Senses.Remove(_currentSense.DomainSense);
-				Messenger.Default.Send(new DomainModelChangedMessage());
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				if (index == _senses.Count)
 					index--;
 				CurrentSense = _senses.Count > 0 ?  _senses[index] : null;

@@ -184,7 +184,7 @@ namespace SIL.Cog.Presentation.Views
 			{
 				var marker = new RegionMarker(region) {IsSelectable = _currentTool == Tool.Select};
 				marker.Click += Region_Click;
-				marker.RegeneratePolygonShape(MapControl);
+				marker.RegenerateShape(MapControl);
 
 				MapControl.Markers.Add(marker);
 			}
@@ -275,10 +275,10 @@ namespace SIL.Cog.Presentation.Views
 			long areaSum = 0;
 			long xSum = 0;
 			long ySum = 0;
-			for (int i = 0; i < rm.Polygon.Count; i++)
+			for (int i = 0; i < rm.Points.Count; i++)
 			{
-				GPoint curPoint = MapControl.FromLatLngToLocal(rm.Polygon[i]);
-				GPoint nextPoint = MapControl.FromLatLngToLocal(i == rm.Polygon.Count - 1 ? rm.Polygon[0] : rm.Polygon[i + 1]);
+				GPoint curPoint = MapControl.FromLatLngToLocal(rm.Points[i]);
+				GPoint nextPoint = MapControl.FromLatLngToLocal(i == rm.Points.Count - 1 ? rm.Points[0] : rm.Points[i + 1]);
 				long v = (curPoint.X * nextPoint.Y) - (nextPoint.X * curPoint.Y);
 				areaSum += v;
 				xSum += (curPoint.X + nextPoint.X) * v;
@@ -310,8 +310,11 @@ namespace SIL.Cog.Presentation.Views
 
 		private void Search()
 		{
-			MapControl.SetPositionByKeywords(SearchTextBox.Text);
-			MapControl.Zoom = 11;
+			using (BusyCursor.Display())
+			{
+				MapControl.SetPositionByKeywords(SearchTextBox.Text);
+				MapControl.Zoom = 11;
+			}
 		}
 
 		private void ShapeToolButton_OnChecked(object sender, RoutedEventArgs e)
@@ -359,7 +362,7 @@ namespace SIL.Cog.Presentation.Views
 				}
 				else
 				{
-					_nextPointMarker.Position = _intermediateRegionMarker.Route.Last();
+					_nextPointMarker.Position = _intermediateRegionMarker.Points.Last();
 					_nextPointMarker.Shape = null;
 				}
 			}
@@ -398,9 +401,9 @@ namespace SIL.Cog.Presentation.Views
 
 		private void MapControl_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (_currentTool == Tool.Region && _intermediateRegionMarker.Route.Count > 1)
+			if (_currentTool == Tool.Region && _intermediateRegionMarker.Points.Count > 1)
 			{
-				_nextPointMarker.Position = _intermediateRegionMarker.Route.Last();
+				_nextPointMarker.Position = _intermediateRegionMarker.Points.Last();
 				GPoint point = MapControl.FromLatLngToLocal(_intermediateRegionMarker.Position);
 				UpdateNextPointMarker(new Point(point.X, point.Y));
 				AddCurrentRegion();
@@ -410,7 +413,7 @@ namespace SIL.Cog.Presentation.Views
 		private void AddCurrentRegion()
 		{
 			var vm = (GeographicalViewModel) DataContext;
-			vm.NewRegionCommand.Execute(_intermediateRegionMarker.Route.Select(p => Tuple.Create(p.Lat, p.Lng)));
+			vm.NewRegionCommand.Execute(_intermediateRegionMarker.Points.Select(p => Tuple.Create(p.Lat, p.Lng)));
 			ClearCurrentRegion();
 		}
 
@@ -467,7 +470,7 @@ namespace SIL.Cog.Presentation.Views
 			double right = double.MinValue;
 			double bottom = double.MaxValue;
 
-			foreach (PointLatLng p in regionMarkers.SelectMany(rm => rm.Polygon))
+			foreach (PointLatLng p in regionMarkers.SelectMany(rm => rm.Points))
 			{
 				// left
 				if (p.Lng < left)

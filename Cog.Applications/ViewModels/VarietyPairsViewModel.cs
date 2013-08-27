@@ -60,7 +60,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortDirection = ListSortDirection.Descending;
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
-			Messenger.Default.Register<DomainModelChangedMessage>(this, msg => ClearComparison());
+			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
+				{
+					if (msg.AffectsComparison)
+						ClearComparison();
+				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ClearComparison());
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
@@ -69,7 +73,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_selectedWordPairsMonitor = new SimpleMonitor();
 			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
-				new TaskAreaCommandViewModel("Perform comparison on this variety pair", new RelayCommand(PerformComparison)),
+				new TaskAreaCommandViewModel("Compare this variety pair", new RelayCommand(PerformComparison)),
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending))),

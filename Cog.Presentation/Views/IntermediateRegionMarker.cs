@@ -6,15 +6,16 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
+using SIL.Collections;
 
 namespace SIL.Cog.Presentation.Views
 {
-	public class IntermediateRegionMarker : GMapMarker, IDisposable
+	public class IntermediateRegionMarker : GMapRoute, IDisposable
 	{
 		private readonly List<RegionPointMarker> _regionPoints;
 
 		public IntermediateRegionMarker(PointLatLng pos)
-			: base(pos)
+			: base(pos.ToEnumerable())
 		{
 			_regionPoints = new List<RegionPointMarker>();
 		}
@@ -24,16 +25,16 @@ namespace SIL.Cog.Presentation.Views
 			GMapMarker selectedPointMarker = _regionPoints.FirstOrDefault(p => p.Shape.IsMouseOver);
 			PointLatLng latLng = selectedPointMarker != null ? selectedPointMarker.Position : Map.FromLocalToLatLng((int) point.X, (int) point.Y);
 
-			if (Route.Count > 0)
+			if (_regionPoints.Count > 0)
 			{
-				if (latLng == Route.Last())
+				if (latLng == Points.Last())
 					return false;
 				if (latLng == Position)
 					return true;
-			}
 
-			Route.Add(latLng);
-			RegenerateRouteShape(Map);
+				Points.Add(latLng);
+				RegenerateShape(Map);
+			}
 
 			var pointMarker = new RegionPointMarker(latLng);
 			_regionPoints.Add(pointMarker);
@@ -41,15 +42,15 @@ namespace SIL.Cog.Presentation.Views
 			return false;
 		}
 
-		public override void RegenerateRouteShape(GMapControl map)
+		public override void RegenerateShape(GMapControl map)
 		{
 			if (map != null)
 			{
-				if (Route.Count > 1)
+				if (Points.Count > 1)
 				{
 					var localPath = new List<Point>();
-					var offset = map.FromLatLngToLocal(Route[0]);
-					foreach (var i in Route)
+					var offset = map.FromLatLngToLocal(Points[0]);
+					foreach (PointLatLng i in Points)
 					{
 						var p = map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
 						localPath.Add(new Point(p.X - offset.X, p.Y - offset.Y));

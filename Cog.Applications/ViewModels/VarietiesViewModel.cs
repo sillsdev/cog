@@ -56,7 +56,7 @@ namespace SIL.Cog.Applications.ViewModels
 						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
-				new TaskAreaCommandViewModel("Run stemmer on this variety", new RelayCommand(RunStemmer))));
+				new TaskAreaCommandViewModel("Remove affixes from words in this variety", new RelayCommand(RunStemmer))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -132,7 +132,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var variety = new Variety(vm.Name);
 				_projectService.Project.Varieties.Add(variety);
-				Messenger.Default.Send(new DomainModelChangedMessage());
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				CurrentVariety = _varieties[variety];
 			}
 		}
@@ -144,7 +144,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 			var vm = new EditVarietyViewModel(_projectService.Project.Varieties, _currentVariety.DomainVariety);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-				_currentVariety.Name = vm.Name;
+			{
+				_currentVariety.DomainVariety.Name = vm.Name;
+				Messenger.Default.Send(new DomainModelChangedMessage(false));
+			}
 		}
 
 		private void RemoveCurrentVariety()
@@ -156,7 +159,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				int index = _varieties.IndexOf(_currentVariety);
 				_projectService.Project.Varieties.Remove(_currentVariety.DomainVariety);
-				Messenger.Default.Send(new DomainModelChangedMessage());
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				if (index == _varieties.Count)
 					index--;
 				CurrentVariety = _varieties.Count > 0 ? _varieties[index] : null;

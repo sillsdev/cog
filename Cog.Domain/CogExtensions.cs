@@ -294,7 +294,7 @@ namespace SIL.Cog.Domain
 			foreach (ClusterEdge<T> edge in path)
 			{
 				totalLen += edge.Length;
-				if (totalLen > midpoint)
+				if (totalLen >= midpoint)
 				{
 					midpointEdge = edge;
 					break;
@@ -366,7 +366,7 @@ namespace SIL.Cog.Domain
 		        Cluster<T> cdn;
 			    IEnumerable<ClusterEdge<T>> cdp;
 		        double depth = GetLongestPath(tree, node, childEdge.GetOtherVertex(node), childEdge.Length, path.Concat(childEdge), out cdn, out cdp);
-		        if (depth > maxDepth)
+		        if (depth >= maxDepth)
 		        {
 		            deepestNode = cdn;
 		            maxDepth = depth;

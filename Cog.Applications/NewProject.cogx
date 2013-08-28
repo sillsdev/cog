@@ -64,6 +64,10 @@
 			<Value id="pharyngealized+" name="+"/>
 			<Value id="pharyngealized-" name="-"/>
 		</Feature>
+		<Feature id="breathy-voiced" name="Breathy-voiced">
+			<Value id="breathy-voiced+" name="+"/>
+			<Value id="breathy-voiced-" name="-"/>
+		</Feature>
 		
 		<Feature id="height" name="Height">
 			<Value id="close" name="close"/>
@@ -1172,7 +1176,9 @@
 			<Symbol strRep="&#x031E;"/>
 			<Symbol strRep="&#x031F;"/>
 			<Symbol strRep="&#x0320;"/>
-			<Symbol strRep="&#x0324;"/>
+			<Symbol strRep="&#x0324;">
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced+"/>
+			</Symbol>
 			<Symbol strRep="&#x0330;"/>
 			<Symbol strRep="&#x0339;"/>
 			<Symbol strRep="&#x033A;"/>
@@ -1238,6 +1244,10 @@
 				<RelevantFeature ref="nasal" weight="5" vowel="true" consonant="true">
 					<RelevantValue ref="nasal+" metric="100"/>
 					<RelevantValue ref="nasal-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="breathy-voiced" weight="2" vowel="true" consonant="true">
+					<RelevantValue ref="breathy-voiced+" metric="100"/>
+					<RelevantValue ref="breathy-voiced-" metric="0"/>
 				</RelevantFeature>
 				
 				<RelevantFeature ref="manner" weight="50" consonant="true">

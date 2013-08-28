@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -127,17 +128,28 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void FindNext()
 		{
+			WordListsVarietySenseViewModel curVarietySense = _currentVarietySense;
+			if (curVarietySense == null)
+			{
+				WordListsVarietyViewModel firstVariety = _varietiesView.Cast<WordListsVarietyViewModel>().FirstOrDefault();
+				if (firstVariety != null && _senses.Count > 0)
+				{
+					curVarietySense = firstVariety.Senses[0];
+				}
+			}
+
 			if (_varieties.Count > 0 && _senses.Count > 0 && _startVarietySense == null)
 			{
-				_startVarietySense = _currentVarietySense;
+				_startVarietySense = curVarietySense;
 			}
-			else if (_startVarietySense == _currentVarietySense)
+			else if (curVarietySense == null || _startVarietySense == curVarietySense)
 			{
 				SearchEnded();
 				return;
 			}
-			WordListsVarietyViewModel variety = _currentVarietySense.Variety;
-			WordListsVarietySenseViewModel curVarietySense = _currentVarietySense;
+
+			Debug.Assert(curVarietySense != null);
+			WordListsVarietyViewModel variety = curVarietySense.Variety;
 			int senseIndex = variety.Senses.IndexOf(curVarietySense);
 			switch (_findViewModel.Field)
 			{

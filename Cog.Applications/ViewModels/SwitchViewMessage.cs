@@ -4,7 +4,7 @@ using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	internal class SwitchViewMessage : MessageBase
+	public class SwitchViewMessage : MessageBase
 	{
 		private readonly Type _viewModelType;
 		private readonly ReadOnlyList<object> _domainModels;

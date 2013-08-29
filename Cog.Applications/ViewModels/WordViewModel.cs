@@ -179,5 +179,10 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _word; }
 		}
+
+		public override string ToString()
+		{
+			return StrRep;
+		}
 	}
 }

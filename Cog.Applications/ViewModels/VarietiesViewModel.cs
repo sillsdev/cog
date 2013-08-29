@@ -62,6 +62,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
+			CurrentVariety = null;
+			VarietiesView = null;
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 		}
 
@@ -193,10 +195,13 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				if (Set(() => VarietiesView, ref _varietiesView, value))
 				{
-					_varietiesView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-					_varietiesView.CollectionChanged += VarietiesChanged;
-					if (_currentVariety == null)
-						CurrentVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
+					if (_varietiesView != null)
+					{
+						_varietiesView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+						_varietiesView.CollectionChanged += VarietiesChanged;
+						if (_currentVariety == null)
+							CurrentVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
+					}
 				}
 			}
 		}

@@ -1,0 +1,1216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CogProject xmlns="http://www.sil.org/CogProject"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<FeatureSystem>
+		<Feature id="place" name="Place">
+			<Value id="bilabial" name="bilabial" />
+			<Value id="labiodental" name="labiodental" />
+			<Value id="dental" name="dental"/>
+			<Value id="alveolar" name="alveolar"/>
+			<Value id="retroflex" name="retroflex"/>
+			<Value id="palato-alveolar" name="palato-alveolar"/>
+			<Value id="alveolo-palatal" name="alveolo-palatal"/>
+			<Value id="palatal" name="palatal"/>
+			<Value id="velar" name="velar"/>
+			<Value id="uvular" name="uvular"/>
+			<Value id="pharyngeal" name="pharyngeal"/>
+			<Value id="epiglottal" name="epiglottal"/>
+			<Value id="glottal" name="glottal"/>
+		</Feature>
+		<Feature id="manner" name="Manner">
+			<Value id="stop" name="stop"/>
+			<Value id="affricate" name="affricate"/>
+			<Value id="fricative" name="fricative"/>
+			<Value id="approximant" name="approximant"/>
+			<Value id="trill" name="trill"/>
+			<Value id="flap" name="flap"/>
+			<Value id="close-vowel" name="close-vowel"/>
+			<Value id="mid-vowel" name="mid-vowel"/>
+			<Value id="open-vowel" name="open-vowel"/>
+		</Feature>
+		<Feature id="syllabic" name="Syllabic">
+			<Value id="syllabic+" name="+"/>
+			<Value id="syllabic-" name="-"/>
+		</Feature>
+		<Feature id="voice" name="Voice">
+			<Value id="voice+" name="+"/>
+			<Value id="voice-" name="-"/>
+		</Feature>
+		<Feature id="nasal" name="Nasal">
+			<Value id="nasal+" name="+"/>
+			<Value id="nasal-" name="-"/>
+		</Feature>
+		<Feature id="lateral" name="Lateral">
+			<Value id="lateral+" name="+"/>
+			<Value id="lateral-" name="-"/>
+		</Feature>
+		<Feature id="aspirated" name="Aspirated">
+			<Value id="aspirated+" name="+"/>
+			<Value id="aspirated-" name="-"/>
+		</Feature>
+		<Feature id="palatalized" name="Palatalized">
+			<Value id="palatalized+" name="+"/>
+			<Value id="palatalized-" name="-"/>
+		</Feature>
+		<Feature id="labialized" name="Labialized">
+			<Value id="labialized+" name="+"/>
+			<Value id="labialized-" name="-"/>
+		</Feature>
+		<Feature id="velarized" name="Velarized">
+			<Value id="velarized+" name="+"/>
+			<Value id="velarized-" name="-"/>
+		</Feature>
+		<Feature id="pharyngealized" name="Pharyngealized">
+			<Value id="pharyngealized+" name="+"/>
+			<Value id="pharyngealized-" name="-"/>
+		</Feature>
+		<Feature id="breathy-voiced" name="Breathy-voiced">
+			<Value id="breathy-voiced+" name="+"/>
+			<Value id="breathy-voiced-" name="-"/>
+		</Feature>
+		
+		<Feature id="height" name="Height">
+			<Value id="close" name="close"/>
+			<Value id="near-close" name="near-close"/>
+			<Value id="close-mid" name="close-mid"/>
+			<Value id="mid" name="mid"/>
+			<Value id="open-mid" name="open-mid"/>
+			<Value id="near-open" name="near-open"/>
+			<Value id="open" name="open"/>
+		</Feature>
+		<Feature id="backness" name="Backness">
+			<Value id="front" name="front"/>
+			<Value id="near-front" name="near-front"/>
+			<Value id="central" name="central"/>
+			<Value id="near-back" name="near-back"/>
+			<Value id="back" name="back"/>
+		</Feature>
+		<Feature id="round" name="Round">
+			<Value id="round+" name="+"/>
+			<Value id="round-" name="-"/>
+		</Feature>
+		<Feature id="long" name="Long">
+			<Value id="long+" name="+"/>
+			<Value id="long-" name="-"/>
+		</Feature>
+	</FeatureSystem>
+	<Segmentation>
+		<Vowels>
+			<Symbol strRep="a">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="e">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="i">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="o">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="u">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="y">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="æ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="near-open"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ø">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="œ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ɐ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="near-open"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɑ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɒ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ɔ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ɘ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ə">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɛ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɜ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɞ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ɤ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɨ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɪ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="near-close"/>
+				<FeatureValue feature="backness" value="near-front"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɯ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ɵ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ɶ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ʉ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ʊ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="near-close"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+			<Symbol strRep="ʌ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+			</Symbol>
+			<Symbol strRep="ʏ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+
+				<FeatureValue feature="height" value="near-close"/>
+				<FeatureValue feature="backness" value="near-front"/>
+				<FeatureValue feature="round" value="round+"/>
+			</Symbol>
+		</Vowels>
+		<Consonants>
+			<Symbol strRep="b">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="c">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="d">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="f">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="g">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="h">
+				<FeatureValue feature="place" value="glottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="j">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="k">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="l">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="m">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ᵐ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="n">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="p">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="q">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="r">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="trill"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="s">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="t">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="v">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="w">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="labialized" value="labialized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="x">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="z">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ç">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ð">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ħ">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="pharyngeal"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ŋ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ᵑ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɓ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɕ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɖ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɗ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɟ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɠ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɡ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɢ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɣ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɥ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="labialized" value="labialized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɦ">
+				<FeatureValue feature="place" value="glottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɧ">
+				<FeatureValue feature="place" value="velar palato-alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɫ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="velarized" value="velarized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ɬ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ɭ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ɮ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ɰ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɱ">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɲ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɳ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɴ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɸ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɹ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɺ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="flap"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ɻ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɽ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="flap"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ɾ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="flap"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʀ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="trill"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʁ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʂ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʃ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʄ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʈ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʋ">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʍ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="labialized" value="labialized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʎ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ʐ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʑ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʒ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʔ">
+				<FeatureValue feature="place" value="glottal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʕ">
+				<FeatureValue feature="place" value="pharyngeal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʙ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="trill"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʛ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʜ">
+				<FeatureValue feature="place" value="epiglottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʝ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʟ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+			</Symbol>
+			<Symbol strRep="ʡ">
+				<FeatureValue feature="place" value="epiglottal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="ʢ">
+				<FeatureValue feature="place" value="epiglottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="β">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="θ">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="χ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+
+			<Symbol strRep="ts">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="dz">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="tʃ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="dʒ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="tɕ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+			<Symbol strRep="dʑ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+			</Symbol>
+		</Consonants>
+		<Modifiers>
+			<Symbol strRep="ʰ">
+				<FeatureValue feature="aspirated" value="aspirated+"/>
+			</Symbol>
+			<Symbol strRep="ʲ">
+				<FeatureValue feature="palatalized" value="palatalized+"/>
+			</Symbol>
+			<Symbol strRep="ʷ">
+				<FeatureValue feature="labialized" value="labialized+"/>
+			</Symbol>
+			<Symbol strRep="ː">
+				<!--FeatureValue feature="long" value="long+"/-->
+			</Symbol>
+			<Symbol strRep="ˑ">
+				<!--FeatureValue feature="long" value="long+"/-->
+			</Symbol>
+			<Symbol strRep="ˠ">
+				<FeatureValue feature="velarized" value="velarized+"/>
+			</Symbol>
+			<Symbol strRep="ˤ">
+				<FeatureValue feature="pharyngealized" value="pharyngealized+"/>
+			</Symbol>
+			<Symbol strRep="&#x0303;">
+				<FeatureValue feature="nasal" value="nasal+"/>
+			</Symbol>
+			<Symbol strRep="&#x0306;">
+				<FeatureValue feature="long" value="long-"/>
+			</Symbol>
+			<Symbol strRep="&#x0308;">
+				<FeatureValue feature="backness" value="central"/>
+			</Symbol>
+			<Symbol strRep="&#x0325;">
+				<FeatureValue feature="voice" value="voice-"/>
+			</Symbol>
+			<Symbol strRep="&#x030A;">
+				<FeatureValue feature="voice" value="voice-"/>
+			</Symbol>
+			<Symbol strRep="&#x0329;">
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+			</Symbol>
+			<Symbol strRep="&#x030D;">
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+			</Symbol>
+			<Symbol strRep="&#x032C;">
+				<FeatureValue feature="voice" value="voice+"/>
+			</Symbol>
+			<Symbol strRep="&#x032F;">
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+			</Symbol>
+			<Symbol strRep="&#x0334;">
+				<FeatureValue feature="velarized" value="velarized+"/>
+			</Symbol>
+			<Symbol strRep="&#x033D;">
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="height" value="mid"/>
+			</Symbol>
+			<Symbol strRep="ⁿ">
+				<FeatureValue feature="nasal" value="nasal+"/>
+			</Symbol>
+			<Symbol strRep="&#x032A;"/>
+			<Symbol strRep="&#x02DE;"/>
+			<Symbol strRep="ʼ"/>
+			<Symbol strRep="ˡ"/>
+			<Symbol strRep="&#x0318;"/>
+			<Symbol strRep="&#x0319;"/>
+			<Symbol strRep="&#x031A;"/>
+			<Symbol strRep="&#x031C;"/>
+			<Symbol strRep="&#x031D;"/>
+			<Symbol strRep="&#x031E;"/>
+			<Symbol strRep="&#x031F;"/>
+			<Symbol strRep="&#x0320;"/>
+			<Symbol strRep="&#x0324;">
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced+"/>
+			</Symbol>
+			<Symbol strRep="&#x0330;"/>
+			<Symbol strRep="&#x0339;"/>
+			<Symbol strRep="&#x033A;"/>
+			<Symbol strRep="&#x033B;"/>
+			<Symbol strRep="&#x033C;"/>
+		</Modifiers>
+		<Boundaries>
+			<Symbol strRep="-"/>
+			<Symbol strRep="."/>
+			<Symbol strRep="|"/>
+			<Symbol strRep="ˈ"/>
+			<Symbol strRep="ˌ"/>
+			<Symbol strRep="‖"/>
+		</Boundaries>
+		<ToneLetters>
+			<Symbol strRep="↑"/>
+			<Symbol strRep="↓"/>
+			<Symbol strRep="˥"/>
+			<Symbol strRep="˦"/>
+			<Symbol strRep="˧"/>
+			<Symbol strRep="˨"/>
+			<Symbol strRep="˩"/>
+		</ToneLetters>
+		<Joiners>
+			<Symbol strRep="&#x0361;"/>
+			<Symbol strRep="&#x035C;"/>
+		</Joiners>
+	</Segmentation>
+	<WordAligners />
+	<Senses />
+	<Varieties />
+	<ProjectProcessors />
+	<VarietyProcessors />
+	<VarietyPairProcessors />
+</CogProject>

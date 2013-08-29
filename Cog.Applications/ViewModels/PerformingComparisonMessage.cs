@@ -2,7 +2,7 @@
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	internal class PerformingComparisonMessage : MessageBase
+	public class PerformingComparisonMessage : MessageBase
 	{
 	}
 }

@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	internal class HookFindMessage : MessageBase
+	public class HookFindMessage : MessageBase
 	{
 		private readonly ICommand _findCommand;
 

@@ -131,11 +131,18 @@ namespace SIL.Cog.Applications.ViewModels
 			WordListsVarietySenseViewModel curVarietySense = _currentVarietySense;
 			if (curVarietySense == null)
 			{
-				WordListsVarietyViewModel firstVariety = _varietiesView.Cast<WordListsVarietyViewModel>().FirstOrDefault();
-				if (firstVariety != null && _senses.Count > 0)
+				WordListsVarietyViewModel curVariety = null;
+				switch (_findViewModel.Field)
 				{
-					curVarietySense = firstVariety.Senses[0];
+					case FindField.Form:
+						curVariety = _varietiesView.Cast<WordListsVarietyViewModel>().LastOrDefault();
+						break;
+					case FindField.Sense:
+						curVariety = _varietiesView.Cast<WordListsVarietyViewModel>().FirstOrDefault();
+						break;
 				}
+				if (curVariety != null && _senses.Count > 0)
+					curVarietySense = curVariety.Senses.Last();
 			}
 
 			if (_varieties.Count > 0 && _senses.Count > 0 && _startVarietySense == null)

@@ -135,7 +135,7 @@ namespace SIL.Cog.Applications.ViewModels
 						match = curWord.Sense.Gloss.Contains(str);
 						break;
 				}
-				if (match && _startWord != curWord)
+				if (match)
 				{
 					using (_selectedWordsMonitor.Enter())
 					{

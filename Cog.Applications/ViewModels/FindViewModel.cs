@@ -40,7 +40,7 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => Field, ref _field, value); }
 		}
 
-		public void ShowSearchEndedMessage()
+		internal void ShowSearchEndedMessage()
 		{
 			_dialogService.ShowMessage(this, "Find reached the starting point of the search.", "Cog");
 		}

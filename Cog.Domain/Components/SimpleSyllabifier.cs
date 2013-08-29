@@ -78,15 +78,7 @@ namespace SIL.Cog.Domain.Components
 
 		protected virtual void SyllabifyUnmarkedAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			ShapeNode newStartNode = null;
-			foreach (ShapeNode node in word.Shape.GetNodes(ann.Span))
-			{
-				ShapeNode newNode = node.DeepClone();
-				if (newStartNode == null)
-					newStartNode = newNode;
-				newShape.Add(newNode);
-			}
-			newShape.Annotations.Add(newStartNode, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
+			ProcessSyllable(ann.Span.Start, ann.Span.End, newShape);
 		}
 
 		protected void ProcessSyllable(ShapeNode startNode, ShapeNode endNode, Shape newShape)
@@ -127,6 +119,12 @@ namespace SIL.Cog.Domain.Components
 				ShapeNode codaEnd = node.Prev;
 
 				newShape.Add(codaStart != codaEnd ? Combine(spanFactory, codaStart, codaEnd) : codaStart.DeepClone());
+			}
+
+			while (node != endNode.Next)
+			{
+				newShape.Add(node.DeepClone());
+				node = node.Next;
 			}
 			newShape.Annotations.Add(newStartNode, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
 		}

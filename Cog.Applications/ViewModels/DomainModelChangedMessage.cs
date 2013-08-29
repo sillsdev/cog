@@ -2,7 +2,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	internal class DomainModelChangedMessage : MessageBase
+	public class DomainModelChangedMessage : MessageBase
 	{
 		private readonly bool _affectsComparison;
 

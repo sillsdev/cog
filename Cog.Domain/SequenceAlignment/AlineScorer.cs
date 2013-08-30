@@ -113,7 +113,8 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			else
 			{
 				Ngram corr = _segmentPool.GetExisting(node);
-				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
+				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Count == 0 ? 0
+					: varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 			}
 			return (int) (MaxSoundChangeScore * prob);
 		}

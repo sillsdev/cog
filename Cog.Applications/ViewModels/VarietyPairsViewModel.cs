@@ -42,6 +42,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordPairsViewModel _startWordPairs;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
 		private bool _deferredResetCurrentVarietyPair;
+		private bool _searchWrapped;
 
 		public VarietyPairsViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IExportService exportService, IAnalysisService analysisService,
 			VarietyPairViewModel.Factory varietyPairFactory)
@@ -161,6 +162,9 @@ namespace SIL.Cog.Applications.ViewModels
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
 
+		/// <summary>
+		/// Finds the next.
+		/// </summary>
 		private void FindNext()
 		{
 			if (_currentVarietyPair == null || (_currentVarietyPair.Cognates.WordPairs.Count == 0 && _currentVarietyPair.Noncognates.WordPairs.Count == 0))
@@ -171,7 +175,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			WordPairsViewModel cognates = _currentVarietyPair.Cognates;
 			WordPairsViewModel noncognates = _currentVarietyPair.Noncognates;
-			if (cognates.SelectedWordPairs.Count == 0 && noncognates.SelectedWordPairs.Count == 0)
+			if (cognates.WordPairs.Count > 0 && cognates.SelectedWordPairs.Count == 0 && noncognates.SelectedWordPairs.Count == 0)
 			{
 				_startWordPairs = cognates;
 			}
@@ -193,10 +197,10 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				using (_selectedWordPairsMonitor.Enter())
 				{
-					if (curWordPairs.FindNext(_findViewModel.Field, _findViewModel.String, false, startAtBeginning))
+					if (curWordPairs.FindNext(_findViewModel.Field, _findViewModel.String, _searchWrapped, startAtBeginning))
 					{
 						WordPairsViewModel otherWordPairs = curWordPairs == cognates ? noncognates : cognates;
-						otherWordPairs.SelectedWordPairs.Clear();
+						otherWordPairs.ClearPreviousSearchHit();
 						break;
 					}
 				}
@@ -217,6 +221,7 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					curWordPairs = _startWordPairs;
 					startAtBeginning = true;
+					_searchWrapped = true;
 				}
 				else
 				{
@@ -234,6 +239,7 @@ namespace SIL.Cog.Applications.ViewModels
 				_currentVarietyPair.Cognates.ResetSearch();
 				_currentVarietyPair.Noncognates.ResetSearch();
 			}
+			_searchWrapped = false;
 		}
 
 		private void SearchEnded()
@@ -370,7 +376,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public CurrentVarietyPairState CurrentVarietyPairState
 		{
 			get { return _currentVarietyPairState; }
-			set { Set(() => CurrentVarietyPairState, ref _currentVarietyPairState, value); }
+			private set { Set(() => CurrentVarietyPairState, ref _currentVarietyPairState, value); }
 		}
 
 		private void SetCurrentVarietyPair()

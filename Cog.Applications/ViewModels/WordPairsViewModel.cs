@@ -71,10 +71,11 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (_wordPairs.Count == 0)
 			{
-				ResetSearch();
+				if (wrap)
+					ResetSearch();
 				return false;
 			}
-			if (_selectedWordPairs.Count == 0)
+			if (!startAtBeginning && _selectedWordPairs.Count == 0)
 			{
 				_startWordPair = _wordPairsView.Cast<WordPairViewModel>().Last();
 			}
@@ -84,7 +85,8 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 			else if (!startAtBeginning && _selectedWordPairs.Contains(_startWordPair))
 			{
-				ResetSearch();
+				if (wrap)
+					ResetSearch();
 				return false;
 			}
 
@@ -126,7 +128,7 @@ namespace SIL.Cog.Applications.ViewModels
 						match = curWordPair.Sense.Gloss.Contains(str);
 						break;
 				}
-				if (match && _startWordPair != curWordPair)
+				if (match)
 				{
 					using (_selectedWordPairsMonitor.Enter())
 					{
@@ -150,6 +152,12 @@ namespace SIL.Cog.Applications.ViewModels
 		internal void ResetSearch()
 		{
 			_startWordPair = null;
+		}
+
+		internal void ClearPreviousSearchHit()
+		{
+			using (_selectedWordPairsMonitor.Enter())
+				_selectedWordPairs.Clear();
 		}
 
 		public ObservableList<WordPairViewModel> WordPairs

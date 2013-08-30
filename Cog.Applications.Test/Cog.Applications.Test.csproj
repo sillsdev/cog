@@ -44,6 +44,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="WindowsBase" />
@@ -51,8 +54,11 @@
   <ItemGroup>
     <Compile Include="TestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\GlobalCorrespondencesViewModelTest.cs" />
     <Compile Include="ViewModels\SegmentsViewModelTest.cs" />
     <Compile Include="ViewModels\VarietiesViewModelTest.cs" />
+    <Compile Include="ViewModels\VarietyPairsViewModelTest.cs" />
+    <Compile Include="ViewModels\WordListsVarietySenseViewModelTest.cs" />
     <Compile Include="ViewModels\WordListsViewModelTest.cs" />
     <Compile Include="ViewModels\WordViewModelTest.cs" />
   </ItemGroup>

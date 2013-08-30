@@ -72,7 +72,7 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _strRep; }
 			set
 			{
-				string val = value.Trim();
+				string val = value == null ? "" : value.Trim();
 				if (_strRep != val)
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();

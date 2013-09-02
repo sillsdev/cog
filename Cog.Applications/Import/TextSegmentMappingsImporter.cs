@@ -18,20 +18,15 @@ namespace SIL.Cog.Applications.Import
 			return null;
 		}
 
-		public IEnumerable<Tuple<string, string>> Import(object importSettingsViewModel, string path)
+		public IEnumerable<Tuple<string, string>> Import(object importSettingsViewModel, Stream stream)
 		{
 			var mappings = new List<Tuple<string, string>>();
-			using (var file = new StreamReader(path))
+			var reader = new CsvReader(new StreamReader(stream), _delimiter);
+			IList<string> mapping;
+			while (reader.ReadRow(out mapping))
 			{
-				var reader = new CsvReader(file, _delimiter);
-				IList<string> mapping;
-				while (reader.ReadRow(out mapping))
-				{
-					if (mapping.Count >= 2)
-					{
-						mappings.Add(Tuple.Create(mapping[0].Trim(), mapping[1].Trim()));
-					}
-				}
+				if (mapping.Count >= 2)
+					mappings.Add(Tuple.Create(mapping[0].Trim(), mapping[1].Trim()));
 			}
 
 			return mappings;

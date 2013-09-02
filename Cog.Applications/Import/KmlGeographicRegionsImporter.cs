@@ -43,24 +43,24 @@ namespace SIL.Cog.Applications.Import
 			return null;
 		}
 
-		public void Import(object importSettingsViewModel, string path, CogProject project)
+		public void Import(object importSettingsViewModel, Stream stream, CogProject project)
 		{
 			XDocument doc;
-			if (ZipFile.IsZipFile(path))
+			if (ZipFile.IsZipFile(stream, false))
 			{
-				ZipFile zipFile = ZipFile.Read(path);
+				ZipFile zipFile = ZipFile.Read(stream, new ReadOptions());
 				ZipEntry kmlEntry = zipFile.First(entry => entry.FileName.EndsWith(".kml"));
 				doc = XDocument.Load(kmlEntry.OpenReader());
 			}
 			else
 			{
-				doc = XDocument.Load(path);
+				doc = XDocument.Load(stream);
 			}
 			XElement root = doc.Root;
 			Debug.Assert(root != null);
 
 			if (root.GetDefaultNamespace() != DefaultNamespace)
-				throw new ArgumentException("The specified file is not a valid KML file", "path");
+				throw new ImportException("The specified file is not a valid KML file.");
 
 			doc.Validate(Schema, null);
 

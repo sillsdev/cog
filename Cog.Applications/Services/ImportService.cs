@@ -4,7 +4,6 @@ using System.IO;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Import;
 using SIL.Cog.Applications.ViewModels;
-using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.Services
 {
@@ -54,8 +53,7 @@ namespace SIL.Cog.Applications.Services
 			if (result.IsValid)
 			{
 				IWordListsImporter importer = WordListsImporters[result.SelectedFileType];
-				CogProject project = _projectService.Project;
-				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, project)))
+				if (Import(importer, ownerViewModel, result.FileName, (importSettingsViewModel, stream) => importer.Import(importSettingsViewModel, stream, _projectService.Project)))
 				{
 					_analysisService.SegmentAll();
 					Messenger.Default.Send(new DomainModelChangedMessage(true));
@@ -72,7 +70,7 @@ namespace SIL.Cog.Applications.Services
 			{
 				ISegmentMappingsImporter importer = SegmentMappingsImporters[result.SelectedFileType];
 				IEnumerable<Tuple<string, string>> importedMappings = null;
-				if (Import(importer, ownerViewModel, importSettingsViewModel => importedMappings = importer.Import(importSettingsViewModel, result.FileName)))
+				if (Import(importer, ownerViewModel, result.FileName, (importSettingsViewModel, stream) => importedMappings = importer.Import(importSettingsViewModel, stream)))
 				{
 					mappings = importedMappings;
 					return true;
@@ -88,7 +86,7 @@ namespace SIL.Cog.Applications.Services
 			if (result.IsValid)
 			{
 				IGeographicRegionsImporter importer = GeographicRegionsImporters[result.SelectedFileType];
-				if (Import(importer, ownerViewModel, importSettingsViewModel => importer.Import(importSettingsViewModel, result.FileName, _projectService.Project)))
+				if (Import(importer, ownerViewModel, result.FileName, (importSettingsViewModel, stream) => importer.Import(importSettingsViewModel, stream, _projectService.Project)))
 				{
 					Messenger.Default.Send(new DomainModelChangedMessage(false));
 					return true;
@@ -97,7 +95,7 @@ namespace SIL.Cog.Applications.Services
 			return false;
 		}
 
-		private bool Import(IImporter importer, object ownerViewModel, Action<object> importAction)
+		private bool Import(IImporter importer, object ownerViewModel, string fileName, Action<object, Stream> importAction)
 		{
 			object importSettingsViewModel;
 			if (GetImportSettings(ownerViewModel, importer, out importSettingsViewModel))
@@ -105,16 +103,13 @@ namespace SIL.Cog.Applications.Services
 				_busyService.ShowBusyIndicatorUntilUpdated();
 				try
 				{
-					importAction(importSettingsViewModel);
+					using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+						importAction(importSettingsViewModel, stream);
 					return true;
 				}
-				catch (ImportException ie)
+				catch (Exception e)
 				{
-					_dialogService.ShowError(ownerViewModel, ie.Message, "Cog");
-				}
-				catch (IOException ioe)
-				{
-					_dialogService.ShowError(ownerViewModel, ioe.Message, "Cog");
+					_dialogService.ShowError(ownerViewModel, string.Format("Error importing file:\n{0}", e.Message), "Cog");
 				}
 			}
 			return false;

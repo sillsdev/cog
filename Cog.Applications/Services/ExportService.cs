@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using SIL.Cog.Applications.Export;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
@@ -48,10 +50,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Similarity Matrix", SimilarityMatrixExporters.Keys);
 			if (result.IsValid)
-			{
-				_busyService.ShowBusyIndicator(() => SimilarityMatrixExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project, similarityMetric));
-				return true;
-			}
+				return Export(ownerViewModel, result.FileName, stream => SimilarityMatrixExporters[result.SelectedFileType].Export(stream, _projectService.Project, similarityMetric));
 			return false;
 		}
 
@@ -59,10 +58,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Word Lists", WordListsExporters.Keys);
 			if (result.IsValid)
-			{
-				_busyService.ShowBusyIndicator(() => WordListsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project));
-				return true;
-			}
+				return Export(ownerViewModel, result.FileName, stream => WordListsExporters[result.SelectedFileType].Export(stream, _projectService.Project));
 			return false;
 		}
 
@@ -70,10 +66,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Cognate Sets", CognateSetsExporters.Keys);
 			if (result.IsValid)
-			{
-				_busyService.ShowBusyIndicator(() => CognateSetsExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project));
-				return true;
-			}
+				return Export(ownerViewModel, result.FileName, stream => CognateSetsExporters[result.SelectedFileType].Export(stream, _projectService.Project));
 			return false;
 		}
 
@@ -81,10 +74,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Variety Pair", VarietyPairExporters.Keys);
 			if (result.IsValid)
-			{
-				_busyService.ShowBusyIndicator(() => VarietyPairExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project.WordAligners["primary"], varietyPair));
-				return true;
-			}
+				return Export(ownerViewModel, result.FileName, stream => VarietyPairExporters[result.SelectedFileType].Export(stream, _projectService.Project.WordAligners["primary"], varietyPair));
 			return false;
 		}
 
@@ -92,11 +82,26 @@ namespace SIL.Cog.Applications.Services
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Segment Frequencies", SegmentFrequenciesExporters.Keys);
 			if (result.IsValid)
+				return Export(ownerViewModel, result.FileName, stream => SegmentFrequenciesExporters[result.SelectedFileType].Export(stream, _projectService.Project, syllablePosition));
+			return false;
+		}
+
+		private bool Export(object ownerViewModel, string fileName, Action<Stream> exportAction)
+		{
+			try
 			{
-				_busyService.ShowBusyIndicator(() => SegmentFrequenciesExporters[result.SelectedFileType].Export(result.FileName, _projectService.Project, syllablePosition));
+				_busyService.ShowBusyIndicator(() =>
+					{
+						using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+							exportAction(stream);
+					});
 				return true;
 			}
-			return false;
+			catch (Exception e)
+			{
+				_dialogService.ShowError(ownerViewModel, string.Format("Error exporting file:\n{0}", e.Message), "Cog");
+				return false;
+			}
 		}
 	}
 }

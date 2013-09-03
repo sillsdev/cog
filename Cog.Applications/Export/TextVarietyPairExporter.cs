@@ -9,40 +9,38 @@ namespace SIL.Cog.Applications.Export
 {
 	public class TextVarietyPairExporter : IVarietyPairExporter
 	{
-		public void Export(string path, IWordAligner aligner, VarietyPair varietyPair)
+		public void Export(Stream stream, IWordAligner aligner, VarietyPair varietyPair)
 		{
-			using (var writer = new StreamWriter(path))
+			var writer = new StreamWriter(stream);
+			writer.WriteLine("Similarity");
+			writer.WriteLine("----------");
+			writer.WriteLine("Lexical: {0:p}", varietyPair.LexicalSimilarityScore);
+			writer.WriteLine("Phonetic: {0:p}", varietyPair.PhoneticSimilarityScore);
+			writer.WriteLine();
+
+			writer.WriteLine("Likely cognates");
+			writer.WriteLine("--------------");
+			WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));
+			writer.WriteLine();
+
+			writer.WriteLine("Likely non-cognates");
+			writer.WriteLine("-------------------");
+			WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted));
+			writer.WriteLine();
+
+			writer.WriteLine("Sound correspondences");
+			writer.WriteLine("---------------------");
+			bool first = true;
+			foreach (SoundContext lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
 			{
-				writer.WriteLine("Similarity");
-				writer.WriteLine("----------");
-				writer.WriteLine("Lexical: {0:p}", varietyPair.LexicalSimilarityScore);
-				writer.WriteLine("Phonetic: {0:p}", varietyPair.PhoneticSimilarityScore);
-				writer.WriteLine();
-
-				writer.WriteLine("Likely cognates");
-				writer.WriteLine("--------------");
-				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));
-				writer.WriteLine();
-
-				writer.WriteLine("Likely non-cognates");
-				writer.WriteLine("-------------------");
-				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted));
-				writer.WriteLine();
-
-				writer.WriteLine("Sound correspondences");
-				writer.WriteLine("---------------------");
-				bool first = true;
-				foreach (SoundContext lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
-				{
-					if (!first)
-						writer.WriteLine();
-					IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
-					FrequencyDistribution<Ngram> freqDist = varietyPair.SoundChangeFrequencyDistribution[lhs];
-					writer.WriteLine(lhs.ToString());
-					foreach (var correspondence in freqDist.ObservedSamples.Select(corr => new {Segment = corr, Probability = probDist[corr], Frequency = freqDist[corr]}).OrderByDescending(corr => corr.Probability))
-						writer.WriteLine("{0}: {1:p}, {2}", correspondence.Segment, correspondence.Probability, correspondence.Frequency);
-					first = false;
-				}
+				if (!first)
+					writer.WriteLine();
+				IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
+				FrequencyDistribution<Ngram> freqDist = varietyPair.SoundChangeFrequencyDistribution[lhs];
+				writer.WriteLine(lhs.ToString());
+				foreach (var correspondence in freqDist.ObservedSamples.Select(corr => new {Segment = corr, Probability = probDist[corr], Frequency = freqDist[corr]}).OrderByDescending(corr => corr.Probability))
+					writer.WriteLine("{0}: {1:p}, {2}", correspondence.Segment, correspondence.Probability, correspondence.Frequency);
+				first = false;
 			}
 		}
 

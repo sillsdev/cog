@@ -30,7 +30,7 @@ namespace SIL.Cog.Applications.Export
 				{"open-vowel", 2}
 			};
 
-		public void Export(string path, CogProject project, ViewModelSyllablePosition syllablePosition)
+		public void Export(Stream stream, CogProject project, ViewModelSyllablePosition syllablePosition)
 		{
 			var domainSyllablePosition = SyllablePosition.Onset;
 			switch (syllablePosition)
@@ -50,25 +50,23 @@ namespace SIL.Cog.Applications.Export
 				.SelectMany(v => v.SegmentFrequencyDistributions[domainSyllablePosition].ObservedSamples)
 				.Distinct().Where(s => !s.IsComplex).OrderBy(GetSortOrder).ThenBy(s => s.StrRep).ToArray();
 
-			using (var writer = new StreamWriter(path))
+			var writer = new StreamWriter(stream);
+			foreach (Segment seg in segments)
 			{
+				writer.Write("\t");
+				writer.Write(seg.StrRep);
+			}
+			writer.WriteLine();
+
+			foreach (Variety variety in project.Varieties)
+			{
+				writer.Write(variety.Name);
 				foreach (Segment seg in segments)
 				{
 					writer.Write("\t");
-					writer.Write(seg.StrRep);
+					writer.Write(variety.SegmentFrequencyDistributions[domainSyllablePosition][seg]);
 				}
 				writer.WriteLine();
-
-				foreach (Variety variety in project.Varieties)
-				{
-					writer.Write(variety.Name);
-					foreach (Segment seg in segments)
-					{
-						writer.Write("\t");
-						writer.Write(variety.SegmentFrequencyDistributions[domainSyllablePosition][seg]);
-					}
-					writer.WriteLine();
-				}
 			}
 		}
 

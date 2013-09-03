@@ -1,10 +1,11 @@
-﻿using SIL.Cog.Applications.ViewModels;
+﻿using System.IO;
+using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.Export
 {
 	public interface ISegmentFrequenciesExporter
 	{
-		void Export(string path, CogProject project, ViewModelSyllablePosition syllablePosition);
+		void Export(Stream stream, CogProject project, ViewModelSyllablePosition syllablePosition);
 	}
 }

@@ -21,7 +21,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IExportService _exportService;
 		private readonly IAnalysisService _analysisService;
 		private readonly WordListsVarietyViewModel.Factory _varietyFactory; 
-		private WordListsVarietySenseViewModel _currentVarietySense;
+		private WordListsVarietySenseViewModel _selectedVarietySense;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
  		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
@@ -70,9 +70,9 @@ namespace SIL.Cog.Applications.ViewModels
 			project.Senses.CollectionChanged += SensesChanged;
 		}
 
-		protected override void OnIsCurrentChanged()
+		protected override void OnIsSelectedChanged()
 		{
-			if (IsCurrent)
+			if (IsSelected)
 			{
 				Messenger.Default.Send(new HookFindMessage(_findCommand));
 			}
@@ -91,7 +91,7 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					var variety = (Variety) msg.DomainModels[0];
 					var sense = (Sense) msg.DomainModels[1];
-					CurrentVarietySense = _varieties[variety].Senses.Single(s => s.DomainSense == sense);
+					SelectedVarietySense = _varieties[variety].Senses.Single(s => s.DomainSense == sense);
 				}
 			}
 		}
@@ -128,7 +128,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void FindNext()
 		{
-			WordListsVarietySenseViewModel curVarietySense = _currentVarietySense;
+			WordListsVarietySenseViewModel curVarietySense = _selectedVarietySense;
 			if (curVarietySense == null)
 			{
 				WordListsVarietyViewModel curVariety = null;
@@ -175,7 +175,7 @@ namespace SIL.Cog.Applications.ViewModels
 						curVarietySense = varieties[varietyIndex].Senses[senseIndex];
 						if (curVarietySense.Words.Any(w => w.StrRep.Contains(_findViewModel.String)))
 						{
-							Set(() => CurrentVarietySense, ref _currentVarietySense, curVarietySense);
+							Set(() => SelectedVarietySense, ref _selectedVarietySense, curVarietySense);
 							return;
 						}
 					} while (_startVarietySense != curVarietySense);
@@ -189,7 +189,7 @@ namespace SIL.Cog.Applications.ViewModels
 						curVarietySense = variety.Senses[senseIndex];
 						if (curVarietySense.DomainSense.Gloss.Contains(_findViewModel.String))
 						{
-							Set(() => CurrentVarietySense, ref _currentVarietySense, curVarietySense);
+							Set(() => SelectedVarietySense, ref _selectedVarietySense, curVarietySense);
 							return;
 						}
 					} while (_startVarietySense != curVarietySense);
@@ -230,12 +230,12 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public WordListsVarietySenseViewModel CurrentVarietySense
+		public WordListsVarietySenseViewModel SelectedVarietySense
 		{
-			get { return _currentVarietySense; }
+			get { return _selectedVarietySense; }
 			set
 			{
-				if (Set(() => CurrentVarietySense, ref _currentVarietySense, value))
+				if (Set(() => SelectedVarietySense, ref _selectedVarietySense, value))
 					_startVarietySense = null;
 			}
 		}

@@ -9,7 +9,7 @@ namespace SIL.Cog.Applications.ViewModels
 	public class EditRegionViewModel : ViewModelBase
 	{
 		private readonly ReadOnlyList<VarietyViewModel> _varieties;
-		private VarietyViewModel _currentVariety;
+		private VarietyViewModel _selectedVariety;
 		private string _description;
 		private readonly string _title;
 
@@ -17,14 +17,14 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_title = "New Region";
 			_varieties = new ReadOnlyList<VarietyViewModel>(varieties.Select(v => new VarietyViewModel(v)).OrderBy(vm => vm.Name).ToArray());
-			_currentVariety = _varieties[0];
+			_selectedVariety = _varieties[0];
 		}
 
 		public EditRegionViewModel(IEnumerable<Variety> varieties, Variety variety, GeographicRegion region)
 		{
 			_title = "Edit Region";
 			_varieties = new ReadOnlyList<VarietyViewModel>(varieties.Select(v => new VarietyViewModel(v)).OrderBy(vm => vm.Name).ToArray());
-			_currentVariety = _varieties.First(vm => vm.DomainVariety == variety);
+			_selectedVariety = _varieties.First(vm => vm.DomainVariety == variety);
 			_description = region.Description;
 		}
 
@@ -38,10 +38,10 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _varieties; }
 		}
 
-		public VarietyViewModel CurrentVariety
+		public VarietyViewModel SelectedVariety
 		{
-			get { return _currentVariety; }
-			set { Set(() => CurrentVariety, ref _currentVariety, value); }
+			get { return _selectedVariety; }
+			set { Set(() => SelectedVariety, ref _selectedVariety, value); }
 		}
 
 		public string Description

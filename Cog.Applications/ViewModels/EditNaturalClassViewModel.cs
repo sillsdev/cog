@@ -12,9 +12,9 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private SoundType _type;
 		private readonly BindableList<FeatureViewModel> _availableFeatures;
-		private readonly BindableList<FeatureViewModel> _selectedFeatures;
-		private FeatureViewModel _currentSelectedFeature;
-		private FeatureViewModel _currentAvailableFeature;
+		private readonly BindableList<FeatureViewModel> _activeFeatures;
+		private FeatureViewModel _selectedActiveFeature;
+		private FeatureViewModel _selectedAvailableFeature;
 		private readonly ICommand _addCommand;
 		private readonly ICommand _removeCommand;
 
@@ -22,7 +22,7 @@ namespace SIL.Cog.Applications.ViewModels
 			: base("New Natural Class", soundClasses)
 		{
 			_availableFeatures = new BindableList<FeatureViewModel>(featSys.OfType<SymbolicFeature>().Select(f => new FeatureViewModel(f)));
-			_selectedFeatures = new BindableList<FeatureViewModel>();
+			_activeFeatures = new BindableList<FeatureViewModel>();
 
 			_addCommand = new RelayCommand(AddFeature, CanAddFeature);
 			_removeCommand = new RelayCommand(RemoveFeature, CanRemoveFeature);
@@ -33,12 +33,12 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_type = naturalClass.Type == CogFeatureSystem.ConsonantType ? SoundType.Consonant : SoundType.Vowel;
 			_availableFeatures = new BindableList<FeatureViewModel>();
-			_selectedFeatures = new BindableList<FeatureViewModel>();
+			_activeFeatures = new BindableList<FeatureViewModel>();
 			foreach (SymbolicFeature feature in featSys.OfType<SymbolicFeature>())
 			{
 				SymbolicFeatureValue sfv;
 				if (naturalClass.FeatureStruct.TryGetValue(feature, out sfv))
-					_selectedFeatures.Add(new FeatureViewModel(feature, (FeatureSymbol) sfv));
+					_activeFeatures.Add(new FeatureViewModel(feature, (FeatureSymbol) sfv));
 				else
 					_availableFeatures.Add(new FeatureViewModel(feature));
 			}
@@ -49,30 +49,30 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanAddFeature()
 		{
-			return _currentAvailableFeature != null;
+			return _selectedAvailableFeature != null;
 		}
 
 		private void AddFeature()
 		{
-			FeatureViewModel feature = _currentAvailableFeature;
+			FeatureViewModel feature = _selectedAvailableFeature;
 			_availableFeatures.Remove(feature);
 			if (feature.Values.Count > 0)
-				feature.CurrentValue = feature.Values[0];
-			_selectedFeatures.Add(feature);
-			CurrentSelectedFeature = feature;
+				feature.SelectedValue = feature.Values[0];
+			_activeFeatures.Add(feature);
+			SelectedActiveFeature = feature;
 		}
 
 		private bool CanRemoveFeature()
 		{
-			return _currentSelectedFeature != null;
+			return _selectedActiveFeature != null;
 		}
 
 		private void RemoveFeature()
 		{
-			FeatureViewModel feature = _currentSelectedFeature;
-			_selectedFeatures.Remove(feature);
+			FeatureViewModel feature = _selectedActiveFeature;
+			_activeFeatures.Remove(feature);
 			_availableFeatures.Add(feature);
-			CurrentAvailableFeature = feature;
+			SelectedAvailableFeature = feature;
 		}
 
 		public SoundType Type
@@ -81,10 +81,10 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => Type, ref _type, value); }
 		}
 
-		public FeatureViewModel CurrentAvailableFeature
+		public FeatureViewModel SelectedAvailableFeature
 		{
-			get { return _currentAvailableFeature; }
-			set { Set(() => CurrentAvailableFeature, ref _currentAvailableFeature, value); }
+			get { return _selectedAvailableFeature; }
+			set { Set(() => SelectedAvailableFeature, ref _selectedAvailableFeature, value); }
 		}
 
 		public ObservableList<FeatureViewModel> AvailableFeatures
@@ -92,15 +92,15 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _availableFeatures; }
 		}
 
-		public FeatureViewModel CurrentSelectedFeature
+		public FeatureViewModel SelectedActiveFeature
 		{
-			get { return _currentSelectedFeature; }
-			set { Set(() => CurrentSelectedFeature, ref _currentSelectedFeature, value); }
+			get { return _selectedActiveFeature; }
+			set { Set(() => SelectedActiveFeature, ref _selectedActiveFeature, value); }
 		}
 
-		public ObservableList<FeatureViewModel> SelectedFeatures
+		public ObservableList<FeatureViewModel> ActiveFeatures
 		{
-			get { return _selectedFeatures; }
+			get { return _activeFeatures; }
 		}
 
 		public ICommand AddCommand

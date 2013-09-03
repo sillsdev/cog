@@ -114,13 +114,13 @@ namespace SIL.Cog.Presentation.Views
 			if (e.SelectionInfos.Count == 1 && e.SelectionInfos[0].AddedCellRanges.Count == 1)
 			{
 				SelectionCellRange range = e.SelectionInfos[0].AddedCellRanges[0];
-				vm.CurrentColumn = range.ColumnRange.StartIndex - 2;
-				vm.CurrentWord = (MultipleWordAlignmentWordViewModel) AlignmentGrid.Items[range.ItemRange.StartIndex];
+				vm.SelectedColumn = range.ColumnRange.StartIndex - 2;
+				vm.SelectedWord = (MultipleWordAlignmentWordViewModel) AlignmentGrid.Items[range.ItemRange.StartIndex];
 			}
 			else
 			{
-				vm.CurrentColumn = -1;
-				vm.CurrentWord = null;
+				vm.SelectedColumn = -1;
+				vm.SelectedWord = null;
 				AlignmentGrid.CurrentItem = null;
 			}
 		}

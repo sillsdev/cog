@@ -11,7 +11,7 @@ using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public enum CurrentVarietyPairState
+	public enum VarietyPairState
 	{
 		SelectedAndCompared,
 		SelectedAndNotCompared,
@@ -27,10 +27,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private ReadOnlyMirroredList<Variety, VarietyViewModel> _varieties;
 		private ICollectionView _varietiesView1;
 		private ICollectionView _varietiesView2;
-		private VarietyViewModel _currentVariety1;
-		private VarietyViewModel _currentVariety2;
-		private VarietyPairViewModel _currentVarietyPair;
-		private CurrentVarietyPairState _currentVarietyPairState;
+		private VarietyViewModel _selectedVariety1;
+		private VarietyViewModel _selectedVariety2;
+		private VarietyPairViewModel _selectedVarietyPair;
+		private VarietyPairState _varietyPairState;
 		private readonly IExportService _exportService;
 		private readonly IDialogService _dialogService;
 		private readonly ICommand _findCommand;
@@ -41,7 +41,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private FindViewModel _findViewModel;
 		private WordPairsViewModel _startWordPairs;
 		private readonly SimpleMonitor _selectedWordPairsMonitor;
-		private bool _deferredResetCurrentVarietyPair;
+		private bool _deferredResetSelectedVarietyPair;
 		private bool _searchWrapped;
 
 		public VarietyPairsViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IExportService exportService, IAnalysisService analysisService,
@@ -60,7 +60,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortPropertyName = "PhoneticSimilarityScore";
 			_sortDirection = ListSortDirection.Descending;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetCurrentVarietyPair());
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetSelectedVarietyPair());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
 				{
 					if (msg.AffectsComparison)
@@ -72,7 +72,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_findCommand = new RelayCommand(Find);
 
 			_selectedWordPairsMonitor = new SimpleMonitor();
-			_currentVarietyPairState = CurrentVarietyPairState.NotSelected;
+			_varietyPairState = VarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
 				new TaskAreaCommandViewModel("Compare this variety pair", new RelayCommand(PerformComparison)),
 				new TaskAreaCommandViewModel("Find words", _findCommand),
@@ -86,7 +86,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_projectService.Project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
-			_deferredResetCurrentVarietyPair = true;
+			_deferredResetSelectedVarietyPair = true;
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -96,11 +96,11 @@ namespace SIL.Cog.Applications.ViewModels
 				_busyService.ShowBusyIndicatorUntilUpdated();
 
 				var pair = (VarietyPair) msg.DomainModels[0];
-				CurrentVarietyPair = _varietyPairFactory(pair, true);
-				Set(() => CurrentVariety1, ref _currentVariety1, _varieties[pair.Variety1]);
-				Set(() => CurrentVariety2, ref _currentVariety2, _varieties[pair.Variety2]);
-				CurrentVarietyPairState = pair.Variety1.VarietyPairs.Contains(pair.Variety2)
-					? CurrentVarietyPairState.SelectedAndCompared : CurrentVarietyPairState.SelectedAndNotCompared;
+				SelectedVarietyPair = _varietyPairFactory(pair, true);
+				Set(() => SelectedVariety1, ref _selectedVariety1, _varieties[pair.Variety1]);
+				Set(() => SelectedVariety2, ref _selectedVariety2, _varieties[pair.Variety2]);
+				VarietyPairState = pair.Variety1.VarietyPairs.Contains(pair.Variety2)
+					? VarietyPairState.SelectedAndCompared : VarietyPairState.SelectedAndNotCompared;
 			}
 		}
 
@@ -108,24 +108,24 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_sortPropertyName = propertyName;
 			_sortDirection = sortDirection;
-			if (_currentVarietyPair != null)
+			if (_selectedVarietyPair != null)
 			{
-				_currentVarietyPair.Cognates.UpdateSort(_sortPropertyName, _sortDirection);
-				_currentVarietyPair.Noncognates.UpdateSort(_sortPropertyName, _sortDirection);
+				_selectedVarietyPair.Cognates.UpdateSort(_sortPropertyName, _sortDirection);
+				_selectedVarietyPair.Noncognates.UpdateSort(_sortPropertyName, _sortDirection);
 			}
 		}
 
 		private void ClearComparison()
 		{
-			ResetCurrentVarietyPair();
-			CurrentVarietyPair = null;
-			if (CurrentVarietyPairState == CurrentVarietyPairState.SelectedAndCompared)
-				CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
+			ResetSelectedVarietyPair();
+			SelectedVarietyPair = null;
+			if (VarietyPairState == VarietyPairState.SelectedAndCompared)
+				VarietyPairState = VarietyPairState.SelectedAndNotCompared;
 		}
 
-		protected override void OnIsCurrentChanged()
+		protected override void OnIsSelectedChanged()
 		{
-			if (IsCurrent)
+			if (IsSelected)
 			{
 				Messenger.Default.Send(new HookFindMessage(_findCommand));
 			}
@@ -138,18 +138,18 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void PerformComparison()
 		{
-			if (_currentVarietyPairState == CurrentVarietyPairState.NotSelected || _currentVarietyPair != null)
+			if (_varietyPairState == VarietyPairState.NotSelected || _selectedVarietyPair != null)
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
 			CogProject project = _projectService.Project;
-			var pair = new VarietyPair(_currentVariety1.DomainVariety, _currentVariety2.DomainVariety);
+			var pair = new VarietyPair(_selectedVariety1.DomainVariety, _selectedVariety2.DomainVariety);
 			project.VarietyPairs.Add(pair);
 
 			_analysisService.Compare(pair);
 
-			CurrentVarietyPair = _varietyPairFactory(pair, true);
-			CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
+			SelectedVarietyPair = _varietyPairFactory(pair, true);
+			VarietyPairState = VarietyPairState.SelectedAndCompared;
 		}
 
 		private void Find()
@@ -167,14 +167,14 @@ namespace SIL.Cog.Applications.ViewModels
 		/// </summary>
 		private void FindNext()
 		{
-			if (_currentVarietyPair == null || (_currentVarietyPair.Cognates.WordPairs.Count == 0 && _currentVarietyPair.Noncognates.WordPairs.Count == 0))
+			if (_selectedVarietyPair == null || (_selectedVarietyPair.Cognates.WordPairs.Count == 0 && _selectedVarietyPair.Noncognates.WordPairs.Count == 0))
 			{
 				SearchEnded();
 				return;
 			}
 
-			WordPairsViewModel cognates = _currentVarietyPair.Cognates;
-			WordPairsViewModel noncognates = _currentVarietyPair.Noncognates;
+			WordPairsViewModel cognates = _selectedVarietyPair.Cognates;
+			WordPairsViewModel noncognates = _selectedVarietyPair.Noncognates;
 			if (cognates.WordPairs.Count > 0 && cognates.SelectedWordPairs.Count == 0 && noncognates.SelectedWordPairs.Count == 0)
 			{
 				_startWordPairs = cognates;
@@ -234,10 +234,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private void ResetSearch()
 		{
 			_startWordPairs = null;
-			if (_currentVarietyPair != null)
+			if (_selectedVarietyPair != null)
 			{
-				_currentVarietyPair.Cognates.ResetSearch();
-				_currentVarietyPair.Noncognates.ResetSearch();
+				_selectedVarietyPair.Cognates.ResetSearch();
+				_selectedVarietyPair.Noncognates.ResetSearch();
 			}
 			_searchWrapped = false;
 		}
@@ -250,35 +250,35 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ExportVarietyPair()
 		{
-			if (_currentVarietyPairState != CurrentVarietyPairState.SelectedAndCompared)
+			if (_varietyPairState != VarietyPairState.SelectedAndCompared)
 				return;
 
-			_exportService.ExportVarietyPair(this, _currentVarietyPair.DomainVarietyPair);
+			_exportService.ExportVarietyPair(this, _selectedVarietyPair.DomainVarietyPair);
 		}
 
-		private void ResetCurrentVarietyPair()
+		private void ResetSelectedVarietyPair()
 		{
 			if (_varieties.Count > 0)
 			{
 				if (_varietiesView1 == null || _varietiesView2 == null)
 				{
-					_deferredResetCurrentVarietyPair = true;
+					_deferredResetSelectedVarietyPair = true;
 				}
 				else
 				{
-					Set(() => CurrentVariety1, ref _currentVariety1, _varietiesView1.Cast<VarietyViewModel>().First());
+					Set(() => SelectedVariety1, ref _selectedVariety1, _varietiesView1.Cast<VarietyViewModel>().First());
 					if (_varieties.Count > 1)
-						Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().ElementAt(1));
+						Set(() => SelectedVariety2, ref _selectedVariety2, _varietiesView2.Cast<VarietyViewModel>().ElementAt(1));
 					else
-						Set(() => CurrentVariety2, ref _currentVariety2, _varietiesView2.Cast<VarietyViewModel>().First());
-					SetCurrentVarietyPair();
+						Set(() => SelectedVariety2, ref _selectedVariety2, _varietiesView2.Cast<VarietyViewModel>().First());
+					SetSelectedVarietyPair();
 				}
 			}
 			else
 			{
-				Set(() => CurrentVariety1, ref _currentVariety1, null);
-				Set(() => CurrentVariety2, ref _currentVariety2, null);
-				SetCurrentVarietyPair();
+				Set(() => SelectedVariety1, ref _selectedVariety1, null);
+				Set(() => SelectedVariety2, ref _selectedVariety2, null);
+				SetSelectedVarietyPair();
 			}
 		}
 
@@ -300,19 +300,19 @@ namespace SIL.Cog.Applications.ViewModels
 				if (Set(() => VarietiesView1, ref _varietiesView1, value))
 				{
 					_varietiesView1.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-					if (_deferredResetCurrentVarietyPair)
-						ResetCurrentVarietyPair();
+					if (_deferredResetSelectedVarietyPair)
+						ResetSelectedVarietyPair();
 				}
 			}
 		}
 
-		public VarietyViewModel CurrentVariety1
+		public VarietyViewModel SelectedVariety1
 		{
-			get { return _currentVariety1; }
+			get { return _selectedVariety1; }
 			set
 			{
-				if (Set(() => CurrentVariety1, ref _currentVariety1, value))
-					SetCurrentVarietyPair();
+				if (Set(() => SelectedVariety1, ref _selectedVariety1, value))
+					SetSelectedVarietyPair();
 			}
 		}
 
@@ -324,31 +324,31 @@ namespace SIL.Cog.Applications.ViewModels
 				if (Set(() => VarietiesView2, ref _varietiesView2, value))
 				{
 					_varietiesView2.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-					if (_deferredResetCurrentVarietyPair)
-						ResetCurrentVarietyPair();
+					if (_deferredResetSelectedVarietyPair)
+						ResetSelectedVarietyPair();
 				}
 			}
 		}
 
-		public VarietyViewModel CurrentVariety2
+		public VarietyViewModel SelectedVariety2
 		{
-			get { return _currentVariety2; }
+			get { return _selectedVariety2; }
 			set
 			{
-				if (Set(() => CurrentVariety2, ref _currentVariety2, value))
-					SetCurrentVarietyPair();
+				if (Set(() => SelectedVariety2, ref _selectedVariety2, value))
+					SetSelectedVarietyPair();
 			}
 		}
 
-		public VarietyPairViewModel CurrentVarietyPair
+		public VarietyPairViewModel SelectedVarietyPair
 		{
-			get { return _currentVarietyPair; }
+			get { return _selectedVarietyPair; }
 			set
 			{
-				VarietyPairViewModel oldCurVarietyPair = _currentVarietyPair;
-				if (Set(() => CurrentVarietyPair, ref _currentVarietyPair, value))
+				VarietyPairViewModel oldCurVarietyPair = _selectedVarietyPair;
+				if (Set(() => SelectedVarietyPair, ref _selectedVarietyPair, value))
 				{
-					_deferredResetCurrentVarietyPair = false;
+					_deferredResetSelectedVarietyPair = false;
 					ResetSearch();
 					if (oldCurVarietyPair != null)
 					{
@@ -356,12 +356,12 @@ namespace SIL.Cog.Applications.ViewModels
 						oldCurVarietyPair.Noncognates.SelectedWordPairs.CollectionChanged -= SelectedWordPairsChanged;
 					}
 
-					if (_currentVarietyPair != null)
+					if (_selectedVarietyPair != null)
 					{
-						_currentVarietyPair.Cognates.UpdateSort(_sortPropertyName, _sortDirection);
-						_currentVarietyPair.Noncognates.UpdateSort(_sortPropertyName, _sortDirection);
-						_currentVarietyPair.Cognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
-						_currentVarietyPair.Noncognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
+						_selectedVarietyPair.Cognates.UpdateSort(_sortPropertyName, _sortDirection);
+						_selectedVarietyPair.Noncognates.UpdateSort(_sortPropertyName, _sortDirection);
+						_selectedVarietyPair.Cognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
+						_selectedVarietyPair.Noncognates.SelectedWordPairs.CollectionChanged += SelectedWordPairsChanged;
 					}
 				}
 			}
@@ -373,33 +373,33 @@ namespace SIL.Cog.Applications.ViewModels
 				ResetSearch();
 		}
 
-		public CurrentVarietyPairState CurrentVarietyPairState
+		public VarietyPairState VarietyPairState
 		{
-			get { return _currentVarietyPairState; }
-			private set { Set(() => CurrentVarietyPairState, ref _currentVarietyPairState, value); }
+			get { return _varietyPairState; }
+			private set { Set(() => VarietyPairState, ref _varietyPairState, value); }
 		}
 
-		private void SetCurrentVarietyPair()
+		private void SetSelectedVarietyPair()
 		{
-			if (_currentVariety1 != null && _currentVariety2 != null && _currentVariety1 != _currentVariety2)
+			if (_selectedVariety1 != null && _selectedVariety2 != null && _selectedVariety1 != _selectedVariety2)
 			{
 				VarietyPair pair;
-				if (_currentVariety1.DomainVariety.VarietyPairs.TryGetValue(_currentVariety2.DomainVariety, out pair))
+				if (_selectedVariety1.DomainVariety.VarietyPairs.TryGetValue(_selectedVariety2.DomainVariety, out pair))
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();
-					CurrentVarietyPair = _varietyPairFactory(pair, _currentVariety1.DomainVariety == pair.Variety1);
-					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndCompared;
+					SelectedVarietyPair = _varietyPairFactory(pair, _selectedVariety1.DomainVariety == pair.Variety1);
+					VarietyPairState = VarietyPairState.SelectedAndCompared;
 				}
 				else
 				{
-					CurrentVarietyPair = null;
-					CurrentVarietyPairState = CurrentVarietyPairState.SelectedAndNotCompared;
+					SelectedVarietyPair = null;
+					VarietyPairState = VarietyPairState.SelectedAndNotCompared;
 				}
 			}
 			else
 			{
-				CurrentVarietyPair = null;
-				CurrentVarietyPairState = CurrentVarietyPairState.NotSelected;
+				SelectedVarietyPair = null;
+				VarietyPairState = VarietyPairState.NotSelected;
 			}
 		}
 	}

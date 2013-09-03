@@ -31,7 +31,7 @@
 							<DataTrigger.Binding>
 								<MultiBinding Converter="{StaticResource EqualConverter}">
 									<Binding Path="." />
-									<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="DataContext.CurrentCommand" />
+									<Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="DataContext.SelectedCommand" />
 								</MultiBinding>
 							</DataTrigger.Binding>
 							<Setter TargetName="circle" Property="Visibility" Value="Visible" />

@@ -25,7 +25,7 @@ namespace SIL.Cog.Applications.ViewModels
 				index = 1;
 			else if (cognateIdentifier is DolgopolskyCognateIdentifier)
 				index = 2;
-			CurrentOption = Options[index];
+			SelectedOption = Options[index];
 			base.Setup();
 		}
 	}

@@ -98,9 +98,9 @@ namespace SIL.Cog.Applications.ViewModels
 				_findViewModel.ShowSearchEndedMessage();
 		}
 
-		protected override void OnIsCurrentChanged()
+		protected override void OnIsSelectedChanged()
 		{
-			if (IsCurrent)
+			if (IsSelected)
 			{
 				Messenger.Default.Send(new HookFindMessage(_findCommand));
 			}

@@ -58,7 +58,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ReadOnlyObservableList<SegmentCategoryViewModel> _readonlyCategories;
 		private ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel> _varieties;
 		private ViewModelSyllablePosition _syllablePosition;
-		private VarietySegmentViewModel _currentSegment;
+		private VarietySegmentViewModel _selectedSegment;
 		private readonly BindableList<WordViewModel> _currentWords;
 		private readonly WordsViewModel _observedWords;
 		private readonly WordViewModel.Factory _wordFactory;
@@ -198,26 +198,26 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _findCommand; }
 		}
 
-		public VarietySegmentViewModel CurrentSegment
+		public VarietySegmentViewModel SelectedSegment
 		{
-			get { return _currentSegment; }
+			get { return _selectedSegment; }
 			set
 			{
-				if (Set(() => CurrentSegment, ref _currentSegment, value))
+				if (Set(() => SelectedSegment, ref _selectedSegment, value))
 				{
 					_busyService.ShowBusyIndicatorUntilUpdated();
 					using (_currentWords.BulkUpdate())
 					{
 						_currentWords.Clear();
-						if (_currentSegment != null)
+						if (_selectedSegment != null)
 						{
-							foreach (Word word in _currentSegment.Variety.DomainVariety.Words)
+							foreach (Word word in _selectedSegment.Variety.DomainVariety.Words)
 							{
 								WordViewModel vm = _wordFactory(word);
 								bool add = false;
 								foreach (WordSegmentViewModel seg in vm.Segments)
 								{
-									if (seg.StrRep == _currentSegment.StrRep)
+									if (seg.StrRep == _selectedSegment.StrRep)
 									{
 										bool correctPosition = false;
 										switch (_syllablePosition)

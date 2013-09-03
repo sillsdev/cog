@@ -9,7 +9,7 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly SymbolicFeature _feature;
 		private readonly ReadOnlyCollection<FeatureValueViewModel> _values;
-		private FeatureValueViewModel _currentValue;
+		private FeatureValueViewModel _selectedValue;
 
 		public FeatureViewModel(SymbolicFeature feature)
 			: this(feature, null)
@@ -21,9 +21,9 @@ namespace SIL.Cog.Applications.ViewModels
 			_feature = feature;
 			_values = new ReadOnlyCollection<FeatureValueViewModel>(feature.PossibleSymbols.Select(s => new FeatureValueViewModel(s)).ToArray());
 			if (symbol != null)
-				_currentValue = _values.Single(fv => fv.DomainSymbol == symbol);
+				_selectedValue = _values.Single(fv => fv.DomainSymbol == symbol);
 			else if (_values.Count > 0)
-				_currentValue = _values[0];
+				_selectedValue = _values[0];
 		}
 
 		public string Name
@@ -41,10 +41,10 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _values; }
 		}
 
-		public FeatureValueViewModel CurrentValue
+		public FeatureValueViewModel SelectedValue
 		{
-			get { return _currentValue; }
-			set { Set(() => CurrentValue, ref _currentValue, value); }
+			get { return _selectedValue; }
+			set { Set(() => SelectedValue, ref _selectedValue, value); }
 		}
 	}
 }

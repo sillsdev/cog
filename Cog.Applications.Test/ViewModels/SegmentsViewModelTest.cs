@@ -108,17 +108,17 @@ namespace SIL.Cog.Applications.Test.ViewModels
 
 			Assert.That(observedWords.WordsView, Is.Empty);
 
-			segments.CurrentSegment = segments.Varieties[1].Segments[3];
+			segments.SelectedSegment = segments.Varieties[1].Segments[3];
 			WordViewModel[] wordsViewArray = observedWords.WordsView.Cast<WordViewModel>().ToArray();
 			Assert.That(wordsViewArray.Select(w => w.StrRep), Is.EqualTo(new[] {"gu.gəl", "gu.fi"}));
 			Assert.That(wordsViewArray[0].Segments[1].IsSelected, Is.True);
 			Assert.That(wordsViewArray[0].Segments[2].IsSelected, Is.False);
 			Assert.That(wordsViewArray[0].Segments[4].IsSelected, Is.True);
 
-			segments.CurrentSegment = segments.Varieties[0].Segments[1];
+			segments.SelectedSegment = segments.Varieties[0].Segments[1];
 			Assert.That(observedWords.WordsView, Is.Empty);
 
-			segments.CurrentSegment = null;
+			segments.SelectedSegment = null;
 			Assert.That(observedWords.WordsView, Is.Empty);
 		}
 
@@ -168,7 +168,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(observedWords.SelectedWords, Is.Empty);
 
 			// nothing selected, matches
-			segments.CurrentSegment = segments.Varieties[1].Segments[3];
+			segments.SelectedSegment = segments.Varieties[1].Segments[3];
 			WordViewModel[] wordsViewArray = observedWords.WordsView.Cast<WordViewModel>().ToArray();
 			findViewModel.String = "fi";
 			findViewModel.FindNextCommand.Execute(null);

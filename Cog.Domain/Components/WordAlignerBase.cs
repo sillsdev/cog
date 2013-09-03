@@ -40,7 +40,7 @@ namespace SIL.Cog.Domain.Components
 		{
 			Word[] wordArray = words.ToArray();
 			if (wordArray.Length == 2)
-				return new PairwiseWordAlignerResult(Scorer, _settings, wordArray[0], wordArray[1]);
+				return new PairwiseWordAlignerResult(Scorer, new WordPairAlignerSettings(), wordArray[0], wordArray[1]);
 			return new MultipleWordAlignerResult(Scorer, wordArray);
 		}
 

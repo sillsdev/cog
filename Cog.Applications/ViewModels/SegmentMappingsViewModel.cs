@@ -13,7 +13,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
 		private readonly BindableList<SegmentMappingViewModel> _mappings;
-		private SegmentMappingViewModel _currentMapping;
+		private SegmentMappingViewModel _selectedMapping;
 		private readonly ICommand _newCommand;
 		private readonly ICommand _removeCommand;
 		private readonly ICommand _importCommand;
@@ -36,20 +36,20 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var mapping = new SegmentMappingViewModel(_projectService.Project.Segmenter, vm.Segment1, vm.Segment2);
 				_mappings.Add(mapping);
-				CurrentMapping = mapping;
+				SelectedMapping = mapping;
 				IsChanged = true;
 			}
 		}
 
 		private void RemoveMapping()
 		{
-			_mappings.Remove(_currentMapping);
+			_mappings.Remove(_selectedMapping);
 			IsChanged = true;
 		}
 
 		private bool CanRemoveMapping()
 		{
-			return _currentMapping != null;
+			return _selectedMapping != null;
 		}
 
 		private void Import()
@@ -64,10 +64,10 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		public SegmentMappingViewModel CurrentMapping
+		public SegmentMappingViewModel SelectedMapping
 		{
-			get { return _currentMapping; }
-			set { Set(() => CurrentMapping, ref _currentMapping, value); }
+			get { return _selectedMapping; }
+			set { Set(() => SelectedMapping, ref _selectedMapping, value); }
 		}
 
 		public ObservableList<SegmentMappingViewModel> Mappings

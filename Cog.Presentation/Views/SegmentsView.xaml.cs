@@ -70,7 +70,7 @@ namespace SIL.Cog.Presentation.Views
 					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
 					break;
 
-				case "CurrentSegment":
+				case "SelectedSegment":
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
 							if (_selectMonitor.Busy)
@@ -79,9 +79,9 @@ namespace SIL.Cog.Presentation.Views
 							using (_selectMonitor.Enter())
 							{
 								SegmentsDataGrid.SelectedCellRanges.Clear();
-								if (vm.CurrentSegment != null)
+								if (vm.SelectedSegment != null)
 								{
-									VarietyViewModel variety = vm.CurrentSegment.Variety;
+									VarietyViewModel variety = vm.SelectedSegment.Variety;
 									int itemIndex = SegmentsDataGrid.Items.IndexOf(variety);
 									SegmentsDataGrid.BringItemIntoView(variety);
 									SegmentsDataGrid.Dispatcher.BeginInvoke(new Action(() =>
@@ -89,7 +89,7 @@ namespace SIL.Cog.Presentation.Views
 									        var row = (DataRow) SegmentsDataGrid.GetContainerFromIndex(itemIndex);
 										    if (row != null)
 										    {
-											    Cell cell = row.Cells.Single(c => c.DataContext == vm.CurrentSegment);
+											    Cell cell = row.Cells.Single(c => c.DataContext == vm.SelectedSegment);
 												SegmentsDataGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
 											    cell.BringIntoView();
 										    }
@@ -152,11 +152,11 @@ namespace SIL.Cog.Presentation.Views
 					int itemIndex = cellRange.ItemRange.StartIndex;
 					var variety = (SegmentsVarietyViewModel) SegmentsDataGrid.Items[itemIndex];
 					int columnIndex = cellRange.ColumnRange.StartIndex;
-					vm.CurrentSegment = variety.Segments[columnIndex - 1];
+					vm.SelectedSegment = variety.Segments[columnIndex - 1];
 				}
 				else
 				{
-					vm.CurrentSegment = null;
+					vm.SelectedSegment = null;
 				}
 			}
 		}

@@ -20,7 +20,7 @@ namespace SIL.Cog.Presentation.Views
 			var command = (TaskAreaCommandViewModel) hyperlink.DataContext;
 
 			var vm = (TaskAreaCommandGroupViewModel) DataContext;
-			vm.CurrentCommand = command;
+			vm.SelectedCommand = command;
 		}
 	}
 }

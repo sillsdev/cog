@@ -6,7 +6,7 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly string _optionDisplayName;
 		private readonly ReadOnlyList<ComponentSettingsViewModelBase> _options;
-		private ComponentSettingsViewModelBase _currentOption;
+		private ComponentSettingsViewModelBase _selectedOption;
 
 		protected ComponentOptionsViewModel(string displayName, string optionDisplayName, params ComponentSettingsViewModelBase[] options)
 			: base(displayName)
@@ -22,10 +22,10 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _optionDisplayName; }
 		}
 
-		public ComponentSettingsViewModelBase CurrentOption
+		public ComponentSettingsViewModelBase SelectedOption
 		{
-			get { return _currentOption; }
-			set { SetChanged(() => CurrentOption, ref _currentOption, value); }
+			get { return _selectedOption; }
+			set { SetChanged(() => SelectedOption, ref _selectedOption, value); }
 		}
 
 		public override void AcceptChanges()
@@ -47,7 +47,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			return _currentOption.UpdateComponent();
+			return _selectedOption.UpdateComponent();
 		}
 	}
 }

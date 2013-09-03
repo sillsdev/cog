@@ -44,7 +44,7 @@
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=AvailableFeaturesListBox}">Available features:</Label>
 			<ListBox Grid.Column="0" Grid.Row="1" Name="AvailableFeaturesListBox" Height="250" Width="150" ItemsSource="{Binding AvailableFeatures}"
-					 SelectedItem="{Binding CurrentAvailableFeature}" DisplayMemberPath="Name" />
+					 SelectedItem="{Binding SelectedAvailableFeature}" DisplayMemberPath="Name" />
 			<StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
 				<StackPanel.Resources>
 					<Style TargetType="Button">
@@ -56,17 +56,17 @@
 				<Button Command="{Binding RemoveCommand}">Remove</Button>
 			</StackPanel>
 			<Label Grid.Column="2" Grid.Row="0" Target="{Binding ElementName=SelectedFeaturesDataGrid}">Selected features:</Label>
-			<xcdg:DataGridControl Name="SelectedFeaturesDataGrid" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding SelectedFeatures}" Height="250" Width="240"
-								  SelectedItem="{Binding CurrentSelectedFeature}" ReadOnly="True">
+			<xcdg:DataGridControl Name="SelectedFeaturesDataGrid" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding ActiveFeatures}" Height="250" Width="240"
+								  SelectedItem="{Binding SelectedActiveFeature}" ReadOnly="True">
 				<xcdg:DataGridControl.Columns>
 					<xcdg:Column FieldName="Name" Title="Feature" Width="*" />
-					<xcdg:Column FieldName="CurrentValue" Title="Value" Width="*">
+					<xcdg:Column FieldName="SelectedValue" Title="Value" Width="*">
 						<xcdg:Column.DisplayMemberBindingInfo>
 							<xcdg:DataGridBindingInfo Path="." />
 						</xcdg:Column.DisplayMemberBindingInfo>
 						<xcdg:Column.CellContentTemplate>
 							<DataTemplate DataType="{x:Type vm:FeatureViewModel}">
-								<ComboBox ItemsSource="{Binding Values}" SelectedItem="{Binding CurrentValue, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
+								<ComboBox ItemsSource="{Binding Values}" SelectedItem="{Binding SelectedValue, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
 							</DataTemplate>
 						</xcdg:Column.CellContentTemplate>
 					</xcdg:Column>

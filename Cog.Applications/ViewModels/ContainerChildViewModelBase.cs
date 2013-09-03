@@ -5,7 +5,7 @@ namespace SIL.Cog.Applications.ViewModels
 	public abstract class ContainerChildViewModelBase : ViewModelBase
 	{
 		private string _displayName;
-		private bool _isCurrent;
+		private bool _isSelected;
 
 		protected ContainerChildViewModelBase(string displayName)
 		{
@@ -18,17 +18,17 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => DisplayName, ref _displayName, value); }
 		}
 
-		public bool IsCurrent
+		public bool IsSelected
 		{
-			get { return _isCurrent; }
+			get { return _isSelected; }
 			set
 			{
-				if (Set(() => IsCurrent, ref _isCurrent, value))
-					OnIsCurrentChanged();
+				if (Set(() => IsSelected, ref _isSelected, value))
+					OnIsSelectedChanged();
 			}
 		}
 
-		protected virtual void OnIsCurrentChanged()
+		protected virtual void OnIsSelectedChanged()
 		{
 		}
 	}

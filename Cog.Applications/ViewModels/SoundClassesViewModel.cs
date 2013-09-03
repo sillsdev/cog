@@ -15,7 +15,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly BindableList<SoundClassViewModel> _soundClasses;
-		private SoundClassViewModel _currentSoundClass;
+		private SoundClassViewModel _selectedSoundClass;
 		private readonly ICommand _newNaturalClassCommand;
 		private readonly ICommand _newUnnaturalClassCommand;
 		private readonly ICommand _editSoundClassCommand;
@@ -81,12 +81,12 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var fs = new FeatureStruct();
 				fs.AddValue(CogFeatureSystem.Type, vm.Type == SoundType.Consonant ? CogFeatureSystem.ConsonantType : CogFeatureSystem.VowelType);
-				foreach (FeatureViewModel feature in vm.SelectedFeatures)
-					fs.AddValue(feature.DomainFeature, feature.CurrentValue.DomainSymbol);
+				foreach (FeatureViewModel feature in vm.ActiveFeatures)
+					fs.AddValue(feature.DomainFeature, feature.SelectedValue.DomainSymbol);
 				var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _displaySonority ? 0 : -1);
 				IsChanged = true;
 				_soundClasses.Add(newNaturalClass);
-				CurrentSoundClass = newNaturalClass;
+				SelectedSoundClass = newNaturalClass;
 			}
 		}
 
@@ -98,18 +98,18 @@ namespace SIL.Cog.Applications.ViewModels
 				var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _projectService.Project.Segmenter), _displaySonority ? 0 : -1);
 				IsChanged = true;
 				_soundClasses.Add(newUnnaturalClass);
-				CurrentSoundClass = newUnnaturalClass;
+				SelectedSoundClass = newUnnaturalClass;
 			}
 		}
 
 		private bool CanEditSoundClass()
 		{
-			return _currentSoundClass != null;
+			return _selectedSoundClass != null;
 		}
 
 		private void EditSoundClass()
 		{
-			var currentNC = _currentSoundClass.DomainSoundClass as NaturalClass;
+			var currentNC = _selectedSoundClass.DomainSoundClass as NaturalClass;
 			if (currentNC != null)
 			{
 				var vm = new EditNaturalClassViewModel(_projectService.Project.FeatureSystem, _soundClasses.Select(nc => nc.DomainSoundClass), currentNC);
@@ -117,28 +117,28 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					var fs = new FeatureStruct();
 					fs.AddValue(CogFeatureSystem.Type, vm.Type == SoundType.Consonant ? CogFeatureSystem.ConsonantType : CogFeatureSystem.VowelType);
-					foreach (FeatureViewModel feature in vm.SelectedFeatures)
-						fs.AddValue(feature.DomainFeature, feature.CurrentValue.DomainSymbol);
-					var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _currentSoundClass.Sonority);
-					int index = _soundClasses.IndexOf(_currentSoundClass);
+					foreach (FeatureViewModel feature in vm.ActiveFeatures)
+						fs.AddValue(feature.DomainFeature, feature.SelectedValue.DomainSymbol);
+					var newNaturalClass = new SoundClassViewModel(new NaturalClass(vm.Name, fs), _selectedSoundClass.Sonority);
+					int index = _soundClasses.IndexOf(_selectedSoundClass);
 					IsChanged = true;
 					_soundClasses[index] = newNaturalClass;
-					CurrentSoundClass = newNaturalClass;
+					SelectedSoundClass = newNaturalClass;
 				}
 			}
 			else
 			{
-				var currentUnc = _currentSoundClass.DomainSoundClass as UnnaturalClass;
+				var currentUnc = _selectedSoundClass.DomainSoundClass as UnnaturalClass;
 				if (currentUnc != null)
 				{
 					var vm = new EditUnnaturalClassViewModel(_dialogService, _projectService.Project.Segmenter, _soundClasses.Select(nc => nc.DomainSoundClass), currentUnc);
 					if (_dialogService.ShowModalDialog(this, vm) == true)
 					{
-						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _projectService.Project.Segmenter), _currentSoundClass.Sonority);
-						int index = _soundClasses.IndexOf(_currentSoundClass);
+						var newUnnaturalClass = new SoundClassViewModel(new UnnaturalClass(vm.Name, vm.Segments, vm.IgnoreModifiers, _projectService.Project.Segmenter), _selectedSoundClass.Sonority);
+						int index = _soundClasses.IndexOf(_selectedSoundClass);
 						IsChanged = true;
 						_soundClasses[index] = newUnnaturalClass;
-						CurrentSoundClass = newUnnaturalClass;
+						SelectedSoundClass = newUnnaturalClass;
 					}
 				}
 			}
@@ -146,40 +146,40 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanRemoveSoundClass()
 		{
-			return _currentSoundClass != null;
+			return _selectedSoundClass != null;
 		}
 
 		private void RemoveSoundClass()
 		{
-			int index = _soundClasses.IndexOf(_currentSoundClass);
+			int index = _soundClasses.IndexOf(_selectedSoundClass);
 			IsChanged = true;
 			_soundClasses.RemoveAt(index);
 			if (_soundClasses.Count == 0)
-				CurrentSoundClass = null;
+				SelectedSoundClass = null;
 			else
-				CurrentSoundClass = index >= _soundClasses.Count ? _soundClasses[index - 1] : _soundClasses[index];
+				SelectedSoundClass = index >= _soundClasses.Count ? _soundClasses[index - 1] : _soundClasses[index];
 		}
 
 		private bool CanMoveSoundClassUp()
 		{
-			return _currentSoundClass != null && _soundClasses.IndexOf(_currentSoundClass) > 0;
+			return _selectedSoundClass != null && _soundClasses.IndexOf(_selectedSoundClass) > 0;
 		}
 
 		private void MoveSoundClassUp()
 		{
-			int index = _soundClasses.IndexOf(_currentSoundClass);
+			int index = _soundClasses.IndexOf(_selectedSoundClass);
 			IsChanged = true;
 			_soundClasses.Move(index, index - 1);
 		}
 
 		private bool CanMoveSoundClassDown()
 		{
-			return _currentSoundClass != null && _soundClasses.IndexOf(_currentSoundClass) < _soundClasses.Count - 1;
+			return _selectedSoundClass != null && _soundClasses.IndexOf(_selectedSoundClass) < _soundClasses.Count - 1;
 		}
 
 		private void MoveSoundClassDown()
 		{
-			int index = _soundClasses.IndexOf(_currentSoundClass);
+			int index = _soundClasses.IndexOf(_selectedSoundClass);
 			IsChanged = true;
 			_soundClasses.Move(index, index + 1);
 		}
@@ -190,10 +190,10 @@ namespace SIL.Cog.Applications.ViewModels
 			ChildrenAcceptChanges(_soundClasses);
 		}
 
-		public SoundClassViewModel CurrentSoundClass
+		public SoundClassViewModel SelectedSoundClass
 		{
-			get { return _currentSoundClass; }
-			set { Set(() => CurrentSoundClass, ref _currentSoundClass, value); }
+			get { return _selectedSoundClass; }
+			set { Set(() => SelectedSoundClass, ref _selectedSoundClass, value); }
 		}
 
 		public bool DisplaySonority

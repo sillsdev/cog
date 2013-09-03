@@ -17,13 +17,13 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Variety details" />
-			<ComboBox Name="VarietiesComboBox" Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding VarietiesView}" SelectedItem="{Binding CurrentVariety}" DisplayMemberPath="Name"
+			<ComboBox Name="VarietiesComboBox" Margin="5,0,0,0" FontSize="16" ItemsSource="{Binding VarietiesView}" SelectedItem="{Binding SelectedVariety}" DisplayMemberPath="Name"
 					  b:ComboBoxBehaviors.AutoSize="True" />
         </StackPanel>
         <Grid>
             <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsVarietySelected, Converter={StaticResource ReverseBoolConverter}}">No variety selected.</TextBlock>
             <Border Visibility="{Binding IsVarietySelected, Converter={StaticResource BoolConverter}}">
-                <v:VarietyView DataContext="{Binding CurrentVariety}" />
+                <v:VarietyView DataContext="{Binding SelectedVariety}" />
             </Border>
         </Grid>
     </DockPanel>

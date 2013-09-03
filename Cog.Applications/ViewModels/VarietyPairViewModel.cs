@@ -14,7 +14,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IProjectService _projectService;
 		private readonly VarietyPair _varietyPair;
 		private readonly ReadOnlyList<SoundChangeViewModel> _soundChanges;
-		private SoundChangeViewModel _currentSoundChange;
+		private SoundChangeViewModel _selectedSoundChange;
 		private readonly bool _areVarietiesInOrder;
 		private readonly WordPairsViewModel _cognates;
 		private readonly WordPairsViewModel _noncognates;
@@ -38,12 +38,12 @@ namespace SIL.Cog.Applications.ViewModels
 				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
 		}
 
-		public SoundChangeViewModel CurrentSoundChange
+		public SoundChangeViewModel SelectedSoundChange
 		{
-			get { return _currentSoundChange; }
+			get { return _selectedSoundChange; }
 			set
 			{
-				Set(() => CurrentSoundChange, ref _currentSoundChange, value);
+				Set(() => SelectedSoundChange, ref _selectedSoundChange, value);
 				UpdateSelectedChangeWordPairs(_cognates);
 				UpdateSelectedChangeWordPairs(_noncognates);
 			}
@@ -58,7 +58,7 @@ namespace SIL.Cog.Applications.ViewModels
 				bool selected = false;
 				foreach (AlignedNodeViewModel node in wordPair.AlignedNodes)
 				{
-					if (_currentSoundChange == null)
+					if (_selectedSoundChange == null)
 					{
 						node.IsSelected = false;
 					}
@@ -66,7 +66,7 @@ namespace SIL.Cog.Applications.ViewModels
 					{
 						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(_segmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, aligner.ContextualSoundClasses);
 						Ngram corr = wordPair.DomainAlignment[1, node.Column].ToNgram(_segmentPool);
-						node.IsSelected = lhs.Equals(_currentSoundChange.DomainSoundChangeLhs) && corr.Equals(_currentSoundChange.DomainCorrespondence);
+						node.IsSelected = lhs.Equals(_selectedSoundChange.DomainSoundChangeLhs) && corr.Equals(_selectedSoundChange.DomainCorrespondence);
 						if (node.IsSelected)
 							selected = true;
 					}

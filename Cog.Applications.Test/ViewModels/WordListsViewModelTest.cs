@@ -155,83 +155,83 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			// nothing selected, no match
 			findViewModel.String = "fall";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.Null);
+			Assert.That(wordLists.SelectedVarietySense, Is.Null);
 
 			// nothing selected, matches
 			findViewModel.String = "he";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
 
 			// first word selected, matches
-			wordLists.CurrentVarietySense = wordLists.Varieties[0].Senses[0];
+			wordLists.SelectedVarietySense = wordLists.Varieties[0].Senses[0];
 			findViewModel.String = "o";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
 			// start search over
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
 
 			// last word selected, matches
-			wordLists.CurrentVarietySense = wordLists.Varieties[1].Senses[2];
+			wordLists.SelectedVarietySense = wordLists.Varieties[1].Senses[2];
 			findViewModel.String = "ba";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
 
 			// last word selected, matches, change selected word
 			findViewModel.String = "ba";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
-			wordLists.CurrentVarietySense = wordLists.Varieties[0].Senses[0];
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
+			wordLists.SelectedVarietySense = wordLists.Varieties[0].Senses[0];
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
 
 			// sense searches
 
 			// nothing selected, no match
-			wordLists.CurrentVarietySense = null;
+			wordLists.SelectedVarietySense = null;
 			findViewModel.Field = FindField.Sense;
 			findViewModel.String = "sense4";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.Null);
+			Assert.That(wordLists.SelectedVarietySense, Is.Null);
 
 			// nothing selected, matches
-			wordLists.CurrentVarietySense = null;
+			wordLists.SelectedVarietySense = null;
 			findViewModel.Field = FindField.Sense;
 			findViewModel.String = "sense2";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
 
 			// selected, matches
 			findViewModel.String = "sense";
-			wordLists.CurrentVarietySense = wordLists.Varieties[1].Senses[1];
+			wordLists.SelectedVarietySense = wordLists.Varieties[1].Senses[1];
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.CurrentVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
+			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
 		}
 	}
 }

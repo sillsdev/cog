@@ -89,7 +89,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var region = new GeographicRegion(coordinates.Select(coord => new GeographicCoordinate(coord.Item1, coord.Item2))) {Description = vm.Description};
-				vm.CurrentVariety.DomainVariety.Regions.Add(region);
+				vm.SelectedVariety.DomainVariety.Regions.Add(region);
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}
 		}

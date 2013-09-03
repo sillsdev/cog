@@ -9,7 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SensesViewModel}">
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">Senses</TextBlock>
-        <xcdg:DataGridControl Name="SensesGrid" Margin="0,5,0,0" ItemsSource="{Binding Senses}" SelectedItem="{Binding CurrentSense}" ReadOnly="True">
+        <xcdg:DataGridControl Name="SensesGrid" Margin="0,5,0,0" ItemsSource="{Binding Senses}" SelectedItem="{Binding SelectedSense}" ReadOnly="True">
             <xcdg:DataGridControl.Columns>
 				<xcdg:Column FieldName="Gloss" Title="Gloss" Width="200" />
 				<xcdg:Column FieldName="Category" Title="Category" Width="*" />

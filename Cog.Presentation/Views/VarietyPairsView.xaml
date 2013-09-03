@@ -17,17 +17,17 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}" Text="Variety pair details" />
             <Border Background="{StaticResource Variety1Brush}" Padding="3" Margin="0,0,5,0">
-				<ComboBox Name="Varieties1ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView1}" SelectedItem="{Binding CurrentVariety1}" DisplayMemberPath="Name" b:ComboBoxBehaviors.AutoSize="True" />    
+				<ComboBox Name="Varieties1ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView1}" SelectedItem="{Binding SelectedVariety1}" DisplayMemberPath="Name" b:ComboBoxBehaviors.AutoSize="True" />    
             </Border>
             <Border Background="{StaticResource Variety2Brush}" Padding="3">
-				<ComboBox Name="Varieties2ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView2}" SelectedItem="{Binding CurrentVariety2}" DisplayMemberPath="Name" b:ComboBoxBehaviors.AutoSize="True" />
+				<ComboBox Name="Varieties2ComboBox" FontSize="16" ItemsSource="{Binding VarietiesView2}" SelectedItem="{Binding SelectedVariety2}" DisplayMemberPath="Name" b:ComboBoxBehaviors.AutoSize="True" />
             </Border>
         </StackPanel>
         <Grid>
-            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding CurrentVarietyPairState, Converter={StaticResource EnumConverter}, ConverterParameter=NotSelected}">No variety pair selected.</TextBlock>
-            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding CurrentVarietyPairState, Converter={StaticResource EnumConverter}, ConverterParameter=SelectedAndNotCompared}">The selected variety pair has not been compared.</TextBlock>
-            <Border Visibility="{Binding CurrentVarietyPairState, Converter={StaticResource EnumConverter}, ConverterParameter=SelectedAndCompared}">
-                <v:VarietyPairView DataContext="{Binding CurrentVarietyPair}" />
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding VarietyPairState, Converter={StaticResource EnumConverter}, ConverterParameter=NotSelected}">No variety pair selected.</TextBlock>
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding VarietyPairState, Converter={StaticResource EnumConverter}, ConverterParameter=SelectedAndNotCompared}">The selected variety pair has not been compared.</TextBlock>
+            <Border Visibility="{Binding VarietyPairState, Converter={StaticResource EnumConverter}, ConverterParameter=SelectedAndCompared}">
+                <v:VarietyPairView DataContext="{Binding SelectedVarietyPair}" />
             </Border>
         </Grid>
     </DockPanel>

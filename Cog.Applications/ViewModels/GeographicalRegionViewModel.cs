@@ -70,10 +70,10 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_region.Description = vm.Description;
-				if (vm.CurrentVariety.DomainVariety != _variety.DomainVariety)
+				if (vm.SelectedVariety.DomainVariety != _variety.DomainVariety)
 				{
 					_variety.DomainVariety.Regions.Remove(_region);
-					vm.CurrentVariety.DomainVariety.Regions.Add(_region);
+					vm.SelectedVariety.DomainVariety.Regions.Add(_region);
 				}
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}

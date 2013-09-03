@@ -38,7 +38,7 @@ namespace SIL.Cog.Presentation.Views
 					{
 						var menuItem = new MenuItem {Header = command.DisplayName, Command = command.Command, DataContext = command, Tag = group, Style = (Style) FindResource("TaskAreaMenuItemStyle")};
 						menuItem.Click += menuItem_Click;
-						if (command == group.CurrentCommand)
+						if (command == group.SelectedCommand)
 						{
 							var geometry = new EllipseGeometry(new Point(0, 0), 3, 3);
 							var drawingBrush = new DrawingBrush(new GeometryDrawing {Brush = Brushes.Black, Geometry = geometry}) {Stretch = Stretch.None};
@@ -80,7 +80,7 @@ namespace SIL.Cog.Presentation.Views
 			var menuItem = (MenuItem) sender;
 			var command = (TaskAreaCommandViewModel) menuItem.DataContext;
 			var group = (TaskAreaCommandGroupViewModel) menuItem.Tag;
-			group.CurrentCommand = command;
+			group.SelectedCommand = command;
 		}
 	}
 }

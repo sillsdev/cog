@@ -21,8 +21,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
 		private double _maxSegProb;
 		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
-		private VarietySegmentViewModel _currentSegment;
-		private AffixViewModel _currentAffix;
+		private VarietySegmentViewModel _selectedSegment;
+		private AffixViewModel _selectedAffix;
 		private readonly WordsViewModel _wordsViewModel;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
@@ -67,12 +67,12 @@ namespace SIL.Cog.Applications.ViewModels
 				if (kvp.Key == SyllablePosition.Anywhere)
 				{
 					Segment curSeg = null;
-					if (CurrentSegment != null)
-						curSeg = CurrentSegment.DomainSegment;
+					if (SelectedSegment != null)
+						curSeg = SelectedSegment.DomainSegment;
 					_segments.ReplaceAll(kvp.Value.ObservedSamples.Select(seg => new VarietySegmentViewModel(this, seg, SyllablePosition.Anywhere)));
 					MaxSegmentProbability = _segments.Select(seg => seg.Probability).Concat(0).Max();
 					if (curSeg != null)
-						CurrentSegment = _segments.FirstOrDefault(vm => vm.DomainSegment.Equals(curSeg));
+						SelectedSegment = _segments.FirstOrDefault(vm => vm.DomainSegment.Equals(curSeg));
 				}
 			}
 		}
@@ -86,38 +86,38 @@ namespace SIL.Cog.Applications.ViewModels
 				_projectService.Project.Segmenter.Segment(affix);
 				DomainVariety.Affixes.Add(affix);
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
-				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
+				SelectedAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
 
 		private bool CanEditAffix()
 		{
-			return CurrentAffix != null;
+			return SelectedAffix != null;
 		}
 
 		private void EditAffix()
 		{
-			var vm = new EditAffixViewModel(_projectService.Project.Segmenter, _currentAffix.DomainAffix);
+			var vm = new EditAffixViewModel(_projectService.Project.Segmenter, _selectedAffix.DomainAffix);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
-				int index = DomainVariety.Affixes.IndexOf(_currentAffix.DomainAffix);
+				int index = DomainVariety.Affixes.IndexOf(_selectedAffix.DomainAffix);
 				DomainVariety.Affixes[index] = affix;
 				_projectService.Project.Segmenter.Segment(affix);
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
-				CurrentAffix = _affixes.Single(a => a.DomainAffix == affix);
+				SelectedAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}
 		}
 
 		private void RemoveAffix()
 		{
-			DomainVariety.Affixes.Remove(CurrentAffix.DomainAffix);
+			DomainVariety.Affixes.Remove(SelectedAffix.DomainAffix);
 			Messenger.Default.Send(new DomainModelChangedMessage(false));
 		}
 
 		private bool CanRemoveAffix()
 		{
-			return CurrentAffix != null;
+			return SelectedAffix != null;
 		}
 
 		public double MaxSegmentProbability
@@ -141,18 +141,18 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _affixes; }
 		}
 
-		public AffixViewModel CurrentAffix
+		public AffixViewModel SelectedAffix
 		{
-			get { return _currentAffix; }
-			set { Set(() => CurrentAffix, ref _currentAffix, value); }
+			get { return _selectedAffix; }
+			set { Set(() => SelectedAffix, ref _selectedAffix, value); }
 		}
 
-		public VarietySegmentViewModel CurrentSegment
+		public VarietySegmentViewModel SelectedSegment
 		{
-			get { return _currentSegment; }
+			get { return _selectedSegment; }
 			set
 			{
-				if (Set(() => CurrentSegment, ref _currentSegment, value))
+				if (Set(() => SelectedSegment, ref _selectedSegment, value))
 				{
 					_wordsViewModel.SelectedSegmentWords.Clear();
 					foreach (WordViewModel word in _words)
@@ -169,7 +169,7 @@ namespace SIL.Cog.Applications.ViewModels
 			bool selected = false;
 			foreach (WordSegmentViewModel segment in word.Segments.Where(s => !s.IsBoundary && !s.IsNotInOriginal))
 			{
-				segment.IsSelected = _currentSegment != null && segment.DomainNode.StrRep() == _currentSegment.StrRep;
+				segment.IsSelected = _selectedSegment != null && segment.DomainNode.StrRep() == _selectedSegment.StrRep;
 				if (segment.IsSelected)
 					selected = true;
 			}

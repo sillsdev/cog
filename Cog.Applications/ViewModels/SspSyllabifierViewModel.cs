@@ -57,7 +57,7 @@ namespace SIL.Cog.Applications.ViewModels
 				Set(() => SyllabificationEnabled, ref _syllabificationEnabled, false);
 			}
 
-			_sonorityClasses.CurrentSoundClass = null;
+			_sonorityClasses.SelectedSoundClass = null;
 			_sonorityClasses.SoundClasses.Clear();
 			foreach (SonorityClass sonorityClass in sonorityScale)
 				_sonorityClasses.SoundClasses.Add(new SoundClassViewModel(sonorityClass.SoundClass, sonorityClass.Sonority));

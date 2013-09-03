@@ -5,7 +5,7 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public abstract class ContainerViewModelBase : ContainerChildViewModelBase
 	{
-		private ContainerChildViewModelBase _currentView;
+		private ContainerChildViewModelBase _selectedView;
 		private readonly ReadOnlyList<ContainerChildViewModelBase> _views;
 
 		protected ContainerViewModelBase(string displayName, params ContainerChildViewModelBase[] views)
@@ -19,48 +19,48 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _views; }
 		}
 
-		public ContainerChildViewModelBase CurrentView
+		public ContainerChildViewModelBase SelectedView
 		{
-			get { return _currentView; }
+			get { return _selectedView; }
 			set
 			{
-				ContainerChildViewModelBase oldView = _currentView;
-				if (Set(() => CurrentView, ref _currentView, value))
+				ContainerChildViewModelBase oldView = _selectedView;
+				if (Set(() => SelectedView, ref _selectedView, value))
 				{
-					OnCurrentViewChanged(oldView, _currentView);
-					var newMaster = _currentView as ContainerViewModelBase;
+					OnSelectedViewChanged(oldView, _selectedView);
+					var newMaster = _selectedView as ContainerViewModelBase;
 					if (newMaster != null)
 					{
 						if (newMaster.Views.Count > 0)
-							newMaster.CurrentView = newMaster.Views[0];
+							newMaster.SelectedView = newMaster.Views[0];
 					}
 				}
 			}
 		}
 
-		protected virtual void OnCurrentViewChanged(ContainerChildViewModelBase oldView, ContainerChildViewModelBase newView)
+		protected virtual void OnSelectedViewChanged(ContainerChildViewModelBase oldView, ContainerChildViewModelBase newView)
 		{
 			if (oldView != null)
-				oldView.IsCurrent = false;
-			newView.IsCurrent = true;
+				oldView.IsSelected = false;
+			newView.IsSelected = true;
 		}
 
 		protected bool SwitchView(Type viewType)
 		{
-			ContainerChildViewModelBase oldView = _currentView;
+			ContainerChildViewModelBase oldView = _selectedView;
 			foreach (ContainerChildViewModelBase view in _views)
 			{
 				var masterVM = view as ContainerViewModelBase;
 				if (view.GetType() == viewType)
 				{
-					if (Set(() => CurrentView, ref _currentView, view))
-						OnCurrentViewChanged(oldView, _currentView);
+					if (Set(() => SelectedView, ref _selectedView, view))
+						OnSelectedViewChanged(oldView, _selectedView);
 					return true;
 				}
 				if (masterVM != null && masterVM.SwitchView(viewType))
 				{
-					if (Set(() => CurrentView, ref _currentView, view))
-						OnCurrentViewChanged(oldView, _currentView);
+					if (Set(() => SelectedView, ref _selectedView, view))
+						OnSelectedViewChanged(oldView, _selectedView);
 					return true;
 				}
 			}
@@ -68,12 +68,12 @@ namespace SIL.Cog.Applications.ViewModels
 			return false;
 		}
 
-		protected override void OnIsCurrentChanged()
+		protected override void OnIsSelectedChanged()
 		{
-			if (!IsCurrent)
+			if (!IsSelected)
 			{
 				foreach (ContainerChildViewModelBase view in _views)
-					view.IsCurrent = false;
+					view.IsSelected = false;
 			}
 		}
 	}

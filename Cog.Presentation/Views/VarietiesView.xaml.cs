@@ -52,7 +52,7 @@ namespace SIL.Cog.Presentation.Views
 					DispatcherHelper.CheckBeginInvokeOnUI(SetupVarieties);
 					break;
 
-				case "CurrentVariety":
+				case "SelectedVariety":
 					BusyCursor.DisplayUntilIdle();
 					break;
 			}

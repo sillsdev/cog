@@ -20,7 +20,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel> _varieties;
 		private ICollectionView _varietiesView;
-		private VarietiesVarietyViewModel _currentVariety;
+		private VarietiesVarietyViewModel _selectedVariety;
 		private bool _isVarietySelected;
 		private readonly ICommand _findCommand;
 		
@@ -48,8 +48,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
-					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameCurrentVariety)), 
-					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveCurrentVariety)),
+					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameSelectedVariety)), 
+					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveSelectedVariety)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
 						new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
@@ -62,7 +62,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
-			CurrentVariety = null;
+			SelectedVariety = null;
 			VarietiesView = null;
 			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 		}
@@ -71,12 +71,12 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (msg.ViewModelType == GetType())
 			{
-				CurrentVariety = _varieties[(Variety) msg.DomainModels[0]];
+				SelectedVariety = _varieties[(Variety) msg.DomainModels[0]];
 				if (msg.DomainModels.Count > 1)
 				{
 					var sense = (Sense) msg.DomainModels[1];
-					_currentVariety.Words.SelectedWords.Clear();
-					_currentVariety.Words.SelectedWords.AddRange(_currentVariety.Words.Words.Where(w => w.Sense.DomainSense == sense));
+					_selectedVariety.Words.SelectedWords.Clear();
+					_selectedVariety.Words.SelectedWords.AddRange(_selectedVariety.Words.Words.Where(w => w.Sense.DomainSense == sense));
 				}
 			}
 		}
@@ -86,13 +86,13 @@ namespace SIL.Cog.Applications.ViewModels
 			_sortPropertyName = propertyName;
 			_sortDirection = sortDirection;
 
-			if (_currentVariety != null)
-				_currentVariety.Words.UpdateSort(_sortPropertyName, _sortDirection);
+			if (_selectedVariety != null)
+				_selectedVariety.Words.UpdateSort(_sortPropertyName, _sortDirection);
 		}
 
-		protected override void OnIsCurrentChanged()
+		protected override void OnIsSelectedChanged()
 		{
-			if (IsCurrent)
+			if (IsSelected)
 			{
 				Messenger.Default.Send(new HookFindMessage(_findCommand));
 			}
@@ -109,22 +109,22 @@ namespace SIL.Cog.Applications.ViewModels
 				return;
 
 			_findViewModel = new FindViewModel(_dialogService, FindNext);
-			_findViewModel.PropertyChanged += (sender, args) => _currentVariety.Words.ResetSearch();
+			_findViewModel.PropertyChanged += (sender, args) => _selectedVariety.Words.ResetSearch();
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
 
 		private void FindNext()
 		{
-			if (_currentVariety == null)
+			if (_selectedVariety == null)
 				_findViewModel.ShowSearchEndedMessage();
-			else if (!_currentVariety.Words.FindNext(_findViewModel.Field, _findViewModel.String))
+			else if (!_selectedVariety.Words.FindNext(_findViewModel.Field, _findViewModel.String))
 				_findViewModel.ShowSearchEndedMessage();
 		}
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (_currentVariety == null || !_varieties.Contains(_currentVariety))
-				CurrentVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
+			if (_selectedVariety == null || !_varieties.Contains(_selectedVariety))
+				SelectedVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
 		}
 
 		private void AddNewVariety()
@@ -135,47 +135,47 @@ namespace SIL.Cog.Applications.ViewModels
 				var variety = new Variety(vm.Name);
 				_projectService.Project.Varieties.Add(variety);
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
-				CurrentVariety = _varieties[variety];
+				SelectedVariety = _varieties[variety];
 			}
 		}
 
-		private void RenameCurrentVariety()
+		private void RenameSelectedVariety()
 		{
-			if (_currentVariety == null)
+			if (_selectedVariety == null)
 				return;
 
-			var vm = new EditVarietyViewModel(_projectService.Project.Varieties, _currentVariety.DomainVariety);
+			var vm = new EditVarietyViewModel(_projectService.Project.Varieties, _selectedVariety.DomainVariety);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				_currentVariety.DomainVariety.Name = vm.Name;
+				_selectedVariety.DomainVariety.Name = vm.Name;
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}
 		}
 
-		private void RemoveCurrentVariety()
+		private void RemoveSelectedVariety()
 		{
-			if (_currentVariety == null)
+			if (_selectedVariety == null)
 				return;
 
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this variety?", "Cog"))
 			{
-				int index = _varieties.IndexOf(_currentVariety);
-				_projectService.Project.Varieties.Remove(_currentVariety.DomainVariety);
+				int index = _varieties.IndexOf(_selectedVariety);
+				_projectService.Project.Varieties.Remove(_selectedVariety.DomainVariety);
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				if (index == _varieties.Count)
 					index--;
-				CurrentVariety = _varieties.Count > 0 ? _varieties[index] : null;
+				SelectedVariety = _varieties.Count > 0 ? _varieties[index] : null;
 			}
 		}
 
 		private void RunStemmer()
 		{
-			if (_currentVariety == null)
+			if (_selectedVariety == null)
 				return;
 
 			var vm = new RunStemmerViewModel(false);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-				_analysisService.Stem(vm.Method, _currentVariety.DomainVariety);
+				_analysisService.Stem(vm.Method, _selectedVariety.DomainVariety);
 		}
 
 		public ICommand FindCommand
@@ -199,27 +199,27 @@ namespace SIL.Cog.Applications.ViewModels
 					{
 						_varietiesView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 						_varietiesView.CollectionChanged += VarietiesChanged;
-						if (_currentVariety == null)
-							CurrentVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
+						if (_selectedVariety == null)
+							SelectedVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
 					}
 				}
 			}
 		}
 
-		public VarietiesVarietyViewModel CurrentVariety
+		public VarietiesVarietyViewModel SelectedVariety
 		{
-			get { return _currentVariety; }
+			get { return _selectedVariety; }
 			set
 			{
-				if (Set(() => CurrentVariety, ref _currentVariety, value))
+				if (Set(() => SelectedVariety, ref _selectedVariety, value))
 				{
-					if (_currentVariety != null)
+					if (_selectedVariety != null)
 					{
-						_currentVariety.Words.UpdateSort(_sortPropertyName, _sortDirection);
-						_currentVariety.Words.ResetSearch();
+						_selectedVariety.Words.UpdateSort(_sortPropertyName, _sortDirection);
+						_selectedVariety.Words.ResetSearch();
 					}
 				}
-				IsVarietySelected = _currentVariety != null;
+				IsVarietySelected = _selectedVariety != null;
 			}
 		}
 

@@ -48,7 +48,7 @@
                 <MenuItem Header="About Cog" Click="AboutBox_Click" />
             </MenuItem>
         </Menu>
-        <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding CurrentView}">
+        <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding SelectedView}">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:ContainerViewModelBase}">
                     <TextBlock Text="{Binding DisplayName}" />
@@ -57,7 +57,7 @@
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <c:TabControlEx Padding="0" Style="{StaticResource SubTabControlStyle}" TabStripPlacement="Top" ItemsSource="{Binding Views}"
-									ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding CurrentView}">
+									ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding SelectedView}">
                         <TabControl.Template>
                             <ControlTemplate TargetType="TabControl">
                                 <DockPanel>

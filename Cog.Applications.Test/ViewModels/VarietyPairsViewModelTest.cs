@@ -44,10 +44,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			varietyPairs.VarietiesView2 = new ListCollectionView(varietyPairs.Varieties);
 
 			Assert.That(varietyPairs.Varieties, Is.Empty);
-			Assert.That(varietyPairs.CurrentVarietyPairState, Is.EqualTo(CurrentVarietyPairState.NotSelected));
-			Assert.That(varietyPairs.CurrentVariety1, Is.Null);
-			Assert.That(varietyPairs.CurrentVariety2, Is.Null);
-			Assert.That(varietyPairs.CurrentVarietyPair, Is.Null);
+			Assert.That(varietyPairs.VarietyPairState, Is.EqualTo(VarietyPairState.NotSelected));
+			Assert.That(varietyPairs.SelectedVariety1, Is.Null);
+			Assert.That(varietyPairs.SelectedVariety2, Is.Null);
+			Assert.That(varietyPairs.SelectedVarietyPair, Is.Null);
 
 			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
@@ -57,10 +57,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			analysisService.SegmentAll();
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
 
-			Assert.That(varietyPairs.CurrentVarietyPairState, Is.EqualTo(CurrentVarietyPairState.SelectedAndNotCompared));
-			Assert.That(varietyPairs.CurrentVariety1, Is.EqualTo(varietyPairs.VarietiesView1.Cast<VarietyViewModel>().First()));
-			Assert.That(varietyPairs.CurrentVariety2, Is.EqualTo(varietyPairs.VarietiesView2.Cast<VarietyViewModel>().ElementAt(1)));
-			Assert.That(varietyPairs.CurrentVarietyPair, Is.Null);
+			Assert.That(varietyPairs.VarietyPairState, Is.EqualTo(VarietyPairState.SelectedAndNotCompared));
+			Assert.That(varietyPairs.SelectedVariety1, Is.EqualTo(varietyPairs.VarietiesView1.Cast<VarietyViewModel>().First()));
+			Assert.That(varietyPairs.SelectedVariety2, Is.EqualTo(varietyPairs.VarietiesView2.Cast<VarietyViewModel>().ElementAt(1)));
+			Assert.That(varietyPairs.SelectedVarietyPair, Is.Null);
 
 			Messenger.Default.Send(new PerformingComparisonMessage());
 			var varietyPairGenerator = new VarietyPairGenerator();
@@ -74,26 +74,26 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			}
 			Messenger.Default.Send(new ComparisonPerformedMessage());
 
-			Assert.That(varietyPairs.CurrentVarietyPairState, Is.EqualTo(CurrentVarietyPairState.SelectedAndCompared));
-			Assert.That(varietyPairs.CurrentVarietyPair, Is.Not.Null);
-			Assert.That(varietyPairs.CurrentVarietyPair.AreVarietiesInOrder, Is.True);
+			Assert.That(varietyPairs.VarietyPairState, Is.EqualTo(VarietyPairState.SelectedAndCompared));
+			Assert.That(varietyPairs.SelectedVarietyPair, Is.Not.Null);
+			Assert.That(varietyPairs.SelectedVarietyPair.AreVarietiesInOrder, Is.True);
 
-			VarietyViewModel temp = varietyPairs.CurrentVariety2;
-			varietyPairs.CurrentVariety2 = varietyPairs.CurrentVariety1;
-			varietyPairs.CurrentVariety1 = temp;
+			VarietyViewModel temp = varietyPairs.SelectedVariety2;
+			varietyPairs.SelectedVariety2 = varietyPairs.SelectedVariety1;
+			varietyPairs.SelectedVariety1 = temp;
 
-			Assert.That(varietyPairs.CurrentVarietyPairState, Is.EqualTo(CurrentVarietyPairState.SelectedAndCompared));
-			Assert.That(varietyPairs.CurrentVarietyPair, Is.Not.Null);
-			Assert.That(varietyPairs.CurrentVarietyPair.AreVarietiesInOrder, Is.False);
+			Assert.That(varietyPairs.VarietyPairState, Is.EqualTo(VarietyPairState.SelectedAndCompared));
+			Assert.That(varietyPairs.SelectedVarietyPair, Is.Not.Null);
+			Assert.That(varietyPairs.SelectedVarietyPair.AreVarietiesInOrder, Is.False);
 
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
-			Assert.That(varietyPairs.CurrentVarietyPairState, Is.EqualTo(CurrentVarietyPairState.SelectedAndNotCompared));
+			Assert.That(varietyPairs.VarietyPairState, Is.EqualTo(VarietyPairState.SelectedAndNotCompared));
 
 			project.Varieties.RemoveRangeAt(0, 2);
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
-			Assert.That(varietyPairs.CurrentVarietyPairState, Is.EqualTo(CurrentVarietyPairState.NotSelected));
-			Assert.That(varietyPairs.CurrentVariety1, Is.EqualTo(varietyPairs.VarietiesView1.Cast<VarietyViewModel>().First()));
-			Assert.That(varietyPairs.CurrentVariety2, Is.EqualTo(varietyPairs.VarietiesView2.Cast<VarietyViewModel>().First()));
+			Assert.That(varietyPairs.VarietyPairState, Is.EqualTo(VarietyPairState.NotSelected));
+			Assert.That(varietyPairs.SelectedVariety1, Is.EqualTo(varietyPairs.VarietiesView1.Cast<VarietyViewModel>().First()));
+			Assert.That(varietyPairs.SelectedVariety2, Is.EqualTo(varietyPairs.VarietiesView2.Cast<VarietyViewModel>().First()));
 		}
 
 		[Test]
@@ -150,10 +150,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			varietyPairs.VarietiesView1 = new ListCollectionView(varietyPairs.Varieties);
 			varietyPairs.VarietiesView2 = new ListCollectionView(varietyPairs.Varieties);
 
-			WordPairsViewModel cognates = varietyPairs.CurrentVarietyPair.Cognates;
+			WordPairsViewModel cognates = varietyPairs.SelectedVarietyPair.Cognates;
 			cognates.WordPairsView = new ListCollectionView(cognates.WordPairs);
 			WordPairViewModel[] cognatesArray = cognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
-			WordPairsViewModel noncognates = varietyPairs.CurrentVarietyPair.Noncognates;
+			WordPairsViewModel noncognates = varietyPairs.SelectedVarietyPair.Noncognates;
 			noncognates.WordPairsView = new ListCollectionView(noncognates.WordPairs);
 			WordPairViewModel[] noncognatesArray = noncognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 
@@ -219,10 +219,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(noncognates.SelectedWordPairs, Is.Empty);
 
 			// switch variety pair, nothing selected, no cognates, matches, change selected word
-			varietyPairs.CurrentVariety2 = varietyPairs.Varieties[2];
-			cognates = varietyPairs.CurrentVarietyPair.Cognates;
+			varietyPairs.SelectedVariety2 = varietyPairs.Varieties[2];
+			cognates = varietyPairs.SelectedVarietyPair.Cognates;
 			cognates.WordPairsView = new ListCollectionView(cognates.WordPairs);
-			noncognates = varietyPairs.CurrentVarietyPair.Noncognates;
+			noncognates = varietyPairs.SelectedVarietyPair.Noncognates;
 			noncognates.WordPairsView = new ListCollectionView(noncognates.WordPairs);
 			noncognatesArray = noncognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 
@@ -302,10 +302,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			varietyPairs.VarietiesView1 = new ListCollectionView(varietyPairs.Varieties);
 			varietyPairs.VarietiesView2 = new ListCollectionView(varietyPairs.Varieties);
 
-			WordPairsViewModel cognates = varietyPairs.CurrentVarietyPair.Cognates;
+			WordPairsViewModel cognates = varietyPairs.SelectedVarietyPair.Cognates;
 			cognates.WordPairsView = new ListCollectionView(cognates.WordPairs);
 			WordPairViewModel[] cognatesArray = cognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
-			WordPairsViewModel noncognates = varietyPairs.CurrentVarietyPair.Noncognates;
+			WordPairsViewModel noncognates = varietyPairs.SelectedVarietyPair.Noncognates;
 			noncognates.WordPairsView = new ListCollectionView(noncognates.WordPairs);
 			WordPairViewModel[] noncognatesArray = noncognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 
@@ -316,8 +316,8 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			var sortWordsByItems = (TaskAreaItemsViewModel) commonTasks.Items[2];
 			var sortWordsByGroup = (TaskAreaCommandGroupViewModel) sortWordsByItems.Items[0];
 			// default sorting is by similarity, change to sense
-			sortWordsByGroup.CurrentCommand = sortWordsByGroup.Commands[1];
-			sortWordsByGroup.CurrentCommand.Command.Execute(null);
+			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
+			sortWordsByGroup.SelectedCommand.Command.Execute(null);
 			cognatesArray = cognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			noncognatesArray = noncognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			Assert.That(cognatesArray.Select(wp => wp.Sense.Gloss), Is.EqualTo(new[] {"sense1", "sense3"}));

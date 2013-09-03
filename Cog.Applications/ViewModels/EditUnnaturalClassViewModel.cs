@@ -13,7 +13,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private bool _ignoreModifiers;
 		private readonly Segmenter _segmenter;
 		private readonly BindableList<string> _segments;
-		private string _currentSegment;
+		private string _selectedSegment;
 		private readonly ICommand _addSegmentCommand;
 		private readonly ICommand _removeSegmentCommand;
 
@@ -44,29 +44,29 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				_segments.Add(vm.Segment);
-				CurrentSegment = vm.Segment;
+				SelectedSegment = vm.Segment;
 			}
 		}
 
 		private bool CanRemoveSegment()
 		{
-			return _currentSegment != null;
+			return _selectedSegment != null;
 		}
 
 		private void RemoveSegment()
 		{
-			int index = _segments.IndexOf(_currentSegment);
+			int index = _segments.IndexOf(_selectedSegment);
 			_segments.RemoveAt(index);
 			if (_segments.Count == 0)
-				CurrentSegment = null;
+				SelectedSegment = null;
 			else
-				CurrentSegment = index >= _segments.Count ? _segments[index - 1] : _segments[index];
+				SelectedSegment = index >= _segments.Count ? _segments[index - 1] : _segments[index];
 		}
 
-		public string CurrentSegment
+		public string SelectedSegment
 		{
-			get { return _currentSegment; }
-			set { Set(() => CurrentSegment, ref _currentSegment, value); }
+			get { return _selectedSegment; }
+			set { Set(() => SelectedSegment, ref _selectedSegment, value); }
 		}
 
 		public bool IgnoreModifiers

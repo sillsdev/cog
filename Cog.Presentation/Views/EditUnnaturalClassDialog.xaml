@@ -26,7 +26,7 @@
 			<Label Grid.ColumnSpan="3" Grid.Row="2" Padding="0" Margin="0,3,5,0">Segments</Label>
 			<StackPanel Grid.ColumnSpan="3" Grid.Row="3">
 				<Grid>
-					<ListBox Height="125" ItemsSource="{Binding Segments}" SelectedItem="{Binding CurrentSegment}" />
+					<ListBox Height="125" ItemsSource="{Binding Segments}" SelectedItem="{Binding SelectedSegment}" />
 					<TextBlock Margin="3,3,3,0" Text="Click Add to add a segment">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">

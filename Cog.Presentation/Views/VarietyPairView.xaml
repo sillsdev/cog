@@ -65,7 +65,7 @@
 			<GridSplitter Grid.Column="1" Grid.RowSpan="3" Margin="3,10,3,0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="4" />
             <HeaderedContentControl Margin="0,10,0,0" Grid.Column="2" Grid.RowSpan="3" Header="Sound changes">
                 <xcdg:DataGridControl Name="CorrespondenceDataGrid" ItemsSource="{Binding Source={StaticResource SoundChangesSource}}" AutoCreateColumns="False"
-									  ReadOnly="True" SelectedItem="{Binding CurrentSoundChange}">
+									  ReadOnly="True" SelectedItem="{Binding SelectedSoundChange}">
 					<xcdg:DataGridControl.Resources>
 						<DataTemplate DataType="{x:Type xcdg:Group}">
 							<TextBlock FontSize="16" Margin="2,0,0,0" Foreground="{StaticResource HeaderTextBrush}">

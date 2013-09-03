@@ -20,10 +20,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private ICollectionView _wordsView;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
 		private ICollectionView _sensesView;
-		private SenseViewModel _currentSense;
+		private SenseViewModel _selectedSense;
 		private int _columnCount;
-		private int _currentColumn;
-		private MultipleWordAlignmentWordViewModel _currentWord;
+		private int _selectedColumn;
+		private MultipleWordAlignmentWordViewModel _selectedWord;
 		private readonly IBusyService _busyService;
 		private readonly IExportService _exportService;
 		private bool _groupByCognateSet;
@@ -91,8 +91,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (_currentSense == null || !_senses.Contains(_currentSense))
-				CurrentSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
+			if (_selectedSense == null || !_senses.Contains(_selectedSense))
+				SelectedSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
 		}
 
 		public ReadOnlyObservableList<SenseViewModel> Senses
@@ -109,7 +109,7 @@ namespace SIL.Cog.Applications.ViewModels
 				{
 					_sensesView.SortDescriptions.Add(new SortDescription("Gloss", ListSortDirection.Ascending));
 					_sensesView.CollectionChanged += SensesChanged;
-					CurrentSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
+					SelectedSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
 				}
 			}
 		}
@@ -120,14 +120,14 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => ColumnCount, ref _columnCount, value); }
 		}
 
-		public SenseViewModel CurrentSense
+		public SenseViewModel SelectedSense
 		{
-			get { return _currentSense; }
+			get { return _selectedSense; }
 			set 
 			{
-				if (Set(() => CurrentSense, ref _currentSense, value))
+				if (Set(() => SelectedSense, ref _selectedSense, value))
 				{
-					if (_currentSense == null || _projectService.Project.VarietyPairs.Count == 0)
+					if (_selectedSense == null || _projectService.Project.VarietyPairs.Count == 0)
 						ResetAlignment();
 					else
 						AlignWords();
@@ -149,16 +149,16 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		public int CurrentColumn
+		public int SelectedColumn
 		{
-			get { return _currentColumn; }
-			set { Set(() => CurrentColumn, ref _currentColumn, value); }
+			get { return _selectedColumn; }
+			set { Set(() => SelectedColumn, ref _selectedColumn, value); }
 		}
 
-		public MultipleWordAlignmentWordViewModel CurrentWord
+		public MultipleWordAlignmentWordViewModel SelectedWord
 		{
-			get { return _currentWord; }
-			set { Set(() => CurrentWord, ref _currentWord, value); }
+			get { return _selectedWord; }
+			set { Set(() => SelectedWord, ref _selectedWord, value); }
 		}
 
 		public bool GroupByCognateSet
@@ -180,24 +180,24 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_words.Clear();
 			ColumnCount = 0;
-			CurrentColumn = 0;
-			CurrentWord = null;
+			SelectedColumn = 0;
+			SelectedWord = null;
 		}
 
 		private void AlignWords()
 		{
-			if (_currentSense == null)
+			if (_selectedSense == null)
 				return;
 
 			_busyService.ShowBusyIndicatorUntilUpdated();
 
-			var clusterer = new CognateSetsClusterer(_currentSense.DomainSense, 0.5);
+			var clusterer = new CognateSetsClusterer(_selectedSense.DomainSense, 0.5);
 			List<Cluster<Variety>> cognateSets = clusterer.GenerateClusters(_projectService.Project.Varieties).ToList();
 
 			var words = new List<Word>();
 			foreach (Variety variety in _projectService.Project.Varieties)
 			{
-				IReadOnlyCollection<Word> varietyWords = variety.Words[_currentSense.DomainSense];
+				IReadOnlyCollection<Word> varietyWords = variety.Words[_selectedSense.DomainSense];
 				if (varietyWords.Count == 0)
 					continue;
 
@@ -215,7 +215,7 @@ namespace SIL.Cog.Applications.ViewModels
 					{
 						VarietyPair vp = variety.VarietyPairs[otherVariety];
 						WordPair wp;
-						if (vp.WordPairs.TryGetValue(_currentSense.DomainSense, out wp))
+						if (vp.WordPairs.TryGetValue(_selectedSense.DomainSense, out wp))
 							wordCounts.UpdateValue(wp.GetWord(variety), () => 0, c => c + 1);
 					}
 					if (wordCounts.Count > 0)
@@ -239,11 +239,6 @@ namespace SIL.Cog.Applications.ViewModels
 				Annotation<ShapeNode> suffixAnn = word.Suffix;
 				var suffix = new AlignmentCell<ShapeNode>(suffixAnn != null ? word.Shape.GetNodes(suffixAnn.Span).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
 				alignment = new Alignment<Word, ShapeNode>(0, 0, Tuple.Create(word, prefix, columns, suffix));
-			}
-			else if (words.Count == 2)
-			{
-				IWordAlignerResult result = aligner.Compute(words[0], words[1]);
-				alignment = result.GetAlignments().First();
 			}
 			else
 			{

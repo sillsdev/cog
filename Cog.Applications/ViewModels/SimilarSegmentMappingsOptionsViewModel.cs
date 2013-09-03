@@ -32,7 +32,7 @@ namespace SIL.Cog.Applications.ViewModels
 				else if (SegmentMappings.VowelMappings is ListSegmentMappings)
 					index = 1;
 			}
-			CurrentOption = Options[index];
+			SelectedOption = Options[index];
 			base.Setup();
 		}
 	}

@@ -68,7 +68,7 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 			Set(() => ExpansionCompressionEnabled, ref _expansionCompressionEnabled, aligner.Settings.ExpansionCompressionEnabled);
 
-			_soundClasses.CurrentSoundClass = null;
+			_soundClasses.SelectedSoundClass = null;
 			_soundClasses.SoundClasses.Clear();
 			foreach (SoundClass soundClass in aligner.ContextualSoundClasses)
 				_soundClasses.SoundClasses.Add(new SoundClassViewModel(soundClass));

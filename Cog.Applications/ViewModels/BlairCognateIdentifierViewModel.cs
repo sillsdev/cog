@@ -29,7 +29,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override void Setup()
 		{
-			_ignoredMappings.CurrentMapping = null;
+			_ignoredMappings.SelectedMapping = null;
 			_ignoredMappings.Mappings.Clear();
 
 			IProcessor<VarietyPair> cognateIdentifier = _projectService.Project.VarietyPairProcessors["cognateIdentifier"];

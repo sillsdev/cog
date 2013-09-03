@@ -5,7 +5,7 @@ namespace SIL.Cog.Applications.ViewModels
 	public class TaskAreaCommandGroupViewModel : TaskAreaViewModelBase
 	{
 		private readonly ReadOnlyList<TaskAreaCommandViewModel> _commands;
-		private TaskAreaCommandViewModel _currentCommand;
+		private TaskAreaCommandViewModel _selectedCommand;
 
 		public TaskAreaCommandGroupViewModel(params TaskAreaCommandViewModel[] commands)
 			: this(null, commands)
@@ -18,7 +18,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_commands = new ReadOnlyList<TaskAreaCommandViewModel>(commands);
 			if (_commands.Count > 0)
-				_currentCommand = _commands[0];
+				_selectedCommand = _commands[0];
 		}
 
 		public ReadOnlyList<TaskAreaCommandViewModel> Commands
@@ -26,10 +26,10 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _commands; }
 		}
 
-		public TaskAreaCommandViewModel CurrentCommand
+		public TaskAreaCommandViewModel SelectedCommand
 		{
-			get { return _currentCommand; }
-			set { Set(() => CurrentCommand, ref _currentCommand, value); }
+			get { return _selectedCommand; }
+			set { Set(() => SelectedCommand, ref _selectedCommand, value); }
 		}
 	}
 }

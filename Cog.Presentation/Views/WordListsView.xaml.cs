@@ -65,7 +65,7 @@ namespace SIL.Cog.Presentation.Views
 					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
 					break;
 
-				case "CurrentVarietySense":
+				case "SelectedVarietySense":
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
 							if (_selectMonitor.Busy)
@@ -74,9 +74,9 @@ namespace SIL.Cog.Presentation.Views
 							using (_selectMonitor.Enter())
 							{
 								WordListsGrid.SelectedCellRanges.Clear();
-								if (vm.CurrentVarietySense != null)
+								if (vm.SelectedVarietySense != null)
 								{
-									WordListsVarietyViewModel variety = vm.CurrentVarietySense.Variety;
+									WordListsVarietyViewModel variety = vm.SelectedVarietySense.Variety;
 									int itemIndex = WordListsGrid.Items.IndexOf(variety);
 									WordListsGrid.BringItemIntoView(variety);
 									WordListsGrid.Dispatcher.BeginInvoke(new Action(() =>
@@ -84,7 +84,7 @@ namespace SIL.Cog.Presentation.Views
 									        var row = (DataRow) WordListsGrid.GetContainerFromIndex(itemIndex);
 										    if (row != null)
 										    {
-											    Cell cell = row.Cells.Single(c => c.Content == vm.CurrentVarietySense);
+											    Cell cell = row.Cells.Single(c => c.Content == vm.SelectedVarietySense);
 												WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
 											    cell.BringIntoView();
 										    }
@@ -143,11 +143,11 @@ namespace SIL.Cog.Presentation.Views
 					int itemIndex = cellRange.ItemRange.StartIndex;
 					var variety = (WordListsVarietyViewModel) WordListsGrid.Items[itemIndex];
 					int columnIndex = cellRange.ColumnRange.StartIndex;
-					vm.CurrentVarietySense = variety.Senses[columnIndex - 1];
+					vm.SelectedVarietySense = variety.Senses[columnIndex - 1];
 				}
 				else
 				{
-					vm.CurrentVarietySense = null;
+					vm.SelectedVarietySense = null;
 				}
 			}
 		}

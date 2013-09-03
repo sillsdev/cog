@@ -12,7 +12,7 @@
              d:DesignHeight="200" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SoundClassesViewModel}">
 	<StackPanel>
 		<Grid>
-			<xcdg:DataGridControl Name="SoundClassesGrid" Height="125" ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding CurrentSoundClass}" ReadOnly="True"
+			<xcdg:DataGridControl Name="SoundClassesGrid" Height="125" ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding SelectedSoundClass}" ReadOnly="True"
 								  b:DataGridControlBehaviors.AutoScrollOnSelection="True">
 				<xcdg:DataGridControl.Columns>
 					<xcdg:Column FieldName="Name" Title="Name" Width="150" />

@@ -40,14 +40,14 @@ namespace SIL.Cog.Applications.Test.ViewModels
 
 			Assert.That(varieties.Varieties, Is.Empty);
 			Assert.That(varieties.IsVarietySelected, Is.False);
-			Assert.That(varieties.CurrentVariety, Is.Null);
+			Assert.That(varieties.SelectedVariety, Is.Null);
 
 			project.Varieties.Add(new Variety("variety1"));
 
 			Assert.That(varieties.Varieties.Count, Is.EqualTo(1));
 			Assert.That(varieties.Varieties[0].Name, Is.EqualTo("variety1"));
 			Assert.That(varieties.IsVarietySelected, Is.True);
-			Assert.That(varieties.CurrentVariety, Is.EqualTo(varieties.VarietiesView.Cast<VarietiesVarietyViewModel>().First()));
+			Assert.That(varieties.SelectedVariety, Is.EqualTo(varieties.VarietiesView.Cast<VarietiesVarietyViewModel>().First()));
 
 			project = new CogProject(_spanFactory)
 				{
@@ -58,12 +58,12 @@ namespace SIL.Cog.Applications.Test.ViewModels
 
 			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"French", "English", "Spanish"}));
 			Assert.That(varieties.IsVarietySelected, Is.False);
-			Assert.That(varieties.CurrentVariety, Is.Null);
+			Assert.That(varieties.SelectedVariety, Is.Null);
 
 			varieties.VarietiesView = new ListCollectionView(varieties.Varieties);
 			VarietiesVarietyViewModel[] varietiesViewArray = varieties.VarietiesView.Cast<VarietiesVarietyViewModel>().ToArray();
 			Assert.That(varieties.IsVarietySelected, Is.True);
-			Assert.That(varieties.CurrentVariety, Is.EqualTo(varietiesViewArray[0]));
+			Assert.That(varieties.SelectedVariety, Is.EqualTo(varietiesViewArray[0]));
 			// should be sorted
 			Assert.That(varietiesViewArray.Select(v => v.Name), Is.EqualTo(new[] {"English", "French", "Spanish"}));
 		}
@@ -94,7 +94,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			projectService.ProjectOpened += Raise.Event();
 
 			varieties.VarietiesView = new ListCollectionView(varieties.Varieties);
-			WordsViewModel wordsViewModel = varieties.CurrentVariety.Words;
+			WordsViewModel wordsViewModel = varieties.SelectedVariety.Words;
 			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
 			WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
 
@@ -146,8 +146,8 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
 
 			// switch variety, nothing selected, matches, change selected word
-			varieties.CurrentVariety = varieties.Varieties[1];
-			wordsViewModel = varieties.CurrentVariety.Words;
+			varieties.SelectedVariety = varieties.Varieties[1];
+			wordsViewModel = varieties.SelectedVariety.Words;
 			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
 			wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
 			findViewModel.String = "go";
@@ -203,32 +203,32 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			var addVariety = (TaskAreaCommandViewModel) commonTasks.Items[0];
 			dialogService.ShowModalDialog(varieties, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety3")).Returns(true);
 			addVariety.Command.Execute(null);
-			Assert.That(varieties.CurrentVariety.Name, Is.EqualTo("variety3"));
+			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety3"));
 			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety3"}));
 
 			var renameVariety = (TaskAreaCommandViewModel) commonTasks.Items[1];
 			dialogService.ShowModalDialog(varieties, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety4")).Returns(true);
 			renameVariety.Command.Execute(null);
-			Assert.That(varieties.CurrentVariety.Name, Is.EqualTo("variety4"));
+			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety4"));
 			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety4"}));
 
 			var removeVariety = (TaskAreaCommandViewModel) commonTasks.Items[2];
 			dialogService.ShowYesNoQuestion(varieties, Arg.Any<string>(), Arg.Any<string>()).Returns(true);
 			removeVariety.Command.Execute(null);
-			Assert.That(varieties.CurrentVariety.Name, Is.EqualTo("variety2"));
+			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety2"));
 			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2"}));
 
-			WordsViewModel wordsViewModel = varieties.CurrentVariety.Words;
+			WordsViewModel wordsViewModel = varieties.SelectedVariety.Words;
 			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
 			var sortWordsByItems = (TaskAreaItemsViewModel) commonTasks.Items[4];
 			var sortWordsByGroup = (TaskAreaCommandGroupViewModel) sortWordsByItems.Items[0];
 			// default sorting is by sense, change to form
-			sortWordsByGroup.CurrentCommand = sortWordsByGroup.Commands[1];
-			sortWordsByGroup.CurrentCommand.Command.Execute(null);
+			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
+			sortWordsByGroup.SelectedCommand.Command.Execute(null);
 			Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"goofy", "google", "help"}));
 			// change sorting back to sense
-			sortWordsByGroup.CurrentCommand = sortWordsByGroup.Commands[0];
-			sortWordsByGroup.CurrentCommand.Command.Execute(null);
+			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[0];
+			sortWordsByGroup.SelectedCommand.Command.Execute(null);
 			Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"help", "google", "goofy"}));
 		}
 	}

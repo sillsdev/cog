@@ -49,9 +49,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override void Setup()
 		{
-			_consMappings.CurrentMapping = null;
+			_consMappings.SelectedMapping = null;
 			_consMappings.Mappings.Clear();
-			_vowelMappings.CurrentMapping = null;
+			_vowelMappings.SelectedMapping = null;
 			_vowelMappings.Mappings.Clear();
 
 			if (SegmentMappings == null || !(SegmentMappings.VowelMappings is ListSegmentMappings))

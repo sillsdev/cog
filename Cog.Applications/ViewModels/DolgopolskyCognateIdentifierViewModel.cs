@@ -69,7 +69,7 @@ namespace SIL.Cog.Applications.ViewModels
 				soundClasses = dolgopolsky.SoundClasses;
 			}
 
-			_soundClasses.CurrentSoundClass = null;
+			_soundClasses.SelectedSoundClass = null;
 			_soundClasses.SoundClasses.Clear();
 			foreach (SoundClass soundClass in soundClasses)
 				_soundClasses.SoundClasses.Add(new SoundClassViewModel(soundClass));

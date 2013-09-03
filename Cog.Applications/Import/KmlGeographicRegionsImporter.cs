@@ -48,7 +48,8 @@ namespace SIL.Cog.Applications.Import
 			XDocument doc;
 			if (ZipFile.IsZipFile(stream, false))
 			{
-				ZipFile zipFile = ZipFile.Read(stream, new ReadOptions());
+				stream.Seek(0, SeekOrigin.Begin);
+				ZipFile zipFile = ZipFile.Read(stream);
 				ZipEntry kmlEntry = zipFile.First(entry => entry.FileName.EndsWith(".kml"));
 				doc = XDocument.Load(kmlEntry.OpenReader());
 			}

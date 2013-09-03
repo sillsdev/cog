@@ -10,7 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SegmentMappingsViewModel}">
     <StackPanel>
         <Grid>
-            <xcdg:DataGridControl Name="MappingsGrid" ItemsSource="{Binding Mappings}" b:DataGridControlBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding CurrentMapping}" ReadOnly="True">
+            <xcdg:DataGridControl Name="MappingsGrid" ItemsSource="{Binding Mappings}" b:DataGridControlBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding SelectedMapping}" ReadOnly="True">
                 <xcdg:DataGridControl.Columns>
 					<xcdg:Column FieldName="Segment1" Title="Segment 1" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
 					<xcdg:Column FieldName="Segment2" Title="Segment 2" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />

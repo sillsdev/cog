@@ -74,7 +74,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_projectService.Init();
 			DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
-			CurrentView = input;
+			SelectedView = input;
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -86,8 +86,8 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			switch (e.PropertyName)
 			{
-				case "CurrentView":
-					CheckSettingsWorkspace(CurrentView);
+				case "SelectedView":
+					CheckSettingsWorkspace(SelectedView);
 					break;
 			}
 		}
@@ -96,7 +96,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			switch (e.PropertyName)
 			{
-				case "CurrentView":
+				case "SelectedView":
 					CheckSettingsWorkspace(sender);
 					break;
 			}
@@ -108,7 +108,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (childView == null)
 				return;
 
-			var settingsWorkspace = childView.CurrentView as SettingsWorkspaceViewModelBase;
+			var settingsWorkspace = childView.SelectedView as SettingsWorkspaceViewModelBase;
 			if (settingsWorkspace != null && settingsWorkspace.IsDirty)
 			{
 				if (_dialogService.ShowYesNoQuestion(this, "Do you wish to apply the current settings?", "Cog"))
@@ -120,7 +120,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void New()
 		{
-			CheckSettingsWorkspace(CurrentView);
+			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.New())
 			{
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
@@ -130,7 +130,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void Open()
 		{
-			CheckSettingsWorkspace(CurrentView);
+			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.Open())
 			{
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
@@ -145,14 +145,14 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void Save()
 		{
-			CheckSettingsWorkspace(CurrentView);
+			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.Save())
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
 		}
 
 		private void SaveAs()
 		{
-			CheckSettingsWorkspace(CurrentView);
+			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.SaveAs())
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
 		}
@@ -244,7 +244,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public bool CanExit()
 		{
-			CheckSettingsWorkspace(CurrentView);
+			CheckSettingsWorkspace(SelectedView);
 			return _projectService.Close();
 		}
 

@@ -137,19 +137,10 @@ namespace SIL.Cog.Domain.SequenceAlignment
 		{
 			SymbolicFeatureValue pValue;
 			if (!fs1.TryGetValue(feature, out pValue))
-				pValue = null;
+				return 0;
 			SymbolicFeatureValue qValue;
 			if (!fs2.TryGetValue(feature, out qValue))
-				qValue = null;
-
-			if (pValue == null && qValue == null)
 				return 0;
-
-			if (pValue == null)
-				return qValue.Values.Min(symbol => _valueMetrics[symbol]);
-
-			if (qValue == null)
-				return pValue.Values.Min(symbol => _valueMetrics[symbol]);
 
 			int min = -1;
 			foreach (FeatureSymbol pSymbol in pValue.Values)

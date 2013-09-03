@@ -129,7 +129,7 @@
 							<xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
 						</xcdg:Column.DisplayMemberBindingInfo>
 					</xcdg:Column>
-					<xcdg:Column FieldName="FeatureStructure" Title="Features" Width="500" />
+					<xcdg:Column FieldName="FeatureStructure" Title="Features" Width="1100" />
 				</xcdg:DataGridControl.Columns>
 				<xcdg:DataGridControl.View>
 					<xcdg:TableView>

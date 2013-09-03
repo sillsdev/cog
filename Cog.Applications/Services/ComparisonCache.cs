@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
 
-namespace SIL.Cog.Applications.ViewModels
+namespace SIL.Cog.Applications.Services
 {
 	[ProtoContract]
 	internal class ComparisonCache

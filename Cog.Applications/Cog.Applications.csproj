@@ -70,6 +70,7 @@
     <Compile Include="Export\IVarietyPairExporter.cs" />
     <Compile Include="Export\IWordListsExporter.cs" />
     <Compile Include="Export\NexusCognateSetsExporter.cs" />
+    <Compile Include="Export\NonClosingStreamWrapper.cs" />
     <Compile Include="Export\TextCognateSetsExporter.cs" />
     <Compile Include="Export\TextSegmentFrequenciesExporter.cs" />
     <Compile Include="Export\TextSimilarityMatrixExporter.cs" />
@@ -112,9 +113,11 @@
     <Compile Include="Import\WordSurv7WordListsImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AnalysisService.cs" />
+    <Compile Include="Services\ComparisonCache.cs" />
     <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\FileDialogResult.cs" />
     <Compile Include="Services\FileType.cs" />
+    <Compile Include="Services\GlobalSoundCorrespondenceSurrogate.cs" />
     <Compile Include="Services\GraphService.cs" />
     <Compile Include="Services\IAnalysisService.cs" />
     <Compile Include="Services\IBusyService.cs" />
@@ -128,6 +131,9 @@
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\ProjectService.cs" />
     <Compile Include="Services\ServiceExtensions.cs" />
+    <Compile Include="Services\SoundContextSurrogate.cs" />
+    <Compile Include="Services\VarietyPairSurrogate.cs" />
+    <Compile Include="Services\WordPairSurrogate.cs" />
     <Compile Include="ViewModels\AddUnnaturalClassSegmentViewModel.cs" />
     <Compile Include="ViewModels\AffixViewModel.cs" />
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
@@ -139,7 +145,6 @@
     <Compile Include="ViewModels\CognateIdentifierOptionsViewModel.cs" />
     <Compile Include="ViewModels\CompareViewModel.cs" />
     <Compile Include="ViewModels\CompareSettingsViewModel.cs" />
-    <Compile Include="ViewModels\ComparisonCache.cs" />
     <Compile Include="ViewModels\ComparisonPerformedMessage.cs" />
     <Compile Include="ViewModels\ComponentOptionsViewModel.cs" />
     <Compile Include="ViewModels\ComponentSettingsViewModelBase.cs" />
@@ -166,7 +171,6 @@
     <Compile Include="ViewModels\GlobalCorrespondencesViewModel.cs" />
     <Compile Include="ViewModels\GlobalCorrespondenceEdge.cs" />
     <Compile Include="ViewModels\GlobalSegmentVertex.cs" />
-    <Compile Include="ViewModels\GlobalSoundCorrespondenceSurrogate.cs" />
     <Compile Include="ViewModels\HeaderGridVertex.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
@@ -211,7 +215,6 @@
     <Compile Include="ViewModels\SoundChangeViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
-    <Compile Include="ViewModels\SoundContextSurrogate.cs" />
     <Compile Include="ViewModels\ViewModelSyllablePosition.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
     <Compile Include="ViewModels\SspSyllabifierViewModel.cs" />
@@ -227,7 +230,6 @@
     <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
     <Compile Include="ViewModels\VarietiesVarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />
-    <Compile Include="ViewModels\VarietyPairSurrogate.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
@@ -236,7 +238,6 @@
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />
-    <Compile Include="ViewModels\WordPairSurrogate.cs" />
     <Compile Include="ViewModels\WordPairsViewModel.cs" />
     <Compile Include="ViewModels\WordPairViewModel.cs" />
     <Compile Include="ViewModels\WordSegmentViewModel.cs" />

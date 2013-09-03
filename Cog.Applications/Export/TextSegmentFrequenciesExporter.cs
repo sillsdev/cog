@@ -50,23 +50,25 @@ namespace SIL.Cog.Applications.Export
 				.SelectMany(v => v.SegmentFrequencyDistributions[domainSyllablePosition].ObservedSamples)
 				.Distinct().Where(s => !s.IsComplex).OrderBy(GetSortOrder).ThenBy(s => s.StrRep).ToArray();
 
-			var writer = new StreamWriter(stream);
-			foreach (Segment seg in segments)
+			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
 			{
-				writer.Write("\t");
-				writer.Write(seg.StrRep);
-			}
-			writer.WriteLine();
-
-			foreach (Variety variety in project.Varieties)
-			{
-				writer.Write(variety.Name);
 				foreach (Segment seg in segments)
 				{
 					writer.Write("\t");
-					writer.Write(variety.SegmentFrequencyDistributions[domainSyllablePosition][seg]);
+					writer.Write(seg.StrRep);
 				}
 				writer.WriteLine();
+
+				foreach (Variety variety in project.Varieties)
+				{
+					writer.Write(variety.Name);
+					foreach (Segment seg in segments)
+					{
+						writer.Write("\t");
+						writer.Write(variety.SegmentFrequencyDistributions[domainSyllablePosition][seg]);
+					}
+					writer.WriteLine();
+				}
 			}
 		}
 

@@ -4,7 +4,7 @@ using ProtoBuf;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
-namespace SIL.Cog.Applications.ViewModels
+namespace SIL.Cog.Applications.Services
 {
 	[ProtoContract]
 	internal class WordPairSurrogate

@@ -7,36 +7,38 @@ namespace SIL.Cog.Applications.Export
 	{
 		public void Export(Stream stream, CogProject project)
 		{
-			var writer = new StreamWriter(stream);
-			foreach (Sense sense in project.Senses)
+			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
 			{
-				writer.Write("\t");
-				writer.Write(sense.Gloss);
-			}
-			writer.WriteLine();
-			foreach (Sense sense in project.Senses)
-			{
-				writer.Write("\t");
-				writer.Write(sense.Category);
-			}
-			writer.WriteLine();
-
-			foreach (Variety variety in project.Varieties)
-			{
-				writer.Write(variety.Name);
 				foreach (Sense sense in project.Senses)
 				{
 					writer.Write("\t");
-					bool first = true;
-					foreach (Word word in variety.Words[sense])
-					{
-						if (!first)
-							writer.Write(",");
-						writer.Write(word.StrRep);
-						first = false;
-					}
+					writer.Write(sense.Gloss);
 				}
 				writer.WriteLine();
+				foreach (Sense sense in project.Senses)
+				{
+					writer.Write("\t");
+					writer.Write(sense.Category);
+				}
+				writer.WriteLine();
+
+				foreach (Variety variety in project.Varieties)
+				{
+					writer.Write(variety.Name);
+					foreach (Sense sense in project.Senses)
+					{
+						writer.Write("\t");
+						bool first = true;
+						foreach (Word word in variety.Words[sense])
+						{
+							if (!first)
+								writer.Write(",");
+							writer.Write(word.StrRep);
+							first = false;
+						}
+					}
+					writer.WriteLine();
+				}
 			}
 		}
 	}

@@ -134,6 +134,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var variety = new Variety(vm.Name);
 				_projectService.Project.Varieties.Add(variety);
+				_analysisService.Segment(variety);
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				SelectedVariety = _varieties[variety];
 			}

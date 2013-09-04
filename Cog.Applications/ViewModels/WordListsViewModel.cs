@@ -101,7 +101,9 @@ namespace SIL.Cog.Applications.ViewModels
 			var vm = new EditVarietyViewModel(_projectService.Project.Varieties);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				_projectService.Project.Varieties.Add(new Variety(vm.Name));
+				var variety = new Variety(vm.Name);
+				_projectService.Project.Varieties.Add(variety);
+				_analysisService.Segment(variety);
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
 			}
 		}

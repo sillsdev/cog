@@ -233,5 +233,39 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
 		}
+
+		[Test]
+		public void TaskAreas()
+		{
+			DispatcherHelper.Initialize();
+			var projectService = Substitute.For<IProjectService>();
+			var dialogService = Substitute.For<IDialogService>();
+			var busyService = Substitute.For<IBusyService>();
+			var analysisService = Substitute.For<IAnalysisService>();
+			var importService = Substitute.For<IImportService>();
+			var exportService = Substitute.For<IExportService>();
+
+			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
+			WordListsVarietySenseViewModel.Factory varietySenseFactory = (variety, sense) => new WordListsVarietySenseViewModel(busyService, analysisService, wordFactory, variety, sense);
+			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietySenseFactory, variety);
+
+			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
+
+			var project = new CogProject(_spanFactory)
+				{
+					Varieties = {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")}
+				};
+			projectService.Project.Returns(project);
+			projectService.ProjectOpened += Raise.Event();
+
+			var commonTasks = (TaskAreaItemsViewModel) wordLists.TaskAreas[0];
+
+			// add a new variety
+			var addVariety = (TaskAreaCommandViewModel) commonTasks.Items[0];
+			dialogService.ShowModalDialog(wordLists, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety4")).Returns(true);
+			addVariety.Command.Execute(null);
+
+			Assert.That(project.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety3", "variety4"}));
+		}
 	}
 }

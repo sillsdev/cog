@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
         xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" mc:Ignorable="d"
-        Title="Text import" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
+        Title="Text Import" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=FormatComboBox}" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:ImportTextWordListsViewModel}">
 	<Grid Margin="10">

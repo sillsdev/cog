@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using QuickGraph;
-using System.Linq;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.Clusterers
 {
 	[TestFixture]
 	public abstract class ClustererTestBase

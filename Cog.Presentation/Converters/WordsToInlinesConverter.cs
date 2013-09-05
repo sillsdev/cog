@@ -22,7 +22,7 @@ namespace SIL.Cog.Presentation.Converters
 			foreach (WordViewModel wordVM in words)
 			{
 				if (!first)
-					inlines.Add(new Run("/"));
+					inlines.Add(new Run(","));
 				var run = new Run(wordVM.StrRep);
 				if (!string.IsNullOrEmpty(((IDataErrorInfo) wordVM)["StrRep"]))
 					run.TextDecorations = textDecoration;

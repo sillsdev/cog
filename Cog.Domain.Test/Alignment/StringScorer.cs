@@ -1,6 +1,6 @@
-﻿using SIL.Cog.Domain.SequenceAlignment;
+using SIL.Cog.Domain.SequenceAlignment;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.Alignment
 {
 	public class StringScorer : IPairwiseAlignmentScorer<string, char>
 	{

@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.SequenceAlignment;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.Alignment
 {
 	[TestFixture]
 	public class MultipleAlignmentAlgorithmTest : AlignmentAlgorithmTestBase

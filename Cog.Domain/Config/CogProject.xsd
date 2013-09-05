@@ -410,6 +410,7 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+			<xs:attribute name="version" type="xs:int" use="required" />
 		</xs:complexType>
 		<xs:key name="FeatureKey">
 			<xs:selector xpath="Feature" />

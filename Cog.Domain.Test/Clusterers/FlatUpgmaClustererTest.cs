@@ -1,8 +1,8 @@
-﻿using System.Linq;
+using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Clusterers;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.Clusterers
 {
 	public class FlatUpgmaClustererTest : ClustererTestBase
 	{

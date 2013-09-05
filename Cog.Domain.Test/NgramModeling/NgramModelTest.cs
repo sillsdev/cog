@@ -1,11 +1,11 @@
-﻿using System.Linq;
+using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.Domain.NgramModeling;
 using SIL.Collections;
 using SIL.Machine;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.NgramModeling
 {
 	[TestFixture]
 	public class NgramModelTest

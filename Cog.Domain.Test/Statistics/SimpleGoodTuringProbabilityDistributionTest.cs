@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using SIL.Cog.Domain.Statistics;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.Statistics
 {
 	[TestFixture]
 	public class SimpleGoodTuringProbabilityDistributionTest

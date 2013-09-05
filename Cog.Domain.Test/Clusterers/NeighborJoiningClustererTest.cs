@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using QuickGraph;
 using SIL.Cog.Domain.Clusterers;
 
-namespace SIL.Cog.Domain.Test
+namespace SIL.Cog.Domain.Test.Clusterers
 {
 	public class NeighborJoiningClustererTest : ClustererTestBase
 	{

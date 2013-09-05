@@ -33,7 +33,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_domainWords = new ObservableList<Word>(variety.DomainVariety.Words[sense]);
 			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_domainWords, word => wordFactory(word), vm => vm.DomainWord);
 			_domainWords.CollectionChanged += DomainWordsChanged;
-			_strRep = string.Join("/", _domainWords.Select(word => word.StrRep));
+			_strRep = string.Join(",", _domainWords.Select(word => word.StrRep));
 			_showInVarietiesCommand = new RelayCommand(ShowInVarieties, () => _domainWords.Count > 0);
 		}
 
@@ -64,7 +64,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void DomainWordsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			Set(() => StrRep, ref _strRep, string.Join("/", DomainWords.Select(word => word.StrRep)));
+			Set(() => StrRep, ref _strRep, string.Join(",", DomainWords.Select(word => word.StrRep)));
 		}
 
 		public string StrRep
@@ -80,7 +80,7 @@ namespace SIL.Cog.Applications.ViewModels
 					if (!string.IsNullOrEmpty(val))
 					{
 						int index = 0;
-						foreach (string wordStr in val.Split('/').Select(s => s.Trim()).Distinct())
+						foreach (string wordStr in val.Split(',').Select(s => s.Trim()).Distinct())
 						{
 							Word word = wordsToRemove.FirstOrDefault(w => w.StrRep == wordStr);
 							if (word != null)

@@ -51,7 +51,7 @@ namespace SIL.Cog.Domain.Components
 
 		private void SyllabifyAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			if (word.Shape.GetNodes(ann.Span).Any(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType)))
+			if (word.Shape.GetNodes(ann.Span).Any(n => n.Type() == CogFeatureSystem.ToneLetterType || n.StrRep() == "."))
 			{
 				ShapeNode[] annNodes = word.Shape.GetNodes(ann.Span).ToArray();
 				int i;
@@ -86,6 +86,16 @@ namespace SIL.Cog.Domain.Components
 			SpanFactory<ShapeNode> spanFactory = newShape.SpanFactory;
 			ShapeNode newStartNode = null;
 			ShapeNode node = startNode;
+
+			while (node.Type() == CogFeatureSystem.BoundaryType && node != endNode.Next)
+			{
+				ShapeNode newNode = node.DeepClone();
+				newShape.Add(newNode);
+				if (newStartNode == null)
+					newStartNode = newNode;
+				node = node.Next;
+			}
+
 			ShapeNode onsetStart = node;
 			while (node.Type() == CogFeatureSystem.ConsonantType && node != endNode.Next)
 				node = node.Next;
@@ -95,7 +105,8 @@ namespace SIL.Cog.Domain.Components
 			{
 				ShapeNode onset = onsetStart != onsetEnd ? Combine(spanFactory, onsetStart, onsetEnd) : onsetStart.DeepClone();
 				newShape.Add(onset);
-				newStartNode = onset;
+				if (newStartNode == null)
+					newStartNode = onset;
 			}
 
 			if (node != endNode.Next)

@@ -65,19 +65,35 @@ namespace SIL.Cog.Domain.Components
 			ShapeNode[] annNodes = word.Shape.GetNodes(ann.Span).ToArray();
 			ShapeNode syllableStart = null;
 			int prevSonority = -1, curSonority = -1, nextSonority = -1;
+			bool useMaximalOnset = false;
 			foreach (ShapeNode node in annNodes)
 			{
 				ShapeNode nextNode = node.Next;
 				if (ann.Span.Contains(nextNode))
 				{
 					nextSonority = GetSonority(nextNode);
-					if (curSonority == -1)
+					// stress markers indicate a syllable break
+					if (syllableStart != null && node.StrRep().IsOneOf("ˈ", "ˌ"))
+					{
+						if (useMaximalOnset)
+							ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
+						else
+							ProcessSyllable(syllableStart, node.Prev, newShape);
+						useMaximalOnset = false;
+						curSonority = -1;
+						syllableStart = null;
+					}
+					else if (curSonority == -1)
 					{
 						curSonority = GetSonority(node);
 					}
 					else if ((curSonority < prevSonority && curSonority < nextSonority) || (curSonority == prevSonority))
 					{
-						ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
+						if (useMaximalOnset)
+							ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
+						else
+							ProcessSyllable(syllableStart, node.Prev, newShape);
+						useMaximalOnset = true;
 						syllableStart = null;
 					}
 				}
@@ -86,7 +102,10 @@ namespace SIL.Cog.Domain.Components
 				prevSonority = curSonority;
 				curSonority = nextSonority;
 			}
-			ProcessSyllableWithMaximalOnset(syllableStart, ann.Span.End, newShape);
+			if (useMaximalOnset)
+				ProcessSyllableWithMaximalOnset(syllableStart, ann.Span.End, newShape);
+			else
+				ProcessSyllable(syllableStart, ann.Span.End, newShape);
 		}
 
 		private void ProcessSyllableWithMaximalOnset(ShapeNode startNode, ShapeNode endNode, Shape newShape)

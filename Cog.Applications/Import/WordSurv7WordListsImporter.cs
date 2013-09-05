@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -35,14 +36,21 @@ namespace SIL.Cog.Applications.Import
 				if (!SkipRows(reader, 2))
 					throw new ImportException("Metadata for a variety is incomplete.");
 
+				Sense curSense = null;
 				IList<string> glossRow;
-				while (reader.ReadRow(out glossRow) && !string.IsNullOrEmpty(glossRow[0]))
+				while (reader.ReadRow(out glossRow) && glossRow.Any(s => !string.IsNullOrEmpty(s)))
 				{
-					string gloss = glossRow[0].Trim();
-					Sense sense = senses.GetValue(gloss, () => new Sense(gloss, null));
+					if (!string.IsNullOrEmpty(glossRow[0]))
+					{
+						string gloss = glossRow[0].Trim();
+						curSense = senses.GetValue(gloss, () => new Sense(gloss, null));
+					}
+					if (curSense == null)
+						throw new ImportException("A gloss is missing.");
+
 					string wordStr = glossRow[1].Trim().Normalize(NormalizationForm.FormD);
 					if (!string.IsNullOrEmpty(wordStr))
-						variety.Words.Add(new Word(wordStr, sense));
+						variety.Words.Add(new Word(wordStr, curSense));
 				}
 				varieties.Add(variety);
 			}

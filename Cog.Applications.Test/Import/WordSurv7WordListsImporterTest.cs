@@ -43,17 +43,18 @@ namespace SIL.Cog.Applications.Test.Import
 							   + "\"variety1\",\"\"\r\n\r\n\r\n"
 							   + "\"sense1\",\"word1\",\"\",\"\"\r\n"
 							   + "\"sense2\",\"word2\",\"\",\"\"\r\n"
-							   + "\"sense3\",\"word3\",\"\",\"\"\r\n"
+							   + "\"\",\"word3\",\"\",\"\"\r\n"
+							   + "\"sense3\",\"word4\",\"\",\"\"\r\n"
 							   + "\r\n"
 							   + "\"variety2\",\"\"\r\n\r\n\r\n"
-							   + "\"sense1\",\"word4\",\"\",\"\"\r\n"
-							   + "\"sense2\",\"word5\",\"\",\"\"\r\n"
-							   + "\"sense3\",\"word6\",\"\",\"\"\r\n"
+							   + "\"sense1\",\"word5\",\"\",\"\"\r\n"
+							   + "\"sense2\",\"word6\",\"\",\"\"\r\n"
+							   + "\"sense3\",\"word7\",\"\",\"\"\r\n"
 							   + "\r\n";
 			importer.Import(null, new MemoryStream(Encoding.UTF8.GetBytes(file3), false), project);
 			Assert.That(project.Senses.Select(s => s.Gloss), Is.EqualTo(new[] {"sense1", "sense2", "sense3"}));
 			Assert.That(project.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2"}));
-			Assert.That(project.Varieties.SelectMany(v => v.Words).Select(w => w.StrRep), Is.EqualTo(new[] {"word1", "word2", "word3", "word4", "word5", "word6"}));
+			Assert.That(project.Varieties.SelectMany(v => v.Words).Select(w => w.StrRep), Is.EqualTo(new[] {"word1", "word2", "word3", "word4", "word5", "word6", "word7"}));
 		}
 	}
 }

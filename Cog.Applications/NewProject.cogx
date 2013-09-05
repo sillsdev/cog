@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CogProject xmlns="http://www.sil.org/CogProject"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			version="1">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -1880,6 +1881,15 @@
 			<Symbol strRep="&#x033A;"/>
 			<Symbol strRep="&#x033B;"/>
 			<Symbol strRep="&#x033C;"/>
+			
+			<!-- Tone diacritics -->
+			<Symbol strRep="&#x0301;"/>
+			<Symbol strRep="&#x030B;"/>
+			<Symbol strRep="&#x0304;"/>
+			<Symbol strRep="&#x0300;"/>
+			<Symbol strRep="&#x030F;"/>
+			<Symbol strRep="&#x030C;"/>
+			<Symbol strRep="&#x0302;"/>
 		</Modifiers>
 		<Boundaries>
 			<Symbol strRep="-"/>

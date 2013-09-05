@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
         xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+        xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
         Title="{Binding DisplayName}" Height="768" Width="1024" DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Style="{StaticResource MainWindowStyle}">
+        Style="{StaticResource MainWindowStyle}" b:UIElementBehaviors.HelpFile="Help\Cog.chm">
     <Window.InputBindings>
         <KeyBinding Command="{Binding NewCommand}" Gesture="CTRL+N" />
         <KeyBinding Command="{Binding OpenCommand}" Gesture="CTRL+O" />
@@ -45,6 +46,7 @@
 				<MenuItem Header="Compare All Variety Pairs" Command="{Binding PerformComparisonCommand}" />
 			</MenuItem>
             <MenuItem Header="_Help">
+				<MenuItem Header="Cog _Help" Command="Help" />
                 <MenuItem Header="About Cog" Click="AboutBox_Click" />
             </MenuItem>
         </Menu>

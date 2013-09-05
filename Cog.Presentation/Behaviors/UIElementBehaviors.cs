@@ -1,4 +1,10 @@
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace SIL.Cog.Presentation.Behaviors
 {
@@ -8,6 +14,7 @@ namespace SIL.Cog.Presentation.Behaviors
 		{
 			EventManager.RegisterClassHandler(typeof (UIElement), UIElement.GotFocusEvent, new RoutedEventHandler(elem_GotFocus), true);
 			EventManager.RegisterClassHandler(typeof (UIElement), UIElement.LostFocusEvent, new RoutedEventHandler(elem_LostFocus), true);
+			CommandManager.RegisterClassCommandBinding(typeof(UIElement), new CommandBinding(ApplicationCommands.Help, ExecuteHelp, CanExecuteHelp));
 		}
 
 		private static void elem_GotFocus(object sender, RoutedEventArgs e)
@@ -39,5 +46,70 @@ namespace SIL.Cog.Presentation.Behaviors
 		{
 			obj.SetValue(IsFocusWithinPropertyKey, value);
 		}
+
+		public static readonly DependencyProperty HelpFileProperty = DependencyProperty.RegisterAttached("HelpFile", typeof(string), typeof(UIElementBehaviors),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+ 
+		public static string GetHelpFile(UIElement obj)
+		{
+			return (string) obj.GetValue(HelpFileProperty);
+		}
+ 
+		public static void SetHelpFile(UIElement obj, string value)
+		{
+			obj.SetValue(HelpFileProperty, value);
+		}
+
+		public static readonly DependencyProperty HelpTopicProperty = DependencyProperty.RegisterAttached("HelpTopic", typeof(string), typeof(UIElementBehaviors),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+ 
+		public static string GetHelpTopic(UIElement obj)
+		{
+			return (string) obj.GetValue(HelpTopicProperty);
+		}
+ 
+		public static void SetHelpTopic(UIElement obj, string value)
+		{
+			obj.SetValue(HelpTopicProperty, value);
+		}
+ 
+		private static void CanExecuteHelp(object sender, CanExecuteRoutedEventArgs args)
+		{
+			var elem = sender as UIElement;
+			if (elem == null)
+				return;
+
+			string filename = GetHelpFile(elem);
+			if (!string.IsNullOrEmpty(filename))
+				args.CanExecute = true;
+		}
+ 
+		private static void ExecuteHelp(object sender, ExecutedRoutedEventArgs args)
+		{
+			// Call ShowHelp.
+			var elem = sender as UIElement;
+			if (elem == null)
+				return;
+
+			string filename = GetHelpFile(elem);
+			if (!string.IsNullOrEmpty(filename))
+			{
+				if (!Path.IsPathRooted(filename))
+				{
+					string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+					if (!string.IsNullOrEmpty(dir))
+						filename = Path.Combine(dir, filename);
+				}
+				string topic = GetHelpTopic(elem);
+				IntPtr windowHandle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
+				if (string.IsNullOrEmpty(topic))
+					HtmlHelp(windowHandle, filename, 1, null);
+				else
+					HtmlHelp(windowHandle, filename, 0, topic);
+			}
+		}
+
+		[DllImport("hhctrl.ocx", CharSet = CharSet.Auto)]
+		private static extern IntPtr HtmlHelp(IntPtr hWndCaller, string helpFile, int command, string data);
 	}
 }

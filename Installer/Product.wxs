@@ -27,7 +27,9 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="$(var.PlatformProgramFilesFolder)">
 				<Directory Id="SILFolder" Name="SIL">
-					<Directory Id="INSTALLFOLDER" Name="Cog" />
+					<Directory Id="INSTALLFOLDER" Name="Cog">
+						<Directory Id="HelpFolder" Name="Help" />
+					</Directory>
 				</Directory>
 			</Directory>
 			<Directory Id="ProgramMenuFolder">
@@ -38,6 +40,11 @@
 	</Fragment>
 
 	<Fragment>
+		<Component Id="Cog.chm" Win64="$(var.Win64)" Directory="HelpFolder">
+			<File Id="Cog.chm" Name="Cog.chm" Source="$(var.Cog.Presentation.TargetDir)\Help\Cog.chm" KeyPath="yes" />
+			<RemoveFile Id="PurgeChw" Name="*.chw" On="uninstall"/>
+		</Component>
+		
 		<ComponentGroup Id="RequiredComponents" Directory="INSTALLFOLDER">
 			<!-- Cog -->
 			<Component Id="Cog.exe" Win64="$(var.Win64)">
@@ -49,11 +56,12 @@
 				</ProgId>
 			</Component>
 			<Component Id="SIL.Cog.Applications.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Cog.Applications.dll" Name="SIL.Cog.Applications.dll" Source="$(var.Cog.Presentation.TargetDir)SIL.Cog.Applications.dll" KeyPath="yes" />
+				<File Id="SIL.Cog.Applications.dll" Name="SIL.Cog.Applications.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Applications.dll" KeyPath="yes" />
 			</Component>
 			<Component Id="SIL.Cog.Domain.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)SIL.Cog.Domain.dll" KeyPath="yes" />
+				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Domain.dll" KeyPath="yes" />
 			</Component>
+			<ComponentRef Id="Cog.chm"/>
 
 			<!-- Machine -->
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">
@@ -122,13 +130,13 @@
 		</ComponentGroup>
 		<Component Id="ProgramMenuShortcut" Directory="AppProgramMenuFolder" Guid="F34CBDA4-7885-49C8-8256-71148666888E" Win64="$(var.Win64)">
 			<Condition>PROGRAMMENUSHORTCUT = "1"</Condition>
-			<Shortcut Id="ProgramMenuShortcut" Name="Cog" Target="[INSTALLFOLDER]Cog.exe" />
+			<Shortcut Id="ProgramMenuShortcut" Name="Cog" Target="[INSTALLFOLDER]Cog.exe" WorkingDirectory="INSTALLFOLDER" />
 			<RemoveFolder Id="AppProgramMenuFolder" On="uninstall" />
 			<RegistryValue Root="HKCU" Key="Software\SIL\Cog" Type="string" Value="" KeyPath="yes" />
 		</Component>
 		<Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="CC4DBF72-8CD4-4732-9261-15F2E1058981" Win64="$(var.Win64)">
 			<Condition>DESKTOPSHORTCUT = "1"</Condition>
-			<Shortcut Id="DesktopShortcut" Name="Cog" Target="[INSTALLFOLDER]Cog.exe" />
+			<Shortcut Id="DesktopShortcut" Name="Cog" Target="[INSTALLFOLDER]Cog.exe" WorkingDirectory="INSTALLFOLDER" />
 			<RegistryValue Root="HKCU" Key="Software\SIL\Cog" Type="string" Value="" KeyPath="yes" />
 		</Component>
 	</Fragment>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CogProject xmlns="http://www.sil.org/CogProject"
+<CogProject xmlns="http://www.sil.org/CogProject/1.0"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			version="1">
 	<FeatureSystem>
@@ -1915,7 +1915,7 @@
 	</Segmentation>
 	<WordAligners>
 		<WordAligner id="primary" xsi:type="Aline">
-			<Mode>local</Mode>
+			<Mode>global</Mode>
 			<ExpansionCompressionEnabled>false</ExpansionCompressionEnabled>
 			<RelevantFeatures>
 				<RelevantFeature ref="height" weight="10" vowel="true">

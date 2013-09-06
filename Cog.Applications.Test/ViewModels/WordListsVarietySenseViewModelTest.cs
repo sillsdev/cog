@@ -44,10 +44,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 
 			project.Varieties[0].Words.Add(new Word("gu.gəl", project.Senses[0]));
 
-			Assert.That(varietySense.StrRep, Is.EqualTo("hɛ.loʊ/gu.gəl"));
+			Assert.That(varietySense.StrRep, Is.EqualTo("hɛ.loʊ,gu.gəl"));
 			Assert.That(varietySense.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.loʊ", "gu.gəl"}));
 
-			varietySense.StrRep = "hɛ.lp/gu.gəl";
+			varietySense.StrRep = "hɛ.lp,gu.gəl";
 			Assert.That(varietySense.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.lp", "gu.gəl"}));
 
 			varietySense.StrRep = "hɛ.lp";
@@ -59,11 +59,11 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			varietySense.StrRep = null;
 			Assert.That(varietySense.Words, Is.Empty);
 
-			varietySense.StrRep = " hɛ.lp/gu.gəl /gu.fi ";
+			varietySense.StrRep = " hɛ.lp,gu.gəl ,gu.fi ";
 			Assert.That(varietySense.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.lp", "gu.gəl", "gu.fi"}));
-			Assert.That(varietySense.StrRep, Is.EqualTo("hɛ.lp/gu.gəl/gu.fi"));
+			Assert.That(varietySense.StrRep, Is.EqualTo("hɛ.lp,gu.gəl,gu.fi"));
 
-			varietySense.StrRep = "hɛ.lp/gu.gəl/gu";
+			varietySense.StrRep = "hɛ.lp,gu.gəl,gu";
 			Assert.That(varietySense.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.lp", "gu.gəl", "gu"}));
 		}
 	}

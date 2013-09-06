@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema
-    targetNamespace="http://www.sil.org/CogProject"
+    targetNamespace="http://www.sil.org/CogProject/1.0"
     elementFormDefault="qualified"
-    xmlns="http://www.sil.org/CogProject"
+    xmlns="http://www.sil.org/CogProject/1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 	<xs:element name="FeatureValue">

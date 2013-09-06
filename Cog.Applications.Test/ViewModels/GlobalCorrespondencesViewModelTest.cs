@@ -126,7 +126,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			WordPairViewModel[] wordPairsArray = observedWordPairs.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			Assert.That(wordPairsArray.Length, Is.EqualTo(2));
 			Assert.That(wordPairsArray[0].Sense.Gloss, Is.EqualTo("sense2"));
-			Assert.That(wordPairsArray[0].AlignedNodes[0].IsSelected, Is.True);
+			Assert.That(wordPairsArray[0].AlignedNodes[2].IsSelected, Is.True);
 			Assert.That(wordPairsArray[1].Sense.Gloss, Is.EqualTo("sense2"));
 			Assert.That(wordPairsArray[1].AlignedNodes[0].IsSelected, Is.True);
 

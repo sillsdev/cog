@@ -12,10 +12,10 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public enum AlineMode
 	{
-		[Description("Partial (local)")]
-		Local,
 		[Description("Full (global)")]
 		Global,
+		[Description("Partial (local)")]
+		Local,
 		[Description("Beginning (half-local)")]
 		HalfLocal,
 		[Description("Hybrid (semi-global)")]

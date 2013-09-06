@@ -27,7 +27,7 @@ namespace SIL.Cog.Domain.Config
 			}
 		}
 
-		private const string DefaultNamespace = "http://www.sil.org/CogProject";
+		private const string DefaultNamespace = "http://www.sil.org/CogProject/1.0";
 		internal static readonly XNamespace Cog = DefaultNamespace;
 		private const string XsiNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 		private static readonly XNamespace Xsi = XsiNamespace;

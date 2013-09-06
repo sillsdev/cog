@@ -63,8 +63,12 @@ namespace SIL.Cog.Applications.Services
 		{
 			string projectPath = _settingsService.LastProject;
 			string[] args = Environment.GetCommandLineArgs();
+			bool usingCmdLineArg = false;
 			if (args.Length > 1)
+			{
 				projectPath = args[1];
+				usingCmdLineArg = true;
+			}
 
 			if (string.IsNullOrEmpty(projectPath) || !File.Exists(projectPath))
 			{
@@ -78,6 +82,14 @@ namespace SIL.Cog.Applications.Services
 				}
 				catch (ConfigException)
 				{
+					if (usingCmdLineArg)
+						_dialogService.ShowError(this, "The specified file is not a valid Cog configuration file.", "Cog");
+					NewProject();
+				}
+				catch (IOException ioe)
+				{
+					if (usingCmdLineArg)
+						_dialogService.ShowError(this, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
 					NewProject();
 				}
 			}
@@ -119,7 +131,7 @@ namespace SIL.Cog.Applications.Services
 					}
 					catch (IOException ioe)
 					{
-						_dialogService.ShowError(this, ioe.Message, "Cog");
+						_dialogService.ShowError(this, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
 					}
 				}
 			}

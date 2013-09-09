@@ -55,7 +55,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportWordListsCommand = new RelayCommand(ExportWordLists, CanExportWordLists);
 			_exportSimilarityMatrixCommand = new RelayCommand(ExportSimilarityMatrix, CanExportSimilarityMatrix);
 			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
-			_exportSegmentFrequenciesCommand = new RelayCommand(ExportSegmentFrequencies);
+			_exportSegmentFrequenciesCommand = new RelayCommand(ExportSegmentFrequencies, CanExportSegmentFrequencies);
 			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
 			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
 			_exportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
@@ -199,6 +199,11 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportService.ExportCognateSets(this);
 		}
 
+		private bool CanExportSegmentFrequencies()
+		{
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Senses.Count > 0;
+		}
+
 		private void ExportSegmentFrequencies()
 		{
 			var vm = new ExportSegmentFrequenciesViewModel();
@@ -239,7 +244,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			var vm = new ExportGlobalCorrespondencesChartViewModel();
 			if (_dialogService.ShowModalDialog(this, vm) == true)
-				_imageExportService.ExportGlobalCorrespondencesChart(this, vm.SyllablePosition, vm.FrequencyFilter);
+				_imageExportService.ExportGlobalCorrespondencesChart(this, vm.SyllablePosition, vm.FrequencyThreshold);
 		}
 
 		public bool CanExit()

@@ -5,7 +5,7 @@ namespace SIL.Cog.Applications.ViewModels
 	public class ExportGlobalCorrespondencesChartViewModel : ViewModelBase
 	{
 		private ViewModelSyllablePosition _syllablePosition;
-		private int _frequencyFilter;
+		private int _frequencyThreshold;
 
 		public ViewModelSyllablePosition SyllablePosition
 		{
@@ -13,10 +13,10 @@ namespace SIL.Cog.Applications.ViewModels
 			set { Set(() => SyllablePosition, ref _syllablePosition, value); }
 		}
 
-		public int FrequencyFilter
+		public int FrequencyThreshold
 		{
-			get { return _frequencyFilter; }
-			set { Set(() => FrequencyFilter, ref _frequencyFilter, value); }
+			get { return _frequencyThreshold; }
+			set { Set(() => FrequencyThreshold, ref _frequencyThreshold, value); }
 		}
 	}
 }

@@ -111,15 +111,19 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 
 			var clusterer = new FlatUpgmaClusterer<Variety>(getDistance, 1.0 - _similarityScoreThreshold);
-			int index = 0;
 			_currentClusters.Clear();
-			_currentClusters.AddRange(clusterer.GenerateClusters(_varieties.Where(v => v.Regions.Count > 0).Select(v => v.DomainVariety)).OrderByDescending(c => c.DataObjects.Count));
-			foreach (Cluster<Variety> cluster in _currentClusters)
+			_currentClusters.AddRange(clusterer.GenerateClusters(_varieties.Select(v => v.DomainVariety)).Where(c => c.DataObjects.Any(v => v.Regions.Count > 0)).OrderByDescending(c => c.DataObjects.Count));
+			foreach (GeographicalVarietyViewModel variety in _varieties)
 			{
-				var clusterVarieties = new HashSet<Variety>(cluster.DataObjects);
-				foreach (GeographicalVarietyViewModel variety in _varieties.Where(v => clusterVarieties.Contains(v.DomainVariety)))
+				if (variety.Regions.Count > 0)
+				{
+					int index = _currentClusters.FindIndex(c => c.DataObjects.Contains(variety.DomainVariety));
 					variety.ClusterIndex = index;
-				index++;
+				}
+				else
+				{
+					variety.ClusterIndex = -1;
+				}
 			}
 		}
 
@@ -127,10 +131,17 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			_currentClusters.Clear();
 			int index = 0;
-			foreach (GeographicalVarietyViewModel variety in _varieties.Where(v => v.Regions.Count > 0))
+			foreach (GeographicalVarietyViewModel variety in _varieties)
 			{
-				variety.ClusterIndex = index;
-				index++;
+				if (variety.Regions.Count > 0)
+				{
+					variety.ClusterIndex = index;
+					index++;
+				}
+				else
+				{
+					variety.ClusterIndex = -1;
+				}
 			}
 		}
 
@@ -138,7 +149,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (variety.ClusterIndex == -1 || (variety.ClusterIndex != -1 && variety.Regions.Count == 0))
 			{
-				if (_currentClusters.Count == 0)
+				if (_projectService.Project.VarietyPairs.Count == 0)
 					ResetClusters();
 				else
 					ClusterVarieties();

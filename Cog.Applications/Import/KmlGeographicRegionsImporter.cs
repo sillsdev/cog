@@ -1,42 +1,19 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Schema;
 using Ionic.Zip;
 using SIL.Cog.Domain;
+using SIL.Collections;
 
 namespace SIL.Cog.Applications.Import
 {
 	public class KmlGeographicRegionsImporter : IGeographicRegionsImporter
 	{
-		private class ResourceXmlResolver : XmlResolver
-		{
-			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
-			{
-				return GetType().Assembly.GetManifestResourceStream(string.Format("SIL.Cog.Applications.Import.{0}", Path.GetFileName(absoluteUri.ToString())));
-			}
-
-			public override ICredentials Credentials
-			{
-				set { throw new NotImplementedException(); }
-			}
-		}
-
 		private const string DefaultNamespace = "http://www.opengis.net/kml/2.2";
 		private static readonly XNamespace Kml = DefaultNamespace;
-		private static readonly XmlSchemaSet Schema;
-
-		static KmlGeographicRegionsImporter()
-		{
-			Schema = new XmlSchemaSet {XmlResolver = new ResourceXmlResolver()};
-			Schema.Add(DefaultNamespace, "ogckml22.xsd");
-			Schema.Compile();
-		}
 
 		public object CreateImportSettingsViewModel()
 		{
@@ -51,25 +28,30 @@ namespace SIL.Cog.Applications.Import
 				stream.Seek(0, SeekOrigin.Begin);
 				ZipFile zipFile = ZipFile.Read(stream);
 				ZipEntry kmlEntry = zipFile.First(entry => entry.FileName.EndsWith(".kml"));
-				doc = XDocument.Load(kmlEntry.OpenReader());
+				doc = XDocument.Load(kmlEntry.OpenReader(), LoadOptions.SetLineInfo);
 			}
 			else
 			{
-				doc = XDocument.Load(stream);
+				doc = XDocument.Load(stream, LoadOptions.SetLineInfo);
 			}
 			XElement root = doc.Root;
 			Debug.Assert(root != null);
 
 			if (root.GetDefaultNamespace() != DefaultNamespace)
-				throw new ImportException("The specified file is not a valid KML file.");
-
-			doc.Validate(Schema, null);
+				throw new ImportException("The specified file is not a KML file.");
 
 			XElement document = root.Element(Kml + "Document");
-			LoadFolder(project.Varieties.ToDictionary(v => v.Name.ToLowerInvariant()), document);
+			if (document == null)
+				throw new ImportException("Missing Document element.");
+
+			var regions = new Dictionary<Variety, List<GeographicRegion>>();
+			LoadFolder(project.Varieties.ToDictionary(v => v.Name.ToLowerInvariant()), regions, document);
+
+			foreach (KeyValuePair<Variety, List<GeographicRegion>> varietyRegions in regions)
+				varietyRegions.Key.Regions.AddRange(varietyRegions.Value);
 		}
 
-		private void LoadFolder(Dictionary<string, Variety> varieties, XElement elem)
+		private void LoadFolder(Dictionary<string, Variety> varieties, Dictionary<Variety, List<GeographicRegion>> regions, XElement elem)
 		{
 			foreach (XElement placemark in elem.Elements(Kml + "Placemark"))
 			{
@@ -79,7 +61,7 @@ namespace SIL.Cog.Applications.Import
 				{
 					XElement polygon = placemark.Element(Kml + "Polygon");
 					if (polygon != null)
-						LoadRegion(variety, polygon, (string) placemark.Element(Kml + "description"));
+						regions.GetValue(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "description")));
 				}
 			}
 
@@ -88,32 +70,31 @@ namespace SIL.Cog.Applications.Import
 				var name = (string) folder.Element(Kml + "name");
 				Variety variety;
 				if (!string.IsNullOrEmpty(name) && varieties.TryGetValue(name.ToLowerInvariant(), out variety))
-				{
-					LoadVarietyFolder(variety, folder);
-				}
+					LoadVarietyFolder(regions, variety, folder);
 				else
-				{
-					LoadFolder(varieties, folder);
-				}
+					LoadFolder(varieties, regions, folder);
 			}
 		}
 
-		private void LoadVarietyFolder(Variety variety, XElement elem)
+		private void LoadVarietyFolder(Dictionary<Variety, List<GeographicRegion>> regions, Variety variety, XElement elem)
 		{
 			foreach (XElement placemark in elem.Elements(Kml + "Placemark"))
 			{
 				XElement polygon = placemark.Element(Kml + "Polygon");
 				if (polygon != null)
-					LoadRegion(variety, polygon, (string) placemark.Element(Kml + "name"));
+					regions.GetValue(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "name")));
 			}
 
 			foreach (XElement folder in elem.Elements(Kml + "Folder"))
-				LoadVarietyFolder(variety, folder);
+				LoadVarietyFolder(regions, variety, folder);
 		}
 
-		private void LoadRegion(Variety variety, XElement polygon, string desc)
+		private GeographicRegion LoadRegion(XElement polygon, string desc)
 		{
-			XElement coords = polygon.Elements(Kml + "outerBoundaryIs").Elements(Kml + "LinearRing").Elements(Kml + "coordinates").First();
+			XElement coords = polygon.Elements(Kml + "outerBoundaryIs").Elements(Kml + "LinearRing").Elements(Kml + "coordinates").FirstOrDefault();
+			if (coords == null || string.IsNullOrEmpty((string) coords))
+				throw new ImportException(string.Format("A Polygon element does not contain coordinates. Line: {0}", ((IXmlLineInfo) polygon).LineNumber));
+
 			var region = new GeographicRegion {Description = desc};
 			string[] coordsArray = ((string) coords).Split().Where(coord => !string.IsNullOrEmpty(coord)).ToArray();
 			for (int i = 0; i < coordsArray.Length - 1; i++)
@@ -121,7 +102,7 @@ namespace SIL.Cog.Applications.Import
 				string[] coordArray = coordsArray[i].Split(',');
 				region.Coordinates.Add(new GeographicCoordinate(double.Parse(coordArray[1]), double.Parse(coordArray[0])));
 			}
-			variety.Regions.Add(region);
+			return region;
 		}
 	}
 }

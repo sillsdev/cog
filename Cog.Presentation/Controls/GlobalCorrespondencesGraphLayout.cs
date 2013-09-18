@@ -42,21 +42,21 @@ namespace SIL.Cog.Presentation.Controls
 						{
 							// header
 							new GridLayoutRow {AutoHeight = true},
-							// plosive
+							// nasal
+							new GridLayoutRow {Height = rowHeight},
+							// stop
 							new GridLayoutRow {Height = rowHeight},
 							// affricate
 							new GridLayoutRow {Height = rowHeight},
-							// nasal
+							// fricative
+							new GridLayoutRow {Height = rowHeight},
+							// approximant
+							new GridLayoutRow {Height = rowHeight},
+							// flap or tap
 							new GridLayoutRow {Height = rowHeight},
 							// trill
 							new GridLayoutRow {Height = rowHeight},
-							// tap or flap
-							new GridLayoutRow {Height = rowHeight},
-							// fricative
-							new GridLayoutRow {Height = rowHeight},
 							// lateral fricative
-							new GridLayoutRow {Height = rowHeight},
-							// approximant
 							new GridLayoutRow {Height = rowHeight},
 							// lateral approximant
 							new GridLayoutRow {Height = rowHeight}

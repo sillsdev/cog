@@ -52,12 +52,12 @@ namespace SIL.Cog.Applications.Services
 
 		private static readonly Dictionary<string, int> ConsonantMannerLookup = new Dictionary<string, int>
 			{
-				{"stop", 1},
-				{"affricate", 2},
-				{"trill", 4},
-				{"flap", 5},
-				{"fricative", 6},
-				{"approximant", 8}
+				{"stop", 2},
+				{"affricate", 3},
+				{"fricative", 4},
+				{"approximant", 5},
+				{"flap", 6},
+				{"trill", 7},
 			};
 
 		private readonly IProjectService _projectService;
@@ -225,14 +225,14 @@ namespace SIL.Cog.Applications.Services
 						new HeaderGridVertex("Pharyngeal") {Row = 0, Column = 28, ColumnSpan = 3},
 						new HeaderGridVertex("Glottal") {Row = 0, Column = 31, ColumnSpan = 3},
 
-						new HeaderGridVertex("Plosive") {Row = 1, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Affricate") {Row = 2, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Nasal") {Row = 3, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Trill") {Row = 4, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Tap or Flap") {Row = 5, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Fricative") {Row = 6, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Lateral fricative") {Row = 7, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Approximant") {Row = 8, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Nasal") {Row = 1, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Stop") {Row = 2, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Affricate") {Row = 3, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Fricative") {Row = 4, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Approximant") {Row = 5, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Flap or tap") {Row = 6, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Trill") {Row = 7, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
+						new HeaderGridVertex("Lateral fricative") {Row = 8, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
 						new HeaderGridVertex("Lateral approximant") {Row = 9, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left}
 					});
 
@@ -302,13 +302,13 @@ namespace SIL.Cog.Applications.Services
 			int row;
 			if (nasalSymbol.ID == "nasal+")
 			{
-				row = 3;
+				row = 1;
 			}
 			else if (ConsonantMannerLookup.TryGetValue(mannerSymbol.ID, out row))
 			{
 				var lateralSymbol = (FeatureSymbol) consonant.FeatureStruct.GetValue<SymbolicFeatureValue>("lateral");
 				if (lateralSymbol.ID == "lateral+")
-					row++;
+					row += 4;
 			}
 			else
 			{

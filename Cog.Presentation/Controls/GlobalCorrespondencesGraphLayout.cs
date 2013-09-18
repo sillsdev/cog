@@ -44,6 +44,8 @@ namespace SIL.Cog.Presentation.Controls
 							new GridLayoutRow {AutoHeight = true},
 							// plosive
 							new GridLayoutRow {Height = rowHeight},
+							// affricate
+							new GridLayoutRow {Height = rowHeight},
 							// nasal
 							new GridLayoutRow {Height = rowHeight},
 							// trill

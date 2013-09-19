@@ -113,11 +113,10 @@
     <Compile Include="Import\WordSurv7WordListsImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AnalysisService.cs" />
-    <Compile Include="Services\ComparisonCache.cs" />
     <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\FileDialogResult.cs" />
     <Compile Include="Services\FileType.cs" />
-    <Compile Include="Services\GlobalSoundCorrespondenceSurrogate.cs" />
+    <Compile Include="Services\SoundCorrespondenceSurrogate.cs" />
     <Compile Include="Services\GraphService.cs" />
     <Compile Include="Services\IAnalysisService.cs" />
     <Compile Include="Services\IBusyService.cs" />
@@ -203,6 +202,8 @@
     <Compile Include="ViewModels\SegmentsVarietyViewModel.cs" />
     <Compile Include="ViewModels\SegmentsViewModel.cs" />
     <Compile Include="ViewModels\ContainerChildViewModelBase.cs" />
+    <Compile Include="ViewModels\SelectableVarietyViewModel.cs" />
+    <Compile Include="ViewModels\SelectVarietiesViewModel.cs" />
     <Compile Include="ViewModels\SensesViewModel.cs" />
     <Compile Include="ViewModels\SenseViewModel.cs" />
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />

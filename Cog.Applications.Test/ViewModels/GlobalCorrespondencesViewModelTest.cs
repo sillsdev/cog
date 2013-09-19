@@ -52,7 +52,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
 			var wordPairGenerator = new WordPairGenerator(project, "primary");
-			var globalCorrIdentifier = new GlobalSoundCorrespondenceIdentifier(segmentPool, project, "primary");
+			var globalCorrIdentifier = new SoundCorrespondenceIdentifier(segmentPool, project, "primary");
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);
@@ -105,7 +105,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
 			var wordPairGenerator = new WordPairGenerator(project, "primary");
-			var globalCorrIdentifier = new GlobalSoundCorrespondenceIdentifier(segmentPool, project, "primary");
+			var globalCorrIdentifier = new SoundCorrespondenceIdentifier(segmentPool, project, "primary");
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);
@@ -171,7 +171,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
 			var wordPairGenerator = new WordPairGenerator(project, "primary");
-			var globalCorrIdentifier = new GlobalSoundCorrespondenceIdentifier(segmentPool, project, "primary");
+			var globalCorrIdentifier = new SoundCorrespondenceIdentifier(segmentPool, project, "primary");
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);

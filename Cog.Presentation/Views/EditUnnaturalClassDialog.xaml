@@ -40,7 +40,7 @@
                     </TextBlock.Style>
 					</TextBlock>
 				</Grid>
-				<Border Background="{StaticResource ControlPanelBackgroundBrush}">
+				<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
 					<Border.Resources>
 						<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 							<Setter Property="Margin" Value="0,3,5,3" />

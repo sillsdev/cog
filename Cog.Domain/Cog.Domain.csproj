@@ -57,7 +57,7 @@
     <Compile Include="Clusterers\OpticsRootedHierarchicalClusterer.cs" />
     <Compile Include="Clusterers\UpgmaClusterer.cs" />
     <Compile Include="Components\AffixStripper.cs" />
-    <Compile Include="Components\GlobalSoundCorrespondenceIdentifier.cs" />
+    <Compile Include="Components\SoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
     <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />
     <Compile Include="Components\SonorityClass.cs" />
@@ -101,8 +101,8 @@
     <Compile Include="Config\IComponentConfig.cs" />
     <Compile Include="GeographicCoordinate.cs" />
     <Compile Include="GeographicRegion.cs" />
-    <Compile Include="GlobalSoundCorrespondence.cs" />
-    <Compile Include="GlobalSoundCorrespondenceCollection.cs" />
+    <Compile Include="SoundCorrespondence.cs" />
+    <Compile Include="SoundCorrespondenceCollection.cs" />
     <Compile Include="IFlatClusterer.cs" />
     <Compile Include="Clusterers\ClusterOrderEntry.cs" />
     <Compile Include="Clusterers\DbscanClusterer.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using GalaSoft.MvvmLight.Messaging;
@@ -13,6 +14,8 @@ namespace SIL.Cog.Applications.Services
 {
 	public class ProjectService : IProjectService
 	{
+		private const int CacheVersion = 1;
+
 		private static readonly FileType CogProjectFileType = new FileType("Cog Project", ".cogx");
 
 		public event EventHandler<EventArgs> ProjectOpened;
@@ -46,11 +49,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			_isChanged = true;
 			if (msg.AffectsComparison)
-			{
 				_project.VarietyPairs.Clear();
-				foreach (GlobalSoundCorrespondenceCollection corrs in _project.GlobalSoundCorrespondenceCollections.Values)
-					corrs.Clear();
-			}
 		}
 
 		private void HandleComparisonPerformed(ComparisonPerformedMessage msg)
@@ -213,19 +212,27 @@ namespace SIL.Cog.Applications.Services
 				string cacheFileName = Path.Combine(cogPath, name + ".cache");
 				if (File.Exists(cacheFileName))
 				{
-					bool delete = false;
-					using (FileStream fs = File.OpenRead(cacheFileName))
+					bool delete = true;
+					try
 					{
-						var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
-						if (hash == CalcProjectHash())
+						using (FileStream fs = File.OpenRead(cacheFileName))
 						{
-							var cache = Serializer.DeserializeWithLengthPrefix<ComparisonCache>(fs, PrefixStyle.Base128, 1);
-							cache.Load(_segmentPool, _project);
+							var version = Serializer.DeserializeWithLengthPrefix<int>(fs, PrefixStyle.Base128, 1);
+							if (version == CacheVersion)
+							{
+								var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
+								if (hash == CalcProjectHash())
+								{
+									_project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
+										.Select(surrogate => surrogate.ToVarietyPair(_segmentPool, _project)));
+									delete = false;
+								}
+							}
 						}
-						else
-						{
-							delete = true;
-						}
+					}
+					catch (Exception)
+					{
+						_dialogService.ShowError(this, "An error ocurred while loading the cached comparison results. You must re-run the comparison.", "Cog");
 					}
 					if (delete)
 						File.Delete(cacheFileName);
@@ -250,8 +257,13 @@ namespace SIL.Cog.Applications.Services
 				Directory.CreateDirectory(path);
 				using (FileStream fs = File.Create(cacheFileName))
 				{
+					Serializer.SerializeWithLengthPrefix(fs, CacheVersion, PrefixStyle.Base128, 1);
 					Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
-					Serializer.SerializeWithLengthPrefix(fs, new ComparisonCache(_project), PrefixStyle.Base128, 1);
+					foreach (VarietyPair vp in _project.VarietyPairs)
+					{
+						var surrogate = new VarietyPairSurrogate(vp);
+						Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
+					}
 				}
 			}
 		}

@@ -5,13 +5,13 @@ using SIL.Machine;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class GlobalSoundCorrespondenceIdentifier : IProcessor<VarietyPair>
+	public class SoundCorrespondenceIdentifier : IProcessor<VarietyPair>
 	{
 		private readonly SegmentPool _segmentPool;
 		private readonly CogProject _project;
 		private readonly string _alignerID;
 
-		public GlobalSoundCorrespondenceIdentifier(SegmentPool segmentPool, CogProject project, string alignerID)
+		public SoundCorrespondenceIdentifier(SegmentPool segmentPool, CogProject project, string alignerID)
 		{
 			_segmentPool = segmentPool;
 			_project = project;
@@ -68,45 +68,21 @@ namespace SIL.Cog.Domain.Components
 			}
 
 			foreach (KeyValuePair<SyllablePosition, Identifier> kvp in identifiers)
-				MergeCorrespondences(kvp.Key, kvp.Value.Correspondences);
-		}
-
-		private void MergeCorrespondences(SyllablePosition position, GlobalSoundCorrespondenceCollection source)
-		{
-			if (source.Count == 0)
-				return;
-
-			GlobalSoundCorrespondenceCollection target = _project.GlobalSoundCorrespondenceCollections[position];
-			lock (target)
-			{
-				foreach (GlobalSoundCorrespondence sourceCorr in source)
-				{
-					GlobalSoundCorrespondence targetCorr;
-					if (target.TryGetValue(sourceCorr.Segment1, sourceCorr.Segment2, out targetCorr))
-					{
-						targetCorr.Frequency += sourceCorr.Frequency;
-						targetCorr.WordPairs.AddRange(sourceCorr.WordPairs);
-					}
-					else
-					{
-						target.Add(sourceCorr);
-					}
-				}
-			}
+				data.SoundCorrespondenceCollections[kvp.Key].ReplaceAll(kvp.Value.Correspondences);
 		}
 
 		private class Identifier
 		{
-			private readonly GlobalSoundCorrespondenceCollection _correspondences;
+			private readonly SoundCorrespondenceCollection _correspondences;
 			private readonly Func<Alignment<Word, ShapeNode>, int, bool> _filter;
 
 			public Identifier(Func<Alignment<Word, ShapeNode>, int, bool> filter)
 			{
-				_correspondences = new GlobalSoundCorrespondenceCollection();
+				_correspondences = new SoundCorrespondenceCollection();
 				_filter = filter;
 			}
 
-			public GlobalSoundCorrespondenceCollection Correspondences
+			public IEnumerable<SoundCorrespondence> Correspondences
 			{
 				get { return _correspondences; }
 			}
@@ -125,10 +101,10 @@ namespace SIL.Cog.Domain.Components
 						Segment seg2 = ngram2.First;
 						if (!seg1.Equals(seg2))
 						{
-							GlobalSoundCorrespondence corr;
+							SoundCorrespondence corr;
 							if (!_correspondences.TryGetValue(seg1, seg2, out corr))
 							{
-								corr = new GlobalSoundCorrespondence(seg1, seg2);
+								corr = new SoundCorrespondence(seg1, seg2);
 								_correspondences.Add(corr);
 							}
 							corr.Frequency++;

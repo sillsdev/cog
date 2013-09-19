@@ -252,6 +252,9 @@
     <Compile Include="Views\SegmentsWordsView.xaml.cs">
       <DependentUpon>SegmentsWordsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SelectVarietiesDialog.xaml.cs">
+      <DependentUpon>SelectVarietiesDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SoundClassesView.xaml.cs">
       <DependentUpon>SoundClassesView.xaml</DependentUpon>
     </Compile>
@@ -453,6 +456,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SegmentsWordsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectVarietiesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

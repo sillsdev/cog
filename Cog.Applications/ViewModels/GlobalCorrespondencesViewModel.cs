@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
@@ -22,7 +25,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly IGraphService _graphService;
 		private readonly ICommand _findCommand;
-		private IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> _graph; 
+		private IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> _graph;
+		private readonly HashSet<Variety> _selectedVarieties;
 
 		private FindViewModel _findViewModel;
 
@@ -35,6 +39,8 @@ namespace SIL.Cog.Applications.ViewModels
 			_dialogService = dialogService;
 			_imageExportService = imageExportService;
 			_graphService = graphService;
+
+			_selectedVarieties = new HashSet<Variety>();
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -60,7 +66,8 @@ namespace SIL.Cog.Applications.ViewModels
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
 					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => _observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
-					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _observedWordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending)))))
+					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _observedWordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending))))),
+				new TaskAreaCommandViewModel("Select varieties", new RelayCommand(SelectVarieties))
 				));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart))));
@@ -71,10 +78,30 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
+			_selectedVarieties.Clear();
+			_selectedVarieties.UnionWith(_projectService.Project.Varieties);
+			_projectService.Project.Varieties.CollectionChanged += VarietiesChanged;
 			if (_projectService.Project.VarietyPairs.Count > 0)
 				GenerateGraph();
 			else
 				ClearGraph();
+		}
+
+		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			_selectedVarieties.ExceptWith(e.OldItems.Cast<Variety>());
+			_selectedVarieties.UnionWith(e.NewItems.Cast<Variety>());
+		}
+
+		private void SelectVarieties()
+		{
+			var vm = new SelectVarietiesViewModel(_projectService.Project.Varieties, _selectedVarieties);
+			if (_dialogService.ShowModalDialog(this, vm) == true)
+			{
+				_selectedVarieties.Clear();
+				_selectedVarieties.UnionWith(vm.Varieties.Where(v => v.IsSelected).Select(v => v.DomainVariety));
+				GenerateGraph();
+			}
 		}
 
 		private void ExportChart()
@@ -113,8 +140,9 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void GenerateGraph()
 		{
+			_busyService.ShowBusyIndicatorUntilUpdated();
 			SelectedCorrespondence = null;
-			Graph = _graphService.GenerateGlobalCorrespondencesGraph(_syllablePosition);
+			Graph = _graphService.GenerateGlobalCorrespondencesGraph(_syllablePosition, _selectedVarieties);
 		}
 
 		private void ClearGraph()

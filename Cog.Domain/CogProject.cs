@@ -15,8 +15,6 @@ namespace SIL.Cog.Domain
 		private readonly KeyedBulkObservableList<string, Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
-		private readonly ReadOnlyDictionary<SyllablePosition, GlobalSoundCorrespondenceCollection> _globalSoundCorrespondenceCollections;
-
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners; 
 
 		private readonly ObservableDictionary<string, IProcessor<CogProject>> _projectProcessors; 
@@ -31,13 +29,6 @@ namespace SIL.Cog.Domain
 			_varieties = new KeyedBulkObservableList<string, Variety>(variety => variety.Name);
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
-
-			_globalSoundCorrespondenceCollections = new ReadOnlyDictionary<SyllablePosition, GlobalSoundCorrespondenceCollection>(new Dictionary<SyllablePosition, GlobalSoundCorrespondenceCollection>
-				{
-					{SyllablePosition.Onset, new GlobalSoundCorrespondenceCollection()},
-					{SyllablePosition.Nucleus, new GlobalSoundCorrespondenceCollection()},
-					{SyllablePosition.Coda, new GlobalSoundCorrespondenceCollection()}
-				});
 
 			_wordAligners = new ObservableDictionary<string, IWordAligner>();
 
@@ -112,11 +103,6 @@ namespace SIL.Cog.Domain
 		public BulkObservableList<VarietyPair> VarietyPairs
 		{
 			get { return _varietyPairs; }
-		}
-
-		public ReadOnlyDictionary<SyllablePosition, GlobalSoundCorrespondenceCollection> GlobalSoundCorrespondenceCollections
-		{
-			get { return _globalSoundCorrespondenceCollections; }
 		}
 
 		public ObservableDictionary<string, IWordAligner> WordAligners

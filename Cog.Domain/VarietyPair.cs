@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
 
@@ -16,12 +17,20 @@ namespace SIL.Cog.Domain
 		private double _significance;
 		private double _precision;
 		private double _recall;
+		private readonly ReadOnlyDictionary<SyllablePosition, SoundCorrespondenceCollection> _soundCorrespondenceCollections;
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
 			_variety1 = variety1;
 			_variety2 = variety2;
 			_wordPairs = new WordPairCollection(this);
+
+			_soundCorrespondenceCollections = new ReadOnlyDictionary<SyllablePosition, SoundCorrespondenceCollection>(new Dictionary<SyllablePosition, SoundCorrespondenceCollection>
+				{
+					{SyllablePosition.Onset, new SoundCorrespondenceCollection()},
+					{SyllablePosition.Nucleus, new SoundCorrespondenceCollection()},
+					{SyllablePosition.Coda, new SoundCorrespondenceCollection()}
+				});
 		}
 
 		public Variety Variety1
@@ -77,6 +86,11 @@ namespace SIL.Cog.Domain
 		{
 			get { return _recall; }
 			set { Set(() => Recall, ref _recall, value); }
+		}
+
+		public ReadOnlyDictionary<SyllablePosition, SoundCorrespondenceCollection> SoundCorrespondenceCollections
+		{
+			get { return _soundCorrespondenceCollections; }
 		}
 
 		public IConditionalProbabilityDistribution<SoundContext, Ngram> SoundChangeProbabilityDistribution

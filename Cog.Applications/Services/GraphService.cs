@@ -179,9 +179,14 @@ namespace SIL.Cog.Applications.Services
 
 		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(ViewModelSyllablePosition syllablePosition)
 		{
+			return GenerateGlobalCorrespondencesGraph(syllablePosition, _projectService.Project.Varieties);
+		}
+
+		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(ViewModelSyllablePosition syllablePosition, IEnumerable<Variety> varieties)
+		{
+			var varietiesSet = new HashSet<Variety>(varieties);
 			CogProject project = _projectService.Project;
 			var graph = new BidirectionalGraph<GridVertex, GlobalCorrespondenceEdge>();
-
 			var vertices = new Dictionary<Tuple<int, int>, GlobalSegmentVertex>();
 			var edges = new Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge>();
 			int maxFreq = 0;
@@ -199,13 +204,16 @@ namespace SIL.Cog.Applications.Services
 						new HeaderGridVertex("Open") {Row = 7, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left}
 					});
 
-				foreach (GlobalSoundCorrespondence corr in project.GlobalSoundCorrespondenceCollections[SyllablePosition.Nucleus])
+				foreach (VarietyPair vp in project.VarietyPairs.Where(vp => varietiesSet.Contains(vp.Variety1) && varietiesSet.Contains(vp.Variety2)))
 				{
-					GlobalSegmentVertex vertex1, vertex2;
-					if (GetVowel(vertices, corr.Segment1, out vertex1) && GetVowel(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
+					foreach (SoundCorrespondence corr in vp.SoundCorrespondenceCollections[SyllablePosition.Nucleus])
 					{
-						int freq = AddEdge(edges, corr, vertex1, vertex2);
-						maxFreq = Math.Max(freq, maxFreq);
+						GlobalSegmentVertex vertex1, vertex2;
+						if (GetVowel(vertices, corr.Segment1, out vertex1) && GetVowel(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
+						{
+							int freq = AddEdge(edges, corr, vertex1, vertex2);
+							maxFreq = Math.Max(freq, maxFreq);
+						}
 					}
 				}
 			}
@@ -236,24 +244,27 @@ namespace SIL.Cog.Applications.Services
 						new HeaderGridVertex("Lateral approximant") {Row = 9, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left}
 					});
 
-				GlobalSoundCorrespondenceCollection corrs = null;
-				switch (syllablePosition)
+				foreach (VarietyPair vp in project.VarietyPairs.Where(vp => varietiesSet.Contains(vp.Variety1) && varietiesSet.Contains(vp.Variety2)))
 				{
-					case ViewModelSyllablePosition.Onset:
-						corrs = project.GlobalSoundCorrespondenceCollections[SyllablePosition.Onset];
-						break;
-					case ViewModelSyllablePosition.Coda:
-						corrs = project.GlobalSoundCorrespondenceCollections[SyllablePosition.Coda];
-						break;
-				}
-				Debug.Assert(corrs != null);
-				foreach (GlobalSoundCorrespondence corr in corrs)
-				{
-					GlobalSegmentVertex vertex1, vertex2;
-					if (GetConsonant(vertices, corr.Segment1, out vertex1) && GetConsonant(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
+					SoundCorrespondenceCollection corrs = null;
+					switch (syllablePosition)
 					{
-						int freq = AddEdge(edges, corr, vertex1, vertex2);
-						maxFreq = Math.Max(freq, maxFreq);
+						case ViewModelSyllablePosition.Onset:
+							corrs = vp.SoundCorrespondenceCollections[SyllablePosition.Onset];
+							break;
+						case ViewModelSyllablePosition.Coda:
+							corrs = vp.SoundCorrespondenceCollections[SyllablePosition.Coda];
+							break;
+					}
+					Debug.Assert(corrs != null);
+					foreach (SoundCorrespondence corr in corrs)
+					{
+						GlobalSegmentVertex vertex1, vertex2;
+						if (GetConsonant(vertices, corr.Segment1, out vertex1) && GetConsonant(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
+						{
+							int freq = AddEdge(edges, corr, vertex1, vertex2);
+							maxFreq = Math.Max(freq, maxFreq);
+						}
 					}
 				}
 			}
@@ -268,7 +279,7 @@ namespace SIL.Cog.Applications.Services
 			return graph;
 		}
 
-		private static int AddEdge(Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge> edges, GlobalSoundCorrespondence corr,
+		private static int AddEdge(Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge> edges, SoundCorrespondence corr,
 			GlobalSegmentVertex vertex1, GlobalSegmentVertex vertex2)
 		{
 			Tuple<int, int> key1 = Tuple.Create(vertex1.Row, vertex1.Column);

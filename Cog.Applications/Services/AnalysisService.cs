@@ -111,8 +111,6 @@ namespace SIL.Cog.Applications.Services
 			Messenger.Default.Send(new PerformingComparisonMessage());
 			var generator = new VarietyPairGenerator();
 			generator.Process(_projectService.Project);
-			foreach (GlobalSoundCorrespondenceCollection corrs in _projectService.Project.GlobalSoundCorrespondenceCollections.Values)
-				corrs.Clear();
 
 			var pipeline = new MultiThreadedPipeline<VarietyPair>(GetCompareProcessors());
 
@@ -132,8 +130,6 @@ namespace SIL.Cog.Applications.Services
 					if (vm.Canceled)
 					{
 						_projectService.Project.VarietyPairs.Clear();
-						foreach (GlobalSoundCorrespondenceCollection corrs in _projectService.Project.GlobalSoundCorrespondenceCollections.Values)
-							corrs.Clear();
 					}
 					else
 					{
@@ -161,7 +157,7 @@ namespace SIL.Cog.Applications.Services
 			if (project.VarietyPairProcessors.TryGetValue("similarSegmentIdentifier", out similarSegmentIdentifier))
 				processors.Add(similarSegmentIdentifier);
 			processors.Add(project.VarietyPairProcessors["soundChangeInducer"]);
-			processors.Add(new GlobalSoundCorrespondenceIdentifier(_segmentPool, project, "primary"));
+			processors.Add(new SoundCorrespondenceIdentifier(_segmentPool, project, "primary"));
 			return processors;
 		}
 	}

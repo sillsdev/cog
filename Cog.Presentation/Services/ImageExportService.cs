@@ -14,7 +14,6 @@ using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Presentation.Controls;
-using SIL.Cog.Presentation.Views;
 
 namespace SIL.Cog.Presentation.Services
 {

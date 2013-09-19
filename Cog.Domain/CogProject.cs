@@ -8,6 +8,7 @@ namespace SIL.Cog.Domain
 {
 	public class CogProject : ObservableObject
 	{
+		private int _version;
 		private FeatureSystem _featSys;
 		private readonly Segmenter _segmenter;
 
@@ -77,6 +78,12 @@ namespace SIL.Cog.Domain
 					}
 					break;
 			}
+		}
+
+		public int Version
+		{
+			get { return _version; }
+			set { Set(() => Version, ref _version, value); }
 		}
 
 		public FeatureSystem FeatureSystem

@@ -7,12 +7,12 @@ namespace SIL.Cog.Applications.Services
 	{
 		event EventHandler<EventArgs> ProjectOpened;
 
-		void Init();
-		bool New();
-		bool Open();
-		bool Close();
-		bool Save();
-		bool SaveAs();
+		bool Init();
+		bool New(object ownerViewModel);
+		bool Open(object ownerViewModel);
+		bool Close(object ownerViewModel);
+		bool Save(object ownerViewModel);
+		bool SaveAs(object ownerViewModel);
 
 		bool IsChanged { get; }
 		CogProject Project { get; }

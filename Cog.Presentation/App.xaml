@@ -7,7 +7,7 @@
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-             mc:Ignorable="d" StartupUri="Views\MainWindow.xaml"
+             mc:Ignorable="d"
              x:Class="SIL.Cog.Presentation.App">
     <Application.Resources>
         <ResourceDictionary>

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using ProtoBuf;
 using SIL.Cog.Applications.ViewModels;
@@ -30,6 +32,8 @@ namespace SIL.Cog.Applications.Services
 		private CogProject _project;
 		private string _projectName;
 		private bool _isChanged;
+		private bool _isNew;
+		private FileStream _projectFileStream;
 
 		public ProjectService(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IDialogService dialogService, IBusyService busyService,
 			ISettingsService settingsService, Lazy<IAnalysisService> analysisService)
@@ -54,22 +58,22 @@ namespace SIL.Cog.Applications.Services
 
 		private void HandleComparisonPerformed(ComparisonPerformedMessage msg)
 		{
-			if (_settingsService.LastProject != null && !_isChanged)
+			if (_projectFileStream != null && !_isChanged)
 				SaveComparisonCache();
 		}
 
-		public void Init()
+		public bool Init()
 		{
 			string projectPath = _settingsService.LastProject;
-			string[] args = Environment.GetCommandLineArgs();
 			bool usingCmdLineArg = false;
+			string[] args = Environment.GetCommandLineArgs();
 			if (args.Length > 1)
 			{
 				projectPath = args[1];
 				usingCmdLineArg = true;
 			}
 
-			if (string.IsNullOrEmpty(projectPath) || !File.Exists(projectPath))
+			if (string.IsNullOrEmpty(projectPath) || projectPath == "<new>" || !File.Exists(projectPath))
 			{
 				NewProject();
 			}
@@ -82,26 +86,55 @@ namespace SIL.Cog.Applications.Services
 				catch (ConfigException)
 				{
 					if (usingCmdLineArg)
-						_dialogService.ShowError(this, "The specified file is not a valid Cog configuration file.", "Cog");
+					{
+						_dialogService.ShowError(null, "The specified file is not a valid Cog configuration file.", "Cog");
+						CloseProject();
+						return false;
+					}
 					NewProject();
 				}
 				catch (IOException ioe)
 				{
 					if (usingCmdLineArg)
-						_dialogService.ShowError(this, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
+					{
+						_dialogService.ShowError(null, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
+						CloseProject();
+						return false;
+					}
 					NewProject();
 				}
 			}
+
+			return true;
 		}
 
-		public bool New()
+		public bool New(object ownerViewModel)
 		{
-			if (Close())
+			if (_isNew && !_isChanged)
 			{
 				NewProject();
 				return true;
 			}
+
+			StartNewProcess("<new>", 5000);
 			return false;
+		}
+
+		private void StartNewProcess(string projectPath, int timeout)
+		{
+			_busyService.ShowBusyIndicator(() =>
+				{
+					Process process = Process.Start(Assembly.GetEntryAssembly().Location, projectPath);
+					Debug.Assert(process != null);
+					var stopwatch = new Stopwatch();
+					stopwatch.Start();
+					while (process.MainWindowHandle == IntPtr.Zero && stopwatch.ElapsedMilliseconds < timeout)
+					{
+						Thread.Sleep(100);
+						process.Refresh();
+					}
+					stopwatch.Stop();
+				});
 		}
 
 		private void NewProject()
@@ -110,14 +143,15 @@ namespace SIL.Cog.Applications.Services
 			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Applications.NewProject.cogx");
 			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
 			SetupProject(null, "New Project", project);
+			_isNew = true;
 		}
 
-		public bool Open()
+		public bool Open(object ownerViewModel)
 		{
-			if (Close())
+			if (_isNew && !_isChanged)
 			{
-				FileDialogResult result = _dialogService.ShowOpenFileDialog(this, CogProjectFileType);
-				if (result.IsValid)
+				FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, CogProjectFileType);
+				if (result.IsValid && result.FileName != _settingsService.LastProject)
 				{
 					try
 					{
@@ -126,75 +160,108 @@ namespace SIL.Cog.Applications.Services
 					}
 					catch (ConfigException)
 					{
-						_dialogService.ShowError(this, "The specified file is not a valid Cog configuration file.", "Cog");
+						_dialogService.ShowError(ownerViewModel, "The specified file is not a valid Cog configuration file.", "Cog");
+						CloseProject();
 					}
 					catch (IOException ioe)
 					{
-						_dialogService.ShowError(this, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
+						_dialogService.ShowError(ownerViewModel, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
+						CloseProject();
 					}
 				}
+			}
+			else
+			{
+				FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, CogProjectFileType);
+				if (result.IsValid && result.FileName != _settingsService.LastProject)
+					StartNewProcess(result.FileName, 5000);
 			}
 
 			return false;
 		}
 
-		public bool Close()
+		public bool Close(object ownerViewModel)
 		{
 			if (IsChanged)
 			{
-				bool? res = _dialogService.ShowQuestion(this, "Do you want to save the changes to this project?", "Cog");
+				bool? res = _dialogService.ShowQuestion(ownerViewModel, "Do you want to save the changes to this project?", "Cog");
 				if (res == true)
-					Save();
+					Save(ownerViewModel);
 				else if (res == null)
 					return false;
 			}
+			CloseProject();
 			return true;
+		}
+
+		private void CloseProject()
+		{
+			if (_projectFileStream != null)
+			{
+				_projectFileStream.Close();
+				_projectFileStream = null;
+			}
+			_project = null;
+			_projectName = null;
+			_isChanged = false;
 		}
 
 		private void OpenProject(string path)
 		{
 			_busyService.ShowBusyIndicatorUntilUpdated();
-			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, path);
+			_projectFileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, _projectFileStream);
 			SetupProject(path, Path.GetFileNameWithoutExtension(path), project);
+			_isNew = false;
 		}
 
-		public bool Save()
+		public bool Save(object ownerViewModel)
 		{
-			if (string.IsNullOrEmpty(_settingsService.LastProject))
+			if (_projectFileStream == null)
 			{
-				FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
+				FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, CogProjectFileType);
 				if (result.IsValid)
 				{
-					SaveProject(result.FileName);
+					SaveAsProject(result.FileName);
 					return true;
 				}
 
 				return false;
 			}
 
-			SaveProject(_settingsService.LastProject);
+			SaveProject();
 			return true;
 		}
 
-		public bool SaveAs()
+		public bool SaveAs(object ownerViewModel)
 		{
-			FileDialogResult result = _dialogService.ShowSaveFileDialog(this, CogProjectFileType);
+			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, CogProjectFileType);
 			if (result.IsValid)
 			{
-				SaveProject(result.FileName);
+				SaveAsProject(result.FileName);
 				return true;
 			}
 
 			return false;
 		}
 
-		private void SaveProject(string path)
+		private void SaveAsProject(string path)
 		{
-			ConfigManager.Save(_project, path);
+			_projectFileStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+			SaveProject();
 			_settingsService.LastProject = path;
 			_projectName = Path.GetFileNameWithoutExtension(path);
+		}
+
+		private void SaveProject()
+		{
+			_projectFileStream.Seek(0, SeekOrigin.Begin);
+			ConfigManager.Save(_project, _projectFileStream);
+			_projectFileStream.Flush();
+			_projectFileStream.SetLength(_projectFileStream.Position);
 			SaveComparisonCache();
 			_isChanged = false;
+			_isNew = false;
 		}
 
 		private void SetupProject(string path, string name, CogProject project)
@@ -272,10 +339,8 @@ namespace SIL.Cog.Applications.Services
 		{
 			using (var md5 = MD5.Create())
 			{
-				using (FileStream fs = File.OpenRead(_settingsService.LastProject))
-				{
-					return BitConverter.ToString(md5.ComputeHash(fs)).Replace("-","").ToLower();
-				}
+				_projectFileStream.Seek(0, SeekOrigin.Begin);
+				return BitConverter.ToString(md5.ComputeHash(_projectFileStream)).Replace("-","").ToLower();
 			}
 		}
 

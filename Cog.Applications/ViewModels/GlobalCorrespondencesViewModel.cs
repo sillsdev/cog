@@ -89,8 +89,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void VarietiesChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			_selectedVarieties.ExceptWith(e.OldItems.Cast<Variety>());
-			_selectedVarieties.UnionWith(e.NewItems.Cast<Variety>());
+			if (e.OldItems != null)
+				_selectedVarieties.ExceptWith(e.OldItems.Cast<Variety>());
+			if (e.NewItems != null)
+				_selectedVarieties.UnionWith(e.NewItems.Cast<Variety>());
 		}
 
 		private void SelectVarieties()

@@ -86,6 +86,7 @@ namespace SIL.Cog.Domain.Config
 							throw new ConfigException("The specified file is not a valid Cog config file", args.Exception);
 					}
 				});
+			project.Version = int.Parse((string) root.Attribute("version"));
 			var featSys = new FeatureSystem();
 			XElement featSysElem = root.Element(Cog + "FeatureSystem");
 			Debug.Assert(featSysElem != null);
@@ -265,9 +266,9 @@ namespace SIL.Cog.Domain.Config
 			return fs;
 		}
 
-		public static void Save(CogProject project, string configFilePath)
+		private static XElement SaveProject(CogProject project)
 		{
-			var root = new XElement(Cog + "CogProject", new XAttribute("xmlns", DefaultNamespace), new XAttribute(XNamespace.Xmlns + "xsi", XsiNamespace),
+			var root = new XElement(Cog + "CogProject", new XAttribute("xmlns", DefaultNamespace), new XAttribute(XNamespace.Xmlns + "xsi", XsiNamespace), new XAttribute("version", project.Version),
 				new XElement(Cog + "FeatureSystem", project.FeatureSystem.Cast<SymbolicFeature>().Select(feature => new XElement(Cog + "Feature", new XAttribute("id", feature.ID), new XAttribute("name", feature.Description),
 					feature.PossibleSymbols.Select(symbol => new XElement(Cog + "Value", new XAttribute("id", symbol.ID), new XAttribute("name", symbol.Description)))))),
 				new XElement(Cog + "Segmentation",
@@ -301,6 +302,18 @@ namespace SIL.Cog.Domain.Config
 			root.Add(new XElement(Cog + "VarietyProcessors", project.VarietyProcessors.Select(kvp => SaveComponent("VarietyProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement(Cog + "VarietyPairProcessors", project.VarietyPairProcessors.Select(kvp => SaveComponent("VarietyPairProcessor", kvp.Key, kvp.Value))));
 
+			return root;
+		}
+
+		public static void Save(CogProject project, Stream configFileStream)
+		{
+			XElement root = SaveProject(project);
+			root.Save(configFileStream);
+		}
+
+		public static void Save(CogProject project, string configFilePath)
+		{
+			XElement root = SaveProject(project);
 			root.Save(configFilePath);
 		}
 

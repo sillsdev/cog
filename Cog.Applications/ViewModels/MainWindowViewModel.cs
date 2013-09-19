@@ -71,10 +71,18 @@ namespace SIL.Cog.Applications.ViewModels
 			_findCommand = _nullCommand;
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 			Messenger.Default.Register<HookFindMessage>(this, msg => FindCommand = msg.FindCommand ?? _nullCommand);
+		}
 
-			_projectService.Init();
-			DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
-			SelectedView = input;
+		public bool Init()
+		{
+			if (_projectService.Init())
+			{
+				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+				SelectedView = Views[0];
+				return true;
+			}
+
+			return false;
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -121,7 +129,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void New()
 		{
 			CheckSettingsWorkspace(SelectedView);
-			if (_projectService.New())
+			if (_projectService.New(this))
 			{
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
 				SwitchView(typeof(WordListsViewModel));
@@ -131,7 +139,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void Open()
 		{
 			CheckSettingsWorkspace(SelectedView);
-			if (_projectService.Open())
+			if (_projectService.Open(this))
 			{
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
 				SwitchView(typeof(WordListsViewModel));
@@ -146,14 +154,14 @@ namespace SIL.Cog.Applications.ViewModels
 		private void Save()
 		{
 			CheckSettingsWorkspace(SelectedView);
-			if (_projectService.Save())
+			if (_projectService.Save(this))
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
 		}
 
 		private void SaveAs()
 		{
 			CheckSettingsWorkspace(SelectedView);
-			if (_projectService.SaveAs())
+			if (_projectService.SaveAs(this))
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
 		}
 
@@ -250,7 +258,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public bool CanExit()
 		{
 			CheckSettingsWorkspace(SelectedView);
-			return _projectService.Close();
+			return _projectService.Close(this);
 		}
 
 		private bool CanPerformComparison()

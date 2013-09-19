@@ -121,23 +121,36 @@ namespace SIL.Cog.Presentation.Services
 
 		public void ShowMessage(object ownerViewModel, string message, string caption)
 		{
-			MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+			ShowMessageBox(ownerViewModel, message, caption, MessageBoxImage.Information);
 		}
 
 		public void ShowWarning(object ownerViewModel, string message, string caption)
 		{
-			MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+			ShowMessageBox(ownerViewModel, message, caption, MessageBoxImage.Warning);
 		}
 
 		public void ShowError(object ownerViewModel, string message, string caption)
 		{
-			MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+			ShowMessageBox(ownerViewModel, message, caption, MessageBoxImage.Error);
+		}
+
+		private void ShowMessageBox(object ownerViewModel, string message, string caption, MessageBoxImage icon)
+		{
+			Window owner = FindOwnerWindow(ownerViewModel);
+			if (owner == null)
+				MessageBox.Show(message, caption, MessageBoxButton.OK, icon);
+			else
+				MessageBox.Show(owner, message, caption, MessageBoxButton.OK, icon);
 		}
 
 		public bool? ShowQuestion(object ownerViewModel, string message, string caption)
 		{
-			MessageBoxResult result = MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.YesNoCancel,
-				MessageBoxImage.Question, MessageBoxResult.Cancel);
+			Window owner = FindOwnerWindow(ownerViewModel);
+			MessageBoxResult result;
+			if (owner == null)
+				result = MessageBox.Show(message, caption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
+			else
+				result = MessageBox.Show(owner, message, caption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
 			if (result == MessageBoxResult.Yes)
 				return true;
 			if (result == MessageBoxResult.No)
@@ -147,8 +160,12 @@ namespace SIL.Cog.Presentation.Services
 
 		public bool ShowYesNoQuestion(object ownerViewModel, string message, string caption)
 		{
-			MessageBoxResult result = MessageBox.Show(FindOwnerWindow(ownerViewModel), message, caption, MessageBoxButton.YesNo,
-				MessageBoxImage.Question, MessageBoxResult.No);
+			Window owner = FindOwnerWindow(ownerViewModel);
+			MessageBoxResult result;
+			if (owner == null)
+				result = MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+			else
+				result = MessageBox.Show(owner, message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
 			return result == MessageBoxResult.Yes;
 		}
 
@@ -160,12 +177,14 @@ namespace SIL.Cog.Presentation.Services
 			if (Application.Current.Windows.Count == 1)
 				return Application.Current.Windows[0];
 
-			foreach (Window window in Application.Current.Windows)
+			if (viewModel != null)
 			{
-				if (FindViewModelView(window, viewModel))
-					return window;
+				foreach (Window window in Application.Current.Windows)
+				{
+					if (FindViewModelView(window, viewModel))
+						return window;
+				}
 			}
-
 			return Application.Current.MainWindow;
 		}
 

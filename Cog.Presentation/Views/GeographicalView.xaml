@@ -28,8 +28,8 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<TextBox Grid.Column="0" Name="SearchTextBox" KeyUp="SearchTextBox_OnKeyUp" Margin="0,0,5,5" />
-			<Button Grid.Column="1" Click="SearchButton_OnClick" Margin="5,0,0,5" Width="50">Search</Button>
+			<TextBox Grid.Column="0" Name="SearchTextBox" KeyUp="SearchTextBox_OnKeyUp" Margin="0,0,5,5" ToolTip="Search map for location" />
+			<Button Grid.Column="1" Click="SearchButton_OnClick" Margin="0,0,0,5" Width="50">Search</Button>
 		</Grid>
 		<HeaderedContentControl Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" Header="Regions">
 			<TreeView Name="RegionsTreeView" ItemsSource="{Binding Varieties}" PreviewMouseDoubleClick="RegionsTreeView_OnPreviewMouseDoubleClick">

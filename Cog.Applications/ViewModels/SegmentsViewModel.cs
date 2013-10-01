@@ -216,9 +216,9 @@ namespace SIL.Cog.Applications.ViewModels
 							{
 								WordViewModel vm = _wordFactory(word);
 								bool add = false;
-								foreach (WordSegmentViewModel seg in vm.Segments)
+								foreach (WordSegmentViewModel seg in vm.Segments.Where(s => !s.IsBoundary && !s.IsNotInOriginal))
 								{
-									if (seg.StrRep == _selectedSegment.StrRep)
+									if (seg.DomainNode.StrRep() == _selectedSegment.StrRep)
 									{
 										bool correctPosition = false;
 										switch (_syllablePosition)

@@ -23,6 +23,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _removeCommand;
 
 		public GeographicalRegionViewModel(IProjectService projectService, IDialogService dialogService, GeographicalVarietyViewModel variety, GeographicRegion region)
+			: base(region)
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;

@@ -31,9 +31,7 @@
 							<DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
 								<TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
 							</DataTemplate>
-							<Style TargetType="xcdg:ColumnManagerCell" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
-								<Setter Property="FontSize" Value="16" />
-							</Style>
+							<Style TargetType="xcdg:ColumnManagerCell" BasedOn="{StaticResource PhoneticColumnManagerCellStyle}" />
 						</xcdg:DataGridControl.Resources>
 						<xcdg:DataGridControl.View>
 							<xcdg:TableView FixedColumnCount="1">

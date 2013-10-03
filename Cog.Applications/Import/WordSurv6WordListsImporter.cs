@@ -65,10 +65,7 @@ namespace SIL.Cog.Applications.Import
 					if (wordListIdElem == null)
 						throw new ImportException(string.Format("A \"transcription\" element is missing a \"word_list_id\" element. Line: {0}", ((IXmlLineInfo) transElem).LineNumber));
 					var varietyID = (string) wordListIdElem;
-					XElement transNameElem = transElem.Element("name");
-					if (transNameElem == null)
-						throw new ImportException(string.Format("A \"transcription\" element is missing a \"name\" element. Line: {0}", ((IXmlLineInfo) transElem).LineNumber));
-					var wordform = (string) transNameElem;
+					var wordform = (string) transElem.Element("name");
 					if (wordform != null)
 					{
 						wordform = wordform.Trim();

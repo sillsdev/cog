@@ -16,6 +16,8 @@
 			</ResourceDictionary.MergedDictionaries>
 
 			<p:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+			
+			<sys:Double x:Key="PhoneticFontSize">16</sys:Double>
 
 			<cnvtrs:ContentToPathConverter x:Key="Content2PathConverter"/>
 			<cnvtrs:ContentToMarginConverter x:Key="Content2MarginConverter"/>
@@ -405,8 +407,30 @@
 				</Setter>
 			</Style>
 
+			<Style x:Key="PhoneticTextBlockStyle" TargetType="{x:Type TextBlock}">
+				<Setter Property="FontSize" Value="{StaticResource PhoneticFontSize}" />
+				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+			</Style>
+
+			<Style x:Key="PhoneticColumnManagerCellStyle" TargetType="{x:Type xcdg:ColumnManagerCell}" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
+				<Setter Property="FontSize" Value="{StaticResource PhoneticFontSize}" />
+				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+			</Style>
+			<Style x:Key="PhoneticDataCellStyle" TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
+				<Setter Property="FontSize" Value="{StaticResource PhoneticFontSize}" />
+				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+			</Style>
+
+			<Style x:Key="PhoneticControlStyle" TargetType="{x:Type Control}">
+				<Setter Property="FontSize" Value="{StaticResource PhoneticFontSize}" />
+				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+			</Style>
+
+			<Style x:Key="PhoneticTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource PhoneticControlStyle}" />
+			<Style x:Key="PhoneticListBoxItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource PhoneticControlStyle}" />
+
 			<DataTemplate x:Key="PhoneticCellContentTemplate">
-				<TextBlock Name="CellContent" Text="{Binding}" FontSize="16" />
+				<TextBlock Name="CellContent" Text="{Binding}" Style="{StaticResource PhoneticTextBlockStyle}" />
 				<DataTemplate.Triggers>
 					<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type xcdg:DataCell}}, Path=HasValidationError}" Value="True">
 						<Setter TargetName="CellContent" Property="TextDecorations">

@@ -86,23 +86,28 @@ namespace SIL.Cog.Presentation.Views
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			AlignmentGrid.Columns.Add(headerColumn);
+
+			object fontSizeObj = Application.Current.FindResource("PhoneticFontSize");
+			Debug.Assert(fontSizeObj != null);
+			var fontSize = (double) fontSizeObj;
+
 			var prefixColumn = new Column {FieldName = "Prefix", ReadOnly = true, CanBeCurrentWhenReadOnly = false};
 			DataGridControlBehaviors.SetAutoSize(prefixColumn, true);
 			DataGridControlBehaviors.SetAutoSizePadding(prefixColumn, 9);
-			DataGridControlBehaviors.SetFontSizeHint(prefixColumn, 16);
+			DataGridControlBehaviors.SetFontSizeHint(prefixColumn, fontSize);
 			AlignmentGrid.Columns.Add(prefixColumn);
 			for (int i = 0; i < vm.ColumnCount; i++)
 			{
 				var column = new Column {FieldName = "Column" + i};
 				DataGridControlBehaviors.SetAutoSize(column, true);
 				DataGridControlBehaviors.SetAutoSizePadding(column, 9);
-				DataGridControlBehaviors.SetFontSizeHint(column, 16);
+				DataGridControlBehaviors.SetFontSizeHint(column, fontSize);
 				AlignmentGrid.Columns.Add(column);
 			}
 			var suffixColumn = new Column {FieldName = "Suffix", ReadOnly = true, CanBeCurrentWhenReadOnly = false};
 			DataGridControlBehaviors.SetAutoSize(suffixColumn, true);
 			DataGridControlBehaviors.SetAutoSizePadding(suffixColumn, 9);
-			DataGridControlBehaviors.SetFontSizeHint(suffixColumn, 16);
+			DataGridControlBehaviors.SetFontSizeHint(suffixColumn, fontSize);
 			AlignmentGrid.Columns.Add(suffixColumn);
 
 			AlignmentGrid.CurrentItem = null;

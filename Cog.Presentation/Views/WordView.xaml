@@ -33,7 +33,7 @@
 			</TextBlock>
 		</TextBlock>
 		<Grid>
-			<TextBlock Margin="3,0,0,0"  FontSize="16" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">
+			<TextBlock Margin="3,0,0,0" Style="{StaticResource PhoneticTextBlockStyle}" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">
 				<TextBlock.TextDecorations>
 					<TextDecorationCollection>
 						<TextDecoration Location="Underline" PenOffset="1">
@@ -49,7 +49,7 @@
 				</TextBlock.TextDecorations>
 			</TextBlock>
 			<ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
-					 Background="Transparent" FontSize="16" ItemsSource="{Binding Segments}" b:ItemsControlBehaviors.IsDragSource="True" b:ItemsControlBehaviors.CanDragItem="ListBox_OnCanDragItem"
+					 Background="Transparent" ItemsSource="{Binding Segments}" b:ItemsControlBehaviors.IsDragSource="True" b:ItemsControlBehaviors.CanDragItem="ListBox_OnCanDragItem"
 					 b:ItemsControlBehaviors.IsDropTarget="True" b:ItemsControlBehaviors.CanDropItem="ListBox_OnCanDropItem" b:ItemsControlBehaviors.DragDropTemplate="{StaticResource BlankTemplate}"
 					 GiveFeedback="ListBox_OnGiveFeedback" PreviewMouseLeftButtonDown="ListBox_OnPreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_OnPreviewMouseLeftButtonUp">
 				<ListBox.ItemsPanel>
@@ -63,7 +63,7 @@
 					</ControlTemplate>
 				</ListBox.Template>
 				<ListBox.ItemContainerStyle>
-					<Style TargetType="ListBoxItem">
+					<Style TargetType="ListBoxItem" BasedOn="{StaticResource PhoneticListBoxItemStyle}">
 						<Setter Property="Padding" Value="3" />
 						<Setter Property="Template">
 							<Setter.Value>

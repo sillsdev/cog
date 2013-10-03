@@ -68,7 +68,7 @@
 									  ReadOnly="True" SelectedItem="{Binding SelectedSoundChange}">
 					<xcdg:DataGridControl.Resources>
 						<DataTemplate DataType="{x:Type xcdg:Group}">
-							<TextBlock FontSize="16" Margin="2,0,0,0" Foreground="{StaticResource HeaderTextBrush}">
+							<TextBlock Style="{StaticResource PhoneticTextBlockStyle}" Margin="2,0,0,0" Foreground="{StaticResource HeaderTextBrush}">
 								<Run Text="{Binding Value.Target, Mode=OneWay}">
 									<Run.Style>
 										<Style TargetType="Run">
@@ -92,7 +92,7 @@
 						<xcdg:Column FieldName="Correspondence" Title="Segment" Width="80">
 							<xcdg:Column.CellContentTemplate>
 								<DataTemplate>
-									<TextBlock Name="ContentTextBlock" FontSize="16" Margin="4,0,0,0" Text="{Binding}" />
+									<TextBlock Name="ContentTextBlock" Style="{StaticResource PhoneticTextBlockStyle}" Margin="4,0,0,0" Text="{Binding}" />
 									<DataTemplate.Triggers>
 										<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
 											<Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety2Brush}" />

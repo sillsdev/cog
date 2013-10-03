@@ -112,7 +112,7 @@
 					<xcdg:Column FieldName="StrRep" Title="Segment" Width="80">
 						<xcdg:Column.CellContentTemplate>
 							<DataTemplate>
-								<TextBlock FontSize="16" Text="{Binding}" />
+								<TextBlock Style="{StaticResource PhoneticTextBlockStyle}" Text="{Binding}" />
 							</DataTemplate>
 						</xcdg:Column.CellContentTemplate>
 					</xcdg:Column>

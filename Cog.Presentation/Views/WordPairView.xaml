@@ -9,8 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairViewModel}">
 	<UserControl.Resources>
-		<Style x:Key="Node1TextBlockStyle" TargetType="TextBlock">
-			<Setter Property="FontSize" Value="16" />
+		<Style x:Key="Node1TextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneticTextBlockStyle}">
 			<Setter Property="Padding" Value="3" />
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:WordPairView}}}" Value="True">
@@ -21,8 +20,7 @@
 				</DataTrigger>
 			</Style.Triggers>
 		</Style>
-		<Style x:Key="Node2TextBlockStyle" TargetType="TextBlock">
-			<Setter Property="FontSize" Value="16" />
+		<Style x:Key="Node2TextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource PhoneticTextBlockStyle}">
 			<Setter Property="Padding" Value="3" />
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:WordPairView}}}" Value="True">

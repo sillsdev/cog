@@ -62,12 +62,20 @@ namespace SIL.Cog.Applications.Import
 				}
 			}
 
+			bool skipFinalColumn = false;
 			var senses = new Dictionary<string, Sense>();
 			for (int i = 1; i < glosses.Count; i++)
 			{
 				string gloss = glosses[i].Trim();
 				if (string.IsNullOrEmpty(gloss))
+				{
+					if (i == glosses.Count - 1)
+					{
+						skipFinalColumn = true;
+						break;
+					}
 					throw new ImportException("A blank gloss is not allowed. Line: 1");
+				}
 				if (senses.ContainsKey(gloss))
 					throw new ImportException(string.Format("The gloss, \"{0}\", is not unique. Line: 1", gloss));
 				string category = null;
@@ -95,7 +103,9 @@ namespace SIL.Cog.Applications.Import
 					string wordStr = varietyRow[j].Trim();
 					if (!string.IsNullOrEmpty(wordStr))
 					{
-						foreach (string w in wordStr.Split(','))
+						if (j == varietyRow.Count - 1 && skipFinalColumn)
+							throw new ImportException("A blank gloss is not allowed. Line: 1");
+						foreach (string w in wordStr.Split(',', '/'))
 						{
 							string str = w.Trim().Normalize(NormalizationForm.FormD);
 							variety.Words.Add(new Word(str, senses[glosses[j].Trim()]));
@@ -122,12 +132,21 @@ namespace SIL.Cog.Applications.Import
 				return;
 			}
 
+			bool skipFinalColumn = false;
 			var varieties = new Dictionary<string, Variety>();
 			for (int i = (categoriesIncluded ? 2 : 1); i < varietyNames.Count; i++)
 			{
 				string name = varietyNames[i].Trim();
 				if (string.IsNullOrEmpty(name))
+				{
+					// ignore trailing space
+					if (i == varietyNames.Count - 1)
+					{
+						skipFinalColumn = true;
+						break;
+					}
 					throw new ImportException("A blank variety name is not allowed. Line: 1");
+				}
 				if (varieties.ContainsKey(name))
 					throw new ImportException(string.Format("The variety name, \"{0}\", is not unique. Line: 1", name));
 				varieties[name] = new Variety(name);
@@ -160,7 +179,9 @@ namespace SIL.Cog.Applications.Import
 					string wordStr = glossRow[j].Trim();
 					if (!string.IsNullOrEmpty(wordStr))
 					{
-						foreach (string w in wordStr.Split(','))
+						if (j == glossRow.Count - 1 && skipFinalColumn)
+							throw new ImportException("A blank variety name is not allowed. Line: 1");
+						foreach (string w in wordStr.Split(',', '/'))
 						{
 							string str = w.Trim().Normalize(NormalizationForm.FormD);
 							varieties[varietyNames[j].Trim()].Words.Add(new Word(str, sense));

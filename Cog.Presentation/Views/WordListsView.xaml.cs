@@ -155,6 +155,9 @@ namespace SIL.Cog.Presentation.Views
 		private void Cell_OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			var cell = (DataCell) sender;
+			if (cell.ParentColumn.Index == 0)
+				return;
+
 			WordListsGrid.SelectedCellRanges.Clear();
 			int itemIndex = WordListsGrid.Items.IndexOf(cell.ParentRow.DataContext);
 			WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));

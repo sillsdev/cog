@@ -85,8 +85,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_projectService.Project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
 			_deferredResetSelectedVarietyPair = true;
+			_varietiesView1 = null;
+			_varietiesView2 = null;
+			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietyViewModel>(_projectService.Project.Varieties, variety => new VarietyViewModel(variety), vm => vm.DomainVariety));
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)

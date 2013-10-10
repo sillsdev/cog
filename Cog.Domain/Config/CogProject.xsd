@@ -252,6 +252,16 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+	<xs:complexType name="ThresholdCognateIdentifier">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element name="Threshold" type="xs:double" />
+					<xs:element ref="ApplicableAligner" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 	
 	<xs:element name="CogProject">
 		<xs:complexType>

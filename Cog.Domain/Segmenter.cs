@@ -216,10 +216,9 @@ namespace SIL.Cog.Domain
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-			string nfdStr = str.Normalize(NormalizationForm.FormD);
 			int index = 0;
 			int nodeCount = 0;
-			foreach (Match match in _regex.Matches(nfdStr))
+			foreach (Match match in _regex.Matches(str))
 			{
 				if (match.Index != index)
 					break;
@@ -231,7 +230,7 @@ namespace SIL.Cog.Domain
 
 				index = match.Index + match.Length;
 
-				if (index == nfdStr.Length)
+				if (index == str.Length)
 				{
 					if (nodeCount == 0)
 						break;
@@ -266,9 +265,8 @@ namespace SIL.Cog.Domain
 			if (_regex == null)
 				_regex = new Regex(CreateRegexString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-			string nfdStr = str.Normalize(NormalizationForm.FormD);
 			int index = 0;
-			foreach (Match match in _regex.Matches(nfdStr))
+			foreach (Match match in _regex.Matches(str))
 			{
 				if (match.Index != index)
 					break;
@@ -378,7 +376,7 @@ namespace SIL.Cog.Domain
 
 				index = match.Index + match.Length;
 
-				if (index == nfdStr.Length)
+				if (index == str.Length)
 				{
 					if (shape.Count == 0)
 						break;

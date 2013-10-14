@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -92,7 +91,7 @@ namespace SIL.Cog.Applications.ViewModels
 							}
 							else
 							{
-								var newWord = new Word(wordStr.Normalize(NormalizationForm.FormD), DomainSense);
+								var newWord = new Word(wordStr, DomainSense);
 								_domainWords.Insert(index, newWord);
 								_variety.DomainVariety.Words.Add(newWord);
 							}

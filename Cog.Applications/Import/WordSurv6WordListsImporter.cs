@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.Cog.Domain;
@@ -76,7 +75,7 @@ namespace SIL.Cog.Applications.Import
 							{
 								foreach (string w in wordform.Split(','))
 								{
-									string str = w.Trim().Normalize(NormalizationForm.FormD);
+									string str = w.Trim();
 									variety.Item2.Add(new Word(str, sense));
 								}
 							}

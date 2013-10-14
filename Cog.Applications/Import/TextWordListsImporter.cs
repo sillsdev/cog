@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 
@@ -107,7 +106,7 @@ namespace SIL.Cog.Applications.Import
 							throw new ImportException("A blank gloss is not allowed. Line: 1");
 						foreach (string w in wordStr.Split(',', '/'))
 						{
-							string str = w.Trim().Normalize(NormalizationForm.FormD);
+							string str = w.Trim();
 							variety.Words.Add(new Word(str, senses[glosses[j].Trim()]));
 						}
 					}
@@ -183,7 +182,7 @@ namespace SIL.Cog.Applications.Import
 							throw new ImportException("A blank variety name is not allowed. Line: 1");
 						foreach (string w in wordStr.Split(',', '/'))
 						{
-							string str = w.Trim().Normalize(NormalizationForm.FormD);
+							string str = w.Trim();
 							varieties[varietyNames[j].Trim()].Words.Add(new Word(str, sense));
 						}
 					}

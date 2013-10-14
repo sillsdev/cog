@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
@@ -48,7 +47,7 @@ namespace SIL.Cog.Applications.Import
 					if (curSense == null)
 						throw new ImportException("A gloss is missing.");
 
-					string wordStr = glossRow[1].Trim().Normalize(NormalizationForm.FormD);
+					string wordStr = glossRow[1].Trim();
 					if (!string.IsNullOrEmpty(wordStr))
 						variety.Words.Add(new Word(wordStr, curSense));
 				}

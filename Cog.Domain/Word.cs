@@ -6,7 +6,7 @@ using SIL.Machine;
 
 namespace SIL.Cog.Domain
 {
-	public class Word : ObservableObject, IData<ShapeNode>, IDeepCloneable<Word>
+	public class Word : ObservableObject, IData<ShapeNode>
 	{
 		private int _stemIndex;
 		private int _stemLength;
@@ -25,16 +25,6 @@ namespace SIL.Cog.Domain
 			_sense = sense;
 			_stemIndex = stemIndex;
 			_stemLength = stemLength;
-		}
-
-		private Word(Word word)
-		{
-			_strRep = word._strRep;
-			_stemIndex = word._stemIndex;
-			_stemLength = word._stemLength;
-			_shape = word._shape.DeepClone();
-			_shape.Freeze();
-			_sense = word._sense;
 		}
 
 		public string StrRep
@@ -104,11 +94,6 @@ namespace SIL.Cog.Domain
 		public AnnotationList<ShapeNode> Annotations
 		{
 			get { return _shape.Annotations; }
-		}
-
-		public Word DeepClone()
-		{
-			return new Word(this);
 		}
 
 		public override string ToString()

@@ -47,7 +47,7 @@ namespace SIL.Cog.Domain.Test
 			Assert.That(shape.Count, Is.EqualTo(7));
 			AssertShapeNodeEqual(shape.ElementAt(2), "-", CogFeatureSystem.BoundaryType);
 
-			Assert.That(_segmenter.TrySegment("señor", out shape), Is.True);
+			Assert.That(_segmenter.TrySegment("señor", out shape), Is.True);
 			Assert.That(shape.Count, Is.EqualTo(5));
 			AssertShapeNodeEqual(shape.ElementAt(2), "n", CogFeatureSystem.ConsonantType);
 			Assert.That(shape.ElementAt(2).OriginalStrRep(), Is.EqualTo("ñ"));

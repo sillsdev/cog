@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SIL.Machine;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -71,8 +72,8 @@ namespace SIL.Cog.Domain.Components
 				int totalCount = 0;
 				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
-					Ngram u = alignment[0, column].ToNgram(_segmentPool);
-					Ngram v = alignment[1, column].ToNgram(_segmentPool);
+					Ngram<Segment> u = alignment[0, column].ToNgram(_segmentPool);
+					Ngram<Segment> v = alignment[1, column].ToNgram(_segmentPool);
 					string uStr = u.ToString();
 					string vStr = v.ToString();
 					int cat = 3;
@@ -134,7 +135,7 @@ namespace SIL.Cog.Domain.Components
 			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
 		}
 
-		private bool AreSegmentsMapped(ISegmentMappings mappings, Ngram u, Ngram v)
+		private bool AreSegmentsMapped(ISegmentMappings mappings, Ngram<Segment> u, Ngram<Segment> v)
 		{
 			IEnumerable<Segment> uSegs = u.Count == 0 ? new Segment[] {null} : (IEnumerable<Segment>) u;
 			IEnumerable<Segment> vSegs = v.Count == 0 ? new Segment[] {null} : (IEnumerable<Segment>) v;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain
 {
@@ -9,8 +10,8 @@ namespace SIL.Cog.Domain
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly WordPairCollection _wordPairs; 
-		private IConditionalProbabilityDistribution<SoundContext, Ngram> _soundChangeProbabilityDistribution;
-		private ConditionalFrequencyDistribution<SoundContext, Ngram> _soundFreqDist;
+		private IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> _soundChangeProbabilityDistribution;
+		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _soundFreqDist;
 		private double _defaultCorrProb;
 		private double _phoneticSimilarityScore;
 		private double _lexicalSimilarityScore;
@@ -93,13 +94,13 @@ namespace SIL.Cog.Domain
 			get { return _soundCorrespondenceCollections; }
 		}
 
-		public IConditionalProbabilityDistribution<SoundContext, Ngram> SoundChangeProbabilityDistribution
+		public IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> SoundChangeProbabilityDistribution
 		{
 			get { return _soundChangeProbabilityDistribution; }
 			set { Set(() => SoundChangeProbabilityDistribution, ref _soundChangeProbabilityDistribution, value); }
 		}
 
-		public ConditionalFrequencyDistribution<SoundContext, Ngram> SoundChangeFrequencyDistribution
+		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> SoundChangeFrequencyDistribution
 		{
 			get { return _soundFreqDist; }
 			set { Set(() => SoundChangeFrequencyDistribution, ref _soundFreqDist, value); }

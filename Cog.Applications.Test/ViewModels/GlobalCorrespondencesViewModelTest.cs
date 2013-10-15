@@ -9,9 +9,10 @@ using SIL.Cog.Applications.Services;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
 using SIL.Machine;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.Test.ViewModels
 {
@@ -58,8 +59,8 @@ namespace SIL.Cog.Applications.Test.ViewModels
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
 					wp.AreCognatePredicted = true;
-				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
-				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram>(fd));
+				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
 			}
 
@@ -111,8 +112,8 @@ namespace SIL.Cog.Applications.Test.ViewModels
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
 					wp.AreCognatePredicted = true;
-				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
-				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram>(fd));
+				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
 			}
 			projectService.ProjectOpened += Raise.Event();
@@ -177,8 +178,8 @@ namespace SIL.Cog.Applications.Test.ViewModels
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
 					wp.AreCognatePredicted = true;
-				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
-				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram>(fd));
+				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
 			}
 			projectService.ProjectOpened += Raise.Event();

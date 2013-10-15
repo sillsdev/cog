@@ -5,6 +5,7 @@ using QuickGraph;
 using QuickGraph.Algorithms;
 using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
+using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.Domain.SequenceAlignment
 {

@@ -4,6 +4,8 @@ using System.Linq;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.SequenceAlignment
 {
@@ -106,13 +108,13 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			{
 				SoundContext lhs = node.ToSoundContext(_segmentPool, _contextualSoundClasses);
 				prob = varietyPair.DefaultCorrespondenceProbability;
-				IProbabilityDistribution<Ngram> probDist;
+				IProbabilityDistribution<Ngram<Segment>> probDist;
 				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
 					prob = probDist.Samples.Max(nseg => probDist[nseg]);
 			}
 			else
 			{
-				Ngram corr = _segmentPool.GetExisting(node);
+				Ngram<Segment> corr = _segmentPool.GetExisting(node);
 				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Count == 0 ? 0
 					: varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
 			}
@@ -179,26 +181,26 @@ namespace SIL.Cog.Domain.SequenceAlignment
 				q2 = tempNode;
 			}
 
-			Ngram target;
+			Ngram<Segment> target;
 			if (p1 == null)
 			{
-				target = new Ngram();
+				target = new Ngram<Segment>();
 			}
 			else
 			{
 				Segment targetSegment = _segmentPool.GetExisting(p1);
-				target = p2 == null ? targetSegment : new Ngram(targetSegment, _segmentPool.GetExisting(p2));
+				target = p2 == null ? targetSegment : new Ngram<Segment>(targetSegment, _segmentPool.GetExisting(p2));
 			}
 
-			Ngram corr;
+			Ngram<Segment> corr;
 			if (q1 == null)
 			{
-				corr = new Ngram();
+				corr = new Ngram<Segment>();
 			}
 			else
 			{
 				Segment corrSegment = _segmentPool.GetExisting(q1);
-				corr = q2 == null ? corrSegment : new Ngram(corrSegment, _segmentPool.GetExisting(q2));
+				corr = q2 == null ? corrSegment : new Ngram<Segment>(corrSegment, _segmentPool.GetExisting(q2));
 			}
 
 			ShapeNode leftNode = p1 == null ? p2 : p1.GetPrev(NodeFilter);
@@ -212,7 +214,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 				rightEnv = null;
 
 			var lhs = new SoundContext(leftEnv, target, rightEnv);
-			IProbabilityDistribution<Ngram> probDist;
+			IProbabilityDistribution<Ngram<Segment>> probDist;
 			double prob = varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
 				: varietyPair.DefaultCorrespondenceProbability;
 			return (int) (MaxSoundChangeScore * prob);

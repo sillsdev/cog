@@ -10,6 +10,7 @@ using SIL.Cog.Domain;
 using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
 using SIL.Machine;
+using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.Applications.ViewModels
 {

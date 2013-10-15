@@ -1,4 +1,5 @@
 ﻿using SIL.Machine;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain
 {
@@ -16,6 +17,6 @@ namespace SIL.Cog.Domain
 			get { return _name; }
 		}
 
-		public abstract bool Matches(ShapeNode leftNode, Ngram target, ShapeNode rightNode);
+		public abstract bool Matches(ShapeNode leftNode, Ngram<Segment> target, ShapeNode rightNode);
 	}
 }

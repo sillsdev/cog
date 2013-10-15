@@ -1,6 +1,7 @@
 using System.IO;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Clusterers;
+using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.Applications.Export
 {

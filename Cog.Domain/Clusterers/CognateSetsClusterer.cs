@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
+using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.Domain.Clusterers
 {

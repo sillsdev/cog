@@ -1,5 +1,5 @@
-using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain
 {

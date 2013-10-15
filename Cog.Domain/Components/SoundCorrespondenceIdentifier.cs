@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Machine;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -93,8 +94,8 @@ namespace SIL.Cog.Domain.Components
 				AlignmentCell<ShapeNode> cell2 = alignment[1, column];
 				if (!cell1.IsNull && !cell2.IsNull && _filter(alignment, column))
 				{
-					Ngram ngram1 = cell1.ToNgram(segmentPool);
-					Ngram ngram2 = cell2.ToNgram(segmentPool);
+					Ngram<Segment> ngram1 = cell1.ToNgram(segmentPool);
+					Ngram<Segment> ngram2 = cell2.ToNgram(segmentPool);
 					if (ngram1.Count == 1 && ngram2.Count == 1)
 					{
 						Segment seg1 = ngram1.First;

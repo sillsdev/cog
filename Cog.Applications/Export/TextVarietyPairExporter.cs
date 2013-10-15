@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Statistics;
 using SIL.Machine;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.Export
 {
@@ -36,8 +37,8 @@ namespace SIL.Cog.Applications.Export
 				{
 					if (!first)
 						writer.WriteLine();
-					IProbabilityDistribution<Ngram> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
-					FrequencyDistribution<Ngram> freqDist = varietyPair.SoundChangeFrequencyDistribution[lhs];
+					IProbabilityDistribution<Ngram<Segment>> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
+					FrequencyDistribution<Ngram<Segment>> freqDist = varietyPair.SoundChangeFrequencyDistribution[lhs];
 					writer.WriteLine(lhs.ToString());
 					foreach (var correspondence in freqDist.ObservedSamples.Select(corr => new {Segment = corr, Probability = probDist[corr], Frequency = freqDist[corr]}).OrderByDescending(corr => corr.Probability))
 						writer.WriteLine("{0}: {1:p}, {2}", correspondence.Segment, correspondence.Probability, correspondence.Frequency);

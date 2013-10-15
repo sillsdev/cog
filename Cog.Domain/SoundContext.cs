@@ -1,29 +1,30 @@
 ﻿using System;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain
 {
 	public class SoundContext : IEquatable<SoundContext>
 	{
 		private readonly SoundClass _leftEnv;
-		private readonly Ngram _target;
+		private readonly Ngram<Segment> _target;
 		private readonly SoundClass _rightEnv;
 
-		public SoundContext(Ngram target)
+		public SoundContext(Ngram<Segment> target)
 			: this(null, target, null)
 		{
 		}
 
-		public SoundContext(SoundClass leftEnv, Ngram target)
+		public SoundContext(SoundClass leftEnv, Ngram<Segment> target)
 			: this(leftEnv, target, null)
 		{
 		}
 
-		public SoundContext(Ngram target, SoundClass rightEnv)
+		public SoundContext(Ngram<Segment> target, SoundClass rightEnv)
 			: this(null, target, rightEnv)
 		{
 		}
 
-		public SoundContext(SoundClass leftEnv, Ngram target, SoundClass rightEnv)
+		public SoundContext(SoundClass leftEnv, Ngram<Segment> target, SoundClass rightEnv)
 		{
 			_leftEnv = leftEnv;
 			_target = target;
@@ -35,7 +36,7 @@ namespace SIL.Cog.Domain
 			get { return _leftEnv; }
 		}
 
-		public Ngram Target
+		public Ngram<Segment> Target
 		{
 			get { return _target; }
 		}

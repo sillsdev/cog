@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
-using SIL.Cog.Domain.Statistics;
 using SIL.Machine;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -41,13 +42,13 @@ namespace SIL.Cog.Domain.Components
 		{
 			for (int i = 0; i < 15; i++)
 			{
-				ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts = E(varietyPair);
+				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> expectedCounts = E(varietyPair);
 				if (M(varietyPair, expectedCounts))
 					break;
 			}
 		}
 
-		private ConditionalFrequencyDistribution<SoundContext, Ngram> E(VarietyPair pair)
+		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> E(VarietyPair pair)
 		{
 			if (pair.SoundChangeProbabilityDistribution != null)
 			{
@@ -55,7 +56,7 @@ namespace SIL.Cog.Domain.Components
 				cognateIdentifier.Process(pair);
 			}
 
-			var expectedCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
+			var expectedCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
@@ -68,7 +69,7 @@ namespace SIL.Cog.Domain.Components
 						for (int column = 0; column < alignment.ColumnCount; column++)
 						{
 							SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, wordPair.Word1, aligner.ContextualSoundClasses);
-							Ngram corr = alignment[1, column].ToNgram(_segmentPool);
+							Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
 							expectedCounts[lhs].Increment(corr);
 						}
 					}
@@ -77,12 +78,12 @@ namespace SIL.Cog.Domain.Components
 			return expectedCounts;
 		}
 
-		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram> expectedCounts)
+		private bool M(VarietyPair pair, ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> expectedCounts)
 		{
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			int segmentCount = pair.Variety2.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
-			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram>(fd, possCorrCount));
+			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram<Segment>>(fd, possCorrCount));
 
 			bool converged = true;
 			if (pair.SoundChangeProbabilityDistribution == null || pair.SoundChangeProbabilityDistribution.Conditions.Count != cpd.Conditions.Count)
@@ -93,15 +94,15 @@ namespace SIL.Cog.Domain.Components
 			{
 				foreach (SoundContext lhs in cpd.Conditions)
 				{
-					IProbabilityDistribution<Ngram> probDist = cpd[lhs];
-					IProbabilityDistribution<Ngram> oldProbDist;
+					IProbabilityDistribution<Ngram<Segment>> probDist = cpd[lhs];
+					IProbabilityDistribution<Ngram<Segment>> oldProbDist;
 					if (!pair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out oldProbDist) || probDist.Samples.Count != oldProbDist.Samples.Count)
 					{
 						converged = false;
 						break;
 					}
 
-					foreach (Ngram correspondence in probDist.Samples)
+					foreach (Ngram<Segment> correspondence in probDist.Samples)
 					{
 						if (Math.Abs(probDist[correspondence] - oldProbDist[correspondence]) > 0.0001)
 						{

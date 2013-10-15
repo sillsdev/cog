@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Applications.Services
 {
@@ -37,7 +38,7 @@ namespace SIL.Cog.Applications.Services
 			IWordAligner aligner = project.WordAligners["primary"];
 			SoundClass leftEnv = LeftEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == LeftEnvironment);
 			SoundClass rightEnv = RightEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == RightEnvironment);
-			return new SoundContext(leftEnv, new Ngram(_target.Select(segmentPool.GetExisting)), rightEnv);
+			return new SoundContext(leftEnv, new Ngram<Segment>(_target.Select(segmentPool.GetExisting)), rightEnv);
 		}
 	}
 }

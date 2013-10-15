@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using SIL.Machine;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain
 {
@@ -67,7 +68,7 @@ namespace SIL.Cog.Domain
 			get { return _ignoreModifiers; }
 		}
 
-		public override bool Matches(ShapeNode leftNode, Ngram target, ShapeNode rightNode)
+		public override bool Matches(ShapeNode leftNode, Ngram<Segment> target, ShapeNode rightNode)
 		{
 			string strRep = target.ToString();
 			if (_ignoreModifiers)

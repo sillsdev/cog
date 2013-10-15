@@ -5,6 +5,7 @@ using System.Threading;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -173,7 +174,7 @@ namespace SIL.Cog.Domain.Components
 		private int GetSonority(ShapeNode node)
 		{
 			ShapeNode prevNode = node.Prev;
-			Ngram target = _segmentPool.Get(node);
+			Ngram<Segment> target = _segmentPool.Get(node);
 			ShapeNode nextNode = node.Next;
 
 			foreach (SonorityClass level in _sonorityScale)

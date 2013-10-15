@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -65,7 +66,7 @@ namespace SIL.Cog.Applications.ViewModels
 					else
 					{
 						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(_segmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, aligner.ContextualSoundClasses);
-						Ngram corr = wordPair.DomainAlignment[1, node.Column].ToNgram(_segmentPool);
+						Ngram<Segment> corr = wordPair.DomainAlignment[1, node.Column].ToNgram(_segmentPool);
 						node.IsSelected = lhs.Equals(_selectedSoundChange.DomainSoundChangeLhs) && corr.Equals(_selectedSoundChange.DomainCorrespondence);
 						if (node.IsSelected)
 							selected = true;

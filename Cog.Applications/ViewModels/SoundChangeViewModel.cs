@@ -1,17 +1,18 @@
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class SoundChangeViewModel : ViewModelBase
 	{
 		private readonly SoundContext _domainLhs;
-		private readonly Ngram _correspondence;
+		private readonly Ngram<Segment> _correspondence;
 		private readonly SoundChangeLhsViewModel _lhs;
 		private readonly double _prob;
 		private readonly int _frequency;
 
-		public SoundChangeViewModel(SoundContext lhs, Ngram correspondence, double probability, int frequency)
+		public SoundChangeViewModel(SoundContext lhs, Ngram<Segment> correspondence, double probability, int frequency)
 		{
 			_domainLhs = lhs;
 			_correspondence = correspondence;
@@ -45,7 +46,7 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _domainLhs; }
 		}
 
-		internal Ngram DomainCorrespondence
+		internal Ngram<Segment> DomainCorrespondence
 		{
 			get { return _correspondence; }
 		}

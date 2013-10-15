@@ -1,5 +1,5 @@
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Statistics;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.ViewModels
 {

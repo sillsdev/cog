@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.Services
 {
@@ -34,7 +35,7 @@ namespace SIL.Cog.Applications.Services
 			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
 			foreach (SoundContext lhs in vp.SoundChangeFrequencyDistribution.Conditions)
 			{
-				FrequencyDistribution<Ngram> freqDist = vp.SoundChangeFrequencyDistribution[lhs];
+				FrequencyDistribution<Ngram<Segment>> freqDist = vp.SoundChangeFrequencyDistribution[lhs];
 				_soundChanges[new SoundContextSurrogate(lhs)] = freqDist.ObservedSamples.Select(ngram => Tuple.Create(ngram.Select(seg => seg.StrRep).ToArray(), freqDist[ngram])).ToArray();
 			}
 			_soundCorrespondenceCollections = new Dictionary<SyllablePosition, List<SoundCorrespondenceSurrogate>>();
@@ -81,14 +82,14 @@ namespace SIL.Cog.Applications.Services
 				};
 			var wordPairs = new Dictionary<WordPairSurrogate, WordPair>();
 			vp.WordPairs.AddRange(_wordPairs.Select(surrogate => wordPairs.GetValue(surrogate, () => surrogate.ToWordPair(project, vp))));
-			var soundChanges = new ConditionalFrequencyDistribution<SoundContext, Ngram>();
+			var soundChanges = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			foreach (KeyValuePair<SoundContextSurrogate, Tuple<string[], int>[]> fd in _soundChanges)
 			{
 				SoundContext ctxt = fd.Key.ToSoundContext(project, segmentPool);
-				FrequencyDistribution<Ngram> freqDist = soundChanges[ctxt];
+				FrequencyDistribution<Ngram<Segment>> freqDist = soundChanges[ctxt];
 				foreach (Tuple<string[], int> sample in fd.Value)
 				{
-					Ngram corr = sample.Item1 == null ? new Ngram() : new Ngram(sample.Item1.Select(segmentPool.GetExisting));
+					Ngram<Segment> corr = sample.Item1 == null ? new Ngram<Segment>() : new Ngram<Segment>(sample.Item1.Select(segmentPool.GetExisting));
 					freqDist.Increment(corr, sample.Item2);
 				}
 			}
@@ -96,8 +97,8 @@ namespace SIL.Cog.Applications.Services
 			IWordAligner aligner = project.WordAligners["primary"];
 			int segmentCount = vp.Variety2.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
-			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram>(soundChanges,
-				freqDist => new WittenBellProbabilityDistribution<Ngram>(freqDist, possCorrCount));
+			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(soundChanges,
+				freqDist => new WittenBellProbabilityDistribution<Ngram<Segment>>(freqDist, possCorrCount));
 
 			foreach (KeyValuePair<SyllablePosition, List<SoundCorrespondenceSurrogate>> kvp in _soundCorrespondenceCollections)
 			{

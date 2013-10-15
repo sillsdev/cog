@@ -7,6 +7,7 @@ using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
+using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.Applications.ViewModels
 {

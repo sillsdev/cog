@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Cog.Domain.NgramModeling;
-using SIL.Cog.Domain.Statistics;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -52,7 +52,7 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		private Affix CreateAffix(Ngram ngram, string category, double score)
+		private Affix CreateAffix(Ngram<Segment> ngram, string category, double score)
 		{
 			var shape = new Shape(_spanFactory,
 				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
@@ -85,11 +85,10 @@ namespace SIL.Cog.Domain.Components
 					break;
 			}
 
-			NgramModel[] ngramModels = NgramModel.TrainAll(_segmentPool, _maxAffixLength + 2, variety, dir).ToArray();
-			var affixFreqDist = new ConditionalFrequencyDistribution<Tuple<int, string>, Ngram>();
-			var ngramFreqDist = new ConditionalFrequencyDistribution<Tuple<int, string>, Ngram>();
+			var affixFreqDist = new ConditionalFrequencyDistribution<Tuple<int, string>, Ngram<Segment>>();
+			var ngramFreqDist = new ConditionalFrequencyDistribution<Tuple<int, string>, Ngram<Segment>>();
 
-			var candidates = new HashSet<Ngram>();
+			var candidates = new HashSet<Ngram<Segment>>();
 			var categories = new HashSet<string>();
 			foreach (Word word in variety.Words)
 			{
@@ -99,7 +98,7 @@ namespace SIL.Cog.Domain.Components
 				if (!string.IsNullOrEmpty(word.Sense.Category))
 					categories.Add(word.Sense.Category);
 
-				var affix = new Ngram(Segment.Anchor);
+				var affix = new Ngram<Segment>(Segment.Anchor);
 				foreach (ShapeNode node in word.Shape.GetNodes(word.Shape.GetFirst(dir, Filter), word.Shape.GetLast(dir, Filter).GetPrev(dir, Filter), dir).Where(Filter).Take(_maxAffixLength))
 				{
 					if (node == word.Shape.GetLast(dir, Filter))
@@ -117,7 +116,7 @@ namespace SIL.Cog.Domain.Components
 				}
 
 				IEnumerable<Segment> segs = word.Shape.Where(Filter).Select(n => _segmentPool.Get(n));
-				var wordNgram = new Ngram(dir == Direction.LeftToRight ? Dash.ToEnumerable().Concat(segs) : segs.Concat(Dash));
+				var wordNgram = new Ngram<Segment>(dir == Direction.LeftToRight ? Dash.ToEnumerable().Concat(segs) : segs.Concat(Dash));
 				if (wordNgram.Count <= _maxAffixLength + 1)
 				{
 					ngramFreqDist[Tuple.Create(wordNgram.Count, (string) null)].Increment(wordNgram);
@@ -127,7 +126,7 @@ namespace SIL.Cog.Domain.Components
 
 				foreach (ShapeNode node1 in word.Shape.GetFirst(dir, Filter).GetNext(dir, Filter).GetNodes(dir).Where(Filter))
 				{
-					var nonaffix = new Ngram(Dash);
+					var nonaffix = new Ngram<Segment>(Dash);
 					foreach (ShapeNode node2 in node1.GetNodes(dir).Where(Filter).Take(_maxAffixLength))
 					{
 						nonaffix = nonaffix.Concat(_segmentPool.Get(node2), dir);
@@ -138,11 +137,16 @@ namespace SIL.Cog.Domain.Components
 				}
 			}
 
-			var affixProbDist = new ConditionalProbabilityDistribution<Tuple<int, string>, Ngram>(affixFreqDist, fd => new SimpleGoodTuringProbabilityDistribution<Ngram>(fd, fd.ObservedSamples.Count + 1));
-			var nonaffixProbDist = new ConditionalProbabilityDistribution<Tuple<int, string>, Ngram>(ngramFreqDist, fd => new MaxLikelihoodProbabilityDistribution<Ngram>(fd));
+			var ngramModels = new Dictionary<string, NgramModel<Word, Segment>[]>();
+			foreach (string cat in categories)
+				ngramModels[cat] = NgramModel<Word, Segment>.TrainAll(_maxAffixLength + 2, variety.Words.Where(w => w.Sense.Category == cat), GetSegments, dir).ToArray();
+			ngramModels[string.Empty] = NgramModel<Word, Segment>.TrainAll(_maxAffixLength + 2, variety.Words, GetSegments, dir).ToArray();
+
+			var affixProbDist = new ConditionalProbabilityDistribution<Tuple<int, string>, Ngram<Segment>>(affixFreqDist, fd => new SimpleGoodTuringProbabilityDistribution<Ngram<Segment>>(fd, fd.ObservedSamples.Count + 1));
+			var nonaffixProbDist = new ConditionalProbabilityDistribution<Tuple<int, string>, Ngram<Segment>>(ngramFreqDist, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 
 			var affixes = new List<Affix>();
-			foreach (Ngram candidate in candidates)
+			foreach (Ngram<Segment> candidate in candidates)
 			{
 				string category = null;
 				if (categories.Count > 0)
@@ -151,12 +155,15 @@ namespace SIL.Cog.Domain.Components
 					if (((double) affixFreqDist[Tuple.Create(candidate.Count, candidateCategory)][candidate] / affixFreqDist[Tuple.Create(candidate.Count, (string) null)][candidate]) >= 0.75)
 						category = candidateCategory;
 				}
-				NgramModel higherOrderModel = ngramModels[candidate.Count];
-				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => higherOrderModel.GetProbability(seg, candidate, category)),
-					variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => ngramModels[0].GetProbability(seg, new Ngram(), category)));
+
+				NgramModel<Word, Segment>[] models = ngramModels[category ?? string.Empty];
+				NgramModel<Word, Segment> lowestOrderModel = models[0];
+				NgramModel<Word, Segment> highestOrderModel = models[candidate.Count];
+				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => highestOrderModel.GetProbability(seg, candidate)),
+					variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => lowestOrderModel.GetProbability(seg, new Ngram<Segment>())));
 
 				double affixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)][candidate];
-				Ngram nonaffix = dir == Direction.LeftToRight ? new Ngram(Dash.ToEnumerable().Concat(candidate.SkipFirst())) : candidate.TakeAllExceptLast().Concat(Dash);
+				Ngram<Segment> nonaffix = dir == Direction.LeftToRight ? new Ngram<Segment>(Dash.ToEnumerable().Concat(candidate.SkipFirst())) : candidate.TakeAllExceptLast().Concat(Dash);
 				double nonaffixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)][nonaffix];
 				double diff = affixProb - nonaffixProb;
 				diff = Math.Min(diff, 0.75);
@@ -187,6 +194,11 @@ namespace SIL.Cog.Domain.Components
 					variety.Affixes.Add(affix);
 				}
 			}
+		}
+
+		private IEnumerable<Segment> GetSegments(Word word)
+		{
+			return word.Shape.GetNodes(word.Span).Where(n => n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)).Select(n => _segmentPool.Get(n));
 		}
 
 		private static double CosineSimilarity(IEnumerable<double> observed, IEnumerable<double> expected)

@@ -127,6 +127,11 @@
 			<Component Id="protobuf_net.dll" Win64="$(var.Win64)">
 				<File Id="protobuf_net.dll" Name="protobuf-net.dll" Source="$(var.Cog.Presentation.TargetDir)\protobuf-net.dll" KeyPath="yes" />
 			</Component>
+
+			<!-- NBug -->
+			<Component Id="NBug.dll" Win64="$(var.Win64)">
+				<File Id="NBug.dll" Name="NBug.dll" Source="$(var.Cog.Presentation.TargetDir)\NBug.dll" KeyPath="yes" />
+			</Component>
 		</ComponentGroup>
 		<Component Id="ProgramMenuShortcut" Directory="AppProgramMenuFolder" Guid="F34CBDA4-7885-49C8-8256-71148666888E" Win64="$(var.Win64)">
 			<Condition>PROGRAMMENUSHORTCUT = "1"</Condition>

@@ -17,6 +17,12 @@ namespace SIL.Cog.Presentation
 			DispatcherHelper.Initialize();
 		}
 
+		public App()
+		{
+			AppDomain.CurrentDomain.UnhandledException += NBug.Handler.UnhandledException;
+			Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
+		}
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			EventManager.RegisterClassHandler(typeof(TextBox), UIElement.GotFocusEvent, new RoutedEventHandler(TextBox_GotFocus));

@@ -5,11 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d" DataContextChanged="OnDataContextChanged" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordsViewModel}">
 	<UserControl.Resources>
-		<cnvtrs:ItemsControlScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
+		<cnvtrs:ListBoxScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
 	</UserControl.Resources>
 	<Border BorderThickness="1" BorderBrush="{StaticResource ListBorderBrush}">
 		<Grid>
@@ -17,60 +17,58 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="18" />
 			</Grid.ColumnDefinitions>
-			<ScrollViewer Grid.Column="0" Name="ScrollViewer" CanContentScroll="False">
-				<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordsListBox" ItemsSource="{Binding WordsView}" AlternationCount="2" SelectionChanged="WordsListBox_OnSelectionChanged">
-					<ListBox.CommandBindings>
-						<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
-						<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
-					</ListBox.CommandBindings>
-					<ListBox.ItemContainerStyle>
-						<Style TargetType="ListBoxItem">
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="ListBoxItem">
-										<Grid>
-											<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
-											<Border Margin="5" Padding="3" Background="Transparent">
-												<Border.ContextMenu>
-													<ContextMenu>
-														<MenuItem Command="Copy" />
-														<MenuItem Command="SelectAll" />
-														<Separator />
-														<MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
-													</ContextMenu>
-												</Border.ContextMenu>
-												<ContentPresenter />
-											</Border>
-										</Grid>
-										<ControlTemplate.Triggers>
-											<Trigger Property="ItemsControl.AlternationIndex" Value="1">
-												<Setter TargetName="IconBorder" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
-											</Trigger>
-											<Trigger Property="IsSelected" Value="True">
-												<Setter TargetName="IconBorder" Property="Effect">
-													<Setter.Value>
-														<DropShadowEffect ShadowDepth="0" Color="#FFF9D460" BlurRadius="10" />
-													</Setter.Value>
-												</Setter>
-											</Trigger>
-										</ControlTemplate.Triggers>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-					</ListBox.ItemContainerStyle>
-					<ListBox.Template>
-						<ControlTemplate>
-							<ItemsPresenter />
-						</ControlTemplate>
-					</ListBox.Template>
-					<ListBox.ItemTemplate>
-						<DataTemplate DataType="{x:Type vm:WordViewModel}">
-							<v:WordView HorizontalAlignment="Stretch" />
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</ScrollViewer>
+			<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordsListBox" ItemsSource="{Binding WordsView}" AlternationCount="2" SelectionChanged="WordsListBox_OnSelectionChanged">
+				<ListBox.CommandBindings>
+					<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
+					<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
+				</ListBox.CommandBindings>
+				<ListBox.ItemContainerStyle>
+					<Style TargetType="ListBoxItem">
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="ListBoxItem">
+									<Grid>
+										<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
+										<Border Margin="5" Padding="3" Background="Transparent">
+											<Border.ContextMenu>
+												<ContextMenu>
+													<MenuItem Command="Copy" />
+													<MenuItem Command="SelectAll" />
+													<Separator />
+													<MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
+												</ContextMenu>
+											</Border.ContextMenu>
+											<ContentPresenter />
+										</Border>
+									</Grid>
+									<ControlTemplate.Triggers>
+										<Trigger Property="ItemsControl.AlternationIndex" Value="1">
+											<Setter TargetName="IconBorder" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
+										</Trigger>
+										<Trigger Property="IsSelected" Value="True">
+											<Setter TargetName="IconBorder" Property="Effect">
+												<Setter.Value>
+													<DropShadowEffect ShadowDepth="0" Color="#FFF9D460" BlurRadius="10" />
+												</Setter.Value>
+											</Setter>
+										</Trigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</ListBox.ItemContainerStyle>
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="{x:Type vm:WordViewModel}">
+						<v:WordView HorizontalAlignment="Stretch" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<VirtualizingStackPanel b:VirtualizingStackPanelBehaviors.IsEnabled="True" />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+			</ListBox>
 			<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedSegmentWords}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
@@ -84,7 +82,7 @@
 								<MultiBinding Converter="{StaticResource MarkerPosConverter}">
 									<Binding Path="." />
 									<Binding ElementName="WordsListBox" />
-									<Binding ElementName="ScrollViewer" />
+									<!--Binding ElementName="ScrollViewer" /-->
 								</MultiBinding>
 							</Setter.Value>
 						</Setter>

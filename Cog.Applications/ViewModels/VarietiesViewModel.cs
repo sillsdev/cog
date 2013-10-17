@@ -165,7 +165,7 @@ namespace SIL.Cog.Applications.ViewModels
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
 				if (index == _varieties.Count)
 					index--;
-				SelectedVariety = _varieties.Count > 0 ? _varieties[index] : null;
+				SelectedVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
 			}
 		}
 

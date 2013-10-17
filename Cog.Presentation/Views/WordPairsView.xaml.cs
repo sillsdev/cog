@@ -66,14 +66,7 @@ namespace SIL.Cog.Presentation.Views
 		private void MarkerClicked(object sender, MouseButtonEventArgs e)
 		{
 			var rect = (Rectangle) sender;
-			ScrollToWordPair((WordPairViewModel) rect.DataContext, ScrollViewer, WordPairsListBox);
-		}
-
-		private void ScrollToWordPair(WordPairViewModel wordPair, ScrollViewer sv, ItemsControl ic)
-		{
-			var cp = (FrameworkElement) ic.ItemContainerGenerator.ContainerFromItem(wordPair);
-			var point = cp.TransformToAncestor(ic).Transform(new Point());
-			sv.ScrollToVerticalOffset((point.Y + (cp.ActualHeight / 2)) - (sv.ActualHeight / 2));
+			WordPairsListBox.ScrollToCenterOfView(rect.DataContext);
 		}
 
 		private void Copy_OnExecuted(object sender, ExecutedRoutedEventArgs e)

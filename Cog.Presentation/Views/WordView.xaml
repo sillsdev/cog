@@ -13,6 +13,7 @@
         <DataTemplate x:Key="BlankTemplate" />
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="InverseBoolConverter" />
+		<Cursor x:Key="OpenHandCursor">../Images/openhand.cur</Cursor>
     </UserControl.Resources>
 	<StackPanel>
 		<TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
@@ -89,7 +90,7 @@
 								<Setter Property="Foreground" Value="Gray" />
 							</DataTrigger>
 							<DataTrigger Binding="{Binding IsBoundary}" Value="True">
-								<Setter Property="Cursor" Value="../Images/openhand.cur" />
+								<Setter Property="Cursor" Value="{StaticResource OpenHandCursor}" />
 							</DataTrigger>
 						</Style.Triggers>
 					</Style>

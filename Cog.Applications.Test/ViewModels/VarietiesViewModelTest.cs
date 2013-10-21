@@ -215,8 +215,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			var removeVariety = (TaskAreaCommandViewModel) commonTasks.Items[2];
 			dialogService.ShowYesNoQuestion(varieties, Arg.Any<string>(), Arg.Any<string>()).Returns(true);
 			removeVariety.Command.Execute(null);
-			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety2"));
+			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety1"));
 			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2"}));
+
+			varieties.SelectedVariety = varieties.Varieties.First(v => v.Name == "variety2");
 
 			WordsViewModel wordsViewModel = varieties.SelectedVariety.Words;
 			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);

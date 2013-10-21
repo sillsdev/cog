@@ -156,7 +156,7 @@ namespace SIL.Cog.Applications.ViewModels
 				_segments.Clear();
 				foreach (Segment segment in _projectService.Project.Varieties
 					.SelectMany(v => v.SegmentFrequencyDistributions[DomainSyllablePosition].ObservedSamples)
-					.Distinct().Where(s => !s.IsComplex).OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s, comparer))
+					.Distinct().OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s, comparer))
 				{
 					_domainSegments.Add(segment);
 					_segments.Add(new SegmentViewModel(segment));
@@ -169,8 +169,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private string GetCategory(Segment segment)
 		{
-			return segment.Type == CogFeatureSystem.VowelType ? HeightCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("manner")).ID]
-				: PlaceCategoryLookup[((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("place")).ID];
+			FeatureStruct fs = segment.FeatureStruct;
+			if (segment.IsComplex)
+				fs = segment.FeatureStruct.GetValue(CogFeatureSystem.First);
+
+			return segment.Type == CogFeatureSystem.VowelType ? HeightCategoryLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("manner")).ID]
+				: PlaceCategoryLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("place")).ID];
 		}
 
 		public bool HasSegments
@@ -379,9 +383,17 @@ namespace SIL.Cog.Applications.ViewModels
 			public int Compare(Segment x, Segment y)
 			{
 				Tuple<string, Dictionary<string, int>>[] features = x.Type == CogFeatureSystem.ConsonantType ? ConsonantFeatureSortOrder : VowelFeatureSortOrder;
+
+				FeatureStruct fsx = x.FeatureStruct;
+				if (x.IsComplex)
+					fsx = x.FeatureStruct.GetValue(CogFeatureSystem.First);
+				FeatureStruct fsy = y.FeatureStruct;
+				if (y.IsComplex)
+					fsy = y.FeatureStruct.GetValue(CogFeatureSystem.First);
+
 				foreach (Tuple<string, Dictionary<string, int>> feature in features)
 				{
-					int res = Compare(feature.Item1, feature.Item2, x, y);
+					int res = Compare(feature.Item1, feature.Item2, fsx, fsy);
 					if (res != 0)
 						return res;
 				}
@@ -389,10 +401,10 @@ namespace SIL.Cog.Applications.ViewModels
 				return string.Compare(x.StrRep, y.StrRep, StringComparison.Ordinal);
 			}
 
-			private int Compare(string feature, Dictionary<string, int> sortOrderLookup, Segment x, Segment y)
+			private int Compare(string feature, Dictionary<string, int> sortOrderLookup, FeatureStruct fsx, FeatureStruct fsy)
 			{
-				int valx = sortOrderLookup[((FeatureSymbol) x.FeatureStruct.GetValue<SymbolicFeatureValue>(feature)).ID];
-				int valy = sortOrderLookup[((FeatureSymbol) y.FeatureStruct.GetValue<SymbolicFeatureValue>(feature)).ID];
+				int valx = sortOrderLookup[((FeatureSymbol) fsx.GetValue<SymbolicFeatureValue>(feature)).ID];
+				int valy = sortOrderLookup[((FeatureSymbol) fsy.GetValue<SymbolicFeatureValue>(feature)).ID];
 				return valx.CompareTo(valy);
 			}
 		}

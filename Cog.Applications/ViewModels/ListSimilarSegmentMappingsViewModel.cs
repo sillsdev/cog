@@ -7,74 +7,66 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ListSimilarSegmentMappingsViewModel : ComponentSettingsViewModelBase
 	{
+		public delegate ListSimilarSegmentMappingsViewModel Factory(SoundType soundType);
+
 		private readonly IProjectService _projectService;
-		private readonly SegmentMappingsViewModel _consMappings;
-		private readonly SegmentMappingsViewModel _vowelMappings;
-		private bool _generateDiphthongs;
+		private readonly SegmentMappingsViewModel _mappings;
+		private readonly SoundType _soundType;
+		private bool _generateDigraphs;
 		
-		public ListSimilarSegmentMappingsViewModel(IProjectService projectService, SegmentMappingsViewModel consMappings, SegmentMappingsViewModel vowelMappings)
+		public ListSimilarSegmentMappingsViewModel(IProjectService projectService, SegmentMappingsViewModel mappings, SoundType soundType)
 			: base("List")
 		{
 			_projectService = projectService;
-			_consMappings = consMappings;
-			_consMappings.PropertyChanged += ChildPropertyChanged;
-			_vowelMappings = vowelMappings;
-			_vowelMappings.PropertyChanged += ChildPropertyChanged;
+			_mappings = mappings;
+			_mappings.PropertyChanged += ChildPropertyChanged;
+			_soundType = soundType;
 		}
 
 		public override void AcceptChanges()
 		{
 			base.AcceptChanges();
-			_consMappings.AcceptChanges();
-			_vowelMappings.AcceptChanges();
+			_mappings.AcceptChanges();
 		}
 
-		public SegmentMappingsViewModel ConsonantMappings
+		public SegmentMappingsViewModel Mappings
 		{
-			get { return _consMappings; }
+			get { return _mappings; }
 		}
 
-		public SegmentMappingsViewModel VowelMappings
+		public bool GenerateDigraphs
 		{
-			get { return _vowelMappings; }
+			get { return _generateDigraphs; }
+			set { SetChanged(() => GenerateDigraphs, ref _generateDigraphs, value); }
 		}
 
-		public bool GenerateDiphthongs
+		public SoundType SoundType
 		{
-			get { return _generateDiphthongs; }
-			set { SetChanged(() => GenerateDiphthongs, ref _generateDiphthongs, value); }
+			get { return _soundType; }
 		}
 
-		public TypeSegmentMappings SegmentMappings { get; set; }
+		public ListSegmentMappings SegmentMappings { get; set; }
 
 		public override void Setup()
 		{
-			_consMappings.SelectedMapping = null;
-			_consMappings.Mappings.Clear();
-			_vowelMappings.SelectedMapping = null;
-			_vowelMappings.Mappings.Clear();
+			_mappings.SelectedMapping = null;
+			_mappings.Mappings.Clear();
 
-			if (SegmentMappings == null || !(SegmentMappings.VowelMappings is ListSegmentMappings))
+			if (SegmentMappings == null)
 			{
-				Set(() => GenerateDiphthongs, ref _generateDiphthongs, true);
+				Set(() => GenerateDigraphs, ref _generateDigraphs, _soundType == SoundType.Vowel);
 			}
 			else
 			{
-				var consMappings = (ListSegmentMappings) SegmentMappings.ConsonantMappings;
-				foreach (Tuple<string, string> mapping in consMappings.Mappings)
-					_consMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
-				var vowelMappings = (ListSegmentMappings) SegmentMappings.VowelMappings;
-				foreach (Tuple<string, string> mapping in vowelMappings.Mappings)
-					_vowelMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
-				Set(() => GenerateDiphthongs, ref _generateDiphthongs, vowelMappings.GenerateDigraphs);
+				foreach (Tuple<string, string> mapping in SegmentMappings.Mappings)
+					_mappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+				Set(() => GenerateDigraphs, ref _generateDigraphs, SegmentMappings.GenerateDigraphs);
 			}
 		}
 
 		public override object UpdateComponent()
 		{
-			return new TypeSegmentMappings(
-				new ListSegmentMappings(_projectService.Project.Segmenter, _vowelMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), _generateDiphthongs),
-				new ListSegmentMappings(_projectService.Project.Segmenter, _consMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false));
+			return new ListSegmentMappings(_projectService.Project.Segmenter, _mappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), _generateDigraphs);
 		}
 	}
 }

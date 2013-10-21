@@ -27,34 +27,17 @@
             <RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <CheckBox Grid.ColumnSpan="2" Grid.Row="0" IsChecked="{Binding IgnoreRegularInsertionDeletion}">Ignore regular insertions/deletions</CheckBox>
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding RegularConsonantsEqual}">Regular consonants are category 1</CheckBox>
 		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,5,0" Padding="0">Ignored correspondences</Label>
 		<v:SegmentMappingsView HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,0,5,5" Width="280" DataContext="{Binding IgnoredMappings}" />
-        <GroupBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarSegments}" Header="{Binding DisplayName}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=TypeComboBox}" Margin="0,3,5,5" Padding="0,0,0,5" Content="{Binding OptionDisplayName}" ContentStringFormat="{}{0}:" />
-				<ComboBox Grid.Column="1" Grid.Row="0" Name="TypeComboBox" Width="150" HorizontalAlignment="Left" ItemsSource="{Binding Options}" Margin="0,0,0,5" SelectedItem="{Binding SelectedOption}" DisplayMemberPath="DisplayName" />
-                <ContentPresenter Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding SelectedOption}">
-                    <ContentPresenter.Resources>
-                        <DataTemplate DataType="{x:Type vm:ListSimilarSegmentMappingsViewModel}">
-                            <v:ListSimilarSegmentIdentifierView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type vm:ThresholdSimilarSegmentMappingsViewModel}">
-                            <v:ThresholdSimilarSegmentIdentifierView />
-                        </DataTemplate>
-                    </ContentPresenter.Resources>
-                </ContentPresenter>
-            </Grid>
+        <GroupBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarVowels}" Header="{Binding DisplayName}">
+			<v:SimilarSegmentMappingsOptionsView />
         </GroupBox>
-    </Grid>
+		<GroupBox Grid.Row="5" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarConsonants}" Header="{Binding DisplayName}">
+			<v:SimilarSegmentMappingsOptionsView />
+		</GroupBox>
+	</Grid>
 </UserControl>

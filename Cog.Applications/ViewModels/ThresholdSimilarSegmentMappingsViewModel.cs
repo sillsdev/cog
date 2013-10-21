@@ -5,50 +5,38 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ThresholdSimilarSegmentMappingsViewModel : ComponentSettingsViewModelBase
 	{
-		private readonly IProjectService _projectService;
-		private int _vowelThreshold;
-		private int _consThreshold;
+		public delegate ThresholdSimilarSegmentMappingsViewModel Factory(SoundType soundType);
 
-		public ThresholdSimilarSegmentMappingsViewModel(IProjectService projectService)
+		private readonly IProjectService _projectService;
+		private int _threshold;
+		private readonly SoundType _soundType;
+
+		public ThresholdSimilarSegmentMappingsViewModel(IProjectService projectService, SoundType soundType)
 			: base("Threshold")
 		{
 			_projectService = projectService;
+			_soundType = soundType;
 		}
 
-		public int VowelThreshold
+		public int Threshold
 		{
-			get { return _vowelThreshold; }
-			set { SetChanged(() => VowelThreshold, ref _vowelThreshold, value); }
+			get { return _threshold; }
+			set { SetChanged(() => Threshold, ref _threshold, value); }
 		}
 
-		public int ConsonantThreshold
-		{
-			get { return _consThreshold; }
-			set { SetChanged(() => ConsonantThreshold, ref _consThreshold, value); }
-		}
-
-		public TypeSegmentMappings SegmentMappings { get; set; }
+		public ThresholdSegmentMappings SegmentMappings { get; set; }
 
 		public override void Setup()
 		{
-			if (SegmentMappings == null || !(SegmentMappings.VowelMappings is ThresholdSegmentMappings))
-			{
-				Set(() => VowelThreshold, ref _vowelThreshold, 500);
-				Set(() => ConsonantThreshold, ref _consThreshold, 600);
-			}
+			if (SegmentMappings == null)
+				Set(() => Threshold, ref _threshold, _soundType == SoundType.Vowel ? 500 : 600);
 			else
-			{
-				var vowelMappings = (ThresholdSegmentMappings) SegmentMappings.VowelMappings;
-				Set(() => VowelThreshold, ref _vowelThreshold, vowelMappings.Threshold);
-				var consMappings = (ThresholdSegmentMappings) SegmentMappings.ConsonantMappings;
-				Set(() => ConsonantThreshold, ref _consThreshold, consMappings.Threshold);
-			}
+				Set(() => Threshold, ref _threshold, SegmentMappings.Threshold);
 		}
 
 		public override object UpdateComponent()
 		{
-			return new TypeSegmentMappings(new ThresholdSegmentMappings(_projectService.Project, _vowelThreshold, "primary"),
-				new ThresholdSegmentMappings(_projectService.Project, _consThreshold, "primary"));
+			return new ThresholdSegmentMappings(_projectService.Project, _threshold, "primary");
 		}
 	}
 }

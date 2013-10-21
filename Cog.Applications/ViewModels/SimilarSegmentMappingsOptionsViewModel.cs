@@ -1,24 +1,27 @@
-﻿using SIL.Cog.Domain.Components;
+﻿using SIL.Cog.Domain;
+using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class SimilarSegmentMappingsOptionsViewModel : ComponentOptionsViewModel
 	{
-		private TypeSegmentMappings _segmentMappings;
+		public delegate SimilarSegmentMappingsOptionsViewModel Factory(SoundType soundType);
 
-		public SimilarSegmentMappingsOptionsViewModel(ThresholdSimilarSegmentMappingsViewModel thresholdMappings, ListSimilarSegmentMappingsViewModel listMappings)
-			: base("Similar segments", "Type", thresholdMappings, listMappings)
+		private ISegmentMappings _segmentMappings;
+
+		public SimilarSegmentMappingsOptionsViewModel(ThresholdSimilarSegmentMappingsViewModel.Factory thresholdMappingsFactory, ListSimilarSegmentMappingsViewModel.Factory listMappingsFactory, SoundType soundType)
+			: base("Similar " + (soundType == SoundType.Vowel ? "vowels" : "consonants"), "Type", thresholdMappingsFactory(soundType), listMappingsFactory(soundType))
 		{
 		}
 
-		public TypeSegmentMappings SegmentMappings
+		public ISegmentMappings SegmentMappings
 		{
 			get { return _segmentMappings; }
 			set
 			{
 				_segmentMappings = value;
-				((ThresholdSimilarSegmentMappingsViewModel) Options[0]).SegmentMappings = value;
-				((ListSimilarSegmentMappingsViewModel) Options[1]).SegmentMappings = value;
+				((ThresholdSimilarSegmentMappingsViewModel) Options[0]).SegmentMappings = _segmentMappings as ThresholdSegmentMappings;
+				((ListSimilarSegmentMappingsViewModel) Options[1]).SegmentMappings = _segmentMappings as ListSegmentMappings;
 			}
 		}
 
@@ -27,9 +30,9 @@ namespace SIL.Cog.Applications.ViewModels
 			int index = 0;
 			if (SegmentMappings != null)
 			{
-				if (SegmentMappings.VowelMappings is ThresholdSegmentMappings)
+				if (SegmentMappings is ThresholdSegmentMappings)
 					index = 0;
-				else if (SegmentMappings.VowelMappings is ListSegmentMappings)
+				else if (SegmentMappings is ListSegmentMappings)
 					index = 1;
 			}
 			SelectedOption = Options[index];

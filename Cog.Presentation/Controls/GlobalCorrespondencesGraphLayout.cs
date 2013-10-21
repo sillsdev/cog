@@ -34,7 +34,7 @@ namespace SIL.Cog.Presentation.Controls
 		private void SetConsonantLayoutParameters()
 		{
 			const int rowHeight = 35;
-			const int columnWidth = 30;
+			const int columnWidth = 40;
 			const int separatorWidth = 10;
 			LayoutParameters = new GridLayoutParameters
 				{
@@ -116,7 +116,7 @@ namespace SIL.Cog.Presentation.Controls
 		private void SetVowelLayoutParameters()
 		{
 			const int rowHeight = 35;
-			const int columnWidth = 30;
+			const int columnWidth = 40;
 			const int separatorWidth = 10;
 			LayoutParameters = new GridLayoutParameters
 				{

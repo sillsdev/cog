@@ -7,7 +7,6 @@ using QuickGraph.Algorithms;
 using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
 using SIL.Machine.Clusterers;
 using SIL.Machine.FeatureModel;
@@ -209,9 +208,15 @@ namespace SIL.Cog.Applications.Services
 				{
 					foreach (SoundCorrespondence corr in vp.SoundCorrespondenceCollections[SyllablePosition.Nucleus])
 					{
-						GlobalSegmentVertex vertex1, vertex2;
-						if (GetVowel(vertices, corr.Segment1, out vertex1) && GetVowel(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
+						int row1, column1, row2, column2;
+						GridHorizontalAlignment alignment1, alignment2;
+						if (GetVowelPosition(corr.Segment1, out row1, out column1, out alignment1) && GetVowelPosition(corr.Segment2, out row2, out column2, out alignment2)
+							&& (row1 != row2 || column1 != column2))
 						{
+							GlobalSegmentVertex vertex1 = vertices.GetValue(Tuple.Create(row1, column1), () => new GlobalSegmentVertex {Row = row1, Column = column1, HorizontalAlignment = alignment1} );
+							vertex1.StrReps.Add(corr.Segment1.StrRep);
+							GlobalSegmentVertex vertex2 = vertices.GetValue(Tuple.Create(row2, column2), () => new GlobalSegmentVertex {Row = row2, Column = column2, HorizontalAlignment = alignment2} );
+							vertex2.StrReps.Add(corr.Segment2.StrRep);
 							int freq = AddEdge(edges, corr, vertex1, vertex2);
 							maxFreq = Math.Max(freq, maxFreq);
 						}
@@ -260,9 +265,16 @@ namespace SIL.Cog.Applications.Services
 					Debug.Assert(corrs != null);
 					foreach (SoundCorrespondence corr in corrs)
 					{
-						GlobalSegmentVertex vertex1, vertex2;
-						if (GetConsonant(vertices, corr.Segment1, out vertex1) && GetConsonant(vertices, corr.Segment2, out vertex2) && vertex1 != vertex2)
+						int row1, column1, row2, column2;
+						GridHorizontalAlignment alignment1, alignment2;
+						if (GetConsonantPosition(corr.Segment1, out row1, out column1, out alignment1) && GetConsonantPosition(corr.Segment2, out row2, out column2, out alignment2)
+							&& (row1 != row2 || column1 != column2))
 						{
+							GlobalSegmentVertex vertex1 = vertices.GetValue(Tuple.Create(row1, column1), () => new GlobalSegmentVertex {Row = row1, Column = column1, HorizontalAlignment = alignment1} );
+							vertex1.StrReps.Add(corr.Segment1.StrRep);
+							GlobalSegmentVertex vertex2 = vertices.GetValue(Tuple.Create(row2, column2), () => new GlobalSegmentVertex {Row = row2, Column = column2, HorizontalAlignment = alignment2} );
+							vertex2.StrReps.Add(corr.Segment2.StrRep);
+
 							int freq = AddEdge(edges, corr, vertex1, vertex2);
 							maxFreq = Math.Max(freq, maxFreq);
 						}
@@ -291,79 +303,66 @@ namespace SIL.Cog.Applications.Services
 			return edge.Frequency;
 		}
 
-		private static bool GetConsonant(Dictionary<Tuple<int, int>, GlobalSegmentVertex> vertices, Segment consonant, out GlobalSegmentVertex vertex)
+		private static bool GetConsonantPosition(Segment consonant, out int row, out int column, out GridHorizontalAlignment alignment)
 		{
+			row = -1;
+			alignment = GridHorizontalAlignment.Right;
+			FeatureStruct fs = consonant.FeatureStruct;
 			if (consonant.IsComplex)
-			{
-				vertex = null;
-				return false;
-			}
+				fs = consonant.FeatureStruct.GetValue<FeatureStruct>(CogFeatureSystem.First);
 
-			var placeSymbol = (FeatureSymbol) consonant.FeatureStruct.GetValue<SymbolicFeatureValue>("place");
-			var mannerSymbol = (FeatureSymbol) consonant.FeatureStruct.GetValue<SymbolicFeatureValue>("manner");
-			var voiceSymbol = (FeatureSymbol) consonant.FeatureStruct.GetValue<SymbolicFeatureValue>("voice");
-			var nasalSymbol = (FeatureSymbol) consonant.FeatureStruct.GetValue<SymbolicFeatureValue>("nasal");
+			var placeSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("place");
+			var mannerSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("manner");
+			var voiceSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("voice");
+			var nasalSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("nasal");
 
-			int column;
 			if (!ConsonantPlaceLookup.TryGetValue(placeSymbol.ID, out column))
-			{
-				vertex = null;
 				return false;
-			}
 
-			int row;
 			if (nasalSymbol.ID == "nasal+")
 			{
 				row = 1;
 			}
 			else if (ConsonantMannerLookup.TryGetValue(mannerSymbol.ID, out row))
 			{
-				var lateralSymbol = (FeatureSymbol) consonant.FeatureStruct.GetValue<SymbolicFeatureValue>("lateral");
+				var lateralSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("lateral");
 				if (lateralSymbol.ID == "lateral+")
 					row += 4;
 			}
 			else
 			{
-				vertex = null;
 				return false;
 			}
 
-			var alignment = GridHorizontalAlignment.Right;
 			if (voiceSymbol.ID == "voice+")
 			{
 				column += 2;
 				alignment = GridHorizontalAlignment.Left;
 			}
 
-			vertex = vertices.GetValue(Tuple.Create(row, column), () => new GlobalSegmentVertex {Row = row, Column = column, HorizontalAlignment = alignment} );
-			vertex.StrReps.Add(consonant.StrRep);
 			return true;
 		}
 
-		private static bool GetVowel(Dictionary<Tuple<int, int>, GlobalSegmentVertex> vertices, Segment vowel, out GlobalSegmentVertex vertex)
+		private static bool GetVowelPosition(Segment vowel, out int row, out int column, out GridHorizontalAlignment alignment)
 		{
+			alignment = GridHorizontalAlignment.Right;
+			FeatureStruct fs = vowel.FeatureStruct;
 			if (vowel.IsComplex)
-			{
-				vertex = null;
-				return false;
-			}
+				fs = vowel.FeatureStruct.GetValue<FeatureStruct>(CogFeatureSystem.First);
 
-			var heightSymbol = (FeatureSymbol) vowel.FeatureStruct.GetValue<SymbolicFeatureValue>("height");
-			var backnessSymbol = (FeatureSymbol) vowel.FeatureStruct.GetValue<SymbolicFeatureValue>("backness");
-			var roundSymbol = (FeatureSymbol) vowel.FeatureStruct.GetValue<SymbolicFeatureValue>("round");
+			var heightSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("height");
+			var backnessSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("backness");
+			var roundSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("round");
 
-			int row = VowelHeightLookup[heightSymbol.ID];
-			int column = VowelBacknessLookup[backnessSymbol.ID];
+			row = VowelHeightLookup[heightSymbol.ID];
+			column = VowelBacknessLookup[backnessSymbol.ID];
 
-			var alignment = GridHorizontalAlignment.Right;
 			if (roundSymbol.ID == "round+")
 			{
 				column += 2;
 				alignment = GridHorizontalAlignment.Left;
 			}
 
-			vertex = vertices.GetValue(Tuple.Create(row, column), () => new GlobalSegmentVertex {Row = row, Column = column, HorizontalAlignment = alignment});
-			vertex.StrReps.Add(vowel.StrRep);
 			return true;
 		}
 	}

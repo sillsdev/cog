@@ -82,7 +82,6 @@
 								<MultiBinding Converter="{StaticResource MarkerPosConverter}">
 									<Binding Path="." />
 									<Binding ElementName="WordsListBox" />
-									<!--Binding ElementName="ScrollViewer" /-->
 								</MultiBinding>
 							</Setter.Value>
 						</Setter>

@@ -275,7 +275,6 @@ namespace SIL.Cog.Domain
 				{
 					string strRep;
 					FeatureStruct phonemeFS;
-					bool isComplex = false;
 					if (!TryMultipleBaseCharacterSymbol(match, _vowels, out strRep, out phonemeFS))
 					{
 						var sb = new StringBuilder();
@@ -284,17 +283,24 @@ namespace SIL.Cog.Domain
 						phonemeFS = BuildFeatStruct(match, vowelComp.Captures[0], "vowelBase", _vowels, out partStrRep);
 						sb.Append(partStrRep);
 						Group joinerGroup = match.Groups["joiner"];
+						if (joinerGroup.Success || vowelComp.Captures.Count > 1)
+						{
+							phonemeFS.AddValue(CogFeatureSystem.First, phonemeFS.DeepClone());
+							phonemeFS.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
+						}
+						else
+						{
+							phonemeFS.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Simple);
+						}
 						if (joinerGroup.Success)
 						{
 							for (int i = 0; i < joinerGroup.Captures.Count; i++)
 							{
 								string joinerStr = joinerGroup.Captures[i].Value;
-								//sb.Append(joinerStr);
 								phonemeFS.Add(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out partStrRep));
 								sb.Append(partStrRep);
 								phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
 							}
-							isComplex = true;
 						}
 						else if (vowelComp.Captures.Count > 1)
 						{
@@ -303,7 +309,6 @@ namespace SIL.Cog.Domain
 								phonemeFS.Add(BuildFeatStruct(match, vowelComp.Captures[i], "vowelBase", _vowels, out partStrRep));
 								sb.Append(partStrRep);
 							}
-							isComplex = true;
 						}
 						strRep = sb.ToString();
 					}
@@ -311,14 +316,12 @@ namespace SIL.Cog.Domain
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, strRep);
 					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.VowelType);
-					phonemeFS.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
 					shape.Add(phonemeFS);
 				}
 				else if (match.Groups["consSeg"].Success)
 				{
 					string strRep;
 					FeatureStruct phonemeFS;
-					bool isComplex = false;
 					if (!TryMultipleBaseCharacterSymbol(match, _consonants, out strRep, out phonemeFS))
 					{
 						var sb = new StringBuilder();
@@ -327,19 +330,26 @@ namespace SIL.Cog.Domain
 						phonemeFS = BuildFeatStruct(match, consComp.Captures[0], "consBase", _consonants, out compStrRep);
 						sb.Append(compStrRep);
 						Group joinerGroup = match.Groups["joiner"];
+						if (joinerGroup.Success || consComp.Captures.Count > 1)
+						{
+							phonemeFS.AddValue(CogFeatureSystem.First, phonemeFS.DeepClone());
+							phonemeFS.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
+						}
+						else
+						{
+							phonemeFS.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Simple);
+						}
 						if (joinerGroup.Success)
 						{
 							for (int i = 0; i < joinerGroup.Captures.Count; i++)
 							{
 								string joinerStr = joinerGroup.Captures[i].Value;
-								//sb.Append(joinerStr);
 								phonemeFS.Add(BuildFeatStruct(match, consComp.Captures[i + 1], "consBase", _consonants, out compStrRep));
 								sb.Append(compStrRep);
 								FeatureStruct joinerFs = _joiners[joinerStr].FeatureStruct;
 								if (joinerFs != null)
 									phonemeFS.PriorityUnion(joinerFs);
 							}
-							isComplex = true;
 						}
 						else if (consComp.Captures.Count > 1)
 						{
@@ -348,7 +358,6 @@ namespace SIL.Cog.Domain
 								phonemeFS.Add(BuildFeatStruct(match, consComp.Captures[i], "consBase", _consonants, out compStrRep));
 								sb.Append(compStrRep);
 							}
-							isComplex = true;
 						}
 						strRep = sb.ToString();
 					}
@@ -356,7 +365,6 @@ namespace SIL.Cog.Domain
 					phonemeFS.AddValue(CogFeatureSystem.StrRep, strRep);
 					phonemeFS.AddValue(CogFeatureSystem.OriginalStrRep, match.Value);
 					phonemeFS.AddValue(CogFeatureSystem.Type, CogFeatureSystem.ConsonantType);
-					phonemeFS.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
 					shape.Add(phonemeFS);
 				}
 				else if (match.Groups["tone"].Success)

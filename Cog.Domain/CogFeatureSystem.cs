@@ -27,6 +27,8 @@ namespace SIL.Cog.Domain
 		public static readonly StringFeature OriginalStrRep;
 		public static readonly StringFeature StrRep;
 
+		public static readonly ComplexFeature First;
+
 		public static readonly CogFeatureSystem Instance;
 
 		static CogFeatureSystem()
@@ -51,6 +53,8 @@ namespace SIL.Cog.Domain
 			OriginalStrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "OriginalStrRep"};
 			StrRep = new StringFeature(Guid.NewGuid().ToString()) {Description = "StrRep"};
 
+			First = new ComplexFeature(Guid.NewGuid().ToString()) {Description = "First"};
+
 			Instance = new CogFeatureSystem();
 		}
 
@@ -60,6 +64,7 @@ namespace SIL.Cog.Domain
 			Add(SegmentType);
 			Add(OriginalStrRep);
 			Add(StrRep);
+			Add(First);
 			Freeze();
 		}
 	}

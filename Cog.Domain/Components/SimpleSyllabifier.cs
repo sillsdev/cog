@@ -160,6 +160,13 @@ namespace SIL.Cog.Domain.Components
 			fs.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
 			fs.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
 			fs.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
+			if (isComplex && !fs.ContainsFeature(CogFeatureSystem.First))
+			{
+				var firstFS = new FeatureStruct();
+				foreach (Feature feature in start.Annotation.FeatureStruct.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
+					firstFS.AddValue(feature, start.Annotation.FeatureStruct.GetValue(feature));
+				fs.AddValue(CogFeatureSystem.First, firstFS);
+			}
 			return new ShapeNode(spanFactory, fs);
 		}
 	}

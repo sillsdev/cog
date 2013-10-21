@@ -22,6 +22,7 @@
 			<cnvtrs:ContentToPathConverter x:Key="Content2PathConverter"/>
 			<cnvtrs:ContentToMarginConverter x:Key="Content2MarginConverter"/>
 			<cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
+			<cnvtrs:IsTextTrimmedConverter x:Key="IsTextTrimmedConverter" />
 
 			<SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FF315599" />
 			<SolidColorBrush x:Key="TabBackgroundBrush" Color="#FF7388B0" />
@@ -333,7 +334,19 @@
 			</DataTemplate>
 
 			<DataTemplate DataType="{x:Type vm:GlobalSegmentVertex}">
-				<TextBlock FontSize="14" Text="{Binding StrRep}" LineHeight="14" LineStackingStrategy="BlockLineHeight" />
+				<TextBlock Name="ContentTextBlock" FontSize="14" Text="{Binding StrRep}" LineHeight="14" LineStackingStrategy="BlockLineHeight" MaxWidth="34" TextTrimming="WordEllipsis" />
+				<DataTemplate.Triggers>
+					<DataTrigger Value="True">
+						<DataTrigger.Binding>
+							<MultiBinding Converter="{StaticResource IsTextTrimmedConverter}">
+								<Binding ElementName="ContentTextBlock" Path="." />
+								<Binding ElementName="ContentTextBlock" Path="ActualWidth" />
+								<Binding ElementName="ContentTextBlock" Path="Text" />
+							</MultiBinding>
+						</DataTrigger.Binding>
+						<Setter TargetName="ContentTextBlock" Property="ToolTip" Value="{Binding StrRep}" />
+					</DataTrigger>
+				</DataTemplate.Triggers>
 			</DataTemplate>
 			
 			<DataTemplate DataType="{x:Type vm:HeaderGridVertex}">

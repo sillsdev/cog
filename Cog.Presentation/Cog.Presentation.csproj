@@ -170,6 +170,7 @@
     <Compile Include="Converters\EqualityConverter.cs" />
     <Compile Include="Converters\HslColor.cs" />
     <Compile Include="Converters\IndexToColorConverter.cs" />
+    <Compile Include="Converters\IsTextTrimmedConverter.cs" />
     <Compile Include="Converters\LevelToIndentConverter.cs" />
     <Compile Include="Converters\LessThanConverter.cs" />
     <Compile Include="Converters\PercentageToGradientColorConverter.cs" />

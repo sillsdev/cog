@@ -15,7 +15,8 @@ namespace SIL.Cog.Domain.Components
 		private readonly List<SonorityClass> _sonorityScale;
 		private readonly ThreadLocal<HashSet<string>> _initialOnsets; 
 
-		public SspSyllabifier(SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
+		public SspSyllabifier(bool combineSegments, SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
+			: base(combineSegments)
 		{
 			_segmentPool = segmentPool;
 			_sonorityScale = sonorityScale.ToList();
@@ -140,7 +141,7 @@ namespace SIL.Cog.Domain.Components
 					}
 					else
 					{
-						newShape.Add(onsetStart != n.Prev ? Combine(newShape.SpanFactory, onsetStart, n.Prev) : onsetStart.DeepClone());
+						Combine(CogFeatureSystem.Coda, newShape, onsetStart, n.Prev);
 						Annotation<ShapeNode> prevSyllableAnn = newShape.Annotations.Last(ann => ann.Type() == CogFeatureSystem.SyllableType);
 						prevSyllableAnn.Remove();
 						newShape.Annotations.Add(prevSyllableAnn.Span.Start, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
@@ -154,21 +155,48 @@ namespace SIL.Cog.Domain.Components
 
 		private void CombineWith(ShapeNode node, ShapeNode start, ShapeNode end)
 		{
-			var strRep = new StringBuilder();
-			var origStrRep = new StringBuilder();
-			strRep.Append(node.StrRep());
-			origStrRep.Append(node.OriginalStrRep());
-			ShapeNode n = start;
-			while (n != end.Next)
+			if (CombineSegments)
 			{
-				strRep.Append(n.StrRep());
-				origStrRep.Append(n.OriginalStrRep());
-				node.Annotation.FeatureStruct.Add(n.Annotation.FeatureStruct);
-				n = n.Next;
+				var strRep = new StringBuilder();
+				var origStrRep = new StringBuilder();
+				strRep.Append(node.StrRep());
+				origStrRep.Append(node.OriginalStrRep());
+				ShapeNode n = start;
+				while (n != end.Next)
+				{
+					strRep.Append(n.StrRep());
+					origStrRep.Append(n.OriginalStrRep());
+					node.Annotation.FeatureStruct.Add(n.Annotation.FeatureStruct);
+					n = n.Next;
+				}
+				node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
+				node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
+				node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
+
+				FeatureStruct firstFS;
+				if (start.IsComplex())
+				{
+					firstFS = start.Annotation.FeatureStruct.GetValue(CogFeatureSystem.First);
+				}
+				else
+				{
+					firstFS = new FeatureStruct();
+					foreach (Feature feature in start.Annotation.FeatureStruct.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
+						firstFS.AddValue(feature, start.Annotation.FeatureStruct.GetValue(feature));
+				}
+				node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.First, firstFS);
 			}
-			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
-			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
-			node.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
+			else
+			{
+				ShapeNode n = start;
+				while (n != end.Next)
+				{
+					var newNode = n.DeepClone();
+					node.AddAfter(newNode);
+					node = newNode;
+					n = n.Next;
+				}
+			}
 		}
 
 		private int GetSonority(ShapeNode node)

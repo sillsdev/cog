@@ -30,24 +30,24 @@ namespace SIL.Cog.Applications.Export
 				{"open-vowel", 2}
 			};
 
-		public void Export(Stream stream, CogProject project, ViewModelSyllablePosition syllablePosition)
+		public void Export(Stream stream, CogProject project, SyllablePosition syllablePosition)
 		{
-			var domainSyllablePosition = SyllablePosition.Onset;
+			FeatureSymbol domainSyllablePosition = null;
 			switch (syllablePosition)
 			{
-				case ViewModelSyllablePosition.Onset:
-					domainSyllablePosition = SyllablePosition.Onset;
+				case SyllablePosition.Onset:
+					domainSyllablePosition = CogFeatureSystem.Onset;
 					break;
-				case ViewModelSyllablePosition.Nucleus:
-					domainSyllablePosition = SyllablePosition.Nucleus;
+				case SyllablePosition.Nucleus:
+					domainSyllablePosition = CogFeatureSystem.Nucleus;
 					break;
-				case ViewModelSyllablePosition.Coda:
-					domainSyllablePosition = SyllablePosition.Coda;
+				case SyllablePosition.Coda:
+					domainSyllablePosition = CogFeatureSystem.Coda;
 					break;
 			}
 
 			Segment[] segments = project.Varieties
-				.SelectMany(v => v.SegmentFrequencyDistributions[domainSyllablePosition].ObservedSamples)
+				.SelectMany(v => v.SyllablePositionSegmentFrequencyDistributions[domainSyllablePosition].ObservedSamples)
 				.Distinct().Where(s => !s.IsComplex).OrderBy(GetSortOrder).ThenBy(s => s.StrRep).ToArray();
 
 			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
@@ -65,7 +65,7 @@ namespace SIL.Cog.Applications.Export
 					foreach (Segment seg in segments)
 					{
 						writer.Write("\t");
-						writer.Write(variety.SegmentFrequencyDistributions[domainSyllablePosition][seg]);
+						writer.Write(variety.SyllablePositionSegmentFrequencyDistributions[domainSyllablePosition][seg]);
 					}
 					writer.WriteLine();
 				}

@@ -57,7 +57,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly BindableList<SegmentCategoryViewModel> _categories;
 		private readonly ReadOnlyObservableList<SegmentCategoryViewModel> _readonlyCategories;
 		private ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel> _varieties;
-		private ViewModelSyllablePosition _syllablePosition;
+		private SyllablePosition _syllablePosition;
 		private VarietySegmentViewModel _selectedSegment;
 		private readonly BindableList<WordViewModel> _currentWords;
 		private readonly WordsViewModel _observedWords;
@@ -85,9 +85,9 @@ namespace SIL.Cog.Applications.ViewModels
 			_findCommand = new RelayCommand(Find);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Syllable position",
-				new TaskAreaCommandViewModel("Onset", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Onset)),
-				new TaskAreaCommandViewModel("Nucleus", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Nucleus)),
-				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Coda))));
+				new TaskAreaCommandViewModel("Onset", new RelayCommand(() => SyllablePosition = SyllablePosition.Onset)),
+				new TaskAreaCommandViewModel("Nucleus", new RelayCommand(() => SyllablePosition = SyllablePosition.Nucleus)),
+				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = SyllablePosition.Coda))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Find words", _findCommand),
@@ -155,7 +155,7 @@ namespace SIL.Cog.Applications.ViewModels
 				_domainSegments.Clear();
 				_segments.Clear();
 				foreach (Segment segment in _projectService.Project.Varieties
-					.SelectMany(v => v.SegmentFrequencyDistributions[DomainSyllablePosition].ObservedSamples)
+					.SelectMany(v => v.SyllablePositionSegmentFrequencyDistributions[DomainSyllablePosition].ObservedSamples)
 					.Distinct().OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s, comparer))
 				{
 					_domainSegments.Add(segment);
@@ -224,21 +224,22 @@ namespace SIL.Cog.Applications.ViewModels
 								{
 									if (seg.DomainNode.StrRep() == _selectedSegment.StrRep)
 									{
-										bool correctPosition = false;
+										FeatureSymbol pos = null;
 										switch (_syllablePosition)
 										{
-											case ViewModelSyllablePosition.Onset:
-												correctPosition = seg.DomainNode.Annotation.Parent.Children.First == seg.DomainNode.Annotation;
+											case SyllablePosition.Onset:
+												pos = CogFeatureSystem.Onset;
 												break;
-											case ViewModelSyllablePosition.Nucleus:
-												correctPosition = true;
+											case SyllablePosition.Nucleus:
+												pos = CogFeatureSystem.Nucleus;
 												break;
-											case ViewModelSyllablePosition.Coda:
-												correctPosition = seg.DomainNode.Annotation.Parent.Children.Last == seg.DomainNode.Annotation;
+											case SyllablePosition.Coda:
+												pos = CogFeatureSystem.Coda;
 												break;
 										}
 
-										if (correctPosition)
+										SymbolicFeatureValue curPos;
+										if (seg.DomainNode.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out curPos) && (FeatureSymbol) curPos == pos)
 										{
 											seg.IsSelected = true;
 											add = true;
@@ -259,7 +260,7 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _observedWords; }
 		}
 
-		public ViewModelSyllablePosition SyllablePosition
+		public SyllablePosition SyllablePosition
 		{
 			get { return _syllablePosition; }
 			set
@@ -269,20 +270,20 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		internal SyllablePosition DomainSyllablePosition
+		internal FeatureSymbol DomainSyllablePosition
 		{
 			get
 			{
 				switch (_syllablePosition)
 				{
-					case ViewModelSyllablePosition.Onset:
-						return Domain.SyllablePosition.Onset;
-					case ViewModelSyllablePosition.Nucleus:
-						return Domain.SyllablePosition.Nucleus;
-					case ViewModelSyllablePosition.Coda:
-						return Domain.SyllablePosition.Coda;
+					case SyllablePosition.Onset:
+						return CogFeatureSystem.Onset;
+					case SyllablePosition.Nucleus:
+						return CogFeatureSystem.Nucleus;
+					case SyllablePosition.Coda:
+						return CogFeatureSystem.Coda;
 				}
-				return Domain.SyllablePosition.Anywhere;
+				return null;
 			}
 		}
 

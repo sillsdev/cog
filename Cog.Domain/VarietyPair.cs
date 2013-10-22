@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SIL.Collections;
+using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
 
@@ -18,7 +19,7 @@ namespace SIL.Cog.Domain
 		private double _significance;
 		private double _precision;
 		private double _recall;
-		private readonly ReadOnlyDictionary<SyllablePosition, SoundCorrespondenceCollection> _soundCorrespondenceCollections;
+		private readonly ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> _soundCorrespondenceCollections;
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
@@ -26,11 +27,11 @@ namespace SIL.Cog.Domain
 			_variety2 = variety2;
 			_wordPairs = new WordPairCollection(this);
 
-			_soundCorrespondenceCollections = new ReadOnlyDictionary<SyllablePosition, SoundCorrespondenceCollection>(new Dictionary<SyllablePosition, SoundCorrespondenceCollection>
+			_soundCorrespondenceCollections = new ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection>(new Dictionary<FeatureSymbol, SoundCorrespondenceCollection>
 				{
-					{SyllablePosition.Onset, new SoundCorrespondenceCollection()},
-					{SyllablePosition.Nucleus, new SoundCorrespondenceCollection()},
-					{SyllablePosition.Coda, new SoundCorrespondenceCollection()}
+					{CogFeatureSystem.Onset, new SoundCorrespondenceCollection()},
+					{CogFeatureSystem.Nucleus, new SoundCorrespondenceCollection()},
+					{CogFeatureSystem.Coda, new SoundCorrespondenceCollection()}
 				});
 		}
 
@@ -89,7 +90,7 @@ namespace SIL.Cog.Domain
 			set { Set(() => Recall, ref _recall, value); }
 		}
 
-		public ReadOnlyDictionary<SyllablePosition, SoundCorrespondenceCollection> SoundCorrespondenceCollections
+		public ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> SoundCorrespondenceCollections
 		{
 			get { return _soundCorrespondenceCollections; }
 		}

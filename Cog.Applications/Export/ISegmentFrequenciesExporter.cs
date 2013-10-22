@@ -6,6 +6,6 @@ namespace SIL.Cog.Applications.Export
 {
 	public interface ISegmentFrequenciesExporter
 	{
-		void Export(Stream stream, CogProject project, ViewModelSyllablePosition syllablePosition);
+		void Export(Stream stream, CogProject project, SyllablePosition syllablePosition);
 	}
 }

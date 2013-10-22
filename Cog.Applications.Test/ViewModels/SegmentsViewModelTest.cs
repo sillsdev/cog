@@ -61,7 +61,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(segments.Categories[1].Segments, Is.EquivalentTo(new[] {segments.Segments[2]}));
 			Assert.That(segments.Categories[2].Segments, Is.EquivalentTo(new[] {segments.Segments[3]}));
 
-			segments.SyllablePosition = ViewModelSyllablePosition.Nucleus;
+			segments.SyllablePosition = SyllablePosition.Nucleus;
 			Assert.That(segments.HasSegments, Is.True);
 			Assert.That(segments.Segments.Select(s => s.StrRep), Is.EqualTo(new[] {"i", "u", "ʊ", "ɛ", "ə", "æ"}));
 			Assert.That(segments.Categories.Select(c => c.Name), Is.EqualTo(new[] {"Close", "Mid", "Open"}));

@@ -138,9 +138,18 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="SspSyllabifier">
+	<xs:complexType name="SimpleSyllabifier">
 		<xs:complexContent>
 			<xs:extension base="VarietyProcessorBase">
+				<xs:sequence>
+					<xs:element name="CombineSegments" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SspSyllabifier">
+		<xs:complexContent>
+			<xs:extension base="SimpleSyllabifier">
 				<xs:sequence>
 					<xs:element name="SonorityScale">
 						<xs:complexType>

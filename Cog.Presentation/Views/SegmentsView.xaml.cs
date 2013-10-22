@@ -105,6 +105,7 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var vm = (SegmentsViewModel) DataContext;
 
+			SegmentsDataGrid.CurrentColumn = null;
 			SegmentsDataGrid.Columns.Clear();
 			var view = new DataGridCollectionView(vm.Varieties, typeof(SegmentsVarietyViewModel), false, false);
 			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(SegmentsVarietyViewModel)));
@@ -118,7 +119,7 @@ namespace SIL.Cog.Presentation.Views
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			SegmentsDataGrid.Columns.Add(headerColumn);
 			foreach (SegmentViewModel segment in vm.Segments)
-				SegmentsDataGrid.Columns.Add(new Column {FieldName = segment.StrRep, Title = segment.StrRep, Width = 63, CellHorizontalContentAlignment = HorizontalAlignment.Center});
+				SegmentsDataGrid.Columns.Add(new Column {FieldName = segment.StrRep, Title = segment.StrRep, Width = 65, CellHorizontalContentAlignment = HorizontalAlignment.Center});
 		}
 
 		private void LoadMergedHeaders()

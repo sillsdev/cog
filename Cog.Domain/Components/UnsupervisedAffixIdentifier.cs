@@ -159,8 +159,8 @@ namespace SIL.Cog.Domain.Components
 				NgramModel<Word, Segment>[] models = ngramModels[category ?? string.Empty];
 				NgramModel<Word, Segment> lowestOrderModel = models[0];
 				NgramModel<Word, Segment> highestOrderModel = models[candidate.Count];
-				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => highestOrderModel.GetProbability(seg, candidate)),
-					variety.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Select(seg => lowestOrderModel.GetProbability(seg, new Ngram<Segment>())));
+				double curveDrop = CosineSimilarity(variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => highestOrderModel.GetProbability(seg, candidate)),
+					variety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => lowestOrderModel.GetProbability(seg, new Ngram<Segment>())));
 
 				double affixProb = nonaffixProbDist[Tuple.Create(candidate.Count, category)][candidate];
 				Ngram<Segment> nonaffix = dir == Direction.LeftToRight ? new Ngram<Segment>(Dash.ToEnumerable().Concat(candidate.SkipFirst())) : candidate.TakeAllExceptLast().Concat(Dash);

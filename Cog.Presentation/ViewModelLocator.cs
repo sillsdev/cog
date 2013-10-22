@@ -83,7 +83,7 @@ namespace SIL.Cog.Presentation
 	        builder.RegisterType<SegmentsViewModel>().SingleInstance();
 
 			// Component settings view models
-	        builder.RegisterType<SspSyllabifierViewModel>().SingleInstance();
+	        builder.RegisterType<SyllabifierViewModel>().SingleInstance();
 	        builder.RegisterType<UnsupervisedAffixIdentifierViewModel>().SingleInstance();
 	        builder.RegisterType<AlineViewModel>().SingleInstance();
 	        builder.RegisterType<EMSoundChangeInducerViewModel>().SingleInstance();

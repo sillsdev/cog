@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using SIL.Collections;
 using SIL.Machine;
@@ -8,6 +9,18 @@ namespace SIL.Cog.Domain.Components
 {
 	public class SimpleSyllabifier : IProcessor<Variety>
 	{
+		private readonly bool _combineSegments;
+
+		public SimpleSyllabifier(bool combineSegments)
+		{
+			_combineSegments = combineSegments;
+		}
+
+		public bool CombineSegments
+		{
+			get { return _combineSegments; }
+		}
+
 		public virtual void Process(Variety data)
 		{
 			foreach (Word word in data.Words)
@@ -83,7 +96,6 @@ namespace SIL.Cog.Domain.Components
 
 		protected void ProcessSyllable(ShapeNode startNode, ShapeNode endNode, Shape newShape)
 		{
-			SpanFactory<ShapeNode> spanFactory = newShape.SpanFactory;
 			ShapeNode newStartNode = null;
 			ShapeNode node = startNode;
 
@@ -103,10 +115,9 @@ namespace SIL.Cog.Domain.Components
 
 			if (onsetStart != node)
 			{
-				ShapeNode onset = onsetStart != onsetEnd ? Combine(spanFactory, onsetStart, onsetEnd) : onsetStart.DeepClone();
-				newShape.Add(onset);
+				ShapeNode start = Combine(CogFeatureSystem.Onset, newShape, onsetStart, onsetEnd);
 				if (newStartNode == null)
-					newStartNode = onset;
+					newStartNode = start;
 			}
 
 			if (node != endNode.Next)
@@ -116,10 +127,9 @@ namespace SIL.Cog.Domain.Components
 					node = node.Next;
 				ShapeNode nucleusEnd = node.Prev;
 
-				ShapeNode nucleus = nucleusStart != nucleusEnd ? Combine(spanFactory, nucleusStart, nucleusEnd) : nucleusStart.DeepClone();
-				newShape.Add(nucleus);
+				ShapeNode start = Combine(CogFeatureSystem.Nucleus, newShape, nucleusStart, nucleusEnd);
 				if (newStartNode == null)
-					newStartNode = nucleus;
+					newStartNode = start;
 			}
 
 			if (node != endNode.Next)
@@ -129,7 +139,7 @@ namespace SIL.Cog.Domain.Components
 					node = node.Next;
 				ShapeNode codaEnd = node.Prev;
 
-				newShape.Add(codaStart != codaEnd ? Combine(spanFactory, codaStart, codaEnd) : codaStart.DeepClone());
+				Combine(CogFeatureSystem.Coda, newShape, codaStart, codaEnd);
 			}
 
 			while (node != endNode.Next)
@@ -140,34 +150,69 @@ namespace SIL.Cog.Domain.Components
 			newShape.Annotations.Add(newStartNode, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
 		}
 
-		protected ShapeNode Combine(SpanFactory<ShapeNode> spanFactory, ShapeNode start, ShapeNode end)
+		protected ShapeNode Combine(FeatureSymbol syllablePosition, Shape newShape, ShapeNode start, ShapeNode end)
 		{
-			var fs = start.Annotation.FeatureStruct.DeepClone();
-			var strRep = new StringBuilder();
-			var origStrRep = new StringBuilder();
-			strRep.Append(start.StrRep());
-			origStrRep.Append(start.OriginalStrRep());
-			ShapeNode node = start.Next;
-			bool isComplex = false;
-			while (node != end.Next)
+			ShapeNode newStart = null;
+			if (start == end)
 			{
-				strRep.Append(node.StrRep());
-				origStrRep.Append(node.OriginalStrRep());
-				fs.Add(node.Annotation.FeatureStruct);
-				node = node.Next;
-				isComplex = true;
+				newStart = start.DeepClone();
+				newStart.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SyllablePosition, syllablePosition);
+				newShape.Add(newStart);
 			}
-			fs.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
-			fs.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
-			fs.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
-			if (isComplex && !fs.ContainsFeature(CogFeatureSystem.First))
+			else if (_combineSegments)
 			{
-				var firstFS = new FeatureStruct();
-				foreach (Feature feature in start.Annotation.FeatureStruct.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
-					firstFS.AddValue(feature, start.Annotation.FeatureStruct.GetValue(feature));
-				fs.AddValue(CogFeatureSystem.First, firstFS);
+				var fs = start.Annotation.FeatureStruct.DeepClone();
+				var strRep = new StringBuilder();
+				var origStrRep = new StringBuilder();
+				strRep.Append(start.StrRep());
+				origStrRep.Append(start.OriginalStrRep());
+				ShapeNode node = start.Next;
+				bool isComplex = false;
+				while (node != end.Next)
+				{
+					strRep.Append(node.StrRep());
+					origStrRep.Append(node.OriginalStrRep());
+					fs.Add(node.Annotation.FeatureStruct);
+					node = node.Next;
+					isComplex = true;
+				}
+				fs.AddValue(CogFeatureSystem.StrRep, strRep.ToString());
+				fs.AddValue(CogFeatureSystem.OriginalStrRep, origStrRep.ToString());
+				fs.AddValue(CogFeatureSystem.SegmentType, isComplex ? CogFeatureSystem.Complex : CogFeatureSystem.Simple);
+				fs.AddValue(CogFeatureSystem.SyllablePosition, syllablePosition);
+				if (isComplex)
+				{
+					FeatureStruct firstFS;
+					if (start.IsComplex())
+					{
+						firstFS = start.Annotation.FeatureStruct.GetValue(CogFeatureSystem.First);
+					}
+					else
+					{
+						firstFS = new FeatureStruct();
+						foreach (Feature feature in start.Annotation.FeatureStruct.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
+							firstFS.AddValue(feature, start.Annotation.FeatureStruct.GetValue(feature));
+					}
+					fs.AddValue(CogFeatureSystem.First, firstFS);
+				}
+				newStart = newShape.Add(fs);
 			}
-			return new ShapeNode(spanFactory, fs);
+			else
+			{
+				ShapeNode node = start;
+				while (node != end.Next)
+				{
+					var newNode = node.DeepClone();
+					newNode.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SyllablePosition, syllablePosition);
+					newShape.Add(newNode);
+					if (newStart == null)
+						newStart = newNode;
+					node = node.Next;
+				}
+			}
+
+			Debug.Assert(newStart != null);
+			return newStart;
 		}
 	}
 }

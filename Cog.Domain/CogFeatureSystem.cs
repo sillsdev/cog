@@ -29,6 +29,11 @@ namespace SIL.Cog.Domain
 
 		public static readonly ComplexFeature First;
 
+		public static readonly SymbolicFeature SyllablePosition;
+		public static readonly FeatureSymbol Onset;
+		public static readonly FeatureSymbol Nucleus;
+		public static readonly FeatureSymbol Coda;
+
 		public static readonly CogFeatureSystem Instance;
 
 		static CogFeatureSystem()
@@ -55,6 +60,12 @@ namespace SIL.Cog.Domain
 
 			First = new ComplexFeature(Guid.NewGuid().ToString()) {Description = "First"};
 
+			Onset = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "onset"};
+			Nucleus = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "nucleus"};
+			Coda = new FeatureSymbol(Guid.NewGuid().ToString()) {Description = "coda"};
+
+			SyllablePosition = new SymbolicFeature(Guid.NewGuid().ToString(), Onset, Nucleus, Coda) {Description = "SyllablePosition"};
+
 			Instance = new CogFeatureSystem();
 		}
 
@@ -65,6 +76,7 @@ namespace SIL.Cog.Domain
 			Add(OriginalStrRep);
 			Add(StrRep);
 			Add(First);
+			Add(SyllablePosition);
 			Freeze();
 		}
 	}

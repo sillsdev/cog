@@ -78,7 +78,7 @@ namespace SIL.Cog.Applications.Services
 			return false;
 		}
 
-		public bool ExportSegmentFrequencies(object ownerViewModel, ViewModelSyllablePosition syllablePosition)
+		public bool ExportSegmentFrequencies(object ownerViewModel, SyllablePosition syllablePosition)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Segment Frequencies", SegmentFrequenciesExporters.Keys);
 			if (result.IsValid)

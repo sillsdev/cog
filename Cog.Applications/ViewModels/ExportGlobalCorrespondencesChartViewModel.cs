@@ -4,10 +4,10 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ExportGlobalCorrespondencesChartViewModel : ViewModelBase
 	{
-		private ViewModelSyllablePosition _syllablePosition;
+		private SyllablePosition _syllablePosition;
 		private int _frequencyThreshold;
 
-		public ViewModelSyllablePosition SyllablePosition
+		public SyllablePosition SyllablePosition
 		{
 			get { return _syllablePosition; }
 			set { Set(() => SyllablePosition, ref _syllablePosition, value); }

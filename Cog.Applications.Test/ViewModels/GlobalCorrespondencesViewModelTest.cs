@@ -68,13 +68,13 @@ namespace SIL.Cog.Applications.Test.ViewModels
 
 			Assert.That(globalCorrespondences.Graph, Is.Not.Null);
 
-			globalCorrespondences.SyllablePosition = ViewModelSyllablePosition.Nucleus;
+			globalCorrespondences.SyllablePosition = SyllablePosition.Nucleus;
 			Assert.That(globalCorrespondences.Graph, Is.Not.Null);
 
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
 			Assert.That(globalCorrespondences.Graph, Is.Null);
 
-			globalCorrespondences.SyllablePosition = ViewModelSyllablePosition.Coda;
+			globalCorrespondences.SyllablePosition = SyllablePosition.Coda;
 			Assert.That(globalCorrespondences.Graph, Is.Null);
 		}
 
@@ -131,7 +131,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(wordPairsArray[1].Sense.Gloss, Is.EqualTo("sense2"));
 			Assert.That(wordPairsArray[1].AlignedNodes[0].IsSelected, Is.True);
 
-			globalCorrespondences.SyllablePosition = ViewModelSyllablePosition.Nucleus;
+			globalCorrespondences.SyllablePosition = SyllablePosition.Nucleus;
 			globalCorrespondences.SelectedCorrespondence = globalCorrespondences.Graph.Edges.First(e => ((GlobalSegmentVertex) e.Source).StrRep == "ʊ" && ((GlobalSegmentVertex) e.Target).StrRep == "u");
 			wordPairsArray = observedWordPairs.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			Assert.That(wordPairsArray.Length, Is.EqualTo(2));

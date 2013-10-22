@@ -79,6 +79,7 @@
     <Compile Include="Components\UnsupervisedAffixIdentifier.cs" />
     <Compile Include="Components\VarietyPairGenerator.cs" />
     <Compile Include="Components\WordPairGenerator.cs" />
+    <Compile Include="Config\Components\SimpleSyllabifierConfig.cs" />
     <Compile Include="Config\Components\SspSyllabifierConfig.cs" />
     <Compile Include="Config\Components\WordAlignerConfigBase.cs" />
     <Compile Include="Config\Components\AlineConfig.cs" />
@@ -129,7 +130,6 @@
     <Compile Include="WordCollection.cs" />
     <Compile Include="WordPair.cs" />
     <Compile Include="WordPairCollection.cs" />
-    <Compile Include="SyllablePosition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">

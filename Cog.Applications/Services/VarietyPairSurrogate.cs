@@ -4,6 +4,7 @@ using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
 using SIL.Collections;
+using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
 
@@ -14,13 +15,13 @@ namespace SIL.Cog.Applications.Services
 	{
 		private readonly List<WordPairSurrogate> _wordPairs;
 		private readonly Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> _soundChanges;
-		private readonly Dictionary<SyllablePosition, List<SoundCorrespondenceSurrogate>> _soundCorrespondenceCollections;
+		private readonly Dictionary<string, List<SoundCorrespondenceSurrogate>> _soundCorrespondenceCollections;
 
 		public VarietyPairSurrogate()
 		{
 			_wordPairs = new List<WordPairSurrogate>();
 			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
-			_soundCorrespondenceCollections = new Dictionary<SyllablePosition, List<SoundCorrespondenceSurrogate>>();
+			_soundCorrespondenceCollections = new Dictionary<string, List<SoundCorrespondenceSurrogate>>();
 		}
 
 		public VarietyPairSurrogate(VarietyPair vp)
@@ -38,9 +39,18 @@ namespace SIL.Cog.Applications.Services
 				FrequencyDistribution<Ngram<Segment>> freqDist = vp.SoundChangeFrequencyDistribution[lhs];
 				_soundChanges[new SoundContextSurrogate(lhs)] = freqDist.ObservedSamples.Select(ngram => Tuple.Create(ngram.Select(seg => seg.StrRep).ToArray(), freqDist[ngram])).ToArray();
 			}
-			_soundCorrespondenceCollections = new Dictionary<SyllablePosition, List<SoundCorrespondenceSurrogate>>();
-			foreach (KeyValuePair<SyllablePosition, SoundCorrespondenceCollection> kvp in vp.SoundCorrespondenceCollections)
-				_soundCorrespondenceCollections[kvp.Key] = kvp.Value.Select(corr => new SoundCorrespondenceSurrogate(wordPairSurrogates, corr)).ToList();
+			_soundCorrespondenceCollections = new Dictionary<string, List<SoundCorrespondenceSurrogate>>();
+			foreach (KeyValuePair<FeatureSymbol, SoundCorrespondenceCollection> kvp in vp.SoundCorrespondenceCollections)
+			{
+				string pos;
+				if (kvp.Key == CogFeatureSystem.Onset)
+					pos = "onset";
+				else if (kvp.Key == CogFeatureSystem.Nucleus)
+					pos = "nucleus";
+				else
+					pos = "coda";
+				_soundCorrespondenceCollections[pos] = kvp.Value.Select(corr => new SoundCorrespondenceSurrogate(wordPairSurrogates, corr)).ToList();
+			}
 		}
 
 		[ProtoMember(1)]
@@ -67,7 +77,7 @@ namespace SIL.Cog.Applications.Services
 		}
 
 		[ProtoMember(8)]
-		public Dictionary<SyllablePosition, List<SoundCorrespondenceSurrogate>> SoundCorrespondenceCollections
+		public Dictionary<string, List<SoundCorrespondenceSurrogate>> SoundCorrespondenceCollections
 		{
 			get { return _soundCorrespondenceCollections; }
 		}
@@ -95,15 +105,30 @@ namespace SIL.Cog.Applications.Services
 			}
 			vp.SoundChangeFrequencyDistribution = soundChanges;
 			IWordAligner aligner = project.WordAligners["primary"];
-			int segmentCount = vp.Variety2.SegmentFrequencyDistributions[SyllablePosition.Anywhere].ObservedSamples.Count;
+			int segmentCount = vp.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(soundChanges,
 				freqDist => new WittenBellProbabilityDistribution<Ngram<Segment>>(freqDist, possCorrCount));
 
-			foreach (KeyValuePair<SyllablePosition, List<SoundCorrespondenceSurrogate>> kvp in _soundCorrespondenceCollections)
+			foreach (KeyValuePair<string, List<SoundCorrespondenceSurrogate>> kvp in _soundCorrespondenceCollections)
 			{
 				if (kvp.Value != null)
-					vp.SoundCorrespondenceCollections[kvp.Key].AddRange(kvp.Value.Select(surrogate => surrogate.ToSoundCorrespondence(segmentPool, wordPairs)));
+				{
+					FeatureSymbol pos = null;
+					switch (kvp.Key)
+					{
+						case "onset":
+							pos = CogFeatureSystem.Onset;
+							break;
+						case "nucleus":
+							pos = CogFeatureSystem.Nucleus;
+							break;
+						case "coda":
+							pos = CogFeatureSystem.Coda;
+							break;
+					}
+					vp.SoundCorrespondenceCollections[pos].AddRange(kvp.Value.Select(surrogate => surrogate.ToSoundCorrespondence(segmentPool, wordPairs)));
+				}
 			}
 			return vp;
 		}

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
-using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -35,17 +34,12 @@ namespace SIL.Cog.Applications.ViewModels
 			_projectService = projectService;
 			_dialogService = dialogService;
 
-			IEnumerable<Segment> segments;
-			FrequencyDistribution<Segment> freqDist;
-			if (variety.SegmentFrequencyDistributions.TryGetValue(SyllablePosition.Anywhere, out freqDist))
-				segments = freqDist.ObservedSamples;
-			else
-				segments = Enumerable.Empty<Segment>();
+			IEnumerable<Segment> segments = variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<Segment>() : variety.SegmentFrequencyDistribution.ObservedSamples;
 
-			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(this, seg, SyllablePosition.Anywhere)));
+			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(this, seg)));
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
 			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
-			variety.SegmentFrequencyDistributions.CollectionChanged += SegmentFrequencyDistributionsChanged;
+			variety.PropertyChanged += variety_PropertyChanged;
 			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
 			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
 				{
@@ -59,21 +53,17 @@ namespace SIL.Cog.Applications.ViewModels
 			_removeAffixCommand = new RelayCommand(RemoveAffix, CanRemoveAffix);
 		}
 
-		private void SegmentFrequencyDistributionsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void variety_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Add)
+			if (e.PropertyName == "SegmentFrequencyDistribution")
 			{
-				KeyValuePair<SyllablePosition, FrequencyDistribution<Segment>> kvp = e.NewItems.Cast<KeyValuePair<SyllablePosition, FrequencyDistribution<Segment>>>().Single();
-				if (kvp.Key == SyllablePosition.Anywhere)
-				{
-					Segment curSeg = null;
-					if (SelectedSegment != null)
-						curSeg = SelectedSegment.DomainSegment;
-					_segments.ReplaceAll(kvp.Value.ObservedSamples.Select(seg => new VarietySegmentViewModel(this, seg, SyllablePosition.Anywhere)));
-					MaxSegmentProbability = _segments.Select(seg => seg.Probability).Concat(0).Max();
-					if (curSeg != null)
-						SelectedSegment = _segments.FirstOrDefault(vm => vm.DomainSegment.Equals(curSeg));
-				}
+				Segment curSeg = null;
+				if (SelectedSegment != null)
+					curSeg = SelectedSegment.DomainSegment;
+				_segments.ReplaceAll(DomainVariety.SegmentFrequencyDistribution.ObservedSamples.Select(seg => new VarietySegmentViewModel(this, seg)));
+				MaxSegmentProbability = _segments.Select(seg => seg.Probability).Concat(0).Max();
+				if (curSeg != null)
+					SelectedSegment = _segments.FirstOrDefault(vm => vm.DomainSegment.Equals(curSeg));
 			}
 		}
 

@@ -177,12 +177,12 @@ namespace SIL.Cog.Applications.Services
 			return graph;
 		}
 
-		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(ViewModelSyllablePosition syllablePosition)
+		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SyllablePosition syllablePosition)
 		{
 			return GenerateGlobalCorrespondencesGraph(syllablePosition, _projectService.Project.Varieties);
 		}
 
-		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(ViewModelSyllablePosition syllablePosition, IEnumerable<Variety> varieties)
+		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SyllablePosition syllablePosition, IEnumerable<Variety> varieties)
 		{
 			var varietiesSet = new HashSet<Variety>(varieties);
 			CogProject project = _projectService.Project;
@@ -190,7 +190,7 @@ namespace SIL.Cog.Applications.Services
 			var vertices = new Dictionary<Tuple<int, int>, GlobalSegmentVertex>();
 			var edges = new Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge>();
 			int maxFreq = 0;
-			if (syllablePosition == ViewModelSyllablePosition.Nucleus)
+			if (syllablePosition == SyllablePosition.Nucleus)
 			{
 				graph.AddVertexRange(new []
 					{
@@ -206,7 +206,7 @@ namespace SIL.Cog.Applications.Services
 
 				foreach (VarietyPair vp in project.VarietyPairs.Where(vp => varietiesSet.Contains(vp.Variety1) && varietiesSet.Contains(vp.Variety2)))
 				{
-					foreach (SoundCorrespondence corr in vp.SoundCorrespondenceCollections[SyllablePosition.Nucleus])
+					foreach (SoundCorrespondence corr in vp.SoundCorrespondenceCollections[CogFeatureSystem.Nucleus])
 					{
 						int row1, column1, row2, column2;
 						GridHorizontalAlignment alignment1, alignment2;
@@ -255,11 +255,11 @@ namespace SIL.Cog.Applications.Services
 					SoundCorrespondenceCollection corrs = null;
 					switch (syllablePosition)
 					{
-						case ViewModelSyllablePosition.Onset:
-							corrs = vp.SoundCorrespondenceCollections[SyllablePosition.Onset];
+						case SyllablePosition.Onset:
+							corrs = vp.SoundCorrespondenceCollections[CogFeatureSystem.Onset];
 							break;
-						case ViewModelSyllablePosition.Coda:
-							corrs = vp.SoundCorrespondenceCollections[SyllablePosition.Coda];
+						case SyllablePosition.Coda:
+							corrs = vp.SoundCorrespondenceCollections[CogFeatureSystem.Coda];
 							break;
 					}
 					Debug.Assert(corrs != null);

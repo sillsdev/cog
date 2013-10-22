@@ -38,7 +38,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=SyllablePositionComboBox}">Syllable position:</Label>
-		<ComboBox Name="SyllablePositionComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:ViewModelSyllablePosition}}}"
+		<ComboBox Name="SyllablePositionComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SyllablePosition}}}"
 				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding SyllablePosition}" />
 		<Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=FrequencyThresholdUpDown}">Frequency threshold:</Label>
 		<xctk:IntegerUpDown Name="FrequencyThresholdUpDown" Grid.Column="1" Grid.Row="1" Minimum="0" Increment="10" Value="{Binding FrequencyThreshold}" />

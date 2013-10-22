@@ -51,7 +51,7 @@ namespace SIL.Cog.Presentation.Views
 		private void WordPairsListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var vm = (WordPairsViewModel) DataContext;
-			if (_monitor.Busy)
+			if (vm == null || _monitor.Busy)
 				return;
 
 			using (_monitor.Enter())

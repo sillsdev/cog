@@ -160,7 +160,7 @@ namespace SIL.Cog.Presentation.Services
 			return false;
 		}
 
-		public bool ExportGlobalCorrespondencesChart(object ownerViewModel, ViewModelSyllablePosition syllablePosition, int frequencyFilter)
+		public bool ExportGlobalCorrespondencesChart(object ownerViewModel, SyllablePosition syllablePosition, int frequencyFilter)
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)

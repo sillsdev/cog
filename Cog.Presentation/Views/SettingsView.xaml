@@ -54,8 +54,8 @@
 										<DataTemplate DataType="{x:Type vm:DolgopolskyCognateIdentifierViewModel}">
 											<v:DolgopolskyCognateIdentifierView />
 										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:SspSyllabifierViewModel}">
-											<v:SspSyllabifierView />
+										<DataTemplate DataType="{x:Type vm:SyllabifierViewModel}">
+											<v:SyllabifierView />
 										</DataTemplate>
 										<DataTemplate DataType="{x:Type vm:UnsupervisedAffixIdentifierViewModel}">
 											<v:UnsupervisedAffixIdentifierView />

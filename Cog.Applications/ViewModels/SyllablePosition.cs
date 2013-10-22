@@ -2,7 +2,7 @@
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public enum ViewModelSyllablePosition
+	public enum SyllablePosition
 	{
 		[Description("Onset")]
 		Onset,

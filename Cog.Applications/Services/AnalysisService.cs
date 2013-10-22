@@ -43,14 +43,12 @@ namespace SIL.Cog.Applications.Services
 		private IEnumerable<IProcessor<Variety>> GetSegmentProcessors()
 		{
 			CogProject project = _projectService.Project;
-			var processors = new List<IProcessor<Variety>> {new VarietySegmenter(project.Segmenter)};
-			IProcessor<Variety> syllabifier;
-			if (project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
-				processors.Add(syllabifier);
-			else
-				processors.Add(new SimpleSyllabifier());
-			processors.Add(new SegmentFrequencyDistributionCalculator(_segmentPool));
-			return processors;
+			return new[]
+				{
+					new VarietySegmenter(project.Segmenter),
+					project.VarietyProcessors["syllabifier"],
+					new SegmentFrequencyDistributionCalculator(_segmentPool)
+				};
 		}
 
 		public void StemAll(object ownerViewModel, StemmingMethod method)

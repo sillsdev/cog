@@ -1,4 +1,5 @@
 using SIL.Cog.Domain;
+using SIL.Machine.FeatureModel;
 using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -9,16 +10,20 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly int _frequency;
 		private readonly double _probability;
 
-		public VarietySegmentViewModel(VarietyViewModel variety, Segment segment, SyllablePosition position)
+		public VarietySegmentViewModel(VarietyViewModel variety, Segment segment)
+			: this(variety, segment, null)
+		{
+		}
+
+		public VarietySegmentViewModel(VarietyViewModel variety, Segment segment, FeatureSymbol position)
 			: base(segment)
 		{
 			_variety = variety;
-			FrequencyDistribution<Segment> freqDist;
-			if (variety.DomainVariety.SegmentFrequencyDistributions.TryGetValue(position, out freqDist))
-			{
-				_frequency = freqDist[segment];
-				_probability = (double) _frequency / freqDist.SampleOutcomeCount;
-			}
+			FrequencyDistribution<Segment> freqDist = position == null ? variety.DomainVariety.SegmentFrequencyDistribution
+				: variety.DomainVariety.SyllablePositionSegmentFrequencyDistributions[position];
+
+			_frequency = freqDist[segment];
+			_probability = (double) _frequency / freqDist.SampleOutcomeCount;
 		}
 
 		public double Probability

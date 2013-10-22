@@ -7,15 +7,16 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class SspSyllabifierViewModel : ComponentSettingsViewModelBase
+	public class SyllabifierViewModel : ComponentSettingsViewModelBase
 	{
 		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private readonly IAnalysisService _analysisService;
-		private bool _syllabificationEnabled;
+		private bool _automaticSyllabificationEnabled;
 		private readonly SoundClassesViewModel _sonorityClasses;
+		private bool _combineSegments;
 
-		public SspSyllabifierViewModel(SegmentPool segmentPool, IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
+		public SyllabifierViewModel(SegmentPool segmentPool, IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
 			: base("Syllabification")
 		{
 			_segmentPool = segmentPool;
@@ -30,12 +31,13 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			CogProject project = _projectService.Project;
 			IEnumerable<SonorityClass> sonorityScale;
-			IProcessor<Variety> processor;
-			if (project.VarietyProcessors.TryGetValue("syllabifier", out processor))
+			var syllabifier = (SimpleSyllabifier) project.VarietyProcessors["syllabifier"];
+			var sspSyllabifier = syllabifier as SspSyllabifier;
+			bool automaticSyllabificationEnabled;
+			if (sspSyllabifier != null)
 			{
-				var syllabifier = (SspSyllabifier) processor;
-				sonorityScale = syllabifier.SonorityScale;
-				Set(() => SyllabificationEnabled, ref _syllabificationEnabled, true);
+				sonorityScale = sspSyllabifier.SonorityScale;
+				automaticSyllabificationEnabled = true;
 			}
 			else
 			{
@@ -50,12 +52,19 @@ namespace SIL.Cog.Applications.ViewModels
 						new SonorityClass(7, new NaturalClass("Flap", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.ConsonantType).Symbol("flap").Value)),
 						new SonorityClass(8, new UnnaturalClass("Glide", new[] {"j", "ɥ", "ɰ", "w"}, true, project.Segmenter)),
 						new SonorityClass(8, new NaturalClass("Non-syllabic vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("syllabic-").Value)),
-						new SonorityClass(9, new NaturalClass("Close vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("close-vowel").Symbol("syllabic+").Value)),
-						new SonorityClass(10, new NaturalClass("Mid vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("mid-vowel").Symbol("syllabic+").Value)),
-						new SonorityClass(11, new NaturalClass("Open vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("open-vowel").Symbol("syllabic+").Value))
+						new SonorityClass(9, new NaturalClass("Close vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("close").Symbol("syllabic+").Value)),
+						new SonorityClass(10, new NaturalClass("Near-close vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("near-close").Symbol("syllabic+").Value)),
+						new SonorityClass(11, new NaturalClass("Close-mid vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("close-mid").Symbol("syllabic+").Value)),
+						new SonorityClass(12, new NaturalClass("Mid vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("mid").Symbol("syllabic+").Value)),
+						new SonorityClass(13, new NaturalClass("Open-mid vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("open-mid").Symbol("syllabic+").Value)),
+						new SonorityClass(14, new NaturalClass("Near-open vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("near-open").Symbol("syllabic+").Value)),
+						new SonorityClass(15, new NaturalClass("Open vowel", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.VowelType).Symbol("open").Symbol("syllabic+").Value))
 					};
-				Set(() => SyllabificationEnabled, ref _syllabificationEnabled, false);
+				automaticSyllabificationEnabled = false;
 			}
+
+			Set(() => CombineSegments, ref _combineSegments, syllabifier.CombineSegments);
+			Set(() => AutomaticSyllabificationEnabled, ref _automaticSyllabificationEnabled, automaticSyllabificationEnabled);
 
 			_sonorityClasses.SelectedSoundClass = null;
 			_sonorityClasses.SoundClasses.Clear();
@@ -69,10 +78,16 @@ namespace SIL.Cog.Applications.ViewModels
 			_sonorityClasses.AcceptChanges();
 		}
 
-		public bool SyllabificationEnabled
+		public bool AutomaticSyllabificationEnabled
 		{
-			get { return _syllabificationEnabled; }
-			set { SetChanged(() => SyllabificationEnabled, ref _syllabificationEnabled, value); }
+			get { return _automaticSyllabificationEnabled; }
+			set { SetChanged(() => AutomaticSyllabificationEnabled, ref _automaticSyllabificationEnabled, value); }
+		}
+
+		public bool CombineSegments
+		{
+			get { return _combineSegments; }
+			set { SetChanged(() => CombineSegments, ref _combineSegments, value); }
 		}
 
 		public SoundClassesViewModel SonorityClasses
@@ -82,17 +97,10 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override object UpdateComponent()
 		{
-			SspSyllabifier syllabifier;
-			if (_syllabificationEnabled)
-			{
-				syllabifier = new SspSyllabifier(_segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)));
-				_projectService.Project.VarietyProcessors["syllabifier"] = syllabifier;
-			}
-			else
-			{
-				syllabifier = null;
-				_projectService.Project.VarietyProcessors.Remove("syllabifier");
-			}
+			SimpleSyllabifier syllabifier = _automaticSyllabificationEnabled
+				? new SspSyllabifier(_combineSegments, _segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)))
+				: new SimpleSyllabifier(_combineSegments);
+			_projectService.Project.VarietyProcessors["syllabifier"] = syllabifier;
 
 			_analysisService.SegmentAll();
 			return syllabifier;

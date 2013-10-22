@@ -217,9 +217,9 @@
     <Compile Include="ViewModels\SoundChangeViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
     <Compile Include="ViewModels\SoundClassViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelSyllablePosition.cs" />
+    <Compile Include="ViewModels\SyllablePosition.cs" />
     <Compile Include="ViewModels\SoundType.cs" />
-    <Compile Include="ViewModels\SspSyllabifierViewModel.cs" />
+    <Compile Include="ViewModels\SyllabifierViewModel.cs" />
     <Compile Include="ViewModels\SwitchViewMessage.cs" />
     <Compile Include="ViewModels\TaskAreaBooleanViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaCommandGroupViewModel.cs" />

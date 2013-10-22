@@ -10,6 +10,7 @@ using QuickGraph;
 using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
+using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -19,7 +20,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IImageExportService _imageExportService;
 		private readonly WordPairsViewModel _observedWordPairs;
 		private GlobalCorrespondenceEdge _selectedCorrespondence;
-		private ViewModelSyllablePosition _syllablePosition;
+		private SyllablePosition _syllablePosition;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
@@ -55,9 +56,9 @@ namespace SIL.Cog.Applications.ViewModels
 			_findCommand = new RelayCommand(Find);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Syllable position",
-				new TaskAreaCommandViewModel("Onset", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Onset)),
-				new TaskAreaCommandViewModel("Nucleus", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Nucleus)),
-				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = ViewModelSyllablePosition.Coda))));
+				new TaskAreaCommandViewModel("Onset", new RelayCommand(() => SyllablePosition = SyllablePosition.Onset)),
+				new TaskAreaCommandViewModel("Nucleus", new RelayCommand(() => SyllablePosition = SyllablePosition.Nucleus)),
+				new TaskAreaCommandViewModel("Coda", new RelayCommand(() => SyllablePosition = SyllablePosition.Coda))));
 			_correspondenceFilter = new TaskAreaIntegerViewModel("Frequency threshold");
 			_correspondenceFilter.PropertyChanging += _correspondenceFilter_PropertyChanging;
 			_correspondenceFilter.PropertyChanged += _correspondenceFilter_PropertyChanged;
@@ -185,24 +186,27 @@ namespace SIL.Cog.Applications.ViewModels
 								if ((seg1.StrReps.Contains(an.StrRep1) && seg2.StrReps.Contains(an.StrRep2))
 								    || (seg1.StrReps.Contains(an.StrRep2) && seg2.StrReps.Contains(an.StrRep1)))
 								{
-									bool correctPosition = false;
+									FeatureSymbol pos = null;
 									switch (_syllablePosition)
 									{
-										case ViewModelSyllablePosition.Onset:
-											correctPosition = (!an.DomainCell1.IsNull && an.DomainCell1.First.Annotation.Parent.Children.First == an.DomainCell1.First.Annotation)
-												|| (!an.DomainCell2.IsNull && an.DomainCell2.First.Annotation.Parent.Children.First == an.DomainCell2.First.Annotation);
+										case SyllablePosition.Onset:
+											pos = CogFeatureSystem.Onset;
 											break;
-										case ViewModelSyllablePosition.Nucleus:
-											correctPosition = true;
+										case SyllablePosition.Nucleus:
+											pos = CogFeatureSystem.Nucleus;
 											break;
-										case ViewModelSyllablePosition.Coda:
-											correctPosition = (!an.DomainCell1.IsNull && an.DomainCell1.Last.Annotation.Parent.Children.Last == an.DomainCell1.Last.Annotation)
-											    || (!an.DomainCell2.IsNull && an.DomainCell2.Last.Annotation.Parent.Children.Last == an.DomainCell2.Last.Annotation);
+										case SyllablePosition.Coda:
+											pos = CogFeatureSystem.Coda;
 											break;
 									}
 
-									if (correctPosition)
+									SymbolicFeatureValue curPos1, curPos2;
+									if (!an.DomainCell1.IsNull && !an.DomainCell2.IsNull
+									    && an.DomainCell1.First.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out curPos1) && (FeatureSymbol) curPos1 == pos
+										&& an.DomainCell2.First.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out curPos2) && (FeatureSymbol) curPos2 == pos)
+									{
 										an.IsSelected = true;
+									}
 								}
 							}
 							_observedWordPairs.WordPairs.Add(vm);
@@ -217,7 +221,7 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _observedWordPairs; }
 		}
 
-		public ViewModelSyllablePosition SyllablePosition
+		public SyllablePosition SyllablePosition
 		{
 			get { return _syllablePosition; }
 			set

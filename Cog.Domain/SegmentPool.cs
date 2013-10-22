@@ -23,6 +23,7 @@ namespace SIL.Cog.Domain
 				{
 					FeatureStruct fs = node.Annotation.FeatureStruct.DeepClone();
 					fs.RemoveValue(CogFeatureSystem.OriginalStrRep);
+					fs.RemoveValue(CogFeatureSystem.SyllablePosition);
 					fs.Freeze();
 					return new Segment(fs);
 				});

@@ -4,9 +4,9 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class ExportSegmentFrequenciesViewModel : ViewModelBase
 	{
-		private ViewModelSyllablePosition _syllablePosition;
+		private SyllablePosition _syllablePosition;
 
-		public ViewModelSyllablePosition SyllablePosition
+		public SyllablePosition SyllablePosition
 		{
 			get { return _syllablePosition; }
 			set { Set(() => SyllablePosition, ref _syllablePosition, value); }

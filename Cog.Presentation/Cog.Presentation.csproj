@@ -307,8 +307,8 @@
     <Compile Include="Views\SegmentMappingsView.xaml.cs">
       <DependentUpon>SegmentMappingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SspSyllabifierView.xaml.cs">
-      <DependentUpon>SspSyllabifierView.xaml</DependentUpon>
+    <Compile Include="Views\SyllabifierView.xaml.cs">
+      <DependentUpon>SyllabifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TaskAreaCommandGroupView.xaml.cs">
       <DependentUpon>TaskAreaCommandGroupView.xaml</DependentUpon>
@@ -542,7 +542,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SspSyllabifierView.xaml">
+    <Page Include="Views\SyllabifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,5 @@
 using SIL.Collections;
+using SIL.Machine.FeatureModel;
 using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain
@@ -10,7 +11,8 @@ namespace SIL.Cog.Domain
 		private readonly BulkObservableList<Affix> _affixes;
 		private string _name;
 		private readonly BulkObservableList<GeographicRegion> _regions;
-		private readonly ObservableDictionary<SyllablePosition, FrequencyDistribution<Segment>> _segmentFreqDists;
+		private readonly ObservableDictionary<FeatureSymbol, FrequencyDistribution<Segment>> _syllablePositionSegmentFreqDists;
+		private FrequencyDistribution<Segment> _segmentFreqDist; 
 
 		public Variety(string name)
 		{
@@ -19,7 +21,7 @@ namespace SIL.Cog.Domain
 			_varietyPairs = new VarietyVarietyPairCollection(this);
 			_affixes = new BulkObservableList<Affix>();
 			_regions = new BulkObservableList<GeographicRegion>();
-			_segmentFreqDists = new ObservableDictionary<SyllablePosition, FrequencyDistribution<Segment>>();
+			_syllablePositionSegmentFreqDists = new ObservableDictionary<FeatureSymbol, FrequencyDistribution<Segment>>();
 		}
 
 		public string Name
@@ -48,9 +50,15 @@ namespace SIL.Cog.Domain
 			get { return _regions; }
 		}
 
-		public ObservableDictionary<SyllablePosition, FrequencyDistribution<Segment>> SegmentFrequencyDistributions
+		public FrequencyDistribution<Segment> SegmentFrequencyDistribution
 		{
-			get { return _segmentFreqDists; }
+			get { return _segmentFreqDist; }
+			set { Set(() => SegmentFrequencyDistribution, ref _segmentFreqDist, value); }
+		}
+
+		public ObservableDictionary<FeatureSymbol, FrequencyDistribution<Segment>> SyllablePositionSegmentFrequencyDistributions
+		{
+			get { return _syllablePositionSegmentFreqDists; }
 		}
 
 		public override string ToString()

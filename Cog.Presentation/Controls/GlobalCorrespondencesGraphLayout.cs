@@ -12,20 +12,20 @@ namespace SIL.Cog.Presentation.Controls
 			SetConsonantLayoutParameters();
 		}
 
-		public static readonly DependencyProperty SyllablePositionProperty = DependencyProperty.Register("SyllablePosition", typeof(ViewModelSyllablePosition),
-			typeof(GlobalCorrespondencesGraphLayout), new UIPropertyMetadata(ViewModelSyllablePosition.Onset, SyllablePositionPropertyChanged));
+		public static readonly DependencyProperty SyllablePositionProperty = DependencyProperty.Register("SyllablePosition", typeof(SyllablePosition),
+			typeof(GlobalCorrespondencesGraphLayout), new UIPropertyMetadata(SyllablePosition.Onset, SyllablePositionPropertyChanged));
 
 		private static void SyllablePositionPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
 		{
 			var graphLayout = (GlobalCorrespondencesGraphLayout) depObj;
 			switch (graphLayout.SyllablePosition)
 			{
-				case ViewModelSyllablePosition.Onset:
-				case ViewModelSyllablePosition.Coda:
+				case SyllablePosition.Onset:
+				case SyllablePosition.Coda:
 					graphLayout.SetConsonantLayoutParameters();
 					break;
 
-				case ViewModelSyllablePosition.Nucleus:
+				case SyllablePosition.Nucleus:
 					graphLayout.SetVowelLayoutParameters();
 					break;
 			}
@@ -167,9 +167,9 @@ namespace SIL.Cog.Presentation.Controls
 				};
 		}
 
-		public ViewModelSyllablePosition SyllablePosition
+		public SyllablePosition SyllablePosition
 		{
-			get { return (ViewModelSyllablePosition) GetValue(SyllablePositionProperty); }
+			get { return (SyllablePosition) GetValue(SyllablePositionProperty); }
 			set { SetValue(SyllablePositionProperty, value); }
 		}
 

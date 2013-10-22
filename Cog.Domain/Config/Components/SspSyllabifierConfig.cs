@@ -11,6 +11,7 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
+			var combineSegmentsStr = (string) elem.Element(ConfigManager.Cog + "CombineSegments");
 			XElement scaleElem = elem.Element(ConfigManager.Cog + "SonorityScale");
 			Debug.Assert(scaleElem != null);
 			var sonorityScale = new List<SonorityClass>();
@@ -20,12 +21,13 @@ namespace SIL.Cog.Domain.Config.Components
 				SoundClass soundClass = ConfigManager.LoadSoundClass(project.Segmenter, project.FeatureSystem, scElem.Elements().First());
 				sonorityScale.Add(new SonorityClass(sonority, soundClass));
 			}
-			return new SspSyllabifier(segmentPool, sonorityScale);
+			return new SspSyllabifier(combineSegmentsStr == null || bool.Parse(combineSegmentsStr), segmentPool, sonorityScale);
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)
 		{
 			var syllabifier = (SspSyllabifier) component;
+			elem.Add(new XElement(ConfigManager.Cog + "CombineSegments", syllabifier.CombineSegments));
 			elem.Add(new XElement(ConfigManager.Cog + "SonorityScale",
 				syllabifier.SonorityScale.Select(sc => new XElement(ConfigManager.Cog + "SonorityClass", new XAttribute("sonority", sc.Sonority), ConfigManager.SaveSoundClass(sc.SoundClass)))));
 		}

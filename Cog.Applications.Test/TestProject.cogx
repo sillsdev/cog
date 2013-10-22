@@ -2018,6 +2018,10 @@
 	<Senses />
 	<Varieties />
 	<ProjectProcessors />
-	<VarietyProcessors />
+	<VarietyProcessors>
+		<VarietyProcessor xsi:type="SimpleSyllabifier" id="syllabifier">
+			<CombineSegments>true</CombineSegments>
+		</VarietyProcessor>
+	</VarietyProcessors>
 	<VarietyPairProcessors />
 </CogProject>

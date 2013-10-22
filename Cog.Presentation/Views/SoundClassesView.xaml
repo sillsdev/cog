@@ -20,9 +20,12 @@
 					<xcdg:Column FieldName="Description" Title="Description" Width="*" />
 					<xcdg:Column FieldName="Sonority" Title="Sonority" Width="80"
 								 Visible="{Binding Path=DataGridControl.DataContext.DisplaySonority, RelativeSource={RelativeSource Self}}">
+						<xcdg:Column.DisplayMemberBindingInfo>
+							<xcdg:DataGridBindingInfo Path="." />
+						</xcdg:Column.DisplayMemberBindingInfo>
 						<xcdg:Column.CellContentTemplate>
-							<DataTemplate>
-								<xctk:IntegerUpDown Value="{Binding ., UpdateSourceTrigger=PropertyChanged}" Minimum="0" />
+							<DataTemplate DataType="{x:Type vm:SoundClassViewModel}">
+								<xctk:IntegerUpDown Value="{Binding Sonority, UpdateSourceTrigger=PropertyChanged}" Minimum="0" />
 							</DataTemplate>
 						</xcdg:Column.CellContentTemplate>
 					</xcdg:Column>

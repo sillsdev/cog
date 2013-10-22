@@ -124,7 +124,7 @@ namespace SIL.Cog.Applications.Services
 		{
 			_busyService.ShowBusyIndicator(() =>
 				{
-					Process process = Process.Start(Assembly.GetEntryAssembly().Location, projectPath);
+					Process process = Process.Start(Assembly.GetEntryAssembly().Location, string.Format("\"{0}\"", projectPath));
 					Debug.Assert(process != null);
 					var stopwatch = new Stopwatch();
 					stopwatch.Start();

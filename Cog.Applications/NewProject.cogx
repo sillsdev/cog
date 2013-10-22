@@ -2079,16 +2079,40 @@
 				<SonorityClass sonority="9">
 					<NaturalClass name="Close vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
-						<FeatureValue feature="manner" value="close-vowel" />
+						<FeatureValue feature="height" value="close" />
 					</NaturalClass>
 				</SonorityClass>
 				<SonorityClass sonority="10">
-					<NaturalClass name="Mid vowel" type="vowel">
+					<NaturalClass name="Near-close vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
-						<FeatureValue feature="manner" value="mid-vowel" />
+						<FeatureValue feature="height" value="near-close" />
 					</NaturalClass>
 				</SonorityClass>
 				<SonorityClass sonority="11">
+					<NaturalClass name="Close-mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="close-mid" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="12">
+					<NaturalClass name="Mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="mid" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="13">
+					<NaturalClass name="Open-mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="open-mid" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="14">
+					<NaturalClass name="Near-open vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="near-open" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="15">
 					<NaturalClass name="Open vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="manner" value="open-vowel" />

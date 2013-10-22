@@ -139,7 +139,7 @@ namespace SIL.Cog.Applications.ViewModels
 					case FindField.Form:
 						curVariety = _varietiesView.Cast<WordListsVarietyViewModel>().LastOrDefault();
 						break;
-					case FindField.Sense:
+					case FindField.Gloss:
 						curVariety = _varietiesView.Cast<WordListsVarietyViewModel>().FirstOrDefault();
 						break;
 				}
@@ -183,7 +183,7 @@ namespace SIL.Cog.Applications.ViewModels
 					} while (_startVarietySense != curVarietySense);
 					break;
 
-				case FindField.Sense:
+				case FindField.Gloss:
 					do
 					{
 						senseIndex = (senseIndex + 1) % variety.Senses.Count;

@@ -151,6 +151,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			dialogService.DidNotReceive().ShowModelessDialog(wordLists, Arg.Any<FindViewModel>(), Arg.Any<Action>());
 
 			// form searches
+			findViewModel.Field = FindField.Form;
 
 			// nothing selected, no match
 			findViewModel.String = "fall";
@@ -207,14 +208,14 @@ namespace SIL.Cog.Applications.Test.ViewModels
 
 			// nothing selected, no match
 			wordLists.SelectedVarietySense = null;
-			findViewModel.Field = FindField.Sense;
+			findViewModel.Field = FindField.Gloss;
 			findViewModel.String = "sense4";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(wordLists.SelectedVarietySense, Is.Null);
 
 			// nothing selected, matches
 			wordLists.SelectedVarietySense = null;
-			findViewModel.Field = FindField.Sense;
+			findViewModel.Field = FindField.Gloss;
 			findViewModel.String = "sense2";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));

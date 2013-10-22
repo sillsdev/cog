@@ -9,10 +9,10 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public enum FindField
 	{
+		[Description("Gloss")]
+		Gloss,
 		[Description("Form")]
-		Form,
-		[Description("Sense")]
-		Sense
+		Form
 	}
 
 	public class FindViewModel : ViewModelBase

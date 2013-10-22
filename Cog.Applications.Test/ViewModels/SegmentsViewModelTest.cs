@@ -163,6 +163,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			dialogService.DidNotReceive().ShowModelessDialog(segments, Arg.Any<FindViewModel>(), Arg.Any<Action>());
 
 			// nothing selected, no match
+			findViewModel.Field = FindField.Form;
 			findViewModel.String = "nothing";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(observedWords.SelectedWords, Is.Empty);

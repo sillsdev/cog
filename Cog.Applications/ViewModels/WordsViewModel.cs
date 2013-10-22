@@ -131,7 +131,7 @@ namespace SIL.Cog.Applications.ViewModels
 						match = curWord.StrRep.Contains(str);
 						break;
 
-					case FindField.Sense:
+					case FindField.Gloss:
 						match = curWord.Sense.Gloss.Contains(str);
 						break;
 				}

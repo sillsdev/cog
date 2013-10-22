@@ -171,6 +171,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			dialogService.DidNotReceive().ShowModelessDialog(varietyPairs, Arg.Any<FindViewModel>(), Arg.Any<Action>());
 
 			// form searches
+			findViewModel.Field = FindField.Form;
 
 			// nothing selected, no match
 			findViewModel.String = "nothing";
@@ -247,7 +248,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(noncognates.SelectedWordPairs, Is.EquivalentTo(noncognatesArray[0].ToEnumerable()));
 
 			// sense searches
-			findViewModel.Field = FindField.Sense;
+			findViewModel.Field = FindField.Gloss;
 			findViewModel.String = "sense2";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(cognates.SelectedWordPairs, Is.Empty);

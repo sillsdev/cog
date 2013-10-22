@@ -200,6 +200,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			dialogService.DidNotReceive().ShowModelessDialog(globalCorrespondences, Arg.Any<FindViewModel>(), Arg.Any<Action>());
 
 			// form searches
+			findViewModel.Field = FindField.Form;
 
 			// no word pairs, no match
 			findViewModel.String = "nothing";
@@ -267,7 +268,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			Assert.That(observedWordPairs.SelectedWordPairs, Is.EquivalentTo(wordPairsArray[0].ToEnumerable()));
 
 			// sense searches
-			findViewModel.Field = FindField.Sense;
+			findViewModel.Field = FindField.Gloss;
 			findViewModel.String = "sense2";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(observedWordPairs.SelectedWordPairs, Is.EquivalentTo(wordPairsArray[1].ToEnumerable()));

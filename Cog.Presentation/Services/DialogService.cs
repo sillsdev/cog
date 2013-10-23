@@ -35,7 +35,9 @@ namespace SIL.Cog.Presentation.Services
 		{
 			Type dialogType = _windowViewModelMappings.GetWindowTypeFromViewModelType(viewModel.GetType());
 			var dialog = (Window) Activator.CreateInstance(dialogType);
-			dialog.Owner = FindOwnerWindow(ownerViewModel);
+			Window owner = FindOwnerWindow(ownerViewModel);
+			if (dialog != owner)
+				dialog.Owner = owner;
 			dialog.DataContext = viewModel;
 			return dialog;
 		}

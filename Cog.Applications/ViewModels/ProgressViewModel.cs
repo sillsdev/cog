@@ -17,11 +17,22 @@ namespace SIL.Cog.Applications.ViewModels
 		private bool _canceled;
 		private readonly ICommand _cancelCommand;
 		private TimeSpan _prevRemaining;
+		private readonly bool _indeterminate;
+		private readonly bool _cancelable;
+		private string _displayName;
 
-		public ProgressViewModel(Action<ProgressViewModel> action)
+		public ProgressViewModel(Action<ProgressViewModel> action, bool indeterminate, bool cancelable)
 		{
 			_action = action;
 			_cancelCommand = new RelayCommand(() => Canceled = true);
+			_indeterminate = indeterminate;
+			_cancelable = cancelable;
+		}
+
+		public string DisplayName
+		{
+			get { return _displayName; }
+			set { Set(() => DisplayName, ref _displayName, value); }
 		}
 
 		public string Text
@@ -36,23 +47,26 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				Set(() => Value, ref _value, value);
-				DateTime now = DateTime.Now;
-				TimeSpan span = now - _firstTime;
-				if (span.TotalSeconds < 3)
+				if (!_indeterminate)
 				{
-					TimeRemaining = "Calculating...";
-					return;
+					DateTime now = DateTime.Now;
+					TimeSpan span = now - _firstTime;
+					if (span.TotalSeconds < 3)
+					{
+						TimeRemaining = "Calculating...";
+						return;
+					}
+					var remaining = new TimeSpan((span.Ticks / value) * (100 - value));
+					if (_prevRemaining.Ticks != 0 && remaining > _prevRemaining && (remaining.TotalSeconds - _prevRemaining.TotalSeconds < 5))
+						remaining = _prevRemaining;
+					if (remaining.Ticks == 0)
+						TimeRemaining = "";
+					else if (remaining.TotalMinutes >= 1.5)
+						TimeRemaining = string.Format("About {0} minutes remaining", (int)Math.Round(remaining.TotalMinutes, MidpointRounding.AwayFromZero));
+					else
+						TimeRemaining = string.Format("About {0} seconds remaining", (int)Math.Round(remaining.TotalSeconds, MidpointRounding.AwayFromZero));
+					_prevRemaining = remaining;
 				}
-				var remaining = new TimeSpan((span.Ticks / value) * (100 - value));
-				if (_prevRemaining.Ticks != 0 && remaining > _prevRemaining && (remaining.TotalSeconds - _prevRemaining.TotalSeconds < 5))
-					remaining = _prevRemaining;
-				if (remaining.Ticks == 0)
-					TimeRemaining = "";
-				else if (remaining.TotalMinutes >= 1.5)
-					TimeRemaining = string.Format("About {0} minutes remaining", (int) Math.Round(remaining.TotalMinutes, MidpointRounding.AwayFromZero));
-				else
-					TimeRemaining = string.Format("About {0} seconds remaining", (int) Math.Round(remaining.TotalSeconds, MidpointRounding.AwayFromZero));
-				_prevRemaining = remaining;
 			}
 		}
 
@@ -66,6 +80,16 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _executing; }
 			set { Set(() => Executing, ref _executing, value); }
+		}
+
+		public bool IsIndeterminate
+		{
+			get { return _indeterminate; }
+		}
+
+		public bool IsCancelable
+		{
+			get { return _cancelable; }
 		}
 
 		public bool Canceled

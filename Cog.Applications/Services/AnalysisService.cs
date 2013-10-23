@@ -72,7 +72,7 @@ namespace SIL.Cog.Applications.Services
 							pipeline.WaitForComplete();
 						}
 					}
-				});
+				}, false, true);
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
 			_dialogService.ShowModalDialog(ownerViewModel, progressVM);
@@ -134,7 +134,7 @@ namespace SIL.Cog.Applications.Services
 						vm.Text = "Analyzing results...";
 						Messenger.Default.Send(new ComparisonPerformedMessage());
 					}
-				});
+				}, false, true);
 			pipeline.ProgressUpdated += (sender, e) => progressVM.Value = e.PercentCompleted;
 
 			_dialogService.ShowModalDialog(ownerViewModel, progressVM);

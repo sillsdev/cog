@@ -173,6 +173,7 @@
     <Compile Include="Converters\IsTextTrimmedConverter.cs" />
     <Compile Include="Converters\LevelToIndentConverter.cs" />
     <Compile Include="Converters\LessThanConverter.cs" />
+    <Compile Include="Converters\ProgressDialogTitleConverter.cs" />
     <Compile Include="Converters\PercentageToGradientColorConverter.cs" />
     <Compile Include="Converters\PercentageToStrokeThicknessConverter.cs" />
     <Compile Include="Converters\PercentageToSpectrumColorConverter.cs" />

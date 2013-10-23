@@ -29,10 +29,12 @@ namespace SIL.Cog.Presentation
 
 			base.OnStartup(e);
 
+			ShutdownMode = ShutdownMode.OnExplicitShutdown;
 			var locator = (ViewModelLocator) Resources["Locator"];
 			if (locator.Main.Init())
 			{
 				var mainWindow = new MainWindow();
+				ShutdownMode = ShutdownMode.OnLastWindowClose;
 				mainWindow.Show();
 			}
 			else

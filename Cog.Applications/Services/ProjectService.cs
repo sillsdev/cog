@@ -73,36 +73,52 @@ namespace SIL.Cog.Applications.Services
 				usingCmdLineArg = true;
 			}
 
-			if (string.IsNullOrEmpty(projectPath) || projectPath == "<new>" || !File.Exists(projectPath))
-			{
-				NewProject();
-			}
-			else
-			{
-				try
+			string errorMsg = null;
+			var progressVM = new ProgressViewModel(vm =>
 				{
-					OpenProject(projectPath);
-				}
-				catch (ConfigException)
-				{
-					if (usingCmdLineArg)
+					if (string.IsNullOrEmpty(projectPath) || projectPath == "<new>" || !File.Exists(projectPath))
 					{
-						_dialogService.ShowError(null, "The specified file is not a valid Cog configuration file.", "Cog");
-						CloseProject();
-						return false;
+						NewProject(vm);
 					}
-					NewProject();
-				}
-				catch (IOException ioe)
-				{
-					if (usingCmdLineArg)
+					else
 					{
-						_dialogService.ShowError(null, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
-						CloseProject();
-						return false;
+						try
+						{
+							OpenProject(vm, projectPath);
+						}
+						catch (ConfigException)
+						{
+							if (usingCmdLineArg)
+							{
+								errorMsg = "The specified file is not a valid Cog configuration file.";
+								CloseProject();
+								vm.Canceled = true;
+							}
+							else
+							{
+								NewProject(vm);
+							}
+						}
+						catch (IOException ioe)
+						{
+							if (usingCmdLineArg)
+							{
+								errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
+								CloseProject();
+								vm.Canceled = true;
+							}
+							else
+							{
+								NewProject(vm);
+							}
+						}
 					}
-					NewProject();
-				}
+				}, true, false);
+
+			if (_dialogService.ShowModalDialog(null, progressVM) == false)
+			{
+				_dialogService.ShowError(null, errorMsg, "Cog");
+				return false;
 			}
 
 			return true;
@@ -112,7 +128,8 @@ namespace SIL.Cog.Applications.Services
 		{
 			if (_isNew && !_isChanged)
 			{
-				NewProject();
+				var progressVM = new ProgressViewModel(NewProject, true, false);
+				_dialogService.ShowModalDialog(ownerViewModel, progressVM);
 				return true;
 			}
 
@@ -137,12 +154,13 @@ namespace SIL.Cog.Applications.Services
 				});
 		}
 
-		private void NewProject()
+		private void NewProject(ProgressViewModel vm)
 		{
-			_busyService.ShowBusyIndicatorUntilFinishDrawing();
+			vm.DisplayName = "Opening New Project - Cog";
+			vm.Text = "Loading project file...";
 			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Applications.NewProject.cogx");
 			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
-			SetupProject(null, "New Project", project);
+			SetupProject(vm, null, "New Project", project);
 			_isNew = true;
 		}
 
@@ -153,21 +171,32 @@ namespace SIL.Cog.Applications.Services
 				FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, CogProjectFileType);
 				if (result.IsValid && result.FileName != _settingsService.LastProject)
 				{
-					try
+					string errorMsg = null;
+					var progressVM = new ProgressViewModel(vm =>
+						{
+							try
+							{
+								OpenProject(vm, result.FileName);
+							}
+							catch (ConfigException)
+							{
+								errorMsg = "The specified file is not a valid Cog configuration file.";
+								CloseProject();
+								vm.Canceled = true;
+							}
+							catch (IOException ioe)
+							{
+								errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
+								CloseProject();
+								vm.Canceled = true;
+							}
+						}, true, false);
+					if (_dialogService.ShowModalDialog(ownerViewModel, progressVM) == false)
 					{
-						OpenProject(result.FileName);
-						return true;
+						_dialogService.ShowError(ownerViewModel, errorMsg, "Cog");
+						return false;
 					}
-					catch (ConfigException)
-					{
-						_dialogService.ShowError(ownerViewModel, "The specified file is not a valid Cog configuration file.", "Cog");
-						CloseProject();
-					}
-					catch (IOException ioe)
-					{
-						_dialogService.ShowError(ownerViewModel, string.Format("Error opening project file:\n{0}", ioe.Message), "Cog");
-						CloseProject();
-					}
+					return true;
 				}
 			}
 			else
@@ -206,12 +235,14 @@ namespace SIL.Cog.Applications.Services
 			_isChanged = false;
 		}
 
-		private void OpenProject(string path)
+		private void OpenProject(ProgressViewModel vm, string path)
 		{
-			_busyService.ShowBusyIndicatorUntilFinishDrawing();
+			string projectName = Path.GetFileNameWithoutExtension(path);
+			vm.DisplayName = string.Format("Opening {0} - Cog", projectName);
+			vm.Text = "Loading project file...";
 			_projectFileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, _projectFileStream);
-			SetupProject(path, Path.GetFileNameWithoutExtension(path), project);
+			SetupProject(vm, path, projectName, project);
 			_isNew = false;
 		}
 
@@ -264,13 +295,15 @@ namespace SIL.Cog.Applications.Services
 			_isNew = false;
 		}
 
-		private void SetupProject(string path, string name, CogProject project)
+		private void SetupProject(ProgressViewModel vm, string path, string name, CogProject project)
 		{
 			_settingsService.LastProject = path;
 			_isChanged = false;
 			_project = project;
 			_projectName = name;
 
+			if (vm != null)
+				vm.Text = "Segmenting and syllabifying words...";
 			_analysisService.Value.SegmentAll();
 
 			if (path != null)
@@ -279,6 +312,8 @@ namespace SIL.Cog.Applications.Services
 				string cacheFileName = Path.Combine(cogPath, name + ".cache");
 				if (File.Exists(cacheFileName))
 				{
+					if (vm != null)
+						vm.Text = "Loading cached results...";
 					bool delete = true;
 					try
 					{
@@ -299,13 +334,15 @@ namespace SIL.Cog.Applications.Services
 					}
 					catch (Exception)
 					{
-						_dialogService.ShowError(this, "An error ocurred while loading the cached comparison results. You must re-run the comparison.", "Cog");
+						// could not load the cache, so delete it
 					}
 					if (delete)
 						File.Delete(cacheFileName);
 				}
 			}
 
+			if (vm != null)
+				vm.Text = "Initializing views...";
 			OnProjectOpened(new EventArgs());
 		}
 

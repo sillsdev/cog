@@ -3,14 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications" mc:Ignorable="d"
-        Title="{Binding Value, StringFormat={}{0}% completed}" ShowInTaskbar="False"
+        xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+        xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters" mc:Ignorable="d"
+        ShowInTaskbar="False"
 		WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="Window_Loaded" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:ProgressViewModel}">
-    <StackPanel Margin="10" >
+	<Window.Resources>
+		<cnvtrs:InvertedBooleanToVisibilityConverter x:Key="InvertedVisConverter" />
+		<BooleanToVisibilityConverter x:Key="VisConverter" />
+		<cnvtrs:ProgressDialogTitleConverter x:Key="TitleConverter" />
+	</Window.Resources>
+	<Window.Title>
+		<MultiBinding Converter="{StaticResource TitleConverter}">
+			<Binding Path="DisplayName" />
+			<Binding Path="Value" />
+		</MultiBinding>
+	</Window.Title>
+    <StackPanel Margin="10">
         <TextBlock Margin="0,0,0,5" Text="{Binding Text}" />
-        <TextBlock Margin="0,0,0,5" Text="{Binding TimeRemaining}" />
-        <ProgressBar Name="ProgressBar" Value="{Binding Value}" Margin="0,0,0,5" Width="250" Height="20" />
-        <Button HorizontalAlignment="Right" Command="{Binding CancelCommand}" Width="70">Cancel</Button>
+		<TextBlock Margin="0,0,0,5" Visibility="{Binding IsIndeterminate, Converter={StaticResource InvertedVisConverter}}" Text="{Binding TimeRemaining}" />
+        <ProgressBar Name="ProgressBar" Value="{Binding Value}" IsIndeterminate="{Binding IsIndeterminate}" Margin="0,0,0,5" Width="250" Height="20" />
+        <Button Visibility="{Binding IsCancelable, Converter={StaticResource VisConverter}}" HorizontalAlignment="Right" Command="{Binding CancelCommand}" Width="70">Cancel</Button>
     </StackPanel>
 </Window>

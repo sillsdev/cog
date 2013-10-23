@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -161,6 +162,11 @@ namespace SIL.Cog.Presentation.Views
 			WordListsGrid.SelectedCellRanges.Clear();
 			int itemIndex = WordListsGrid.Items.IndexOf(cell.ParentRow.DataContext);
 			WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
+		}
+
+		private void QuickReference_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start("Help\\GettingStartedWithCog.pdf");
 		}
 	}
 }

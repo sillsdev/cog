@@ -11,13 +11,14 @@
 		<?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
 		<?define ProductUpgradeCode = "DCE6931C-A5F0-4EA8-89C1-18CE3A4FDB02" ?>
 	<?endif ?>
-	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="$(var.VersionNumber)" Manufacturer="SIL International, Inc." UpgradeCode="$(var.ProductUpgradeCode)">
+	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="$(var.VersionNumber)" Manufacturer="SIL International" UpgradeCode="$(var.ProductUpgradeCode)">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate />
 
 		<Feature Id="Complete" Level="1">
 			<ComponentGroupRef Id="RequiredComponents" />
+			<ComponentGroupRef Id="Helps"/>
 			<ComponentRef Id="ProgramMenuShortcut" />
 			<ComponentRef Id="DesktopShortcut" />
 		</Feature>
@@ -40,10 +41,15 @@
 	</Fragment>
 
 	<Fragment>
-		<Component Id="Cog.chm" Win64="$(var.Win64)" Directory="HelpFolder">
-			<File Id="Cog.chm" Name="Cog.chm" Source="$(var.Cog.Presentation.TargetDir)\Help\Cog.chm" KeyPath="yes" />
-			<RemoveFile Id="PurgeChw" Name="*.chw" On="uninstall"/>
-		</Component>
+		<ComponentGroup Id="Helps" Directory="HelpFolder">
+			<Component Id="Cog.chm" Win64="$(var.Win64)">
+				<File Id="Cog.chm" Name="Cog.chm" Source="$(var.Cog.Presentation.TargetDir)\Help\Cog.chm" KeyPath="yes" />
+				<RemoveFile Id="PurgeChw" Name="*.chw" On="uninstall"/>
+			</Component>
+			<Component Id="GettingStartedWithCog.pdf" Win64="$(var.Win64)">
+				<File Id="GettingStartedWithCog.pdf" Name="GettingStartedWithCog.pdf" Source="$(var.Cog.Presentation.TargetDir)\Help\GettingStartedWithCog.pdf" KeyPath="yes" />
+			</Component>
+		</ComponentGroup>
 		
 		<ComponentGroup Id="RequiredComponents" Directory="INSTALLFOLDER">
 			<!-- Cog -->
@@ -61,7 +67,6 @@
 			<Component Id="SIL.Cog.Domain.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Domain.dll" KeyPath="yes" />
 			</Component>
-			<ComponentRef Id="Cog.chm"/>
 
 			<!-- Machine -->
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">

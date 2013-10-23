@@ -5,7 +5,7 @@
 // associated with an assembly.
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("Cog")]
-[assembly: AssemblyCopyright("Copyright © SIL International, Inc. 2013")]
+[assembly: AssemblyCopyright("Copyright © 2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

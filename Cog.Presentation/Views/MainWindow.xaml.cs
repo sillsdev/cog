@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Presentation.Properties;
@@ -46,6 +47,11 @@ namespace SIL.Cog.Presentation.Views
 		{
 			base.OnSourceInitialized(e);
 			WindowPlacement.SetPlacement(this, Settings.Default.WindowPlacement);
+		}
+
+		private void QuickReference_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start("Help\\GettingStartedWithCog.pdf");
 		}
 	}
 }

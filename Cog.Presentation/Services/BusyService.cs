@@ -6,7 +6,7 @@ namespace SIL.Cog.Presentation.Services
 {
 	public class BusyService : IBusyService
 	{
-		public void ShowBusyIndicatorUntilUpdated()
+		public void ShowBusyIndicatorUntilFinishDrawing()
 		{
 			BusyCursor.DisplayUntilIdle();
 		}

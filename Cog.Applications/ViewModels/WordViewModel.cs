@@ -110,7 +110,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
 				return;
 
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			int i = 0;
 			int index = 0;
 			while (!_segments[i].IsBoundary)

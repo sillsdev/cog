@@ -139,7 +139,7 @@ namespace SIL.Cog.Applications.Services
 
 		private void NewProject()
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Applications.NewProject.cogx");
 			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
 			SetupProject(null, "New Project", project);
@@ -208,7 +208,7 @@ namespace SIL.Cog.Applications.Services
 
 		private void OpenProject(string path)
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			_projectFileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, _projectFileStream);
 			SetupProject(path, Path.GetFileNameWithoutExtension(path), project);

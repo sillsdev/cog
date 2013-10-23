@@ -190,7 +190,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_selectedSense == null)
 				return;
 
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 
 			var clusterer = new CognateSetsClusterer(_selectedSense.DomainSense, 0.5);
 			List<Cluster<Variety>> cognateSets = clusterer.GenerateClusters(_projectService.Project.Varieties).ToList();

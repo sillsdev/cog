@@ -95,7 +95,7 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (msg.ViewModelType == GetType())
 			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
+				_busyService.ShowBusyIndicatorUntilFinishDrawing();
 
 				var pair = (VarietyPair) msg.DomainModels[0];
 				SelectedVarietyPair = _varietyPairFactory(pair, true);
@@ -143,7 +143,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (_varietyPairState == VarietyPairState.NotSelected || _selectedVarietyPair != null)
 				return;
 
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			CogProject project = _projectService.Project;
 			var pair = new VarietyPair(_selectedVariety1.DomainVariety, _selectedVariety2.DomainVariety);
 			project.VarietyPairs.Add(pair);
@@ -388,7 +388,7 @@ namespace SIL.Cog.Applications.ViewModels
 				VarietyPair pair;
 				if (_selectedVariety1.DomainVariety.VarietyPairs.TryGetValue(_selectedVariety2.DomainVariety, out pair))
 				{
-					_busyService.ShowBusyIndicatorUntilUpdated();
+					_busyService.ShowBusyIndicatorUntilFinishDrawing();
 					SelectedVarietyPair = _varietyPairFactory(pair, _selectedVariety1.DomainVariety == pair.Variety1);
 					VarietyPairState = VarietyPairState.SelectedAndCompared;
 				}

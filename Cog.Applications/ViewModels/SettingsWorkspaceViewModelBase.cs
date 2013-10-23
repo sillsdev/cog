@@ -52,7 +52,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public void Apply()
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 			{
 				componentVM.UpdateComponent();
@@ -68,7 +68,7 @@ namespace SIL.Cog.Applications.ViewModels
 			if (!_isDirty)
 				return;
 
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 			{
 				componentVM.Setup();

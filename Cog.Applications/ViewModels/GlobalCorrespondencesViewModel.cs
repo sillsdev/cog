@@ -143,7 +143,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void GenerateGraph()
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			SelectedCorrespondence = null;
 			Graph = _graphService.GenerateGlobalCorrespondencesGraph(_syllablePosition, _selectedVarieties);
 		}
@@ -167,7 +167,7 @@ namespace SIL.Cog.Applications.ViewModels
 				GlobalCorrespondenceEdge oldCorr = _selectedCorrespondence;
 				if (Set(() => SelectedCorrespondence, ref _selectedCorrespondence, value))
 				{
-					_busyService.ShowBusyIndicatorUntilUpdated();
+					_busyService.ShowBusyIndicatorUntilFinishDrawing();
 					if (oldCorr != null)
 						oldCorr.IsSelected = false;
 					_observedWordPairs.WordPairs.Clear();

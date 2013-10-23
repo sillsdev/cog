@@ -100,7 +100,7 @@ namespace SIL.Cog.Applications.Services
 			object importSettingsViewModel;
 			if (GetImportSettings(ownerViewModel, importer, out importSettingsViewModel))
 			{
-				_busyService.ShowBusyIndicatorUntilUpdated();
+				_busyService.ShowBusyIndicatorUntilFinishDrawing();
 				try
 				{
 					using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))

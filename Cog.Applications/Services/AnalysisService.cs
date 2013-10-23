@@ -27,7 +27,7 @@ namespace SIL.Cog.Applications.Services
 
 		public void SegmentAll()
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			var pipeline = new MultiThreadedPipeline<Variety>(GetSegmentProcessors());
 			pipeline.Process(_projectService.Project.Varieties);
 			pipeline.WaitForComplete();
@@ -35,7 +35,7 @@ namespace SIL.Cog.Applications.Services
 
 		public void Segment(Variety variety)
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			var pipeline = new Pipeline<Variety>(GetSegmentProcessors());
 			pipeline.Process(variety.ToEnumerable());
 		}
@@ -81,7 +81,7 @@ namespace SIL.Cog.Applications.Services
 
 		public void Stem(StemmingMethod method, Variety variety)
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			if (method == StemmingMethod.Automatic)
 				variety.Affixes.Clear();
 
@@ -142,7 +142,7 @@ namespace SIL.Cog.Applications.Services
 
 		public void Compare(VarietyPair varietyPair)
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			var pipeline = new Pipeline<VarietyPair>(GetCompareProcessors());
 			pipeline.Process(varietyPair.ToEnumerable());
 		}

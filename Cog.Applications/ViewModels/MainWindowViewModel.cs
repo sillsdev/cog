@@ -34,9 +34,10 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IImageExportService _imageExportService;
 		private readonly IProjectService _projectService;
 		private readonly IAnalysisService _analysisService;
+		private readonly IBusyService _busyService;
 
 		public MainWindowViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IExportService exportService,
-			IImageExportService imageExportService, IAnalysisService analysisService, InputViewModel input, CompareViewModel compare, AnalyzeViewModel analyze)
+			IImageExportService imageExportService, IAnalysisService analysisService, IBusyService busyService, InputViewModel input, CompareViewModel compare, AnalyzeViewModel analyze)
 			: base("Cog", input, compare, analyze)
 		{
 			_dialogService = dialogService;
@@ -45,6 +46,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_imageExportService = imageExportService;
 			_projectService = projectService;
 			_analysisService = analysisService;
+			_busyService = busyService;
 
 			_newCommand = new RelayCommand(New);
 			_openCommand = new RelayCommand(Open);
@@ -75,6 +77,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public bool Init()
 		{
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			if (_projectService.Init())
 			{
 				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);

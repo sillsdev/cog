@@ -74,7 +74,7 @@ namespace SIL.Cog.Applications.ViewModels
 				string val = value == null ? "" : value.Trim();
 				if (_strRep != val)
 				{
-					_busyService.ShowBusyIndicatorUntilUpdated();
+					_busyService.ShowBusyIndicatorUntilFinishDrawing();
 					var wordsToRemove = new HashSet<Word>(DomainWords);
 					if (!string.IsNullOrEmpty(val))
 					{

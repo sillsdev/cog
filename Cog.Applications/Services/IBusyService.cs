@@ -4,7 +4,7 @@ namespace SIL.Cog.Applications.Services
 {
 	public interface IBusyService
 	{
-		void ShowBusyIndicatorUntilUpdated();
+		void ShowBusyIndicatorUntilFinishDrawing();
 		void ShowBusyIndicator(Action action);
 	}
 }

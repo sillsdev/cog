@@ -148,7 +148,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void PopulateSegments()
 		{
 			var comparer = new SegmentComparer();
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			using (_domainSegments.BulkUpdate())
 			using (_segments.BulkUpdate())
 			{
@@ -210,7 +210,7 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				if (Set(() => SelectedSegment, ref _selectedSegment, value))
 				{
-					_busyService.ShowBusyIndicatorUntilUpdated();
+					_busyService.ShowBusyIndicatorUntilFinishDrawing();
 					using (_currentWords.BulkUpdate())
 					{
 						_currentWords.Clear();

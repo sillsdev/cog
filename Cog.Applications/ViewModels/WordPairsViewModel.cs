@@ -60,7 +60,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void UpdateSort(SortDescription sortDesc)
 		{
-			_busyService.ShowBusyIndicatorUntilUpdated();
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			if (_wordPairsView.SortDescriptions.Count == 0)
 				_wordPairsView.SortDescriptions.Add(sortDesc);
 			else

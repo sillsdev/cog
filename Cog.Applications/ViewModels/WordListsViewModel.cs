@@ -51,10 +51,10 @@ namespace SIL.Cog.Applications.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
  					new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
-					new TaskAreaCommandViewModel("Find words", _findCommand)));
+					new TaskAreaCommandViewModel("Find words", _findCommand),
+					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import)),
 					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export)),
 					new TaskAreaCommandViewModel("Remove affixes from all words", new RelayCommand(RunStemmer))));
 			_isEmpty = true;

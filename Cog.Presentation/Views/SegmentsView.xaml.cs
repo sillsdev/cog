@@ -119,7 +119,7 @@ namespace SIL.Cog.Presentation.Views
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			SegmentsDataGrid.Columns.Add(headerColumn);
 			foreach (SegmentViewModel segment in vm.Segments)
-				SegmentsDataGrid.Columns.Add(new Column {FieldName = segment.StrRep, Title = segment.StrRep, Width = 65, CellHorizontalContentAlignment = HorizontalAlignment.Center});
+				SegmentsDataGrid.Columns.Add(new Column {FieldName = segment.StrRep, Title = segment.StrRep, Width = 67, CellHorizontalContentAlignment = HorizontalAlignment.Center});
 		}
 
 		private void LoadMergedHeaders()

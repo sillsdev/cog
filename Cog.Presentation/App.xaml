@@ -425,10 +425,6 @@
 				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
 			</Style>
 
-			<Style x:Key="PhoneticColumnManagerCellStyle" TargetType="{x:Type xcdg:ColumnManagerCell}" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
-				<Setter Property="FontSize" Value="{StaticResource PhoneticFontSize}" />
-				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-			</Style>
 			<Style x:Key="PhoneticDataCellStyle" TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
 				<Setter Property="FontSize" Value="{StaticResource PhoneticFontSize}" />
 				<Setter Property="TextOptions.TextFormattingMode" Value="Display" />

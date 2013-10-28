@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
 using SIL.Machine.Clusterers;
 

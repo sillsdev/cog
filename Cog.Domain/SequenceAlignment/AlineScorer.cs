@@ -99,6 +99,9 @@ namespace SIL.Cog.Domain.SequenceAlignment
 
 		private int GetMaxSoundChangeScore(Word word, ShapeNode node, Word otherWord)
 		{
+			if (word.Variety == otherWord.Variety)
+				return 0;
+
 			VarietyPair varietyPair = word.Variety.VarietyPairs[otherWord.Variety];
 			if (varietyPair.SoundChangeProbabilityDistribution == null)
 				return 0;
@@ -165,6 +168,9 @@ namespace SIL.Cog.Domain.SequenceAlignment
 
 		private int GetSoundChangeScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1, ShapeNode q2)
 		{
+			if (sequence1.Variety == sequence2.Variety)
+				return 0;
+
 			VarietyPair varietyPair = sequence1.Variety.VarietyPairs[sequence2.Variety];
 
 			if (varietyPair.SoundChangeProbabilityDistribution == null)

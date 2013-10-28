@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using QuickGraph;
 using QuickGraph.Algorithms;
-using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
 using SIL.Machine.Clusterers;
 

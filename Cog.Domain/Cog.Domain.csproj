@@ -49,7 +49,6 @@
     <Compile Include="Affix.cs" />
     <Compile Include="Alignment.cs" />
     <Compile Include="AlignmentCell.cs" />
-    <Compile Include="Clusterers\CognateSetsClusterer.cs" />
     <Compile Include="Components\AffixStripper.cs" />
     <Compile Include="Components\SoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />

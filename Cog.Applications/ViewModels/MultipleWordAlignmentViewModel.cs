@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Clusterers;
 using SIL.Collections;
 using SIL.Machine;
 using SIL.Machine.Clusterers;
@@ -192,37 +191,18 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 
-			var clusterer = new CognateSetsClusterer(_selectedSense.DomainSense, 0.5);
-			List<Cluster<Variety>> cognateSets = clusterer.GenerateClusters(_projectService.Project.Varieties).ToList();
-
-			var words = new List<Word>();
-			foreach (Variety variety in _projectService.Project.Varieties)
-			{
-				IReadOnlyCollection<Word> varietyWords = variety.Words[_selectedSense.DomainSense];
-				if (varietyWords.Count == 0)
-					continue;
-
-				if (varietyWords.Count == 1)
-				{
-					Word word = varietyWords.First();
-					if (word.Shape.Count > 0)
-						words.Add(word);
-				}
-				else
-				{
-					Cluster<Variety> cognateSet = cognateSets.Single(set => set.DataObjects.Contains(variety));
-					var wordCounts = new Dictionary<Word, int>();
-					foreach (Variety otherVariety in cognateSet.DataObjects.Where(v => v != variety))
+			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) =>
+			    {
+					WordPair wp;
+					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(_selectedSense.DomainSense, out wp)
+						&& wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
 					{
-						VarietyPair vp = variety.VarietyPairs[otherVariety];
-						WordPair wp;
-						if (vp.WordPairs.TryGetValue(_selectedSense.DomainSense, out wp))
-							wordCounts.UpdateValue(wp.GetWord(variety), () => 0, c => c + 1);
+						return wp.AreCognatePredicted ? 0.0 : 1.0;
 					}
-					if (wordCounts.Count > 0)
-						words.Add(wordCounts.MaxBy(kvp => kvp.Value).Key);
-				}
-			}
+					return 1.0;
+			    }, 0.5);
+
+			List<Word> words = _projectService.Project.Varieties.SelectMany(v => v.Words[_selectedSense.DomainSense]).ToList();
 			if (words.Count == 0)
 			{
 				_words.Clear();
@@ -247,6 +227,7 @@ namespace SIL.Cog.Applications.ViewModels
 				alignment = result.GetAlignments().First();
 			}
 
+			List<Cluster<Word>> cognateSets = clusterer.GenerateClusters(words).ToList();
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
 			{
@@ -257,7 +238,7 @@ namespace SIL.Cog.Applications.ViewModels
 					Word word = alignment.Sequences[i];
 					IEnumerable<AlignmentCell<ShapeNode>> columns = Enumerable.Range(0, alignment.ColumnCount).Select(col => alignment[i, col]);
 					AlignmentCell<ShapeNode> suffix = alignment.Suffixes[i];
-					int cognateSetIndex = cognateSets.FindIndex(set => set.DataObjects.Contains(word.Variety)) + 1;
+					int cognateSetIndex = cognateSets.FindIndex(set => set.DataObjects.Contains(word)) + 1;
 					_words.Add(new MultipleWordAlignmentWordViewModel(word, prefix, columns, suffix, cognateSetIndex));
 				}
 			}

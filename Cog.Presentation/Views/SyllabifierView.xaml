@@ -27,12 +27,14 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<CheckBox Grid.ColumnSpan="2" Grid.Row="0" IsChecked="{Binding CombineSegments}">Combine segments in the same syllable position</CheckBox>
-		<CheckBox Grid.ColumnSpan="2" Grid.Row="1" Margin="0,5,0,5" IsChecked="{Binding AutomaticSyllabificationEnabled}">Enable automatic syllabification</CheckBox>
-		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0">Sonority scale</Label>
-		<Grid Grid.ColumnSpan="2" Grid.Row="3" IsEnabled="{Binding AutomaticSyllabificationEnabled}">
+		<CheckBox Grid.ColumnSpan="2" Grid.Row="1" Margin="0,8,0,5" IsChecked="{Binding AutomaticSyllabificationEnabled}">Enable automatic syllabification</CheckBox>
+		<Label Grid.ColumnSpan="2" Grid.Row="2" Padding="0">Sonority scale</Label>
+		<Grid Grid.ColumnSpan="2" Grid.Row="3" Margin="0,0,0,5" IsEnabled="{Binding AutomaticSyllabificationEnabled}">
 			<v:SoundClassesView DataContext="{Binding SonorityClasses}" />
 		</Grid>
+		<CheckBox Grid.ColumnSpan="2" Grid.Row="4" IsEnabled="{Binding AutomaticSyllabificationEnabled}" IsChecked="{Binding VowelsSameSonorityTautosyllabic}">Successive vowels with same sonority are tautosyllabic</CheckBox>
 	</Grid>
 </UserControl>

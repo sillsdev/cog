@@ -13,14 +13,21 @@ namespace SIL.Cog.Domain.Components
 	{
 		private readonly SegmentPool _segmentPool;
 		private readonly List<SonorityClass> _sonorityScale;
-		private readonly ThreadLocal<HashSet<string>> _initialOnsets; 
+		private readonly ThreadLocal<HashSet<string>> _initialOnsets;
+		private readonly bool _vowelsSameSonorityTautosyllabic;
 
-		public SspSyllabifier(bool combineSegments, SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
+		public SspSyllabifier(bool combineSegments, bool vowelsSameSonorityTautosyllabic, SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
 			: base(combineSegments)
 		{
+			_vowelsSameSonorityTautosyllabic = vowelsSameSonorityTautosyllabic;
 			_segmentPool = segmentPool;
 			_sonorityScale = sonorityScale.ToList();
 			_initialOnsets = new ThreadLocal<HashSet<string>>();
+		}
+
+		public bool VowelsSameSonorityTautosyllabic
+		{
+			get { return _vowelsSameSonorityTautosyllabic; }
 		}
 
 		public IEnumerable<SonorityClass> SonorityScale
@@ -66,41 +73,42 @@ namespace SIL.Cog.Domain.Components
 		{
 			ShapeNode[] annNodes = word.Shape.GetNodes(ann.Span).ToArray();
 			ShapeNode syllableStart = null;
-			int prevSonority = -1, curSonority = -1, nextSonority = -1;
+			int prevSonority = -1, curSonority = -1;
+			FeatureSymbol prevType = null;
 			bool useMaximalOnset = false;
 			foreach (ShapeNode node in annNodes)
 			{
+				FeatureSymbol curType = node.Type();
 				ShapeNode nextNode = node.Next;
-				if (ann.Span.Contains(nextNode))
+				int nextSonority = ann.Span.Contains(nextNode) ? GetSonority(nextNode) : -1;
+				// stress markers indicate a syllable break
+				if (syllableStart != null && node.StrRep().IsOneOf("ˈ", "ˌ"))
 				{
-					nextSonority = GetSonority(nextNode);
-					// stress markers indicate a syllable break
-					if (syllableStart != null && node.StrRep().IsOneOf("ˈ", "ˌ"))
-					{
-						if (useMaximalOnset)
-							ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
-						else
-							ProcessSyllable(syllableStart, node.Prev, newShape);
-						useMaximalOnset = false;
-						curSonority = -1;
-						syllableStart = null;
-					}
-					else if (curSonority == -1)
-					{
-						curSonority = GetSonority(node);
-					}
-					else if ((curSonority < prevSonority && curSonority < nextSonority) || (curSonority == prevSonority))
-					{
-						if (useMaximalOnset)
-							ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
-						else
-							ProcessSyllable(syllableStart, node.Prev, newShape);
-						useMaximalOnset = true;
-						syllableStart = null;
-					}
+					if (useMaximalOnset)
+						ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
+					else
+						ProcessSyllable(syllableStart, node.Prev, newShape);
+					useMaximalOnset = false;
+					curSonority = -1;
+					syllableStart = null;
+				}
+				else if (curSonority == -1)
+				{
+					curSonority = GetSonority(node);
+				}
+				else if ((curSonority < prevSonority && curSonority < nextSonority)
+					|| ((!_vowelsSameSonorityTautosyllabic || curType != CogFeatureSystem.VowelType || prevType != CogFeatureSystem.VowelType) && curSonority == prevSonority))
+				{
+					if (useMaximalOnset)
+						ProcessSyllableWithMaximalOnset(syllableStart, node.Prev, newShape);
+					else
+						ProcessSyllable(syllableStart, node.Prev, newShape);
+					useMaximalOnset = true;
+					syllableStart = null;
 				}
 				if (syllableStart == null)
 					syllableStart = node;
+				prevType = curType;
 				prevSonority = curSonority;
 				curSonority = nextSonority;
 			}

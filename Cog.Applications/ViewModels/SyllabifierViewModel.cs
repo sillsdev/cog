@@ -15,6 +15,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private bool _automaticSyllabificationEnabled;
 		private readonly SoundClassesViewModel _sonorityClasses;
 		private bool _combineSegments;
+		private bool _vowelsSameSonorityTautosyllabic;
 
 		public SyllabifierViewModel(SegmentPool segmentPool, IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
 			: base("Syllabification")
@@ -34,13 +35,16 @@ namespace SIL.Cog.Applications.ViewModels
 			var syllabifier = (SimpleSyllabifier) project.VarietyProcessors["syllabifier"];
 			var sspSyllabifier = syllabifier as SspSyllabifier;
 			bool automaticSyllabificationEnabled;
+			bool vowelsSameSonorityTautosyllabic;
 			if (sspSyllabifier != null)
 			{
+				vowelsSameSonorityTautosyllabic = sspSyllabifier.VowelsSameSonorityTautosyllabic;
 				sonorityScale = sspSyllabifier.SonorityScale;
 				automaticSyllabificationEnabled = true;
 			}
 			else
 			{
+				vowelsSameSonorityTautosyllabic = false;
 				sonorityScale = new[]
 					{
 						new SonorityClass(1, new NaturalClass("Stop", FeatureStruct.New(project.FeatureSystem).Symbol(CogFeatureSystem.ConsonantType).Symbol("stop").Symbol("nasal-").Value)),
@@ -64,6 +68,7 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 
 			Set(() => CombineSegments, ref _combineSegments, syllabifier.CombineSegments);
+			Set(() => VowelsSameSonorityTautosyllabic, ref _vowelsSameSonorityTautosyllabic, vowelsSameSonorityTautosyllabic);
 			Set(() => AutomaticSyllabificationEnabled, ref _automaticSyllabificationEnabled, automaticSyllabificationEnabled);
 
 			_sonorityClasses.SelectedSoundClass = null;
@@ -90,6 +95,12 @@ namespace SIL.Cog.Applications.ViewModels
 			set { SetChanged(() => CombineSegments, ref _combineSegments, value); }
 		}
 
+		public bool VowelsSameSonorityTautosyllabic
+		{
+			get { return _vowelsSameSonorityTautosyllabic; }
+			set { SetChanged(() => VowelsSameSonorityTautosyllabic, ref _vowelsSameSonorityTautosyllabic, value); }
+		}
+
 		public SoundClassesViewModel SonorityClasses
 		{
 			get { return _sonorityClasses; }
@@ -98,7 +109,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public override object UpdateComponent()
 		{
 			SimpleSyllabifier syllabifier = _automaticSyllabificationEnabled
-				? new SspSyllabifier(_combineSegments, _segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)))
+				? new SspSyllabifier(_combineSegments, _vowelsSameSonorityTautosyllabic, _segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)))
 				: new SimpleSyllabifier(_combineSegments);
 			_projectService.Project.VarietyProcessors["syllabifier"] = syllabifier;
 

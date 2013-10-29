@@ -24,7 +24,8 @@
 								  Margin="0,10,0,0" SelectionUnit="Cell" SelectionChanged="WordListsGrid_OnSelectionChanged">
 				<xcdg:DataGridControl.Resources>
 					<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource {x:Type xcdg:DataCell}}">
-						<EventSetter Event="MouseRightButtonUp" Handler="Cell_OnMouseRightButtonUp" />
+						<EventSetter Event="PreviewMouseRightButtonUp" Handler="Cell_OnPreviewMouseRightButtonUp" />
+						<EventSetter Event="PreviewMouseRightButtonDown" Handler="Cell_OnPreviewMouseRightButtonDown" />
 					</Style>
 					<DataTemplate DataType="{x:Type vm:WordListsVarietyViewModel}">
 						<TextBlock><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>

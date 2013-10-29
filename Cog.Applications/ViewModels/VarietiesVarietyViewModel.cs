@@ -92,8 +92,8 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				var affix = new Affix(vm.StrRep, vm.Type == AffixViewModelType.Prefix ? AffixType.Prefix : AffixType.Suffix, vm.Category);
 				int index = DomainVariety.Affixes.IndexOf(_selectedAffix.DomainAffix);
-				DomainVariety.Affixes[index] = affix;
 				_projectService.Project.Segmenter.Segment(affix);
+				DomainVariety.Affixes[index] = affix;
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
 				SelectedAffix = _affixes.Single(a => a.DomainAffix == affix);
 			}

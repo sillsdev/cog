@@ -38,6 +38,8 @@ namespace SIL.Cog.Presentation.Services
 			Window owner = FindOwnerWindow(ownerViewModel);
 			if (dialog != owner)
 				dialog.Owner = owner;
+			else
+				dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 			dialog.DataContext = viewModel;
 			return dialog;
 		}

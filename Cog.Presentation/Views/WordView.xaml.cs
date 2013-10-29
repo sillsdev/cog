@@ -52,7 +52,8 @@ namespace SIL.Cog.Presentation.Views
 
 		private void ListBox_OnGiveFeedback(object sender, GiveFeedbackEventArgs e)
 		{
-			Mouse.OverrideCursor = null;
+			if (Mouse.OverrideCursor != null)
+				Mouse.OverrideCursor = null;
 			Mouse.SetCursor(_closedHandCursor);
 			e.UseDefaultCursors = false;
 			e.Handled = true;

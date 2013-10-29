@@ -310,6 +310,9 @@ namespace SIL.Cog.Presentation.Views
 
 		private void Search()
 		{
+			if (string.IsNullOrEmpty(SearchTextBox.Text))
+				return;
+
 			using (BusyCursor.Display())
 			{
 				MapControl.SetPositionByKeywords(SearchTextBox.Text);

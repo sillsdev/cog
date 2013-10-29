@@ -107,9 +107,13 @@ namespace SIL.Cog.Applications.Services
 						importAction(importSettingsViewModel, stream);
 					return true;
 				}
-				catch (Exception e)
+				catch (IOException ioe)
 				{
-					_dialogService.ShowError(ownerViewModel, string.Format("Error importing file:\n{0}", e.Message), "Cog");
+					_dialogService.ShowError(ownerViewModel, string.Format("Error importing file:\n{0}", ioe.Message), "Cog");
+				}
+				catch (ImportException ie)
+				{
+					_dialogService.ShowError(ownerViewModel, string.Format("Error importing file:\n{0}", ie.Message), "Cog");
 				}
 			}
 			return false;

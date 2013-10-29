@@ -67,6 +67,9 @@
 			<Component Id="SIL.Cog.Domain.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Domain.dll" KeyPath="yes" />
 			</Component>
+			<Component Id="Cog.exe.config" Win64="$(var.Win64)">
+				<File Id="Cog.exe.config" Name="Cog.exe.config" Source="$(var.Cog.Presentation.TargetDir)\Cog.exe.config" KeyPath="yes" />
+			</Component>
 
 			<!-- Machine -->
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">

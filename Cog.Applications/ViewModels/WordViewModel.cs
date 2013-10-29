@@ -161,7 +161,7 @@ namespace SIL.Cog.Applications.ViewModels
 				switch (columnName)
 				{
 					case "StrRep":
-						if (_word.Shape.Count == 0)
+						if (_word.Shape == null || _word.Shape.Count == 0)
 							return "The word contains invalid segments.";
 						break;
 				}

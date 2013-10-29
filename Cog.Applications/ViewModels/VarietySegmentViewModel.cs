@@ -19,11 +19,18 @@ namespace SIL.Cog.Applications.ViewModels
 			: base(segment)
 		{
 			_variety = variety;
-			FrequencyDistribution<Segment> freqDist = position == null ? variety.DomainVariety.SegmentFrequencyDistribution
-				: variety.DomainVariety.SyllablePositionSegmentFrequencyDistributions[position];
 
-			_frequency = freqDist[segment];
-			_probability = (double) _frequency / freqDist.SampleOutcomeCount;
+			FrequencyDistribution<Segment> freqDist;
+			if (position == null)
+				freqDist = variety.DomainVariety.SegmentFrequencyDistribution;
+			else if (!variety.DomainVariety.SyllablePositionSegmentFrequencyDistributions.TryGetValue(position, out freqDist))
+				freqDist = null;
+
+			if (freqDist != null)
+			{
+				_frequency = freqDist[segment];
+				_probability = (double) _frequency / freqDist.SampleOutcomeCount;
+			}
 		}
 
 		public double Probability

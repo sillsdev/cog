@@ -1,3 +1,6 @@
+using SIL.Machine;
+using SIL.Machine.NgramModeling;
+
 namespace SIL.Cog.Domain.Components
 {
 	public class ThresholdSegmentMappings : ISegmentMappings
@@ -23,13 +26,23 @@ namespace SIL.Cog.Domain.Components
 			get { return _alignerID; }
 		}
 
-		public bool IsMapped(Segment seg1, Segment seg2)
+		public bool IsMapped(ShapeNode leftNode1, Ngram<Segment> target1, ShapeNode rightNode1, ShapeNode leftNode2, Ngram<Segment> target2, ShapeNode rightNode2)
 		{
-			if (seg1 == null || seg2 == null)
+			if (target1.Count == 0 || target2.Count == 0)
 				return false;
 
 			IWordAligner aligner = _project.WordAligners[_alignerID];
-			return aligner.Delta(seg1.FeatureStruct, seg2.FeatureStruct) <= _threshold;
+
+			foreach (Segment seg1 in target1)
+			{
+				foreach (Segment seg2 in target2)
+				{
+					if (aligner.Delta(seg1.FeatureStruct, seg2.FeatureStruct) <= _threshold)
+						return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

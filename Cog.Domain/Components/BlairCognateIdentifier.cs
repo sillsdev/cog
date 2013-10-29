@@ -72,8 +72,12 @@ namespace SIL.Cog.Domain.Components
 				int totalCount = 0;
 				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
+					ShapeNode uLeftNode = alignment.GetLeftNode(0, column);
 					Ngram<Segment> u = alignment[0, column].ToNgram(_segmentPool);
+					ShapeNode uRightNode = alignment.GetRightNode(0, column);
+					ShapeNode vLeftNode = alignment.GetLeftNode(1, column);
 					Ngram<Segment> v = alignment[1, column].ToNgram(_segmentPool);
+					ShapeNode vRightNode = alignment.GetRightNode(1, column);
 					string uStr = u.ToString();
 					string vStr = v.ToString();
 					int cat = 3;
@@ -81,18 +85,18 @@ namespace SIL.Cog.Domain.Components
 					{
 						cat = 1;
 					}
-					else if (AreSegmentsMapped(_ignoredMappings, u, v))
+					else if (_ignoredMappings.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
 					{
 						cat = 0;
 					}
 					else if (u.Count == 0 || v.Count == 0)
 					{
-						if (AreSegmentsMapped(_similarSegments, u, v) || correspondences.Contains(Tuple.Create(uStr, vStr)))
+						if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode) || correspondences.Contains(Tuple.Create(uStr, vStr)))
 							cat = _ignoreRegularInsertionDeletion ? 0 : 1;
 					}
 					else if (u[0].Type == CogFeatureSystem.VowelType && v[0].Type == CogFeatureSystem.VowelType)
 					{
-						cat = AreSegmentsMapped(_similarSegments, u, v) ? 1 : 2;
+						cat = _similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode) ? 1 : 2;
 					}
 					else if (u[0].Type == CogFeatureSystem.ConsonantType && v[0].Type == CogFeatureSystem.ConsonantType)
 					{
@@ -100,12 +104,12 @@ namespace SIL.Cog.Domain.Components
 						{
 							if (correspondences.Contains(Tuple.Create(uStr, vStr)))
 								cat = 1;
-							else if (AreSegmentsMapped(_similarSegments, u, v))
+							else if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
 								cat = 2;
 						}
 						else
 						{
-							if (AreSegmentsMapped(_similarSegments, u, v))
+							if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
 								cat = correspondences.Contains(Tuple.Create(uStr, vStr)) ? 1 : 2;
 						}
 					}
@@ -133,22 +137,6 @@ namespace SIL.Cog.Domain.Components
 			int wordPairCount = varietyPair.WordPairs.Count;
 			varietyPair.PhoneticSimilarityScore = totalScore / wordPairCount;
 			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
-		}
-
-		private bool AreSegmentsMapped(ISegmentMappings mappings, Ngram<Segment> u, Ngram<Segment> v)
-		{
-			IEnumerable<Segment> uSegs = u.Count == 0 ? new Segment[] {null} : (IEnumerable<Segment>) u;
-			IEnumerable<Segment> vSegs = v.Count == 0 ? new Segment[] {null} : (IEnumerable<Segment>) v;
-			foreach (Segment uSeg in uSegs)
-			{
-				foreach (Segment vSeg in vSegs)
-				{
-					if (mappings.IsMapped(uSeg, vSeg))
-						return true;
-				}
-			}
-
-			return false;
 		}
 	}
 }

@@ -111,11 +111,11 @@ namespace SIL.Cog.Domain
 			return soundClass != null;
 		}
 
-		public static bool TryGetMatchingSoundClass(this IEnumerable<SoundClass> soundClasses, SegmentPool segmentPool, Alignment<Word, ShapeNode> alignment, int seq, int col, Word word, out SoundClass soundClass)
+		public static bool TryGetMatchingSoundClass(this IEnumerable<SoundClass> soundClasses, SegmentPool segmentPool, Alignment<Word, ShapeNode> alignment, int seq, int col, out SoundClass soundClass)
 		{
-			ShapeNode leftNode = GetLeftNode(alignment, word, seq, col);
+			ShapeNode leftNode = alignment.GetLeftNode(seq, col);
 			Ngram<Segment> target = alignment[seq, col].ToNgram(segmentPool);
-			ShapeNode rightNode = GetRightNode(alignment, word, seq, col);
+			ShapeNode rightNode = alignment.GetRightNode(seq, col);
 			soundClass = soundClasses.FirstOrDefault(sc => sc.Matches(leftNode, target, rightNode));
 			return soundClass != null;
 		}
@@ -125,21 +125,21 @@ namespace SIL.Cog.Domain
 			return node.Type().IsOneOf(CogFeatureSystem.VowelType, CogFeatureSystem.ConsonantType, CogFeatureSystem.AnchorType);
 		}
 
-		public static SoundContext ToSoundContext(this Alignment<Word, ShapeNode> alignment, SegmentPool segmentPool, int seq, int col, Word word, IEnumerable<SoundClass> soundClasses)
+		public static SoundContext ToSoundContext(this Alignment<Word, ShapeNode> alignment, SegmentPool segmentPool, int seq, int col, IEnumerable<SoundClass> soundClasses)
 		{
-			ShapeNode leftNode = GetLeftNode(alignment, word, seq, col);
+			ShapeNode leftNode = alignment.GetLeftNode(seq, col);
 			SoundClass leftEnv;
 			if (leftNode == null || !soundClasses.TryGetMatchingSoundClass(segmentPool, leftNode, out leftEnv))
 				leftEnv = null;
 			Ngram<Segment> target = alignment[seq, col].ToNgram(segmentPool);
-			ShapeNode rightNode = GetRightNode(alignment, word, seq, col);
+			ShapeNode rightNode = alignment.GetRightNode(seq, col);
 			SoundClass rightEnv;
 			if (rightNode == null || !soundClasses.TryGetMatchingSoundClass(segmentPool, rightNode, out rightEnv))
 				rightEnv = null;
 			return new SoundContext(leftEnv, target, rightEnv);
 		}
 
-		private static ShapeNode GetLeftNode(Alignment<Word, ShapeNode> alignment, Word word, int seq, int col)
+		public static ShapeNode GetLeftNode(this Alignment<Word, ShapeNode> alignment, int seq, int col)
 		{
 			AlignmentCell<ShapeNode> cell = alignment[seq, col];
 			ShapeNode leftNode;
@@ -156,7 +156,7 @@ namespace SIL.Cog.Domain
 				}
 				else
 				{
-					leftNode = word.Shape.Begin;
+					leftNode = alignment.Sequences[seq].Shape.Begin;
 				}
 			}
 			else
@@ -166,7 +166,7 @@ namespace SIL.Cog.Domain
 			return leftNode;
 		}
 
-		private static ShapeNode GetRightNode(Alignment<Word, ShapeNode> alignment, Word word, int seq, int col)
+		public static ShapeNode GetRightNode(this Alignment<Word, ShapeNode> alignment, int seq, int col)
 		{
 			AlignmentCell<ShapeNode> cell = alignment[seq, col];
 			ShapeNode rightNode;
@@ -183,7 +183,7 @@ namespace SIL.Cog.Domain
 				}
 				else
 				{
-					rightNode = word.Shape.End;
+					rightNode = alignment.Sequences[seq].Shape.End;
 				}
 			}
 			else

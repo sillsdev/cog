@@ -16,8 +16,8 @@ namespace SIL.Cog.Applications.ViewModels
 			_segment1 = segment1;
 			_segment2 = segment2;
 
-			_isSegment1Valid = segmenter.IsValidSegment(_segment1);
-			_isSegment2Valid = segmenter.IsValidSegment(_segment2);
+			_isSegment1Valid = IsValid(segmenter, _segment1);
+			_isSegment2Valid = IsValid(segmenter, _segment2);
 		}
 
 		public string Segment1
@@ -49,6 +49,17 @@ namespace SIL.Cog.Applications.ViewModels
 
 				return null;
 			}
+		}
+
+		private bool IsValid(Segmenter segmenter, string segment)
+		{
+			if (segment == "#")
+				return false;
+			if (segment.StartsWith("#"))
+				return segmenter.IsValidSegment(segment.Remove(0, 1));
+			if (segment.EndsWith("#"))
+				return segmenter.IsValidSegment(segment.Remove(segment.Length - 1, 1));
+			return segmenter.IsValidSegment(segment);
 		}
 
 		string IDataErrorInfo.Error

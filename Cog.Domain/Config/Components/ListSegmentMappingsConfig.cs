@@ -12,8 +12,7 @@ namespace SIL.Cog.Domain.Config.Components
 		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement mappingsElem = elem.Element(ConfigManager.Cog + "Mappings");
-			var genDigraphsStr = (string) elem.Element(ConfigManager.Cog + "GenerateDigraphs") ?? "false";
-			return new ListSegmentMappings(project.Segmenter, ParseMappings(mappingsElem), bool.Parse(genDigraphsStr));
+			return new ListSegmentMappings(project.Segmenter, ParseMappings(mappingsElem));
 		}
 
 		private IEnumerable<Tuple<string, string>> ParseMappings(XElement elem)
@@ -26,7 +25,6 @@ namespace SIL.Cog.Domain.Config.Components
 		{
 			var listMappings = (ListSegmentMappings) component;
 			elem.Add(new XElement(ConfigManager.Cog + "Mappings", CreateMappings(listMappings.Mappings)));
-			elem.Add(new XElement(ConfigManager.Cog + "GenerateDigraphs", listMappings.GenerateDigraphs));
 		}
 
 		private IEnumerable<XElement> CreateMappings(IEnumerable<Tuple<string, string>> mappings)

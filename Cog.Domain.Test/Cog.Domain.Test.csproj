@@ -49,6 +49,7 @@
     <Compile Include="Alignment\MultipleAlignmentAlgorithmTest.cs" />
     <Compile Include="Alignment\PairwiseAlignmentAlgorithmTest.cs" />
     <Compile Include="Alignment\StringScorer.cs" />
+    <Compile Include="Components\ListSegmentMappingsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmenterTest.cs" />
   </ItemGroup>

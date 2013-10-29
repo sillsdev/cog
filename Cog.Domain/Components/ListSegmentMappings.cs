@@ -2,26 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
+using SIL.Machine;
+using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain.Components
 {
 	public class ListSegmentMappings : ISegmentMappings
 	{
 		private readonly List<Tuple<string, string>> _mappings;
-		private readonly bool _generateDigraphs;
 
 		private readonly Dictionary<string, HashSet<string>> _mappingLookup;
 
-		public ListSegmentMappings(Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings, bool generateDigraphs)
+		public ListSegmentMappings(Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings)
 		{
 			_mappings = mappings.ToList();
-			_generateDigraphs = generateDigraphs;
 
 			_mappingLookup = new Dictionary<string, HashSet<string>>();
 			foreach (Tuple<string, string> mapping in _mappings)
 			{
 				string str1, str2;
-				if (segmenter.NormalizeSegmentString(mapping.Item1, out str1) && segmenter.NormalizeSegmentString(mapping.Item2, out str2))
+				if (Normalize(segmenter, mapping.Item1, out str1) && Normalize(segmenter, mapping.Item2, out str2))
 				{
 					HashSet<string> segments = _mappingLookup.GetValue(str1, () => new HashSet<string>());
 					segments.Add(str2);
@@ -29,35 +29,34 @@ namespace SIL.Cog.Domain.Components
 					segments.Add(str1);
 				}
 			}
+		}
 
-			if (_generateDigraphs)
+		private bool Normalize(Segmenter segmenter, string segment, out string normalizedSegment)
+		{
+			normalizedSegment = null;
+			if (segment == "#")
 			{
-				string[] vowels = _mappingLookup.Keys.Where(v => v != "-").ToArray();
-				foreach (string vowel1 in vowels)
-				{
-					foreach (string vowel2 in vowels)
-					{
-						if (vowel1 == vowel2)
-							continue;
-
-						string seg = vowel1 + vowel2;
-						HashSet<string> segments;
-						if (!_mappingLookup.TryGetValue(seg, out segments))
-						{
-							segments = new HashSet<string>(_mappingLookup[vowel1]);
-							segments.UnionWith(_mappingLookup[vowel2]);
-							segments.Add(vowel1);
-							segments.Add(vowel2);
-							_mappingLookup[seg] = segments;
-							foreach (string otherSeg in segments)
-							{
-								HashSet<string> otherSegments = _mappingLookup.GetValue(otherSeg, () => new HashSet<string>());
-								otherSegments.Add(seg);
-							}
-						}
-					}
-				}
+				// ignore
 			}
+			else if (segment.StartsWith("#"))
+			{
+				string normalized;
+				if (segmenter.NormalizeSegmentString(segment.Remove(0, 1), out normalized))
+					normalizedSegment = "#" + normalized;
+			}
+			else if (segment.EndsWith("#"))
+			{
+				string normalized;
+				if (segmenter.NormalizeSegmentString(segment.Remove(segment.Length - 1, 1), out normalized))
+					normalizedSegment = normalized + "#";
+			}
+			else
+			{
+				string normalized;
+				if (segmenter.NormalizeSegmentString(segment, out normalized))
+					normalizedSegment = normalized;
+			}
+			return normalizedSegment != null;
 		}
 
 		public IEnumerable<Tuple<string, string>> Mappings
@@ -65,17 +64,42 @@ namespace SIL.Cog.Domain.Components
 			get { return _mappings; }
 		}
 
-		public bool GenerateDigraphs
+		public bool IsMapped(ShapeNode leftNode1, Ngram<Segment> target1, ShapeNode rightNode1, ShapeNode leftNode2, Ngram<Segment> target2, ShapeNode rightNode2)
 		{
-			get { return _generateDigraphs; }
+			foreach (string strRep1 in GetStrReps(leftNode1, target1, rightNode1))
+			{
+				foreach (string strRep2 in GetStrReps(rightNode1, target2, rightNode2))
+				{
+					HashSet<string> segments;
+					if (_mappingLookup.TryGetValue(strRep1, out segments) && segments.Contains(strRep2))
+						return true;
+				}
+			}
+			return false;
 		}
 
-		public bool IsMapped(Segment seg1, Segment seg2)
+		private IEnumerable<string> GetStrReps(ShapeNode leftNode, Ngram<Segment> target, ShapeNode rightNode)
 		{
-			HashSet<string> segments;
-			if (_mappingLookup.TryGetValue(seg1 == null ? "-" : seg1.StrRep, out segments))
-				return segments.Contains(seg2 == null ? "-" : seg2.StrRep);
-			return false;
+			if (target.Count == 0)
+			{
+				if (leftNode != null && leftNode.Type() == CogFeatureSystem.AnchorType)
+					yield return "#-";
+				if (rightNode != null && rightNode.Type() == CogFeatureSystem.AnchorType)
+					yield return "-#";
+				yield return "-";
+			}
+			else
+			{
+				foreach (Segment seg in target)
+				{
+					string strRep = seg.ToString();
+					if (leftNode != null && leftNode.Type() == CogFeatureSystem.AnchorType)
+						yield return string.Format("#{0}", strRep);
+					if (rightNode != null && rightNode.Type() == CogFeatureSystem.AnchorType)
+						yield return string.Format("{0}#", strRep);
+					yield return strRep;
+				}
+			}
 		}
 	}
 }

@@ -5,12 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
-             xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500" d:DataContext="{d:DesignInstance vm:ListSimilarSegmentMappingsViewModel}">
-	<UserControl.Resources>
-		<cnvtrs:EnumMatchToVisibilityConverter x:Key="VisConverter" />
-	</UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -19,10 +15,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Padding="0">Correspondences</Label>
         <v:SegmentMappingsView Grid.Column="0" Grid.Row="1" Margin="0,0,0,5" DataContext="{Binding Mappings}" />
-        <CheckBox Visibility="{Binding SoundType, Converter={StaticResource VisConverter}, ConverterParameter=Vowel}" Grid.Row="2" Grid.ColumnSpan="2" IsChecked="{Binding GenerateDigraphs}">Generate diphthongs</CheckBox>
     </Grid>
 </UserControl>

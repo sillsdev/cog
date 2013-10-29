@@ -69,10 +69,10 @@ namespace SIL.Cog.Domain.Components
 						else
 						{
 							SoundClass sc1;
-							if (!_soundClasses.TryGetMatchingSoundClass(_segmentPool, alignment, 0, column, wp.Word1, out sc1))
+							if (!_soundClasses.TryGetMatchingSoundClass(_segmentPool, alignment, 0, column, out sc1))
 								sc1 = null;
 							SoundClass sc2;
-							if (!_soundClasses.TryGetMatchingSoundClass(_segmentPool, alignment, 1, column, wp.Word2, out sc2))
+							if (!_soundClasses.TryGetMatchingSoundClass(_segmentPool, alignment, 1, column, out sc2))
 								sc2 = null;
 							if (sc1 != null && sc2 != null && sc1 == sc2)
 							{

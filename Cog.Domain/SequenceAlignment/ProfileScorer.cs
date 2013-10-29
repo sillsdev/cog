@@ -18,8 +18,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			{
 				for (int j = 0; j < sequence2.Alignment.SequenceCount; j++)
 				{
-					sum += (int) (_scorer.GetGapPenalty(sequence1.Alignment.Sequences[i], sequence2.Alignment.Sequences[j])
-						* (1.0 - sequence1.Weights[i]) * (1.0 - sequence2.Weights[j]));
+					sum += _scorer.GetGapPenalty(sequence1.Alignment.Sequences[i], sequence2.Alignment.Sequences[j]);
 				}
 			}
 

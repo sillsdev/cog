@@ -68,7 +68,7 @@ namespace SIL.Cog.Domain.Components
 					{
 						for (int column = 0; column < alignment.ColumnCount; column++)
 						{
-							SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, wordPair.Word1, aligner.ContextualSoundClasses);
+							SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
 							Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
 							expectedCounts[lhs].Increment(corr);
 						}

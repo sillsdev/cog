@@ -65,7 +65,7 @@ namespace SIL.Cog.Applications.ViewModels
 					}
 					else
 					{
-						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(_segmentPool, 0, node.Column, wordPair.DomainWordPair.Word1, aligner.ContextualSoundClasses);
+						SoundContext lhs = wordPair.DomainAlignment.ToSoundContext(_segmentPool, 0, node.Column, aligner.ContextualSoundClasses);
 						Ngram<Segment> corr = wordPair.DomainAlignment[1, node.Column].ToNgram(_segmentPool);
 						node.IsSelected = lhs.Equals(_selectedSoundChange.DomainSoundChangeLhs) && corr.Equals(_selectedSoundChange.DomainCorrespondence);
 						if (node.IsSelected)

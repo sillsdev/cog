@@ -142,9 +142,9 @@ namespace SIL.Cog.Presentation.Services
 		{
 			Window owner = FindOwnerWindow(ownerViewModel);
 			if (owner == null)
-				MessageBox.Show(message, caption, MessageBoxButton.OK, icon);
+				MessageBoxEx.Show(message, caption, MessageBoxButton.OK, icon);
 			else
-				MessageBox.Show(owner, message, caption, MessageBoxButton.OK, icon);
+				MessageBoxEx.Show(owner, message, caption, MessageBoxButton.OK, icon);
 		}
 
 		public bool? ShowQuestion(object ownerViewModel, string message, string caption)
@@ -152,9 +152,9 @@ namespace SIL.Cog.Presentation.Services
 			Window owner = FindOwnerWindow(ownerViewModel);
 			MessageBoxResult result;
 			if (owner == null)
-				result = MessageBox.Show(message, caption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
+				result = MessageBoxEx.Show(message, caption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
 			else
-				result = MessageBox.Show(owner, message, caption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
+				result = MessageBoxEx.Show(owner, message, caption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
 			if (result == MessageBoxResult.Yes)
 				return true;
 			if (result == MessageBoxResult.No)
@@ -167,9 +167,9 @@ namespace SIL.Cog.Presentation.Services
 			Window owner = FindOwnerWindow(ownerViewModel);
 			MessageBoxResult result;
 			if (owner == null)
-				result = MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+				result = MessageBoxEx.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
 			else
-				result = MessageBox.Show(owner, message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+				result = MessageBoxEx.Show(owner, message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
 			return result == MessageBoxResult.Yes;
 		}
 

@@ -50,6 +50,13 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (string.IsNullOrEmpty(segment))
 				return "Please specify a segment.";
+
+			if (segment == "#")
+				return "This is an invalid segment.";
+			if (segment.StartsWith("#"))
+				segment = segment.Remove(0, 1);
+			else if (segment.EndsWith("#"))
+				segment = segment.Remove(segment.Length - 1, 1);
 			Shape shape;
 			if (!_segmenter.TrySegment(segment, out shape))
 				return "This is an invalid segment.";

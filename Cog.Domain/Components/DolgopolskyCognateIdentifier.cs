@@ -99,8 +99,16 @@ namespace SIL.Cog.Domain.Components
 			}
 
 			int wordPairCount = varietyPair.WordPairs.Count;
-			varietyPair.PhoneticSimilarityScore = totalScore / wordPairCount;
-			varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
+			if (wordPairCount == 0)
+			{
+				varietyPair.PhoneticSimilarityScore = 0;
+				varietyPair.LexicalSimilarityScore = 0;
+			}
+			else
+			{
+				varietyPair.PhoneticSimilarityScore = totalScore / wordPairCount;
+				varietyPair.LexicalSimilarityScore = (double) totalCognateCount / wordPairCount;
+			}
 		}
 	}
 }

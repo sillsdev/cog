@@ -147,18 +147,18 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			if (!fs2.TryGetValue(feature, out qValue))
 				return 0;
 
-			int min = -1;
+			int sum = 0;
+			int count = 0;
 			foreach (FeatureSymbol pSymbol in pValue.Values)
 			{
 				foreach (FeatureSymbol qSymbol in qValue.Values)
 				{
-					int diff = Math.Abs(_valueMetrics[pSymbol] - _valueMetrics[qSymbol]);
-					if (min == -1 || diff < min)
-						min = diff;
+					sum += Math.Abs(_valueMetrics[pSymbol] - _valueMetrics[qSymbol]);
+					count++;
 				}
 			}
 
-			return min;
+			return sum / count;
 		}
 
 		private int V(ShapeNode node)

@@ -24,6 +24,10 @@
     <Compile Include="Bundle.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
     <WixExtension Include="WixNetFxExtension">
       <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
       <Name>WixNetFxExtension</Name>
@@ -67,9 +71,9 @@
     <CreateProperty Value="%(AsmInfo.Version)">
       <Output TaskParameter="Value" PropertyName="VersionNumber" />
     </CreateProperty>
-	<CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
-		<Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
-	</CreateProperty>
+    <CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
+      <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+    </CreateProperty>
     <!-- Create the WiX preprocessor variable $(var.VersionNumber) -->
     <CreateProperty Value="$(DefineConstants);VersionNumber=$(ShortVersionNumber)">
       <Output TaskParameter="Value" PropertyName="DefineConstants" />

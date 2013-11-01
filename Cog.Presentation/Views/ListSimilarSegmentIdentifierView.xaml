@@ -7,16 +7,18 @@
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500" d:DataContext="{d:DesignInstance vm:ListSimilarSegmentMappingsViewModel}">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" Padding="0">Correspondences</Label>
-        <v:SegmentMappingsView Grid.Column="0" Grid.Row="1" Margin="0,0,0,5" DataContext="{Binding Mappings}" />
-    </Grid>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Label Grid.Column="0" Grid.Row="0" Padding="0">Correspondences</Label>
+		<v:SegmentMappingsView Grid.Column="0" Grid.Row="1" Margin="0,0,0,5" DataContext="{Binding Mappings}" />
+		<CheckBox Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,0,5" IsChecked="{Binding ImplicitComplexSegments}">Similar digraphs are implicit</CheckBox>
+	</Grid>
 </UserControl>

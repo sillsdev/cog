@@ -299,7 +299,9 @@ namespace SIL.Cog.Domain
 								string joinerStr = joinerGroup.Captures[i].Value;
 								phonemeFS.Add(BuildFeatStruct(match, vowelComp.Captures[i + 1], "vowelBase", _vowels, out partStrRep));
 								sb.Append(partStrRep);
-								phonemeFS.PriorityUnion(_joiners[joinerStr].FeatureStruct);
+								FeatureStruct joinerFs = _joiners[joinerStr].FeatureStruct;
+								if (joinerFs != null)
+									phonemeFS.PriorityUnion(joinerFs);
 							}
 						}
 						else if (vowelComp.Captures.Count > 1)

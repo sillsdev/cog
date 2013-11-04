@@ -52,7 +52,7 @@ namespace SIL.Cog.Applications.ViewModels
 					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveSelectedVariety)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
-						new TaskAreaCommandViewModel("Sense", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
+						new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
 						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 

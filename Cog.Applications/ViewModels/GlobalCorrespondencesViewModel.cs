@@ -66,7 +66,7 @@ namespace SIL.Cog.Applications.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
-					new TaskAreaCommandViewModel("Sense", new RelayCommand(() => _observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
+					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => _observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _observedWordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending))))),
 				new TaskAreaCommandViewModel("Select varieties", new RelayCommand(SelectVarieties))
 				));

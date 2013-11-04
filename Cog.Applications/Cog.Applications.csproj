@@ -134,6 +134,7 @@
     <Compile Include="Services\SoundContextSurrogate.cs" />
     <Compile Include="Services\VarietyPairSurrogate.cs" />
     <Compile Include="Services\WordPairSurrogate.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AddUnnaturalClassSegmentViewModel.cs" />
     <Compile Include="ViewModels\AffixViewModel.cs" />
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />

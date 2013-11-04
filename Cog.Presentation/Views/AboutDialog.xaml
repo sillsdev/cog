@@ -1,0 +1,39 @@
+﻿<Window x:Class="SIL.Cog.Presentation.Views.AboutDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications" mc:Ignorable="d"
+        Title="About Cog" Height="Auto" Width="430" ShowInTaskbar="False" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterOwner" SizeToContent="Height"
+        d:DataContext="{d:DesignInstance vm:AboutViewModel}">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		
+		<Image Grid.RowSpan="6" Grid.Column="0" Source="/Cog;component/Images/SIL-logo.jpg" VerticalAlignment="Top" Width="120" Margin="20,10,20,20" />
+		<TextBlock Grid.Row="0" Grid.Column="1" FontSize="30" Margin="5">Cog</TextBlock>
+		<TextBlock Grid.Row="1" Grid.Column="1" Margin="5,5,5,20">
+			<TextBlock>Version</TextBlock>
+			<TextBlock Text="{Binding Version}" />
+			<TextBlock Text="{Binding BuildDate, StringFormat={}({0:d})}" />
+		</TextBlock>
+		<TextBlock Grid.Row="2" Grid.Column="1" Margin="5">© 2013 SIL International®</TextBlock>
+		<TextBlock Grid.Row="3" Grid.Column="1" Margin="5">
+			<Run>Code licensed under the</Run>
+			<Hyperlink Command="{Binding LicenseCommand}">MIT License</Hyperlink>
+		</TextBlock>
+		<TextBlock Grid.Row="4" Grid.Column="1" Margin="5" VerticalAlignment="Bottom">
+			<Hyperlink Command="{Binding WebsiteCommand}">Cog website</Hyperlink>
+		</TextBlock>
+		<Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" Margin="5,5,0,0" Width="70" Click="okButton_Click">OK</Button>
+	</Grid>
+</Window>

@@ -27,6 +27,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly ICommand _performComparisonCommand;
 		private readonly ICommand _runStemmerCommand;
 		private ICommand _findCommand;
+		private readonly ICommand _aboutCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
@@ -61,6 +62,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_exportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
 			_performComparisonCommand = new RelayCommand(PerformComparison, CanPerformComparison);
 			_runStemmerCommand = new RelayCommand(RunStemmer, CanRunStemmer);
+			_aboutCommand = new RelayCommand(ShowAbout);
 
 			foreach (ContainerViewModelBase childView in Views.OfType<ContainerViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
@@ -283,6 +285,11 @@ namespace SIL.Cog.Applications.ViewModels
 				_analysisService.StemAll(this, vm.Method);
 		}
 
+		private void ShowAbout()
+		{
+			_dialogService.ShowModalDialog(this, new AboutViewModel());
+		}
+
 		public ICommand NewCommand
 		{
 			get { return _newCommand; }
@@ -362,6 +369,11 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			get { return _findCommand; }
 			private set { Set(() => FindCommand, ref _findCommand, value); }
+		}
+
+		public ICommand AboutCommand
+		{
+			get { return _aboutCommand; }
 		}
 	}
 }

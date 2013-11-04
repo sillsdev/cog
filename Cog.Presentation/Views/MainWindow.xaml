@@ -49,7 +49,7 @@
 				<MenuItem Header="Cog _Help" Command="Help" />
 				<MenuItem Header="Getting Started with Cog" Click="QuickReference_Click" />
 				<Separator />
-                <MenuItem Header="About Cog" Click="AboutBox_Click" />
+                <MenuItem Header="About Cog" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>
         <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0,10,0,0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding SelectedView}">

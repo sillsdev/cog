@@ -37,12 +37,6 @@ namespace SIL.Cog.Presentation.Views
 			base.OnClosing(e);
 		}
 
-		private void AboutBox_Click(object sender, RoutedEventArgs e)
-		{
-			var aboutBox = new AboutBox(this);
-			aboutBox.ShowDialog();
-		}
-
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);

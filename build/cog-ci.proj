@@ -67,8 +67,8 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="Upload" DependsOnTargets="VersionNumber;Installer;MakeDownloadPointers">
-		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)/output/Cog-$(ShortVersionNumber)-Setup.exe" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/Cog-$(ShortVersionNumber)-Setup.exe' />
-		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)/output/DownloadPointers.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadPointers.html' />
-		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)/output/DownloadButton.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadButton.html' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)\output\Cog-$(ShortVersionNumber)-Setup.exe" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/Cog-$(ShortVersionNumber)-Setup.exe' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)\output\DownloadPointers.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadPointers.html' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)\output\DownloadButton.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadButton.html' />
 	</Target>
 </Project>

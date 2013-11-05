@@ -68,6 +68,7 @@ body, html {
 	padding: 0 10px 0 0;
 	font-size: 85%;
 	color: #c0c0c0;
+	line-height: 30px;
 }
 
 .masthead-links a {
@@ -75,4 +76,9 @@ body, html {
 }
 .masthead-links a:hover {
 	color: #808080;
+}
+
+.downloads-table {
+	width: auto;
+	margin-bottom: 0px;
 }

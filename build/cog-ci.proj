@@ -1,0 +1,73 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+		<Solution>Cog.sln</Solution>
+		<Configuration>Release</Configuration>
+		<Platform>Mixed Platforms</Platform>
+		<LifecycleStage>Alpha</LifecycleStage>
+	</PropertyGroup>
+	
+	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+		<ParameterGroup>
+			<Path ParameterType="System.String" Required="true" />
+			<Token ParameterType="System.String" Required="true" />
+			<Replacement ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Code Type="Fragment" Language="cs">
+<![CDATA[
+string content = File.ReadAllText(Path);
+content = content.Replace(Token, Replacement);
+File.WriteAllText(Path, content);
+]]>
+			</Code>
+		</Task>
+	</UsingTask>
+	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+	
+	<Target Name="BuildAll">
+		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+	</Target>
+	
+	<Target Name="Test" DependsOnTargets="BuildAll">
+		<CreateItem Include="$(RootDir)/**/$(Configuration)/*Test.dll">
+			<Output ItemName="TestAssemblies" TaskParameter="Include" />
+		</CreateItem>
+		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.6.3" />
+	</Target>
+	
+	<Target Name="VersionNumber" DependsOnTargets="BuildAll">
+		<!-- Read the version from the .exe -->
+		<GetAssemblyIdentity AssemblyFiles="$(RootDir)/Cog.Presentation/bin/$(Configuration)/Cog.exe">
+		  <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
+		</GetAssemblyIdentity>
+		<!-- Create the MSBuild property $(VersionNumber) -->
+		<CreateProperty Value="%(AsmInfo.Version)">
+		  <Output TaskParameter="Value" PropertyName="VersionNumber" />
+		</CreateProperty>
+		<CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
+		  <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+		</CreateProperty>
+	</Target>
+	
+	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
+		<Copy SourceFiles="$(RootDir)/build/DownloadPointers.html" DestinationFolder="$(RootDir)/output" />
+		<TokenReplace Path="$(RootDir)/output/DownloadPointers.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage)" />
+		<TokenReplace Path="$(RootDir)/output/DownloadPointers.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
+		<TokenReplace Path="$(RootDir)/output/DownloadPointers.html" Token="RELEASE_DATE" Replacement="$([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
+		
+		<Copy SourceFiles="$(RootDir)/build/DownloadButton.html" DestinationFolder="$(RootDir)/output" />
+		<TokenReplace Path="$(RootDir)/output/DownloadButton.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage.ToLower())" />
+		<TokenReplace Path="$(RootDir)/output/DownloadButton.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
+	</Target>
+	
+	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">
+		<Copy SourceFiles="$(RootDir)/Installer/Bootstrapper/bin/$(Configuration)/Cog-$(ShortVersionNumber)-Setup.exe" DestinationFolder="$(RootDir)/output" />
+	</Target>
+	
+	<Target Name="Upload" DependsOnTargets="VersionNumber;Installer;MakeDownloadPointers">
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)/output/Cog-$(ShortVersionNumber)-Setup.exe" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/Cog-$(ShortVersionNumber)-Setup.exe' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)/output/DownloadPointers.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadPointers.html' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "$(RootDir)/output/DownloadButton.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadButton.html' />
+	</Target>
+</Project>

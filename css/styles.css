@@ -59,6 +59,7 @@ body, html {
 }
 
 .masthead-links {
+	font-size: 18;
 	margin: 0;
 	list-style: none;
 }
@@ -69,6 +70,7 @@ body, html {
 	font-size: 85%;
 	color: #c0c0c0;
 	line-height: 30px;
+	font-weight: 200;
 }
 
 .masthead-links a {

@@ -30,7 +30,7 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="Test" DependsOnTargets="BuildAll">
-		<CreateItem Include="$(RootDir)/**/$(Configuration)/*Test.dll">
+		<CreateItem Include="$(RootDir)/**/bin/$(Configuration)/*Test.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.6.2" />
@@ -62,6 +62,7 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">
+		<Delete Files="$(RootDir)/output/Cog-*-Setup.exe" />
 		<Copy SourceFiles="$(RootDir)/Installer/Bootstrapper/bin/$(Configuration)/Cog-$(ShortVersionNumber)-Setup.exe" DestinationFolder="$(RootDir)/output" />
 	</Target>
 	

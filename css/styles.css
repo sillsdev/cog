@@ -59,10 +59,8 @@ body, html {
 }
 
 .masthead-links {
-	font-size: 18px;
 	margin: 0;
 	list-style: none;
-	font-weight: 200;
 }
 
 .masthead-links li {
@@ -70,7 +68,6 @@ body, html {
 	padding: 0 10px 0 0;
 	font-size: 85%;
 	color: #c0c0c0;
-	line-height: 30px;
 }
 
 .masthead-links a {
@@ -83,4 +80,9 @@ body, html {
 .downloads-table {
 	width: auto;
 	margin-bottom: 0px;
+}
+
+.download-info {
+	color: #c0c0c0;
+	font-size: 14px;
 }

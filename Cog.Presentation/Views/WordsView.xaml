@@ -29,7 +29,7 @@
 								<ControlTemplate TargetType="ListBoxItem">
 									<Grid>
 										<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
-										<Border Margin="5" Padding="3" Background="Transparent">
+										<Border Margin="5" Padding="3" Background="Transparent" PreviewMouseRightButtonDown="ListBoxItem_OnPreviewMouseRightButtonDown">
 											<Border.ContextMenu>
 												<ContextMenu>
 													<MenuItem Command="Copy" />

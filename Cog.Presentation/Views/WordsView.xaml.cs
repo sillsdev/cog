@@ -101,5 +101,12 @@ namespace SIL.Cog.Presentation.Views
 		{
 			WordsListBox.SelectAll();
 		}
+
+		private void ListBoxItem_OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var elem = (Border) sender;
+			if (!WordsListBox.SelectedItems.Contains(elem.DataContext))
+				WordsListBox.SelectedItem = elem.DataContext;
+		}
 	}
 }

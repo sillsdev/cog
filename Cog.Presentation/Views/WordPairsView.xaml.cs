@@ -79,5 +79,12 @@ namespace SIL.Cog.Presentation.Views
 		{
 			WordPairsListBox.SelectAll();
 		}
+
+		private void ListBoxItem_OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var elem = (Border) sender;
+			if (!WordPairsListBox.SelectedItems.Contains(elem.DataContext))
+				WordPairsListBox.SelectedItem = elem.DataContext;
+		}
 	}
 }

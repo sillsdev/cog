@@ -32,6 +32,8 @@ namespace SIL.Cog.Presentation.Converters
 
 			var sb = (ScrollBar) sv.Template.FindName("PART_VerticalScrollBar", sv);
 			var track = (Track) sb.Template.FindName("PART_Track", sb);
+			if (track == null)
+				return (y * listBox.ActualHeight) / height;
 			var trackPoint = track.TransformToAncestor(sb).Transform(new Point());
 			return trackPoint.Y + ((y * track.ActualHeight) / height);
 		}

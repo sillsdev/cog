@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -169,7 +171,9 @@ namespace SIL.Cog.Presentation.Views
 
 		private void QuickReference_Click(object sender, RoutedEventArgs e)
 		{
-			Process.Start("Help\\GettingStartedWithCog.pdf");
+			string exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			if (!string.IsNullOrEmpty(exeDir))
+				Process.Start(Path.Combine(exeDir, "Help\\GettingStartedWithCog.pdf"));
 		}
 	}
 }

@@ -181,12 +181,18 @@ namespace SIL.Cog.Applications.Services
 							catch (ConfigException)
 							{
 								errorMsg = "The specified file is not a valid Cog configuration file.";
-								CloseProject();
-								vm.Canceled = true;
 							}
 							catch (IOException ioe)
 							{
 								errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
+							}
+							catch (UnauthorizedAccessException)
+							{
+								errorMsg = "Access to the specified project is denied.";
+							}
+
+							if (!string.IsNullOrEmpty(errorMsg))
+							{
 								CloseProject();
 								vm.Canceled = true;
 							}

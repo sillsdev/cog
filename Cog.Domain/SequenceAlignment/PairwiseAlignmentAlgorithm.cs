@@ -75,7 +75,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 					int m4 = !ExpansionCompressionEnabled || j - 2 < 0 ? int.MinValue : _sim[i - 1, j - 2] + _scorer.GetExpansionScore(_sequence1, Get1(i), _sequence2, Get2(j - 1), Get2(j));
 					int m5 = !ExpansionCompressionEnabled || i - 2 < 0 ? int.MinValue : _sim[i - 2, j - 1] + _scorer.GetCompressionScore(_sequence1, Get1(i - 1), Get1(i), _sequence2, Get2(j));
 
-					if (Mode == AlignmentMode.Local || Mode == AlignmentMode.HalfLocal)
+					if (Mode == AlignmentMode.Local)
 						_sim[i, j] = new[] {m1, m2, m3, m4, m5, 0}.Max();
 					else
 						_sim[i, j] = new[] {m1, m2, m3, m4, m5}.Max();

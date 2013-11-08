@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
-             mc:Ignorable="d" DataContextChanged="WordPairsView_OnDataContextChanged"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+			 mc:Ignorable="d" DataContextChanged="WordPairsView_OnDataContextChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairsViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:ListBoxScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
@@ -61,11 +61,6 @@
 						<v:WordPairView HorizontalAlignment="Stretch" />
 					</DataTemplate>
 				</ListBox.ItemTemplate>
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<VirtualizingStackPanel b:VirtualizingStackPanelBehaviors.IsEnabled="True" />
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
 			</ListBox>
 			<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedCorrespondenceWordPairs}">
 				<ItemsControl.ItemTemplate>

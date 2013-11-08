@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
-             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
-             mc:Ignorable="d" DataContextChanged="GlobalWordPairsView_OnDataContextChanged"
+             xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+			 mc:Ignorable="d" DataContextChanged="GlobalWordPairsView_OnDataContextChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairsViewModel}">
 	<ListBox ItemsSource="{Binding WordPairsView}" SelectionMode="Extended" Name="WordPairsListBox" AlternationCount="2" LostFocus="WordPairsListBox_OnLostFocus"
 			 SelectionChanged="WordPairsListBox_OnSelectionChanged">
@@ -59,10 +59,5 @@
 				</StackPanel>
 			</DataTemplate>
 		</ListBox.ItemTemplate>
-		<ListBox.ItemsPanel>
-			<ItemsPanelTemplate>
-				<VirtualizingStackPanel b:VirtualizingStackPanelBehaviors.IsEnabled="True" />
-			</ItemsPanelTemplate>
-		</ListBox.ItemsPanel>
 	</ListBox>
 </UserControl>

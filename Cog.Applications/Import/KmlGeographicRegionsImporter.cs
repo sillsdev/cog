@@ -45,19 +45,19 @@ namespace SIL.Cog.Applications.Import
 				throw new ImportException("Missing Document element.");
 
 			var regions = new Dictionary<Variety, List<GeographicRegion>>();
-			LoadFolder(project.Varieties.ToDictionary(v => v.Name.ToLowerInvariant()), regions, document);
+			LoadFolder(project, regions, document);
 
 			foreach (KeyValuePair<Variety, List<GeographicRegion>> varietyRegions in regions)
 				varietyRegions.Key.Regions.AddRange(varietyRegions.Value);
 		}
 
-		private void LoadFolder(Dictionary<string, Variety> varieties, Dictionary<Variety, List<GeographicRegion>> regions, XElement elem)
+		private void LoadFolder(CogProject project, Dictionary<Variety, List<GeographicRegion>> regions, XElement elem)
 		{
 			foreach (XElement placemark in elem.Elements(Kml + "Placemark"))
 			{
 				var name = (string) placemark.Element(Kml + "name");
 				Variety variety;
-				if (!string.IsNullOrEmpty(name) && varieties.TryGetValue(name.ToLowerInvariant(), out variety))
+				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGetValue(name, out variety))
 				{
 					XElement polygon = placemark.Element(Kml + "Polygon");
 					if (polygon != null)
@@ -69,10 +69,10 @@ namespace SIL.Cog.Applications.Import
 			{
 				var name = (string) folder.Element(Kml + "name");
 				Variety variety;
-				if (!string.IsNullOrEmpty(name) && varieties.TryGetValue(name.ToLowerInvariant(), out variety))
+				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGetValue(name, out variety))
 					LoadVarietyFolder(regions, variety, folder);
 				else
-					LoadFolder(varieties, regions, folder);
+					LoadFolder(project, regions, folder);
 			}
 		}
 

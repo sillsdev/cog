@@ -80,6 +80,7 @@
 								<MultiBinding Converter="{StaticResource MarkerPosConverter}">
 									<Binding Path="." />
 									<Binding ElementName="WordPairsListBox" />
+									<Binding ElementName="WordPairsListBox" Path="ActualHeight" />
 								</MultiBinding>
 							</Setter.Value>
 						</Setter>

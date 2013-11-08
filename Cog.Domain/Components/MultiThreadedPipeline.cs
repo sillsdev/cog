@@ -41,8 +41,14 @@ namespace SIL.Cog.Domain.Components
 								{
 									if (token.IsCancellationRequested)
 										break;
-									processor.Process(sd);
-									countdownEvent.Signal();
+									try
+									{
+										processor.Process(sd);
+									}
+									finally
+									{
+										countdownEvent.Signal();
+									}
 								}
 							}, token, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
 					}

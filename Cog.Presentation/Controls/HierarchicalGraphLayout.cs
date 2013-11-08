@@ -40,6 +40,13 @@ namespace SIL.Cog.Presentation.Controls
 				VertexControl vc = GetVertexControl(v);
 				vc.FontSize = fontSize;
 			}
+
+			double thickness = ScaleLabelsToZoom > 1 ? 1 : (1.0 / ScaleLabelsToZoom) * 1.0;
+			foreach (HierarchicalGraphEdge e in Graph.Edges)
+			{
+				EdgeControl ec = GetEdgeControl(e);
+				ec.StrokeThickness = thickness;
+			}
 		}
 	}
 }

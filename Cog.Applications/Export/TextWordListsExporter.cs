@@ -9,18 +9,25 @@ namespace SIL.Cog.Applications.Export
 		{
 			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
 			{
+				bool categoriesIncluded = false;
 				foreach (Sense sense in project.Senses)
 				{
 					writer.Write("\t");
 					writer.Write(sense.Gloss);
+					if (!string.IsNullOrEmpty(sense.Category))
+						categoriesIncluded = true;
 				}
 				writer.WriteLine();
-				foreach (Sense sense in project.Senses)
+
+				if (categoriesIncluded)
 				{
-					writer.Write("\t");
-					writer.Write(sense.Category);
+					foreach (Sense sense in project.Senses)
+					{
+						writer.Write("\t");
+						writer.Write(sense.Category);
+					}
+					writer.WriteLine();
 				}
-				writer.WriteLine();
 
 				foreach (Variety variety in project.Varieties)
 				{

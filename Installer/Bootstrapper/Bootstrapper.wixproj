@@ -79,7 +79,7 @@
       <Output TaskParameter="Value" PropertyName="DefineConstants" />
     </CreateProperty>
     <!-- Update the MSBuild properties $(TargetName), etc. -->
-    <CreateProperty Value="Cog-$(ShortVersionNumber)-Setup">
+    <CreateProperty Value="Cog-$(VersionNumber)-Setup">
       <Output TaskParameter="Value" PropertyName="TargetName" />
     </CreateProperty>
     <CreateProperty Value="$(TargetName)$(TargetExt)">

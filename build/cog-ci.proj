@@ -62,7 +62,10 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">
-		<Delete Files="$(RootDir)/output/Cog-*-Setup.exe" />
+		<ItemGroup>
+			<FilesToDelete Include="$(RootDir)/output/Cog-*-Setup.exe" />
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" />
 		<Copy SourceFiles="$(RootDir)/Installer/Bootstrapper/bin/$(Configuration)/Cog-$(VersionNumber)-Setup.exe" DestinationFolder="$(RootDir)/output" />
 	</Target>
 	

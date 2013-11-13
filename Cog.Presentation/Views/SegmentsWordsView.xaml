@@ -18,17 +18,17 @@
 					<Setter.Value>
 						<ControlTemplate TargetType="ListBoxItem">
 							<Grid>
+								<Grid.ContextMenu>
+									<ContextMenu>
+										<MenuItem Command="Copy" />
+										<MenuItem Command="SelectAll" />
+										<Separator />
+										<MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
+										<MenuItem Header="Show in varieties" Command="{Binding ShowInVarietiesCommand}" />
+									</ContextMenu>
+								</Grid.ContextMenu>
 								<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
 								<Border Margin="5" Padding="3" Background="Transparent" PreviewMouseRightButtonDown="ListBoxItem_OnPreviewMouseRightButtonDown">
-									<Border.ContextMenu>
-										<ContextMenu>
-											<MenuItem Command="Copy" />
-											<MenuItem Command="SelectAll" />
-											<Separator />
-											<MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
-											<MenuItem Header="Show in varieties" Command="{Binding ShowInVarietiesCommand}" />
-										</ContextMenu>
-									</Border.ContextMenu>
 									<ContentPresenter />
 								</Border>
 							</Grid>

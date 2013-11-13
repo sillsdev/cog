@@ -22,18 +22,18 @@
 					<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
 					<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
 				</ListBox.CommandBindings>
-				<ListBox.ContextMenu>
-					<ContextMenu>
-						<MenuItem Command="Copy" />
-						<MenuItem Command="SelectAll" />
-					</ContextMenu>
-				</ListBox.ContextMenu>
 				<ListBox.ItemContainerStyle>
 					<Style TargetType="ListBoxItem">
 						<Setter Property="Template">
 							<Setter.Value>
 								<ControlTemplate TargetType="ListBoxItem">
 									<Grid>
+										<Grid.ContextMenu>
+											<ContextMenu>
+												<MenuItem Command="Copy" />
+												<MenuItem Command="SelectAll" />
+											</ContextMenu>
+										</Grid.ContextMenu>
 										<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
 										<Border Margin="5" Padding="3" PreviewMouseRightButtonDown="ListBoxItem_OnPreviewMouseRightButtonDown">
 											<ContentPresenter />

@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 
 namespace SIL.Cog.Presentation.Behaviors
 {
@@ -101,11 +100,10 @@ namespace SIL.Cog.Presentation.Behaviors
 						filename = Path.Combine(dir, filename);
 				}
 				string topic = GetHelpTopic(elem);
-				IntPtr windowHandle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
 				if (string.IsNullOrEmpty(topic))
-					HtmlHelp(windowHandle, filename, 1, null);
+					HtmlHelp(IntPtr.Zero, filename, 1, null);
 				else
-					HtmlHelp(windowHandle, filename, 0, topic);
+					HtmlHelp(IntPtr.Zero, filename, 0, topic);
 			}
 		}
 

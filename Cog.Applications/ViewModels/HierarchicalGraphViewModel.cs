@@ -71,7 +71,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void Export()
 		{
-			_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
+			if (_projectService.Project.VarietyPairs.Count > 0)
+				_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
 		}
 
 		public HierarchicalGraphType GraphType

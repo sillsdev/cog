@@ -47,7 +47,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void Export()
 		{
-			_imageExportService.ExportCurrentNetworkGraph(this);
+			if (_projectService.Project.VarietyPairs.Count > 0)
+				_imageExportService.ExportCurrentNetworkGraph(this);
 		}
 
 		public SimilarityMetric SimilarityMetric

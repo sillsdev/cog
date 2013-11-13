@@ -109,7 +109,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ExportChart()
 		{
-			_imageExportService.ExportCurrentGlobalCorrespondencesChart(this);
+			if (_projectService.Project.VarietyPairs.Count > 0)
+				_imageExportService.ExportCurrentGlobalCorrespondencesChart(this);
 		}
 
 		private void Find()

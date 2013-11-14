@@ -26,7 +26,13 @@ namespace SIL.Cog.Applications.Import
 			while (reader.ReadRow(out mapping))
 			{
 				if (mapping.Count >= 2)
-					mappings.Add(Tuple.Create(mapping[0].Trim(), mapping[1].Trim()));
+				{
+					string str1 = mapping[0].Trim();
+					string str2 = mapping[1].Trim();
+					if (string.IsNullOrEmpty(str1) || string.IsNullOrEmpty(str2))
+						throw new ImportException("An empty segment is not allowed.");
+					mappings.Add(Tuple.Create(str1, str2));
+				}
 			}
 
 			return mappings;

@@ -50,6 +50,11 @@ namespace SIL.Cog.Domain.Components
 
 			Boundary bdry;
 			string strRep = StripBoundary(segment, out bdry);
+			if (strRep.IsOneOf("-", "_"))
+			{
+				normalizedSegment = AddBoundary(strRep, bdry);
+				return true;
+			}
 			string normalized;
 			if (_segmenter.NormalizeSegmentString(strRep, out normalized))
 			{

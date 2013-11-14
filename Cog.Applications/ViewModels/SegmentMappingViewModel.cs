@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
+using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -56,10 +57,10 @@ namespace SIL.Cog.Applications.ViewModels
 			if (segment == "#")
 				return false;
 			if (segment.StartsWith("#"))
-				return segmenter.IsValidSegment(segment.Remove(0, 1));
-			if (segment.EndsWith("#"))
-				return segmenter.IsValidSegment(segment.Remove(segment.Length - 1, 1));
-			return segmenter.IsValidSegment(segment);
+				segment = segment.Remove(0, 1);
+			else if (segment.EndsWith("#"))
+				segment = segment.Remove(segment.Length - 1, 1);
+			return segment.IsOneOf("-", "_") || segmenter.IsValidSegment(segment);
 		}
 
 		string IDataErrorInfo.Error

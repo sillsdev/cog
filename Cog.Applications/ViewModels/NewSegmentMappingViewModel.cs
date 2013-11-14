@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
+using SIL.Collections;
 using SIL.Machine;
 
 namespace SIL.Cog.Applications.ViewModels
@@ -57,11 +58,14 @@ namespace SIL.Cog.Applications.ViewModels
 				segment = segment.Remove(0, 1);
 			else if (segment.EndsWith("#"))
 				segment = segment.Remove(segment.Length - 1, 1);
-			Shape shape;
-			if (!_segmenter.TrySegment(segment, out shape))
-				return "This is an invalid segment.";
-			if (shape.Any(n => n.Type() != shape.First.Type()))
-				return "Please specify only one segment.";
+			if (!segment.IsOneOf("-", "_"))
+			{
+				Shape shape;
+				if (!_segmenter.TrySegment(segment, out shape))
+					return "This is an invalid segment.";
+				if (shape.Any(n => n.Type() != shape.First.Type()))
+					return "Please specify only one segment.";
+			}
 			return null;
 		}
 

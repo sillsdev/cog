@@ -25,15 +25,13 @@ namespace SIL.Cog.Applications.ViewModels
 			set
 			{
 				ContainerChildViewModelBase oldView = _selectedView;
-				if (Set(() => SelectedView, ref _selectedView, value))
+				Set(() => SelectedView, ref _selectedView, value);
+				OnSelectedViewChanged(oldView, _selectedView);
+				var newMaster = _selectedView as ContainerViewModelBase;
+				if (newMaster != null)
 				{
-					OnSelectedViewChanged(oldView, _selectedView);
-					var newMaster = _selectedView as ContainerViewModelBase;
-					if (newMaster != null)
-					{
-						if (newMaster.Views.Count > 0)
-							newMaster.SelectedView = newMaster.Views[0];
-					}
+					if (newMaster.Views.Count > 0)
+						newMaster.SelectedView = newMaster.Views[0];
 				}
 			}
 		}

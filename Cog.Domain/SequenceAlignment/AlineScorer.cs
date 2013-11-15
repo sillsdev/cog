@@ -16,6 +16,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 		private const int MaxExpansionCompressionScore = 4500;
 		private const int IndelCost = 1000;
 		private const int VowelCost = 0;
+		private const int SyllablePositionCost = 500;
 
 		private readonly SegmentPool _segmentPool;
 		private readonly IReadOnlySet<SymbolicFeature> _relevantConsFeatures;
@@ -72,19 +73,22 @@ namespace SIL.Cog.Domain.SequenceAlignment
 
 		public int GetSubstitutionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q)
 		{
-			return (MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + V(p) + V(q))) + GetSoundChangeScore(sequence1, p, null, sequence2, q, null);
+			return (MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + GetVowelCost(p) + GetVowelCost(q) + GetSyllablePositionCost(p, q)))
+				+ GetSoundChangeScore(sequence1, p, null, sequence2, q, null);
 		}
 
 		public int GetExpansionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q1, ShapeNode q2)
 		{
 			return (MaxExpansionCompressionScore - (Delta(p.Annotation.FeatureStruct, q1.Annotation.FeatureStruct) + Delta(p.Annotation.FeatureStruct, q2.Annotation.FeatureStruct)
-				+ V(p) + Math.Max(V(q1), V(q2)))) + GetSoundChangeScore(sequence1, p, null, sequence2, q1, q2);
+				+ GetVowelCost(p) + Math.Max(GetVowelCost(q1), GetVowelCost(q2)) + Math.Max(GetSyllablePositionCost(p, q1), GetSyllablePositionCost(p, q2))))
+				+ GetSoundChangeScore(sequence1, p, null, sequence2, q1, q2);
 		}
 
 		public int GetCompressionScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q)
 		{
 			return (MaxExpansionCompressionScore - (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct)
-				+ V(q) + Math.Max(V(p1), V(p2)))) + GetSoundChangeScore(sequence1, p1, p2, sequence2, q, null);
+				+ GetVowelCost(q) + Math.Max(GetVowelCost(p1), GetVowelCost(p2)) + Math.Max(GetSyllablePositionCost(p1, q), GetSyllablePositionCost(p2, q))))
+				+ GetSoundChangeScore(sequence1, p1, p2, sequence2, q, null);
 		}
 
 		public int GetMaxScore1(Word sequence1, ShapeNode p, Word sequence2)
@@ -95,6 +99,14 @@ namespace SIL.Cog.Domain.SequenceAlignment
 		public int GetMaxScore2(Word sequence1, Word sequence2, ShapeNode q)
 		{
 			return GetMaxScore(q) + GetMaxSoundChangeScore(sequence2, q, sequence1);
+		}
+
+		private int GetSyllablePositionCost(ShapeNode p1, ShapeNode q1)
+		{
+			SymbolicFeatureValue pos1, pos2;
+			if (p1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos1) && q1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos2))
+				return (FeatureSymbol) pos1 == (FeatureSymbol) pos2 ? 0 : SyllablePositionCost;
+			return 0;
 		}
 
 		private int GetMaxSoundChangeScore(Word word, ShapeNode node, Word otherWord)
@@ -126,7 +138,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 
 		private int GetMaxScore(ShapeNode node)
 		{
-			return MaxSubstitutionScore - (V(node) * 2);
+			return MaxSubstitutionScore - (GetVowelCost(node) * 2);
 		}
 
 		public int Delta(FeatureStruct fs1, FeatureStruct fs2)
@@ -161,7 +173,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			return sum / count;
 		}
 
-		private int V(ShapeNode node)
+		private int GetVowelCost(ShapeNode node)
 		{
 			return node.Annotation.Type() == CogFeatureSystem.VowelType ? VowelCost : 0;
 		}

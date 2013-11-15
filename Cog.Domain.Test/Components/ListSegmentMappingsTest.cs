@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
 using SIL.Machine;
@@ -38,7 +39,8 @@ namespace SIL.Cog.Domain.Test.Components
 					Tuple.Create("h#", "-#"),
 					Tuple.Create("c", "#g"),
 					Tuple.Create("f", "@"),
-					Tuple.Create("a", "o")
+					Tuple.Create("a", "o"),
+					Tuple.Create("Cw", "-V")
 				}, false);
 
 			Shape shape1 = _segmenter.Segment("ma͡et");
@@ -59,6 +61,15 @@ namespace SIL.Cog.Domain.Test.Components
 
 			Assert.That(mappings.IsMapped(shape1.First.Prev, segmentPool.Get(shape1.First), shape1.First.Next, shape2.First.Prev, new Ngram<Segment>(), shape2.First), Is.False);
 			Assert.That(mappings.IsMapped(shape1.Last.Prev, segmentPool.Get(shape1.Last), shape1.Last.Next, shape2.Last.Prev, segmentPool.Get(shape2.Last), shape2.Last.Next), Is.False);
+
+			shape1 = _segmenter.Segment("swat");
+			shape2 = _segmenter.Segment("sat");
+
+			Assert.That(mappings.IsMapped(shape1.ElementAt(0), segmentPool.Get(shape1.ElementAt(1)), shape1.ElementAt(2), shape2.ElementAt(0), new Ngram<Segment>(), shape2.ElementAt(1)), Is.True);
+
+			shape1 = _segmenter.Segment("sawat");
+			shape2 = _segmenter.Segment("saat");
+			Assert.That(mappings.IsMapped(shape1.ElementAt(1), segmentPool.Get(shape1.ElementAt(2)), shape1.ElementAt(3), shape2.ElementAt(1), new Ngram<Segment>(), shape2.ElementAt(2)), Is.False);
 		}
 
 		[Test]

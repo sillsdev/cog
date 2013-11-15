@@ -52,11 +52,11 @@ namespace SIL.Cog.Applications.ViewModels
 			if (string.IsNullOrEmpty(segment))
 				return "Please specify a segment.";
 
-			if (segment == "#")
+			if (segment.IsOneOf("#", "C", "V"))
 				return "This is an invalid segment.";
-			if (segment.StartsWith("#"))
+			if (segment[0].IsOneOf('#', 'C', 'V'))
 				segment = segment.Remove(0, 1);
-			else if (segment.EndsWith("#"))
+			if (segment[segment.Length - 1].IsOneOf('#', 'C', 'V'))
 				segment = segment.Remove(segment.Length - 1, 1);
 			if (!segment.IsOneOf("-", "_"))
 			{

@@ -9,10 +9,33 @@ namespace SIL.Cog.Domain.Components
 {
 	public class ListSegmentMappings : ISegmentMappings
 	{
-		private enum Boundary
+		private class Context
 		{
-			WordInitial,
-			WordFinal,
+			private readonly Environment _leftEnv;
+			private readonly Environment _rightEnv;
+
+			public Context(Environment leftEnv, Environment rightEnv)
+			{
+				_leftEnv = leftEnv;
+				_rightEnv = rightEnv;
+			}
+
+			public Environment LeftEnvironment
+			{
+				get { return _leftEnv; }
+			}
+
+			public Environment RightEnvironment
+			{
+				get { return _rightEnv; }
+			}
+		}
+
+		private enum Environment
+		{
+			WordBoundary,
+			Vowel,
+			Consonant,
 			None
 		}
 
@@ -20,7 +43,7 @@ namespace SIL.Cog.Domain.Components
 		private readonly bool _implicitComplexSegments;
 		private readonly Segmenter _segmenter;
 
-		private readonly Dictionary<string, HashSet<string>> _mappingLookup;
+		private readonly Dictionary<string, Dictionary<string, List<Tuple<Context, Context>>>> _mappingLookup;
 
 		public ListSegmentMappings(Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings, bool implicitComplexSegments)
 		{
@@ -28,69 +51,74 @@ namespace SIL.Cog.Domain.Components
 			_mappings = mappings.ToList();
 			_implicitComplexSegments = implicitComplexSegments;
 
-			_mappingLookup = new Dictionary<string, HashSet<string>>();
+			_mappingLookup = new Dictionary<string, Dictionary<string, List<Tuple<Context, Context>>>>();
 			foreach (Tuple<string, string> mapping in _mappings)
 			{
+				Context ctxt1, ctxt2;
 				string str1, str2;
-				if (Normalize(mapping.Item1, out str1) && Normalize(mapping.Item2, out str2))
+				if (Normalize(mapping.Item1, out str1, out ctxt1) && Normalize(mapping.Item2, out str2, out ctxt2))
 				{
-					HashSet<string> segments = _mappingLookup.GetValue(str1, () => new HashSet<string>());
-					segments.Add(str2);
-					segments = _mappingLookup.GetValue(str2, () => new HashSet<string>());
-					segments.Add(str1);
+					Dictionary<string, List<Tuple<Context, Context>>> segments = _mappingLookup.GetValue(str1, () => new Dictionary<string, List<Tuple<Context, Context>>>());
+					List<Tuple<Context, Context>> contexts = segments.GetValue(str2, () => new List<Tuple<Context, Context>>());
+					contexts.Add(Tuple.Create(ctxt1, ctxt2));
+					segments = _mappingLookup.GetValue(str2, () => new Dictionary<string, List<Tuple<Context, Context>>>());
+					contexts = segments.GetValue(str1, () => new List<Tuple<Context, Context>>());
+					contexts.Add(Tuple.Create(ctxt2, ctxt1));
 				}
 			}
 		}
 
-		private bool Normalize(string segment, out string normalizedSegment)
+		private bool Normalize(string segment, out string normalizedSegment, out Context ctxt)
 		{
 			normalizedSegment = null;
-			if (segment == "#")
+			if (segment.IsOneOf("#", "C", "V"))
+			{
+				ctxt = null;
 				return false;
+			}
 
-			Boundary bdry;
-			string strRep = StripBoundary(segment, out bdry);
+			string strRep = StripContext(segment, out ctxt);
 			if (strRep.IsOneOf("-", "_"))
 			{
-				normalizedSegment = AddBoundary(strRep, bdry);
+				normalizedSegment = "-";
 				return true;
 			}
 			string normalized;
 			if (_segmenter.NormalizeSegmentString(strRep, out normalized))
 			{
-				normalizedSegment = AddBoundary(normalized, bdry);
+				normalizedSegment = normalized;
 				return true;
 			}
+
+			ctxt = null;
 			return false;
 		}
 
-		private string StripBoundary(string strRep, out Boundary bdry)
+		private string StripContext(string strRep, out Context ctxt)
 		{
-			if (strRep.StartsWith("#"))
-			{
-				bdry = Boundary.WordInitial;
-				return strRep.Remove(0, 1);
-			}
-			if (strRep.EndsWith("#"))
-			{
-				bdry = Boundary.WordFinal;
-				return strRep.Remove(strRep.Length - 1, 1);
-			}
-
-			bdry = Boundary.None;
+			Environment leftEnv = GetEnvironment(strRep[0]);
+			if (leftEnv != Environment.None)
+				strRep = strRep.Remove(0, 1);
+			Environment rightEnv = GetEnvironment(strRep[strRep.Length - 1]);
+			if (rightEnv != Environment.None)
+				strRep = strRep.Remove(strRep.Length - 1, 1);
+			ctxt = new Context(leftEnv, rightEnv);
 			return strRep;
 		}
 
-		private string AddBoundary(string strRep, Boundary bdry)
+		private Environment GetEnvironment(char c)
 		{
-			switch (bdry)
+			switch (c)
 			{
-				case Boundary.WordInitial:
-					return string.Format("#{0}", strRep);
-				case Boundary.WordFinal:
-					return string.Format("{0}#", strRep);
+				case '#':
+					return Environment.WordBoundary;
+				case 'C':
+					return Environment.Consonant;
+				case 'V':
+					return Environment.Vowel;
+				default:
+					return Environment.None;
 			}
-			return strRep;
 		}
 
 		public IEnumerable<Tuple<string, string>> Mappings
@@ -105,49 +133,58 @@ namespace SIL.Cog.Domain.Components
 
 		public bool IsMapped(ShapeNode leftNode1, Ngram<Segment> target1, ShapeNode rightNode1, ShapeNode leftNode2, Ngram<Segment> target2, ShapeNode rightNode2)
 		{
-			foreach (string strRep1 in GetStrReps(leftNode1, target1, rightNode1))
+			foreach (string strRep1 in GetStrReps(target1))
 			{
-				foreach (string strRep2 in GetStrReps(rightNode1, target2, rightNode2))
+				foreach (string strRep2 in GetStrReps(target2))
 				{
-					HashSet<string> segments;
-					if (_mappingLookup.TryGetValue(strRep1, out segments) && segments.Contains(strRep2))
-						return true;
+					Dictionary<string, List<Tuple<Context, Context>>> segments;
+					List<Tuple<Context, Context>> contexts;
+					if (_mappingLookup.TryGetValue(strRep1, out segments) && segments.TryGetValue(strRep2, out contexts))
+						return contexts.Any(ctxt => CheckContext(ctxt.Item1, leftNode1, rightNode1) && CheckContext(ctxt.Item2, leftNode2, rightNode2));
 				}
 			}
 			return false;
 		}
 
-		private IEnumerable<string> GetStrReps(ShapeNode leftNode, Ngram<Segment> target, ShapeNode rightNode)
+		private IEnumerable<string> GetStrReps(Ngram<Segment> target)
 		{
-			IList<string> strReps;
 			if (target.Count == 0)
 			{
-				strReps = new[] {"-", "_"};
+				yield return "-";
 			}
 			else
 			{
-				strReps = new List<string>();
 				foreach (Segment seg in target)
 				{
-					strReps.Add(seg.StrRep);
+					yield return seg.StrRep;
 					if (_implicitComplexSegments && seg.IsComplex)
 					{
 						Shape shape = _segmenter.Segment(seg.StrRep);
 						foreach (ShapeNode node in shape)
-							strReps.Add(node.StrRep());
+							yield return node.StrRep();
 					}
 				}	
 			}
-
-			foreach (string strRep in strReps)
-			{
-				if (leftNode != null && leftNode.Type() == CogFeatureSystem.AnchorType)
-					yield return string.Format("#{0}", strRep);
-				if (rightNode != null && rightNode.Type() == CogFeatureSystem.AnchorType)
-					yield return string.Format("{0}#", strRep);
-				yield return strRep;
-			}
 		}
 
+		private bool CheckContext(Context ctxt, ShapeNode leftNode, ShapeNode rightNode)
+		{
+			return CheckEnvironment(ctxt.LeftEnvironment, leftNode) && CheckEnvironment(ctxt.RightEnvironment, rightNode);
+		}
+
+		private bool CheckEnvironment(Environment env, ShapeNode node)
+		{
+			switch (env)
+			{
+				case Environment.WordBoundary:
+					return node.Type() == CogFeatureSystem.AnchorType;
+				case Environment.Consonant:
+					return node.Type() == CogFeatureSystem.ConsonantType;
+				case Environment.Vowel:
+					return node.Type() == CogFeatureSystem.VowelType;
+				default:
+					return true;
+			}
+		}
 	}
 }

@@ -54,11 +54,11 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool IsValid(Segmenter segmenter, string segment)
 		{
-			if (segment == "#")
+			if (segment.IsOneOf("#", "C", "V"))
 				return false;
-			if (segment.StartsWith("#"))
+			if (segment[0].IsOneOf('#', 'C', 'V'))
 				segment = segment.Remove(0, 1);
-			else if (segment.EndsWith("#"))
+			if (segment[segment.Length - 1].IsOneOf('#', 'C', 'V'))
 				segment = segment.Remove(segment.Length - 1, 1);
 			return segment.IsOneOf("-", "_") || segmenter.IsValidSegment(segment);
 		}

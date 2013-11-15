@@ -142,7 +142,8 @@
 		<xs:complexContent>
 			<xs:extension base="VarietyProcessorBase">
 				<xs:sequence>
-					<xs:element name="CombineSegments" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="CombineVowels" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="CombineConsonants" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>

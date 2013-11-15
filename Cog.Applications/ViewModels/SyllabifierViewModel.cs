@@ -14,7 +14,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IAnalysisService _analysisService;
 		private bool _automaticSyllabificationEnabled;
 		private readonly SoundClassesViewModel _sonorityClasses;
-		private bool _combineSegments;
+		private bool _combineVowels;
+		private bool _combineConsonants;
 		private bool _vowelsSameSonorityTautosyllabic;
 
 		public SyllabifierViewModel(SegmentPool segmentPool, IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
@@ -67,7 +68,8 @@ namespace SIL.Cog.Applications.ViewModels
 				automaticSyllabificationEnabled = false;
 			}
 
-			Set(() => CombineSegments, ref _combineSegments, syllabifier.CombineSegments);
+			Set(() => CombineVowels, ref _combineVowels, syllabifier.CombineVowels);
+			Set(() => CombineConsonants, ref _combineConsonants, syllabifier.CombineConsonants);
 			Set(() => VowelsSameSonorityTautosyllabic, ref _vowelsSameSonorityTautosyllabic, vowelsSameSonorityTautosyllabic);
 			Set(() => AutomaticSyllabificationEnabled, ref _automaticSyllabificationEnabled, automaticSyllabificationEnabled);
 
@@ -89,10 +91,16 @@ namespace SIL.Cog.Applications.ViewModels
 			set { SetChanged(() => AutomaticSyllabificationEnabled, ref _automaticSyllabificationEnabled, value); }
 		}
 
-		public bool CombineSegments
+		public bool CombineVowels
 		{
-			get { return _combineSegments; }
-			set { SetChanged(() => CombineSegments, ref _combineSegments, value); }
+			get { return _combineVowels; }
+			set { SetChanged(() => CombineVowels, ref _combineVowels, value); }
+		}
+
+		public bool CombineConsonants
+		{
+			get { return _combineConsonants; }
+			set { SetChanged(() => CombineConsonants, ref _combineConsonants, value); }
 		}
 
 		public bool VowelsSameSonorityTautosyllabic
@@ -109,8 +117,8 @@ namespace SIL.Cog.Applications.ViewModels
 		public override object UpdateComponent()
 		{
 			SimpleSyllabifier syllabifier = _automaticSyllabificationEnabled
-				? new SspSyllabifier(_combineSegments, _vowelsSameSonorityTautosyllabic, _segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)))
-				: new SimpleSyllabifier(_combineSegments);
+				? new SspSyllabifier(_combineVowels, _combineConsonants, _vowelsSameSonorityTautosyllabic, _segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)))
+				: new SimpleSyllabifier(_combineVowels, _combineConsonants);
 			_projectService.Project.VarietyProcessors["syllabifier"] = syllabifier;
 
 			_analysisService.SegmentAll();

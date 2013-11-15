@@ -54,7 +54,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool IsValid(Segmenter segmenter, string segment)
 		{
-			if (segment.IsOneOf("#", "C", "V"))
+			if (string.IsNullOrEmpty(segment) || segment.IsOneOf("#", "C", "V"))
 				return false;
 			if (segment[0].IsOneOf('#', 'C', 'V'))
 				segment = segment.Remove(0, 1);

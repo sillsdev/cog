@@ -71,7 +71,7 @@ namespace SIL.Cog.Domain.Components
 		private bool Normalize(string segment, out string normalizedSegment, out Context ctxt)
 		{
 			normalizedSegment = null;
-			if (segment.IsOneOf("#", "C", "V"))
+			if (string.IsNullOrEmpty(segment) || segment.IsOneOf("#", "C", "V"))
 			{
 				ctxt = null;
 				return false;

@@ -16,8 +16,8 @@ namespace SIL.Cog.Domain.Components
 		private readonly ThreadLocal<HashSet<string>> _initialOnsets;
 		private readonly bool _vowelsSameSonorityTautosyllabic;
 
-		public SspSyllabifier(bool combineSegments, bool vowelsSameSonorityTautosyllabic, SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
-			: base(combineSegments)
+		public SspSyllabifier(bool combineVowels, bool combineConsonants, bool vowelsSameSonorityTautosyllabic, SegmentPool segmentPool, IEnumerable<SonorityClass> sonorityScale)
+			: base(combineVowels, combineConsonants)
 		{
 			_vowelsSameSonorityTautosyllabic = vowelsSameSonorityTautosyllabic;
 			_segmentPool = segmentPool;
@@ -163,7 +163,7 @@ namespace SIL.Cog.Domain.Components
 
 		private void CombineWith(ShapeNode node, ShapeNode start, ShapeNode end)
 		{
-			if (CombineSegments)
+			if ((CombineVowels && node.Type() == CogFeatureSystem.VowelType) || (CombineConsonants && node.Type() == CogFeatureSystem.ConsonantType))
 			{
 				var strRep = new StringBuilder();
 				var origStrRep = new StringBuilder();

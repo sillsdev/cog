@@ -8,14 +8,16 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			var combineSegmentsStr = (string) elem.Element(ConfigManager.Cog + "CombineSegments");
-			return new SimpleSyllabifier(combineSegmentsStr == null || bool.Parse(combineSegmentsStr));
+			var combineVowelsStr = (string) elem.Element(ConfigManager.Cog + "CombineVowels");
+			var combineConsStr = (string) elem.Element(ConfigManager.Cog + "CombineConsonants");
+			return new SimpleSyllabifier(combineVowelsStr == null || bool.Parse(combineVowelsStr), combineConsStr == null || bool.Parse(combineConsStr));
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)
 		{
 			var syllabifier = (SimpleSyllabifier) component;
-			elem.Add(new XElement(ConfigManager.Cog + "CombineSegments", syllabifier.CombineSegments));
+			elem.Add(new XElement(ConfigManager.Cog + "CombineVowels", syllabifier.CombineVowels));
+			elem.Add(new XElement(ConfigManager.Cog + "CombineConsonants", syllabifier.CombineConsonants));
 		}
 	}
 }

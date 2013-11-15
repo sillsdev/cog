@@ -9,16 +9,23 @@ namespace SIL.Cog.Domain.Components
 {
 	public class SimpleSyllabifier : IProcessor<Variety>
 	{
-		private readonly bool _combineSegments;
+		private readonly bool _combineVowels;
+		private readonly bool _combineConsonants;
 
-		public SimpleSyllabifier(bool combineSegments)
+		public SimpleSyllabifier(bool combineVowels, bool combineConsonants)
 		{
-			_combineSegments = combineSegments;
+			_combineVowels = combineVowels;
+			_combineConsonants = combineConsonants;
 		}
 
-		public bool CombineSegments
+		public bool CombineVowels
 		{
-			get { return _combineSegments; }
+			get { return _combineVowels; }
+		}
+
+		public bool CombineConsonants
+		{
+			get { return _combineConsonants; }
 		}
 
 		public virtual void Process(Variety data)
@@ -159,7 +166,7 @@ namespace SIL.Cog.Domain.Components
 				newStart.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SyllablePosition, syllablePosition);
 				newShape.Add(newStart);
 			}
-			else if (_combineSegments)
+			else if ((_combineVowels && syllablePosition == CogFeatureSystem.Nucleus) || (_combineConsonants && syllablePosition != CogFeatureSystem.Nucleus))
 			{
 				var fs = start.Annotation.FeatureStruct.DeepClone();
 				var strRep = new StringBuilder();

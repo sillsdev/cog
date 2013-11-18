@@ -89,6 +89,8 @@ namespace SIL.Cog.Presentation.Views
 										    {
 											    Cell cell = row.Cells.Single(c => c.Content == vm.SelectedVarietySense);
 												WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
+												WordListsGrid.CurrentItem = variety;
+												WordListsGrid.CurrentColumn = cell.ParentColumn;
 											    cell.BringIntoView();
 										    }
 									    }), DispatcherPriority.Background);

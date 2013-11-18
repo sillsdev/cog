@@ -3,47 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
 using SIL.Machine;
+using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain.Components
 {
 	public class ListSegmentMappings : ISegmentMappings
 	{
-		private class Context
+		private class Environment
 		{
-			private readonly Environment _leftEnv;
-			private readonly Environment _rightEnv;
+			private readonly FeatureSymbol _leftEnv;
+			private readonly FeatureSymbol _rightEnv;
 
-			public Context(Environment leftEnv, Environment rightEnv)
+			public Environment(FeatureSymbol leftEnv, FeatureSymbol rightEnv)
 			{
 				_leftEnv = leftEnv;
 				_rightEnv = rightEnv;
 			}
 
-			public Environment LeftEnvironment
+			public FeatureSymbol LeftEnvironment
 			{
 				get { return _leftEnv; }
 			}
 
-			public Environment RightEnvironment
+			public FeatureSymbol RightEnvironment
 			{
 				get { return _rightEnv; }
 			}
-		}
-
-		private enum Environment
-		{
-			WordBoundary,
-			Vowel,
-			Consonant,
-			None
 		}
 
 		private readonly List<Tuple<string, string>> _mappings;
 		private readonly bool _implicitComplexSegments;
 		private readonly Segmenter _segmenter;
 
-		private readonly Dictionary<string, Dictionary<string, List<Tuple<Context, Context>>>> _mappingLookup;
+		private readonly Dictionary<string, Dictionary<string, List<Tuple<Environment, Environment>>>> _mappingLookup;
 
 		public ListSegmentMappings(Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings, bool implicitComplexSegments)
 		{
@@ -51,33 +44,33 @@ namespace SIL.Cog.Domain.Components
 			_mappings = mappings.ToList();
 			_implicitComplexSegments = implicitComplexSegments;
 
-			_mappingLookup = new Dictionary<string, Dictionary<string, List<Tuple<Context, Context>>>>();
+			_mappingLookup = new Dictionary<string, Dictionary<string, List<Tuple<Environment, Environment>>>>();
 			foreach (Tuple<string, string> mapping in _mappings)
 			{
-				Context ctxt1, ctxt2;
+				Environment env1, env2;
 				string str1, str2;
-				if (Normalize(mapping.Item1, out str1, out ctxt1) && Normalize(mapping.Item2, out str2, out ctxt2))
+				if (Normalize(mapping.Item1, out str1, out env1) && Normalize(mapping.Item2, out str2, out env2))
 				{
-					Dictionary<string, List<Tuple<Context, Context>>> segments = _mappingLookup.GetValue(str1, () => new Dictionary<string, List<Tuple<Context, Context>>>());
-					List<Tuple<Context, Context>> contexts = segments.GetValue(str2, () => new List<Tuple<Context, Context>>());
-					contexts.Add(Tuple.Create(ctxt1, ctxt2));
-					segments = _mappingLookup.GetValue(str2, () => new Dictionary<string, List<Tuple<Context, Context>>>());
-					contexts = segments.GetValue(str1, () => new List<Tuple<Context, Context>>());
-					contexts.Add(Tuple.Create(ctxt2, ctxt1));
+					Dictionary<string, List<Tuple<Environment, Environment>>> segments = _mappingLookup.GetValue(str1, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
+					List<Tuple<Environment, Environment>> contexts = segments.GetValue(str2, () => new List<Tuple<Environment, Environment>>());
+					contexts.Add(Tuple.Create(env1, env2));
+					segments = _mappingLookup.GetValue(str2, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
+					contexts = segments.GetValue(str1, () => new List<Tuple<Environment, Environment>>());
+					contexts.Add(Tuple.Create(env2, env1));
 				}
 			}
 		}
 
-		private bool Normalize(string segment, out string normalizedSegment, out Context ctxt)
+		private bool Normalize(string segment, out string normalizedSegment, out Environment env)
 		{
 			normalizedSegment = null;
 			if (string.IsNullOrEmpty(segment) || segment.IsOneOf("#", "C", "V"))
 			{
-				ctxt = null;
+				env = null;
 				return false;
 			}
 
-			string strRep = StripContext(segment, out ctxt);
+			string strRep = StripContext(segment, out env);
 			if (strRep.IsOneOf("-", "_"))
 			{
 				normalizedSegment = "-";
@@ -90,34 +83,34 @@ namespace SIL.Cog.Domain.Components
 				return true;
 			}
 
-			ctxt = null;
+			env = null;
 			return false;
 		}
 
-		private string StripContext(string strRep, out Context ctxt)
+		private string StripContext(string strRep, out Environment env)
 		{
-			Environment leftEnv = GetEnvironment(strRep[0]);
-			if (leftEnv != Environment.None)
+			FeatureSymbol leftEnv = GetEnvironment(strRep[0]);
+			if (leftEnv != null)
 				strRep = strRep.Remove(0, 1);
-			Environment rightEnv = GetEnvironment(strRep[strRep.Length - 1]);
-			if (rightEnv != Environment.None)
+			FeatureSymbol rightEnv = GetEnvironment(strRep[strRep.Length - 1]);
+			if (rightEnv != null)
 				strRep = strRep.Remove(strRep.Length - 1, 1);
-			ctxt = new Context(leftEnv, rightEnv);
+			env = new Environment(leftEnv, rightEnv);
 			return strRep;
 		}
 
-		private Environment GetEnvironment(char c)
+		private FeatureSymbol GetEnvironment(char c)
 		{
 			switch (c)
 			{
 				case '#':
-					return Environment.WordBoundary;
+					return CogFeatureSystem.AnchorType;
 				case 'C':
-					return Environment.Consonant;
+					return CogFeatureSystem.ConsonantType;
 				case 'V':
-					return Environment.Vowel;
+					return CogFeatureSystem.VowelType;
 				default:
-					return Environment.None;
+					return null;
 			}
 		}
 
@@ -137,10 +130,10 @@ namespace SIL.Cog.Domain.Components
 			{
 				foreach (string strRep2 in GetStrReps(target2))
 				{
-					Dictionary<string, List<Tuple<Context, Context>>> segments;
-					List<Tuple<Context, Context>> contexts;
+					Dictionary<string, List<Tuple<Environment, Environment>>> segments;
+					List<Tuple<Environment, Environment>> contexts;
 					if (_mappingLookup.TryGetValue(strRep1, out segments) && segments.TryGetValue(strRep2, out contexts))
-						return contexts.Any(ctxt => CheckContext(ctxt.Item1, leftNode1, rightNode1) && CheckContext(ctxt.Item2, leftNode2, rightNode2));
+						return contexts.Any(ctxt => CheckEnvironment(ctxt.Item1, leftNode1, rightNode1) && CheckEnvironment(ctxt.Item2, leftNode2, rightNode2));
 				}
 			}
 			return false;
@@ -167,24 +160,9 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		private bool CheckContext(Context ctxt, ShapeNode leftNode, ShapeNode rightNode)
+		private bool CheckEnvironment(Environment env, ShapeNode leftNode, ShapeNode rightNode)
 		{
-			return CheckEnvironment(ctxt.LeftEnvironment, leftNode) && CheckEnvironment(ctxt.RightEnvironment, rightNode);
-		}
-
-		private bool CheckEnvironment(Environment env, ShapeNode node)
-		{
-			switch (env)
-			{
-				case Environment.WordBoundary:
-					return node.Type() == CogFeatureSystem.AnchorType;
-				case Environment.Consonant:
-					return node.Type() == CogFeatureSystem.ConsonantType;
-				case Environment.Vowel:
-					return node.Type() == CogFeatureSystem.VowelType;
-				default:
-					return true;
-			}
+			return (env.LeftEnvironment == null || env.LeftEnvironment == leftNode.Type()) && (env.RightEnvironment == null || env.RightEnvironment == rightNode.Type());
 		}
 	}
 }

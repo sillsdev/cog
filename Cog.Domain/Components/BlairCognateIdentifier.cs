@@ -129,6 +129,7 @@ namespace SIL.Cog.Domain.Components
 				double type1And2Score = (double) cat1And2Count / totalCount;
 				wordPair.AreCognatePredicted = type1Score >= 0.5 && type1And2Score >= 0.75;
 				wordPair.PhoneticSimilarityScore = alignment.NormalizedScore;
+				wordPair.CognicityScore = (type1Score * 0.75) + (type1And2Score * 0.25);
 				if (wordPair.AreCognatePredicted)
 					totalCognateCount++;
 				totalScore += wordPair.PhoneticSimilarityScore;

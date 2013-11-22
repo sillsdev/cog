@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using SIL.Collections;
 using SIL.Machine;
+using SIL.Machine.Clusterers;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 
@@ -300,6 +302,32 @@ namespace SIL.Cog.Domain
 			}
 			sb.Append("]");
 			return sb.ToString();
+		}
+
+		public static IEnumerable<Cluster<Word>> GenerateCognateSets(this CogProject project, Sense sense)
+		{
+			double min = double.MaxValue, max = double.MinValue;
+			foreach (VarietyPair vp in project.VarietyPairs)
+			{
+				WordPair wp;
+				if (vp.WordPairs.TryGetValue(sense, out wp))
+				{
+					min = Math.Min(min, wp.CognicityScore);
+					max = Math.Max(max, wp.CognicityScore);
+				}
+			}
+			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) =>
+			    {
+					WordPair wp;
+					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(sense, out wp) && wp.AreCognatePredicted
+						&& wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
+					{
+						return 1.0 - wp.CognicityScore;
+					}
+					return 1.0;
+			    }, (max + min) / 2);
+
+			return clusterer.GenerateClusters(project.Varieties.SelectMany(v => v.Words[sense]));
 		}
 	}
 }

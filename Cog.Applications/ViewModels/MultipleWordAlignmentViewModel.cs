@@ -191,17 +191,6 @@ namespace SIL.Cog.Applications.ViewModels
 
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 
-			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) =>
-			    {
-					WordPair wp;
-					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(_selectedSense.DomainSense, out wp)
-						&& wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
-					{
-						return wp.AreCognatePredicted ? 0.0 : 1.0;
-					}
-					return 1.0;
-			    }, 0.5);
-
 			List<Word> words = _projectService.Project.Varieties.SelectMany(v => v.Words[_selectedSense.DomainSense]).ToList();
 			if (words.Count == 0)
 			{
@@ -227,7 +216,7 @@ namespace SIL.Cog.Applications.ViewModels
 				alignment = result.GetAlignments().First();
 			}
 
-			List<Cluster<Word>> cognateSets = clusterer.GenerateClusters(words).ToList();
+			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedSense.DomainSense).ToList();
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
 			{

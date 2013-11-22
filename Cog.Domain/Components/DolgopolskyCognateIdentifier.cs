@@ -94,6 +94,7 @@ namespace SIL.Cog.Domain.Components
 					wp.AreCognatePredicted = true;
 					totalCognateCount++;
 				}
+				wp.CognicityScore = (double) initialEquivalentClasses / alignment.ColumnCount;
 
 				totalScore += wp.PhoneticSimilarityScore;
 			}

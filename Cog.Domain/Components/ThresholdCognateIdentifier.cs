@@ -41,6 +41,7 @@ namespace SIL.Cog.Domain.Components
 					alignmentCount++;
 				}
 				wordPair.PhoneticSimilarityScore = totalAlignmentScore / alignmentCount;
+				wordPair.CognicityScore = wordPair.PhoneticSimilarityScore;
 				totalScore += wordPair.PhoneticSimilarityScore;
 				wordPair.AreCognatePredicted = wordPair.PhoneticSimilarityScore >= _threshold;
 				if (wordPair.AreCognatePredicted)

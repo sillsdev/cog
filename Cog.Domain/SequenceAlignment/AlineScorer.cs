@@ -11,7 +11,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 {
 	public class AlineScorer : IPairwiseAlignmentScorer<Word, ShapeNode>
 	{
-		private const int MaxSoundChangeScore = 1000;
+		private const int MaxSoundChangeScore = 800;
 		private const int MaxSubstitutionScore = 3500;
 		private const int MaxExpansionCompressionScore = 4500;
 		private const int IndelCost = 1000;

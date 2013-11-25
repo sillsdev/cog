@@ -82,35 +82,12 @@ namespace SIL.Cog.Applications.Services
 					}
 					else
 					{
-						try
-						{
-							OpenProject(vm, projectPath);
-						}
-						catch (ConfigException)
+						if (!OpenProject(vm, projectPath, out errorMsg))
 						{
 							if (usingCmdLineArg)
-							{
-								errorMsg = "The specified file is not a valid Cog configuration file.";
-								CloseProject();
 								vm.Canceled = true;
-							}
 							else
-							{
 								NewProject(vm);
-							}
-						}
-						catch (IOException ioe)
-						{
-							if (usingCmdLineArg)
-							{
-								errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
-								CloseProject();
-								vm.Canceled = true;
-							}
-							else
-							{
-								NewProject(vm);
-							}
 						}
 					}
 				}, true, false);
@@ -174,28 +151,8 @@ namespace SIL.Cog.Applications.Services
 					string errorMsg = null;
 					var progressVM = new ProgressViewModel(vm =>
 						{
-							try
-							{
-								OpenProject(vm, result.FileName);
-							}
-							catch (ConfigException)
-							{
-								errorMsg = "The specified file is not a valid Cog configuration file.";
-							}
-							catch (IOException ioe)
-							{
-								errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
-							}
-							catch (UnauthorizedAccessException)
-							{
-								errorMsg = "Access to the specified project is denied.";
-							}
-
-							if (!string.IsNullOrEmpty(errorMsg))
-							{
-								CloseProject();
+							if (!OpenProject(vm, result.FileName, out errorMsg))
 								vm.Canceled = true;
-							}
 						}, true, false);
 					if (_dialogService.ShowModalDialog(ownerViewModel, progressVM) == false)
 					{
@@ -241,15 +198,42 @@ namespace SIL.Cog.Applications.Services
 			_isChanged = false;
 		}
 
-		private void OpenProject(ProgressViewModel vm, string path)
+		private bool OpenProject(ProgressViewModel vm, string path, out string errorMsg)
 		{
 			string projectName = Path.GetFileNameWithoutExtension(path);
 			vm.DisplayName = string.Format("Opening {0} - Cog", projectName);
 			vm.Text = "Loading project file...";
-			_projectFileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, _projectFileStream);
+			errorMsg = null;
+			FileStream fileStream = null;
+			CogProject project = null;
+			try
+			{
+				fileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+				project = ConfigManager.Load(_spanFactory, _segmentPool, fileStream);
+			}
+			catch (ConfigException)
+			{
+				errorMsg = "The specified file is not a valid Cog configuration file.";
+			}
+			catch (IOException ioe)
+			{
+				errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				errorMsg = "Access to the specified project is denied.";
+			}
+			if (errorMsg != null)
+			{
+				if (fileStream != null)
+					fileStream.Close();
+				return false;
+			}
+			Debug.Assert(project != null);
+			_projectFileStream = fileStream;
 			SetupProject(vm, path, projectName, project);
 			_isNew = false;
+			return true;
 		}
 
 		public bool Save(object ownerViewModel)

@@ -15,37 +15,31 @@ namespace SIL.Cog.Presentation.Services
 
 		public static MessageBoxResult Show(string text)
 		{
-			Initialize();
 			return MessageBox.Show(text);
 		}
 
 		public static MessageBoxResult Show(string text, string caption)
 		{
-			Initialize();
 			return MessageBox.Show(text, caption);
 		}
 
 		public static MessageBoxResult Show(string text, string caption, MessageBoxButton buttons)
 		{
-			Initialize();
 			return MessageBox.Show(text, caption, buttons);
 		}
 
 		public static MessageBoxResult Show(string text, string caption, MessageBoxButton buttons, MessageBoxImage icon)
 		{
-			Initialize();
 			return MessageBox.Show(text, caption, buttons, icon);
 		}
 
 		public static MessageBoxResult Show(string text, string caption, MessageBoxButton buttons, MessageBoxImage icon, MessageBoxResult defResult)
 		{
-			Initialize();
 			return MessageBox.Show(text, caption, buttons, icon, defResult);
 		}
 
 		public static MessageBoxResult Show(string text, string caption, MessageBoxButton buttons, MessageBoxImage icon, MessageBoxResult defResult, MessageBoxOptions options)
-		{
-			Initialize();            
+		{        
 			return MessageBox.Show(text, caption, buttons, icon, defResult, options);
 		}
 

@@ -86,6 +86,7 @@ namespace SIL.Cog.Domain.Config
 							throw new ConfigException("The specified file is not a valid Cog config file", args.Exception);
 					}
 				});
+			segmentPool.Reset();
 			project.Version = int.Parse((string) root.Attribute("version"));
 			var featSys = new FeatureSystem();
 			XElement featSysElem = root.Element(Cog + "FeatureSystem");

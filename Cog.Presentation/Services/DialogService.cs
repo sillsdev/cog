@@ -59,69 +59,69 @@ namespace SIL.Cog.Presentation.Services
 		{
 			if (fileTypes == null) { throw new ArgumentNullException("fileTypes"); }
 			List<FileType> fileTypesList = fileTypes.ToList();
-            if (fileTypesList.Count == 0) { throw new ArgumentException("The fileTypes collection must contain at least one item."); }
+			if (fileTypesList.Count == 0) { throw new ArgumentException("The fileTypes collection must contain at least one item."); }
 
-            var dialog = new OpenFileDialog();
+			var dialog = new OpenFileDialog();
 
-            return ShowFileDialog(ownerViewModel, dialog, title, fileTypesList, defaultFileType, defaultFileName);
+			return ShowFileDialog(ownerViewModel, dialog, title, fileTypesList, defaultFileType, defaultFileName);
 		}
 
 		public FileDialogResult ShowSaveFileDialog(object ownerViewModel, string title, IEnumerable<FileType> fileTypes, FileType defaultFileType, string defaultFileName)
 		{
 			if (fileTypes == null) { throw new ArgumentNullException("fileTypes"); }
 			List<FileType> fileTypesList = fileTypes.ToList();
-            if (fileTypesList.Count == 0) { throw new ArgumentException("The fileTypes collection must contain at least one item."); }
+			if (fileTypesList.Count == 0) { throw new ArgumentException("The fileTypes collection must contain at least one item."); }
 
-            var dialog = new SaveFileDialog();
+			var dialog = new SaveFileDialog();
 
-            return ShowFileDialog(ownerViewModel, dialog, title, fileTypesList, defaultFileType, defaultFileName);
+			return ShowFileDialog(ownerViewModel, dialog, title, fileTypesList, defaultFileType, defaultFileName);
 		}
 
-        private FileDialogResult ShowFileDialog(object ownerViewModel, FileDialog dialog, string title, IList<FileType> fileTypes, FileType defaultFileType, string defaultFileName)
-        {
+		private FileDialogResult ShowFileDialog(object ownerViewModel, FileDialog dialog, string title, IList<FileType> fileTypes, FileType defaultFileType, string defaultFileName)
+		{
 			if (!string.IsNullOrEmpty(title))
 				dialog.Title = title;
-	        List<FileType> fileTypesList = fileTypes.ToList();
-            int filterIndex = fileTypesList.IndexOf(defaultFileType);
-            if (filterIndex >= 0) { dialog.FilterIndex = filterIndex + 1; }
-            if (!string.IsNullOrEmpty(defaultFileName))
-            {
-                dialog.FileName = Path.GetFileName(defaultFileName);
-                string directory = Path.GetDirectoryName(defaultFileName);
-                if (!string.IsNullOrEmpty(directory))
-                {
-                    dialog.InitialDirectory = directory;
-                }
-            }
+			List<FileType> fileTypesList = fileTypes.ToList();
+			int filterIndex = fileTypesList.IndexOf(defaultFileType);
+			if (filterIndex >= 0) { dialog.FilterIndex = filterIndex + 1; }
+			if (!string.IsNullOrEmpty(defaultFileName))
+			{
+				dialog.FileName = Path.GetFileName(defaultFileName);
+				string directory = Path.GetDirectoryName(defaultFileName);
+				if (!string.IsNullOrEmpty(directory))
+				{
+					dialog.InitialDirectory = directory;
+				}
+			}
 
-            dialog.Filter = CreateFilter(fileTypesList);
-            if (dialog.ShowDialog(FindOwnerWindow(ownerViewModel)) == true)
-            {
-                filterIndex = dialog.FilterIndex - 1;
-                if (filterIndex >= 0 && filterIndex < fileTypesList.Count)
-                {
-                    defaultFileType = fileTypesList[filterIndex];
-                }
-                else
-                {
-                    defaultFileType = null;
-                }
-                return new FileDialogResult(dialog.FileName, defaultFileType);
-            }
+			dialog.Filter = CreateFilter(fileTypesList);
+			if (dialog.ShowDialog(FindOwnerWindow(ownerViewModel)) == true)
+			{
+				filterIndex = dialog.FilterIndex - 1;
+				if (filterIndex >= 0 && filterIndex < fileTypesList.Count)
+				{
+					defaultFileType = fileTypesList[filterIndex];
+				}
+				else
+				{
+					defaultFileType = null;
+				}
+				return new FileDialogResult(dialog.FileName, defaultFileType);
+			}
 
-	        return new FileDialogResult();
-        }
+			return new FileDialogResult();
+		}
 
-        private static string CreateFilter(IEnumerable<FileType> fileTypes)
-        {
-            string filter = "";
-            foreach (FileType fileType in fileTypes)
-            {
-                if (!String.IsNullOrEmpty(filter)) { filter += "|"; }
-                filter += fileType.Description + "|" + string.Join(";", fileType.FileExtensions.Select(ext => string.Format("*{0}", ext)));
-            }
-            return filter;
-        }
+		private static string CreateFilter(IEnumerable<FileType> fileTypes)
+		{
+			string filter = "";
+			foreach (FileType fileType in fileTypes)
+			{
+				if (!String.IsNullOrEmpty(filter)) { filter += "|"; }
+				filter += fileType.Description + "|" + string.Join(";", fileType.FileExtensions.Select(ext => string.Format("*{0}", ext)));
+			}
+			return filter;
+		}
 
 		public void ShowMessage(object ownerViewModel, string message, string caption)
 		{

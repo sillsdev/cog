@@ -61,11 +61,20 @@
 					</Extension>
 				</ProgId>
 			</Component>
+			<Component Id="Cog.pdb" Win64="$(var.Win64)">
+				<File Id="Cog.pdb" Name="Cog.pdb" Source="$(var.Cog.Presentation.TargetDir)\Cog.pdb" KeyPath="yes" />
+			</Component>
 			<Component Id="SIL.Cog.Applications.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Cog.Applications.dll" Name="SIL.Cog.Applications.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Applications.dll" KeyPath="yes" />
 			</Component>
+			<Component Id="SIL.Cog.Applications.pdb" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.Applications.pdb" Name="SIL.Cog.Applications.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Applications.pdb" KeyPath="yes" />
+			</Component>
 			<Component Id="SIL.Cog.Domain.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Domain.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="SIL.Cog.Domain.pdb" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.Domain.pdb" Name="SIL.Cog.Domain.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Domain.pdb" KeyPath="yes" />
 			</Component>
 			<Component Id="Cog.exe.config" Win64="$(var.Win64)">
 				<File Id="Cog.exe.config" Name="Cog.exe.config" Source="$(var.Cog.Presentation.TargetDir)\Cog.exe.config" KeyPath="yes" />
@@ -75,8 +84,14 @@
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Machine.dll" Name="SIL.Machine.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Machine.dll" KeyPath="yes" />
 			</Component>
+			<Component Id="SIL.Machine.pdb" Win64="$(var.Win64)">
+				<File Id="SIL.Machine.pdb" Name="SIL.Machine.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Machine.pdb" KeyPath="yes" />
+			</Component>
 			<Component Id="SIL.Collections.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Collections.dll" Name="SIL.Collections.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Collections.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="SIL.Collections.pdb" Win64="$(var.Win64)">
+				<File Id="SIL.Collections.pdb" Name="SIL.Collections.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Collections.pdb" KeyPath="yes" />
 			</Component>
 
 			<!-- MVVM Light -->

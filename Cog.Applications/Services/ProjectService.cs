@@ -221,7 +221,7 @@ namespace SIL.Cog.Applications.Services
 			}
 			catch (UnauthorizedAccessException)
 			{
-				errorMsg = "Access to the specified project is denied.";
+				errorMsg = "The specified file is in use or you do not have access to it.";
 			}
 			if (errorMsg != null)
 			{

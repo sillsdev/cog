@@ -284,6 +284,8 @@ namespace SIL.Cog.Applications.Services
 
 		private void SaveAsProject(string path)
 		{
+			if (_projectFileStream != null)
+				_projectFileStream.Close();
 			_projectFileStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 			SaveProject();
 			_settingsService.LastProject = path;

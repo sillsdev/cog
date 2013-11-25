@@ -23,7 +23,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly WordListsVarietyViewModel.Factory _varietyFactory; 
 		private WordListsVarietySenseViewModel _selectedVarietySense;
 		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
- 		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
+		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 		private readonly ICommand _findCommand;
 		private ICollectionView _varietiesView;
@@ -50,7 +50,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
- 					new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
+					new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import))));
 

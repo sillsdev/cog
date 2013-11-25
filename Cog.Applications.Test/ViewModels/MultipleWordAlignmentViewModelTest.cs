@@ -76,7 +76,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
+				{
 					wp.AreCognatePredicted = true;
+					wp.CognicityScore = 1.0;
+				}
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			}
@@ -105,7 +108,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
+				{
 					wp.AreCognatePredicted = true;
+					wp.CognicityScore = 1.0;
+				}
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			}

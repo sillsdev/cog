@@ -300,8 +300,7 @@ namespace SIL.Cog.Applications.Services
 
 			if (path != null)
 			{
-				string cogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
-				string cacheFileName = Path.Combine(cogPath, name + ".cache");
+				string cacheFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(path) + ".cache");
 				if (File.Exists(cacheFileName))
 				{
 					if (vm != null)
@@ -340,9 +339,7 @@ namespace SIL.Cog.Applications.Services
 
 		private void SaveComparisonCache()
 		{
-			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Cog");
-			string name = Path.GetFileNameWithoutExtension(_settingsService.LastProject);
-			string cacheFileName = Path.Combine(path, name + ".cache");
+			string cacheFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(_settingsService.LastProject) + ".cache");
 			if (_project.VarietyPairs.Count == 0)
 			{
 				if (File.Exists(cacheFileName))
@@ -350,7 +347,6 @@ namespace SIL.Cog.Applications.Services
 			}
 			else
 			{
-				Directory.CreateDirectory(path);
 				using (FileStream fs = File.Create(cacheFileName))
 				{
 					Serializer.SerializeWithLengthPrefix(fs, CacheVersion, PrefixStyle.Base128, 1);

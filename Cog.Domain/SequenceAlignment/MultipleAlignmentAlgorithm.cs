@@ -40,8 +40,13 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			var profiles = new Dictionary<Cluster<TSeq>, Profile<TSeq, TItem>>();
 			var nodeStack = new Stack<Cluster<TSeq>>();
 			Cluster<TSeq> root = rootedTree.Roots().First();
-			nodeStack.Push(root);
 			double maxWeight = double.MinValue;
+			if (root.DataObjects.Count == 1)
+			{
+				profiles[root] = CreateProfile(root.DataObjects.First(), 0);
+				maxWeight = 0;
+			}
+			nodeStack.Push(root);
 			foreach (ClusterEdge<TSeq> edge in rootedTree.OutEdges(root))
 				maxWeight = Math.Max(maxWeight, CalcSequenceWeights(rootedTree, edge, 0, nodeStack, profiles));
 
@@ -58,6 +63,11 @@ namespace SIL.Cog.Domain.SequenceAlignment
 				{
 					curProfiles.Push(profiles[childEdge.Target]);
 					profiles.Remove(childEdge.Target);
+				}
+				if (node.DataObjects.Count == 1)
+				{
+					curProfiles.Push(profiles[node]);
+					profiles.Remove(node);
 				}
 				while (curProfiles.Count > 1)
 				{
@@ -130,13 +140,7 @@ namespace SIL.Cog.Domain.SequenceAlignment
 			{
 				TSeq seq = edge.Target.DataObjects.First();
 				double weight = curWeight + length;
-
-				int startIndex, count;
-				TItem[] items = _itemsSelector(seq, out startIndex, out count).ToArray();
-
-				var profile = new Profile<TSeq, TItem>(new Alignment<TSeq, TItem>(0, 0, Tuple.Create(seq, new AlignmentCell<TItem>(items.Take(startIndex)), 
-					items.Skip(startIndex).Take(count).Select(item => new AlignmentCell<TItem>(item)), new AlignmentCell<TItem>(items.Skip(startIndex + count)))), weight.ToEnumerable());
-				profiles[edge.Target] = profile;
+				profiles[edge.Target] = CreateProfile(seq, weight);
 				return weight;
 			}
 			else
@@ -148,6 +152,15 @@ namespace SIL.Cog.Domain.SequenceAlignment
 					maxWeight = Math.Max(maxWeight, CalcSequenceWeights(tree, childEdge, curWeight + lengthPart, nodeStack, profiles));
 				return maxWeight;
 			}
+		}
+
+		private Profile<TSeq, TItem> CreateProfile(TSeq seq, double weight)
+		{
+			int startIndex, count;
+			TItem[] items = _itemsSelector(seq, out startIndex, out count).ToArray();
+
+			return new Profile<TSeq, TItem>(new Alignment<TSeq, TItem>(0, 0, Tuple.Create(seq, new AlignmentCell<TItem>(items.Take(startIndex)), 
+				items.Skip(startIndex).Take(count).Select(item => new AlignmentCell<TItem>(item)), new AlignmentCell<TItem>(items.Skip(startIndex + count)))), weight.ToEnumerable());
 		}
 	}
 }

@@ -67,7 +67,7 @@ namespace SIL.Cog.Applications.ViewModels
 						newVariety.Regions.CollectionChanged += (s, evt) => RegionsChanged(newVariety);
 						return newVariety;
 					}, vm => vm.DomainVariety));
-			if (_projectService.Project.VarietyPairs.Count > 0)
+			if (_projectService.AreAllVarietiesCompared)
 				ClusterVarieties();
 			else
 				ResetClusters();
@@ -96,7 +96,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ClusterVarieties()
 		{
-			if (_projectService.Project.VarietyPairs.Count == 0)
+			if (!_projectService.AreAllVarietiesCompared)
 				return;
 
 			Func<Variety, Variety, double> getDistance = null;
@@ -149,10 +149,11 @@ namespace SIL.Cog.Applications.ViewModels
 		{
 			if (variety.ClusterIndex == -1 || (variety.ClusterIndex != -1 && variety.Regions.Count == 0))
 			{
-				if (_projectService.Project.VarietyPairs.Count == 0)
-					ResetClusters();
-				else
+				if (_projectService.AreAllVarietiesCompared)
 					ClusterVarieties();
+				else
+					ResetClusters();
+					
 			}
 		}
 

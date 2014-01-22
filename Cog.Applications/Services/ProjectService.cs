@@ -340,12 +340,7 @@ namespace SIL.Cog.Applications.Services
 		private void SaveComparisonCache()
 		{
 			string cacheFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(_settingsService.LastProject) + ".cache");
-			if (_project.VarietyPairs.Count == 0)
-			{
-				if (File.Exists(cacheFileName))
-					File.Delete(cacheFileName);
-			}
-			else
+			if (AreAllVarietiesCompared)
 			{
 				using (FileStream fs = File.Create(cacheFileName))
 				{
@@ -357,6 +352,11 @@ namespace SIL.Cog.Applications.Services
 						Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
 					}
 				}
+			}
+			else
+			{
+				if (File.Exists(cacheFileName))
+					File.Delete(cacheFileName);
 			}
 		}
 
@@ -388,6 +388,11 @@ namespace SIL.Cog.Applications.Services
 		public string ProjectName
 		{
 			get { return _projectName; }
+		}
+
+		public bool AreAllVarietiesCompared
+		{
+			get { return _project.Varieties.Count > 0 && _project.VarietyPairs.Count == ((_project.Varieties.Count - 1) * _project.Varieties.Count) / 2; }
 		}
 	}
 }

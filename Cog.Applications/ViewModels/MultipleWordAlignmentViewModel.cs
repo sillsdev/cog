@@ -68,10 +68,8 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ExportCognateSets()
 		{
-			if (_projectService.Project.VarietyPairs.Count == 0)
-				return;
-
-			_exportService.ExportCognateSets(this);
+			if (_projectService.AreAllVarietiesCompared)
+				_exportService.ExportCognateSets(this);
 		}
 
 		private void _showCognateSets_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -127,10 +125,10 @@ namespace SIL.Cog.Applications.ViewModels
 			{
 				if (Set(() => SelectedSense, ref _selectedSense, value))
 				{
-					if (_selectedSense == null || _projectService.Project.VarietyPairs.Count == 0)
-						ResetAlignment();
-					else
+					if (_selectedSense != null && _projectService.AreAllVarietiesCompared)
 						AlignWords();
+					else
+						ResetAlignment();
 				}
 			}
 		}

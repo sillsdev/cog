@@ -82,7 +82,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_selectedVarieties.Clear();
 			_selectedVarieties.UnionWith(_projectService.Project.Varieties);
 			_projectService.Project.Varieties.CollectionChanged += VarietiesChanged;
-			if (_projectService.Project.VarietyPairs.Count > 0)
+			if (_projectService.AreAllVarietiesCompared)
 				GenerateGraph();
 			else
 				ClearGraph();
@@ -109,7 +109,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void ExportChart()
 		{
-			if (_projectService.Project.VarietyPairs.Count > 0)
+			if (_projectService.AreAllVarietiesCompared)
 				_imageExportService.ExportCurrentGlobalCorrespondencesChart(this);
 		}
 

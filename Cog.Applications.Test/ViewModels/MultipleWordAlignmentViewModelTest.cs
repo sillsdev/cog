@@ -83,7 +83,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			}
-
+			projectService.AreAllVarietiesCompared.Returns(true);
 			projectService.ProjectOpened += Raise.Event();
 
 			Assert.That(alignment.SelectedSense, Is.Null);

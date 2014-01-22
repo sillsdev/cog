@@ -26,7 +26,7 @@ namespace SIL.Cog.Applications.ViewModels
 	public class HierarchicalGraphViewModel : WorkspaceViewModelBase
 	{
 		private readonly IProjectService _projectService;
-		private readonly IGraphService _graphService; 
+		private readonly IGraphService _graphService;
 		private HierarchicalGraphType _graphType;
 		private ClusteringMethod _clusteringMethod;
 		private IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> _graph;
@@ -66,12 +66,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
+			Graph = _projectService.AreAllVarietiesCompared ? _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
 		}
 
 		private void Export()
 		{
-			if (_projectService.Project.VarietyPairs.Count > 0)
+			if (_projectService.AreAllVarietiesCompared)
 				_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
 		}
 

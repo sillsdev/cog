@@ -189,7 +189,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanExportSimilarityMatrix()
 		{
-			return _projectService.Project.VarietyPairs.Count > 0;
+			return _projectService.AreAllVarietiesCompared;
 		}
 
 		private void ExportSimilarityMatrix()
@@ -201,7 +201,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanExportCognateSets()
 		{
-			return _projectService.Project.VarietyPairs.Count > 0;
+			return _projectService.AreAllVarietiesCompared;
 		}
 
 		private void ExportCognateSets()
@@ -223,7 +223,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanExportHierarchicalGraph()
 		{
-			return _projectService.Project.VarietyPairs.Count > 0;
+			return _projectService.AreAllVarietiesCompared;
 		}
 
 		private void ExportHierarchicalGraph()
@@ -235,7 +235,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanExportNetworkGraph()
 		{
-			return _projectService.Project.VarietyPairs.Count > 0;
+			return _projectService.AreAllVarietiesCompared;
 		}
 
 		private void ExportNetworkGraph()
@@ -247,7 +247,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private bool CanExportGlobalCorrespondencesChart()
 		{
-			return _projectService.Project.VarietyPairs.Count > 0;
+			return _projectService.AreAllVarietiesCompared;
 		}
 
 		private void ExportGlobalCorrespondencesChart()

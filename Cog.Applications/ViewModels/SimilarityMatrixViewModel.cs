@@ -50,7 +50,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			ResetVarieties();
-			if (_projectService.Project.VarietyPairs.Count > 0)
+			if (_projectService.AreAllVarietiesCompared)
 				CreateSimilarityMatrix();
 		}
 

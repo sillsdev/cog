@@ -17,5 +17,6 @@ namespace SIL.Cog.Applications.Services
 		bool IsChanged { get; }
 		CogProject Project { get; }
 		string ProjectName { get; }
+		bool AreAllVarietiesCompared { get; }
 	}
 }

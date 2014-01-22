@@ -42,12 +42,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Graph = _projectService.Project.VarietyPairs.Count > 0 ? _graphService.GenerateNetworkGraph(_similarityMetric) : null;
+			Graph = _projectService.AreAllVarietiesCompared ? _graphService.GenerateNetworkGraph(_similarityMetric) : null;
 		}
 
 		private void Export()
 		{
-			if (_projectService.Project.VarietyPairs.Count > 0)
+			if (_projectService.AreAllVarietiesCompared)
 				_imageExportService.ExportCurrentNetworkGraph(this);
 		}
 

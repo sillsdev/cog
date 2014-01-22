@@ -116,6 +116,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
 			}
+			projectService.AreAllVarietiesCompared.Returns(true);
 			projectService.ProjectOpened += Raise.Event();
 
 			var observedWordPairs = globalCorrespondences.ObservedWordPairs;
@@ -182,9 +183,10 @@ namespace SIL.Cog.Applications.Test.ViewModels
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
 			}
+			projectService.AreAllVarietiesCompared.Returns(true);
 			projectService.ProjectOpened += Raise.Event();
 
-			var observedWordPairs = globalCorrespondences.ObservedWordPairs;
+			WordPairsViewModel observedWordPairs = globalCorrespondences.ObservedWordPairs;
 			observedWordPairs.WordPairsView = new ListCollectionView(observedWordPairs.WordPairs);
 
 			FindViewModel findViewModel = null;

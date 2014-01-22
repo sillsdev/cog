@@ -9,11 +9,11 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			var thresholdStr = (string) elem.Element(ConfigManager.Cog + "Threshold");
+			var threshold = (int) elem.Element(ConfigManager.Cog + "Threshold");
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
-			return new ThresholdSegmentMappings(project, int.Parse(thresholdStr), alignerID);
+			return new ThresholdSegmentMappings(project, threshold, alignerID);
 		}
 
 		public void Save(ISegmentMappings component, XElement elem)

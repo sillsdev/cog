@@ -11,20 +11,19 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			var combineVowelsStr = (string) elem.Element(ConfigManager.Cog + "CombineVowels");
-			var combineConsStr = (string) elem.Element(ConfigManager.Cog + "CombineConsonants");
-			var vowelsSameSonorityTautosyllabicStr = (string) elem.Element(ConfigManager.Cog + "VowelsSameSonorityTautosyllabic");
+			var combineVowels = (bool?) elem.Element(ConfigManager.Cog + "CombineVowels") ?? true;
+			var combineCons = (bool?) elem.Element(ConfigManager.Cog + "CombineConsonants") ?? true;
+			var vowelsSameSonorityTautosyllabic = (bool?) elem.Element(ConfigManager.Cog + "VowelsSameSonorityTautosyllabic") ?? false;
 			XElement scaleElem = elem.Element(ConfigManager.Cog + "SonorityScale");
 			Debug.Assert(scaleElem != null);
 			var sonorityScale = new List<SonorityClass>();
 			foreach (XElement scElem in scaleElem.Elements(ConfigManager.Cog + "SonorityClass"))
 			{
-				int sonority = int.Parse((string) scElem.Attribute("sonority"));
+				var sonority = (int) scElem.Attribute("sonority");
 				SoundClass soundClass = ConfigManager.LoadSoundClass(project.Segmenter, project.FeatureSystem, scElem.Elements().First());
 				sonorityScale.Add(new SonorityClass(sonority, soundClass));
 			}
-			return new SspSyllabifier(combineVowelsStr == null || bool.Parse(combineVowelsStr), combineConsStr == null || bool.Parse(combineConsStr),
-				vowelsSameSonorityTautosyllabicStr != null && bool.Parse(vowelsSameSonorityTautosyllabicStr), segmentPool, sonorityScale);
+			return new SspSyllabifier(combineVowels, combineCons,vowelsSameSonorityTautosyllabic, segmentPool, sonorityScale);
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)

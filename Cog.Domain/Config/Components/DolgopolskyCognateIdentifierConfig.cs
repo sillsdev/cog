@@ -16,8 +16,8 @@ namespace SIL.Cog.Domain.Config.Components
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
-			var thresholdStr = (string) elem.Element(ConfigManager.Cog + "InitialEquivalenceThreshold");
-			return new DolgopolskyCognateIdentifier(segmentPool, project, soundClasses, int.Parse(thresholdStr), alignerID);
+			var threshold = (int) elem.Element(ConfigManager.Cog + "InitialEquivalenceThreshold");
+			return new DolgopolskyCognateIdentifier(segmentPool, project, soundClasses, threshold, alignerID);
 		}
 
 		public void Save(IProcessor<VarietyPair> component, XElement elem)

@@ -8,10 +8,10 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			var stemThresholdStr = (string) elem.Element(ConfigManager.Cog + "AffixThreshold");
-			var maxAffixLenStr = (string) elem.Element(ConfigManager.Cog + "MaxAffixLength");
-			var catRequired = (string) elem.Element(ConfigManager.Cog + "CategoryRequired");
-			return new UnsupervisedAffixIdentifier(spanFactory, segmentPool, double.Parse(stemThresholdStr), int.Parse(maxAffixLenStr), catRequired != null && bool.Parse(catRequired));
+			var stemThreshold = (double) elem.Element(ConfigManager.Cog + "AffixThreshold");
+			var maxAffixLen = (int) elem.Element(ConfigManager.Cog + "MaxAffixLength");
+			bool catRequired = (bool?) elem.Element(ConfigManager.Cog + "CategoryRequired") ?? false;
+			return new UnsupervisedAffixIdentifier(spanFactory, segmentPool, stemThreshold, maxAffixLen, catRequired);
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)

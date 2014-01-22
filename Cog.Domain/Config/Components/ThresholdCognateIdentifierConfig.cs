@@ -9,11 +9,11 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			var thresholdStr = (string) elem.Element(ConfigManager.Cog + "Threshold");
+			var threshold = (double) elem.Element(ConfigManager.Cog + "Threshold");
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
-			return new ThresholdCognateIdentifier(project, double.Parse(thresholdStr), alignerID);
+			return new ThresholdCognateIdentifier(project, threshold, alignerID);
 		}
 
 		public void Save(IProcessor<VarietyPair> component, XElement elem)

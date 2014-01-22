@@ -12,7 +12,7 @@ namespace SIL.Cog.Presentation.Converters
 			{
 				var currentValue = (double) values[0];
 				var maxValue = Math.Max(0.2, (double) values[1]);
-				var maxWidth = int.Parse((string) parameter);
+				var maxWidth = int.Parse((string) parameter, CultureInfo.InvariantCulture);
 
 				return maxWidth * (currentValue / maxValue);
 			}

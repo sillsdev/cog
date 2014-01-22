@@ -33,9 +33,7 @@ namespace SIL.Cog.Domain.Config.Components
 						break;
 				}
 			}
-			var disableExpansionCompressionStr = (string) elem.Element(ConfigManager.Cog + "ExpansionCompressionEnabled");
-			if (disableExpansionCompressionStr != null)
-				settings.ExpansionCompressionEnabled = bool.Parse(disableExpansionCompressionStr);
+			settings.ExpansionCompressionEnabled = (bool?) elem.Element(ConfigManager.Cog + "ExpansionCompressionEnabled") ?? false;
 			XElement soundClassesElem = elem.Element(ConfigManager.Cog + "ContextualSoundClasses");
 			if (soundClassesElem != null && soundClassesElem.HasElements)
 				settings.ContextualSoundClasses = ConfigManager.LoadSoundClasses(segmenter, featSys, soundClassesElem);

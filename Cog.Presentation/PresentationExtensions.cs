@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -84,7 +85,7 @@ namespace SIL.Cog.Presentation
 				{
 					prop = propertyStr.Substring(0, bracketIndex);
 					string indexStr = propertyStr.Substring(bracketIndex + 1, propertyStr.Length - bracketIndex - 2);
-					int index = int.Parse(indexStr);
+					int index = int.Parse(indexStr, CultureInfo.InvariantCulture);
 					var coll = currentObject as ICollection;
 					if (coll != null && index >= coll.Count)
 						yield break;

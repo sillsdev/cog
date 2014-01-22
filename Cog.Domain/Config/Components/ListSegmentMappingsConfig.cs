@@ -12,8 +12,8 @@ namespace SIL.Cog.Domain.Config.Components
 		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement mappingsElem = elem.Element(ConfigManager.Cog + "Mappings");
-			var implicitComplexSegmentsStr = (string) elem.Element(ConfigManager.Cog + "ImplicitComplexSegments") ?? "false";
-			return new ListSegmentMappings(project.Segmenter, ParseMappings(mappingsElem), bool.Parse(implicitComplexSegmentsStr));
+			var implicitComplexSegments = (bool?) elem.Element(ConfigManager.Cog + "ImplicitComplexSegments") ?? false;
+			return new ListSegmentMappings(project.Segmenter, ParseMappings(mappingsElem), implicitComplexSegments);
 		}
 
 		private IEnumerable<Tuple<string, string>> ParseMappings(XElement elem)

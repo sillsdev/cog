@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -100,7 +101,7 @@ namespace SIL.Cog.Applications.Import
 			for (int i = 0; i < coordsArray.Length - 1; i++)
 			{
 				string[] coordArray = coordsArray[i].Split(',');
-				region.Coordinates.Add(new GeographicCoordinate(double.Parse(coordArray[1]), double.Parse(coordArray[0])));
+				region.Coordinates.Add(new GeographicCoordinate(double.Parse(coordArray[1], CultureInfo.InvariantCulture), double.Parse(coordArray[0], CultureInfo.InvariantCulture)));
 			}
 			return region;
 		}

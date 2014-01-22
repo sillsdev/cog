@@ -8,9 +8,9 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			var combineVowelsStr = (string) elem.Element(ConfigManager.Cog + "CombineVowels");
-			var combineConsStr = (string) elem.Element(ConfigManager.Cog + "CombineConsonants");
-			return new SimpleSyllabifier(combineVowelsStr == null || bool.Parse(combineVowelsStr), combineConsStr == null || bool.Parse(combineConsStr));
+			var combineVowels = (bool?) elem.Element(ConfigManager.Cog + "CombineVowels") ?? true;
+			var combineCons = (bool?) elem.Element(ConfigManager.Cog + "CombineConsonants") ?? true;
+			return new SimpleSyllabifier(combineVowels, combineCons);
 		}
 
 		public void Save(IProcessor<Variety> component, XElement elem)

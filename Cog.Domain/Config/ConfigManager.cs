@@ -87,7 +87,7 @@ namespace SIL.Cog.Domain.Config
 					}
 				});
 			segmentPool.Reset();
-			project.Version = int.Parse((string) root.Attribute("version"));
+			project.Version = (int) root.Attribute("version");
 			var featSys = new FeatureSystem();
 			XElement featSysElem = root.Element(Cog + "FeatureSystem");
 			Debug.Assert(featSysElem != null);
@@ -105,9 +105,9 @@ namespace SIL.Cog.Domain.Config
 			XElement vowelsElem = segmentationElem.Element(Cog + "Vowels");
 			if (vowelsElem != null)
 			{
-				var maxLenStr = (string) vowelsElem.Attribute("maxLength");
-				if (!string.IsNullOrEmpty(maxLenStr))
-					project.Segmenter.MaxVowelLength = int.Parse(maxLenStr);
+				XAttribute maxLenAttr = vowelsElem.Attribute("maxLength");
+				if (maxLenAttr != null)
+					project.Segmenter.MaxVowelLength = (int) maxLenAttr;
 
 				ParseSymbols(project.FeatureSystem, vowelsElem, project.Segmenter.Vowels);
 			}
@@ -115,9 +115,9 @@ namespace SIL.Cog.Domain.Config
 			XElement consElem = segmentationElem.Element(Cog + "Consonants");
 			if (consElem != null)
 			{
-				var maxLenStr = (string) consElem.Attribute("maxLength");
-				if (!string.IsNullOrEmpty(maxLenStr))
-					project.Segmenter.MaxConsonantLength = int.Parse(maxLenStr);
+				XAttribute maxLenAttr = consElem.Attribute("maxLength");
+				if (maxLenAttr != null)
+					project.Segmenter.MaxConsonantLength = (int) maxLenAttr;
 
 				ParseSymbols(project.FeatureSystem, consElem, project.Segmenter.Consonants);
 			}
@@ -167,10 +167,8 @@ namespace SIL.Cog.Domain.Config
 						if (senses.TryGetValue((string) wordElem.Attribute("sense"), out sense))
 						{
 							var strRep = ((string) wordElem).Trim();
-							var stemIndexStr = (string) wordElem.Attribute("stemIndex");
-							int stemIndex = string.IsNullOrEmpty(stemIndexStr) ? 0 : int.Parse(stemIndexStr);
-							var stemLenStr = (string) wordElem.Attribute("stemLength");
-							int stemLen = string.IsNullOrEmpty(stemLenStr) ? strRep.Length - stemIndex : int.Parse(stemLenStr);
+							var stemIndex = (int?) wordElem.Attribute("stemIndex") ?? 0;
+							var stemLen = (int?) wordElem.Attribute("stemLength") ?? strRep.Length - stemIndex;
 							variety.Words.Add(new Word(strRep, stemIndex, stemLen, sense));
 						}
 					}
@@ -203,8 +201,8 @@ namespace SIL.Cog.Domain.Config
 						var region = new GeographicRegion {Description = (string) regionElem.Element(Cog + "Description")};
 						foreach (XElement coordinateElem in regionElem.Elements(Cog + "Coordinates").Elements(Cog + "Coordinate"))
 						{
-							double latitude = double.Parse((string) coordinateElem.Element(Cog + "Latitude"));
-							double longitude = double.Parse((string) coordinateElem.Element(Cog + "Longitude"));
+							var latitude = (double) coordinateElem.Element(Cog + "Latitude");
+							var longitude = (double) coordinateElem.Element(Cog + "Longitude");
 							region.Coordinates.Add(new GeographicCoordinate(latitude, longitude));
 						}
 						variety.Regions.Add(region);
@@ -404,8 +402,8 @@ namespace SIL.Cog.Domain.Config
 			if (elem.Name == Cog + "UnnaturalClass")
 			{
 				IEnumerable<string> segments = elem.Elements(Cog + "Segment").Select(segElem => (string) segElem);
-				var ignoreModifiersStr = (string) elem.Attribute("ignoreModifiers");
-				return new UnnaturalClass(name, segments, !string.IsNullOrEmpty(ignoreModifiersStr) && bool.Parse(ignoreModifiersStr), segmenter);
+				var ignoreModifiers = (bool?) elem.Attribute("ignoreModifiers") ?? false;
+				return new UnnaturalClass(name, segments, ignoreModifiers, segmenter);
 			}
 			return null;
 		}

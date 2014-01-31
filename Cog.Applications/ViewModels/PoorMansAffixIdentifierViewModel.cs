@@ -1,20 +1,19 @@
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class UnsupervisedAffixIdentifierViewModel : ComponentSettingsViewModelBase
+	public class PoorMansAffixIdentifierViewModel : ComponentSettingsViewModelBase
 	{
 		private readonly IProjectService _projectService;
 		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly SegmentPool _segmentPool;
-		private double _threshold;
+		private int _threshold;
 		private int _maxAffixLength;
-		private bool _categoryRequired;
 
-		public UnsupervisedAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService)
+		public PoorMansAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService)
 			: base("Automatic stemmer")
 		{
 			_spanFactory = spanFactory;
@@ -24,13 +23,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 		public override void Setup()
 		{
-			var identifier = (UnsupervisedAffixIdentifier) _projectService.Project.VarietyProcessors["affixIdentifier"];
-			Set(() => Threshold, ref _threshold, identifier.Threshold);
+			var identifier = (PoorMansAffixIdentifier) _projectService.Project.VarietyProcessors["affixIdentifier"];
+			Set(() => Threshold, ref _threshold, (int) identifier.Threshold);
 			Set(() => MaxAffixLength, ref _maxAffixLength, identifier.MaxAffixLength);
-			Set(() => CategoryRequired, ref _categoryRequired, identifier.CategoryRequired);
 		}
 
-		public double Threshold
+		public int Threshold
 		{
 			get { return _threshold; }
 			set { SetChanged(() => Threshold, ref _threshold, value); }
@@ -42,15 +40,9 @@ namespace SIL.Cog.Applications.ViewModels
 			set { SetChanged(() => MaxAffixLength, ref _maxAffixLength, value); }
 		}
 
-		public bool CategoryRequired
-		{
-			get { return _categoryRequired; }
-			set { SetChanged(() => CategoryRequired, ref _categoryRequired, value); }
-		}
-
 		public override object UpdateComponent()
 		{
-			var affixIdentifier = new UnsupervisedAffixIdentifier(_spanFactory, _segmentPool, _threshold, _maxAffixLength, _categoryRequired);
+			var affixIdentifier = new PoorMansAffixIdentifier(_spanFactory, _segmentPool, _threshold, _maxAffixLength);
 			_projectService.Project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
 			return affixIdentifier;
 		}

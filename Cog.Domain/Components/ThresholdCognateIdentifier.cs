@@ -1,4 +1,5 @@
-using SIL.Machine;
+using SIL.Machine.Annotations;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain.Components
 {

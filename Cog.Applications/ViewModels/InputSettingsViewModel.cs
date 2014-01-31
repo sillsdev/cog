@@ -5,7 +5,7 @@ namespace SIL.Cog.Applications.ViewModels
 	public class InputSettingsViewModel : SettingsWorkspaceViewModelBase
 	{
 		public InputSettingsViewModel(IProjectService projectService, IBusyService busyService, SyllabifierViewModel syllabifierViewModel,
-			UnsupervisedAffixIdentifierViewModel affixIdentifierViewModel)
+			PoorMansAffixIdentifierViewModel affixIdentifierViewModel)
 			: base("Input", projectService, busyService, syllabifierViewModel, affixIdentifierViewModel)
 		{
 		}

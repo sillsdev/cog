@@ -10,7 +10,7 @@ using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
 
@@ -71,7 +71,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
+				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, (sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			}
 			Messenger.Default.Send(new ComparisonPerformedMessage());
 
@@ -128,7 +128,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
+				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, (sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			}
 
 			int i = 0;
@@ -288,7 +288,7 @@ namespace SIL.Cog.Applications.Test.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, fd => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
+				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, (sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			}
 
 			int i = 0;

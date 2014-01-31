@@ -1,14 +1,9 @@
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
+using SIL.Machine.Morphology;
 
 namespace SIL.Cog.Domain
 {
-	public enum AffixType
-	{
-		Prefix,
-		Suffix
-	}
-
 	public class Affix : ObservableObject
 	{
 		private readonly string _strRep;

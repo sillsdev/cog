@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain
 {
-	public class Word : ObservableObject, IData<ShapeNode>
+	public class Word : ObservableObject, IAnnotatedData<ShapeNode>
 	{
 		private int _stemIndex;
 		private int _stemLength;

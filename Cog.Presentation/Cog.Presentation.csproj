@@ -341,8 +341,8 @@
       <DependentUpon>ThresholdSimilarSegmentIdentifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UnicodeCsvClipboardExporter.cs" />
-    <Compile Include="Views\UnsupervisedAffixIdentifierView.xaml.cs">
-      <DependentUpon>UnsupervisedAffixIdentifierView.xaml</DependentUpon>
+    <Compile Include="Views\PoorMansAffixIdentifierView.xaml.cs">
+      <DependentUpon>PoorMansAffixIdentifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VarietyPairsView.xaml.cs">
       <DependentUpon>VarietyPairsView.xaml</DependentUpon>
@@ -571,7 +571,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UnsupervisedAffixIdentifierView.xaml">
+    <Page Include="Views\PoorMansAffixIdentifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

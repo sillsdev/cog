@@ -47,9 +47,8 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Affix.cs" />
-    <Compile Include="Alignment.cs" />
-    <Compile Include="AlignmentCell.cs" />
     <Compile Include="Components\AffixStripper.cs" />
+    <Compile Include="Components\AlineScorer.cs" />
     <Compile Include="Components\SoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
     <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />
@@ -75,7 +74,7 @@
     <Compile Include="Components\ThresholdCognateIdentifier.cs" />
     <Compile Include="Components\ThresholdSegmentMappings.cs" />
     <Compile Include="Components\TypeSegmentMappings.cs" />
-    <Compile Include="Components\UnsupervisedAffixIdentifier.cs" />
+    <Compile Include="Components\PoorMansAffixIdentifier.cs" />
     <Compile Include="Components\VarietyPairGenerator.cs" />
     <Compile Include="Components\WordPairGenerator.cs" />
     <Compile Include="Config\Components\SimpleSyllabifierConfig.cs" />
@@ -89,7 +88,7 @@
     <Compile Include="Config\Components\ThresholdCognateIdentifierConfig.cs" />
     <Compile Include="Config\Components\ThresholdSegmentMappingsConfig.cs" />
     <Compile Include="Config\Components\TypeSegmentMappingsConfig.cs" />
-    <Compile Include="Config\Components\UnsupervisedAffixIdentifierConfig.cs" />
+    <Compile Include="Config\Components\PoorMansAffixIdentifierConfig.cs" />
     <Compile Include="Config\ConfigException.cs" />
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\IComponentConfig.cs" />
@@ -110,12 +109,6 @@
     <Compile Include="Segmenter.cs" />
     <Compile Include="SegmentPool.cs" />
     <Compile Include="Sense.cs" />
-    <Compile Include="SequenceAlignment\AlineScorer.cs" />
-    <Compile Include="SequenceAlignment\IPairwiseAlignmentScorer.cs" />
-    <Compile Include="SequenceAlignment\MultipleAlignmentAlgorithm.cs" />
-    <Compile Include="SequenceAlignment\PairwiseAlignmentAlgorithm.cs" />
-    <Compile Include="SequenceAlignment\Profile.cs" />
-    <Compile Include="SequenceAlignment\ProfileScorer.cs" />
     <Compile Include="SoundContext.cs" />
     <Compile Include="SoundClass.cs" />
     <Compile Include="Symbol.cs" />

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
+using SIL.Machine.Morphology;
 using SIL.Machine.Rules;
 
 namespace SIL.Cog.Domain.Components
@@ -59,7 +60,11 @@ namespace SIL.Cog.Domain.Components
 
 		private bool CheckStemWholeWord(Match<Word, ShapeNode> match)
 		{
-			return !match.Span.Contains(match.Input.Stem.Span);
+			Annotation<ShapeNode> stemAnn = match.Input.Stem;
+			ShapeNode end = stemAnn.Span.End;
+			while (end.Type() == CogFeatureSystem.ToneLetterType)
+				end = end.Prev;
+			return !match.Span.Contains(_spanFactory.Create(stemAnn.Span.Start, end));
 		}
 
 		private ShapeNode MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match, out Word output)

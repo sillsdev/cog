@@ -8,8 +8,9 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.Clusterers;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Applications.ViewModels
 {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain

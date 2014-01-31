@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SIL.Cog.Domain;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
+using SIL.Machine.SequenceAlignment;
 using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Applications.Export

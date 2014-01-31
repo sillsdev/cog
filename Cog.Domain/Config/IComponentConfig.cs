@@ -1,5 +1,5 @@
 ﻿using System.Xml.Linq;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config
 {

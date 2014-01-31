@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Config.Components

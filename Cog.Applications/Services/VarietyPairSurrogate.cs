@@ -108,7 +108,7 @@ namespace SIL.Cog.Applications.Services
 			int segmentCount = vp.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(soundChanges,
-				freqDist => new WittenBellProbabilityDistribution<Ngram<Segment>>(freqDist, possCorrCount));
+				(sc, freqDist) => new WittenBellProbabilityDistribution<Ngram<Segment>>(freqDist, possCorrCount));
 
 			foreach (KeyValuePair<string, List<SoundCorrespondenceSurrogate>> kvp in _soundCorrespondenceCollections)
 			{

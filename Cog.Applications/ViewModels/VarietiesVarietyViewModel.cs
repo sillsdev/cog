@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
+using SIL.Machine.Morphology;
 
 namespace SIL.Cog.Applications.ViewModels
 {

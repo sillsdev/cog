@@ -4,9 +4,9 @@ using System.Linq;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Cog.Domain.SequenceAlignment;
 using SIL.Collections;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Applications.ViewModels
 {

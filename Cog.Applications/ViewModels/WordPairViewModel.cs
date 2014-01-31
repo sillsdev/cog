@@ -3,7 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
-using SIL.Machine;
+using SIL.Machine.Annotations;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Applications.ViewModels
 {

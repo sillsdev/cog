@@ -1,9 +1,9 @@
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Cog.Domain.SequenceAlignment;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain.Config.Components
 {

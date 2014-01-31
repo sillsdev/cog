@@ -4,7 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using SIL.Cog.Applications.Import;
 using SIL.Cog.Domain;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Applications.Test.Import
 {

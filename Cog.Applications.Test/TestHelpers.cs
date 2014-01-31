@@ -2,7 +2,7 @@
 using System.Reflection;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Applications.Test
 {

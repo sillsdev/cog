@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 
@@ -141,7 +141,7 @@ namespace SIL.Cog.Domain.Components
 
 		private IEnumerable<string> GetStrReps(Ngram<Segment> target)
 		{
-			if (target.Count == 0)
+			if (target.Length == 0)
 			{
 				yield return "-";
 			}

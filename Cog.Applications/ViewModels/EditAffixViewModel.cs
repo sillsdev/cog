@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
+using SIL.Machine.Morphology;
 
 namespace SIL.Cog.Applications.ViewModels
 {

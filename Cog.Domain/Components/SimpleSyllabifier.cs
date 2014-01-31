@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Components

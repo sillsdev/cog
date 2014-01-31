@@ -4,10 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.Clusterers;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain
 {

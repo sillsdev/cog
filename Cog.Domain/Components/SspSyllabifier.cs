@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 

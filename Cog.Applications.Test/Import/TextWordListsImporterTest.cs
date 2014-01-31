@@ -5,7 +5,7 @@ using NUnit.Framework;
 using SIL.Cog.Applications.Import;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Applications.Test.Import
 {

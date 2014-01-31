@@ -2019,10 +2019,9 @@
 	<Varieties />
 	<ProjectProcessors />
 	<VarietyProcessors>
-		<VarietyProcessor id="affixIdentifier" xsi:type="UnsupervisedAffixIdentifier">
-			<AffixThreshold>0.5</AffixThreshold>
-			<MaxAffixLength>5</MaxAffixLength>
-			<CategoryRequired>false</CategoryRequired>
+		<VarietyProcessor id="affixIdentifier" xsi:type="PoorMansAffixIdentifier">
+			<AffixThreshold>5</AffixThreshold>
+			<MaxAffixLength>3</MaxAffixLength>
 		</VarietyProcessor>
 		<VarietyProcessor id="syllabifier" xsi:type="SspSyllabifier">
 			<SonorityScale>

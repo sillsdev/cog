@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Cog.Domain.SequenceAlignment;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain.Components
 {

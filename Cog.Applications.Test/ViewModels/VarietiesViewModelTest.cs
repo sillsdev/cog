@@ -8,7 +8,7 @@ using SIL.Cog.Applications.Services;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Applications.Test.ViewModels
 {

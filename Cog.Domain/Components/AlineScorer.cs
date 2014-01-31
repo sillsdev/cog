@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
+using SIL.Machine.SequenceAlignment;
 using SIL.Machine.Statistics;
 
-namespace SIL.Cog.Domain.SequenceAlignment
+namespace SIL.Cog.Domain.Components
 {
 	public class AlineScorer : IPairwiseAlignmentScorer<Word, ShapeNode>
 	{

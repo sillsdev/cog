@@ -127,13 +127,12 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="UnsupervisedAffixIdentifier">
+	<xs:complexType name="PoorMansAffixIdentifier">
 		<xs:complexContent>
 			<xs:extension base="VarietyProcessorBase">
 				<xs:sequence>
 					<xs:element name="AffixThreshold" type="xs:double" />
 					<xs:element name="MaxAffixLength" type="xs:int" />
-					<xs:element name="CategoryRequired" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>

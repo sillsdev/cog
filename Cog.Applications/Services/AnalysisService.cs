@@ -4,7 +4,7 @@ using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Collections;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Applications.Services
 {
@@ -94,12 +94,12 @@ namespace SIL.Cog.Applications.Services
 		{
 			CogProject project = _projectService.Project;
 			var processors = new List<IProcessor<Variety>> {new AffixStripper(project.Segmenter)};
+			IProcessor<Variety> syllabifier = project.VarietyProcessors["syllabifier"];
+			processors.Add(syllabifier);
 			if (method != StemmingMethod.Manual)
 				processors.Add(_projectService.Project.VarietyProcessors["affixIdentifier"]);
 			processors.Add(new Stemmer(_spanFactory, project.Segmenter));
-			IProcessor<Variety> syllabifier;
-			if (_projectService.Project.VarietyProcessors.TryGetValue("syllabifier", out syllabifier))
-				processors.Add(syllabifier);
+			processors.Add(syllabifier);
 			processors.Add(new SegmentFrequencyDistributionCalculator(_segmentPool));
 			return processors;
 		}

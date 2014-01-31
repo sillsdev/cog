@@ -7,8 +7,9 @@ using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.Morphology;
 
 namespace SIL.Cog.Domain.Config
 {

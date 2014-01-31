@@ -2,7 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 
 namespace SIL.Cog.Domain.Test.Components

@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {

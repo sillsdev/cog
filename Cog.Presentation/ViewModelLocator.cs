@@ -17,7 +17,7 @@ using SIL.Cog.Applications.Services;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Presentation.Services;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Presentation
 {
@@ -84,7 +84,7 @@ namespace SIL.Cog.Presentation
 
 			// Component settings view models
 	        builder.RegisterType<SyllabifierViewModel>().SingleInstance();
-	        builder.RegisterType<UnsupervisedAffixIdentifierViewModel>().SingleInstance();
+	        builder.RegisterType<PoorMansAffixIdentifierViewModel>().SingleInstance();
 	        builder.RegisterType<AlineViewModel>().SingleInstance();
 	        builder.RegisterType<EMSoundChangeInducerViewModel>().SingleInstance();
 	        builder.RegisterType<CognateIdentifierOptionsViewModel>().SingleInstance();

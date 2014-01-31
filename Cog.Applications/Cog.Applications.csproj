@@ -230,7 +230,7 @@
     <Compile Include="ViewModels\TaskAreaViewModelBase.cs" />
     <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ThresholdSimilarSegmentMappingsViewModel.cs" />
-    <Compile Include="ViewModels\UnsupervisedAffixIdentifierViewModel.cs" />
+    <Compile Include="ViewModels\PoorMansAffixIdentifierViewModel.cs" />
     <Compile Include="ViewModels\VarietiesVarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />

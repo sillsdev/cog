@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -89,7 +90,7 @@ namespace SIL.Cog.Domain.Components
 					{
 						cat = 0;
 					}
-					else if (u.Count == 0 || v.Count == 0)
+					else if (u.Length == 0 || v.Length == 0)
 					{
 						if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode) || correspondences.Contains(Tuple.Create(uStr, vStr)))
 							cat = _ignoreRegularInsertionDeletion ? 0 : 1;

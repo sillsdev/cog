@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
-using SIL.Machine;
+using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
+using SIL.Machine.SequenceAlignment;
 using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.Components
@@ -83,7 +84,7 @@ namespace SIL.Cog.Domain.Components
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			int segmentCount = pair.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
-			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(expectedCounts, fd => new WittenBellProbabilityDistribution<Ngram<Segment>>(fd, possCorrCount));
+			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(expectedCounts, (sc, fd) => new WittenBellProbabilityDistribution<Ngram<Segment>>(fd, possCorrCount));
 
 			bool converged = true;
 			if (pair.SoundChangeProbabilityDistribution == null || pair.SoundChangeProbabilityDistribution.Conditions.Count != cpd.Conditions.Count)

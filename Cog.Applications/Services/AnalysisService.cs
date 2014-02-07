@@ -95,9 +95,11 @@ namespace SIL.Cog.Applications.Services
 			CogProject project = _projectService.Project;
 			var processors = new List<IProcessor<Variety>> {new AffixStripper(project.Segmenter)};
 			IProcessor<Variety> syllabifier = project.VarietyProcessors["syllabifier"];
-			processors.Add(syllabifier);
 			if (method != StemmingMethod.Manual)
+			{
+				processors.Add(syllabifier);
 				processors.Add(_projectService.Project.VarietyProcessors["affixIdentifier"]);
+			}
 			processors.Add(new Stemmer(_spanFactory, project.Segmenter));
 			processors.Add(syllabifier);
 			processors.Add(new SegmentFrequencyDistributionCalculator(_segmentPool));

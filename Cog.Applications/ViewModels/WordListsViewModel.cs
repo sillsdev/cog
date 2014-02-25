@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -22,8 +23,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IAnalysisService _analysisService;
 		private readonly WordListsVarietyViewModel.Factory _varietyFactory; 
 		private WordListsVarietySenseViewModel _selectedVarietySense;
-		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
-		private ReadOnlyMirroredList<Variety, WordListsVarietyViewModel> _varieties;
+		private MirroredBindableList<Sense, SenseViewModel> _senses;
+		private MirroredBindableList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 		private readonly ICommand _findCommand;
 		private ICollectionView _varietiesView;
@@ -63,8 +64,8 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
-			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, WordListsVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
+			Set("Senses", ref _senses, new MirroredBindableList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, WordListsVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 			SetIsEmpty();
 			project.Varieties.CollectionChanged += VarietiesChanged;
 			project.Senses.CollectionChanged += SensesChanged;

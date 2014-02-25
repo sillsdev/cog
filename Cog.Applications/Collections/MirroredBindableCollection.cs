@@ -2,29 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using GalaSoft.MvvmLight.Threading;
 using SIL.Collections;
 
-namespace SIL.Cog.Applications.ViewModels
+namespace SIL.Cog.Applications.Collections
 {
-	public class ReadOnlyMirroredCollection<TSource, TTarget> : ReadOnlyObservableList<TTarget>, IReadOnlyKeyedCollection<TSource, TTarget>, IKeyedCollection<TSource, TTarget>
+	public class MirroredBindableCollection<TSource, TTarget> : ReadOnlyBindableList<TTarget>, IReadOnlyKeyedCollection<TSource, TTarget>, IKeyedCollection<TSource, TTarget>
 	{
 		private readonly Func<TSource, TTarget> _sourceToTarget;
 		private readonly KeyedBulkObservableList<TSource, TTarget> _items;
 
-		public ReadOnlyMirroredCollection(IReadOnlyObservableCollection<TSource> source, Func<TSource, TTarget> sourceToTarget, Func<TTarget, TSource> targetToSource)
+		public MirroredBindableCollection(IReadOnlyObservableCollection<TSource> source, Func<TSource, TTarget> sourceToTarget, Func<TTarget, TSource> targetToSource)
 			: this((IEnumerable<TSource>) source, sourceToTarget, targetToSource)
 		{
 			source.CollectionChanged += OnSourceCollectionChanged;
 		}
 
-		public ReadOnlyMirroredCollection(IObservableCollection<TSource> source, Func<TSource, TTarget> sourceToTarget, Func<TTarget, TSource> targetToSource)
+		public MirroredBindableCollection(IObservableCollection<TSource> source, Func<TSource, TTarget> sourceToTarget, Func<TTarget, TSource> targetToSource)
 			: this((IEnumerable<TSource>) source, sourceToTarget, targetToSource)
 		{
 			source.CollectionChanged += OnSourceCollectionChanged;
 		}
 
-		protected ReadOnlyMirroredCollection(IEnumerable<TSource> source, Func<TSource, TTarget> sourceToTarget, Func<TTarget, TSource> targetToSource)
+		protected MirroredBindableCollection(IEnumerable<TSource> source, Func<TSource, TTarget> sourceToTarget, Func<TTarget, TSource> targetToSource)
 			: base(new KeyedBulkObservableList<TSource, TTarget>(source.Select(sourceToTarget), targetToSource))
 		{
 			_sourceToTarget = sourceToTarget;
@@ -51,48 +50,29 @@ namespace SIL.Cog.Applications.ViewModels
 
 		protected virtual void MirrorAdd(IEnumerable<TSource> items, int count)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					if (count == 1)
-					{
-						_items.Add(_sourceToTarget(items.First()));
-					}
-					else
-					{
-						using (_items.BulkUpdate())
-							_items.AddRange(items.Select(item => _sourceToTarget(item)));
-					}
-				});
+			_items.AddRange(items.Select(item => _sourceToTarget(item)));
 		}
 
 		protected virtual void MirrorRemove(IEnumerable<TSource> items, int count)
 		{
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
+			if (count == 1)
+			{
+				_items.Remove(items.First());
+			}
+			else
+			{
+				using (_items.BulkUpdate())
 				{
-					if (count == 1)
-					{
-						_items.Remove(items.First());
-					}
-					else
-					{
-						using (_items.BulkUpdate())
-						{
-							foreach (TSource item in items)
-								_items.Remove(item);
-						}
-					}
-				});
+					foreach (TSource item in items)
+						_items.Remove(item);
+				}
+			}
 		}
 
 		protected virtual void MirrorReset(IEnumerable<TSource> source)
 		{
-			if (!DispatcherHelper.UIDispatcher.CheckAccess())
-				source = source.ToArray();
-			DispatcherHelper.CheckBeginInvokeOnUI(() =>
-				{
-					using (_items.BulkUpdate())
-						_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
-				});
+			using (_items.BulkUpdate())
+				_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
 		}
 
 		public bool TryGetValue(TSource key, out TTarget item)

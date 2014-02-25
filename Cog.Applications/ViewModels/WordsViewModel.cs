@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Collections;
 
@@ -11,10 +12,10 @@ namespace SIL.Cog.Applications.ViewModels
 {
 	public class WordsViewModel : ViewModelBase
 	{
-		public delegate WordsViewModel Factory(IObservableList<WordViewModel> words);
+		public delegate WordsViewModel Factory(ReadOnlyBindableList<WordViewModel> words);
 
 		private readonly IBusyService _busyService;
-		private readonly ReadOnlyObservableList<WordViewModel> _words; 
+		private readonly ReadOnlyBindableList<WordViewModel> _words; 
 		private ICollectionView _wordsView;
 		private readonly BindableList<WordViewModel> _selectedWords;
 		private readonly BindableList<WordViewModel> _selectedSegmentWords;
@@ -22,12 +23,11 @@ namespace SIL.Cog.Applications.ViewModels
 		private WordViewModel _startWord;
 		private readonly SimpleMonitor _selectedWordsMonitor;
 
-		public WordsViewModel(IBusyService busyService, IObservableList<WordViewModel> words)
+		public WordsViewModel(IBusyService busyService, ReadOnlyBindableList<WordViewModel> words)
 		{
 			_busyService = busyService;
-			var readonlyWords = words as ReadOnlyObservableList<WordViewModel>;
-			_words = readonlyWords ?? new ReadOnlyObservableList<WordViewModel>(words);
-			words.CollectionChanged += WordsChanged;
+			_words = words;
+			_words.CollectionChanged += WordsChanged;
 			_selectedWords = new BindableList<WordViewModel>();
 			_selectedWords.CollectionChanged += _selectedWords_CollectionChanged;
 			_selectedSegmentWords = new BindableList<WordViewModel>();

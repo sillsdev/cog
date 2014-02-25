@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -52,14 +53,14 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IProjectService _projectService;
 		private readonly IBusyService _busyService;
 		private readonly BulkObservableList<Segment> _domainSegments; 
-		private readonly BindableList<SegmentViewModel> _segments;
-		private readonly ReadOnlyObservableList<SegmentViewModel> _readonlySegments;
-		private readonly BindableList<SegmentCategoryViewModel> _categories;
-		private readonly ReadOnlyObservableList<SegmentCategoryViewModel> _readonlyCategories;
-		private ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel> _varieties;
+		private readonly BulkObservableList<SegmentViewModel> _segments;
+		private readonly ReadOnlyBindableList<SegmentViewModel> _readonlySegments;
+		private readonly BulkObservableList<SegmentCategoryViewModel> _categories;
+		private readonly ReadOnlyBindableList<SegmentCategoryViewModel> _readonlyCategories;
+		private MirroredBindableList<Variety, SegmentsVarietyViewModel> _varieties;
 		private SyllablePosition _syllablePosition;
 		private VarietySegmentViewModel _selectedSegment;
-		private readonly BindableList<WordViewModel> _currentWords;
+		private readonly BulkObservableList<WordViewModel> _currentWords;
 		private readonly WordsViewModel _observedWords;
 		private readonly WordViewModel.Factory _wordFactory;
 		private readonly ICommand _findCommand;
@@ -106,13 +107,13 @@ namespace SIL.Cog.Applications.ViewModels
 						PopulateSegments();
 				});
 
-			_currentWords = new BindableList<WordViewModel>();
-			_observedWords = wordsFactory(_currentWords);
+			_currentWords = new BulkObservableList<WordViewModel>();
+			_observedWords = wordsFactory(new ReadOnlyBindableList<WordViewModel>(_currentWords));
 			_domainSegments = new BulkObservableList<Segment>();
-			_segments = new BindableList<SegmentViewModel>();
-			_readonlySegments = new ReadOnlyObservableList<SegmentViewModel>(_segments);
-			_categories = new BindableList<SegmentCategoryViewModel>();
-			_readonlyCategories = new ReadOnlyObservableList<SegmentCategoryViewModel>(_categories);
+			_segments = new BulkObservableList<SegmentViewModel>();
+			_readonlySegments = new ReadOnlyBindableList<SegmentViewModel>(_segments);
+			_categories = new BulkObservableList<SegmentCategoryViewModel>();
+			_readonlyCategories = new ReadOnlyBindableList<SegmentCategoryViewModel>(_categories);
 		}
 
 		private void SortWordsBy(string propertyName, ListSortDirection sortDirection)
@@ -125,7 +126,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, SegmentsVarietyViewModel>(project.Varieties, variety => new SegmentsVarietyViewModel(this, variety), vm => vm.DomainVariety));
+			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, SegmentsVarietyViewModel>(project.Varieties, variety => new SegmentsVarietyViewModel(this, variety), vm => vm.DomainVariety));
 			PopulateSegments();
 		}
 

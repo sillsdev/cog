@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -18,7 +19,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IAnalysisService _analysisService;
 		private readonly VarietiesVarietyViewModel.Factory _varietyFactory;
 
-		private ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel> _varieties;
+		private MirroredBindableList<Variety, VarietiesVarietyViewModel> _varieties;
 		private ICollectionView _varietiesView;
 		private VarietiesVarietyViewModel _selectedVariety;
 		private bool _isVarietySelected;
@@ -64,7 +65,7 @@ namespace SIL.Cog.Applications.ViewModels
 			CogProject project = _projectService.Project;
 			SelectedVariety = null;
 			VarietiesView = null;
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, VarietiesVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
+			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, VarietiesVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)

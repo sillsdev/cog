@@ -1,3 +1,4 @@
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
@@ -7,13 +8,13 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		public delegate GeographicalVarietyViewModel Factory(Variety variety);
 
-		private readonly ReadOnlyMirroredList<GeographicRegion, GeographicalRegionViewModel> _regions;
+		private readonly MirroredBindableList<GeographicRegion, GeographicalRegionViewModel> _regions;
 		private int _clusterIndex;
 
 		public GeographicalVarietyViewModel(GeographicalRegionViewModel.Factory regionFactory, Variety variety)
 			: base(variety)
 		{
-			_regions = new ReadOnlyMirroredList<GeographicRegion, GeographicalRegionViewModel>(variety.Regions, region => regionFactory(this, region), vm => vm.DomainRegion);
+			_regions = new MirroredBindableList<GeographicRegion, GeographicalRegionViewModel>(variety.Regions, region => regionFactory(this, region), vm => vm.DomainRegion);
 			_clusterIndex = -1;
 		}
 

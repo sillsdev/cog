@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -17,17 +18,17 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
-		private readonly BindableList<VarietySegmentViewModel> _segments;
-		private readonly ReadOnlyObservableList<VarietySegmentViewModel> _readOnlySegments;
+		private readonly BulkObservableList<VarietySegmentViewModel> _segments;
+		private readonly ReadOnlyBindableList<VarietySegmentViewModel> _readOnlySegments;
 		private double _maxSegProb;
-		private readonly ReadOnlyMirroredList<Affix, AffixViewModel> _affixes;
+		private readonly MirroredBindableList<Affix, AffixViewModel> _affixes;
 		private VarietySegmentViewModel _selectedSegment;
 		private AffixViewModel _selectedAffix;
 		private readonly WordsViewModel _wordsViewModel;
 		private readonly ICommand _newAffixCommand;
 		private readonly ICommand _editAffixCommand;
 		private readonly ICommand _removeAffixCommand;
-		private readonly ReadOnlyMirroredCollection<Word, WordViewModel> _words; 
+		private readonly MirroredBindableCollection<Word, WordViewModel> _words; 
  
 		public VarietiesVarietyViewModel(IProjectService projectService, IDialogService dialogService, WordsViewModel.Factory wordsFactory, WordViewModel.Factory wordFactory, Variety variety)
 			: base(variety)
@@ -37,12 +38,12 @@ namespace SIL.Cog.Applications.ViewModels
 
 			IEnumerable<Segment> segments = variety.SegmentFrequencyDistribution == null ? Enumerable.Empty<Segment>() : variety.SegmentFrequencyDistribution.ObservedSamples;
 
-			_segments = new BindableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(this, seg)));
+			_segments = new BulkObservableList<VarietySegmentViewModel>(segments.Select(seg => new VarietySegmentViewModel(this, seg)));
 			_maxSegProb = _segments.Select(seg => seg.Probability).Concat(0).Max();
-			_readOnlySegments = new ReadOnlyObservableList<VarietySegmentViewModel>(_segments);
+			_readOnlySegments = new ReadOnlyBindableList<VarietySegmentViewModel>(_segments);
 			variety.PropertyChanged += variety_PropertyChanged;
-			_affixes = new ReadOnlyMirroredList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
-			_words = new ReadOnlyMirroredCollection<Word, WordViewModel>(variety.Words, word =>
+			_affixes = new MirroredBindableList<Affix, AffixViewModel>(DomainVariety.Affixes, affix => new AffixViewModel(affix), vm => vm.DomainAffix);
+			_words = new MirroredBindableCollection<Word, WordViewModel>(variety.Words, word =>
 				{
 					WordViewModel vm = wordFactory(word);
 					SelectWordSegments(vm);

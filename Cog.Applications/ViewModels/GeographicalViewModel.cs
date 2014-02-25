@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -23,7 +24,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly List<Cluster<Variety>> _currentClusters;
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
-		private ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel> _varieties;
+		private MirroredBindableList<Variety, GeographicalVarietyViewModel> _varieties;
 
 		public GeographicalViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IImageExportService imageExportService,
 			GeographicalVarietyViewModel.Factory varietyFactory)
@@ -60,7 +61,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Set("Varieties", ref _varieties, new ReadOnlyMirroredList<Variety, GeographicalVarietyViewModel>(_projectService.Project.Varieties,
+			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, GeographicalVarietyViewModel>(_projectService.Project.Varieties,
 				variety =>
 					{
 						var newVariety = _varietyFactory(variety);

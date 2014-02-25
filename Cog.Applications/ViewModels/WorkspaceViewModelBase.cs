@@ -1,3 +1,4 @@
+using SIL.Cog.Applications.Collections;
 using SIL.Collections;
 
 namespace SIL.Cog.Applications.ViewModels

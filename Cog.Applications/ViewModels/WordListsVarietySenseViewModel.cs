@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -15,7 +16,7 @@ namespace SIL.Cog.Applications.ViewModels
 		public delegate WordListsVarietySenseViewModel Factory(WordListsVarietyViewModel variety, Sense sense);
 
 		private readonly ObservableList<Word> _domainWords;
-		private readonly ReadOnlyMirroredList<Word, WordViewModel> _words;
+		private readonly MirroredBindableList<Word, WordViewModel> _words;
 		private string _strRep;
 		private readonly WordListsVarietyViewModel _variety;
 		private readonly ICommand _showInVarietiesCommand;
@@ -30,7 +31,7 @@ namespace SIL.Cog.Applications.ViewModels
 			_variety = variety;
 
 			_domainWords = new ObservableList<Word>(variety.DomainVariety.Words[sense]);
-			_words = new ReadOnlyMirroredList<Word, WordViewModel>(_domainWords, word => wordFactory(word), vm => vm.DomainWord);
+			_words = new MirroredBindableList<Word, WordViewModel>(_domainWords, word => wordFactory(word), vm => vm.DomainWord);
 			_domainWords.CollectionChanged += DomainWordsChanged;
 			_strRep = string.Join(",", _domainWords.Select(word => word.StrRep));
 			_showInVarietiesCommand = new RelayCommand(ShowInVarieties, () => _domainWords.Count > 0);

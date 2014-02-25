@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -13,7 +14,7 @@ namespace SIL.Cog.Applications.ViewModels
 	{
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
-		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
+		private MirroredBindableList<Sense, SenseViewModel> _senses;
 		private SenseViewModel _selectedSense;
 
 		public SensesViewModel(IProjectService projectService, IDialogService dialogService)
@@ -32,7 +33,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			Set("Senses", ref _senses, new MirroredBindableList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
 			_senses.CollectionChanged += SensesChanged;
 			SelectedSense = _senses.Count > 0 ? _senses[0] : null;
 		}

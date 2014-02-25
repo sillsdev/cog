@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Applications.Collections;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
@@ -19,7 +20,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IProjectService _projectService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
 		private ICollectionView _wordsView;
-		private ReadOnlyMirroredList<Sense, SenseViewModel> _senses;
+		private MirroredBindableList<Sense, SenseViewModel> _senses;
 		private ICollectionView _sensesView;
 		private SenseViewModel _selectedSense;
 		private int _columnCount;
@@ -64,7 +65,7 @@ namespace SIL.Cog.Applications.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Set("Senses", ref _senses, new ReadOnlyMirroredList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			Set("Senses", ref _senses, new MirroredBindableList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
 		}
 
 		private void ExportCognateSets()

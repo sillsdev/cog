@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Specialized;
+using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Collections;
 
-namespace SIL.Cog.Applications.ViewModels
+namespace SIL.Cog.Applications.Collections
 {
-	public class VarietySenseViewModelCollection : ReadOnlyMirroredList<Sense, WordListsVarietySenseViewModel>
+	public class VarietySenseViewModelCollection : MirroredBindableList<Sense, WordListsVarietySenseViewModel>
 	{
 		public VarietySenseViewModelCollection(IObservableList<Sense> senses, WordCollection words, Func<Sense, WordListsVarietySenseViewModel> viewModelFactory)
 			: base(senses, viewModelFactory, vm => vm.DomainSense)

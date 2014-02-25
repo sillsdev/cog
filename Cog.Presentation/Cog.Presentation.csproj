@@ -75,12 +75,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\GMap.NET\GMap.NET.WindowsPresentation.dll</HintPath>
     </Reference>
-    <Reference Include="GraphSharp, Version=1.0.2.0, Culture=neutral, PublicKeyToken=f9c24778325a6b82, processorArchitecture=MSIL">
-      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GraphSharp.Controls, Version=1.1.0.0, Culture=neutral, PublicKeyToken=f9c24778325a6b82, processorArchitecture=MSIL">
-      <HintPath>..\packages\GraphSharp.1.1.0.0\lib\net40\GraphSharp.Controls.dll</HintPath>
-    </Reference>
     <Reference Include="NBug, Version=1.2.0.0, Culture=neutral, PublicKeyToken=a4292a325f69b123, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NBug.1.2.2\lib\net40-client\NBug.dll</HintPath>
@@ -98,10 +92,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPFExtensions, Version=1.0.3437.34043, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
-    </Reference>
     <Reference Include="Xceed.Wpf.DataGrid, Version=2.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.1.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
@@ -656,6 +646,14 @@
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
       <Name>Cog.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\graphsharp\Source\Graph#.Controls\GraphSharp.Controls.csproj">
+      <Project>{90D874F2-486E-477E-93A9-FFA6FC92A2F4}</Project>
+      <Name>GraphSharp.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\graphsharp\Source\Graph#\GraphSharp.csproj">
+      <Project>{9C59C516-FCA0-4FCF-AE11-E20F0F1B1949}</Project>
+      <Name>GraphSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
       <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>

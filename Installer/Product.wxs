@@ -119,9 +119,6 @@
 			<Component Id="GraphSharp.dll" Win64="$(var.Win64)">
 				<File Id="GraphSharp.dll" Name="GraphSharp.dll" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.dll" KeyPath="yes" />
 			</Component>
-			<Component Id="WPFExtensions.dll" Win64="$(var.Win64)">
-				<File Id="WPFExtensions.dll" Name="WPFExtensions.dll" Source="$(var.Cog.Presentation.TargetDir)\WPFExtensions.dll" KeyPath="yes" />
-			</Component>
 
 			<!-- DotNetZip -->
 			<Component Id="Ionic.Zip.Reduced.dll" Win64="$(var.Win64)">

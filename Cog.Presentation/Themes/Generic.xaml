@@ -1,11 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-                    xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-                    xmlns:ab="clr-namespace:WPFExtensions.AttachedBehaviours;assembly=WPFExtensions"
-                    xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-                    xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
-                    xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls">
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+					xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+					xmlns:gsb="clr-namespace:GraphSharp.Behaviors;assembly=GraphSharp.Controls"
+					xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
+					xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+					xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls">
 	<cnvtrs:LevelToIndentConverter x:Key="LevelToIndentConverter"/>
 	<cnvtrs:DoubleToLog10Converter x:Key="Log10Converter"/>
 	<cnvtrs:EnumMatchToBooleanConverter x:Key="EnumMatchConverter" />
@@ -901,7 +901,7 @@
 
 	<Style TargetType="gsc:VertexControl">
 		<Setter Property="Foreground" Value="Black" />
-		<Setter Property="ab:DragBehaviour.IsDragEnabled" Value="False" />
+		<Setter Property="gsb:DragBehavior.IsDragEnabled" Value="False" />
 		<Style.Triggers>
 			<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
 				<Setter Property="BorderBrush" Value="Orange" />

@@ -6,8 +6,9 @@
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:or="clr-namespace:GraphSharp.Algorithms.OverlapRemoval;assembly=GraphSharp"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
-             xmlns:ga="clr-namespace:SIL.Cog.Applications.GraphAlgorithms;assembly=SIL.Cog.Applications"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
+             xmlns:fdp="clr-namespace:GraphSharp.Algorithms.Layout.Simple.FDP;assembly=GraphSharp"
+             xmlns:hl="clr-namespace:GraphSharp.Algorithms.Highlight;assembly=GraphSharp"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:NetworkGraphViewModel}">
 	<Grid>
@@ -25,10 +26,10 @@
 					</Style>
 				</c:NetworkGraphLayout.Resources>
 				<c:NetworkGraphLayout.LayoutParameters>
-					<ga:StressMajorizationLayoutParameters WeightAdjustment="1.0" />
+					<fdp:StressMajorizationLayoutParameters WeightAdjustment="1.0" />
 				</c:NetworkGraphLayout.LayoutParameters>
 				<c:NetworkGraphLayout.HighlightParameters>
-					<ga:UndirectedHighlightParameters />
+					<hl:UndirectedHighlightParameters />
 				</c:NetworkGraphLayout.HighlightParameters>
 				<c:NetworkGraphLayout.OverlapRemovalParameters>
 					<or:OverlapRemovalParameters HorizontalGap="2" VerticalGap="2" />

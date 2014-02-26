@@ -41,9 +41,6 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
-    <Reference Include="MathNet.Numerics, Version=2.6.1.30, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,30 +77,6 @@
     <Compile Include="Export\TextSimilarityMatrixExporter.cs" />
     <Compile Include="Export\TextVarietyPairExporter.cs" />
     <Compile Include="Export\TextWordListsExporter.cs" />
-    <Compile Include="GraphAlgorithms\BundleEdgeRoutingAlgorithm.cs" />
-    <Compile Include="GraphAlgorithms\BundleEdgeRoutingParameters.cs" />
-    <Compile Include="GraphAlgorithms\CogEdgeRoutingAlgorithmFactory.cs" />
-    <Compile Include="GraphAlgorithms\CogHighlightAlgorithmFactory.cs" />
-    <Compile Include="GraphAlgorithms\CogLayoutAlgorithmFactory.cs" />
-    <Compile Include="GraphAlgorithms\GridLayoutAlgorithm.cs" />
-    <Compile Include="GraphAlgorithms\GridLayoutParameters.cs" />
-    <Compile Include="GraphAlgorithms\GridVertex.cs" />
-    <Compile Include="GraphAlgorithms\HierarchicalHighlightAlgorithm.cs" />
-    <Compile Include="GraphAlgorithms\IAngledVertex.cs" />
-    <Compile Include="GraphAlgorithms\IGridVertex.cs" />
-    <Compile Include="GraphAlgorithms\ILengthEdge.cs" />
-    <Compile Include="GraphAlgorithms\IWeightedEdge.cs" />
-    <Compile Include="GraphAlgorithms\Obstacle.cs" />
-    <Compile Include="GraphAlgorithms\ObstacleSegment.cs" />
-    <Compile Include="GraphAlgorithms\Point2D.cs" />
-    <Compile Include="GraphAlgorithms\RadialTreeLayoutAlgorithm.cs" />
-    <Compile Include="GraphAlgorithms\RadialTreeLayoutParameters.cs" />
-    <Compile Include="GraphAlgorithms\RotationTreeNode.cs" />
-    <Compile Include="GraphAlgorithms\StressMajorizationLayoutAlgorithm.cs" />
-    <Compile Include="GraphAlgorithms\StressMajorizationLayoutParameters.cs" />
-    <Compile Include="GraphAlgorithms\UndirectedHighlightAlgorithm.cs" />
-    <Compile Include="GraphAlgorithms\UndirectedHighlightParameters.cs" />
-    <Compile Include="GraphAlgorithms\VisibilityGraph.cs" />
     <Compile Include="Import\CsvReader.cs" />
     <Compile Include="Import\IGeographicRegionsImporter.cs" />
     <Compile Include="Import\IImporter.cs" />
@@ -174,6 +147,7 @@
     <Compile Include="ViewModels\GlobalCorrespondencesViewModel.cs" />
     <Compile Include="ViewModels\GlobalCorrespondenceEdge.cs" />
     <Compile Include="ViewModels\GlobalSegmentVertex.cs" />
+    <Compile Include="ViewModels\GridVertex.cs" />
     <Compile Include="ViewModels\HeaderGridVertex.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />

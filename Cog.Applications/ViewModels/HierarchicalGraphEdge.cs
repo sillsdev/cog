@@ -1,5 +1,5 @@
+using GraphSharp;
 using QuickGraph;
-using SIL.Cog.Applications.GraphAlgorithms;
 
 namespace SIL.Cog.Applications.ViewModels
 {

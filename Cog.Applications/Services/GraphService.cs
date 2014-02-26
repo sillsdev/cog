@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using GraphSharp;
+using GraphSharp.Algorithms.Layout.Simple.Grid;
 using QuickGraph;
 using QuickGraph.Algorithms;
-using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Collections;

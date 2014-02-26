@@ -1,14 +1,22 @@
 using GraphSharp;
-using SIL.Cog.Applications.GraphAlgorithms;
+using QuickGraph;
 using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class NetworkGraphEdge : WeightedEdge<NetworkGraphVertex>, IWeightedEdge<NetworkGraphVertex>
+	public class NetworkGraphEdge : Edge<NetworkGraphVertex>, IWeightedEdge<NetworkGraphVertex>
 	{
+	    private readonly double _weight;
+
 		public NetworkGraphEdge(NetworkGraphVertex source, NetworkGraphVertex target, VarietyPair varietyPair, SimilarityMetric similarityMetric)
-			: base(source, target, (similarityMetric == SimilarityMetric.Lexical ? varietyPair.LexicalSimilarityScore : varietyPair.PhoneticSimilarityScore))
+			: base(source, target)
 		{
+		    _weight = similarityMetric == SimilarityMetric.Lexical ? varietyPair.LexicalSimilarityScore : varietyPair.PhoneticSimilarityScore;
 		}
+
+	    public double Weight
+	    {
+	        get { return _weight; }
+	    }
 	}
 }

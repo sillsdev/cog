@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Cog.Applications.GraphAlgorithms;
 
 namespace SIL.Cog.Applications.ViewModels
 {

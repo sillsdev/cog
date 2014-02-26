@@ -7,7 +7,6 @@ using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
-using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.Services;
 using SIL.Cog.Domain;
 using SIL.Machine.FeatureModel;

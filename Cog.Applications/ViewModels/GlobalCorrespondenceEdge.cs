@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using GalaSoft.MvvmLight;
-using SIL.Cog.Applications.GraphAlgorithms;
+using GraphSharp;
 using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels

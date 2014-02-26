@@ -1,4 +1,6 @@
-namespace SIL.Cog.Applications.GraphAlgorithms
+using GraphSharp;
+
+namespace SIL.Cog.Applications.ViewModels
 {
 	public abstract class GridVertex : IGridVertex
 	{

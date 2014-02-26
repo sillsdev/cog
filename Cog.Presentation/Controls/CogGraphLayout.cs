@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows;
+using GraphSharp;
+using GraphSharp.Algorithms.Highlight;
 using GraphSharp.Controls;
 using QuickGraph;
-using SIL.Cog.Applications.GraphAlgorithms;
 
 namespace SIL.Cog.Presentation.Controls
 {
@@ -19,14 +20,7 @@ namespace SIL.Cog.Presentation.Controls
 
 		public CogGraphLayout()
 		{
-			LayoutAlgorithmFactory = new CogLayoutAlgorithmFactory<TVertex, TEdge, TGraph>();
-			HighlightAlgorithmFactory = new CogHighlightAlgorithmFactory<TVertex, TEdge, TGraph>();
-			EdgeRoutingAlgorithmFactory = new CogEdgeRoutingAlgorithmFactory<TVertex, TEdge, TGraph>();
-
 			IsVisibleChanged += CogGraphLayout_IsVisibleChanged;
-			
-			CreationTransition = new FadeTransition(0, 1, 1);
-			DestructionTransition = new FadeTransition(1, 0, 1);
 		}
 
 		private static void OnGraphPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)

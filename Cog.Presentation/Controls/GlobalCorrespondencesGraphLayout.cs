@@ -1,6 +1,6 @@
 ﻿using System.Windows;
+using GraphSharp.Algorithms.Layout.Simple.Grid;
 using QuickGraph;
-using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Controls

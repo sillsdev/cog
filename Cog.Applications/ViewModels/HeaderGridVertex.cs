@@ -1,5 +1,3 @@
-using SIL.Cog.Applications.GraphAlgorithms;
-
 namespace SIL.Cog.Applications.ViewModels
 {
 	public class HeaderGridVertex : GridVertex

@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
-             xmlns:ga="clr-namespace:SIL.Cog.Applications.GraphAlgorithms;assembly=SIL.Cog.Applications"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:er="clr-namespace:GraphSharp.Algorithms.EdgeRouting;assembly=GraphSharp"
+             xmlns:hl="clr-namespace:GraphSharp.Algorithms.Highlight;assembly=GraphSharp"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
 	<Grid>
@@ -37,10 +38,10 @@
 					</Style>
 				</c:GlobalCorrespondencesGraphLayout.Resources>
 				<c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
-					<ga:BundleEdgeRoutingParameters VertexMargin="2" LengthCoefficient="1" InkCoefficient="0" />
+					<er:BundleEdgeRoutingParameters VertexMargin="2" LengthCoefficient="1" InkCoefficient="0" />
 				</c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
 				<c:GlobalCorrespondencesGraphLayout.HighlightParameters>
-					<ga:UndirectedHighlightParameters />
+					<hl:UndirectedHighlightParameters />
 				</c:GlobalCorrespondencesGraphLayout.HighlightParameters>
 			</c:GlobalCorrespondencesGraphLayout>
 		</ScrollViewer>

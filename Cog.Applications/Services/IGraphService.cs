@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using QuickGraph;
-using SIL.Cog.Applications.GraphAlgorithms;
 using SIL.Cog.Applications.ViewModels;
 using SIL.Cog.Domain;
 

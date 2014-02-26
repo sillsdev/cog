@@ -155,7 +155,6 @@
     <Compile Include="Converters\FirstGroupRowConverter.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\DoubleToLog10Converter.cs" />
-    <Compile Include="Converters\EdgeRouteToPathConverter.cs" />
     <Compile Include="Converters\GreaterThanConverter.cs" />
     <Compile Include="Converters\EnumMatchToBooleanConverter.cs" />
     <Compile Include="Converters\EnumMatchToVisibilityConverter.cs" />

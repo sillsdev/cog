@@ -11,7 +11,6 @@
 	<cnvtrs:EnumMatchToBooleanConverter x:Key="EnumMatchConverter" />
 	<xcdg:ThicknessConverter x:Key="ThicknessConverter" />
 	<cnvtrs:EqualityConverter x:Key="EqualityConverter" />
-	<cnvtrs:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
 	<cnvtrs:FirstGroupRowConverter x:Key="GroupRowConverter" />
 
 	<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFCE8AA" />
@@ -917,36 +916,7 @@
 	</Style>
 
 	<Style TargetType="gsc:EdgeControl">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type gsc:EdgeControl}">
-					<Path Stroke="{TemplateBinding Foreground}"
-                                      StrokeThickness="{TemplateBinding StrokeThickness}"
-                                      MinWidth="1"
-                                      MinHeight="1"
-                                      ToolTip="{TemplateBinding ToolTip}"
-                                      x:Name="edgePath">
-						<Path.Data>
-							<PathGeometry>
-								<PathGeometry.Figures>
-									<MultiBinding Converter="{StaticResource RouteToPathConverter}">
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(gsc:GraphCanvas.X)" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.(gsc:GraphCanvas.Y)" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualWidth" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Source.ActualHeight" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(gsc:GraphCanvas.X)" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.(gsc:GraphCanvas.Y)" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualWidth" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Target.ActualHeight" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" Path="RoutePoints" />
-									</MultiBinding>
-								</PathGeometry.Figures>
-							</PathGeometry>
-						</Path.Data>
-					</Path>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
+		<Setter Property="IsDirected" Value="False" />
 		<Style.Triggers>
 			<Trigger Property="gsc:GraphElementBehaviour.IsHighlighted" Value="True">
 				<Setter Property="Foreground" Value="Blue" />

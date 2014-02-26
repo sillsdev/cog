@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using QuickGraph;
-using SIL.Collections;
 
 namespace SIL.Cog.Applications.GraphAlgorithms
 {
@@ -73,8 +72,9 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 			double maxX = _nodes.Max(p => p.Point.X);
 			_plusInf = new RotationTreeNode(new Point2D(maxX + 100, double.PositiveInfinity));
 			_minusInf = new RotationTreeNode(new Point2D(maxX + 100, double.NegativeInfinity));
-			_plusInf.Children.Add(_minusInf);
-			_minusInf.Children.AddRange(_nodes.OrderByDescending(n => n));
+			_plusInf.AddChild(_minusInf);
+            foreach (RotationTreeNode node in _nodes.OrderByDescending(n => n))
+                _minusInf.AddChild(node);
 		}
 
 		private void InitializeNodeVisibility()
@@ -160,7 +160,7 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 		private void ComputeRotationTree()
 		{
 			var stack = new Stack<RotationTreeNode>();
-			stack.Push(_minusInf.Children.First);
+			stack.Push(_minusInf.FirstChild);
 
 			while (stack.Count > 0)
 			{
@@ -174,21 +174,21 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 
 				p.Remove();
 				RotationTreeNode z = q.Prev;
-				if (z == z.List.Begin || !LeftTurn(p, z, z.Parent))
+				if (z == null || !LeftTurn(p, z, z.Parent))
 				{
-					q.Prev.AddAfter(p);
+					q.AddBefore(p);
 				}
 				else
 				{
-					while (!z.IsLeaf && LeftTurn(p, z.Children.Last, z))
-						z = z.Children.Last;
-					z.Children.Add(p);
+					while (!z.IsLeaf && LeftTurn(p, z.LastChild, z))
+						z = z.LastChild;
+					z.AddChild(p);
 					if (stack.Count > 0 && z == stack.Peek())
 						stack.Pop();
 				}
-				if (p.Prev == p.List.Begin && p.Parent != _plusInf)
+				if (p.Prev == null && p.Parent != _plusInf)
 					stack.Push(p);
-				if (pr != pr.List.End)
+				if (pr != null)
 					stack.Push(pr);
 			}
 		}

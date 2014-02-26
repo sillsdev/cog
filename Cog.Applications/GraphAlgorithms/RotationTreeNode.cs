@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using SIL.Collections;
 
 namespace SIL.Cog.Applications.GraphAlgorithms
 {
-	internal class RotationTreeNode : OrderedBidirTreeNode<RotationTreeNode>, IComparable<RotationTreeNode>
+	internal class RotationTreeNode : IComparable<RotationTreeNode>
 	{
 		private readonly Obstacle _obstacle;
 		private readonly Point2D _point;
@@ -12,7 +11,6 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 		private readonly bool _isSinglePoint;
  
 		public RotationTreeNode(Obstacle obstacle, Point2D point, bool isSinglePoint)
-			: base(b => new RotationTreeNode(new Point2D(0, 0)))
 		{
 			_obstacle = obstacle;
 			_point = point;
@@ -74,6 +72,71 @@ namespace SIL.Cog.Applications.GraphAlgorithms
 
 			return _segments[0].Contains(p) || _segments[1].Contains(p);
 		}
+
+	    public bool IsLeaf
+	    {
+	        get { return FirstChild == null; }
+	    }
+
+		public RotationTreeNode Next { get; private set; }
+		public RotationTreeNode Prev { get; private set; }
+        public RotationTreeNode Parent { get; private set; }
+
+        public RotationTreeNode FirstChild { get; private set; }
+        public RotationTreeNode LastChild { get; private set; }
+
+        public void AddChild(RotationTreeNode node)
+        {
+            if (IsLeaf)
+            {
+                FirstChild = node;
+                LastChild = node;
+                node.Parent = this;
+            }
+            else
+            {
+                LastChild.AddAfter(node);
+            }
+        }
+
+        public void AddAfter(RotationTreeNode node)
+        {
+			node.Next = Next;
+			Next = node;
+			node.Prev = this;
+            if (node.Next != null)
+			    node.Next.Prev = node;
+            if (Parent.LastChild == this)
+                Parent.LastChild = node;
+            node.Parent = Parent;
+        }
+
+        public void AddBefore(RotationTreeNode node)
+        {
+			node.Prev = Prev;
+			Prev = node;
+			node.Next = this;
+            if (node.Prev != null)
+			    node.Prev.Next = node;
+            if (Parent.FirstChild == this)
+                Parent.FirstChild = node;
+            node.Parent = Parent;
+        }
+
+        public void Remove()
+        {
+            if (Parent.FirstChild == this)
+                Parent.FirstChild = Next;
+            if (Parent.LastChild == this)
+                Parent.LastChild = Prev;
+            if (Prev != null)
+			    Prev.Next = Next;
+            if (Next != null)
+			    Next.Prev = Prev;
+            Next = null;
+            Prev = null;
+            Parent = null;
+        }
 
 		public int CompareTo(RotationTreeNode other)
 		{

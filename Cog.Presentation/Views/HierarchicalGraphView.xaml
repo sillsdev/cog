@@ -13,10 +13,11 @@
     </UserControl.Resources>
     <c:ZoomControl x:Name="ZoomControl" ZoomBoxOpacity="0.25">
         <Grid>
-            <c:DendrogramLayout Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Dendrogram}" Graph="{Binding Graph}" Background="White" />
+			<c:DendrogramLayout x:Name="DendrogramLayout" Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Dendrogram}" Graph="{Binding Graph}" SelectedVertex="{Binding Root}"
+								Background="White" IsVisibleChanged="DendrogramLayout_OnIsVisibleChanged" />
 			<c:HierarchicalGraphLayout x:Name="GraphLayout" Visibility="{Binding GraphType, Converter={StaticResource VisConverter}, ConverterParameter=Tree}" Background="White"
 									   Graph="{Binding Graph}" LayoutAlgorithmType="RadialTree" HighlightAlgorithmType="Hierarchical" ScaleLabelsToZoom="{Binding ElementName=ZoomControl, Path=Zoom}"
-									   LayoutFinished="_graphLayout_OnLayoutFinished">
+									   LayoutFinished="GraphLayout_OnLayoutFinished" IsVisibleChanged="GraphLayout_OnIsVisibleChanged" SelectedVertex="{Binding Root}">
 				<c:HierarchicalGraphLayout.Resources>
 					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource HierarchicalEdgeControlStyle}">
 						<Style.Resources>

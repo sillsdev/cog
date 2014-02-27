@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using QuickGraph;
 using SIL.Cog.Applications.Services;
+using System.Linq;
 
 namespace SIL.Cog.Applications.ViewModels
 {
@@ -32,6 +33,7 @@ namespace SIL.Cog.Applications.ViewModels
 		private IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> _graph;
 		private readonly IImageExportService _exportService;
 		private SimilarityMetric _similarityMetric;
+		private HierarchicalGraphVertex _root;
 
 		public HierarchicalGraphViewModel(IProjectService projectService, IImageExportService exportService, IGraphService graphService)
 			: base("Hierarchical Graph")
@@ -104,7 +106,21 @@ namespace SIL.Cog.Applications.ViewModels
 		public IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge> Graph
 		{
 			get { return _graph; }
-			set { Set(() => Graph, ref _graph, value); }
+			private set
+			{
+				if (_graph != value)
+				{
+					Root = null;
+					Set(() => Graph, ref _graph, value);
+					Root = _graph == null ? null : _graph.Vertices.Single(v => _graph.IsInEdgesEmpty(v));
+				}
+			}
+		}
+
+		public HierarchicalGraphVertex Root
+		{
+			get { return _root; }
+			private set { Set(() => Root, ref _root, value); }
 		}
 	}
 }

@@ -5,7 +5,7 @@ using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Controls
 {
-	public class HierarchicalGraphLayout : CogGraphLayout<HierarchicalGraphVertex,
+	public class HierarchicalGraphLayout : ContextualGraphLayout<HierarchicalGraphVertex,
 		HierarchicalGraphEdge, IBidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>>
 	{
 		public static readonly DependencyProperty ScaleLabelsToZoomProperty = DependencyProperty.Register("ScaleLabelsToZoom", typeof(double),

@@ -116,8 +116,14 @@
 			<Component Id="GraphSharp.Controls.dll" Win64="$(var.Win64)">
 				<File Id="GraphSharp.Controls.dll" Name="GraphSharp.Controls.dll" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.Controls.dll" KeyPath="yes" />
 			</Component>
+			<Component Id="GraphSharp.Controls.pdb" Win64="$(var.Win64)">
+				<File Id="GraphSharp.Controls.pdb" Name="GraphSharp.Controls.pdb" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.Controls.pdb" KeyPath="yes" />
+			</Component>
 			<Component Id="GraphSharp.dll" Win64="$(var.Win64)">
 				<File Id="GraphSharp.dll" Name="GraphSharp.dll" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="GraphSharp.pdb" Win64="$(var.Win64)">
+				<File Id="GraphSharp.pdb" Name="GraphSharp.pdb" Source="$(var.Cog.Presentation.TargetDir)\GraphSharp.pdb" KeyPath="yes" />
 			</Component>
 
 			<!-- DotNetZip -->

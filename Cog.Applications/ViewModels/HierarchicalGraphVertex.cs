@@ -1,13 +1,11 @@
-using GraphSharp;
 using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class HierarchicalGraphVertex : WrapperViewModel, IAngledVertex
+	public class HierarchicalGraphVertex : WrapperViewModel
 	{
 		private readonly Variety _variety;
 		private readonly double _depth;
-		private double _angle;
 
 		public HierarchicalGraphVertex(double depth)
 		{
@@ -44,12 +42,6 @@ namespace SIL.Cog.Applications.ViewModels
 		public override string ToString()
 		{
 			return Name;
-		}
-
-		public double Angle
-		{
-			get { return _angle; }
-			set { Set(() => Angle, ref _angle, value); }
 		}
 	}
 }

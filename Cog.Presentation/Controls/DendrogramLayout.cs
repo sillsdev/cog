@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,7 +17,6 @@ namespace SIL.Cog.Presentation.Controls
 	public class DendrogramLayout : Canvas
 	{
 		private Size _desiredSize;
-		private bool _relayoutOnVisible;
 		private readonly Dictionary<HierarchicalGraphVertex, Border> _varietyVertices;
 		private readonly Dictionary<HierarchicalGraphVertex, Line> _clusterVertices; 
 		private readonly Dictionary<HierarchicalGraphEdge, Line> _edges; 
@@ -26,16 +26,6 @@ namespace SIL.Cog.Presentation.Controls
 			_varietyVertices = new Dictionary<HierarchicalGraphVertex, Border>();
 			_clusterVertices = new Dictionary<HierarchicalGraphVertex, Line>();
 			_edges = new Dictionary<HierarchicalGraphEdge, Line>();
-			IsVisibleChanged += DendrogramLayout_IsVisibleChanged;
-		}
-
-		private void DendrogramLayout_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (_relayoutOnVisible && IsVisible)
-			{
-				Relayout();
-				_relayoutOnVisible = false;
-			}
 		}
 
 		public static readonly DependencyProperty GraphProperty = DependencyProperty.Register("Graph",
@@ -54,6 +44,24 @@ namespace SIL.Cog.Presentation.Controls
 			set { SetValue(GraphProperty, value); }
 		}
 
+		public static readonly DependencyProperty SelectedVertexProperty = DependencyProperty.Register("SelectedVertex",
+			typeof(HierarchicalGraphVertex), typeof(DendrogramLayout),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnSelectedVertexPropertyChanged));
+
+		public HierarchicalGraphVertex SelectedVertex
+		{
+			get { return (HierarchicalGraphVertex) GetValue(SelectedVertexProperty); }
+			set { SetValue(SelectedVertexProperty, value); }
+		}
+
+		private static void OnSelectedVertexPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+		{
+			var dc = (DendrogramLayout) depObj;
+			dc.Relayout();
+		}
+
+		private const double OriginX = 3;
+
 		private void Relayout()
 		{
 			foreach (HierarchicalGraphVertex vertex in _varietyVertices.Keys)
@@ -65,11 +73,17 @@ namespace SIL.Cog.Presentation.Controls
 
 			if (!IsVisible)
 			{
-				_relayoutOnVisible = true;
+                DependencyPropertyChangedEventHandler handler = null;
+                handler = (s, e) =>
+                    {
+                        Relayout();
+                        IsVisibleChanged -= handler;
+                    };
+                IsVisibleChanged += handler;
 				return;
 			}
 
-			if (Graph == null || Graph.IsVerticesEmpty)
+			if (Graph == null || Graph.IsVerticesEmpty || SelectedVertex == null)
 				return;
 
 			var varietyTextBlocks = new List<TextBlock>();
@@ -89,8 +103,6 @@ namespace SIL.Cog.Presentation.Controls
 				}
 			}
 
-			const double originx = 3;
-
 			double maxDepth = 0;
 
 			foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
@@ -103,14 +115,14 @@ namespace SIL.Cog.Presentation.Controls
 			double totalWidth = totalHeight * 1.5;
 			_desiredSize = new Size(totalWidth, totalHeight);
 
-			double tickWidth = ((_desiredSize.Width - (varietyNameWidth + borderThickness.Left + borderThickness.Right + 5)) - originx) / 100;
+			double tickWidth = ((_desiredSize.Width - (varietyNameWidth + borderThickness.Left + borderThickness.Right + 5)) - OriginX) / 100;
 
 			var positions = new Dictionary<HierarchicalGraphVertex, Point>();
 			foreach (TextBlock varietyTextBlock in varietyTextBlocks)
 			{
 				var vertex = (HierarchicalGraphVertex) varietyTextBlock.DataContext;
 				varietyTextBlock.Height = varietyNameHeight;
-				double x = originx + (tickWidth * ((vertex.Depth * 100) / maxDepth));
+				double x = OriginX + (tickWidth * ((vertex.Depth * 100) / maxDepth));
 				var border = new Border {BorderThickness = borderThickness, BorderBrush = Brushes.Transparent, Child = varietyTextBlock};
 				border.MouseEnter += border_MouseEnter;
 				border.MouseLeave += border_MouseLeave;
@@ -123,61 +135,79 @@ namespace SIL.Cog.Presentation.Controls
 				textBlocky += varietyNameHeight + borderThickness.Top + borderThickness.Bottom + 5;
 			}
 
-			while (positions.Count < Graph.VertexCount)
+			while (positions.Count < Graph.VertexCount - 1)
 			{
-				foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
-				{
-					if (positions.ContainsKey(vertex))
-						continue;
-
-					double miny = double.MaxValue;
-					double maxy = 0;
-					double minx = double.MaxValue;
-					double maxx = 0;
-					bool all = true;
-					foreach (IEdge<HierarchicalGraphVertex> edge in Graph.OutEdges(vertex))
-					{
-						Point p;
-						if (!positions.TryGetValue(edge.Target, out p))
-						{
-							all = false;
-							break;
-						}
-
-						miny = Math.Min(p.Y, miny);
-						maxy = Math.Max(p.Y, maxy);
-
-						minx = Math.Min(p.X, minx);
-						maxx = Math.Max(p.X, maxx);
-					}
-
-					if (all)
-					{
-						//double x = originx + (tickWidth * (((offset + vertex.Depth) * 100) / maxDepth));
-						double x = originx + (tickWidth * ((vertex.Depth * 100) / maxDepth));
-						double y = (maxy + miny) / 2;
-
-						var vertexLine = new Line {X1 = x, Y1 = miny - 1, X2 = x, Y2 = maxy + 1, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = vertex};
-						vertexLine.MouseEnter += vertexLine_MouseEnter;
-						vertexLine.MouseLeave += vertexLine_MouseLeave;
-						Children.Add(vertexLine);
-						_clusterVertices[vertex] = vertexLine;
-
-						foreach (HierarchicalGraphEdge edge in Graph.OutEdges(vertex))
-						{
-							Point p = positions[edge.Target];
-							var edgeLine = new Line {X1 = p.X - 1, Y1 = p.Y, X2 = x + 1, Y2 = p.Y, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = edge, ToolTip = string.Format("{0:p}", edge.Length)};
-							edgeLine.MouseEnter += edgeLine_MouseEnter;
-							edgeLine.MouseLeave += edgeLine_OnMouseLeave;
-							Children.Add(edgeLine);
-							_edges[edge] = edgeLine;
-						}
-
-						positions[vertex] = new Point(x, y);
-					}
-				}
+				foreach (HierarchicalGraphVertex vertex in Graph.Vertices.Where(v => v != SelectedVertex && !positions.ContainsKey(v)))
+                    ProcessVertex(positions, tickWidth, maxDepth, vertex);
 			}
+            ProcessVertex(positions, tickWidth, maxDepth, SelectedVertex);
 		}
+
+        private void ProcessVertex(Dictionary<HierarchicalGraphVertex, Point> positions, double tickWidth, double maxDepth, HierarchicalGraphVertex vertex)
+        {
+			double miny = double.MaxValue;
+			double maxy = 0;
+			double minx = double.MaxValue;
+			double maxx = 0;
+			int count = 0;
+			foreach (HierarchicalGraphEdge edge in GetEdges(vertex))
+			{
+				Point p;
+				if (!positions.TryGetValue(edge.GetOtherVertex(vertex), out p))
+					continue;
+
+				miny = Math.Min(p.Y, miny);
+				maxy = Math.Max(p.Y, maxy);
+
+				minx = Math.Min(p.X, minx);
+				maxx = Math.Max(p.X, maxx);
+			    count++;
+			}
+
+			if (count >= Graph.Degree(vertex) - 1)
+			{
+				//double x = originx + (tickWidth * (((offset + vertex.Depth) * 100) / maxDepth));
+				double x = OriginX + (tickWidth * ((vertex.Depth * 100) / maxDepth));
+				double y = (maxy + miny) / 2;
+
+				var vertexLine = new Line {X1 = x, Y1 = miny - 1, X2 = x, Y2 = maxy + 1, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = vertex};
+				vertexLine.MouseEnter += vertexLine_MouseEnter;
+				vertexLine.MouseLeave += vertexLine_MouseLeave;
+				Children.Add(vertexLine);
+				_clusterVertices[vertex] = vertexLine;
+
+				foreach (HierarchicalGraphEdge edge in GetEdges(vertex))
+				{
+				    Point p;
+				    if (!positions.TryGetValue(edge.GetOtherVertex(vertex), out p))
+				        continue;
+					var edgeLine = new Line {X1 = p.X - 1, Y1 = p.Y, X2 = x + 1, Y2 = p.Y, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = edge, ToolTip = string.Format("{0:p}", edge.Length)};
+					edgeLine.MouseEnter += edgeLine_MouseEnter;
+					edgeLine.MouseLeave += edgeLine_OnMouseLeave;
+					Children.Add(edgeLine);
+					_edges[edge] = edgeLine;
+				}
+
+				positions[vertex] = new Point(x, y);
+			}
+        }
+
+        private IEnumerable<HierarchicalGraphEdge> GetEdges(HierarchicalGraphVertex vertex)
+        {
+            IEnumerable<HierarchicalGraphEdge> inEdges;
+            if (Graph.TryGetInEdges(vertex, out inEdges))
+            {
+                foreach (HierarchicalGraphEdge edge in inEdges)
+                    yield return edge;
+            }
+
+            IEnumerable<HierarchicalGraphEdge> outEdges;
+            if (Graph.TryGetOutEdges(vertex, out outEdges))
+            {
+                foreach (HierarchicalGraphEdge edge in outEdges)
+                    yield return edge;
+            }
+        }
 
 		private void vertex_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace SIL.Cog.Presentation.Views
 {
@@ -13,9 +14,21 @@ namespace SIL.Cog.Presentation.Views
 			BusyCursor.DisplayUntilIdle();
 		}
 
-		private void _graphLayout_OnLayoutFinished(object sender, EventArgs e)
+		private void GraphLayout_OnLayoutFinished(object sender, EventArgs e)
 		{
 			ZoomControl.ZoomToFill();
 		}
+
+	    private void GraphLayout_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+	    {
+            if (GraphLayout.IsVisible)
+                ZoomControl.ZoomToFill();
+	    }
+
+	    private void DendrogramLayout_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+	    {
+            if (DendrogramLayout.IsVisible)
+                ZoomControl.ZoomToFill();
+	    }
 	}
 }

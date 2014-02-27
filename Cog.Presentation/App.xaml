@@ -359,21 +359,6 @@
 			</Style>
 
 			<Style x:Key="HierarchicalVertexControlStyle" TargetType="gsc:VertexControl" BasedOn="{StaticResource {x:Type gsc:VertexControl}}">
-				<Setter Property="Template">
-					<Setter.Value>
-						<ControlTemplate TargetType="{x:Type gsc:VertexControl}">
-							<Border BorderBrush="{TemplateBinding BorderBrush}"
-									BorderThickness="{TemplateBinding BorderThickness}"
-									Background="{TemplateBinding Background}"
-									ToolTip="{TemplateBinding ToolTip}">
-								<Border.LayoutTransform>
-									<RotateTransform Angle="{Binding Angle}" />
-								</Border.LayoutTransform>
-								<ContentPresenter Content="{TemplateBinding Vertex}" />
-							</Border>
-						</ControlTemplate>
-					</Setter.Value>
-				</Setter>
 				<Style.Triggers>
 					<DataTrigger Binding="{Binding IsCluster}" Value="True">
 						<Setter Property="Visibility" Value="Collapsed" />

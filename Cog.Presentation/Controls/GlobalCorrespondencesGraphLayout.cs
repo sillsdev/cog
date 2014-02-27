@@ -5,7 +5,7 @@ using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Controls
 {
-	public class GlobalCorrespondencesGraphLayout : CogGraphLayout<GridVertex, GlobalCorrespondenceEdge, IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge>>
+	public class GlobalCorrespondencesGraphLayout : WeightedGraphLayout<GridVertex, GlobalCorrespondenceEdge, IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge>>
 	{
 		public GlobalCorrespondencesGraphLayout()
 		{

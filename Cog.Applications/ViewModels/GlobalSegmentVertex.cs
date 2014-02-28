@@ -3,21 +3,26 @@ using System.Linq;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class GlobalSegmentVertex : GridVertex
+	public abstract class GlobalSegmentVertex : GlobalCorrespondencesGraphVertex
 	{
-		private readonly HashSet<string> _strReps; 
+		private readonly HashSet<string> _strReps;
 
-		public GlobalSegmentVertex()
+	    protected GlobalSegmentVertex()
 		{
 			_strReps = new HashSet<string>();
 		}
 
-		public string StrRep
+		public override string StrRep
 		{
 			get { return string.Join(",", _strReps.OrderBy(s => s)); }
 		}
 
-		internal ISet<string> StrReps
+	    public override bool IsProperty
+	    {
+	        get { return false; }
+	    }
+
+	    internal ISet<string> StrReps
 		{
 			get { return _strReps; }
 		}

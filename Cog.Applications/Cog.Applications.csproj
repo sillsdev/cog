@@ -116,6 +116,7 @@
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\AlineViewModel.cs" />
     <Compile Include="ViewModels\AnalyzeViewModel.cs" />
+    <Compile Include="ViewModels\VowelBacknessVertex.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ChangeTrackingViewModelBase.cs" />
     <Compile Include="ViewModels\CognateIdentifierOptionsViewModel.cs" />
@@ -144,11 +145,13 @@
     <Compile Include="ViewModels\GeographicalRegionViewModel.cs" />
     <Compile Include="ViewModels\GeographicalVarietyViewModel.cs" />
     <Compile Include="ViewModels\GeographicalViewModel.cs" />
+    <Compile Include="ViewModels\GlobalConsonantVertex.cs" />
+    <Compile Include="ViewModels\GlobalCorrespondencesGraphVertex.cs" />
     <Compile Include="ViewModels\GlobalCorrespondencesViewModel.cs" />
-    <Compile Include="ViewModels\GlobalCorrespondenceEdge.cs" />
+    <Compile Include="ViewModels\GlobalCorrespondencesGraphEdge.cs" />
     <Compile Include="ViewModels\GlobalSegmentVertex.cs" />
-    <Compile Include="ViewModels\GridVertex.cs" />
-    <Compile Include="ViewModels\HeaderGridVertex.cs" />
+    <Compile Include="ViewModels\GlobalVowelVertex.cs" />
+    <Compile Include="ViewModels\VowelHeightVertex.cs" />
     <Compile Include="ViewModels\HierarchicalGraphEdge.cs" />
     <Compile Include="ViewModels\HierarchicalGraphVertex.cs" />
     <Compile Include="ViewModels\HierarchicalGraphViewModel.cs" />
@@ -160,6 +163,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ContainerViewModelBase.cs" />
     <Compile Include="ViewModels\DomainModelChangedMessage.cs" />
+    <Compile Include="ViewModels\ConsonantMannerVertex.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModel.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentWordViewModel.cs" />
     <Compile Include="ViewModels\NetworkGraphEdge.cs" />
@@ -167,6 +171,7 @@
     <Compile Include="ViewModels\NetworkGraphViewModel.cs" />
     <Compile Include="ViewModels\NewSegmentMappingViewModel.cs" />
     <Compile Include="ViewModels\PerformingComparisonMessage.cs" />
+    <Compile Include="ViewModels\ConsonantPlaceVertex.cs" />
     <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\RelevantFeatureViewModel.cs" />
     <Compile Include="ViewModels\RelevantValueViewModel.cs" />
@@ -174,6 +179,7 @@
     <Compile Include="ViewModels\SegmentCategoryViewModel.cs" />
     <Compile Include="ViewModels\SegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\SegmentMappingViewModel.cs" />
+    <Compile Include="ViewModels\SegmentPropertyVertex.cs" />
     <Compile Include="ViewModels\SegmentViewModel.cs" />
     <Compile Include="ViewModels\SegmentsVarietyViewModel.cs" />
     <Compile Include="ViewModels\SegmentsViewModel.cs" />

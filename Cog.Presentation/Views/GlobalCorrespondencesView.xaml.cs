@@ -19,7 +19,7 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var vm = (GlobalCorrespondencesViewModel) DataContext;
 			var edgeControl = (EdgeControl) sender;
-			var corr = (GlobalCorrespondenceEdge) edgeControl.DataContext;
+			var corr = (GlobalCorrespondencesGraphEdge) edgeControl.DataContext;
 			vm.SelectedCorrespondence = vm.SelectedCorrespondence == corr ? null : corr;
 		}
 	}

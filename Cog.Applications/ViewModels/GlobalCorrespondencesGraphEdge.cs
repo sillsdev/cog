@@ -5,26 +5,26 @@ using SIL.Cog.Domain;
 
 namespace SIL.Cog.Applications.ViewModels
 {
-	public class GlobalCorrespondenceEdge : ViewModelBase, IWeightedEdge<GridVertex>
+	public class GlobalCorrespondencesGraphEdge : ViewModelBase, IWeightedEdge<GlobalCorrespondencesGraphVertex>
 	{
 		private readonly GlobalSegmentVertex _segment1;
 		private readonly GlobalSegmentVertex _segment2;
 		private bool _isSelected;
 		private readonly List<WordPair> _wordPairs; 
 
-		public GlobalCorrespondenceEdge(GlobalSegmentVertex segment1, GlobalSegmentVertex segment2)
+		public GlobalCorrespondencesGraphEdge(GlobalSegmentVertex segment1, GlobalSegmentVertex segment2)
 		{
 			_segment1 = segment1;
 			_segment2 = segment2;
 			_wordPairs = new List<WordPair>();
 		}
 
-		public GridVertex Source
+		public GlobalCorrespondencesGraphVertex Source
 		{
 			get { return _segment1; }
 		}
 
-		public GridVertex Target
+		public GlobalCorrespondencesGraphVertex Target
 		{
 			get { return _segment2; }
 		}

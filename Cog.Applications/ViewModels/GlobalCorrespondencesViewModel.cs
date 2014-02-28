@@ -18,14 +18,14 @@ namespace SIL.Cog.Applications.ViewModels
 		private readonly IProjectService _projectService;
 		private readonly IImageExportService _imageExportService;
 		private readonly WordPairsViewModel _observedWordPairs;
-		private GlobalCorrespondenceEdge _selectedCorrespondence;
+		private GlobalCorrespondencesGraphEdge _selectedCorrespondence;
 		private SyllablePosition _syllablePosition;
 		private readonly TaskAreaIntegerViewModel _correspondenceFilter;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
 		private readonly IGraphService _graphService;
 		private readonly ICommand _findCommand;
-		private IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> _graph;
+		private IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge> _graph;
 		private readonly HashSet<Variety> _selectedVarieties;
 
 		private FindViewModel _findViewModel;
@@ -159,12 +159,12 @@ namespace SIL.Cog.Applications.ViewModels
 			get { return _findCommand; }
 		}
 
-		public GlobalCorrespondenceEdge SelectedCorrespondence
+		public GlobalCorrespondencesGraphEdge SelectedCorrespondence
 		{
 			get { return _selectedCorrespondence; }
 			set
 			{
-				GlobalCorrespondenceEdge oldCorr = _selectedCorrespondence;
+				GlobalCorrespondencesGraphEdge oldCorr = _selectedCorrespondence;
 				if (Set(() => SelectedCorrespondence, ref _selectedCorrespondence, value))
 				{
 					_busyService.ShowBusyIndicatorUntilFinishDrawing();
@@ -231,7 +231,7 @@ namespace SIL.Cog.Applications.ViewModels
 			}
 		}
 
-		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> Graph
+		public IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge> Graph
 		{
 			get { return _graph; }
 			set { Set(() => Graph, ref _graph, value); }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using GraphSharp;
-using GraphSharp.Algorithms.Layout.Simple.Grid;
 using QuickGraph;
 using QuickGraph.Algorithms;
 using SIL.Cog.Applications.ViewModels;
@@ -16,49 +14,49 @@ namespace SIL.Cog.Applications.Services
 {
 	public class GraphService : IGraphService
 	{
-		private static readonly Dictionary<string, int> VowelHeightLookup = new Dictionary<string, int>
+		private static readonly Dictionary<string, VowelHeight> VowelHeightLookup = new Dictionary<string, VowelHeight>
 			{
-				{"close", 1},
-				{"near-close", 2},
-				{"close-mid", 3},
-				{"mid", 4},
-				{"open-mid", 5},
-				{"near-open", 6},
-				{"open", 7}
+				{"close", VowelHeight.Close},
+				{"near-close", VowelHeight.NearClose},
+				{"close-mid", VowelHeight.CloseMid},
+				{"mid", VowelHeight.Mid},
+				{"open-mid", VowelHeight.OpenMid},
+				{"near-open", VowelHeight.NearOpen},
+				{"open", VowelHeight.Open}
 			};
 
-		private static readonly Dictionary<string, int> VowelBacknessLookup = new Dictionary<string, int>
+		private static readonly Dictionary<string, VowelBackness> VowelBacknessLookup = new Dictionary<string, VowelBackness>
 			{
-				{"front", 1},
-				{"near-front", 4},
-				{"central", 7},
-				{"near-back", 10},
-				{"back", 13}
+				{"front", VowelBackness.Front},
+				{"near-front", VowelBackness.NearFront},
+				{"central", VowelBackness.Central},
+				{"near-back", VowelBackness.NearBack},
+				{"back", VowelBackness.Back}
 			};
 
-		private static readonly Dictionary<string, int> ConsonantPlaceLookup = new Dictionary<string, int>
+		private static readonly Dictionary<string, ConsonantPlace> ConsonantPlaceLookup = new Dictionary<string, ConsonantPlace>
 			{
-				{"bilabial", 1},
-				{"labiodental", 4},
-				{"dental", 7},
-				{"alveolar", 10},
-				{"palato-alveolar", 13},
-				{"retroflex", 16},
-				{"palatal", 19},
-				{"velar", 22},
-				{"uvular", 25},
-				{"pharyngeal", 28},
-				{"glottal", 31}
+				{"bilabial", ConsonantPlace.Bilabial},
+				{"labiodental", ConsonantPlace.Labiodental},
+				{"dental", ConsonantPlace.Dental},
+				{"alveolar", ConsonantPlace.Alveolar},
+				{"palato-alveolar", ConsonantPlace.Postalveolar},
+				{"retroflex", ConsonantPlace.Retroflex},
+				{"palatal", ConsonantPlace.Palatal},
+				{"velar", ConsonantPlace.Velar},
+				{"uvular", ConsonantPlace.Uvular},
+				{"pharyngeal", ConsonantPlace.Pharyngeal},
+				{"glottal", ConsonantPlace.Glottal}
 			};
 
-		private static readonly Dictionary<string, int> ConsonantMannerLookup = new Dictionary<string, int>
+		private static readonly Dictionary<string, ConsonantManner> ConsonantMannerLookup = new Dictionary<string, ConsonantManner>
 			{
-				{"stop", 2},
-				{"affricate", 3},
-				{"fricative", 4},
-				{"approximant", 5},
-				{"flap", 6},
-				{"trill", 7},
+				{"stop", ConsonantManner.Stop},
+				{"affricate", ConsonantManner.Affricate},
+				{"fricative", ConsonantManner.Fricative},
+				{"approximant", ConsonantManner.Approximant},
+				{"flap", ConsonantManner.FlapOrTap},
+				{"trill", ConsonantManner.Trill},
 			};
 
 		private readonly IProjectService _projectService;
@@ -178,47 +176,50 @@ namespace SIL.Cog.Applications.Services
 			return graph;
 		}
 
-		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SyllablePosition syllablePosition)
+		public IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge> GenerateGlobalCorrespondencesGraph(SyllablePosition syllablePosition)
 		{
 			return GenerateGlobalCorrespondencesGraph(syllablePosition, _projectService.Project.Varieties);
 		}
 
-		public IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> GenerateGlobalCorrespondencesGraph(SyllablePosition syllablePosition, IEnumerable<Variety> varieties)
+		public IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge> GenerateGlobalCorrespondencesGraph(SyllablePosition syllablePosition, IEnumerable<Variety> varieties)
 		{
 			var varietiesSet = new HashSet<Variety>(varieties);
 			CogProject project = _projectService.Project;
-			var graph = new BidirectionalGraph<GridVertex, GlobalCorrespondenceEdge>();
-			var vertices = new Dictionary<Tuple<int, int>, GlobalSegmentVertex>();
-			var edges = new Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge>();
+			var graph = new BidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge>();
+			var vertices = new Dictionary<object, GlobalSegmentVertex>();
+			var edges = new Dictionary<UnorderedTuple<object, object>, GlobalCorrespondencesGraphEdge>();
 			int maxFreq = 0;
 			if (syllablePosition == SyllablePosition.Nucleus)
 			{
-				graph.AddVertexRange(new []
+				graph.AddVertexRange(new GlobalCorrespondencesGraphVertex[]
 					{
-						new HeaderGridVertex("Front") {Row = 0, Column = 1, ColumnSpan = 3},
-						new HeaderGridVertex("Central") {Row = 0, Column = 7, ColumnSpan = 3},
-						new HeaderGridVertex("Back") {Row = 0, Column = 13, ColumnSpan = 3},
+						new VowelBacknessVertex(VowelBackness.Front),
+						new VowelBacknessVertex(VowelBackness.Central),
+						new VowelBacknessVertex(VowelBackness.Back),
 
-						new HeaderGridVertex("Close") {Row = 1, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Close-mid") {Row = 3, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Open-mid") {Row = 5, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Open") {Row = 7, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left}
+						new VowelHeightVertex(VowelHeight.Close),
+						new VowelHeightVertex(VowelHeight.CloseMid),
+						new VowelHeightVertex(VowelHeight.OpenMid),
+						new VowelHeightVertex(VowelHeight.Open)
 					});
 
 				foreach (VarietyPair vp in project.VarietyPairs.Where(vp => varietiesSet.Contains(vp.Variety1) && varietiesSet.Contains(vp.Variety2)))
 				{
 					foreach (SoundCorrespondence corr in vp.SoundCorrespondenceCollections[CogFeatureSystem.Nucleus])
 					{
-						int row1, column1, row2, column2;
-						GridHorizontalAlignment alignment1, alignment2;
-						if (GetVowelPosition(corr.Segment1, out row1, out column1, out alignment1) && GetVowelPosition(corr.Segment2, out row2, out column2, out alignment2)
-							&& (row1 != row2 || column1 != column2))
+						VowelHeight height1, height2;
+						VowelBackness backness1, backness2;
+						bool round1, round2;
+						if (GetVowelInfo(corr.Segment1, out height1, out backness1, out round1) && GetVowelInfo(corr.Segment2, out height2, out backness2, out round2)
+							&& (height1 != height2 || backness1 != backness2 || round1 != round2))
 						{
-							GlobalSegmentVertex vertex1 = vertices.GetValue(Tuple.Create(row1, column1), () => new GlobalSegmentVertex {Row = row1, Column = column1, HorizontalAlignment = alignment1} );
+							Tuple<VowelHeight, VowelBackness, bool> key1 = Tuple.Create(height1, backness1, round1);
+							GlobalSegmentVertex vertex1 = vertices.GetValue(key1, () => new GlobalVowelVertex(height1, backness1, round1));
 							vertex1.StrReps.Add(corr.Segment1.StrRep);
-							GlobalSegmentVertex vertex2 = vertices.GetValue(Tuple.Create(row2, column2), () => new GlobalSegmentVertex {Row = row2, Column = column2, HorizontalAlignment = alignment2} );
+							Tuple<VowelHeight, VowelBackness, bool> key2 = Tuple.Create(height2, backness2, round2);
+							GlobalSegmentVertex vertex2 = vertices.GetValue(key2, () => new GlobalVowelVertex(height2, backness2, round2));
 							vertex2.StrReps.Add(corr.Segment2.StrRep);
-							int freq = AddEdge(edges, corr, vertex1, vertex2);
+							int freq = AddEdge(edges, corr, key1, vertex1, key2, vertex2);
 							maxFreq = Math.Max(freq, maxFreq);
 						}
 					}
@@ -226,29 +227,29 @@ namespace SIL.Cog.Applications.Services
 			}
 			else
 			{
-				graph.AddVertexRange(new[]
+				graph.AddVertexRange(new GlobalCorrespondencesGraphVertex[]
 					{
-						new HeaderGridVertex("Bilabial") {Row = 0, Column = 1, ColumnSpan = 3},
-						new HeaderGridVertex("Labiodental") {Row = 0, Column = 4, ColumnSpan = 3},
-						new HeaderGridVertex("Dental") {Row = 0, Column = 7, ColumnSpan = 3},
-						new HeaderGridVertex("Alveolar") {Row = 0, Column = 10, ColumnSpan = 3},
-						new HeaderGridVertex("Postalveolar") {Row = 0, Column = 13, ColumnSpan = 3},
-						new HeaderGridVertex("Retroflex") {Row = 0, Column = 16, ColumnSpan = 3},
-						new HeaderGridVertex("Palatal") {Row = 0, Column = 19, ColumnSpan = 3},
-						new HeaderGridVertex("Velar") {Row = 0, Column = 22, ColumnSpan = 3},
-						new HeaderGridVertex("Uvular") {Row = 0, Column = 25, ColumnSpan = 3},
-						new HeaderGridVertex("Pharyngeal") {Row = 0, Column = 28, ColumnSpan = 3},
-						new HeaderGridVertex("Glottal") {Row = 0, Column = 31, ColumnSpan = 3},
+						new ConsonantPlaceVertex(ConsonantPlace.Bilabial),
+						new ConsonantPlaceVertex(ConsonantPlace.Labiodental), 
+						new ConsonantPlaceVertex(ConsonantPlace.Dental),
+						new ConsonantPlaceVertex(ConsonantPlace.Alveolar),
+						new ConsonantPlaceVertex(ConsonantPlace.Postalveolar),
+						new ConsonantPlaceVertex(ConsonantPlace.Retroflex),
+						new ConsonantPlaceVertex(ConsonantPlace.Palatal),
+						new ConsonantPlaceVertex(ConsonantPlace.Velar),
+						new ConsonantPlaceVertex(ConsonantPlace.Uvular),
+						new ConsonantPlaceVertex(ConsonantPlace.Pharyngeal), 
+						new ConsonantPlaceVertex(ConsonantPlace.Glottal),
 
-						new HeaderGridVertex("Nasal") {Row = 1, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Stop") {Row = 2, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Affricate") {Row = 3, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Fricative") {Row = 4, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Approximant") {Row = 5, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Flap or tap") {Row = 6, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Trill") {Row = 7, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Lateral fricative") {Row = 8, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left},
-						new HeaderGridVertex("Lateral approximant") {Row = 9, Column = 0, HorizontalAlignment = GridHorizontalAlignment.Left}
+						new ConsonantMannerVertex(ConsonantManner.Nasal),
+						new ConsonantMannerVertex(ConsonantManner.Stop),
+						new ConsonantMannerVertex(ConsonantManner.Affricate),
+						new ConsonantMannerVertex(ConsonantManner.Fricative),
+						new ConsonantMannerVertex(ConsonantManner.Approximant),
+						new ConsonantMannerVertex(ConsonantManner.FlapOrTap),
+						new ConsonantMannerVertex(ConsonantManner.Trill),
+						new ConsonantMannerVertex(ConsonantManner.LateralFricative),
+						new ConsonantMannerVertex(ConsonantManner.LateralApproximant)
 					});
 
 				foreach (VarietyPair vp in project.VarietyPairs.Where(vp => varietiesSet.Contains(vp.Variety1) && varietiesSet.Contains(vp.Variety2)))
@@ -266,17 +267,20 @@ namespace SIL.Cog.Applications.Services
 					Debug.Assert(corrs != null);
 					foreach (SoundCorrespondence corr in corrs)
 					{
-						int row1, column1, row2, column2;
-						GridHorizontalAlignment alignment1, alignment2;
-						if (GetConsonantPosition(corr.Segment1, out row1, out column1, out alignment1) && GetConsonantPosition(corr.Segment2, out row2, out column2, out alignment2)
-							&& (row1 != row2 || column1 != column2))
+						ConsonantPlace place1, place2;
+						ConsonantManner manner1, manner2;
+						bool voiced1, voiced2;
+						if (GetConsonantPosition(corr.Segment1, out place1, out manner1, out voiced1) && GetConsonantPosition(corr.Segment2, out place2, out manner2, out voiced2)
+							&& (place1 != place2 || manner1 != manner2 || voiced1 != voiced2))
 						{
-							GlobalSegmentVertex vertex1 = vertices.GetValue(Tuple.Create(row1, column1), () => new GlobalSegmentVertex {Row = row1, Column = column1, HorizontalAlignment = alignment1} );
+							Tuple<ConsonantPlace, ConsonantManner, bool> key1 = Tuple.Create(place1, manner1, voiced1);
+							GlobalSegmentVertex vertex1 = vertices.GetValue(key1, () => new GlobalConsonantVertex(place1, manner1, voiced1));
 							vertex1.StrReps.Add(corr.Segment1.StrRep);
-							GlobalSegmentVertex vertex2 = vertices.GetValue(Tuple.Create(row2, column2), () => new GlobalSegmentVertex {Row = row2, Column = column2, HorizontalAlignment = alignment2} );
+							Tuple<ConsonantPlace, ConsonantManner, bool> key2 = Tuple.Create(place2, manner2, voiced2);
+							GlobalSegmentVertex vertex2 = vertices.GetValue(key2, () => new GlobalConsonantVertex(place2, manner2, voiced2));
 							vertex2.StrReps.Add(corr.Segment2.StrRep);
 
-							int freq = AddEdge(edges, corr, vertex1, vertex2);
+							int freq = AddEdge(edges, corr, key1, vertex1, key2, vertex2);
 							maxFreq = Math.Max(freq, maxFreq);
 						}
 					}
@@ -284,7 +288,7 @@ namespace SIL.Cog.Applications.Services
 			}
 
 			graph.AddVertexRange(vertices.Values);
-			foreach (GlobalCorrespondenceEdge edge in edges.Values)
+			foreach (GlobalCorrespondencesGraphEdge edge in edges.Values)
 			{
 				edge.NormalizedFrequency = (double) edge.Frequency / maxFreq;
 				graph.AddEdge(edge);
@@ -293,21 +297,17 @@ namespace SIL.Cog.Applications.Services
 			return graph;
 		}
 
-		private static int AddEdge(Dictionary<UnorderedTuple<Tuple<int, int>, Tuple<int, int>>, GlobalCorrespondenceEdge> edges, SoundCorrespondence corr,
-			GlobalSegmentVertex vertex1, GlobalSegmentVertex vertex2)
+		private static int AddEdge(Dictionary<UnorderedTuple<object, object>, GlobalCorrespondencesGraphEdge> edges, SoundCorrespondence corr,
+			object key1, GlobalSegmentVertex vertex1, object key2, GlobalSegmentVertex vertex2)
 		{
-			Tuple<int, int> key1 = Tuple.Create(vertex1.Row, vertex1.Column);
-			Tuple<int, int> key2 = Tuple.Create(vertex2.Row, vertex2.Column);
-			GlobalCorrespondenceEdge edge = edges.GetValue(UnorderedTuple.Create(key1, key2), () => new GlobalCorrespondenceEdge(vertex1, vertex2));
+			GlobalCorrespondencesGraphEdge edge = edges.GetValue(UnorderedTuple.Create(key1, key2), () => new GlobalCorrespondencesGraphEdge(vertex1, vertex2));
 			edge.Frequency += corr.Frequency;
 			edge.DomainWordPairs.AddRange(corr.WordPairs);
 			return edge.Frequency;
 		}
 
-		private static bool GetConsonantPosition(Segment consonant, out int row, out int column, out GridHorizontalAlignment alignment)
+		private static bool GetConsonantPosition(Segment consonant, out ConsonantPlace place, out ConsonantManner manner, out bool voiced)
 		{
-			row = -1;
-			alignment = GridHorizontalAlignment.Right;
 			FeatureStruct fs = consonant.FeatureStruct;
 			if (consonant.IsComplex)
 				fs = consonant.FeatureStruct.GetValue<FeatureStruct>(CogFeatureSystem.First);
@@ -317,36 +317,44 @@ namespace SIL.Cog.Applications.Services
 			var voiceSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("voice");
 			var nasalSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("nasal");
 
-			if (!ConsonantPlaceLookup.TryGetValue(placeSymbol.ID, out column))
+			manner = default(ConsonantManner);
+			voiced = false;
+
+			if (!ConsonantPlaceLookup.TryGetValue(placeSymbol.ID, out place))
 				return false;
 
 			if (nasalSymbol.ID == "nasal+")
 			{
-				row = 1;
+				manner = ConsonantManner.Nasal;
 			}
-			else if (ConsonantMannerLookup.TryGetValue(mannerSymbol.ID, out row))
+			else if (ConsonantMannerLookup.TryGetValue(mannerSymbol.ID, out manner))
 			{
 				var lateralSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("lateral");
 				if (lateralSymbol.ID == "lateral+")
-					row += 4;
+				{
+					switch (manner)
+					{
+						case ConsonantManner.Fricative:
+							manner = ConsonantManner.LateralFricative;
+							break;
+						case ConsonantManner.Approximant:
+							manner = ConsonantManner.LateralApproximant;
+							break;
+					}
+				}
 			}
 			else
 			{
 				return false;
 			}
 
-			if (voiceSymbol.ID == "voice+")
-			{
-				column += 2;
-				alignment = GridHorizontalAlignment.Left;
-			}
+			voiced = voiceSymbol.ID == "voice+";
 
 			return true;
 		}
 
-		private static bool GetVowelPosition(Segment vowel, out int row, out int column, out GridHorizontalAlignment alignment)
+		private static bool GetVowelInfo(Segment vowel, out VowelHeight height, out VowelBackness backness, out bool round)
 		{
-			alignment = GridHorizontalAlignment.Right;
 			FeatureStruct fs = vowel.FeatureStruct;
 			if (vowel.IsComplex)
 				fs = vowel.FeatureStruct.GetValue<FeatureStruct>(CogFeatureSystem.First);
@@ -355,14 +363,10 @@ namespace SIL.Cog.Applications.Services
 			var backnessSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("backness");
 			var roundSymbol = (FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("round");
 
-			row = VowelHeightLookup[heightSymbol.ID];
-			column = VowelBacknessLookup[backnessSymbol.ID];
+			height = VowelHeightLookup[heightSymbol.ID];
+			backness = VowelBacknessLookup[backnessSymbol.ID];
 
-			if (roundSymbol.ID == "round+")
-			{
-				column += 2;
-				alignment = GridHorizontalAlignment.Left;
-			}
+			round = roundSymbol.ID == "round+";
 
 			return true;
 		}

@@ -34,16 +34,16 @@ namespace SIL.Cog.Presentation.Controls
 			if (Graph == null)
 				return;
 
-		    double fontSize = Scale(12);
-		    var borderThickness = new Thickness(Scale(2.0));
+			double fontSize = Scale(12);
+			var borderThickness = new Thickness(Scale(2.0));
 			foreach (HierarchicalGraphVertex v in Graph.Vertices)
 			{
 				VertexControl vc = GetVertexControl(v);
 				vc.FontSize = fontSize;
-			    vc.BorderThickness = borderThickness;
+				vc.BorderThickness = borderThickness;
 			}
 
-		    double strokeThickness = Scale(1.0);
+			double strokeThickness = Scale(1.0);
 			foreach (HierarchicalGraphEdge e in Graph.Edges)
 			{
 				EdgeControl ec = GetEdgeControl(e);
@@ -51,9 +51,9 @@ namespace SIL.Cog.Presentation.Controls
 			}
 		}
 
-        private double Scale(double defaultValue)
-        {
-            return ScaleLabelsToZoom > 1 ? defaultValue : (1.0 / ScaleLabelsToZoom) * defaultValue;
-        }
+		private double Scale(double defaultValue)
+		{
+			return ScaleLabelsToZoom > 1 ? defaultValue : (1.0 / ScaleLabelsToZoom) * defaultValue;
+		}
 	}
 }

@@ -1,15 +1,17 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using GraphSharp.Algorithms.Layout.Simple.Grid;
 using QuickGraph;
 using SIL.Cog.Applications.ViewModels;
 
 namespace SIL.Cog.Presentation.Controls
 {
-	public class GlobalCorrespondencesGraphLayout : WeightedGraphLayout<GridVertex, GlobalCorrespondenceEdge, IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge>>
+	public class GlobalCorrespondencesGraphLayout : WeightedGraphLayout<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge,
+		IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge>>
 	{
 		public GlobalCorrespondencesGraphLayout()
 		{
-			SetConsonantLayoutParameters();
+			SetLayoutParameters(typeof(ConsonantManner), typeof(ConsonantPlace));
 		}
 
 		public static readonly DependencyProperty SyllablePositionProperty = DependencyProperty.Register("SyllablePosition", typeof(SyllablePosition),
@@ -22,149 +24,98 @@ namespace SIL.Cog.Presentation.Controls
 			{
 				case SyllablePosition.Onset:
 				case SyllablePosition.Coda:
-					graphLayout.SetConsonantLayoutParameters();
+					graphLayout.SetLayoutParameters(typeof(ConsonantManner), typeof(ConsonantPlace));
 					break;
 
 				case SyllablePosition.Nucleus:
-					graphLayout.SetVowelLayoutParameters();
+					graphLayout.SetLayoutParameters(typeof(VowelHeight), typeof(VowelBackness));
 					break;
 			}
 		}
 
-		private void SetConsonantLayoutParameters()
+		private void SetLayoutParameters(Type rowType, Type columnType)
 		{
 			const int rowHeight = 35;
 			const int columnWidth = 40;
 			const int separatorWidth = 10;
-			LayoutParameters = new GridLayoutParameters
-				{
-					Rows =
-						{
-							// header
-							new GridLayoutRow {AutoHeight = true},
-							// nasal
-							new GridLayoutRow {Height = rowHeight},
-							// stop
-							new GridLayoutRow {Height = rowHeight},
-							// affricate
-							new GridLayoutRow {Height = rowHeight},
-							// fricative
-							new GridLayoutRow {Height = rowHeight},
-							// approximant
-							new GridLayoutRow {Height = rowHeight},
-							// flap or tap
-							new GridLayoutRow {Height = rowHeight},
-							// trill
-							new GridLayoutRow {Height = rowHeight},
-							// lateral fricative
-							new GridLayoutRow {Height = rowHeight},
-							// lateral approximant
-							new GridLayoutRow {Height = rowHeight}
-						},
-					Columns =
-						{
-							// header
-							new GridLayoutColumn {AutoWidth = true},
-							// bilabial
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// labiodental
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// dental
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// alveolar
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// postalveolar
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// retroflex
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// palatal
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// velar
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// uvular
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// pharyngeal
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// glottal
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-						}
-				};
+			var parameters = new GridLayoutParameters();
+			parameters.Rows.Add(new GridLayoutRow {AutoHeight = true});
+			foreach (object row in Enum.GetValues(rowType))
+				parameters.Rows.Add(new GridLayoutRow {Height = rowHeight});
+
+			parameters.Columns.Add(new GridLayoutColumn {AutoWidth = true});
+			foreach (object column in Enum.GetValues(columnType))
+			{
+				parameters.Columns.Add(new GridLayoutColumn {Width = columnWidth});
+				parameters.Columns.Add(new GridLayoutColumn {Width = separatorWidth});
+				parameters.Columns.Add(new GridLayoutColumn {Width = columnWidth});
+			}
+
+			parameters.VertexInfo += parameters_VertexInfo;
+			LayoutParameters = parameters;
 		}
 
-		private void SetVowelLayoutParameters()
+		private void parameters_VertexInfo(object sender, GridVertexInfoEventArgs e)
 		{
-			const int rowHeight = 35;
-			const int columnWidth = 40;
-			const int separatorWidth = 10;
-			LayoutParameters = new GridLayoutParameters
+			object vertex = e.Vertex;
+			if (vertex is ConsonantPlaceVertex)
+			{
+				var place = (ConsonantPlaceVertex) vertex;
+				e.VertexInfo.Row = 0;
+				e.VertexInfo.Column = (((int) place.Place) * 3) + 1;
+				e.VertexInfo.ColumnSpan = 3;
+			}
+			else if (vertex is ConsonantMannerVertex)
+			{
+				var manner = (ConsonantMannerVertex) vertex;
+				e.VertexInfo.Row = ((int) manner.Manner) + 1;
+				e.VertexInfo.Column = 0;
+				e.VertexInfo.HorizontalAlignment = GridHorizontalAlignment.Left;
+			}
+			else if (vertex is VowelBacknessVertex)
+			{
+				var backness = (VowelBacknessVertex) vertex;
+				e.VertexInfo.Row = 0;
+				e.VertexInfo.Column = (((int) backness.Backness) * 3) + 1;
+				e.VertexInfo.ColumnSpan = 3;
+			}
+			else if (vertex is VowelHeightVertex)
+			{
+				var height = (VowelHeightVertex) vertex;
+				e.VertexInfo.Row = ((int) height.Height) + 1;
+				e.VertexInfo.Column = 0;
+				e.VertexInfo.HorizontalAlignment = GridHorizontalAlignment.Left;
+			}
+			else if (vertex is GlobalConsonantVertex)
+			{
+				var consonant = (GlobalConsonantVertex) vertex;
+				e.VertexInfo.Row = ((int) consonant.Manner) + 1;
+				e.VertexInfo.Column = (((int) consonant.Place) * 3) + 1;
+				if (consonant.Voiced)
 				{
-					Rows =
-						{
-							// header
-							new GridLayoutRow {AutoHeight = true},
-							// close
-							new GridLayoutRow {Height = rowHeight},
-							// near-close
-							new GridLayoutRow {Height = rowHeight},
-							// close-mid
-							new GridLayoutRow {Height = rowHeight},
-							// mid
-							new GridLayoutRow {Height = rowHeight},
-							// open-mid
-							new GridLayoutRow {Height = rowHeight},
-							// near-open
-							new GridLayoutRow {Height = rowHeight},
-							// open
-							new GridLayoutRow {Height = rowHeight}
-						},
-					Columns =
-						{
-							// header
-							new GridLayoutColumn {AutoWidth = true},
-							// front
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// near-front
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// central
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// near-back
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth},
-							// back
-							new GridLayoutColumn {Width = columnWidth},
-							new GridLayoutColumn {Width = separatorWidth},
-							new GridLayoutColumn {Width = columnWidth}
-						}
-				};
+					e.VertexInfo.Column += 2;
+					e.VertexInfo.HorizontalAlignment = GridHorizontalAlignment.Left;
+				}
+				else
+				{
+					e.VertexInfo.HorizontalAlignment = GridHorizontalAlignment.Right;
+				}
+			}
+			else if (vertex is GlobalVowelVertex)
+			{
+				var vowel = (GlobalVowelVertex) vertex;
+				e.VertexInfo.Row = ((int) vowel.Height) + 1;
+				e.VertexInfo.Column = (((int) vowel.Backness) * 3) + 1;
+				if (vowel.Round)
+				{
+					e.VertexInfo.Column += 2;
+					e.VertexInfo.HorizontalAlignment = GridHorizontalAlignment.Left;
+				}
+				else
+				{
+					e.VertexInfo.HorizontalAlignment = GridHorizontalAlignment.Right;
+				}
+			}
 		}
 
 		public SyllablePosition SyllablePosition

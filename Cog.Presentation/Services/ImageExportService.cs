@@ -163,7 +163,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", this, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				IBidirectionalGraph<GridVertex, GlobalCorrespondenceEdge> graph = _graphService.GenerateGlobalCorrespondencesGraph(syllablePosition);
+				IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge> graph = _graphService.GenerateGlobalCorrespondencesGraph(syllablePosition);
 
 				var graphLayout = new GlobalCorrespondencesGraphLayout
 					{

@@ -36,6 +36,13 @@
 							</DataTrigger>
 						</Style.Triggers>
 					</Style>
+					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource {x:Type gsc:VertexControl}}">
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsProperty}" Value="True">
+								<Setter Property="BorderThickness" Value="0" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
 				</c:GlobalCorrespondencesGraphLayout.Resources>
 				<c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
 					<er:BundleEdgeRoutingParameters VertexMargin="2" LengthCoefficient="1" InkCoefficient="0" />

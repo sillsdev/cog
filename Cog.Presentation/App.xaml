@@ -349,8 +349,8 @@
 				</DataTemplate.Triggers>
 			</DataTemplate>
 			
-			<DataTemplate DataType="{x:Type vm:HeaderGridVertex}">
-				<TextBlock FontSize="14" Text="{Binding Name}" />
+			<DataTemplate DataType="{x:Type vm:SegmentPropertyVertex}">
+				<TextBlock FontSize="14" Text="{Binding StrRep}" />
 			</DataTemplate>
 
 			<Style x:Key="HierarchicalEdgeControlStyle" TargetType="gsc:EdgeControl" BasedOn="{StaticResource {x:Type gsc:EdgeControl}}">

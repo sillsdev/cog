@@ -9,7 +9,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Converters;
 
 namespace SIL.Cog.Presentation.Views

@@ -1,4 +1,4 @@
-﻿using SIL.Cog.Applications.Services;
+﻿using SIL.Cog.Application.Services;
 using SIL.Cog.Presentation.Properties;
 
 namespace SIL.Cog.Presentation.Services

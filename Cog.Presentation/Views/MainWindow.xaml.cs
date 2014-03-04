@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Properties;
 
 namespace SIL.Cog.Presentation.Views

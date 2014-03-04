@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 
 namespace SIL.Cog.Presentation.Converters
 {

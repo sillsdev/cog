@@ -1,7 +1,7 @@
 using System.Windows;
 using GraphSharp.Controls;
 using QuickGraph;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 
 namespace SIL.Cog.Presentation.Controls
 {

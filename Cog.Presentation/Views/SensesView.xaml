@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              mc:Ignorable="d" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SensesViewModel}">
     <DockPanel>

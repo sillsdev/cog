@@ -6,7 +6,7 @@ using System.Windows;
 using System.Linq;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
 using SIL.Collections;
 using Xceed.Wpf.DataGrid;

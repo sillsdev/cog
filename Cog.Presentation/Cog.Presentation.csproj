@@ -638,9 +638,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cog.Applications\Cog.Applications.csproj">
+    <ProjectReference Include="..\Cog.Application\Cog.Application.csproj">
       <Project>{9711E2C2-1804-441B-9EBC-AE7DE7521EA7}</Project>
-      <Name>Cog.Applications</Name>
+      <Name>Cog.Application</Name>
     </ProjectReference>
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>

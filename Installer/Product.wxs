@@ -64,11 +64,11 @@
 			<Component Id="Cog.pdb" Win64="$(var.Win64)">
 				<File Id="Cog.pdb" Name="Cog.pdb" Source="$(var.Cog.Presentation.TargetDir)\Cog.pdb" KeyPath="yes" />
 			</Component>
-			<Component Id="SIL.Cog.Applications.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Cog.Applications.dll" Name="SIL.Cog.Applications.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Applications.dll" KeyPath="yes" />
+			<Component Id="SIL.Cog.Application.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.Application.dll" Name="SIL.Cog.Application.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Application.dll" KeyPath="yes" />
 			</Component>
-			<Component Id="SIL.Cog.Applications.pdb" Win64="$(var.Win64)">
-				<File Id="SIL.Cog.Applications.pdb" Name="SIL.Cog.Applications.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Applications.pdb" KeyPath="yes" />
+			<Component Id="SIL.Cog.Application.pdb" Win64="$(var.Win64)">
+				<File Id="SIL.Cog.Application.pdb" Name="SIL.Cog.Application.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Application.pdb" KeyPath="yes" />
 			</Component>
 			<Component Id="SIL.Cog.Domain.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Cog.Domain.dll" Name="SIL.Cog.Domain.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Cog.Domain.dll" KeyPath="yes" />

@@ -20,7 +20,7 @@ namespace SIL.Cog.Presentation
 		public App()
 		{
 			AppDomain.CurrentDomain.UnhandledException += NBug.Handler.UnhandledException;
-			Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
+			System.Windows.Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
 		}
 
 		protected override void OnStartup(StartupEventArgs e)

@@ -11,7 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
 using SIL.Collections;
 using Xceed.Wpf.DataGrid;

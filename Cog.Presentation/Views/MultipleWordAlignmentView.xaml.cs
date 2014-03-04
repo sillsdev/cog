@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Threading;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
 using Xceed.Wpf.DataGrid;
 
@@ -87,7 +87,7 @@ namespace SIL.Cog.Presentation.Views
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			AlignmentGrid.Columns.Add(headerColumn);
 
-			object fontSizeObj = Application.Current.FindResource("PhoneticFontSize");
+			object fontSizeObj = System.Windows.Application.Current.FindResource("PhoneticFontSize");
 			Debug.Assert(fontSizeObj != null);
 			var fontSize = (double) fontSizeObj;
 

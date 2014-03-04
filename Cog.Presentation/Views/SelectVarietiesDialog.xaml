@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+        xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" mc:Ignorable="d"
         Title="Select Varieties" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=VarietiesListBox}" SizeToContent="WidthAndHeight"

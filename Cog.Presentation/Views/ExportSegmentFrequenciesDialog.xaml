@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SIL.Cog.Presentation.Views.ExportSegmentFrequenciesDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+        xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
 		xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         Title="Export Segment Frequencies" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"

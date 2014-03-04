@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Views;
 
 namespace SIL.Cog.Presentation.Services

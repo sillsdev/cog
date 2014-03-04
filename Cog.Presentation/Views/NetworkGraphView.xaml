@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
              xmlns:or="clr-namespace:GraphSharp.Algorithms.OverlapRemoval;assembly=GraphSharp"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              xmlns:fdp="clr-namespace:GraphSharp.Algorithms.Layout.Simple.FDP;assembly=GraphSharp"
              xmlns:hl="clr-namespace:GraphSharp.Algorithms.Highlight;assembly=GraphSharp"

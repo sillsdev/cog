@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:prov="clr-namespace:GMap.NET.MapProviders;assembly=GMap.NET.Core"
              xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              mc:Ignorable="d" Loaded="GeographicalView_OnLoaded" IsVisibleChanged="OnIsVisibleChanged"

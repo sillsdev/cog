@@ -12,7 +12,7 @@ using System.Windows.Shapes;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
 using GalaSoft.MvvmLight.Threading;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Services;
 
 namespace SIL.Cog.Presentation.Views
@@ -324,10 +324,10 @@ namespace SIL.Cog.Presentation.Views
 						break;
 					case GeoCoderStatusCode.G_GEO_UNKNOWN_ADDRESS:
 					case GeoCoderStatusCode.Unknow:
-						MessageBoxEx.Show(Application.Current.MainWindow, "Location not found.", "Cog", MessageBoxButton.OK, MessageBoxImage.Information);
+						MessageBoxEx.Show(System.Windows.Application.Current.MainWindow, "Location not found.", "Cog", MessageBoxButton.OK, MessageBoxImage.Information);
 						break;
 					case GeoCoderStatusCode.G_GEO_SERVER_ERROR:
-						MessageBoxEx.Show(Application.Current.MainWindow, "Unable to connect to map server.", "Cog", MessageBoxButton.OK, MessageBoxImage.Error);
+						MessageBoxEx.Show(System.Windows.Application.Current.MainWindow, "Unable to connect to map server.", "Cog", MessageBoxButton.OK, MessageBoxImage.Error);
 						break;
 				}
 			}

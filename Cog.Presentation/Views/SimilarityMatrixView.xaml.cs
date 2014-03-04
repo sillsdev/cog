@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Threading;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
 using Xceed.Wpf.DataGrid;
 

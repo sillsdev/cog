@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:AlineViewModel}">

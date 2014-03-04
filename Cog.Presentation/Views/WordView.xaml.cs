@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Resources;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
 
 namespace SIL.Cog.Presentation.Views
@@ -22,7 +22,7 @@ namespace SIL.Cog.Presentation.Views
 		{
 			InitializeComponent();
 			ListBox.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler((sender, args) => args.Handled = false), true);
-			StreamResourceInfo closedhand = Application.GetResourceStream(new Uri("Images/closedhand.cur", UriKind.Relative));
+			StreamResourceInfo closedhand = System.Windows.Application.GetResourceStream(new Uri("Images/closedhand.cur", UriKind.Relative));
 			Debug.Assert(closedhand != null);
 			_closedHandCursor = new Cursor(closedhand.Stream);
 		}

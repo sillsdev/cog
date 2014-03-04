@@ -1,5 +1,5 @@
 using QuickGraph;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 
 namespace SIL.Cog.Presentation.Controls
 {

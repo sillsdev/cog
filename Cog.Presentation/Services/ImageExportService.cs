@@ -13,8 +13,8 @@ using GraphSharp.Algorithms.Layout.Simple.FDP;
 using GraphSharp.Algorithms.OverlapRemoval;
 using GraphSharp.Controls;
 using QuickGraph;
-using SIL.Cog.Applications.Services;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.Services;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Controls;
 
 namespace SIL.Cog.Presentation.Services
@@ -41,10 +41,10 @@ namespace SIL.Cog.Presentation.Services
 				switch (type)
 				{
 					case HierarchicalGraphType.Tree:
-						graphLayout = Application.Current.MainWindow.FindVisualChild<HierarchicalGraphLayout>();
+						graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<HierarchicalGraphLayout>();
 						break;
 					case HierarchicalGraphType.Dendrogram:
-						graphLayout = Application.Current.MainWindow.FindVisualChild<DendrogramLayout>();
+						graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<DendrogramLayout>();
 						break;
 				}
 
@@ -84,8 +84,8 @@ namespace SIL.Cog.Presentation.Services
 								Background = Brushes.White,
 								ScaleLabelsToZoom = 1.0
 							};
-						hgl.Resources[typeof(VertexControl)] = Application.Current.Resources["HierarchicalVertexControlStyle"];
-						hgl.Resources[typeof(EdgeControl)] = Application.Current.Resources["HierarchicalEdgeControlStyle"];
+						hgl.Resources[typeof(VertexControl)] = System.Windows.Application.Current.Resources["HierarchicalVertexControlStyle"];
+						hgl.Resources[typeof(EdgeControl)] = System.Windows.Application.Current.Resources["HierarchicalEdgeControlStyle"];
 						graphLayout = hgl;
 						scaleUpdate = scale => hgl.ScaleLabelsToZoom = scale;
 						break;
@@ -103,7 +103,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Network Graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var graphLayout = Application.Current.MainWindow.FindVisualChild<NetworkGraphLayout>();
+				var graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<NetworkGraphLayout>();
 				if (graphLayout == null)
 					throw new InvalidOperationException();
 
@@ -145,7 +145,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Map", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var mapControl = Application.Current.MainWindow.FindVisualChild<GMapControl>();
+				var mapControl = System.Windows.Application.Current.MainWindow.FindVisualChild<GMapControl>();
 				if (mapControl == null)
 					throw new InvalidOperationException();
 
@@ -178,7 +178,7 @@ namespace SIL.Cog.Presentation.Services
 						WeightFilter = frequencyFilter,
 						SyllablePosition = syllablePosition
 					};
-				graphLayout.Resources[typeof(EdgeControl)] = Application.Current.Resources["GlobalCorrespondenceEdgeControlStyle"];
+				graphLayout.Resources[typeof(EdgeControl)] = System.Windows.Application.Current.Resources["GlobalCorrespondenceEdgeControlStyle"];
 				SaveElement(graphLayout, result.FileName, null);
 				return true;
 			}
@@ -191,7 +191,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var graphLayout = Application.Current.MainWindow.FindVisualChild<GlobalCorrespondencesGraphLayout>();
+				var graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<GlobalCorrespondencesGraphLayout>();
 				if (graphLayout == null)
 					throw new InvalidOperationException();
 

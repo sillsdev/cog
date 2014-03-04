@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentsViewModel}" IsVisibleChanged="OnIsVisibleChanged"

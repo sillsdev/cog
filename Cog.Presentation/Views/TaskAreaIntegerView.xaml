@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              mc:Ignorable="d" 
              d:DesignHeight="80" d:DesignWidth="150" d:DataContext="{d:DesignInstance vm:TaskAreaIntegerViewModel}">
 	<HeaderedContentControl Margin="8,20,8,0" Header="{Binding DisplayName}" Style="{StaticResource TaskAreaHeaderStyle}">

@@ -2,7 +2,7 @@
 <Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:gsc="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
-             xmlns:vm="clr-namespace:SIL.Cog.Applications.ViewModels;assembly=SIL.Cog.Applications"
+             xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:p="clr-namespace:SIL.Cog.Presentation"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:sys="clr-namespace:System;assembly=mscorlib"

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.ViewModels;
 
 namespace SIL.Cog.Presentation.Views
 {

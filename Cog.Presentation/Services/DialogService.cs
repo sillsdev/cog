@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Microsoft.Win32;
-using SIL.Cog.Applications.Services;
+using SIL.Cog.Application.Services;
 
 namespace SIL.Cog.Presentation.Services
 {
@@ -46,7 +46,7 @@ namespace SIL.Cog.Presentation.Services
 
 		public bool CloseDialog(object viewModel)
 		{
-			Window dialog = Application.Current.Windows.Cast<Window>().SingleOrDefault(w => w.DataContext == viewModel);
+			Window dialog = System.Windows.Application.Current.Windows.Cast<Window>().SingleOrDefault(w => w.DataContext == viewModel);
 			if (dialog != null)
 			{
 				dialog.Close();
@@ -178,18 +178,18 @@ namespace SIL.Cog.Presentation.Services
 		/// </summary>
 		private Window FindOwnerWindow(object viewModel)
 		{
-			if (Application.Current.Windows.Count == 1)
-				return Application.Current.Windows[0];
+			if (System.Windows.Application.Current.Windows.Count == 1)
+				return System.Windows.Application.Current.Windows[0];
 
 			if (viewModel != null)
 			{
-				foreach (Window window in Application.Current.Windows)
+				foreach (Window window in System.Windows.Application.Current.Windows)
 				{
 					if (FindViewModelView(window, viewModel))
 						return window;
 				}
 			}
-			return Application.Current.MainWindow;
+			return System.Windows.Application.Current.MainWindow;
 		}
 
 		private bool FindViewModelView(DependencyObject obj, object viewModel)

@@ -13,8 +13,8 @@
 */
 
 using Autofac;
-using SIL.Cog.Applications.Services;
-using SIL.Cog.Applications.ViewModels;
+using SIL.Cog.Application.Services;
+using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Presentation.Services;
 using SIL.Machine.Annotations;

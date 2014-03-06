@@ -110,7 +110,7 @@ namespace SIL.Cog.Presentation.Views
 			var view = new DataGridCollectionView(vm.Varieties, typeof(SegmentsVarietyViewModel), false, false);
 			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(SegmentsVarietyViewModel)));
 			for (int i = 0; i < vm.Segments.Count; i++)
-				view.ItemProperties.Add(new DataGridItemProperty(vm.Segments[i].StrRep, string.Format("Segments[{0}].Frequency", i), typeof(string)));
+				view.ItemProperties.Add(new DataGridItemProperty(vm.Segments[i].StrRep, string.Format("Segments[{0}].Frequency", i), typeof(int)));
 			SegmentsDataGrid.ItemsSource = view;
 			SegmentsDataGrid.Items.SortDescriptions.Clear();
 

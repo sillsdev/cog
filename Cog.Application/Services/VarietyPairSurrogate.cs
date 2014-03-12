@@ -104,7 +104,7 @@ namespace SIL.Cog.Application.Services
 				}
 			}
 			vp.SoundChangeFrequencyDistribution = soundChanges;
-			IWordAligner aligner = project.WordAligners["primary"];
+			IWordAligner aligner = project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			int segmentCount = vp.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
 			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(soundChanges,

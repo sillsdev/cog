@@ -10,7 +10,7 @@ namespace SIL.Cog.Domain.Config.Components
 		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var threshold = (int) elem.Element(ConfigManager.Cog + "Threshold");
-			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
+			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableWordAligner");
 			Debug.Assert(alignerElem != null);
 			var alignerID = (string) alignerElem.Attribute("ref");
 			return new ThresholdSegmentMappings(project, threshold, alignerID);
@@ -20,7 +20,7 @@ namespace SIL.Cog.Domain.Config.Components
 		{
 			var identifier = (ThresholdSegmentMappings) component;
 			elem.Add(new XElement(ConfigManager.Cog + "Threshold", identifier.Threshold));
-			elem.Add(new XElement(ConfigManager.Cog + "ApplicableAligner", new XAttribute("ref", identifier.AlignerID)));
+			elem.Add(new XElement(ConfigManager.Cog + "ApplicableWordAligner", new XAttribute("ref", identifier.AlignerID)));
 		}
 	}
 }

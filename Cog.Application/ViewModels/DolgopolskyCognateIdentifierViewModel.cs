@@ -42,7 +42,7 @@ namespace SIL.Cog.Application.ViewModels
 		public override void Setup()
 		{
 			CogProject project = _projectService.Project;
-			IProcessor<VarietyPair> cognateIdentifier = project.VarietyPairProcessors["cognateIdentifier"];
+			ICognateIdentifier cognateIdentifier = project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier];
 			var dolgopolsky = cognateIdentifier as DolgopolskyCognateIdentifier;
 
 			IEnumerable<SoundClass> soundClasses;
@@ -78,9 +78,9 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new DolgopolskyCognateIdentifier(_segmentPool, _projectService.Project, _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
-				_initialEquivalenceThreshold, "primary");
-			_projectService.Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			var cognateIdentifier = new DolgopolskyCognateIdentifier(_segmentPool, _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
+				_initialEquivalenceThreshold);
+			_projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier] = cognateIdentifier;
 			return cognateIdentifier;
 		}
 	}

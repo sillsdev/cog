@@ -27,7 +27,7 @@ namespace SIL.Cog.Application.ViewModels
 			_varietyPair = varietyPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 
-			IWordAligner aligner = projectService.Project.WordAligners["primary"];
+			IWordAligner aligner = projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			_cognates = wordPairsFactory();
 			foreach (WordPair wp in _varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted))
 				_cognates.WordPairs.Add(new WordPairViewModel(aligner, wp, _areVarietiesInOrder));
@@ -52,7 +52,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void UpdateSelectedChangeWordPairs(WordPairsViewModel wordPairs)
 		{
-			IWordAligner aligner = _projectService.Project.WordAligners["primary"];
+			IWordAligner aligner = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			wordPairs.SelectedCorrespondenceWordPairs.Clear();
 			foreach (WordPairViewModel wordPair in wordPairs.WordPairs)
 			{

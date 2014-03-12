@@ -198,7 +198,7 @@ namespace SIL.Cog.Application.ViewModels
 				return;
 			}
 
-			IWordAligner aligner = _projectService.Project.WordAligners["primary"];
+			IWordAligner aligner = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			Alignment<Word, ShapeNode> alignment;
 			if (words.Count == 1)
 			{

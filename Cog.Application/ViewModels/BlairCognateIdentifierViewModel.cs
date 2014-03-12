@@ -36,7 +36,7 @@ namespace SIL.Cog.Application.ViewModels
 			_ignoredMappings.SelectedMapping = null;
 			_ignoredMappings.Mappings.Clear();
 
-			IProcessor<VarietyPair> cognateIdentifier = _projectService.Project.VarietyPairProcessors["cognateIdentifier"];
+			ICognateIdentifier cognateIdentifier = _projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier];
 			var blair = cognateIdentifier as BlairCognateIdentifier;
 			if (blair == null)
 			{
@@ -97,10 +97,10 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var cognateIdentifier = new BlairCognateIdentifier(_segmentPool, _projectService.Project, _ignoreRegularInsertionDeletion, _regularConsEqual,
-				"primary", new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
+			var cognateIdentifier = new BlairCognateIdentifier(_segmentPool, _ignoreRegularInsertionDeletion, _regularConsEqual,
+				new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
 				new TypeSegmentMappings((ISegmentMappings) _similarVowels.UpdateComponent(), (ISegmentMappings) _similarConsonants.UpdateComponent()));
-			_projectService.Project.VarietyPairProcessors["cognateIdentifier"] = cognateIdentifier;
+			_projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier] = cognateIdentifier;
 			return cognateIdentifier;
 		}
 	}

@@ -74,7 +74,8 @@ namespace SIL.Cog.Application.Services
 		{
 			FileDialogResult result = _dialogService.ShowSaveFileDialog(ownerViewModel, "Export Variety Pair", VarietyPairExporters.Keys);
 			if (result.IsValid)
-				return Export(ownerViewModel, result.FileName, stream => VarietyPairExporters[result.SelectedFileType].Export(stream, _projectService.Project.WordAligners["primary"], varietyPair));
+				return Export(ownerViewModel, result.FileName, stream => VarietyPairExporters[result.SelectedFileType].Export(stream,
+					_projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner], varietyPair));
 			return false;
 		}
 

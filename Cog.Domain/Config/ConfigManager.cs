@@ -144,6 +144,11 @@ namespace SIL.Cog.Domain.Config
 			foreach (XElement alignerElem in alignersElem.Elements(Cog + "WordAligner"))
 				LoadComponent(spanFactory, segmentPool, project, alignerElem, project.WordAligners);
 
+			XElement cognateIdentifiersElem = root.Element(Cog + "CognateIdentifiers");
+			Debug.Assert(cognateIdentifiersElem != null);
+			foreach (XElement cognateIdentifierElem in cognateIdentifiersElem.Elements(Cog + "CognateIdentifier"))
+				LoadComponent(spanFactory, segmentPool, project, cognateIdentifierElem, project.CognateIdentifiers);
+
 			var senses = new Dictionary<string, Sense>();
 			XElement sensesElem = root.Element(Cog + "Senses");
 			Debug.Assert(sensesElem != null);
@@ -280,6 +285,7 @@ namespace SIL.Cog.Domain.Config
 					new XElement(Cog + "Joiners", SaveSymbols(project.Segmenter.Joiners))));
 
 			root.Add(new XElement(Cog + "WordAligners", project.WordAligners.Select(kvp => SaveComponent("WordAligner", kvp.Key, kvp.Value))));
+			root.Add(new XElement(Cog + "CognateIdentifiers", project.CognateIdentifiers.Select(kvp => SaveComponent("CognateIdentifier", kvp.Key, kvp.Value))));
 
 			var senseIds = new Dictionary<Sense, string>();
 			var sensesElem = new XElement(Cog + "Senses");

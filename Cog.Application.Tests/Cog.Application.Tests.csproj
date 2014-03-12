@@ -34,16 +34,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
+      <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight.WPF4, Version=4.2.30.23173, Culture=neutral, PublicKeyToken=63eb5c012e0b3c1c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
-    <Reference Include="NSubstitute, Version=1.7.1.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="NSubstitute, Version=1.7.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NSubstitute.1.7.1.0\lib\NET40\NSubstitute.dll</HintPath>
+      <HintPath>..\packages\NSubstitute.1.7.2.0\lib\NET40\NSubstitute.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -51,8 +55,20 @@
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
+    <Reference Include="QuickGraph.Data">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.XML" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -63,7 +79,6 @@
     <Compile Include="Import\TextWordListsImporterTests.cs" />
     <Compile Include="Import\WordSurv6WordListsImporterTests.cs" />
     <Compile Include="Import\WordSurv7WordListsImporterTests.cs" />
-    <Compile Include="TestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\GlobalCorrespondencesViewModelTests.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModelTests.cs" />
@@ -76,7 +91,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="TestProject.cogx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cog.Application\Cog.Application.csproj">
@@ -86,6 +100,10 @@
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
       <Name>Cog.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cog.TestUtils\Cog.TestUtils.csproj">
+      <Project>{2A62C29E-F51F-46D4-AF16-475DC4C2069B}</Project>
+      <Name>Cog.TestUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\graphsharp\Source\Graph#\GraphSharp.csproj">
       <Project>{9C59C516-FCA0-4FCF-AE11-E20F0F1B1949}</Project>

@@ -5,16 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4CC70FC7-89DB-4D3D-8D7E-D6185D9DEEF2}</ProjectGuid>
+    <ProjectGuid>{2A62C29E-F51F-46D4-AF16-475DC4C2069B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SIL.Cog.Domain.Tests</RootNamespace>
-    <AssemblyName>SIL.Cog.Domain.Tests</AssemblyName>
+    <RootNamespace>SIL.Cog.TestUtils</RootNamespace>
+    <AssemblyName>SIL.Cog.TestUtils</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,16 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSubstitute">
-      <HintPath>..\packages\NSubstitute.1.7.2.0\lib\NET40\NSubstitute.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -51,20 +39,14 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Components\BlairCognateIdentifierTests.cs" />
-    <Compile Include="Components\CognicityWordPairGeneratorTests.cs" />
-    <Compile Include="Components\ListSegmentMappingsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SegmenterTests.cs" />
+    <Compile Include="TestHelpers.cs" />
+    <Compile Include="TestWordAligner.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
       <Name>Cog.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Cog.TestUtils\Cog.TestUtils.csproj">
-      <Project>{2A62C29E-F51F-46D4-AF16-475DC4C2069B}</Project>
-      <Name>Cog.TestUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
       <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
@@ -76,11 +58,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <EmbeddedResource Include="TestProject.cogx" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

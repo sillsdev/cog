@@ -28,20 +28,20 @@ namespace SIL.Cog.Domain.Components
 
 		public IWordAlignerResult Compute(Word word1, Word word2)
 		{
-			return new PairwiseWordAlignerResult(Scorer, _settings, word1, word2);
+			return new PairwiseWordAlignerResult(this, Scorer, _settings, word1, word2);
 		}
 
 		public IWordAlignerResult Compute(WordPair wordPair)
 		{
-			return new PairwiseWordAlignerResult(Scorer, _settings, wordPair.Word1, wordPair.Word2);
+			return new PairwiseWordAlignerResult(this, Scorer, _settings, wordPair.Word1, wordPair.Word2);
 		}
 
 		public IWordAlignerResult Compute(IEnumerable<Word> words)
 		{
 			Word[] wordArray = words.ToArray();
 			if (wordArray.Length == 2)
-				return new PairwiseWordAlignerResult(Scorer, new WordPairAlignerSettings(), wordArray[0], wordArray[1]);
-			return new MultipleWordAlignerResult(Scorer, wordArray);
+				return new PairwiseWordAlignerResult(this, Scorer, new WordPairAlignerSettings(), wordArray[0], wordArray[1]);
+			return new MultipleWordAlignerResult(this, Scorer, wordArray);
 		}
 
 		public WordPairAlignerSettings Settings

@@ -35,7 +35,7 @@ namespace SIL.Cog.Application.Services
 
 		public SoundContext ToSoundContext(CogProject project, SegmentPool segmentPool)
 		{
-			IWordAligner aligner = project.WordAligners["primary"];
+			IWordAligner aligner = project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			SoundClass leftEnv = LeftEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == LeftEnvironment);
 			SoundClass rightEnv = RightEnvironment == null ? null : aligner.ContextualSoundClasses.First(sc => sc.Name == RightEnvironment);
 			return new SoundContext(leftEnv, new Ngram<Segment>(_target.Select(segmentPool.GetExisting)), rightEnv);

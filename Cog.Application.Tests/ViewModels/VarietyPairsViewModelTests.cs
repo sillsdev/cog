@@ -9,6 +9,7 @@ using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
+using SIL.Cog.TestUtils;
 using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
@@ -66,7 +67,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			Messenger.Default.Send(new PerformingComparisonMessage());
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
-			var wordPairGenerator = new WordPairGenerator(project, "primary");
+			var wordPairGenerator = new SimpleWordPairGenerator(segmentPool, project, 0.3, ComponentIdentifiers.PrimaryWordAligner);
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);
@@ -123,7 +124,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			analysisService.SegmentAll();
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
-			var wordPairGenerator = new WordPairGenerator(project, "primary");
+			var wordPairGenerator = new SimpleWordPairGenerator(segmentPool, project, 0.3, ComponentIdentifiers.PrimaryWordAligner);
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);
@@ -283,7 +284,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			analysisService.SegmentAll();
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
-			var wordPairGenerator = new WordPairGenerator(project, "primary");
+			var wordPairGenerator = new SimpleWordPairGenerator(segmentPool, project, 0.3, ComponentIdentifiers.PrimaryWordAligner);
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);

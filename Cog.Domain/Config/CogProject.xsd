@@ -81,6 +81,9 @@
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:string" use="required" />
 	</xs:complexType>
+	<xs:complexType name="CognateIdentifierBase" abstract="true">
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
 	<xs:complexType name="ProjectProcessorBase" abstract="true">
 		<xs:attribute name="id" type="xs:string" use="required" />
 	</xs:complexType>
@@ -91,7 +94,12 @@
 		<xs:attribute name="id" type="xs:string" use="required" />
 	</xs:complexType>
 	<xs:complexType name="SegmentMappingsBase" abstract="true" />
-	<xs:element name="ApplicableAligner">
+	<xs:element name="ApplicableWordAligner">
+		<xs:complexType>
+			<xs:attribute name="ref" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ApplicableCognateIdentifier">
 		<xs:complexType>
 			<xs:attribute name="ref" type="xs:string" use="required" />
 		</xs:complexType>
@@ -173,17 +181,32 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="EMSoundChangeInducer">
+	<xs:complexType name="SimpleWordPairGenerator">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element ref="ApplicableWordAligner" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CognicityWordPairGenerator">
 		<xs:complexContent>
 			<xs:extension base="VarietyPairProcessorBase">
 				<xs:sequence>
 					<xs:element name="InitialAlignmentThreshold" type="xs:double" />
-					<xs:element ref="ApplicableAligner" />
-					<xs:element name="CognateIdentifier">
-						<xs:complexType>
-							<xs:attribute name="ref" type="xs:string" use="required" />
-						</xs:complexType>
-					</xs:element>
+					<xs:element ref="ApplicableWordAligner" />
+					<xs:element ref="ApplicableCognateIdentifier" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EMSoundChangeInducer">
+		<xs:complexContent>
+			<xs:extension base="VarietyPairProcessorBase">
+				<xs:sequence>
+					<xs:element ref="ApplicableWordAligner" />
+					<xs:element ref="ApplicableCognateIdentifier" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -224,16 +247,15 @@
 			<xs:extension base="SegmentMappingsBase">
 				<xs:sequence>
 					<xs:element name="Threshold" type="xs:int" />
-					<xs:element ref="ApplicableAligner" />
+					<xs:element ref="ApplicableWordAligner" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 	<xs:complexType name="BlairCognateIdentifier">
 		<xs:complexContent>
-			<xs:extension base="VarietyPairProcessorBase">
+			<xs:extension base="CognateIdentifierBase">
 				<xs:sequence>
-					<xs:element ref="ApplicableAligner" />
 					<xs:element name="IgnoreRegularInsertionDeletion" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 					<xs:element name="RegularConsonantsAreEqual" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 					<xs:element name="IgnoredCorrespondences" type="SegmentMappingsBase" />
@@ -244,7 +266,7 @@
 	</xs:complexType>
 	<xs:complexType name="DolgopolskyCognateIdentifier">
 		<xs:complexContent>
-			<xs:extension base="VarietyPairProcessorBase">
+			<xs:extension base="CognateIdentifierBase">
 				<xs:sequence>
 					<xs:element name="SoundClasses">
 						<xs:complexType>
@@ -257,17 +279,15 @@
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="InitialEquivalenceThreshold" type="xs:int" />
-					<xs:element ref="ApplicableAligner" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 	<xs:complexType name="ThresholdCognateIdentifier">
 		<xs:complexContent>
-			<xs:extension base="VarietyPairProcessorBase">
+			<xs:extension base="CognateIdentifierBase">
 				<xs:sequence>
 					<xs:element name="Threshold" type="xs:double" />
-					<xs:element ref="ApplicableAligner" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -312,6 +332,13 @@
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="WordAligner" type="WordAlignerBase" minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CognateIdentifiers">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CognateIdentifier" type="CognateIdentifierBase" minOccurs="0" maxOccurs="unbounded" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -456,20 +483,20 @@
 			<xs:selector xpath="Word" />
 			<xs:field xpath="@sense" />
 		</xs:keyref>
-		<xs:key name="AlignerKey">
-			<xs:selector xpath="Aligner" />
+		<xs:key name="WordAlignerKey">
+			<xs:selector xpath="WordAligner" />
 			<xs:field xpath="@id" />
 		</xs:key>
-		<xs:keyref name="AlignerKeyRef" refer="AlignerKey">
-			<xs:selector xpath="ApplicableAligner" />
+		<xs:keyref name="WordAlignerKeyRef" refer="WordAlignerKey">
+			<xs:selector xpath="ApplicableWordAligner" />
 			<xs:field xpath="@ref" />
 		</xs:keyref>
 		<xs:key name="CognateIdentifierKey">
-			<xs:selector xpath="VarietyPairProcessor" />
+			<xs:selector xpath="CognateIdentifier" />
 			<xs:field xpath="@id" />
 		</xs:key>
 		<xs:keyref name="CognateIdentifierKeyRef" refer="CognateIdentifierKey">
-			<xs:selector xpath="CognateIdentifier" />
+			<xs:selector xpath="ApplicableCognateIdentifier" />
 			<xs:field xpath="@ref" />
 		</xs:keyref>
 		<xs:keyref name="RelevantFeatureKeyRef" refer="FeatureKey">

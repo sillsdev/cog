@@ -1,26 +1,21 @@
-using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
 using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {
-	public class ThresholdCognateIdentifierConfig : IComponentConfig<IProcessor<VarietyPair>>
+	public class ThresholdCognateIdentifierConfig : IComponentConfig<ICognateIdentifier>
 	{
-		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public ICognateIdentifier Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var threshold = (double) elem.Element(ConfigManager.Cog + "Threshold");
-			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableAligner");
-			Debug.Assert(alignerElem != null);
-			var alignerID = (string) alignerElem.Attribute("ref");
-			return new ThresholdCognateIdentifier(project, threshold, alignerID);
+			return new ThresholdCognateIdentifier(threshold);
 		}
 
-		public void Save(IProcessor<VarietyPair> component, XElement elem)
+		public void Save(ICognateIdentifier component, XElement elem)
 		{
 			var identifier = (ThresholdCognateIdentifier) component;
 			elem.Add(new XElement(ConfigManager.Cog + "Threshold", identifier.Threshold));
-			elem.Add(new XElement(ConfigManager.Cog + "ApplicableAligner", new XAttribute("ref", identifier.AlignerID)));
 		}
 	}
 }

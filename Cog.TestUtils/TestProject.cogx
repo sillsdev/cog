@@ -2015,12 +2015,12 @@
 			</RelevantFeatures>
 		</WordAligner>
 	</WordAligners>
+	<CognateIdentifiers />
 	<Senses />
 	<Varieties />
 	<ProjectProcessors />
 	<VarietyProcessors>
-		<VarietyProcessor xsi:type="SimpleSyllabifier" id="syllabifier">
-		</VarietyProcessor>
+		<VarietyProcessor id="syllabifier" xsi:type="SimpleSyllabifier" />
 	</VarietyProcessors>
 	<VarietyPairProcessors />
 </CogProject>

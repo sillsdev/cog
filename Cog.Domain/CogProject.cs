@@ -16,7 +16,8 @@ namespace SIL.Cog.Domain
 		private readonly KeyedBulkObservableList<string, Sense> _senses;
 		private readonly VarietyPairCollection _varietyPairs;
 
-		private readonly ObservableDictionary<string, IWordAligner> _wordAligners; 
+		private readonly ObservableDictionary<string, IWordAligner> _wordAligners;
+		private readonly ObservableDictionary<string, ICognateIdentifier> _cognateIdentifiers; 
 
 		private readonly ObservableDictionary<string, IProcessor<CogProject>> _projectProcessors; 
 		private readonly ObservableDictionary<string, IProcessor<Variety>> _varietyProcessors;
@@ -32,6 +33,7 @@ namespace SIL.Cog.Domain
 			_varietyPairs = new VarietyPairCollection();
 
 			_wordAligners = new ObservableDictionary<string, IWordAligner>();
+			_cognateIdentifiers = new ObservableDictionary<string, ICognateIdentifier>();
 
 			_projectProcessors = new ObservableDictionary<string, IProcessor<CogProject>>();
 			_varietyProcessors = new ObservableDictionary<string, IProcessor<Variety>>();
@@ -115,6 +117,11 @@ namespace SIL.Cog.Domain
 		public ObservableDictionary<string, IWordAligner> WordAligners
 		{
 			get { return _wordAligners; }
+		}
+
+		public ObservableDictionary<string, ICognateIdentifier> CognateIdentifiers
+		{
+			get { return _cognateIdentifiers; }
 		}
 
 		public ObservableDictionary<string, IProcessor<CogProject>> ProjectProcessors

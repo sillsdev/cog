@@ -42,7 +42,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override void Setup()
 		{
-			var aligner = (Aline) _projectService.Project.WordAligners["primary"];
+			var aligner = (Aline) _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			var features = new List<RelevantFeatureViewModel>();
 			foreach (KeyValuePair<SymbolicFeature, int> kvp in aligner.FeatureWeights)
 			{
@@ -139,7 +139,7 @@ namespace SIL.Cog.Application.ViewModels
 
 			var aligner = new Aline(_segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
 				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass)});
-			_projectService.Project.WordAligners["primary"] = aligner;
+			_projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner] = aligner;
 			return aligner;
 		}
 	}

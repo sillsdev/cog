@@ -8,6 +8,13 @@ namespace SIL.Cog.Domain.Components
 {
 	internal abstract class WordAlignerResultBase : IWordAlignerResult
 	{
+		private readonly IWordAligner _wordAligner;
+
+		protected WordAlignerResultBase(IWordAligner wordAligner)
+		{
+			_wordAligner = wordAligner;
+		}
+
 		protected static IEnumerable<ShapeNode> GetNodes(Word word, out int startIndex, out int count)
 		{
 			startIndex = 0;
@@ -25,6 +32,14 @@ namespace SIL.Cog.Domain.Components
 			return nodes;
 		}
 
+		public IWordAligner WordAligner
+		{
+			get { return _wordAligner; }
+		}
+
+		public abstract IReadOnlyList<Word> Words { get; }
+
 		public abstract IEnumerable<Alignment<Word, ShapeNode>> GetAlignments();
+		public abstract int BestRawScore { get; }
 	}
 }

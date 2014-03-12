@@ -177,7 +177,7 @@ namespace SIL.Cog.Application.ViewModels
 
 						var seg1 = (GlobalSegmentVertex) _selectedCorrespondence.Source;
 						var seg2 = (GlobalSegmentVertex) _selectedCorrespondence.Target;
-						IWordAligner aligner = _projectService.Project.WordAligners["primary"];
+						IWordAligner aligner = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 						foreach (WordPair wp in _selectedCorrespondence.DomainWordPairs)
 						{
 							var vm = new WordPairViewModel(aligner, wp, true);

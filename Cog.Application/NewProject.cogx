@@ -2015,6 +2015,23 @@
 			</RelevantFeatures>
 		</WordAligner>
 	</WordAligners>
+	<CognateIdentifiers>
+		<CognateIdentifier id="primary" xsi:type="BlairCognateIdentifier">
+			<IgnoredCorrespondences xsi:type="ListSegmentMappings">
+				<Mappings />
+			</IgnoredCorrespondences>
+			<SimilarSegments xsi:type="TypeSegmentMappings">
+				<VowelMappings xsi:type="ThresholdSegmentMappings">
+					<Threshold>500</Threshold>
+					<ApplicableWordAligner ref="primary" />
+				</VowelMappings>
+				<ConsonantMappings xsi:type="ThresholdSegmentMappings">
+					<Threshold>600</Threshold>
+					<ApplicableWordAligner ref="primary" />
+				</ConsonantMappings>
+			</SimilarSegments>
+		</CognateIdentifier>
+	</CognateIdentifiers>
 	<Senses />
 	<Varieties />
 	<ProjectProcessors />
@@ -2121,26 +2138,10 @@
 		</VarietyProcessor>
 	</VarietyProcessors>
 	<VarietyPairProcessors>
-		<VarietyPairProcessor id="soundChangeInducer" xsi:type="EMSoundChangeInducer">
+		<VarietyPairProcessor id="wordPairGenerator" xsi:type="CognicityWordPairGenerator">
 			<InitialAlignmentThreshold>0.3</InitialAlignmentThreshold>
-			<ApplicableAligner ref="primary" />
-			<CognateIdentifier ref="cognateIdentifier" />
-		</VarietyPairProcessor>
-		<VarietyPairProcessor id="cognateIdentifier" xsi:type="BlairCognateIdentifier">
-			<ApplicableAligner ref="primary" />
-			<IgnoredCorrespondences xsi:type="ListSegmentMappings">
-				<Mappings />
-			</IgnoredCorrespondences>
-			<SimilarSegments xsi:type="TypeSegmentMappings">
-				<VowelMappings xsi:type="ThresholdSegmentMappings">
-					<Threshold>500</Threshold>
-					<ApplicableAligner ref="primary" />
-				</VowelMappings>
-				<ConsonantMappings xsi:type="ThresholdSegmentMappings">
-					<Threshold>600</Threshold>
-					<ApplicableAligner ref="primary" />
-				</ConsonantMappings>
-			</SimilarSegments>
+			<ApplicableWordAligner ref="primary" />
+			<ApplicableCognateIdentifier ref="primary" />
 		</VarietyPairProcessor>
 	</VarietyPairProcessors>
 </CogProject>

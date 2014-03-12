@@ -33,7 +33,7 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			CogProject project = _projectService.Project;
 			IEnumerable<SonorityClass> sonorityScale;
-			var syllabifier = (SimpleSyllabifier) project.VarietyProcessors["syllabifier"];
+			var syllabifier = (SimpleSyllabifier) project.VarietyProcessors[ComponentIdentifiers.Syllabifier];
 			var sspSyllabifier = syllabifier as SspSyllabifier;
 			bool automaticSyllabificationEnabled;
 			bool vowelsSameSonorityTautosyllabic;
@@ -119,7 +119,7 @@ namespace SIL.Cog.Application.ViewModels
 			SimpleSyllabifier syllabifier = _automaticSyllabificationEnabled
 				? new SspSyllabifier(_combineVowels, _combineConsonants, _vowelsSameSonorityTautosyllabic, _segmentPool, _sonorityClasses.SoundClasses.Select(sc => new SonorityClass(sc.Sonority, sc.DomainSoundClass)))
 				: new SimpleSyllabifier(_combineVowels, _combineConsonants);
-			_projectService.Project.VarietyProcessors["syllabifier"] = syllabifier;
+			_projectService.Project.VarietyProcessors[ComponentIdentifiers.Syllabifier] = syllabifier;
 
 			_analysisService.SegmentAll();
 			return syllabifier;

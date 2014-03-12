@@ -8,6 +8,7 @@ using System.Linq;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
+using SIL.Cog.TestUtils;
 using SIL.Collections;
 using SIL.Machine.Annotations;
 

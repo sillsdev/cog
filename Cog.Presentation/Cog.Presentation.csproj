@@ -191,6 +191,12 @@
       <DependentUpon>AddUnnaturalClassSegmentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\BusyCursor.cs" />
+    <Compile Include="Views\CognateIdentifierOptionsView.xaml.cs">
+      <DependentUpon>CognateIdentifierOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ComponentOptionsView.xaml.cs">
+      <DependentUpon>ComponentOptionsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DolgopolskyCognateIdentifierView.xaml.cs">
       <DependentUpon>DolgopolskyCognateIdentifierView.xaml</DependentUpon>
     </Compile>
@@ -279,9 +285,6 @@
     </Compile>
     <Compile Include="Views\EditVarietyDialog.xaml.cs">
       <DependentUpon>EditVarietyDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\EMSoundChangeInducerView.xaml.cs">
-      <DependentUpon>EMSoundChangeInducerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ListSimilarSegmentIdentifierView.xaml.cs">
       <DependentUpon>ListSimilarSegmentIdentifierView.xaml</DependentUpon>
@@ -385,6 +388,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AddUnnaturalClassSegmentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CognateIdentifierOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ComponentOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -493,10 +504,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditSenseDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\EMSoundChangeInducerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

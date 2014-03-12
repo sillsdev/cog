@@ -86,7 +86,6 @@ namespace SIL.Cog.Presentation
 	        builder.RegisterType<SyllabifierViewModel>().SingleInstance();
 	        builder.RegisterType<PoorMansAffixIdentifierViewModel>().SingleInstance();
 	        builder.RegisterType<AlineViewModel>().SingleInstance();
-	        builder.RegisterType<EMSoundChangeInducerViewModel>().SingleInstance();
 	        builder.RegisterType<CognateIdentifierOptionsViewModel>().SingleInstance();
 	        builder.RegisterType<BlairCognateIdentifierViewModel>().SingleInstance();
 	        builder.RegisterType<ThresholdCognateIdentifierViewModel>().SingleInstance();

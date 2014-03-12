@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
+using SIL.Cog.TestUtils;
 using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.ViewModels

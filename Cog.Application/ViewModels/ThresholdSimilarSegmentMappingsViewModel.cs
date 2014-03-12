@@ -36,7 +36,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override object UpdateComponent()
 		{
-			return new ThresholdSegmentMappings(_projectService.Project, _threshold, "primary");
+			return new ThresholdSegmentMappings(_projectService.Project, _threshold, ComponentIdentifiers.PrimaryWordAligner);
 		}
 	}
 }

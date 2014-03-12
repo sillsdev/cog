@@ -46,7 +46,7 @@ namespace SIL.Cog.Application.Services
 			return new[]
 				{
 					new VarietySegmenter(project.Segmenter),
-					project.VarietyProcessors["syllabifier"],
+					project.VarietyProcessors[ComponentIdentifiers.Syllabifier],
 					new SegmentFrequencyDistributionCalculator(_segmentPool)
 				};
 		}
@@ -94,11 +94,11 @@ namespace SIL.Cog.Application.Services
 		{
 			CogProject project = _projectService.Project;
 			var processors = new List<IProcessor<Variety>> {new AffixStripper(project.Segmenter)};
-			IProcessor<Variety> syllabifier = project.VarietyProcessors["syllabifier"];
+			IProcessor<Variety> syllabifier = project.VarietyProcessors[ComponentIdentifiers.Syllabifier];
 			if (method != StemmingMethod.Manual)
 			{
 				processors.Add(syllabifier);
-				processors.Add(_projectService.Project.VarietyProcessors["affixIdentifier"]);
+				processors.Add(_projectService.Project.VarietyProcessors[ComponentIdentifiers.AffixIdentifier]);
 			}
 			processors.Add(new Stemmer(_spanFactory, project.Segmenter));
 			processors.Add(syllabifier);
@@ -152,12 +152,12 @@ namespace SIL.Cog.Application.Services
 		private IEnumerable<IProcessor<VarietyPair>> GetCompareProcessors()
 		{
 			CogProject project = _projectService.Project;
-			var processors = new List<IProcessor<VarietyPair>> {new WordPairGenerator(project, "primary")};
+			var processors = new List<IProcessor<VarietyPair>> {project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator]};
 			IProcessor<VarietyPair> similarSegmentIdentifier;
-			if (project.VarietyPairProcessors.TryGetValue("similarSegmentIdentifier", out similarSegmentIdentifier))
+			if (project.VarietyPairProcessors.TryGetValue(ComponentIdentifiers.SimilarSegmentIdentifier, out similarSegmentIdentifier))
 				processors.Add(similarSegmentIdentifier);
-			processors.Add(project.VarietyPairProcessors["soundChangeInducer"]);
-			processors.Add(new SoundCorrespondenceIdentifier(_segmentPool, project, "primary"));
+			processors.Add(new EMSoundChangeInducer(_segmentPool, project, ComponentIdentifiers.PrimaryWordAligner, ComponentIdentifiers.PrimaryCognateIdentifier));
+			processors.Add(new SoundCorrespondenceIdentifier(_segmentPool, project, ComponentIdentifiers.PrimaryWordAligner));
 			return processors;
 		}
 	}

@@ -6,18 +6,21 @@ namespace SIL.Cog.Application.ViewModels
 {
 	public class CognateIdentifierOptionsViewModel : ComponentOptionsViewModel
 	{
+		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
+		private double _initialAlignmentThreshold;
 
-		public CognateIdentifierOptionsViewModel(IProjectService projectService, BlairCognateIdentifierViewModel blairCognateIdentifier, ThresholdCognateIdentifierViewModel thresholdCognateIdentifier,
-			DolgopolskyCognateIdentifierViewModel dolgopolskyCognateIdentifier)
+		public CognateIdentifierOptionsViewModel(SegmentPool segmentPool, IProjectService projectService, BlairCognateIdentifierViewModel blairCognateIdentifier,
+			ThresholdCognateIdentifierViewModel thresholdCognateIdentifier, DolgopolskyCognateIdentifierViewModel dolgopolskyCognateIdentifier)
 			: base("Likely cognate identification", "Method", blairCognateIdentifier, thresholdCognateIdentifier, dolgopolskyCognateIdentifier)
 		{
+			_segmentPool = segmentPool;
 			_projectService = projectService;
 		}
 
 		public override void Setup()
 		{
-			IProcessor<VarietyPair> cognateIdentifier = _projectService.Project.VarietyPairProcessors["cognateIdentifier"];
+			ICognateIdentifier cognateIdentifier = _projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier];
 			int index = -1;
 			if (cognateIdentifier is BlairCognateIdentifier)
 				index = 0;
@@ -26,7 +29,25 @@ namespace SIL.Cog.Application.ViewModels
 			else if (cognateIdentifier is DolgopolskyCognateIdentifier)
 				index = 2;
 			SelectedOption = Options[index];
+
+			var wordPairGenerator = (CognicityWordPairGenerator) _projectService.Project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator];
+			Set(() => InitialAlignmentThreshold, ref _initialAlignmentThreshold, wordPairGenerator.InitialAlignmentThreshold);
+
 			base.Setup();
+		}
+
+		public double InitialAlignmentThreshold
+		{
+			get { return _initialAlignmentThreshold; }
+			set { SetChanged(() => InitialAlignmentThreshold, ref _initialAlignmentThreshold, value); }
+		}
+
+		public override object UpdateComponent()
+		{
+			var wordPairGenerator = new CognicityWordPairGenerator(_segmentPool, _projectService.Project, _initialAlignmentThreshold,
+				ComponentIdentifiers.PrimaryWordAligner, ComponentIdentifiers.PrimaryCognateIdentifier);
+			_projectService.Project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator] = wordPairGenerator;
+			return base.UpdateComponent();
 		}
 	}
 }

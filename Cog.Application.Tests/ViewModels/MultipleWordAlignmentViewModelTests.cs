@@ -8,6 +8,7 @@ using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
+using SIL.Cog.TestUtils;
 using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
@@ -71,7 +72,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var varietyPairGenerator = new VarietyPairGenerator();
 			varietyPairGenerator.Process(project);
-			var wordPairGenerator = new WordPairGenerator(project, "primary");
+			var wordPairGenerator = new SimpleWordPairGenerator(segmentPool, project, 0.3, ComponentIdentifiers.PrimaryWordAligner);
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				wordPairGenerator.Process(vp);

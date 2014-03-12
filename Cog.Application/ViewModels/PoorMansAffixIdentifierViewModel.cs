@@ -23,7 +23,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override void Setup()
 		{
-			var identifier = (PoorMansAffixIdentifier) _projectService.Project.VarietyProcessors["affixIdentifier"];
+			var identifier = (PoorMansAffixIdentifier) _projectService.Project.VarietyProcessors[ComponentIdentifiers.AffixIdentifier];
 			Set(() => Threshold, ref _threshold, (int) identifier.Threshold);
 			Set(() => MaxAffixLength, ref _maxAffixLength, identifier.MaxAffixLength);
 		}
@@ -43,7 +43,7 @@ namespace SIL.Cog.Application.ViewModels
 		public override object UpdateComponent()
 		{
 			var affixIdentifier = new PoorMansAffixIdentifier(_spanFactory, _segmentPool, _threshold, _maxAffixLength);
-			_projectService.Project.VarietyProcessors["affixIdentifier"] = affixIdentifier;
+			_projectService.Project.VarietyProcessors[ComponentIdentifiers.AffixIdentifier] = affixIdentifier;
 			return affixIdentifier;
 		}
 	}

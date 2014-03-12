@@ -76,8 +76,11 @@
     <Compile Include="Components\TypeSegmentMappings.cs" />
     <Compile Include="Components\PoorMansAffixIdentifier.cs" />
     <Compile Include="Components\VarietyPairGenerator.cs" />
-    <Compile Include="Components\WordPairGenerator.cs" />
+    <Compile Include="Components\CognicityWordPairGenerator.cs" />
+    <Compile Include="Components\SimpleWordPairGenerator.cs" />
+    <Compile Include="Config\Components\CognicityWordPairGeneratorConfig.cs" />
     <Compile Include="Config\Components\SimpleSyllabifierConfig.cs" />
+    <Compile Include="Config\Components\SimpleWordPairGeneratorConfig.cs" />
     <Compile Include="Config\Components\SspSyllabifierConfig.cs" />
     <Compile Include="Config\Components\WordAlignerConfigBase.cs" />
     <Compile Include="Config\Components\AlineConfig.cs" />
@@ -94,6 +97,7 @@
     <Compile Include="Config\IComponentConfig.cs" />
     <Compile Include="GeographicCoordinate.cs" />
     <Compile Include="GeographicRegion.cs" />
+    <Compile Include="ICognateIdentifier.cs" />
     <Compile Include="SoundCorrespondence.cs" />
     <Compile Include="SoundCorrespondenceCollection.cs" />
     <Compile Include="CogFeatureSystem.cs" />

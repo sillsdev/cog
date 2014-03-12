@@ -38,7 +38,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip.Reduced">
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -64,6 +64,7 @@
     <Compile Include="Collections\MirroredBindableCollection.cs" />
     <Compile Include="Collections\MirroredBindableList.cs" />
     <Compile Include="Collections\VarietySenseViewModelCollection.cs" />
+    <Compile Include="ComponentIdentifiers.cs" />
     <Compile Include="Export\ICognateSetsExporter.cs" />
     <Compile Include="Export\ISegmentFrequenciesExporter.cs" />
     <Compile Include="Export\ISimilarityMatrixExporter.cs" />
@@ -132,7 +133,6 @@
     <Compile Include="ViewModels\EditSoundClassViewModel.cs" />
     <Compile Include="ViewModels\EditUnnaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
-    <Compile Include="ViewModels\EMSoundChangeInducerViewModel.cs" />
     <Compile Include="ViewModels\ExportGlobalCorrespondencesChartViewModel.cs" />
     <Compile Include="ViewModels\ExportHierarchicalGraphViewModel.cs" />
     <Compile Include="ViewModels\ExportNetworkGraphViewModel.cs" />

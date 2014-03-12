@@ -60,6 +60,7 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				_selectedSense.DomainSense.Gloss = vm.Gloss;
 				_selectedSense.DomainSense.Category = vm.Category;
+				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}
 		}
 

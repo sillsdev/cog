@@ -6,10 +6,10 @@ using SIL.Collections;
 
 namespace SIL.Cog.Application.Collections
 {
-	public class VarietySenseViewModelCollection : MirroredBindableList<Sense, WordListsVarietySenseViewModel>
+	public class VarietyMeaningViewModelCollection : MirroredBindableList<Meaning, WordListsVarietyMeaningViewModel>
 	{
-		public VarietySenseViewModelCollection(IObservableList<Sense> senses, WordCollection words, Func<Sense, WordListsVarietySenseViewModel> viewModelFactory)
-			: base(senses, viewModelFactory, vm => vm.DomainSense)
+		public VarietyMeaningViewModelCollection(IObservableList<Meaning> meanings, WordCollection words, Func<Meaning, WordListsVarietyMeaningViewModel> viewModelFactory)
+			: base(meanings, viewModelFactory, vm => vm.DomainMeaning)
 		{
 			words.CollectionChanged += WordsChanged;
 		}
@@ -21,7 +21,7 @@ namespace SIL.Cog.Application.Collections
 				case NotifyCollectionChangedAction.Add:
 					foreach (Word word in e.NewItems)
 					{
-						WordListsVarietySenseViewModel vm = this[word.Sense];
+						WordListsVarietyMeaningViewModel vm = this[word.Meaning];
 						if (!vm.DomainWords.Contains(word))
 							vm.DomainWords.Add(word);
 					}
@@ -30,13 +30,13 @@ namespace SIL.Cog.Application.Collections
 				case NotifyCollectionChangedAction.Remove:
 					foreach (Word word in e.OldItems)
 					{
-						WordListsVarietySenseViewModel vm = this[word.Sense];
+						WordListsVarietyMeaningViewModel vm = this[word.Meaning];
 						vm.DomainWords.Remove(word);
 					}
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
-					foreach (WordListsVarietySenseViewModel vm in this)
+					foreach (WordListsVarietyMeaningViewModel vm in this)
 						vm.DomainWords.Clear();
 					break;
 			}

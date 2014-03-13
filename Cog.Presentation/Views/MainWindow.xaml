@@ -101,8 +101,8 @@
                                             <DataTemplate DataType="{x:Type vm:VarietiesViewModel}">
                                                 <v:VarietiesView />
                                             </DataTemplate>
-                                            <DataTemplate DataType="{x:Type vm:SensesViewModel}">
-                                                <v:SensesView />
+                                            <DataTemplate DataType="{x:Type vm:MeaningsViewModel}">
+                                                <v:MeaningsView />
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type vm:SettingsWorkspaceViewModelBase}">
                                                 <v:SettingsView />

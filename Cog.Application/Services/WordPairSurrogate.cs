@@ -18,7 +18,7 @@ namespace SIL.Cog.Application.Services
 
 		public WordPairSurrogate(WordPair wp)
 		{
-			Sense = wp.Sense.Gloss;
+			Meaning = wp.Meaning.Gloss;
 			Word1 = wp.Word1.StrRep;
 			Word2 = wp.Word2.StrRep;
 			_alignmentNotes = wp.AlignmentNotes.ToList();
@@ -28,7 +28,7 @@ namespace SIL.Cog.Application.Services
 		}
 
 		[ProtoMember(1)]
-		public string Sense { get; set; }
+		public string Meaning { get; set; }
 		[ProtoMember(2)]
 		public string Word1 { get; set; }
 		[ProtoMember(3)]
@@ -48,9 +48,9 @@ namespace SIL.Cog.Application.Services
 
 		public WordPair ToWordPair(CogProject project, VarietyPair vp)
 		{
-			Sense sense = project.Senses[Sense];
-			Word word1 = vp.Variety1.Words[sense].First(w => w.StrRep == Word1);
-			Word word2 = vp.Variety2.Words[sense].First(w => w.StrRep == Word2);
+			Meaning meaning = project.Meanings[Meaning];
+			Word word1 = vp.Variety1.Words[meaning].First(w => w.StrRep == Word1);
+			Word word2 = vp.Variety2.Words[meaning].First(w => w.StrRep == Word2);
 			var wp = new WordPair(word1, word2)
 				{
 					AreCognatePredicted = AreCognatePredicted,

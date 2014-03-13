@@ -36,10 +36,10 @@ namespace SIL.Cog.Domain.Components
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			varietyPair.WordPairs.Clear();
 			var counts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-			foreach (Sense sense in varietyPair.Variety1.Words.Senses)
+			foreach (Meaning meaning in varietyPair.Variety1.Words.Meanings)
 			{
-				Word[] words1 = varietyPair.Variety1.Words[sense].Where(w => w.Shape.Count > 0).ToArray();
-				Word[] words2 = varietyPair.Variety2.Words[sense].Where(w => w.Shape.Count > 0).ToArray();
+				Word[] words1 = varietyPair.Variety1.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
+				Word[] words2 = varietyPair.Variety2.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
 				if (words1.Length == 1 && words2.Length == 1)
 				{
 					Word word1 = words1.Single();

@@ -36,10 +36,10 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var segments = new SegmentsViewModel(projectService, dialogService, busyService, exportService, wordsFactory, wordFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 			projectService.ProjectOpened += Raise.Event();
@@ -52,7 +52,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			Assert.That(segments.Categories[2].Segments, Is.EquivalentTo(new[] {segments.Segments[3]}));
 			Assert.That(segments.Categories[3].Segments, Is.EquivalentTo(new[] {segments.Segments[4]}));
 
-			project.Varieties[0].Words.RemoveAll(project.Senses[0]);
+			project.Varieties[0].Words.RemoveAll(project.Meanings[0]);
 			analysisService.Segment(project.Varieties[0]);
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
 			Assert.That(segments.HasSegments, Is.True);
@@ -96,10 +96,10 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var segments = new SegmentsViewModel(projectService, dialogService, busyService, exportService, wordsFactory, wordFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 			projectService.ProjectOpened += Raise.Event();
@@ -140,10 +140,10 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var segments = new SegmentsViewModel(projectService, dialogService, busyService, exportService, wordsFactory, wordFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 			projectService.ProjectOpened += Raise.Event();

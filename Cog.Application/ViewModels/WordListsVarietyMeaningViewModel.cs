@@ -11,9 +11,9 @@ using SIL.Collections;
 
 namespace SIL.Cog.Application.ViewModels
 {
-	public class WordListsVarietySenseViewModel : SenseViewModel
+	public class WordListsVarietyMeaningViewModel : MeaningViewModel
 	{
-		public delegate WordListsVarietySenseViewModel Factory(WordListsVarietyViewModel variety, Sense sense);
+		public delegate WordListsVarietyMeaningViewModel Factory(WordListsVarietyViewModel variety, Meaning meaning);
 
 		private readonly ObservableList<Word> _domainWords;
 		private readonly MirroredBindableList<Word, WordViewModel> _words;
@@ -23,14 +23,14 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly IAnalysisService _analysisService;
 
-		public WordListsVarietySenseViewModel(IBusyService busyService, IAnalysisService analysisService, WordViewModel.Factory wordFactory, WordListsVarietyViewModel variety, Sense sense)
-			: base(sense)
+		public WordListsVarietyMeaningViewModel(IBusyService busyService, IAnalysisService analysisService, WordViewModel.Factory wordFactory, WordListsVarietyViewModel variety, Meaning meaning)
+			: base(meaning)
 		{
 			_busyService = busyService;
 			_analysisService = analysisService;
 			_variety = variety;
 
-			_domainWords = new ObservableList<Word>(variety.DomainVariety.Words[sense]);
+			_domainWords = new ObservableList<Word>(variety.DomainVariety.Words[meaning]);
 			_words = new MirroredBindableList<Word, WordViewModel>(_domainWords, word => wordFactory(word), vm => vm.DomainWord);
 			_domainWords.CollectionChanged += DomainWordsChanged;
 			_strRep = string.Join(",", _domainWords.Select(word => word.StrRep));
@@ -39,7 +39,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void ShowInVarieties()
 		{
-			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _variety.DomainVariety, DomainSense));
+			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _variety.DomainVariety, DomainMeaning));
 		}
 
 		public ReadOnlyObservableList<WordViewModel> Words
@@ -92,7 +92,7 @@ namespace SIL.Cog.Application.ViewModels
 							}
 							else
 							{
-								var newWord = new Word(wordStr, DomainSense);
+								var newWord = new Word(wordStr, DomainMeaning);
 								_domainWords.Insert(index, newWord);
 								_variety.DomainVariety.Words.Add(newWord);
 							}

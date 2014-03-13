@@ -18,13 +18,13 @@ namespace SIL.Cog.Application.Import
 			var reader = new CsvReader(new StreamReader(stream), ',');
 			if (!SkipRows(reader, 5))
 			{
-				project.Senses.Clear();
+				project.Meanings.Clear();
 				project.Varieties.Clear();
 				return;
 			}
 
 			var varieties = new List<Variety>();
-			var senses = new Dictionary<string, Sense>();
+			var meanings = new Dictionary<string, Meaning>();
 			IList<string> varietyRow;
 			while (reader.ReadRow(out varietyRow))
 			{
@@ -35,26 +35,26 @@ namespace SIL.Cog.Application.Import
 				if (!SkipRows(reader, 2))
 					throw new ImportException("Metadata for a variety is incomplete.");
 
-				Sense curSense = null;
+				Meaning curMeaning = null;
 				IList<string> glossRow;
 				while (reader.ReadRow(out glossRow) && glossRow.Any(s => !string.IsNullOrEmpty(s)))
 				{
 					if (!string.IsNullOrEmpty(glossRow[0]))
 					{
 						string gloss = glossRow[0].Trim();
-						curSense = senses.GetValue(gloss, () => new Sense(gloss, null));
+						curMeaning = meanings.GetValue(gloss, () => new Meaning(gloss, null));
 					}
-					if (curSense == null)
+					if (curMeaning == null)
 						throw new ImportException("A gloss is missing.");
 
 					string wordStr = glossRow[1].Trim();
 					if (!string.IsNullOrEmpty(wordStr))
-						variety.Words.Add(new Word(wordStr, curSense));
+						variety.Words.Add(new Word(wordStr, curMeaning));
 				}
 				varieties.Add(variety);
 			}
 
-			project.Senses.ReplaceAll(senses.Values);
+			project.Meanings.ReplaceAll(meanings.Values);
 			project.Varieties.ReplaceAll(varieties);
 		}
 

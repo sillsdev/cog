@@ -70,7 +70,7 @@ namespace SIL.Cog.Presentation
 			// Workspace view models
 			builder.RegisterType<WordListsViewModel>().SingleInstance();
 			builder.RegisterType<VarietiesViewModel>().SingleInstance();
-			builder.RegisterType<SensesViewModel>().SingleInstance();
+			builder.RegisterType<MeaningsViewModel>().SingleInstance();
 			builder.RegisterType<InputSettingsViewModel>().SingleInstance();
 			builder.RegisterType<SimilarityMatrixViewModel>().SingleInstance();
 			builder.RegisterType<VarietyPairsViewModel>().SingleInstance();
@@ -93,7 +93,7 @@ namespace SIL.Cog.Presentation
 
 			// Multiple instance view models
 			builder.RegisterType<WordListsVarietyViewModel>();
-	        builder.RegisterType<WordListsVarietySenseViewModel>();
+	        builder.RegisterType<WordListsVarietyMeaningViewModel>();
 	        builder.RegisterType<WordViewModel>();
 	        builder.RegisterType<VarietiesVarietyViewModel>();
 	        builder.RegisterType<WordsViewModel>();

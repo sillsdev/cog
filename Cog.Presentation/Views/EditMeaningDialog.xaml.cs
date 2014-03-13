@@ -3,11 +3,11 @@
 namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
-	/// Interaction logic for EditSenseDialog.xaml
+	/// Interaction logic for EditMeaningDialog.xaml
 	/// </summary>
-	public partial class EditSenseDialog
+	public partial class EditMeaningDialog
 	{
-		public EditSenseDialog()
+		public EditMeaningDialog()
 		{
 			InitializeComponent();
 		}

@@ -22,13 +22,13 @@ namespace SIL.Cog.Domain
 
 		private readonly SimpleMonitor _reentrancyMonitor = new SimpleMonitor();
 		private readonly Variety _variety;
-		private readonly Dictionary<Sense, HashSet<Word>> _words;
+		private readonly Dictionary<Meaning, HashSet<Word>> _words;
 		private readonly ReadOnlyCollection<Word> _emptyWords;
 
 		internal WordCollection(Variety variety)
 		{
 			_variety = variety;
-			_words = new Dictionary<Sense, HashSet<Word>>();
+			_words = new Dictionary<Meaning, HashSet<Word>>();
 			_emptyWords = new ReadOnlyCollection<Word>(new Word[0]);
 		}
 
@@ -42,17 +42,17 @@ namespace SIL.Cog.Domain
 			return ((IEnumerable<Word>) this).GetEnumerator();
 		}
 
-		public IEnumerable<Sense> Senses
+		public IEnumerable<Meaning> Meanings
 		{
 			get { return _words.Keys; }
 		}
 
-		public IReadOnlyCollection<Word> this[Sense sense]
+		public IReadOnlyCollection<Word> this[Meaning meaning]
 		{
 			get
 			{
 				HashSet<Word> words;
-				if (_words.TryGetValue(sense, out words))
+				if (_words.TryGetValue(meaning, out words))
 					return words.ToReadOnlyCollection();
 				return _emptyWords;
 			}
@@ -61,8 +61,8 @@ namespace SIL.Cog.Domain
 		public void Add(Word item)
 		{
 			CheckReentrancy();
-			HashSet<Word> senseWords = _words.GetValue(item.Sense, () => new HashSet<Word>());
-			if (senseWords.Add(item))
+			HashSet<Word> meaningWords = _words.GetValue(item.Meaning, () => new HashSet<Word>());
+			if (meaningWords.Add(item))
 			{
 				item.Variety = _variety;
 				OnPropertyChanged(new PropertyChangedEventArgs("Count"));
@@ -76,8 +76,8 @@ namespace SIL.Cog.Domain
 			var added = new List<Word>();
 			foreach (Word word in words)
 			{
-				HashSet<Word> senseWords = _words.GetValue(word.Sense, () => new HashSet<Word>());
-				if (senseWords.Add(word))
+				HashSet<Word> meaningWords = _words.GetValue(word.Meaning, () => new HashSet<Word>());
+				if (meaningWords.Add(word))
 				{
 					word.Variety = _variety;
 					added.Add(word);
@@ -104,9 +104,9 @@ namespace SIL.Cog.Domain
 
 		public bool Contains(Word item)
 		{
-			HashSet<Word> senseWords;
-			if (_words.TryGetValue(item.Sense, out senseWords))
-				return senseWords.Contains(item);
+			HashSet<Word> meaningWords;
+			if (_words.TryGetValue(item.Meaning, out meaningWords))
+				return meaningWords.Contains(item);
 			return false;
 		}
 
@@ -119,14 +119,14 @@ namespace SIL.Cog.Domain
 		public bool Remove(Word item)
 		{
 			CheckReentrancy();
-			HashSet<Word> senseWords;
-			if (_words.TryGetValue(item.Sense, out senseWords))
+			HashSet<Word> meaningWords;
+			if (_words.TryGetValue(item.Meaning, out meaningWords))
 			{
-				if (senseWords.Remove(item))
+				if (meaningWords.Remove(item))
 				{
 					item.Variety = null;
-					if (senseWords.Count == 0)
-						_words.Remove(item.Sense);
+					if (meaningWords.Count == 0)
+						_words.Remove(item.Meaning);
 					OnPropertyChanged(new PropertyChangedEventArgs("Count"));
 					OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
 					return true;
@@ -135,9 +135,9 @@ namespace SIL.Cog.Domain
 			return false;
 		}
 
-		public void RemoveAll(Sense sense)
+		public void RemoveAll(Meaning meaning)
 		{
-			_words.Remove(sense);
+			_words.Remove(meaning);
 		}
 
 		public int Count

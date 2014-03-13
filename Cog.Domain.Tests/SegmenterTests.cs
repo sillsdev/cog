@@ -93,8 +93,8 @@ namespace SIL.Cog.Domain.Tests
 		[Test]
 		public void SegmentWord()
 		{
-			var sense = new Sense("gloss", "category");
-			var word = new Word("called", 0, 4, sense);
+			var meaning = new Meaning("gloss", "category");
+			var word = new Word("called", 0, 4, meaning);
 
 			_segmenter.Segment(word);
 			Assert.That(word.Shape.Count, Is.EqualTo(6));

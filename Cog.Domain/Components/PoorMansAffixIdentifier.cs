@@ -40,10 +40,10 @@ namespace SIL.Cog.Domain.Components
 		{
 			if (variety.Affixes.Count == 0)
 			{
-				Word[] noCategoryWords = variety.Words.Where(w => string.IsNullOrEmpty(w.Sense.Category) && w.Shape.Count > 0).ToArray();
+				Word[] noCategoryWords = variety.Words.Where(w => string.IsNullOrEmpty(w.Meaning.Category) && w.Shape.Count > 0).ToArray();
 				if (noCategoryWords.Length >= 5)
 					variety.Affixes.AddRange(IdentifyAffixes(noCategoryWords, null));
-				foreach (IGrouping<string, Word> categoryGroup in variety.Words.Where(w => !string.IsNullOrEmpty(w.Sense.Category) && w.Shape.Count > 0).GroupBy(w => w.Sense.Category))
+				foreach (IGrouping<string, Word> categoryGroup in variety.Words.Where(w => !string.IsNullOrEmpty(w.Meaning.Category) && w.Shape.Count > 0).GroupBy(w => w.Meaning.Category))
 				{
 					Word[] allWords = categoryGroup.Concat(noCategoryWords).ToArray();
 					if (allWords.Length >= 5)

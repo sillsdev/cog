@@ -126,7 +126,7 @@ namespace SIL.Cog.Application.ViewModels
 						break;
 
 					case FindField.Gloss:
-						match = curWordPair.Sense.Gloss.Contains(str);
+						match = curWordPair.Meaning.Gloss.Contains(str);
 						break;
 				}
 				if (match)
@@ -208,9 +208,9 @@ namespace SIL.Cog.Application.ViewModels
 						sb.AppendFormat("{0} \u2192 {1}", pair.Variety1.Name, pair.Variety2.Name);
 						sb.AppendLine();
 					}
-					sb.Append(pair.Sense.Gloss);
-					if (!string.IsNullOrEmpty(pair.Sense.Category))
-						sb.AppendFormat(" ({0})", pair.Sense.Category);
+					sb.Append(pair.Meaning.Gloss);
+					if (!string.IsNullOrEmpty(pair.Meaning.Category))
+						sb.AppendFormat(" ({0})", pair.Meaning.Category);
 					sb.AppendLine();
 
 					sb.Append(pair.DomainAlignment.ToString(pair.DomainWordPair.AlignmentNotes));

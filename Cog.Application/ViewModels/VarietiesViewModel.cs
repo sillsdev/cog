@@ -40,7 +40,7 @@ namespace SIL.Cog.Application.ViewModels
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			_sortPropertyName = "Sense.Gloss";
+			_sortPropertyName = "Meaning.Gloss";
 			_sortDirection = ListSortDirection.Ascending;
 
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
@@ -53,7 +53,7 @@ namespace SIL.Cog.Application.ViewModels
 					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveSelectedVariety)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
-						new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordsBy("Sense.Gloss", ListSortDirection.Ascending))),
+						new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordsBy("Meaning.Gloss", ListSortDirection.Ascending))),
 						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
@@ -75,9 +75,9 @@ namespace SIL.Cog.Application.ViewModels
 				SelectedVariety = _varieties[(Variety) msg.DomainModels[0]];
 				if (msg.DomainModels.Count > 1)
 				{
-					var sense = (Sense) msg.DomainModels[1];
+					var meaning = (Meaning) msg.DomainModels[1];
 					_selectedVariety.Words.SelectedWords.Clear();
-					_selectedVariety.Words.SelectedWords.AddRange(_selectedVariety.Words.Words.Where(w => w.Sense.DomainSense == sense));
+					_selectedVariety.Words.SelectedWords.AddRange(_selectedVariety.Words.Words.Where(w => w.Meaning.DomainMeaning == meaning));
 				}
 			}
 		}

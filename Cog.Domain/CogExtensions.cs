@@ -305,13 +305,13 @@ namespace SIL.Cog.Domain
 			return sb.ToString();
 		}
 
-		public static IEnumerable<Cluster<Word>> GenerateCognateSets(this CogProject project, Sense sense)
+		public static IEnumerable<Cluster<Word>> GenerateCognateSets(this CogProject project, Meaning meaning)
 		{
 			double min = double.MaxValue, max = double.MinValue;
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				WordPair wp;
-				if (vp.WordPairs.TryGetValue(sense, out wp))
+				if (vp.WordPairs.TryGetValue(meaning, out wp))
 				{
 					min = Math.Min(min, wp.CognicityScore);
 					max = Math.Max(max, wp.CognicityScore);
@@ -320,7 +320,7 @@ namespace SIL.Cog.Domain
 			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) =>
 			    {
 					WordPair wp;
-					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(sense, out wp) && wp.AreCognatePredicted
+					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(meaning, out wp) && wp.AreCognatePredicted
 						&& wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
 					{
 						return 1.0 - wp.CognicityScore;
@@ -328,7 +328,7 @@ namespace SIL.Cog.Domain
 					return 1.0;
 			    }, (max + min) / 2);
 
-			return clusterer.GenerateClusters(project.Varieties.SelectMany(v => v.Words[sense]));
+			return clusterer.GenerateClusters(project.Varieties.SelectMany(v => v.Words[meaning]));
 		}
 	}
 }

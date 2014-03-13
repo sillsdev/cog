@@ -16,10 +16,10 @@ namespace SIL.Cog.Domain.Tests.Components
 		{
 			var segmentPool = new SegmentPool();
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gan", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæ", project.Senses[2]), new Word("ban", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛ.ɬa", project.Senses[0]), new Word("gud", project.Senses[1]), new Word("tan", project.Senses[1]), new Word("pæ", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gan", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæ", project.Meanings[2]), new Word("ban", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛ.ɬa", project.Meanings[0]), new Word("gud", project.Meanings[1]), new Word("tan", project.Meanings[1]), new Word("pæ", project.Meanings[2])});
 			project.WordAligners["primary"] = new TestWordAligner(segmentPool);
 			var cognateIdentifier = Substitute.For<ICognateIdentifier>();
 			cognateIdentifier.When(ci => ci.UpdateCognicity(Arg.Any<WordPair>(), Arg.Any<IWordAlignerResult>())).Do(ci =>

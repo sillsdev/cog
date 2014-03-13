@@ -179,7 +179,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private bool CanExportWordLists()
 		{
-			return _projectService.Project.Varieties.Count > 0 || _projectService.Project.Senses.Count > 0;
+			return _projectService.Project.Varieties.Count > 0 || _projectService.Project.Meanings.Count > 0;
 		}
 
 		private void ExportWordLists()
@@ -211,7 +211,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private bool CanExportSegmentFrequencies()
 		{
-			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Senses.Count > 0;
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Meanings.Count > 0;
 		}
 
 		private void ExportSegmentFrequencies()
@@ -265,7 +265,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private bool CanPerformComparison()
 		{
-			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Senses.Count > 0;
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Meanings.Count > 0;
 		}
 
 		private void PerformComparison()
@@ -275,7 +275,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private bool CanRunStemmer()
 		{
-			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Senses.Count > 0;
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Meanings.Count > 0;
 		}
 
 		private void RunStemmer()

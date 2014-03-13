@@ -20,9 +20,9 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IProjectService _projectService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
 		private ICollectionView _wordsView;
-		private MirroredBindableList<Sense, SenseViewModel> _senses;
-		private ICollectionView _sensesView;
-		private SenseViewModel _selectedSense;
+		private MirroredBindableList<Meaning, MeaningViewModel> _meanings;
+		private ICollectionView _meaningsView;
+		private MeaningViewModel _selectedMeaning;
 		private int _columnCount;
 		private int _selectedColumn;
 		private MultipleWordAlignmentWordViewModel _selectedWord;
@@ -65,7 +65,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
-			Set("Senses", ref _senses, new MirroredBindableList<Sense, SenseViewModel>(_projectService.Project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(_projectService.Project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
 		}
 
 		private void ExportCognateSets()
@@ -89,27 +89,27 @@ namespace SIL.Cog.Application.ViewModels
 			_wordsView.SortDescriptions[_groupByCognateSet ? 1 : 0] = new SortDescription(property, sortDirection);
 		}
 
-		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void MeaningsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (_selectedSense == null || !_senses.Contains(_selectedSense))
-				SelectedSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
+			if (_selectedMeaning == null || !_meanings.Contains(_selectedMeaning))
+				SelectedMeaning = _meanings.Count > 0 ? _meaningsView.Cast<MeaningViewModel>().First() : null;
 		}
 
-		public ReadOnlyObservableList<SenseViewModel> Senses
+		public ReadOnlyObservableList<MeaningViewModel> Meanings
 		{
-			get { return _senses; }
+			get { return _meanings; }
 		}
 
-		public ICollectionView SensesView
+		public ICollectionView MeaningsView
 		{
-			get { return _sensesView; }
+			get { return _meaningsView; }
 			set
 			{
-				if (Set(() => SensesView, ref _sensesView, value))
+				if (Set(() => MeaningsView, ref _meaningsView, value))
 				{
-					_sensesView.SortDescriptions.Add(new SortDescription("Gloss", ListSortDirection.Ascending));
-					_sensesView.CollectionChanged += SensesChanged;
-					SelectedSense = _senses.Count > 0 ? _sensesView.Cast<SenseViewModel>().First() : null;
+					_meaningsView.SortDescriptions.Add(new SortDescription("Gloss", ListSortDirection.Ascending));
+					_meaningsView.CollectionChanged += MeaningsChanged;
+					SelectedMeaning = _meanings.Count > 0 ? _meaningsView.Cast<MeaningViewModel>().First() : null;
 				}
 			}
 		}
@@ -120,14 +120,14 @@ namespace SIL.Cog.Application.ViewModels
 			set { Set(() => ColumnCount, ref _columnCount, value); }
 		}
 
-		public SenseViewModel SelectedSense
+		public MeaningViewModel SelectedMeaning
 		{
-			get { return _selectedSense; }
+			get { return _selectedMeaning; }
 			set 
 			{
-				if (Set(() => SelectedSense, ref _selectedSense, value))
+				if (Set(() => SelectedMeaning, ref _selectedMeaning, value))
 				{
-					if (_selectedSense != null && _projectService.AreAllVarietiesCompared)
+					if (_selectedMeaning != null && _projectService.AreAllVarietiesCompared)
 						AlignWords();
 					else
 						ResetAlignment();
@@ -186,12 +186,12 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void AlignWords()
 		{
-			if (_selectedSense == null)
+			if (_selectedMeaning == null)
 				return;
 
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 
-			List<Word> words = _projectService.Project.Varieties.SelectMany(v => v.Words[_selectedSense.DomainSense]).ToList();
+			List<Word> words = _projectService.Project.Varieties.SelectMany(v => v.Words[_selectedMeaning.DomainMeaning]).ToList();
 			if (words.Count == 0)
 			{
 				_words.Clear();
@@ -216,7 +216,7 @@ namespace SIL.Cog.Application.ViewModels
 				alignment = result.GetAlignments().First();
 			}
 
-			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedSense.DomainSense).ToList();
+			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedMeaning.DomainMeaning).ToList();
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
 			{

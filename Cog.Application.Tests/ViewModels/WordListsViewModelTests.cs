@@ -28,8 +28,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var exportService = Substitute.For<IExportService>();
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			WordListsVarietySenseViewModel.Factory varietySenseFactory = (variety, sense) => new WordListsVarietySenseViewModel(busyService, analysisService, wordFactory, variety, sense);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietySenseFactory, variety);
+			WordListsVarietyMeaningViewModel.Factory varietyMeaningFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
+			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyMeaningFactory, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 
@@ -64,7 +64,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		}
 
 		[Test]
-		public void Senses()
+		public void Meanings()
 		{
 			DispatcherHelper.Initialize();
 			var projectService = Substitute.For<IProjectService>();
@@ -75,37 +75,37 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var exportService = Substitute.For<IExportService>();
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			WordListsVarietySenseViewModel.Factory varietySenseFactory = (variety, sense) => new WordListsVarietySenseViewModel(busyService, analysisService, wordFactory, variety, sense);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietySenseFactory, variety);
+			WordListsVarietyMeaningViewModel.Factory varietyglossFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
+			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyglossFactory, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 
 			var project = new CogProject(_spanFactory)
 				{
-					Senses = {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")}
+					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")}
 				};
 			projectService.Project.Returns(project);
 			projectService.ProjectOpened += Raise.Event();
 
-			Assert.That(wordLists.Senses.Select(s => s.Gloss), Is.EqualTo(new[] {"sense1", "sense2", "sense3"}));
+			Assert.That(wordLists.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1", "gloss2", "gloss3"}));
 			Assert.That(wordLists.IsEmpty, Is.False);
 
-			project.Senses.RemoveAt(0);
-			Assert.That(wordLists.Senses.Select(s => s.Gloss), Is.EqualTo(new[] {"sense2", "sense3"}));
+			project.Meanings.RemoveAt(0);
+			Assert.That(wordLists.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss2", "gloss3"}));
 			Assert.That(wordLists.IsEmpty, Is.False);
 
-			project.Senses.Add(new Sense("sense1", "cat1"));
-			Assert.That(wordLists.Senses.Select(s => s.Gloss), Is.EqualTo(new[] {"sense2", "sense3", "sense1"}));
+			project.Meanings.Add(new Meaning("gloss1", "cat1"));
+			Assert.That(wordLists.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss2", "gloss3", "gloss1"}));
 			Assert.That(wordLists.IsEmpty, Is.False);
 
-			project.Senses.Clear();
-			Assert.That(wordLists.Senses.Count, Is.EqualTo(0));
+			project.Meanings.Clear();
+			Assert.That(wordLists.Meanings.Count, Is.EqualTo(0));
 			Assert.That(wordLists.IsEmpty, Is.True);
 
-			project = new CogProject(_spanFactory) {Senses = {new Sense("sense1", "cat1")}};
+			project = new CogProject(_spanFactory) {Meanings = {new Meaning("gloss1", "cat1")}};
 			projectService.Project.Returns(project);
 			projectService.ProjectOpened += Raise.Event();
-			Assert.That(wordLists.Senses.Select(s => s.Gloss), Is.EqualTo(new[] {"sense1"}));
+			Assert.That(wordLists.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1"}));
 			Assert.That(wordLists.IsEmpty, Is.False);
 		}
 
@@ -121,18 +121,18 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var exportService = Substitute.For<IExportService>();
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			WordListsVarietySenseViewModel.Factory varietySenseFactory = (variety, sense) => new WordListsVarietySenseViewModel(busyService, analysisService, wordFactory, variety, sense);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietySenseFactory, variety);
+			WordListsVarietyMeaningViewModel.Factory varietyglossFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
+			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyglossFactory, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 
 			var project = new CogProject(_spanFactory)
 				{
-					Senses = {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")},
+					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
 					Varieties = {new Variety("variety1"), new Variety("variety2")}
 				};
-			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Senses[0]), new Word("good", project.Senses[1]), new Word("bad", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Senses[0]), new Word("google", project.Senses[1]), new Word("batter", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Meanings[0]), new Word("good", project.Meanings[1]), new Word("bad", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google", project.Meanings[1]), new Word("batter", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			projectService.ProjectOpened += Raise.Event();
 
@@ -156,83 +156,83 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			// nothing selected, no match
 			findViewModel.String = "fall";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.Null);
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.Null);
 
 			// nothing selected, matches
 			findViewModel.String = "he";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[0]));
 
 			// first word selected, matches
-			wordLists.SelectedVarietySense = wordLists.Varieties[0].Senses[0];
+			wordLists.SelectedVarietyMeaning = wordLists.Varieties[0].Meanings[0];
 			findViewModel.String = "o";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[0]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[0]));
 			// start search over
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[1]));
 
 			// last word selected, matches
-			wordLists.SelectedVarietySense = wordLists.Varieties[1].Senses[2];
+			wordLists.SelectedVarietyMeaning = wordLists.Varieties[1].Meanings[2];
 			findViewModel.String = "ba";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[2]));
 
 			// last word selected, matches, change selected word
 			findViewModel.String = "ba";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
-			wordLists.SelectedVarietySense = wordLists.Varieties[0].Senses[0];
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[2]));
+			wordLists.SelectedVarietyMeaning = wordLists.Varieties[0].Meanings[0];
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[2]));
 
-			// sense searches
+			// gloss searches
 
 			// nothing selected, no match
-			wordLists.SelectedVarietySense = null;
+			wordLists.SelectedVarietyMeaning = null;
 			findViewModel.Field = FindField.Gloss;
-			findViewModel.String = "sense4";
+			findViewModel.String = "gloss4";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.Null);
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.Null);
 
 			// nothing selected, matches
-			wordLists.SelectedVarietySense = null;
+			wordLists.SelectedVarietyMeaning = null;
 			findViewModel.Field = FindField.Gloss;
-			findViewModel.String = "sense2";
+			findViewModel.String = "gloss2";
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[0].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[0].Meanings[1]));
 
 			// selected, matches
-			findViewModel.String = "sense";
-			wordLists.SelectedVarietySense = wordLists.Varieties[1].Senses[1];
+			findViewModel.String = "gloss";
+			wordLists.SelectedVarietyMeaning = wordLists.Varieties[1].Meanings[1];
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[2]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[2]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[0]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[0]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[1]));
 			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordLists.SelectedVarietySense, Is.EqualTo(wordLists.Varieties[1].Senses[1]));
+			Assert.That(wordLists.SelectedVarietyMeaning, Is.EqualTo(wordLists.Varieties[1].Meanings[1]));
 		}
 
 		[Test]
@@ -247,8 +247,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var exportService = Substitute.For<IExportService>();
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			WordListsVarietySenseViewModel.Factory varietySenseFactory = (variety, sense) => new WordListsVarietySenseViewModel(busyService, analysisService, wordFactory, variety, sense);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietySenseFactory, variety);
+			WordListsVarietyMeaningViewModel.Factory varietyglossFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
+			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyglossFactory, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 

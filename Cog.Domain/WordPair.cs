@@ -38,9 +38,9 @@ namespace SIL.Cog.Domain
 			return _word2;
 		}
 
-		public Sense Sense
+		public Meaning Meaning
 		{
-			get { return _word1.Sense; }
+			get { return _word1.Meaning; }
 		}
 
 		public ObservableList<string> AlignmentNotes

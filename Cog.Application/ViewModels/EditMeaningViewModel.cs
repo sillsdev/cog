@@ -5,28 +5,28 @@ using SIL.Collections;
 
 namespace SIL.Cog.Application.ViewModels
 {
-	public class EditSenseViewModel : ViewModelBase, IDataErrorInfo
+	public class EditMeaningViewModel : ViewModelBase, IDataErrorInfo
 	{
-		private readonly IKeyedCollection<string, Sense> _senses;
-		private readonly Sense _sense;
+		private readonly IKeyedCollection<string, Meaning> _meanings;
+		private readonly Meaning _meaning;
 		private readonly string _title;
 
 		private string _gloss;
 		private string _category;
 
-		public EditSenseViewModel(IKeyedCollection<string, Sense> senses, Sense sense)
+		public EditMeaningViewModel(IKeyedCollection<string, Meaning> meanings, Meaning meaning)
 		{
-			_title = "Edit Sense";
-			_senses = senses;
-			_sense = sense;
-			_gloss = sense.Gloss;
-			_category = sense.Category;
+			_title = "Edit Meaning";
+			_meanings = meanings;
+			_meaning = meaning;
+			_gloss = meaning.Gloss;
+			_category = meaning.Category;
 		}
 
-		public EditSenseViewModel(IKeyedCollection<string, Sense> senses)
+		public EditMeaningViewModel(IKeyedCollection<string, Meaning> meanings)
 		{
-			_title = "New Sense";
-			_senses = senses;
+			_title = "New Meaning";
+			_meanings = meanings;
 		}
 
 		public string Title
@@ -55,8 +55,8 @@ namespace SIL.Cog.Application.ViewModels
 					case "Gloss":
 						if (string.IsNullOrEmpty(_gloss))
 							return "Please enter a gloss.";
-						Sense sense;
-						if (_senses.TryGetValue(_gloss, out sense) && sense != _sense)
+						Meaning meaning;
+						if (_meanings.TryGetValue(_gloss, out meaning) && meaning != _meaning)
 							return "A variety with that gloss already exists.";
 						break;
 				}

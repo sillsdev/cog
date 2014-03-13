@@ -39,11 +39,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
-			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Senses[0]), new Word("kɑr", project.Senses[1]), new Word("fʊt.bɔl", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
+			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Meanings[0]), new Word("kɑr", project.Meanings[1]), new Word("fʊt.bɔl", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 			projectService.ProjectOpened += Raise.Event();
@@ -96,11 +96,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
-			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Senses[0]), new Word("kɑr", project.Senses[1]), new Word("fʊt.bɔl", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
+			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Meanings[0]), new Word("kɑr", project.Meanings[1]), new Word("fʊt.bɔl", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 
@@ -128,18 +128,18 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			globalCorrespondences.SelectedCorrespondence = globalCorrespondences.Graph.Edges.First(e => e.Source.StrRep == "g" && e.Target.StrRep == "k");
 			WordPairViewModel[] wordPairsArray = observedWordPairs.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			Assert.That(wordPairsArray.Length, Is.EqualTo(2));
-			Assert.That(wordPairsArray[0].Sense.Gloss, Is.EqualTo("sense2"));
+			Assert.That(wordPairsArray[0].Meaning.Gloss, Is.EqualTo("gloss2"));
 			Assert.That(wordPairsArray[0].AlignedNodes[2].IsSelected, Is.True);
-			Assert.That(wordPairsArray[1].Sense.Gloss, Is.EqualTo("sense2"));
+			Assert.That(wordPairsArray[1].Meaning.Gloss, Is.EqualTo("gloss2"));
 			Assert.That(wordPairsArray[1].AlignedNodes[0].IsSelected, Is.True);
 
 			globalCorrespondences.SyllablePosition = SyllablePosition.Nucleus;
 			globalCorrespondences.SelectedCorrespondence = globalCorrespondences.Graph.Edges.First(e => e.Source.StrRep == "ʊ" && e.Target.StrRep == "u");
 			wordPairsArray = observedWordPairs.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			Assert.That(wordPairsArray.Length, Is.EqualTo(2));
-			Assert.That(wordPairsArray[0].Sense.Gloss, Is.EqualTo("sense2"));
+			Assert.That(wordPairsArray[0].Meaning.Gloss, Is.EqualTo("gloss2"));
 			Assert.That(wordPairsArray[0].AlignedNodes[1].IsSelected, Is.True);
-			Assert.That(wordPairsArray[1].Sense.Gloss, Is.EqualTo("sense3"));
+			Assert.That(wordPairsArray[1].Meaning.Gloss, Is.EqualTo("gloss3"));
 			Assert.That(wordPairsArray[1].AlignedNodes[1].IsSelected, Is.True);
 
 			globalCorrespondences.SelectedCorrespondence = null;
@@ -163,11 +163,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("kæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
-			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Senses[0]), new Word("kɑr", project.Senses[1]), new Word("fʊt.bɔl", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("kæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
+			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Meanings[0]), new Word("kɑr", project.Meanings[1]), new Word("fʊt.bɔl", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 
@@ -270,9 +270,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(observedWordPairs.SelectedWordPairs, Is.EquivalentTo(wordPairsArray[0].ToEnumerable()));
 
-			// sense searches
+			// gloss searches
 			findViewModel.Field = FindField.Gloss;
-			findViewModel.String = "sense2";
+			findViewModel.String = "gloss2";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(observedWordPairs.SelectedWordPairs, Is.EquivalentTo(wordPairsArray[1].ToEnumerable()));
 			findViewModel.FindNextCommand.Execute(null);

@@ -43,7 +43,7 @@ namespace SIL.Cog.Domain.Components
 				if (dir == Direction.RightToLeft)
 					pattern.Children.Add(new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Value));
 				string category = affix.Category;
-				ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Sense.Category == category));
+				ruleSpec.RuleSpecs.Add(new DefaultPatternRuleSpec<Word, ShapeNode>(pattern, MarkStem, word => category == null || word.Meaning.Category == category));
 			}
 
 			var matcherSettings = new MatcherSettings<ShapeNode>

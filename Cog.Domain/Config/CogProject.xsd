@@ -342,10 +342,10 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="Senses">
+				<xs:element name="Meanings">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Sense" minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="Meaning" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:attribute name="id" type="xs:string" use="required" />
 									<xs:attribute name="gloss" type="xs:string" use="required" />
@@ -368,7 +368,7 @@
 														<xs:complexType>
 															<xs:simpleContent>
 																<xs:extension base="xs:string">
-																	<xs:attribute name="sense" type="xs:string" use="required" />
+																	<xs:attribute name="meaning" type="xs:string" use="required" />
 																	<xs:attribute name="stemIndex" type="xs:int" use="optional" />
 																	<xs:attribute name="stemLength" type="xs:int" use="optional" />
 																</xs:extension>
@@ -475,13 +475,13 @@
 			<xs:selector xpath="FeatureValue" />
 			<xs:field xpath="@value" />
 		</xs:keyref>
-		<xs:key name="SenseKey">
-			<xs:selector xpath="Sense" />
+		<xs:key name="MeaningKey">
+			<xs:selector xpath="Meaning" />
 			<xs:field xpath="@id" />
 		</xs:key>
-		<xs:keyref name="SenseKeyRef" refer="SenseKey">
+		<xs:keyref name="MeaningKeyRef" refer="MeaningKey">
 			<xs:selector xpath="Word" />
-			<xs:field xpath="@sense" />
+			<xs:field xpath="@meaning" />
 		</xs:keyref>
 		<xs:key name="WordAlignerKey">
 			<xs:selector xpath="WordAligner" />

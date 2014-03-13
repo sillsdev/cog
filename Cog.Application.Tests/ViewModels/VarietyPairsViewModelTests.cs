@@ -51,11 +51,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			Assert.That(varietyPairs.SelectedVariety2, Is.Null);
 			Assert.That(varietyPairs.SelectedVarietyPair, Is.Null);
 
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
-			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Senses[0]), new Word("kɑr", project.Senses[1]), new Word("fʊt.bɔl", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
+			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Meanings[0]), new Word("kɑr", project.Meanings[1]), new Word("fʊt.bɔl", project.Meanings[2])});
 			analysisService.SegmentAll();
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
 
@@ -115,11 +115,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var varietyPairs = new VarietyPairsViewModel(projectService, busyService, dialogService, exportService, analysisService, varietyPairFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
-			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Senses[0]), new Word("kɑr", project.Senses[1]), new Word("fʊt.bɔl", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
+			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Meanings[0]), new Word("kɑr", project.Meanings[1]), new Word("fʊt.bɔl", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 			var varietyPairGenerator = new VarietyPairGenerator();
@@ -136,7 +136,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			foreach (WordPair wp in project.VarietyPairs[0].WordPairs)
 			{
 				wp.PhoneticSimilarityScore = (1.0 / project.VarietyPairs[0].WordPairs.Count) * (project.VarietyPairs[0].WordPairs.Count - i);
-				wp.AreCognatePredicted = wp.Sense.Gloss.IsOneOf("sense1", "sense3");
+				wp.AreCognatePredicted = wp.Meaning.Gloss.IsOneOf("gloss1", "gloss3");
 				i++;
 			}
 
@@ -248,9 +248,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			Assert.That(cognates.SelectedWordPairs, Is.Empty);
 			Assert.That(noncognates.SelectedWordPairs, Is.EquivalentTo(noncognatesArray[0].ToEnumerable()));
 
-			// sense searches
+			// gloss searches
 			findViewModel.Field = FindField.Gloss;
-			findViewModel.String = "sense2";
+			findViewModel.String = "gloss2";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(cognates.SelectedWordPairs, Is.Empty);
 			Assert.That(noncognates.SelectedWordPairs, Is.EquivalentTo(noncognatesArray[1].ToEnumerable()));
@@ -276,10 +276,10 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var varietyPairs = new VarietyPairsViewModel(projectService, busyService, dialogService, exportService, analysisService, varietyPairFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3"), new Sense("sense4", "cat4")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3"), new Meaning("gloss4", "cat4")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2]), new Word("wɜrd", project.Senses[3])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2]), new Word("kɑr", project.Senses[3])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2]), new Word("wɜrd", project.Meanings[3])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2]), new Word("kɑr", project.Meanings[3])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 			var varietyPairGenerator = new VarietyPairGenerator();
@@ -296,7 +296,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			foreach (WordPair wp in project.VarietyPairs[0].WordPairs)
 			{
 				wp.PhoneticSimilarityScore = (1.0 / project.VarietyPairs[0].WordPairs.Count) * (i + 1);
-				wp.AreCognatePredicted = wp.Sense.Gloss.IsOneOf("sense1", "sense3");
+				wp.AreCognatePredicted = wp.Meaning.Gloss.IsOneOf("gloss1", "gloss3");
 				i++;
 			}
 
@@ -312,19 +312,19 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			noncognates.WordPairsView = new ListCollectionView(noncognates.WordPairs);
 			WordPairViewModel[] noncognatesArray = noncognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 
-			Assert.That(cognatesArray.Select(wp => wp.Sense.Gloss), Is.EqualTo(new[] {"sense3", "sense1"}));
-			Assert.That(noncognatesArray.Select(wp => wp.Sense.Gloss), Is.EqualTo(new[] {"sense4", "sense2"}));
+			Assert.That(cognatesArray.Select(wp => wp.Meaning.Gloss), Is.EqualTo(new[] {"gloss3", "gloss1"}));
+			Assert.That(noncognatesArray.Select(wp => wp.Meaning.Gloss), Is.EqualTo(new[] {"gloss4", "gloss2"}));
 
 			var commonTasks = (TaskAreaItemsViewModel) varietyPairs.TaskAreas[0];
 			var sortWordsByItems = (TaskAreaItemsViewModel) commonTasks.Items[2];
 			var sortWordsByGroup = (TaskAreaCommandGroupViewModel) sortWordsByItems.Items[0];
-			// default sorting is by similarity, change to sense
+			// default sorting is by similarity, change to gloss
 			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
 			sortWordsByGroup.SelectedCommand.Command.Execute(null);
 			cognatesArray = cognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
 			noncognatesArray = noncognates.WordPairsView.Cast<WordPairViewModel>().ToArray();
-			Assert.That(cognatesArray.Select(wp => wp.Sense.Gloss), Is.EqualTo(new[] {"sense1", "sense3"}));
-			Assert.That(noncognatesArray.Select(wp => wp.Sense.Gloss), Is.EqualTo(new[] {"sense2", "sense4"}));
+			Assert.That(cognatesArray.Select(wp => wp.Meaning.Gloss), Is.EqualTo(new[] {"gloss1", "gloss3"}));
+			Assert.That(noncognatesArray.Select(wp => wp.Meaning.Gloss), Is.EqualTo(new[] {"gloss2", "gloss4"}));
 		}
 	}
 }

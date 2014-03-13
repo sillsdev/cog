@@ -2,7 +2,7 @@ using SIL.Collections;
 
 namespace SIL.Cog.Domain
 {
-	public class WordPairCollection : KeyedBulkObservableList<Sense, WordPair>
+	public class WordPairCollection : KeyedBulkObservableList<Meaning, WordPair>
 	{
 		private readonly VarietyPair _varietyPair;
  
@@ -11,9 +11,9 @@ namespace SIL.Cog.Domain
 			_varietyPair = varietyPair;
 		}
 
-		protected override Sense GetKeyForItem(WordPair item)
+		protected override Meaning GetKeyForItem(WordPair item)
 		{
-			return item.Sense;
+			return item.Meaning;
 		}
 
 		public WordPair Add(Word word1, Word word2)

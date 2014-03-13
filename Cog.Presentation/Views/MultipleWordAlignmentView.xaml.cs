@@ -26,13 +26,13 @@ namespace SIL.Cog.Presentation.Views
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (IsVisible)
-				Dispatcher.BeginInvoke(new Action(() => SensesComboBox.Focus()));
+				Dispatcher.BeginInvoke(new Action(() => MeaningsComboBox.Focus()));
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
-			vm.SensesView = CollectionViewSource.GetDefaultView(vm.Senses);
+			vm.MeaningsView = CollectionViewSource.GetDefaultView(vm.Meanings);
 			LoadCollectionView();
 			vm.Words.CollectionChanged += WordsChanged;
 			vm.PropertyChanged += vm_PropertyChanged;
@@ -43,8 +43,8 @@ namespace SIL.Cog.Presentation.Views
 			var vm = (MultipleWordAlignmentViewModel) sender;
 			switch (e.PropertyName)
 			{
-				case "Senses":
-					DispatcherHelper.CheckBeginInvokeOnUI(() => vm.SensesView = CollectionViewSource.GetDefaultView(vm.Senses));
+				case "Meanings":
+					DispatcherHelper.CheckBeginInvokeOnUI(() => vm.MeaningsView = CollectionViewSource.GetDefaultView(vm.Meanings));
 					break;
 
 				case "GroupByCognateSet":

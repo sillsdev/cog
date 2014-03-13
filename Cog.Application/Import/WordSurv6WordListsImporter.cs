@@ -44,7 +44,7 @@ namespace SIL.Cog.Application.Import
 				varieties[id] = Tuple.Create(variety, new List<Word>());
 			}
 
-			var senses = new Dictionary<string, Sense>();
+			var meanings = new Dictionary<string, Meaning>();
 			foreach (XElement glossElem in root.Elements("glosses").Elements("gloss"))
 			{
 				XElement nameElem = glossElem.Element("name");
@@ -54,10 +54,10 @@ namespace SIL.Cog.Application.Import
 				if (string.IsNullOrEmpty(gloss))
 					throw new ImportException(string.Format("A blank gloss is not allowed. Line: {0}", ((IXmlLineInfo) nameElem).LineNumber));
 				var pos = (string) glossElem.Element("part_of_speech");
-				if (senses.ContainsKey(gloss))
+				if (meanings.ContainsKey(gloss))
 					throw new ImportException(string.Format("The gloss, \"{0}\", is not unique. Line: {1}", gloss, ((IXmlLineInfo) nameElem).LineNumber));
-				var sense = new Sense(gloss, pos);
-				senses[gloss] = sense;
+				var meaning = new Meaning(gloss, pos);
+				meanings[gloss] = meaning;
 				foreach (XElement transElem in glossElem.Elements("transcriptions").Elements("transcription"))
 				{
 					XElement wordListIdElem = transElem.Element("word_list_id");
@@ -76,7 +76,7 @@ namespace SIL.Cog.Application.Import
 								foreach (string w in wordform.Split(','))
 								{
 									string str = w.Trim();
-									variety.Item2.Add(new Word(str, sense));
+									variety.Item2.Add(new Word(str, meaning));
 								}
 							}
 						}
@@ -84,7 +84,7 @@ namespace SIL.Cog.Application.Import
 				}
 			}
 
-			project.Senses.ReplaceAll(senses.Values);
+			project.Meanings.ReplaceAll(meanings.Values);
 			using (project.Varieties.BulkUpdate())
 			{
 				project.Varieties.Clear();

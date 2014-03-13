@@ -29,8 +29,8 @@ namespace SIL.Cog.Application.Import
 					ImportVarietyRows(stream, project, vm.CategoriesIncluded);
 					break;
 
-				case TextWordListsFormat.SenseRows:
-					ImportSenseRows(stream, project, vm.CategoriesIncluded);
+				case TextWordListsFormat.GlossRows:
+					ImportGlossRows(stream, project, vm.CategoriesIncluded);
 					break;
 			}
 		}
@@ -41,7 +41,7 @@ namespace SIL.Cog.Application.Import
 			IList<string> glosses;
 			if (!reader.ReadRow(out glosses))
 			{
-				project.Senses.Clear();
+				project.Meanings.Clear();
 				project.Varieties.Clear();
 				return;
 			}
@@ -62,7 +62,7 @@ namespace SIL.Cog.Application.Import
 			}
 
 			bool skipFinalColumn = false;
-			var senses = new Dictionary<string, Sense>();
+			var meanings = new Dictionary<string, Meaning>();
 			for (int i = 1; i < glosses.Count; i++)
 			{
 				string gloss = glosses[i].Trim();
@@ -75,12 +75,12 @@ namespace SIL.Cog.Application.Import
 					}
 					throw new ImportException("A blank gloss is not allowed. Line: 1");
 				}
-				if (senses.ContainsKey(gloss))
+				if (meanings.ContainsKey(gloss))
 					throw new ImportException(string.Format("The gloss, \"{0}\", is not unique. Line: 1", gloss));
 				string category = null;
 				if (categoriesIncluded && categories != null)
 					category = categories[i].Trim();
-				senses[gloss] = new Sense(gloss, string.IsNullOrEmpty(category) ? null : category);
+				meanings[gloss] = new Meaning(gloss, string.IsNullOrEmpty(category) ? null : category);
 			}
 
 			int line = categoriesIncluded ? 3 : 2;
@@ -107,7 +107,7 @@ namespace SIL.Cog.Application.Import
 						foreach (string w in wordStr.Split(',', '/'))
 						{
 							string str = w.Trim();
-							variety.Words.Add(new Word(str, senses[glosses[j].Trim()]));
+							variety.Words.Add(new Word(str, meanings[glosses[j].Trim()]));
 						}
 					}
 				}
@@ -115,11 +115,11 @@ namespace SIL.Cog.Application.Import
 				line++;
 			}
 
-			project.Senses.ReplaceAll(senses.Values);
+			project.Meanings.ReplaceAll(meanings.Values);
 			project.Varieties.ReplaceAll(varieties.Values);
 		}
 
-		private void ImportSenseRows(Stream stream, CogProject project, bool categoriesIncluded)
+		private void ImportGlossRows(Stream stream, CogProject project, bool categoriesIncluded)
 		{
 			var reader = new CsvReader(new StreamReader(stream), _delimiter);
 
@@ -127,7 +127,7 @@ namespace SIL.Cog.Application.Import
 			if (!reader.ReadRow(out varietyNames))
 			{
 				project.Varieties.Clear();
-				project.Senses.Clear();
+				project.Meanings.Clear();
 				return;
 			}
 
@@ -152,7 +152,7 @@ namespace SIL.Cog.Application.Import
 			}
 
 			int line = 2;
-			var senses = new Dictionary<string, Sense>();
+			var meanings = new Dictionary<string, Meaning>();
 			IList<string> glossRow;
 			while (reader.ReadRow(out glossRow))
 			{
@@ -162,7 +162,7 @@ namespace SIL.Cog.Application.Import
 				string gloss = glossRow[column++].Trim();
 				if (string.IsNullOrEmpty(gloss))
 					throw new ImportException(string.Format("A blank gloss is not allowed. Line: {0}", line));
-				if (senses.ContainsKey(gloss))
+				if (meanings.ContainsKey(gloss))
 					throw new ImportException(string.Format("The gloss, \"{0}\", is not unique. Line: {1}", gloss, line));
 				string category = null;
 				if (categoriesIncluded)
@@ -171,8 +171,8 @@ namespace SIL.Cog.Application.Import
 						throw new ImportException(string.Format("Missing categories column. Line: {0}", line));
 					category = glossRow[column++].Trim();
 				}
-				var sense = new Sense(gloss, string.IsNullOrEmpty(category) ? null : category);
-				senses[gloss] = sense;
+				var meaning = new Meaning(gloss, string.IsNullOrEmpty(category) ? null : category);
+				meanings[gloss] = meaning;
 				for (int j = column; j < glossRow.Count; j++)
 				{
 					string wordStr = glossRow[j].Trim();
@@ -183,14 +183,14 @@ namespace SIL.Cog.Application.Import
 						foreach (string w in wordStr.Split(',', '/'))
 						{
 							string str = w.Trim();
-							varieties[varietyNames[j].Trim()].Words.Add(new Word(str, sense));
+							varieties[varietyNames[j].Trim()].Words.Add(new Word(str, meaning));
 						}
 					}
 				}
 				line++;
 			}
 
-			project.Senses.ReplaceAll(senses.Values);
+			project.Meanings.ReplaceAll(meanings.Values);
 			project.Varieties.ReplaceAll(varieties.Values);
 		}
 	}

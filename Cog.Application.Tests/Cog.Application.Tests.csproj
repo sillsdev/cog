@@ -85,7 +85,7 @@
     <Compile Include="ViewModels\SegmentsViewModelTests.cs" />
     <Compile Include="ViewModels\VarietiesViewModelTests.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModelTests.cs" />
-    <Compile Include="ViewModels\WordListsVarietySenseViewModelTests.cs" />
+    <Compile Include="ViewModels\WordListsVarietyMeaningViewModelTests.cs" />
     <Compile Include="ViewModels\WordListsViewModelTests.cs" />
     <Compile Include="ViewModels\WordViewModelTests.cs" />
   </ItemGroup>

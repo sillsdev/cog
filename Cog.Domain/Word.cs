@@ -12,17 +12,17 @@ namespace SIL.Cog.Domain
 		private int _stemLength;
 		private readonly string _strRep;
 		private Shape _shape;
-		private readonly Sense _sense;
+		private readonly Meaning _meaning;
 
-		public Word(string strRep, Sense sense)
-			: this(strRep, 0, strRep.Length, sense)
+		public Word(string strRep, Meaning meaning)
+			: this(strRep, 0, strRep.Length, meaning)
 		{
 		}
 
-		public Word(string strRep, int stemIndex, int stemLength, Sense sense)
+		public Word(string strRep, int stemIndex, int stemLength, Meaning meaning)
 		{
 			_strRep = strRep;
-			_sense = sense;
+			_meaning = meaning;
 			_stemIndex = stemIndex;
 			_stemLength = stemLength;
 		}
@@ -55,9 +55,9 @@ namespace SIL.Cog.Domain
 			get { return _shape != null && _shape.Count > 0; }
 		}
 
-		public Sense Sense
+		public Meaning Meaning
 		{
-			get { return _sense; }
+			get { return _meaning; }
 		}
 
 		public Variety Variety { get; internal set; }

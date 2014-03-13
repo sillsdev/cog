@@ -16,7 +16,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ReadOnlyCollection<AlignedNodeViewModel> _alignedNodes;
 		private readonly Alignment<Word, ShapeNode> _alignment; 
 		private readonly AlignedNodeViewModel _suffixNode;
-		private readonly SenseViewModel _sense;
+		private readonly MeaningViewModel _meaning;
 		private readonly VarietyViewModel _variety1;
 		private readonly VarietyViewModel _variety2;
 		private readonly bool _areVarietiesInOrder;
@@ -25,7 +25,7 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			_wordPair = wordPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
-			_sense = new SenseViewModel(_wordPair.Word1.Sense);
+			_meaning = new MeaningViewModel(_wordPair.Word1.Meaning);
 			_variety1 = new VarietyViewModel(_wordPair.VarietyPair.Variety1);
 			_variety2 = new VarietyViewModel(_wordPair.VarietyPair.Variety2);
 
@@ -62,9 +62,9 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _variety2; }
 		}
 
-		public SenseViewModel Sense
+		public MeaningViewModel Meaning
 		{
-			get { return _sense; }
+			get { return _meaning; }
 		}
 
 		public AlignedNodeViewModel PrefixNode

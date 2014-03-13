@@ -33,27 +33,27 @@ namespace SIL.Cog.Application.Export
 				writer.WriteLine("END;");
 
 				writer.WriteLine("BEGIN Characters;");
-				writer.WriteLine("\tDIMENSIONS NChar={0};", project.Senses.Count);
+				writer.WriteLine("\tDIMENSIONS NChar={0};", project.Meanings.Count);
 				writer.WriteLine("\tFORMAT Datatype=STANDARD Missing=? Symbols=\"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\";");
 				writer.WriteLine("\tMATRIX");
 
-				var senseClusters = new Dictionary<Sense, List<Cluster<Word>>>();
-				foreach (Sense sense in project.Senses)
-					senseClusters[sense] = project.GenerateCognateSets(sense).ToList();
+				var meaningClusters = new Dictionary<Meaning, List<Cluster<Word>>>();
+				foreach (Meaning meaning in project.Meanings)
+					meaningClusters[meaning] = project.GenerateCognateSets(meaning).ToList();
 
 				for (int i = 0; i < project.Varieties.Count; i++)
 				{
 					Variety variety = project.Varieties[i];
 					string name = RemoveSpecialChars(variety.Name);
 					writer.Write("\t\t{0}{1} ", name, new string(' ', maxNameLen - name.Length));
-					foreach (Sense sense in project.Senses)
+					foreach (Meaning meaning in project.Meanings)
 					{
 						int setIndex = 0;
 						int maxSetSize = -1;
-						foreach (Word word in variety.Words[sense])
+						foreach (Word word in variety.Words[meaning])
 						{
 							int j = 1;
-							foreach (Cluster<Word> set in senseClusters[sense])
+							foreach (Cluster<Word> set in meaningClusters[meaning])
 							{
 								if (set.DataObjects.Contains(word))
 								{

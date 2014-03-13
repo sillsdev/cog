@@ -10,21 +10,21 @@ namespace SIL.Cog.Application.Export
 			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
 			{
 				bool categoriesIncluded = false;
-				foreach (Sense sense in project.Senses)
+				foreach (Meaning meaning in project.Meanings)
 				{
 					writer.Write("\t");
-					writer.Write(sense.Gloss);
-					if (!string.IsNullOrEmpty(sense.Category))
+					writer.Write(meaning.Gloss);
+					if (!string.IsNullOrEmpty(meaning.Category))
 						categoriesIncluded = true;
 				}
 				writer.WriteLine();
 
 				if (categoriesIncluded)
 				{
-					foreach (Sense sense in project.Senses)
+					foreach (Meaning meaning in project.Meanings)
 					{
 						writer.Write("\t");
-						writer.Write(sense.Category);
+						writer.Write(meaning.Category);
 					}
 					writer.WriteLine();
 				}
@@ -32,11 +32,11 @@ namespace SIL.Cog.Application.Export
 				foreach (Variety variety in project.Varieties)
 				{
 					writer.Write(variety.Name);
-					foreach (Sense sense in project.Senses)
+					foreach (Meaning meaning in project.Meanings)
 					{
 						writer.Write("\t");
 						bool first = true;
-						foreach (Word word in variety.Words[sense])
+						foreach (Word word in variety.Words[meaning])
 						{
 							if (!first)
 								writer.Write(",");

@@ -57,9 +57,9 @@ namespace SIL.Cog.Application.Export
 					writer.WriteLine();
 				IWordAlignerResult results = aligner.Compute(pair);
 				Alignment<Word, ShapeNode> alignment = results.GetAlignments().First();
-				writer.Write(pair.Word1.Sense.Gloss);
-				if (!string.IsNullOrEmpty(pair.Word1.Sense.Category))
-					writer.Write(" ({0})", pair.Word1.Sense.Category);
+				writer.Write(pair.Word1.Meaning.Gloss);
+				if (!string.IsNullOrEmpty(pair.Word1.Meaning.Category))
+					writer.Write(" ({0})", pair.Word1.Meaning.Category);
 				writer.WriteLine();
 				writer.Write(alignment.ToString(pair.AlignmentNotes));
 				writer.WriteLine("Similarity: {0:p}", pair.PhoneticSimilarityScore);

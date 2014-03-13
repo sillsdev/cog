@@ -2,12 +2,12 @@ using SIL.Collections;
 
 namespace SIL.Cog.Domain
 {
-	public class Sense : ObservableObject
+	public class Meaning : ObservableObject
 	{
 		private string _gloss;
 		private string _category;
 
-		public Sense(string gloss, string category)
+		public Meaning(string gloss, string category)
 		{
 			Gloss = gloss;
 			Category = category;

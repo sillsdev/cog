@@ -79,7 +79,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending))),
-					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordPairsBy("Sense.Gloss", ListSortDirection.Ascending)))))));
+					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordPairsBy("Meaning.Gloss", ListSortDirection.Ascending)))))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
 		}

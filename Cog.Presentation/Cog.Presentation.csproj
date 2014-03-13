@@ -280,8 +280,8 @@
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditSenseDialog.xaml.cs">
-      <DependentUpon>EditSenseDialog.xaml</DependentUpon>
+    <Compile Include="Views\EditMeaningDialog.xaml.cs">
+      <DependentUpon>EditMeaningDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditVarietyDialog.xaml.cs">
       <DependentUpon>EditVarietyDialog.xaml</DependentUpon>
@@ -295,8 +295,8 @@
     <Compile Include="Views\RunStemmerDialog.xaml.cs">
       <DependentUpon>RunStemmerDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SensesView.xaml.cs">
-      <DependentUpon>SensesView.xaml</DependentUpon>
+    <Compile Include="Views\MeaningsView.xaml.cs">
+      <DependentUpon>MeaningsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SimilarityMatrixView.xaml.cs">
       <DependentUpon>SimilarityMatrixView.xaml</DependentUpon>
@@ -503,7 +503,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\EditSenseDialog.xaml">
+    <Page Include="Views\EditMeaningDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -531,7 +531,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SensesView.xaml">
+    <Page Include="Views\MeaningsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

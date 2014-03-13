@@ -65,7 +65,7 @@ namespace SIL.Cog.Application.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
-					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => _observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending))),
+					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => _observedWordPairs.UpdateSort("Meaning.Gloss", ListSortDirection.Ascending))),
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => _observedWordPairs.UpdateSort("PhoneticSimilarityScore", ListSortDirection.Descending))))),
 				new TaskAreaCommandViewModel("Select varieties", new RelayCommand(SelectVarieties))
 				));
@@ -73,7 +73,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart))));
 			_observedWordPairs = wordPairsFactory();
 			_observedWordPairs.IncludeVarietyNamesInSelectedText = true;
-			_observedWordPairs.UpdateSort("Sense.Gloss", ListSortDirection.Ascending);
+			_observedWordPairs.UpdateSort("Meaning.Gloss", ListSortDirection.Ascending);
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

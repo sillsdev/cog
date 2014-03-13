@@ -22,14 +22,14 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IExportService _exportService;
 		private readonly IAnalysisService _analysisService;
 		private readonly WordListsVarietyViewModel.Factory _varietyFactory; 
-		private WordListsVarietySenseViewModel _selectedVarietySense;
-		private MirroredBindableList<Sense, SenseViewModel> _senses;
+		private WordListsVarietyMeaningViewModel _selectedVarietyMeaning;
+		private MirroredBindableList<Meaning, MeaningViewModel> _meanings;
 		private MirroredBindableList<Variety, WordListsVarietyViewModel> _varieties;
 		private bool _isEmpty;
 		private readonly ICommand _findCommand;
 		private ICollectionView _varietiesView;
 
-		private WordListsVarietySenseViewModel _startVarietySense;
+		private WordListsVarietyMeaningViewModel _startVarietyMeaning;
 		private FindViewModel _findViewModel;
 
 		public WordListsViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService,
@@ -51,7 +51,7 @@ namespace SIL.Cog.Application.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
-					new TaskAreaCommandViewModel("Add a new sense", new RelayCommand(AddNewSense)),
+					new TaskAreaCommandViewModel("Add a new meaning", new RelayCommand(AddNewMeaning)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import))));
 
@@ -64,11 +64,11 @@ namespace SIL.Cog.Application.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			CogProject project = _projectService.Project;
-			Set("Senses", ref _senses, new MirroredBindableList<Sense, SenseViewModel>(project.Senses, sense => new SenseViewModel(sense), vm => vm.DomainSense));
+			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
 			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, WordListsVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
 			SetIsEmpty();
 			project.Varieties.CollectionChanged += VarietiesChanged;
-			project.Senses.CollectionChanged += SensesChanged;
+			project.Meanings.CollectionChanged += MeaningsChanged;
 		}
 
 		protected override void OnIsSelectedChanged()
@@ -91,8 +91,8 @@ namespace SIL.Cog.Application.ViewModels
 				if (msg.DomainModels.Count == 2)
 				{
 					var variety = (Variety) msg.DomainModels[0];
-					var sense = (Sense) msg.DomainModels[1];
-					SelectedVarietySense = _varieties[variety].Senses.Single(s => s.DomainSense == sense);
+					var meaning = (Meaning) msg.DomainModels[1];
+					SelectedVarietyMeaning = _varieties[variety].Meanings.Single(m => m.DomainMeaning == meaning);
 				}
 			}
 		}
@@ -109,12 +109,12 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
-		private void AddNewSense()
+		private void AddNewMeaning()
 		{
-			var vm = new EditSenseViewModel(_projectService.Project.Senses);
+			var vm = new EditMeaningViewModel(_projectService.Project.Meanings);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				_projectService.Project.Senses.Add(new Sense(vm.Gloss, vm.Category));
+				_projectService.Project.Meanings.Add(new Meaning(vm.Gloss, vm.Category));
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
 			}
 		}
@@ -125,14 +125,14 @@ namespace SIL.Cog.Application.ViewModels
 				return;
 
 			_findViewModel = new FindViewModel(_dialogService, FindNext);
-			_findViewModel.PropertyChanged += (sender, args) => _startVarietySense = null;
+			_findViewModel.PropertyChanged += (sender, args) => _startVarietyMeaning = null;
 			_dialogService.ShowModelessDialog(this, _findViewModel, () => _findViewModel = null);
 		}
 
 		private void FindNext()
 		{
-			WordListsVarietySenseViewModel curVarietySense = _selectedVarietySense;
-			if (curVarietySense == null)
+			WordListsVarietyMeaningViewModel curVarietyMeaning = _selectedVarietyMeaning;
+			if (curVarietyMeaning == null)
 			{
 				WordListsVarietyViewModel curVariety = null;
 				switch (_findViewModel.Field)
@@ -144,23 +144,23 @@ namespace SIL.Cog.Application.ViewModels
 						curVariety = _varietiesView.Cast<WordListsVarietyViewModel>().FirstOrDefault();
 						break;
 				}
-				if (curVariety != null && _senses.Count > 0)
-					curVarietySense = curVariety.Senses.Last();
+				if (curVariety != null && _meanings.Count > 0)
+					curVarietyMeaning = curVariety.Meanings.Last();
 			}
 
-			if (_varieties.Count > 0 && _senses.Count > 0 && _startVarietySense == null)
+			if (_varieties.Count > 0 && _meanings.Count > 0 && _startVarietyMeaning == null)
 			{
-				_startVarietySense = curVarietySense;
+				_startVarietyMeaning = curVarietyMeaning;
 			}
-			else if (curVarietySense == null || _startVarietySense == curVarietySense)
+			else if (curVarietyMeaning == null || _startVarietyMeaning == curVarietyMeaning)
 			{
 				SearchEnded();
 				return;
 			}
 
-			Debug.Assert(curVarietySense != null);
-			WordListsVarietyViewModel variety = curVarietySense.Variety;
-			int senseIndex = variety.Senses.IndexOf(curVarietySense);
+			Debug.Assert(curVarietyMeaning != null);
+			WordListsVarietyViewModel variety = curVarietyMeaning.Variety;
+			int meaningIndex = variety.Meanings.IndexOf(curVarietyMeaning);
 			switch (_findViewModel.Field)
 			{
 				case FindField.Form:
@@ -168,34 +168,34 @@ namespace SIL.Cog.Application.ViewModels
 					int varietyIndex = varieties.IndexOf(variety);
 					do
 					{
-						senseIndex++;
-						if (senseIndex == varieties[varietyIndex].Senses.Count)
+						meaningIndex++;
+						if (meaningIndex == varieties[varietyIndex].Meanings.Count)
 						{
 							varietyIndex = (varietyIndex + 1) % _varieties.Count;
-							senseIndex = 0;
+							meaningIndex = 0;
 						}
 
-						curVarietySense = varieties[varietyIndex].Senses[senseIndex];
-						if (curVarietySense.Words.Any(w => w.StrRep.Contains(_findViewModel.String)))
+						curVarietyMeaning = varieties[varietyIndex].Meanings[meaningIndex];
+						if (curVarietyMeaning.Words.Any(w => w.StrRep.Contains(_findViewModel.String)))
 						{
-							Set(() => SelectedVarietySense, ref _selectedVarietySense, curVarietySense);
+							Set(() => SelectedVarietyMeaning, ref _selectedVarietyMeaning, curVarietyMeaning);
 							return;
 						}
-					} while (_startVarietySense != curVarietySense);
+					} while (_startVarietyMeaning != curVarietyMeaning);
 					break;
 
 				case FindField.Gloss:
 					do
 					{
-						senseIndex = (senseIndex + 1) % variety.Senses.Count;
+						meaningIndex = (meaningIndex + 1) % variety.Meanings.Count;
 
-						curVarietySense = variety.Senses[senseIndex];
-						if (curVarietySense.DomainSense.Gloss.Contains(_findViewModel.String))
+						curVarietyMeaning = variety.Meanings[meaningIndex];
+						if (curVarietyMeaning.DomainMeaning.Gloss.Contains(_findViewModel.String))
 						{
-							Set(() => SelectedVarietySense, ref _selectedVarietySense, curVarietySense);
+							Set(() => SelectedVarietyMeaning, ref _selectedVarietyMeaning, curVarietyMeaning);
 							return;
 						}
-					} while (_startVarietySense != curVarietySense);
+					} while (_startVarietyMeaning != curVarietyMeaning);
 					break;
 			}
 			SearchEnded();
@@ -204,7 +204,7 @@ namespace SIL.Cog.Application.ViewModels
 		private void SearchEnded()
 		{
 			_findViewModel.ShowSearchEndedMessage();
-			_startVarietySense = null;
+			_startVarietyMeaning = null;
 		}
 
 		private void Import()
@@ -219,7 +219,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void RunStemmer()
 		{
-			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Senses.Count == 0)
+			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Meanings.Count == 0)
 				return;
 
 			var vm = new RunStemmerViewModel(true);
@@ -233,13 +233,13 @@ namespace SIL.Cog.Application.ViewModels
 			set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
-		public WordListsVarietySenseViewModel SelectedVarietySense
+		public WordListsVarietyMeaningViewModel SelectedVarietyMeaning
 		{
-			get { return _selectedVarietySense; }
+			get { return _selectedVarietyMeaning; }
 			set
 			{
-				if (Set(() => SelectedVarietySense, ref _selectedVarietySense, value))
-					_startVarietySense = null;
+				if (Set(() => SelectedVarietyMeaning, ref _selectedVarietyMeaning, value))
+					_startVarietyMeaning = null;
 			}
 		}
 
@@ -248,9 +248,9 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _findCommand; }
 		}
 
-		public ReadOnlyObservableList<SenseViewModel> Senses
+		public ReadOnlyObservableList<MeaningViewModel> Meanings
 		{
-			get { return _senses; }
+			get { return _meanings; }
 		}
 
 		public ReadOnlyObservableList<WordListsVarietyViewModel> Varieties
@@ -264,7 +264,7 @@ namespace SIL.Cog.Application.ViewModels
 			set { Set(() => VarietiesView, ref _varietiesView, value); }
 		}
 
-		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void MeaningsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			SetIsEmpty();
 		}
@@ -276,7 +276,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void SetIsEmpty()
 		{
-			IsEmpty = _varieties.Count == 0 && _senses.Count == 0;
+			IsEmpty = _varieties.Count == 0 && _meanings.Count == 0;
 		}
 	}
 }

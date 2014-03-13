@@ -41,7 +41,7 @@ namespace SIL.Cog.Presentation.Views
 				return;
 
 			vm.PropertyChanged += ViewModel_PropertyChanged;
-			vm.Senses.CollectionChanged += Senses_CollectionChanged;
+			vm.Meanings.CollectionChanged += Meanings_CollectionChanged;
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -60,15 +60,15 @@ namespace SIL.Cog.Presentation.Views
 			var vm = (WordListsViewModel) sender;
 			switch (e.PropertyName)
 			{
-				case "Senses":
-					vm.Senses.CollectionChanged += Senses_CollectionChanged;
+				case "Meanings":
+					vm.Meanings.CollectionChanged += Meanings_CollectionChanged;
 					break;
 
 				case "Varieties":
 					DispatcherHelper.CheckBeginInvokeOnUI(LoadCollectionView);
 					break;
 
-				case "SelectedVarietySense":
+				case "SelectedVarietyMeaning":
 					DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
 							if (_selectMonitor.Busy)
@@ -77,9 +77,9 @@ namespace SIL.Cog.Presentation.Views
 							using (_selectMonitor.Enter())
 							{
 								WordListsGrid.SelectedCellRanges.Clear();
-								if (vm.SelectedVarietySense != null)
+								if (vm.SelectedVarietyMeaning != null)
 								{
-									WordListsVarietyViewModel variety = vm.SelectedVarietySense.Variety;
+									WordListsVarietyViewModel variety = vm.SelectedVarietyMeaning.Variety;
 									int itemIndex = WordListsGrid.Items.IndexOf(variety);
 									WordListsGrid.BringItemIntoView(variety);
 									WordListsGrid.Dispatcher.BeginInvoke(new Action(() =>
@@ -87,7 +87,7 @@ namespace SIL.Cog.Presentation.Views
 									        var row = (DataRow) WordListsGrid.GetContainerFromIndex(itemIndex);
 										    if (row != null)
 										    {
-											    Cell cell = row.Cells.Single(c => c.Content == vm.SelectedVarietySense);
+											    Cell cell = row.Cells.Single(c => c.Content == vm.SelectedVarietyMeaning);
 												WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(itemIndex, cell.ParentColumn.Index));
 												WordListsGrid.CurrentItem = variety;
 												WordListsGrid.CurrentColumn = cell.ParentColumn;
@@ -110,9 +110,9 @@ namespace SIL.Cog.Presentation.Views
 			WordListsGrid.Columns.Clear();
 			var view = new DataGridCollectionView(vm.Varieties, typeof(WordListsVarietyViewModel), false, false);
 			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)));
-			IComparer sortComparer = ProjectionComparer<WordListsVarietySenseViewModel>.Create(sense => sense.StrRep);
-			for (int i = 0; i < vm.Senses.Count; i++)
-				view.ItemProperties.Add(new DataGridItemProperty("Sense" + i, string.Format("Senses[{0}]", i), typeof(WordListsVarietySenseViewModel)) {SortComparer = sortComparer});
+			IComparer sortComparer = ProjectionComparer<WordListsVarietyMeaningViewModel>.Create(meaning => meaning.StrRep);
+			for (int i = 0; i < vm.Meanings.Count; i++)
+				view.ItemProperties.Add(new DataGridItemProperty("Meaning" + i, string.Format("Meanings[{0}]", i), typeof(WordListsVarietyMeaningViewModel)) {SortComparer = sortComparer});
 			vm.VarietiesView = view;
 			WordListsGrid.Items.SortDescriptions.Clear();
 
@@ -120,16 +120,16 @@ namespace SIL.Cog.Presentation.Views
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
 			WordListsGrid.Columns.Add(headerColumn);
-			for (int i = 0; i < vm.Senses.Count; i++)
+			for (int i = 0; i < vm.Meanings.Count; i++)
 			{
-				var column = new Column {FieldName = "Sense" + i, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof (WordListsVarietySenseViewModel)]};
-				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Senses[{0}].Gloss", i)) {RelativeSource = RelativeSource.Self};
+				var column = new Column {FieldName = "Meaning" + i, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof (WordListsVarietyMeaningViewModel)]};
+				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Meanings[{0}].Gloss", i)) {RelativeSource = RelativeSource.Self};
 				BindingOperations.SetBinding(column, ColumnBase.TitleProperty, titleBinding);
 				WordListsGrid.Columns.Add(column);
 			}
 		}
 
-		private void Senses_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void Meanings_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			LoadCollectionView();
 		}
@@ -148,11 +148,11 @@ namespace SIL.Cog.Presentation.Views
 					int itemIndex = cellRange.ItemRange.StartIndex;
 					var variety = (WordListsVarietyViewModel) WordListsGrid.Items[itemIndex];
 					int columnIndex = cellRange.ColumnRange.StartIndex;
-					vm.SelectedVarietySense = variety.Senses[columnIndex - 1];
+					vm.SelectedVarietyMeaning = variety.Meanings[columnIndex - 1];
 				}
 				else
 				{
-					vm.SelectedVarietySense = null;
+					vm.SelectedVarietyMeaning = null;
 				}
 			}
 		}

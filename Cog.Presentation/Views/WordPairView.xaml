@@ -38,15 +38,15 @@
 	</UserControl.Resources>
 	<StackPanel>
 		<TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
-			<TextBlock Text="{Binding Sense.Gloss}" />
-			<TextBlock Text="{Binding Sense.Category, StringFormat={}({0})}">
+			<TextBlock Text="{Binding Meaning.Gloss}" />
+			<TextBlock Text="{Binding Meaning.Category, StringFormat={}({0})}">
 				<TextBlock.Style>
 					<Style TargetType="TextBlock">
 						<Style.Triggers>
-							<DataTrigger Binding="{Binding Sense.Category}" Value="{x:Null}">
+							<DataTrigger Binding="{Binding Meaning.Category}" Value="{x:Null}">
 								<Setter Property="Visibility" Value="Collapsed" />
 							</DataTrigger>
-							<DataTrigger Binding="{Binding Sense.Category}" Value="{x:Static s:String.Empty}">
+							<DataTrigger Binding="{Binding Meaning.Category}" Value="{x:Static s:String.Empty}">
 								<Setter Property="Visibility" Value="Collapsed" />
 							</DataTrigger>
 						</Style.Triggers>

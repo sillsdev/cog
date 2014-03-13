@@ -20,7 +20,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IAnalysisService _analysisService; 
 		private readonly Word _word;
 		private BindableList<WordSegmentViewModel> _segments;
-		private readonly SenseViewModel _sense;
+		private readonly MeaningViewModel _meaning;
 		private bool _isValid;
 		private readonly SimpleMonitor _monitor;
 		private readonly ICommand _showInWordListsCommand;
@@ -31,7 +31,7 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			_busyService = busyService;
 			_analysisService = analysisService;
-			_sense = new SenseViewModel(word.Sense);
+			_meaning = new MeaningViewModel(word.Meaning);
 			_word = word;
 			LoadSegments();
 			_monitor = new SimpleMonitor();
@@ -42,12 +42,12 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void ShowInWordLists()
 		{
-			Messenger.Default.Send(new SwitchViewMessage(typeof(WordListsViewModel), _word.Variety, _sense.DomainSense));
+			Messenger.Default.Send(new SwitchViewMessage(typeof(WordListsViewModel), _word.Variety, _meaning.DomainMeaning));
 		}
 
 		private void ShowInVarieties()
 		{
-			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _word.Variety, _word.Sense));
+			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _word.Variety, _word.Meaning));
 		}
 
 		private void WordPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -134,9 +134,9 @@ namespace SIL.Cog.Application.ViewModels
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
 		}
 
-		public SenseViewModel Sense
+		public MeaningViewModel Meaning
 		{
-			get { return _sense; }
+			get { return _meaning; }
 		}
 
 		public string StrRep

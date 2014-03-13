@@ -132,7 +132,7 @@ namespace SIL.Cog.Application.ViewModels
 						break;
 
 					case FindField.Gloss:
-						match = curWord.Sense.Gloss.Contains(str);
+						match = curWord.Meaning.Gloss.Contains(str);
 						break;
 				}
 				if (match)
@@ -175,9 +175,9 @@ namespace SIL.Cog.Application.ViewModels
 					if (count > 0)
 						sb.AppendLine();
 
-					sb.Append(word.Sense.Gloss);
-					if (!string.IsNullOrEmpty(word.Sense.Category))
-						sb.AppendFormat(" ({0})", word.Sense.Category);
+					sb.Append(word.Meaning.Gloss);
+					if (!string.IsNullOrEmpty(word.Meaning.Category))
+						sb.AppendFormat(" ({0})", word.Meaning.Category);
 					sb.AppendLine();
 
 					sb.Append(word.DomainWord);

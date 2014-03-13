@@ -21,7 +21,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 
 		[Test]
-		public void Senses()
+		public void Meanings()
 		{
 			DispatcherHelper.Initialize();
 			var projectService = Substitute.For<IProjectService>();
@@ -32,20 +32,20 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var project = new CogProject(_spanFactory)
 				{
-					Senses = {new Sense("sense2", "cat2"), new Sense("sense1", "cat1"), new Sense("sense3", "cat3")}
+					Meanings = {new Meaning("gloss2", "cat2"), new Meaning("gloss1", "cat1"), new Meaning("gloss3", "cat3")}
 				};
 
 			projectService.Project.Returns(project);
 			projectService.ProjectOpened += Raise.Event();
 
-			Assert.That(alignment.SelectedSense, Is.Null);
-			alignment.SensesView = new ListCollectionView(alignment.Senses);
+			Assert.That(alignment.SelectedMeaning, Is.Null);
+			alignment.MeaningsView = new ListCollectionView(alignment.Meanings);
 
-			Assert.That(alignment.SelectedSense.Gloss, Is.EqualTo("sense1"));
-			Assert.That(alignment.SensesView.Cast<SenseViewModel>().Select(s => s.Gloss), Is.EqualTo(new[] {"sense1", "sense2", "sense3"}));
+			Assert.That(alignment.SelectedMeaning.Gloss, Is.EqualTo("gloss1"));
+			Assert.That(alignment.MeaningsView.Cast<MeaningViewModel>().Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1", "gloss2", "gloss3"}));
 
-			project.Senses.Insert(0, new Sense("sense4", "cat4"));
-			Assert.That(alignment.SensesView.Cast<SenseViewModel>().Select(s => s.Gloss), Is.EqualTo(new[] {"sense1", "sense2", "sense3", "sense4"}));
+			project.Meanings.Insert(0, new Meaning("gloss4", "cat4"));
+			Assert.That(alignment.MeaningsView.Cast<MeaningViewModel>().Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1", "gloss2", "gloss3", "gloss4"}));
 		}
 
 		[Test]
@@ -62,11 +62,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService);
 
 			var project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.AddRange(new[] {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")});
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
-			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Senses[0]), new Word("gʊd", project.Senses[1]), new Word("bæd", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Senses[0]), new Word("gu.gəl", project.Senses[1]), new Word("gu.fi", project.Senses[2])});
-			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Senses[0]), new Word("kɑr", project.Senses[1]), new Word("fʊt.bɔl", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("hɛlp", project.Meanings[0]), new Word("gu.gəl", project.Meanings[1]), new Word("gu.fi", project.Meanings[2])});
+			project.Varieties[2].Words.AddRange(new[] {new Word("wɜrd", project.Meanings[0]), new Word("kɑr", project.Meanings[1]), new Word("fʊt.bɔl", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			analysisService.SegmentAll();
 
@@ -87,16 +87,16 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			projectService.AreAllVarietiesCompared.Returns(true);
 			projectService.ProjectOpened += Raise.Event();
 
-			Assert.That(alignment.SelectedSense, Is.Null);
+			Assert.That(alignment.SelectedMeaning, Is.Null);
 			Assert.That(alignment.Words, Is.Empty);
 
-			alignment.SensesView = new ListCollectionView(alignment.Senses);
+			alignment.MeaningsView = new ListCollectionView(alignment.Meanings);
 			alignment.WordsView = new ListCollectionView(alignment.Words);
 
 			Assert.That(alignment.WordsView.Cast<MultipleWordAlignmentWordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.loʊ", "hɛlp", "wɜrd"}));
 			Assert.That(alignment.ColumnCount, Is.EqualTo(4));
 
-			alignment.SelectedSense = alignment.Senses[1];
+			alignment.SelectedMeaning = alignment.Meanings[1];
 
 			Assert.That(alignment.WordsView.Cast<MultipleWordAlignmentWordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"gu.gəl", "gʊd", "kɑr"}));
 			Assert.That(alignment.ColumnCount, Is.EqualTo(5));

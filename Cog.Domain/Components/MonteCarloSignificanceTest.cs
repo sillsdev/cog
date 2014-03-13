@@ -26,9 +26,9 @@ namespace SIL.Cog.Domain.Components
 			for (int n = 0; n < _iterationCount; n++)
 			{
 				var randVariety2 = new Variety(varietyPair.Variety2.Name + "-rand" + n);
-				randVariety2.Words.AddRange(varietyPair.Variety2.Words.Senses.OrderBy(gloss => Guid.NewGuid())
-					.Zip(varietyPair.Variety2.Words.Senses.Select(sense => varietyPair.Variety2.Words[sense].FirstOrDefault()).Where(word => word != null),
-						(sense, word) => new Word(word.StrRep, word.StemIndex, word.StemLength, sense) {Shape = word.Shape}));
+				randVariety2.Words.AddRange(varietyPair.Variety2.Words.Meanings.OrderBy(gloss => Guid.NewGuid())
+					.Zip(varietyPair.Variety2.Words.Meanings.Select(meaning => varietyPair.Variety2.Words[meaning].FirstOrDefault()).Where(word => word != null),
+						(meaning, word) => new Word(word.StrRep, word.StemIndex, word.StemLength, meaning) {Shape = word.Shape}));
 				var randVarietyPair = new VarietyPair(varietyPair.Variety1, randVariety2);
 				foreach (IProcessor<VarietyPair> processor in processors)
 					processor.Process(randVarietyPair);

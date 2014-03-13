@@ -7,8 +7,8 @@ namespace SIL.Cog.Application.ViewModels
 	{
 		[Description("Varieties as rows")]
 		VarietyRows,
-		[Description("Senses as rows")]
-		SenseRows
+		[Description("Glosses as rows")]
+		GlossRows
 	}
 
 	public class ImportTextWordListsViewModel : ViewModelBase

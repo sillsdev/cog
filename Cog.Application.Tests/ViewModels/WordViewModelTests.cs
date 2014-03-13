@@ -23,9 +23,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var dialogService = Substitute.For<IDialogService>();
 			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
 			var project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
-			project.Senses.Add(new Sense("sense1", "cat1"));
+			project.Meanings.Add(new Meaning("gloss1", "cat1"));
 			project.Varieties.Add(new Variety("variety1"));
-			var w = new Word("gugəl", project.Senses[0]);
+			var w = new Word("gugəl", project.Meanings[0]);
 			project.Varieties[0].Words.Add(w);
 			projectService.Project.Returns(project);
 

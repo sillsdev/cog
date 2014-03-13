@@ -12,34 +12,34 @@ namespace SIL.Cog.Application.Export
 		{
 			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
 			{
-				var senseClusters = new Dictionary<Sense, List<Cluster<Word>>>();
-				foreach (Sense sense in project.Senses)
+				var meaningClusters = new Dictionary<Meaning, List<Cluster<Word>>>();
+				foreach (Meaning meaning in project.Meanings)
 				{
 					writer.Write("\t");
-					writer.Write(sense.Gloss);
-					senseClusters[sense] = project.GenerateCognateSets(sense).ToList();
+					writer.Write(meaning.Gloss);
+					meaningClusters[meaning] = project.GenerateCognateSets(meaning).ToList();
 
 				}
 				writer.WriteLine();
-				foreach (Sense sense in project.Senses)
+				foreach (Meaning meaning in project.Meanings)
 				{
 					writer.Write("\t");
-					writer.Write(sense.Category);
+					writer.Write(meaning.Category);
 				}
 				writer.WriteLine();
 
 				foreach (Variety variety in project.Varieties)
 				{
 					writer.Write(variety.Name);
-					foreach (Sense sense in project.Senses)
+					foreach (Meaning meaning in project.Meanings)
 					{
 						writer.Write("\t");
 						bool first = true;
-						foreach (Word word in variety.Words[sense])
+						foreach (Word word in variety.Words[meaning])
 						{
 							if (!first)
 								writer.Write(',');
-							int i = senseClusters[sense].FindIndex(set => set.DataObjects.Contains(word)) + 1;
+							int i = meaningClusters[meaning].FindIndex(set => set.DataObjects.Contains(word)) + 1;
 							writer.Write(i);
 							first = false;
 						}

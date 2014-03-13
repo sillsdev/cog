@@ -18,7 +18,7 @@ namespace SIL.Cog.Presentation.Services
 			{
 				{typeof(EditAffixViewModel), typeof(EditAffixDialog)},
 				{typeof(EditVarietyViewModel), typeof(EditVarietyDialog)},
-				{typeof(EditSenseViewModel), typeof(EditSenseDialog)},
+				{typeof(EditMeaningViewModel), typeof(EditMeaningDialog)},
 				{typeof(RunStemmerViewModel), typeof(RunStemmerDialog)},
 				{typeof(ProgressViewModel), typeof(ProgressDialog)},
 				{typeof(NewSegmentMappingViewModel), typeof(NewSegmentMappingDialog)},

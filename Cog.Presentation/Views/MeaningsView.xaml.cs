@@ -4,21 +4,21 @@ using System.Windows;
 namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
-	/// Interaction logic for SensesView.xaml
+	/// Interaction logic for MeaningsView.xaml
 	/// </summary>
-	public partial class SensesView
+	public partial class MeaningsView
 	{
-		public SensesView()
+		public MeaningsView()
 		{
 			InitializeComponent();
-			SensesGrid.ClipboardExporters.Clear();
+			MeaningsGrid.ClipboardExporters.Clear();
 			BusyCursor.DisplayUntilIdle();
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (IsVisible)
-				Dispatcher.BeginInvoke(new Action(() => SensesGrid.Focus()));
+				Dispatcher.BeginInvoke(new Action(() => MeaningsGrid.Focus()));
 		}
 	}
 }

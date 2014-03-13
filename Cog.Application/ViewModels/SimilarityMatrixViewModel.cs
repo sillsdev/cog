@@ -65,7 +65,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void PerformComparison()
 		{
-			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Senses.Count == 0)
+			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Meanings.Count == 0)
 				return;
 
 			_analysisService.CompareAll(this);

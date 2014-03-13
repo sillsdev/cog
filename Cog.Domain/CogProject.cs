@@ -13,7 +13,7 @@ namespace SIL.Cog.Domain
 		private readonly Segmenter _segmenter;
 
 		private readonly KeyedBulkObservableList<string, Variety> _varieties;
-		private readonly KeyedBulkObservableList<string, Sense> _senses;
+		private readonly KeyedBulkObservableList<string, Meaning> _meanings;
 		private readonly VarietyPairCollection _varietyPairs;
 
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners;
@@ -26,8 +26,8 @@ namespace SIL.Cog.Domain
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
 			_segmenter = new Segmenter(spanFactory);
-			_senses = new KeyedBulkObservableList<string, Sense>(sense => sense.Gloss);
-			_senses.CollectionChanged += SensesChanged;
+			_meanings = new KeyedBulkObservableList<string, Meaning>(meaning => meaning.Gloss);
+			_meanings.CollectionChanged += MeaningsChanged;
 			_varieties = new KeyedBulkObservableList<string, Variety>(variety => variety.Name);
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
@@ -40,18 +40,18 @@ namespace SIL.Cog.Domain
 			_varietyPairProcessors = new ObservableDictionary<string, IProcessor<VarietyPair>>();
 		}
 
-		private void SensesChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void MeaningsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Remove:
 				case NotifyCollectionChangedAction.Replace:
 				case NotifyCollectionChangedAction.Reset:
-					if (_senses.Count > 0)
+					if (_meanings.Count > 0)
 					{
-						var senses = new HashSet<Sense>(_senses);
+						var meanings = new HashSet<Meaning>(_meanings);
 						foreach (Variety variety in _varieties)
-							variety.Words.RemoveAll(w => !senses.Contains(w.Sense));
+							variety.Words.RemoveAll(w => !meanings.Contains(w.Meaning));
 					}
 					else
 					{
@@ -99,9 +99,9 @@ namespace SIL.Cog.Domain
 			get { return _segmenter; }
 		}
 
-		public KeyedBulkObservableList<string, Sense> Senses
+		public KeyedBulkObservableList<string, Meaning> Meanings
 		{
-			get { return _senses; }
+			get { return _meanings; }
 		}
 
 		public KeyedBulkObservableList<string, Variety> Varieties

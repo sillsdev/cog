@@ -112,7 +112,7 @@
     <Compile Include="Segment.cs" />
     <Compile Include="Segmenter.cs" />
     <Compile Include="SegmentPool.cs" />
-    <Compile Include="Sense.cs" />
+    <Compile Include="Meaning.cs" />
     <Compile Include="SoundContext.cs" />
     <Compile Include="SoundClass.cs" />
     <Compile Include="Symbol.cs" />

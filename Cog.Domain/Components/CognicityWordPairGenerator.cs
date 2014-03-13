@@ -45,13 +45,13 @@ namespace SIL.Cog.Domain.Components
 		public void Process(VarietyPair varietyPair)
 		{
 			IWordAligner aligner = _project.WordAligners[_alignerID];
-			var ambiguousSenses = new List<Tuple<Sense, IWordAlignerResult, IWordAlignerResult[]>>();
+			var ambiguousMeanings = new List<Tuple<Meaning, IWordAlignerResult, IWordAlignerResult[]>>();
 			varietyPair.WordPairs.Clear();
 			var counts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-			foreach (Sense sense in varietyPair.Variety1.Words.Senses)
+			foreach (Meaning meaning in varietyPair.Variety1.Words.Meanings)
 			{
-				Word[] words1 = varietyPair.Variety1.Words[sense].Where(w => w.Shape.Count > 0).ToArray();
-				Word[] words2 = varietyPair.Variety2.Words[sense].Where(w => w.Shape.Count > 0).ToArray();
+				Word[] words1 = varietyPair.Variety1.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
+				Word[] words2 = varietyPair.Variety2.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
 
 				if (words1.Length == 1 && words2.Length == 1)
 				{
@@ -68,27 +68,27 @@ namespace SIL.Cog.Domain.Components
 				{
 					IWordAlignerResult[] alignerResults = words1.SelectMany(w1 => words2.Select(w2 => aligner.Compute(w1, w2))).ToArray();
 					IWordAlignerResult maxAlignerResult = alignerResults.MaxBy(a => a.BestRawScore);
-					ambiguousSenses.Add(Tuple.Create(sense, maxAlignerResult, alignerResults));
+					ambiguousMeanings.Add(Tuple.Create(meaning, maxAlignerResult, alignerResults));
 					varietyPair.WordPairs.Add(maxAlignerResult.Words[0], maxAlignerResult.Words[1]);
 				}
 			}
 
 			ICognateIdentifier cognateIdentifier = _project.CognateIdentifiers[_cognateIdentifierID];
-			for (int i = 0; i < ambiguousSenses.Count; i++)
+			for (int i = 0; i < ambiguousMeanings.Count; i++)
 			{
 				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> newCounts = counts.DeepClone();
-				for (int j = i + 1; j < ambiguousSenses.Count; j++)
-					UpdateCounts(aligner, newCounts, ambiguousSenses[j].Item2.GetAlignments().First());
+				for (int j = i + 1; j < ambiguousMeanings.Count; j++)
+					UpdateCounts(aligner, newCounts, ambiguousMeanings[j].Item2.GetAlignments().First());
 
 				IWordAlignerResult bestAlignerResult = null;
 				WordPair bestWordPair = null;
-				foreach (IWordAlignerResult alignerResult in ambiguousSenses[i].Item3)
+				foreach (IWordAlignerResult alignerResult in ambiguousMeanings[i].Item3)
 				{
 					ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> alignmentCounts = counts.DeepClone();
 					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 					UpdateCounts(aligner, alignmentCounts, alignment);
 					varietyPair.SoundChangeFrequencyDistribution = alignmentCounts;
-					varietyPair.WordPairs.Remove(ambiguousSenses[i].Item1);
+					varietyPair.WordPairs.Remove(ambiguousMeanings[i].Item1);
 					WordPair wordPair = varietyPair.WordPairs.Add(alignerResult.Words[0], alignerResult.Words[1]);
 					cognateIdentifier.UpdateCognicity(wordPair, alignerResult);
 					wordPair.PhoneticSimilarityScore = alignment.NormalizedScore;
@@ -100,7 +100,7 @@ namespace SIL.Cog.Domain.Components
 				}
 
 				Debug.Assert(bestWordPair != null);
-				varietyPair.WordPairs.Remove(ambiguousSenses[i].Item1);
+				varietyPair.WordPairs.Remove(ambiguousMeanings[i].Item1);
 				varietyPair.WordPairs.Add(bestWordPair);
 				UpdateCounts(aligner, counts, bestAlignerResult.GetAlignments().First());
 			}

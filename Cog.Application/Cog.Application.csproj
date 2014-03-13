@@ -63,7 +63,7 @@
     <Compile Include="Collections\ReadOnlyBindableList.cs" />
     <Compile Include="Collections\MirroredBindableCollection.cs" />
     <Compile Include="Collections\MirroredBindableList.cs" />
-    <Compile Include="Collections\VarietySenseViewModelCollection.cs" />
+    <Compile Include="Collections\VarietyMeaningViewModelCollection.cs" />
     <Compile Include="ComponentIdentifiers.cs" />
     <Compile Include="Export\ICognateSetsExporter.cs" />
     <Compile Include="Export\ISegmentFrequenciesExporter.cs" />
@@ -129,7 +129,7 @@
     <Compile Include="ViewModels\EditAffixViewModel.cs" />
     <Compile Include="ViewModels\EditNaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditRegionViewModel.cs" />
-    <Compile Include="ViewModels\EditSenseViewModel.cs" />
+    <Compile Include="ViewModels\EditMeaningViewModel.cs" />
     <Compile Include="ViewModels\EditSoundClassViewModel.cs" />
     <Compile Include="ViewModels\EditUnnaturalClassViewModel.cs" />
     <Compile Include="ViewModels\EditVarietyViewModel.cs" />
@@ -185,8 +185,8 @@
     <Compile Include="ViewModels\ContainerChildViewModelBase.cs" />
     <Compile Include="ViewModels\SelectableVarietyViewModel.cs" />
     <Compile Include="ViewModels\SelectVarietiesViewModel.cs" />
-    <Compile Include="ViewModels\SensesViewModel.cs" />
-    <Compile Include="ViewModels\SenseViewModel.cs" />
+    <Compile Include="ViewModels\MeaningsViewModel.cs" />
+    <Compile Include="ViewModels\MeaningViewModel.cs" />
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBase.cs" />
     <Compile Include="ViewModels\SimilarityMatrixVarietyPairViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixVarietyViewModel.cs" />
@@ -215,7 +215,7 @@
     <Compile Include="ViewModels\VarietyPairsViewModel.cs" />
     <Compile Include="ViewModels\VarietyPairViewModel.cs" />
     <Compile Include="ViewModels\VarietySegmentViewModel.cs" />
-    <Compile Include="ViewModels\WordListsVarietySenseViewModel.cs" />
+    <Compile Include="ViewModels\WordListsVarietyMeaningViewModel.cs" />
     <Compile Include="ViewModels\VarietyViewModel.cs" />
     <Compile Include="ViewModels\WordListsVarietyViewModel.cs" />
     <Compile Include="ViewModels\WordListsViewModel.cs" />

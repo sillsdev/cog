@@ -12,19 +12,19 @@ namespace SIL.Cog.Application.ViewModels
 	{
 		public delegate WordListsVarietyViewModel Factory(Variety variety);
 
-		private readonly VarietySenseViewModelCollection _senses;
+		private readonly VarietyMeaningViewModelCollection _meanings;
 		private readonly ICommand _switchToVarietyCommand;
  
-		public WordListsVarietyViewModel(IProjectService projectService, WordListsVarietySenseViewModel.Factory varietySenseFactory, Variety variety)
+		public WordListsVarietyViewModel(IProjectService projectService, WordListsVarietyMeaningViewModel.Factory varietyMeaningFactory, Variety variety)
 			: base(variety)
 		{
-			_senses = new VarietySenseViewModelCollection(projectService.Project.Senses, DomainVariety.Words, sense => varietySenseFactory(this, sense));
+			_meanings = new VarietyMeaningViewModelCollection(projectService.Project.Meanings, DomainVariety.Words, meaning => varietyMeaningFactory(this, meaning));
 			_switchToVarietyCommand = new RelayCommand(() => Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), DomainVariety)));
 		}
 
-		public ReadOnlyObservableList<WordListsVarietySenseViewModel> Senses
+		public ReadOnlyObservableList<WordListsVarietyMeaningViewModel> Meanings
 		{
-			get { return _senses; }
+			get { return _meanings; }
 		}
 
 		public ICommand SwitchToVarietyCommand

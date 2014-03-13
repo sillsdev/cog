@@ -85,11 +85,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var project = new CogProject(_spanFactory)
 				{
-					Senses = {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")},
+					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
 					Varieties = {new Variety("variety1"), new Variety("variety2")}
 				};
-			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Senses[0]), new Word("good", project.Senses[1]), new Word("bad", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Senses[0]), new Word("google", project.Senses[1]), new Word("goofy", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Meanings[0]), new Word("good", project.Meanings[1]), new Word("bad", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google", project.Meanings[1]), new Word("goofy", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			projectService.ProjectOpened += Raise.Event();
 
@@ -163,9 +163,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
 
-			// sense searches
+			// gloss searches
 			findViewModel.Field = FindField.Gloss;
-			findViewModel.String = "sense2";
+			findViewModel.String = "gloss2";
 			findViewModel.FindNextCommand.Execute(null);
 			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
 			findViewModel.FindNextCommand.Execute(null);
@@ -189,11 +189,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var project = new CogProject(_spanFactory)
 				{
-					Senses = {new Sense("sense1", "cat1"), new Sense("sense2", "cat2"), new Sense("sense3", "cat3")},
+					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
 					Varieties = {new Variety("variety1"), new Variety("variety2")}
 				};
-			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Senses[0]), new Word("good", project.Senses[1]), new Word("bad", project.Senses[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Senses[0]), new Word("google", project.Senses[1]), new Word("goofy", project.Senses[2])});
+			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Meanings[0]), new Word("good", project.Meanings[1]), new Word("bad", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google", project.Meanings[1]), new Word("goofy", project.Meanings[2])});
 			projectService.Project.Returns(project);
 			projectService.ProjectOpened += Raise.Event();
 
@@ -225,11 +225,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
 			var sortWordsByItems = (TaskAreaItemsViewModel) commonTasks.Items[4];
 			var sortWordsByGroup = (TaskAreaCommandGroupViewModel) sortWordsByItems.Items[0];
-			// default sorting is by sense, change to form
+			// default sorting is by gloss, change to form
 			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
 			sortWordsByGroup.SelectedCommand.Command.Execute(null);
 			Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"goofy", "google", "help"}));
-			// change sorting back to sense
+			// change sorting back to gloss
 			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[0];
 			sortWordsByGroup.SelectedCommand.Command.Execute(null);
 			Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"help", "google", "goofy"}));

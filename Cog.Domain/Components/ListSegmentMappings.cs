@@ -126,6 +126,9 @@ namespace SIL.Cog.Domain.Components
 
 		public bool IsMapped(ShapeNode leftNode1, Ngram<Segment> target1, ShapeNode rightNode1, ShapeNode leftNode2, Ngram<Segment> target2, ShapeNode rightNode2)
 		{
+			if (_mappings.Count == 0)
+				return false;
+
 			foreach (string strRep1 in GetStrReps(target1))
 			{
 				foreach (string strRep2 in GetStrReps(target2))

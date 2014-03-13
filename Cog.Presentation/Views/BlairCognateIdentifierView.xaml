@@ -33,11 +33,11 @@
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding RegularConsonantsEqual}">Regular consonants are category 1</CheckBox>
 		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,5,0" Padding="0">Ignored correspondences</Label>
 		<v:SegmentMappingsView HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,0,5,5" Width="280" DataContext="{Binding IgnoredMappings}" />
-        <GroupBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarVowels}" Header="{Binding DisplayName}">
-			<v:SimilarSegmentMappingsOptionsView />
+        <GroupBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarVowels}" Header="Similar vowels">
+			<v:SimilarSegmentMappingsView />
         </GroupBox>
-		<GroupBox Grid.Row="5" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarConsonants}" Header="{Binding DisplayName}">
-			<v:SimilarSegmentMappingsOptionsView />
+		<GroupBox Grid.Row="5" Grid.ColumnSpan="2" Margin="0" DataContext="{Binding SimilarConsonants}" Header="Similar consonants">
+			<v:SimilarSegmentMappingsView />
 		</GroupBox>
 	</Grid>
 </UserControl>

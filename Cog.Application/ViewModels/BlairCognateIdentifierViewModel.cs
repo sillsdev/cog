@@ -13,12 +13,12 @@ namespace SIL.Cog.Application.ViewModels
 
 		private bool _ignoreRegularInsertionDeletion;
 		private bool _regularConsEqual;
-		private readonly SimilarSegmentMappingsOptionsViewModel _similarVowels;
-		private readonly SimilarSegmentMappingsOptionsViewModel _similarConsonants;
+		private readonly SimilarSegmentMappingsViewModel _similarVowels;
+		private readonly SimilarSegmentMappingsViewModel _similarConsonants;
 		private readonly SegmentMappingsViewModel _ignoredMappings;
 
 		public BlairCognateIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService, SegmentMappingsViewModel ignoredMappings,
-			SimilarSegmentMappingsOptionsViewModel.Factory similarSegmentMappingsFactory)
+			SimilarSegmentMappingsViewModel.Factory similarSegmentMappingsFactory)
 			: base("Blair")
 		{
 			_segmentPool = segmentPool;
@@ -53,8 +53,8 @@ namespace SIL.Cog.Application.ViewModels
 				foreach (Tuple<string, string> mapping in ignoredMappings.Mappings)
 					_ignoredMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
 				var segmentMappings = (TypeSegmentMappings) blair.SimilarSegments;
-				_similarVowels.SegmentMappings = segmentMappings.VowelMappings;
-				_similarConsonants.SegmentMappings = segmentMappings.ConsonantMappings;
+				_similarVowels.SegmentMappings = (UnionSegmentMappings) segmentMappings.VowelMappings;
+				_similarConsonants.SegmentMappings = (UnionSegmentMappings) segmentMappings.ConsonantMappings;
 			}
 			_similarVowels.Setup();
 			_similarConsonants.Setup();
@@ -85,21 +85,23 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _ignoredMappings; }
 		}
 
-		public ComponentOptionsViewModel SimilarVowels
+		public SimilarSegmentMappingsViewModel SimilarVowels
 		{
 			get { return _similarVowels; }
 		}
 
-		public ComponentOptionsViewModel SimilarConsonants
+		public SimilarSegmentMappingsViewModel SimilarConsonants
 		{
 			get { return _similarConsonants; }
 		}
 
 		public override object UpdateComponent()
 		{
+			_similarVowels.UpdateComponent();
+			_similarConsonants.UpdateComponent();
 			var cognateIdentifier = new BlairCognateIdentifier(_segmentPool, _ignoreRegularInsertionDeletion, _regularConsEqual,
 				new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
-				new TypeSegmentMappings((ISegmentMappings) _similarVowels.UpdateComponent(), (ISegmentMappings) _similarConsonants.UpdateComponent()));
+				new TypeSegmentMappings(_similarVowels.SegmentMappings, _similarConsonants.SegmentMappings));
 			_projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier] = cognateIdentifier;
 			return cognateIdentifier;
 		}

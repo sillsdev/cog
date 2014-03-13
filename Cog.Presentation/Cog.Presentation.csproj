@@ -259,9 +259,6 @@
     <Compile Include="Views\SelectVarietiesDialog.xaml.cs">
       <DependentUpon>SelectVarietiesDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SimilarSegmentMappingsOptionsView.xaml.cs">
-      <DependentUpon>SimilarSegmentMappingsOptionsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SoundClassesView.xaml.cs">
       <DependentUpon>SoundClassesView.xaml</DependentUpon>
     </Compile>
@@ -286,8 +283,8 @@
     <Compile Include="Views\EditVarietyDialog.xaml.cs">
       <DependentUpon>EditVarietyDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ListSimilarSegmentIdentifierView.xaml.cs">
-      <DependentUpon>ListSimilarSegmentIdentifierView.xaml</DependentUpon>
+    <Compile Include="Views\SimilarSegmentMappingsView.xaml.cs">
+      <DependentUpon>SimilarSegmentMappingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
@@ -328,9 +325,6 @@
     </Compile>
     <Compile Include="Views\ThresholdCognateIdentifierView.xaml.cs">
       <DependentUpon>ThresholdCognateIdentifierView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ThresholdSimilarSegmentIdentifierView.xaml.cs">
-      <DependentUpon>ThresholdSimilarSegmentIdentifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UnicodeCsvClipboardExporter.cs" />
     <Compile Include="Views\PoorMansAffixIdentifierView.xaml.cs">
@@ -475,10 +469,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SimilarSegmentMappingsOptionsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\SoundClassesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -507,7 +497,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ListSimilarSegmentIdentifierView.xaml">
+    <Page Include="Views\SimilarSegmentMappingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -560,10 +550,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ThresholdCognateIdentifierView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ThresholdSimilarSegmentIdentifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

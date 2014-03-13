@@ -54,6 +54,7 @@
     <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />
     <Compile Include="Components\SonorityClass.cs" />
     <Compile Include="Components\SimpleSyllabifier.cs" />
+    <Compile Include="Components\UnionSegmentMappings.cs" />
     <Compile Include="Components\VarietySegmenter.cs" />
     <Compile Include="Components\SspSyllabifier.cs" />
     <Compile Include="Components\WordAlignerBase.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Config\Components\SimpleSyllabifierConfig.cs" />
     <Compile Include="Config\Components\SimpleWordPairGeneratorConfig.cs" />
     <Compile Include="Config\Components\SspSyllabifierConfig.cs" />
+    <Compile Include="Config\Components\UnionSegmentMappingsConfig.cs" />
     <Compile Include="Config\Components\WordAlignerConfigBase.cs" />
     <Compile Include="Config\Components\AlineConfig.cs" />
     <Compile Include="Config\Components\BlairCognateIdentifierConfig.cs" />

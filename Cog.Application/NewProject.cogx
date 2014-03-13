@@ -2021,13 +2021,23 @@
 				<Mappings />
 			</IgnoredCorrespondences>
 			<SimilarSegments xsi:type="TypeSegmentMappings">
-				<VowelMappings xsi:type="ThresholdSegmentMappings">
-					<Threshold>500</Threshold>
-					<ApplicableWordAligner ref="primary" />
+				<VowelMappings xsi:type="UnionSegmentMappings">
+					<SegmentMappings xsi:type="ThresholdSegmentMappings">
+						<Threshold>500</Threshold>
+						<ApplicableWordAligner ref="primary" />
+					</SegmentMappings>
+					<SegmentMappings xsi:type="ListSegmentMappings">
+						<Mappings />
+					</SegmentMappings>
 				</VowelMappings>
-				<ConsonantMappings xsi:type="ThresholdSegmentMappings">
-					<Threshold>600</Threshold>
-					<ApplicableWordAligner ref="primary" />
+				<ConsonantMappings xsi:type="UnionSegmentMappings">
+					<SegmentMappings xsi:type="ThresholdSegmentMappings">
+						<Threshold>600</Threshold>
+						<ApplicableWordAligner ref="primary" />
+					</SegmentMappings>
+					<SegmentMappings xsi:type="ListSegmentMappings">
+						<Mappings />
+					</SegmentMappings>
 				</ConsonantMappings>
 			</SimilarSegments>
 		</CognateIdentifier>

@@ -158,7 +158,7 @@
     <Compile Include="ViewModels\ImportTextWordListsViewModel.cs" />
     <Compile Include="ViewModels\InputViewModel.cs" />
     <Compile Include="ViewModels\InputSettingsViewModel.cs" />
-    <Compile Include="ViewModels\ListSimilarSegmentMappingsViewModel.cs" />
+    <Compile Include="ViewModels\SimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ContainerViewModelBase.cs" />
     <Compile Include="ViewModels\DomainModelChangedMessage.cs" />
@@ -192,7 +192,6 @@
     <Compile Include="ViewModels\SimilarityMatrixVarietyViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMatrixViewModel.cs" />
     <Compile Include="ViewModels\SimilarityMetric.cs" />
-    <Compile Include="ViewModels\SimilarSegmentMappingsOptionsViewModel.cs" />
     <Compile Include="ViewModels\SoundChangeLhsViewModel.cs" />
     <Compile Include="ViewModels\SoundChangeViewModel.cs" />
     <Compile Include="ViewModels\SoundClassesViewModel.cs" />
@@ -208,7 +207,6 @@
     <Compile Include="ViewModels\TaskAreaItemsViewModel.cs" />
     <Compile Include="ViewModels\TaskAreaViewModelBase.cs" />
     <Compile Include="ViewModels\ThresholdCognateIdentifierViewModel.cs" />
-    <Compile Include="ViewModels\ThresholdSimilarSegmentMappingsViewModel.cs" />
     <Compile Include="ViewModels\PoorMansAffixIdentifierViewModel.cs" />
     <Compile Include="ViewModels\VarietiesVarietyViewModel.cs" />
     <Compile Include="ViewModels\VarietiesViewModel.cs" />

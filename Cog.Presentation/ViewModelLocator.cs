@@ -99,9 +99,7 @@ namespace SIL.Cog.Presentation
 	        builder.RegisterType<WordsViewModel>();
 	        builder.RegisterType<GeographicalVarietyViewModel>();
 	        builder.RegisterType<GeographicalRegionViewModel>();
-	        builder.RegisterType<SimilarSegmentMappingsOptionsViewModel>();
-	        builder.RegisterType<ThresholdSimilarSegmentMappingsViewModel>();
-	        builder.RegisterType<ListSimilarSegmentMappingsViewModel>();
+	        builder.RegisterType<SimilarSegmentMappingsViewModel>();
 	        builder.RegisterType<SoundClassesViewModel>();
 	        builder.RegisterType<SegmentMappingsViewModel>();
 	        builder.RegisterType<VarietyPairViewModel>();

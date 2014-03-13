@@ -252,6 +252,15 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+	<xs:complexType name="UnionSegmentMappings">
+		<xs:complexContent>
+			<xs:extension base="SegmentMappingsBase">
+				<xs:sequence>
+					<xs:element name="SegmentMappings" minOccurs="1" maxOccurs="unbounded" type="SegmentMappingsBase" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 	<xs:complexType name="BlairCognateIdentifier">
 		<xs:complexContent>
 			<xs:extension base="CognateIdentifierBase">

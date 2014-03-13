@@ -28,7 +28,7 @@ namespace SIL.Cog.Domain.Components
 
 		public bool IsMapped(ShapeNode leftNode1, Ngram<Segment> target1, ShapeNode rightNode1, ShapeNode leftNode2, Ngram<Segment> target2, ShapeNode rightNode2)
 		{
-			if (target1.Length == 0 || target2.Length == 0)
+			if (_threshold == 0 || target1.Length == 0 || target2.Length == 0)
 				return false;
 
 			IWordAligner aligner = _project.WordAligners[_alignerID];

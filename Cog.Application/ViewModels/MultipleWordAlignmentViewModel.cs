@@ -191,7 +191,16 @@ namespace SIL.Cog.Application.ViewModels
 
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 
-			List<Word> words = _projectService.Project.Varieties.SelectMany(v => v.Words[_selectedMeaning.DomainMeaning]).ToList();
+			var words = new HashSet<Word>();
+			foreach (VarietyPair vp in _projectService.Project.VarietyPairs)
+			{
+				WordPair wp;
+				if (vp.WordPairs.TryGetValue(_selectedMeaning.DomainMeaning, out wp))
+				{
+					words.Add(wp.Word1);
+					words.Add(wp.Word2);
+				}
+			}
 			if (words.Count == 0)
 			{
 				_words.Clear();
@@ -202,7 +211,7 @@ namespace SIL.Cog.Application.ViewModels
 			Alignment<Word, ShapeNode> alignment;
 			if (words.Count == 1)
 			{
-				Word word = words[0];
+				Word word = words.First();
 				Annotation<ShapeNode> prefixAnn = word.Prefix;
 				var prefix = new AlignmentCell<ShapeNode>(prefixAnn != null ? word.Shape.GetNodes(prefixAnn.Span).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
 				IEnumerable<AlignmentCell<ShapeNode>> columns = word.Shape.GetNodes(word.Stem.Span).Where(NodeFilter).Select(n => new AlignmentCell<ShapeNode>(n));
@@ -216,7 +225,7 @@ namespace SIL.Cog.Application.ViewModels
 				alignment = result.GetAlignments().First();
 			}
 
-			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedMeaning.DomainMeaning).ToList();
+			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedMeaning.DomainMeaning).OrderByDescending(c => c.DataObjects.Count).ToList();
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
 			{

@@ -328,7 +328,18 @@ namespace SIL.Cog.Domain
 					return 1.0;
 			    }, (max + min) / 2);
 
-			return clusterer.GenerateClusters(project.Varieties.SelectMany(v => v.Words[meaning]));
+			var words = new HashSet<Word>();
+			foreach (VarietyPair vp in project.VarietyPairs)
+			{
+				WordPair wp;
+				if (vp.WordPairs.TryGetValue(meaning, out wp))
+				{
+					words.Add(wp.Word1);
+					words.Add(wp.Word2);
+				}
+			}
+
+			return clusterer.GenerateClusters(words);
 		}
 	}
 }

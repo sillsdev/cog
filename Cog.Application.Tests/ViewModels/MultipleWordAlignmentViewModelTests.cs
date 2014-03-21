@@ -134,8 +134,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			}
 			Messenger.Default.Send(new ComparisonPerformedMessage());
 
-			Assert.That(alignment.WordsView.Cast<MultipleWordAlignmentWordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"gʊd"}));
-			Assert.That(alignment.ColumnCount, Is.EqualTo(3));
+			Assert.That(alignment.WordsView, Is.Empty);
 		}
 	}
 }

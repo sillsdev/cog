@@ -68,7 +68,7 @@ namespace SIL.Cog.Presentation.Views
 			AlignmentGrid.Columns.Clear();
 
 			var view = new DataGridCollectionView(vm.Words, typeof(MultipleWordAlignmentWordViewModel), false, false);
-			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Variety.Name", typeof(string)));
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Variety", typeof(VarietyViewModel)));
 			view.ItemProperties.Add(new DataGridItemProperty("StrRep", "StrRep", typeof(string)));
 			view.ItemProperties.Add(new DataGridItemProperty("CognateSetIndex", "CognateSetIndex", typeof(int)));
 			view.ItemProperties.Add(new DataGridItemProperty("Prefix", "Prefix", typeof(string)));
@@ -82,9 +82,10 @@ namespace SIL.Cog.Presentation.Views
 			}
 			vm.WordsView = view;
 
-			var headerColumn = new Column {FieldName = "Variety", DisplayMemberBindingInfo = new DataGridBindingInfo {Path = new PropertyPath("Variety.Name"), ReadOnly = true}};
+			var headerColumn = new Column {FieldName = "Variety"};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSizePadding(headerColumn, 18);
 			AlignmentGrid.Columns.Add(headerColumn);
 
 			object fontSizeObj = System.Windows.Application.Current.FindResource("PhoneticFontSize");

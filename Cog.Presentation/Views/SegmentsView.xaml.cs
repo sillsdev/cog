@@ -117,6 +117,7 @@ namespace SIL.Cog.Presentation.Views
 			var headerColumn = new Column {FieldName = "Variety"};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSizePadding(headerColumn, 18);
 			SegmentsDataGrid.Columns.Add(headerColumn);
 			foreach (SegmentViewModel segment in vm.Segments)
 				SegmentsDataGrid.Columns.Add(new Column {FieldName = segment.StrRep, Title = segment.StrRep, Width = 67, CellHorizontalContentAlignment = HorizontalAlignment.Center});

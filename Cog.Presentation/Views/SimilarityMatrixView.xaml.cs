@@ -36,14 +36,15 @@ namespace SIL.Cog.Presentation.Views
 
 			SimMatrixGrid.Columns.Clear();
 			var view = new DataGridCollectionView(vm.Varieties, typeof(SimilarityMatrixVarietyViewModel), false, false);
-			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Name", typeof(string)));
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(SimilarityMatrixVarietyViewModel)));
 			for (int i = 0; i < vm.Varieties.Count; i++)
 				view.ItemProperties.Add(new DataGridItemProperty("Variety" + i, string.Format("VarietyPairs[{0}]", i), typeof(SimilarityMatrixVarietyPairViewModel)));
 			SimMatrixGrid.ItemsSource = view;
 
-			var headerColumn = new Column {FieldName = "Variety", Title = "", DisplayMemberBindingInfo = new DataGridBindingInfo {Path = new PropertyPath("Name"), ReadOnly = true}};
+			var headerColumn = new Column {FieldName = "Variety", Title = ""};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSizePadding(headerColumn, 18);
 			SimMatrixGrid.Columns.Add(headerColumn);
 			for (int i = 0; i < vm.Varieties.Count; i++)
 			{

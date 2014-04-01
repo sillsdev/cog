@@ -39,7 +39,7 @@ namespace SIL.Cog.Presentation.Behaviors
 			return (bool) column.GetValue(IsRowHeaderProperty);
 		}
 
-		public static readonly DependencyProperty AutoSizeProperty = DependencyProperty.RegisterAttached("AutoSize", typeof(bool), typeof(DataGridControl),
+		public static readonly DependencyProperty AutoSizeProperty = DependencyProperty.RegisterAttached("AutoSize", typeof(bool), typeof(DataGridControlBehaviors),
 			new UIPropertyMetadata(false, OnAutoSizeChanged));
 
 		private static void OnAutoSizeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
@@ -149,7 +149,7 @@ namespace SIL.Cog.Presentation.Behaviors
 		}
 
 		public static readonly DependencyProperty AutoSizePaddingProperty = DependencyProperty.RegisterAttached("AutoSizePadding", typeof(double), typeof(DataGridControl),
-			new UIPropertyMetadata(18.0));
+			new UIPropertyMetadata(0.0));
 
 		public static void SetAutoSizePadding(ColumnBase column, double value)
 		{

@@ -27,6 +27,9 @@
 						<Run Text="{Binding Value, Mode=OneWay}" />
 					</TextBlock>
 				</DataTemplate>
+				<DataTemplate DataType="{x:Type vm:VarietyViewModel}">
+					<TextBlock Padding="8,2,8,2" Text="{Binding Name}" />
+				</DataTemplate>
 				<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource PhoneticDataCellStyle}">
 					<Style.Triggers>
 						<DataTrigger Value="True">

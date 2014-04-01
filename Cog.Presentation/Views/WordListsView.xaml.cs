@@ -119,6 +119,7 @@ namespace SIL.Cog.Presentation.Views
 			var headerColumn = new Column {FieldName = "Variety"};
 			DataGridControlBehaviors.SetIsRowHeader(headerColumn, true);
 			DataGridControlBehaviors.SetAutoSize(headerColumn, true);
+			DataGridControlBehaviors.SetAutoSizePadding(headerColumn, 18);
 			WordListsGrid.Columns.Add(headerColumn);
 			for (int i = 0; i < vm.Meanings.Count; i++)
 			{

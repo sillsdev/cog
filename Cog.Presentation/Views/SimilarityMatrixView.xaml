@@ -41,6 +41,9 @@
 							</Setter.Value>
 						</Setter>
 					</Style>
+					<DataTemplate DataType="{x:Type vm:SimilarityMatrixVarietyViewModel}">
+						<TextBlock Padding="8,2,8,2" Text="{Binding Name}" />
+					</DataTemplate>
 					<DataTemplate DataType="{x:Type vm:SimilarityMatrixVarietyPairViewModel}">
 						<TextBlock Padding="3,1,3,1" Background="{Binding SimilarityScore, Converter={StaticResource ColorConverter}}" TextAlignment="Center">
 							<TextBlock.ToolTip>

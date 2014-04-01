@@ -147,7 +147,7 @@ namespace SIL.Cog.Application.ViewModels
 		public bool IsValid
 		{
 			get { return _isValid; }
-			set { Set(() => IsValid, ref _isValid, value); }
+			private set { Set(() => IsValid, ref _isValid, value); }
 		}
 
 		public ObservableList<WordSegmentViewModel> Segments

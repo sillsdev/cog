@@ -29,6 +29,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IBusyService _busyService;
 		private readonly IExportService _exportService;
 		private bool _groupByCognateSet;
+		private string _sortByProp;
 
 		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService)
 			: base("Multiple Word Alignment")
@@ -53,6 +54,7 @@ namespace SIL.Cog.Application.ViewModels
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
 
 			_groupByCognateSet = true;
+			_sortByProp = "StrRep";
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
@@ -86,6 +88,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void SortBy(string property, ListSortDirection sortDirection)
 		{
+			_sortByProp = property;
 			_wordsView.SortDescriptions[_groupByCognateSet ? 1 : 0] = new SortDescription(property, sortDirection);
 		}
 
@@ -144,7 +147,7 @@ namespace SIL.Cog.Application.ViewModels
 				{
 					if (_groupByCognateSet)
 						_wordsView.SortDescriptions.Add(new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
-					_wordsView.SortDescriptions.Add(new SortDescription("StrRep", ListSortDirection.Ascending));
+					_wordsView.SortDescriptions.Add(new SortDescription(_sortByProp, ListSortDirection.Ascending));
 				}
 			}
 		}

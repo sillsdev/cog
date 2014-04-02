@@ -7,6 +7,7 @@ using System.Windows.Data;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
+using SIL.Collections;
 using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views
@@ -68,7 +69,7 @@ namespace SIL.Cog.Presentation.Views
 			AlignmentGrid.Columns.Clear();
 
 			var view = new DataGridCollectionView(vm.Words, typeof(MultipleWordAlignmentWordViewModel), false, false);
-			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Variety", typeof(VarietyViewModel)));
+			view.ItemProperties.Add(new DataGridItemProperty("Variety", "Variety", typeof(VarietyViewModel)) {SortComparer = ProjectionComparer<VarietyViewModel>.Create(v => v.Name)});
 			view.ItemProperties.Add(new DataGridItemProperty("StrRep", "StrRep", typeof(string)));
 			view.ItemProperties.Add(new DataGridItemProperty("CognateSetIndex", "CognateSetIndex", typeof(int)));
 			view.ItemProperties.Add(new DataGridItemProperty("Prefix", "Prefix", typeof(string)));

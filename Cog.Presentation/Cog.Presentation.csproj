@@ -150,6 +150,7 @@
     <Compile Include="Controls\ZoomContentPresenter.cs" />
     <Compile Include="Controls\ZoomControl.cs" />
     <Compile Include="Converters\BackgroundToForegroundConverter.cs" />
+    <Compile Include="Converters\CognateSetNameConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ContentToMarginConverter.cs" />
     <Compile Include="Converters\ContentToPathConverter.cs" />

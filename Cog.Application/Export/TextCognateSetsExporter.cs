@@ -17,7 +17,7 @@ namespace SIL.Cog.Application.Export
 				{
 					writer.Write("\t");
 					writer.Write(meaning.Gloss);
-					meaningClusters[meaning] = project.GenerateCognateSets(meaning).ToList();
+					meaningClusters[meaning] = project.GenerateCognateSets(meaning).OrderBy(c => c.Noise).ThenByDescending(c => c.DataObjects.Count).ToList();
 
 				}
 				writer.WriteLine();
@@ -39,8 +39,11 @@ namespace SIL.Cog.Application.Export
 						{
 							if (!first)
 								writer.Write(',');
-							int i = meaningClusters[meaning].FindIndex(set => set.DataObjects.Contains(word)) + 1;
-							writer.Write(i);
+							int i = meaningClusters[meaning].FindIndex(set => set.DataObjects.Contains(word));
+							if (i == -1 || i == meaningClusters[meaning].Count - 1)
+								writer.Write("X");
+							else
+								writer.Write(i + 1);
 							first = false;
 						}
 					}

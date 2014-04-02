@@ -228,7 +228,7 @@ namespace SIL.Cog.Application.ViewModels
 				alignment = result.GetAlignments().First();
 			}
 
-			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedMeaning.DomainMeaning).OrderByDescending(c => c.DataObjects.Count).ToList();
+			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedMeaning.DomainMeaning).OrderBy(c => c.Noise).ThenByDescending(c => c.DataObjects.Count).ToList();
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
 			{
@@ -239,8 +239,8 @@ namespace SIL.Cog.Application.ViewModels
 					Word word = alignment.Sequences[i];
 					IEnumerable<AlignmentCell<ShapeNode>> columns = Enumerable.Range(0, alignment.ColumnCount).Select(col => alignment[i, col]);
 					AlignmentCell<ShapeNode> suffix = alignment.Suffixes[i];
-					int cognateSetIndex = cognateSets.FindIndex(set => set.DataObjects.Contains(word)) + 1;
-					_words.Add(new MultipleWordAlignmentWordViewModel(word, prefix, columns, suffix, cognateSetIndex));
+					int cognateSetIndex = cognateSets.FindIndex(set => set.DataObjects.Contains(word));
+					_words.Add(new MultipleWordAlignmentWordViewModel(word, prefix, columns, suffix, cognateSetIndex == cognateSets.Count - 1 ? int.MaxValue : cognateSetIndex + 1));
 				}
 			}
 		}

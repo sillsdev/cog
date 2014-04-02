@@ -11,6 +11,7 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:MultipleWordAlignmentViewModel}">
 	<UserControl.Resources>
 		<cnvtrs:MultipleWordAlignmentHighlightSegmentConverter x:Key="HighlightConverter" />
+		<cnvtrs:CognateSetNameConverter x:Key="CognateSetConverter" />
 	</UserControl.Resources>
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
@@ -22,10 +23,7 @@
 							  SelectionChanged="AlignmentGrid_OnSelectionChanged">
 			<xcdg:DataGridControl.Resources>
 				<DataTemplate DataType="{x:Type xcdg:Group}">
-					<TextBlock Padding="2" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}">
-						<Run>Cognate set </Run>
-						<Run Text="{Binding Value, Mode=OneWay}" />
-					</TextBlock>
+					<TextBlock Padding="2" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}" Text="{Binding Value, Converter={StaticResource CognateSetConverter}}" />
 				</DataTemplate>
 				<DataTemplate DataType="{x:Type vm:VarietyViewModel}">
 					<TextBlock Padding="8,2,8,2" Text="{Binding Name}" />

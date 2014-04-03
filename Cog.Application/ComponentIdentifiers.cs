@@ -7,6 +7,5 @@ namespace SIL.Cog.Application
 		public const string WordPairGenerator = "wordPairGenerator";
 		public const string Syllabifier = "syllabifier";
 		public const string AffixIdentifier = "affixIdentifier";
-		public const string SimilarSegmentIdentifier = "similarSegmentIdentifier";
 	}
 }

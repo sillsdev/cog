@@ -4,7 +4,7 @@
 		<Solution>Cog.sln</Solution>
 		<Configuration>Release</Configuration>
 		<Platform>Mixed Platforms</Platform>
-		<LifecycleStage>Beta</LifecycleStage>
+		<LifecycleStage>Stable</LifecycleStage>
 	</PropertyGroup>
 	
 	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">

@@ -279,7 +279,7 @@ namespace SIL.Cog.Domain
 			var sb = new StringBuilder();
 			sb.Append("[");
 			bool firstFeature = true;
-			foreach (SymbolicFeature feature in fs.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)))
+			foreach (SymbolicFeature feature in fs.Features.Where(f => !CogFeatureSystem.Instance.ContainsFeature(f)).OfType<SymbolicFeature>())
 			{
 				if (!firstFeature)
 					sb.Append(",");
@@ -307,7 +307,6 @@ namespace SIL.Cog.Domain
 
 		public static IEnumerable<Cluster<Word>> GenerateCognateSets(this CogProject project, Meaning meaning)
 		{
-			double min = double.MaxValue, max = double.MinValue;
 			var words = new HashSet<Word>();
 			var noise = new HashSet<Word>();
 			foreach (VarietyPair vp in project.VarietyPairs)
@@ -317,8 +316,6 @@ namespace SIL.Cog.Domain
 				{
 					if (wp.AreCognatePredicted)
 					{
-						min = Math.Min(min, wp.CognicityScore);
-						max = Math.Max(max, wp.CognicityScore);
 						words.Add(wp.Word1);
 						words.Add(wp.Word2);
 						noise.Remove(wp.Word1);
@@ -334,17 +331,30 @@ namespace SIL.Cog.Domain
 				}
 			}
 
-			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) =>
-			    {
+			double min = double.MaxValue, max = double.MinValue;
+			var distanceMatrix = new Dictionary<UnorderedTuple<Word, Word>, double>();
+			Word[] wordArray = words.ToArray();
+			for (int i = 0; i < wordArray.Length; i++)
+			{
+				for (int j = i + 1; j < wordArray.Length; j++)
+				{
+					Word w1 = wordArray[i];
+					Word w2 = wordArray[j];
+					double score = 0;
 					WordPair wp;
 					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(meaning, out wp) && wp.AreCognatePredicted
-						&& wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
+					    && wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
 					{
-						return 1.0 - wp.CognicityScore;
+						score = wp.CognicityScore;
 					}
-					return 1.0;
-			    }, (max + min) / 2);
+					double distance = 1.0 - score;
+					min = Math.Min(min, distance);
+					max = Math.Max(max, distance);
+					distanceMatrix[UnorderedTuple.Create(w1, w2)] = distance;
+				}
+			}
 
+			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) => distanceMatrix[UnorderedTuple.Create(w1, w2)], (max + min) / 2);
 			return clusterer.GenerateClusters(words).Concat(new Cluster<Word>(noise, true));
 		}
 	}

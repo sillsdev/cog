@@ -133,6 +133,9 @@ namespace SIL.Cog.Domain.Components
 			{
 				foreach (string strRep2 in GetStrReps(target2))
 				{
+					if (strRep1 == strRep2)
+						return true;
+
 					Dictionary<string, List<Tuple<Environment, Environment>>> segments;
 					List<Tuple<Environment, Environment>> contexts;
 					if (_mappingLookup.TryGetValue(strRep1, out segments) && segments.TryGetValue(strRep2, out contexts))

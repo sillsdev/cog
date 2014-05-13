@@ -175,6 +175,7 @@
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ListBoxScrollbarMarkerPositionConverter.cs" />
     <Compile Include="Converters\MultipleWordAlignmentHighlightSegmentConverter.cs" />
+    <Compile Include="Converters\SoundTypeToMultigraphStringConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\WordsToInlinesConverter.cs" />
     <Compile Include="Services\DialogService.cs" />

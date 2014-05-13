@@ -86,8 +86,8 @@
 					</c:DropDownButton.Content>
 					<c:DropDownButton.DropDown>
 						<ContextMenu>
-							<MenuItem Header="Natural Class" Command="{Binding NewNaturalClassCommand}" />
-							<MenuItem Header="Unnatural Class" Command="{Binding NewUnnaturalClassCommand}" />
+							<MenuItem Header="Feature-based Class" Command="{Binding NewNaturalClassCommand}" />
+							<MenuItem Header="Segment-based Class" Command="{Binding NewUnnaturalClassCommand}" />
 						</ContextMenu>
 					</c:DropDownButton.DropDown>
 				</c:DropDownButton>

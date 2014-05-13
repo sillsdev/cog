@@ -38,7 +38,7 @@ namespace SIL.Cog.Application.ViewModels
 					return nc.Type == CogFeatureSystem.ConsonantType ? "Consonant" : "Vowel";
 				var unc = _soundClass as UnnaturalClass;
 				if (unc != null)
-					return "Unnatural";
+					return "Segment";
 				return "";
 			}
 		}

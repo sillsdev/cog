@@ -19,7 +19,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ICommand _removeSegmentCommand;
 
 		public EditUnnaturalClassViewModel(IDialogService dialogService, Segmenter segmenter, IEnumerable<SoundClass> soundClasses)
-			: base("New Unnatural Class", soundClasses)
+			: base("New Segment-based Class", soundClasses)
 		{
 			_dialogService = dialogService;
 			_segmenter = segmenter;
@@ -29,7 +29,7 @@ namespace SIL.Cog.Application.ViewModels
 		}
 
 		public EditUnnaturalClassViewModel(IDialogService dialogService, Segmenter segmenter, IEnumerable<SoundClass> soundClasses, UnnaturalClass unnaturalClass)
-			: base("Edit Unnatural Class", soundClasses, unnaturalClass)
+			: base("Edit Segment-based Class", soundClasses, unnaturalClass)
 		{
 			_dialogService = dialogService;
 			_segmenter = segmenter;

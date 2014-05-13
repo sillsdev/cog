@@ -20,7 +20,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ICommand _removeCommand;
 
 		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<SoundClass> soundClasses)
-			: base("New Natural Class", soundClasses)
+			: base("New Feature-based Class", soundClasses)
 		{
 			_availableFeatures = new BindableList<FeatureViewModel>(featSys.OfType<SymbolicFeature>().Select(f => new FeatureViewModel(f)));
 			_activeFeatures = new BindableList<FeatureViewModel>();
@@ -30,7 +30,7 @@ namespace SIL.Cog.Application.ViewModels
 		}
 
 		public EditNaturalClassViewModel(FeatureSystem featSys, IEnumerable<SoundClass> soundClasses, NaturalClass naturalClass)
-			: base("Edit Natural Class", soundClasses, naturalClass)
+			: base("Edit Feature-based Class", soundClasses, naturalClass)
 		{
 			_type = naturalClass.Type == CogFeatureSystem.ConsonantType ? SoundType.Consonant : SoundType.Vowel;
 			_availableFeatures = new BindableList<FeatureViewModel>();

@@ -6,10 +6,27 @@
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              mc:Ignorable="d" d:DesignHeight="170" d:DesignWidth="205" d:DataContext="{d:DesignInstance vm:GeographicalRegionViewModel}">
 	<Canvas>
-		<Border Background="White" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1" Width="200">
-			<Border.Effect>
+		<Path Canvas.Left="0" Canvas.Top="0" Fill="White" Stroke="{StaticResource ListBorderBrush}" StrokeThickness="1">
+			<Path.Data>
+				<PathGeometry>
+					<PathFigure StartPoint="0,0">
+						<PathFigure.Segments>
+							<LineSegment Point="0,119" />
+							<LineSegment Point="105,119" />
+							<LineSegment Point="80,169" />
+							<LineSegment Point="130,119" />
+							<LineSegment Point="199,119" />
+							<LineSegment Point="199,0" />
+							<LineSegment Point="0,0" />
+						</PathFigure.Segments>
+					</PathFigure>
+				</PathGeometry>
+			</Path.Data>
+			<Path.Effect>
 				<DropShadowEffect />
-			</Border.Effect>
+			</Path.Effect>
+		</Path>
+		<Border Canvas.Left="1" Canvas.Top="1" Background="White" BorderThickness="0" Width="198">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -44,20 +61,5 @@
 				</Border>
 			</Grid>
 		</Border>
-		<Path Canvas.Left="80" Canvas.Top="119" Fill="White" Stroke="{StaticResource ListBorderBrush}" StrokeThickness="1">
-			<Path.Data>
-				<PathGeometry>
-					<PathFigure StartPoint="25,0">
-						<PathFigure.Segments>
-							<LineSegment Point="0,50" />
-							<LineSegment Point="50,0" />
-						</PathFigure.Segments>
-					</PathFigure>
-				</PathGeometry>
-			</Path.Data>
-			<Path.Effect>
-				<DropShadowEffect />
-			</Path.Effect>
-		</Path>
 	</Canvas>
 </UserControl>

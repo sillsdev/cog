@@ -52,6 +52,23 @@ namespace SIL.Cog.Presentation
 			return null;
 		}
 
+		public static bool IsAncestorOf(this DependencyObject obj1, DependencyObject obj2)
+		{
+			DependencyObject curObj = obj2;
+			while (curObj != null)
+			{
+				curObj = VisualTreeHelper.GetParent(curObj);
+				if (curObj == obj1)
+					return true;
+			}
+			return false;
+		}
+
+		public static bool IsDescendantOf(this DependencyObject obj1, DependencyObject obj2)
+		{
+			return IsAncestorOf(obj2, obj1);
+		}
+
 		public static IEnumerable<string> SplitPropertyPath(this string propertyPath)
 		{
 			if (string.IsNullOrEmpty(propertyPath))

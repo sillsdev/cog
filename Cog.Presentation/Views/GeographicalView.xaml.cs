@@ -66,6 +66,16 @@ namespace SIL.Cog.Presentation.Views
 				case "Varieties":
 					DispatcherHelper.CheckBeginInvokeOnUI(() => ResetRegions(vm));
 					break;
+
+				case "SelectedRegion":
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							if (vm.SelectedRegion != null)
+								SelectRegionMarker(MapControl.Markers.OfType<RegionMarker>().Single(rm => rm.Region == vm.SelectedRegion));
+							else
+								ClosePopup();
+						});
+					break;
 			}
 		}
 
@@ -201,7 +211,8 @@ namespace SIL.Cog.Presentation.Views
 		private void Region_Click(object sender, EventArgs e)
 		{
 			var rm = (RegionMarker) sender;
-			SelectRegionMarker(rm);
+			var vm = (GeographicalViewModel) DataContext;
+			vm.SelectedRegion = rm.Region;
 		}
 
 		private void SelectRegionMarker(RegionMarker rm)
@@ -245,15 +256,17 @@ namespace SIL.Cog.Presentation.Views
  
 			if (childNode != null)
 			{
+				((TreeViewItem) parent).IsExpanded = true;
 				childNode.Focus();
-				return childNode.IsSelected = true;
+				childNode.IsSelected = true;
+				return true;
 			}
  
 			if (parent.Items.Count > 0)
 			{
 				foreach (object childItem in parent.Items)
 				{
-					var childControl = (ItemsControl) parent.ItemContainerGenerator.ContainerFromItem(childItem);
+					var childControl = (TreeViewItem) parent.ItemContainerGenerator.ContainerFromItem(childItem);
 					if (SetSelectedTreeRegion(childControl, region))
 						return true;
 				}
@@ -517,12 +530,16 @@ namespace SIL.Cog.Presentation.Views
 
 		private void MapControl_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			if (!MapControl.IsDragging)
-				ClosePopup();
+			if (!MapControl.IsDragging && _popup != null && !_popup.Shape.IsAncestorOf((DependencyObject) e.OriginalSource))
+			{
+				var vm = (GeographicalViewModel) DataContext;
+				vm.SelectedRegion = null;
+			}
 		}
 
 		private void RegionsTreeView_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			var vm = (GeographicalViewModel) DataContext;
 			object selectedItem = RegionsTreeView.SelectedItem;
 			var region = selectedItem as GeographicalRegionViewModel;
 			if (region != null)
@@ -531,7 +548,7 @@ namespace SIL.Cog.Presentation.Views
 				if (marker.Shape.IsVisible && (_popup == null || _popup.Tag != marker))
 				{
 					ZoomAndCenterRegions(new[] {marker});
-					SelectRegionMarker(marker);
+					vm.SelectedRegion = region;
 				}
 			}
 			else
@@ -539,8 +556,8 @@ namespace SIL.Cog.Presentation.Views
 				var variety = selectedItem as GeographicalVarietyViewModel;
 				if (variety != null)
 				{
-					ClosePopup();
 					ZoomAndCenterRegions(MapControl.Markers.OfType<RegionMarker>().Where(rm => rm.Shape.IsVisible && rm.Region.Variety == variety));
+					vm.SelectedRegion = null;
 				}
 			}
 		}
@@ -609,7 +626,10 @@ namespace SIL.Cog.Presentation.Views
 			{
 				marker.Shape.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
 				if (_popup != null && !isVisible && _popup.Tag == marker)
-					ClosePopup();
+				{
+					var vm = (GeographicalViewModel) DataContext;
+					vm.SelectedRegion = null;
+				}
 			}
 		}
 

@@ -25,6 +25,7 @@ namespace SIL.Cog.Application.ViewModels
 		private double _similarityScoreThreshold;
 		private SimilarityMetric _similarityMetric;
 		private MirroredBindableList<Variety, GeographicalVarietyViewModel> _varieties;
+		private GeographicalRegionViewModel _selectedRegion;
 
 		public GeographicalViewModel(IProjectService projectService, IDialogService dialogService, IImportService importService, IImageExportService imageExportService,
 			GeographicalVarietyViewModel.Factory varietyFactory)
@@ -46,6 +47,8 @@ namespace SIL.Cog.Application.ViewModels
 				{
 					if (msg.AffectsComparison)
 						ResetClusters();
+					if (!_varieties.Contains(_selectedRegion.Variety) || !_selectedRegion.Variety.Regions.Contains(_selectedRegion))
+						SelectedRegion = null;
 				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetClusters());
 
@@ -72,6 +75,7 @@ namespace SIL.Cog.Application.ViewModels
 				ClusterVarieties();
 			else
 				ResetClusters();
+			SelectedRegion = null;
 		}
 
 		private void ImportRegions()
@@ -91,6 +95,7 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				var region = new GeographicRegion(coordinates.Select(coord => new GeographicCoordinate(coord.Item1, coord.Item2))) {Description = vm.Description};
 				vm.SelectedVariety.DomainVariety.Regions.Add(region);
+				SelectedRegion = _varieties[vm.SelectedVariety.DomainVariety].Regions.Single(r => r.DomainRegion == region);
 				Messenger.Default.Send(new DomainModelChangedMessage(false));
 			}
 		}
@@ -154,7 +159,6 @@ namespace SIL.Cog.Application.ViewModels
 					ClusterVarieties();
 				else
 					ResetClusters();
-					
 			}
 		}
 
@@ -181,6 +185,12 @@ namespace SIL.Cog.Application.ViewModels
 				if (Set(() => SimilarityScoreThreshold, ref _similarityScoreThreshold, value) && _currentClusters.Count > 0)
 					ClusterVarieties();
 			}
+		}
+
+		public GeographicalRegionViewModel SelectedRegion
+		{
+			get { return _selectedRegion; }
+			set { Set(() => SelectedRegion, ref _selectedRegion, value); }
 		}
 
 		public ICommand NewRegionCommand

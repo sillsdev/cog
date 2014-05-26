@@ -80,7 +80,11 @@ namespace SIL.Cog.Application.ViewModels
 		public HierarchicalGraphType GraphType
 		{
 			get { return _graphType; }
-			set { Set(() => GraphType, ref _graphType, value); }
+		    set
+		    {
+		        if (Set(() => GraphType, ref _graphType, value) && _graph != null)
+                    Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+		    }
 		}
 
 		public ClusteringMethod ClusteringMethod

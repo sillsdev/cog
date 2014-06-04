@@ -144,9 +144,11 @@ namespace SIL.Cog.Domain.Components
 				ShapeNode codaStart = node;
 				while (node.Type() == CogFeatureSystem.ConsonantType && node != endNode.Next)
 					node = node.Next;
-				ShapeNode codaEnd = node.Prev;
-
-				Combine(CogFeatureSystem.Coda, newShape, codaStart, codaEnd);
+				if (codaStart != node)
+				{
+					ShapeNode codaEnd = node.Prev;
+					Combine(CogFeatureSystem.Coda, newShape, codaStart, codaEnd);
+				}
 			}
 
 			while (node != endNode.Next)

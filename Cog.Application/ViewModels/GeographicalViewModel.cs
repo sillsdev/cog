@@ -47,7 +47,7 @@ namespace SIL.Cog.Application.ViewModels
 				{
 					if (msg.AffectsComparison)
 						ResetClusters();
-					if (!_varieties.Contains(_selectedRegion.Variety) || !_selectedRegion.Variety.Regions.Contains(_selectedRegion))
+					if (_selectedRegion != null && (!_varieties.Contains(_selectedRegion.Variety) || !_selectedRegion.Variety.Regions.Contains(_selectedRegion)))
 						SelectedRegion = null;
 				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetClusters());

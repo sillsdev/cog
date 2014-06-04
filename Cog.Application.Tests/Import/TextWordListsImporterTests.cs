@@ -111,11 +111,12 @@ namespace SIL.Cog.Application.Tests.Import
 			Assert.That(project.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1\ttest", "variety2"}));
 			Assert.That(project.Varieties.SelectMany(v => v.Words).Select(w => w.StrRep), Is.EqualTo(new[] {"word1", "word2", "word3", "word4", "word5", "word6"}));
 
-			// extra tab at the end of each line
-			const string file12 = "\tgloss1\tgloss2\tgloss3\t\r\n"
-							   + "\tcat1\tcat2\tcat3\t\r\n"
-							   + "variety1\tword1\tword2\tword3\t\r\n"
-							   + "variety2\tword4\tword5\tword6\t\r\n";
+			// extra tabs at the end of each line
+			const string file12 = "\tgloss1\tgloss2\tgloss3\t\t\t\r\n"
+							   + "\tcat1\tcat2\tcat3\t\t\t\r\n"
+							   + "variety1\tword1\tword2\tword3\t\t\t\r\n"
+							   + "variety2\tword4\tword5\tword6\t\t\t\r\n"
+							   + "\t\t\t\t\t\t\r\n";
 			importer.Import(settings, new MemoryStream(Encoding.UTF8.GetBytes(file12), false), project);
 			Assert.That(project.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1", "gloss2", "gloss3"}));
 			Assert.That(project.Meanings.Select(s => s.Category), Is.EqualTo(new[] {"cat1", "cat2", "cat3"}));
@@ -218,11 +219,12 @@ namespace SIL.Cog.Application.Tests.Import
 			Assert.That(project.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2"}));
 			Assert.That(project.Varieties.SelectMany(v => v.Words).Select(w => w.StrRep), Is.EqualTo(new[] {"word1", "word2", "word3", "word4", "word5", "word6"}));
 
-			// extra tab at the end of each line
-			const string file12 = ",,variety1,variety2\t\r\n"
-							   + "gloss1,cat1,word1,word4\t\r\n"
-							   + "gloss2,cat2,word2,word5\t\r\n"
-							   + "gloss3,cat3,word3,word6\t\r\n";
+			// extra tabs at the end of each line
+			const string file12 = ",,variety1,variety2,,,\r\n"
+							   + "gloss1,cat1,word1,word4,,,\r\n"
+							   + "gloss2,cat2,word2,word5,,,\r\n"
+							   + "gloss3,cat3,word3,word6,,,\r\n"
+							   + ",,,,,,\r\n";
 			importer.Import(settings, new MemoryStream(Encoding.UTF8.GetBytes(file12), false), project);
 			Assert.That(project.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1", "gloss2", "gloss3"}));
 			Assert.That(project.Meanings.Select(s => s.Category), Is.EqualTo(new[] {"cat1", "cat2", "cat3"}));

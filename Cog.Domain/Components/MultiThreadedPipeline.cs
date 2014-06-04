@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,25 +33,21 @@ namespace SIL.Cog.Domain.Components
 					T[] itemArray = items.ToArray();
 					var countdownEvent = new CountdownEvent(itemArray.Length * Processors.Count);
 
+					var tasks = new List<Task>();
 					foreach (T secondaryData in itemArray)
 					{
 						T sd = secondaryData;
-						Task.Factory.StartNew(() =>
+						tasks.Add(Task.Factory.StartNew(() =>
 							{
 								foreach (IProcessor<T> processor in Processors)
 								{
 									if (token.IsCancellationRequested)
 										break;
-									try
-									{
-										processor.Process(sd);
-									}
-									finally
-									{
-										countdownEvent.Signal();
-									}
+
+									processor.Process(sd);
+									countdownEvent.Signal();
 								}
-							}, token, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
+							}, token, TaskCreationOptions.AttachedToParent, TaskScheduler.Current));
 					}
 
 					int lastPcnt = 0;
@@ -64,6 +61,13 @@ namespace SIL.Cog.Domain.Components
 						{
 							OnProgressUpdated(new ProgressEventArgs(curPcnt));
 							lastPcnt = curPcnt;
+						}
+
+						Task faultedTask = tasks.FirstOrDefault(t => t.IsFaulted);
+						if (faultedTask != null)
+						{
+							Debug.Assert(faultedTask.Exception != null);
+							throw faultedTask.Exception;
 						}
 					}
 

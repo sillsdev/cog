@@ -22,11 +22,37 @@ namespace SIL.Cog.Application.Collections
 						continue;
 					}
 				}
-				if ((e.NewItems != null && e.NewItems.Count > 1) || (e.OldItems != null && e.OldItems.Count > 1))
-					nh.Invoke(sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-				else
-					nh.Invoke(sender, e);
+
+				nh.Invoke(sender, IsRangeAction(e) ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset) : e);
 			}
+		}
+
+		private static bool IsRangeAction(NotifyCollectionChangedEventArgs e)
+		{
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					if (e.NewItems != null && e.NewItems.Count != 1)
+						return true;
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					if (e.OldItems != null && e.OldItems.Count != 1)
+						return true;
+					break;
+
+				case NotifyCollectionChangedAction.Replace:
+					if ((e.NewItems != null && e.NewItems.Count != 1) || (e.OldItems != null && e.OldItems.Count != 1))
+						return true;
+					break;
+
+				case NotifyCollectionChangedAction.Move:
+					if (e.NewItems != null && e.NewItems.Count != 1)
+						return true;
+					break;
+			}
+
+			return false;
 		}
 	}
 }

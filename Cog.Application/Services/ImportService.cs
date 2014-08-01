@@ -103,7 +103,7 @@ namespace SIL.Cog.Application.Services
 				_busyService.ShowBusyIndicatorUntilFinishDrawing();
 				try
 				{
-					using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+					using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
 						importAction(importSettingsViewModel, stream);
 					return true;
 				}

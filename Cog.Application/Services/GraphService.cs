@@ -41,6 +41,7 @@ namespace SIL.Cog.Application.Services
 				{"dental", ConsonantPlace.Dental},
 				{"alveolar", ConsonantPlace.Alveolar},
 				{"palato-alveolar", ConsonantPlace.Postalveolar},
+				{"alveolo-palatal", ConsonantPlace.Postalveolar},
 				{"retroflex", ConsonantPlace.Retroflex},
 				{"palatal", ConsonantPlace.Palatal},
 				{"velar", ConsonantPlace.Velar},

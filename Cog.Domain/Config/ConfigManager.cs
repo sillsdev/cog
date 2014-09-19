@@ -98,7 +98,6 @@ namespace SIL.Cog.Domain.Config
 					.Select(e => new FeatureSymbol((string) e.Attribute("id"), (string) e.Attribute("name")))) {Description = (string) featureElem.Attribute("name")};
 				featSys.Add(feat);
 			}
-			featSys.Freeze();
 			project.FeatureSystem = featSys;
 
 			XElement segmentationElem = root.Element(Cog + "Segmentation");

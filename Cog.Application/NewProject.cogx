@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CogProject xmlns="http://www.sil.org/CogProject/1.0"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			version="1">
+			version="2">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -69,6 +69,12 @@
 			<Value id="breathy-voiced+" name="+"/>
 			<Value id="breathy-voiced-" name="-"/>
 		</Feature>
+		<Feature id="airstream" name="Airstream">
+			<Value id="pulmonic" name="pulmonic"/>
+			<Value id="ejective" name="ejective"/>
+			<Value id="implosive" name="implosive"/>
+			<Value id="click" name="click"/>
+		</Feature>
 		
 		<Feature id="height" name="Height">
 			<Value id="close" name="close"/>
@@ -112,6 +118,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -131,6 +138,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close-mid"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -150,6 +158,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -169,6 +178,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close-mid"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -188,6 +198,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -207,6 +218,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -226,6 +238,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="near-open"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -245,6 +258,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="mid"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -264,6 +278,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open-mid"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -283,6 +298,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="near-open"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -302,6 +318,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -321,6 +338,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -340,6 +358,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open-mid"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -359,6 +378,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close-mid"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -378,6 +398,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="mid"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -397,6 +418,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open-mid"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -416,6 +438,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open-mid"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -435,6 +458,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open-mid"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -454,6 +478,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close-mid"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -473,6 +498,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -492,6 +518,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="near-close"/>
 				<FeatureValue feature="backness" value="near-front"/>
@@ -511,6 +538,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -530,6 +558,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close-mid"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -549,6 +578,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open"/>
 				<FeatureValue feature="backness" value="front"/>
@@ -568,6 +598,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="close"/>
 				<FeatureValue feature="backness" value="central"/>
@@ -587,6 +618,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="near-close"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -606,6 +638,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="open-mid"/>
 				<FeatureValue feature="backness" value="back"/>
@@ -625,6 +658,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 
 				<FeatureValue feature="height" value="near-close"/>
 				<FeatureValue feature="backness" value="near-front"/>
@@ -646,6 +680,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="c">
 				<FeatureValue feature="place" value="palatal"/>
@@ -660,6 +695,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="d">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -674,6 +710,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="f">
 				<FeatureValue feature="place" value="labiodental"/>
@@ -688,6 +725,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="g">
 				<FeatureValue feature="place" value="velar"/>
@@ -702,6 +740,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="h">
 				<FeatureValue feature="place" value="glottal"/>
@@ -716,6 +755,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="j">
 				<FeatureValue feature="place" value="palatal"/>
@@ -730,6 +770,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="k">
 				<FeatureValue feature="place" value="velar"/>
@@ -744,6 +785,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="l">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -758,6 +800,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="m">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -772,6 +815,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ᵐ">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -786,6 +830,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="n">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -800,6 +845,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="p">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -814,6 +860,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="q">
 				<FeatureValue feature="place" value="uvular"/>
@@ -828,6 +875,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="r">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -842,6 +890,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="s">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -856,6 +905,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="t">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -870,6 +920,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="v">
 				<FeatureValue feature="place" value="labiodental"/>
@@ -884,6 +935,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="w">
 				<FeatureValue feature="place" value="velar"/>
@@ -899,6 +951,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="x">
 				<FeatureValue feature="place" value="velar"/>
@@ -913,6 +966,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="z">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -927,6 +981,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ç">
 				<FeatureValue feature="place" value="palatal"/>
@@ -941,6 +996,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ð">
 				<FeatureValue feature="place" value="dental"/>
@@ -955,6 +1011,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ħ">
 				<FeatureValue feature="place" value="dental"/>
@@ -969,6 +1026,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ŋ">
 				<FeatureValue feature="place" value="velar"/>
@@ -983,6 +1041,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ᵑ">
 				<FeatureValue feature="place" value="velar"/>
@@ -997,6 +1056,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɓ">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -1011,6 +1071,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
 			</Symbol>
 			<Symbol strRep="ɕ">
 				<FeatureValue feature="place" value="alveolo-palatal"/>
@@ -1025,6 +1086,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɖ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1039,6 +1101,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɗ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1053,6 +1116,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
 			</Symbol>
 			<Symbol strRep="ɟ">
 				<FeatureValue feature="place" value="palatal"/>
@@ -1067,6 +1131,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɠ">
 				<FeatureValue feature="place" value="velar"/>
@@ -1081,6 +1146,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
 			</Symbol>
 			<Symbol strRep="ɡ">
 				<FeatureValue feature="place" value="velar"/>
@@ -1095,6 +1161,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɢ">
 				<FeatureValue feature="place" value="uvular"/>
@@ -1109,6 +1176,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɣ">
 				<FeatureValue feature="place" value="velar"/>
@@ -1123,6 +1191,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɥ">
 				<FeatureValue feature="place" value="palatal"/>
@@ -1138,6 +1207,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɦ">
 				<FeatureValue feature="place" value="glottal"/>
@@ -1152,6 +1222,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɧ">
 				<FeatureValue feature="place" value="velar palato-alveolar"/>
@@ -1166,6 +1237,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɫ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1181,6 +1253,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɬ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1195,6 +1268,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɭ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1209,6 +1283,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɮ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1223,6 +1298,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɰ">
 				<FeatureValue feature="place" value="velar"/>
@@ -1237,6 +1313,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɱ">
 				<FeatureValue feature="place" value="labiodental"/>
@@ -1251,6 +1328,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɲ">
 				<FeatureValue feature="place" value="palatal"/>
@@ -1265,6 +1343,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɳ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1279,6 +1358,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɴ">
 				<FeatureValue feature="place" value="uvular"/>
@@ -1293,6 +1373,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɸ">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -1307,6 +1388,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɹ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1321,6 +1403,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɺ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1335,6 +1418,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɻ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1349,6 +1433,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɽ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1363,6 +1448,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ɾ">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1377,6 +1463,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʀ">
 				<FeatureValue feature="place" value="uvular"/>
@@ -1391,6 +1478,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʁ">
 				<FeatureValue feature="place" value="uvular"/>
@@ -1405,6 +1493,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʂ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1419,6 +1508,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʃ">
 				<FeatureValue feature="place" value="palato-alveolar"/>
@@ -1433,6 +1523,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʄ">
 				<FeatureValue feature="place" value="palatal"/>
@@ -1447,6 +1538,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
 			</Symbol>
 			<Symbol strRep="ʈ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1461,6 +1553,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʋ">
 				<FeatureValue feature="place" value="labiodental"/>
@@ -1475,6 +1568,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʍ">
 				<FeatureValue feature="place" value="velar"/>
@@ -1490,6 +1584,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʎ">
 				<FeatureValue feature="place" value="palatal"/>
@@ -1504,6 +1599,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʐ">
 				<FeatureValue feature="place" value="retroflex"/>
@@ -1518,6 +1614,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʑ">
 				<FeatureValue feature="place" value="alveolo-palatal"/>
@@ -1532,6 +1629,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʒ">
 				<FeatureValue feature="place" value="palato-alveolar"/>
@@ -1546,6 +1644,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʔ">
 				<FeatureValue feature="place" value="glottal"/>
@@ -1560,6 +1659,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʕ">
 				<FeatureValue feature="place" value="pharyngeal"/>
@@ -1574,6 +1674,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʙ">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -1588,6 +1689,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʛ">
 				<FeatureValue feature="place" value="uvular"/>
@@ -1602,6 +1704,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
 			</Symbol>
 			<Symbol strRep="ʜ">
 				<FeatureValue feature="place" value="epiglottal"/>
@@ -1616,6 +1719,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʝ">
 				<FeatureValue feature="place" value="palatal"/>
@@ -1630,6 +1734,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʟ">
 				<FeatureValue feature="place" value="velar"/>
@@ -1644,6 +1749,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʡ">
 				<FeatureValue feature="place" value="epiglottal"/>
@@ -1658,6 +1764,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ʢ">
 				<FeatureValue feature="place" value="epiglottal"/>
@@ -1672,6 +1779,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="β">
 				<FeatureValue feature="place" value="bilabial"/>
@@ -1686,6 +1794,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="θ">
 				<FeatureValue feature="place" value="dental"/>
@@ -1700,6 +1809,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="χ">
 				<FeatureValue feature="place" value="uvular"/>
@@ -1714,6 +1824,83 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			
+			<Symbol strRep="ʘ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǀ">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǁ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǃ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǂ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
 			</Symbol>
 
 			<Symbol strRep="ts">
@@ -1729,6 +1916,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="dz">
 				<FeatureValue feature="place" value="alveolar"/>
@@ -1743,6 +1931,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="tʃ">
 				<FeatureValue feature="place" value="palato-alveolar"/>
@@ -1757,6 +1946,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="dʒ">
 				<FeatureValue feature="place" value="palato-alveolar"/>
@@ -1771,6 +1961,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="tɕ">
 				<FeatureValue feature="place" value="alveolo-palatal"/>
@@ -1785,6 +1976,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="dʑ">
 				<FeatureValue feature="place" value="alveolo-palatal"/>
@@ -1799,6 +1991,7 @@
 				<FeatureValue feature="velarized" value="velarized-"/>
 				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 		</Consonants>
 		<Modifiers>
@@ -1863,7 +2056,9 @@
 			</Symbol>
 			<Symbol strRep="&#x032A;"/>
 			<Symbol strRep="&#x02DE;"/>
-			<Symbol strRep="ʼ"/>
+			<Symbol strRep="ʼ">
+				<FeatureValue feature="airstream" value="ejective"/>
+			</Symbol>
 			<Symbol strRep="ˡ"/>
 			<Symbol strRep="&#x0318;"/>
 			<Symbol strRep="&#x0319;"/>
@@ -2011,6 +2206,12 @@
 				<RelevantFeature ref="pharyngealized" weight="2" consonant="true">
 					<RelevantValue ref="pharyngealized+" metric="100"/>
 					<RelevantValue ref="pharyngealized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="airstream" weight="5" consonant="true">
+					<RelevantValue ref="pulmonic" metric="100"/>
+					<RelevantValue ref="ejective" metric="66"/>
+					<RelevantValue ref="implosive" metric="33"/>
+					<RelevantValue ref="click" metric="0"/>
 				</RelevantFeature>
 			</RelevantFeatures>
 		</WordAligner>

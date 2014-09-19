@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,8 +18,17 @@ namespace SIL.Cog.Application.Services
 	public class ProjectService : IProjectService
 	{
 		private const int CacheVersion = 3;
+		private const int ProjectVersion = 2;
 
 		private static readonly FileType CogProjectFileType = new FileType("Cog Project", ".cogx");
+		private static readonly List<IProjectMigration> ProjectMigrations;
+
+		static ProjectService()
+		{
+			ProjectMigrations = Assembly.GetExecutingAssembly().GetTypes()
+				.Where(t => t.GetInterfaces().Contains(typeof(IProjectMigration)))
+				.Select(t => (IProjectMigration) Activator.CreateInstance(t)).OrderBy(cm => cm.Version).ToList();
+		}
 
 		public event EventHandler<EventArgs> ProjectOpened;
 
@@ -230,9 +240,22 @@ namespace SIL.Cog.Application.Services
 				return false;
 			}
 			Debug.Assert(project != null);
+
 			_projectFileStream = fileStream;
 			SetupProject(vm, path, projectName, project);
 			_isNew = false;
+			return true;
+		}
+
+		private bool MigrateProjectfNeeded(ProgressViewModel vm, CogProject project)
+		{
+			if (project.Version == ProjectVersion)
+				return false;
+
+			vm.Text = "Updating project...";
+			foreach (IProjectMigration pm in ProjectMigrations.SkipWhile(cm => project.Version >= cm.Version))
+				pm.Migrate(_segmentPool, project);
+			project.Version = ProjectVersion;
 			return true;
 		}
 
@@ -290,7 +313,7 @@ namespace SIL.Cog.Application.Services
 		private void SetupProject(ProgressViewModel vm, string path, string name, CogProject project)
 		{
 			_settingsService.LastProject = path;
-			_isChanged = false;
+			_isChanged = MigrateProjectfNeeded(vm, project);
 			_project = project;
 			_projectName = name;
 
@@ -306,26 +329,29 @@ namespace SIL.Cog.Application.Services
 					if (vm != null)
 						vm.Text = "Loading cached results...";
 					bool delete = true;
-					try
+					if (!_isChanged)
 					{
-						using (FileStream fs = File.OpenRead(cacheFileName))
+						try
 						{
-							var version = Serializer.DeserializeWithLengthPrefix<int>(fs, PrefixStyle.Base128, 1);
-							if (version == CacheVersion)
+							using (FileStream fs = File.OpenRead(cacheFileName))
 							{
-								var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
-								if (hash == CalcProjectHash())
+								var version = Serializer.DeserializeWithLengthPrefix<int>(fs, PrefixStyle.Base128, 1);
+								if (version == CacheVersion)
 								{
-									_project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
-										.Select(surrogate => surrogate.ToVarietyPair(_segmentPool, _project)));
-									delete = false;
+									var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
+									if (hash == CalcProjectHash())
+									{
+										_project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
+											.Select(surrogate => surrogate.ToVarietyPair(_segmentPool, _project)));
+										delete = false;
+									}
 								}
 							}
 						}
-					}
-					catch (Exception)
-					{
-						// could not load the cache, so delete it
+						catch (Exception)
+						{
+							// could not load the cache, so delete it
+						}
 					}
 					if (delete)
 						File.Delete(cacheFileName);

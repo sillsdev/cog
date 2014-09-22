@@ -95,8 +95,8 @@
 			</Component>
 
 			<!-- MVVM Light -->
-			<Component Id="GalaSoft.MvvmLight.WPF4.dll" Win64="$(var.Win64)">
-				<File Id="GalaSoft.MvvmLight.WPF4.dll" Name="GalaSoft.MvvmLight.WPF4.dll" Source="$(var.Cog.Presentation.TargetDir)\GalaSoft.MvvmLight.WPF4.dll" KeyPath="yes" />
+			<Component Id="GalaSoft.MvvmLight.dll" Win64="$(var.Win64)">
+				<File Id="GalaSoft.MvvmLight.dll" Name="GalaSoft.MvvmLight.dll" Source="$(var.Cog.Presentation.TargetDir)\GalaSoft.MvvmLight.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- Autofac -->

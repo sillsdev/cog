@@ -81,7 +81,7 @@ namespace SIL.Cog.Application.Services.ProjectMigrations
 
 		private static void AddValue(SymbolCollection symbols, Symbol symbol, FeatureSymbol value)
 		{
-			FeatureStruct fs = symbol.FeatureStruct == null ? new FeatureStruct() : symbol.FeatureStruct.DeepClone();
+			FeatureStruct fs = symbol.FeatureStruct.DeepClone();
 			fs.AddValue(value.Feature, value);
 			fs.Freeze();
 			symbols.Remove(symbol);

@@ -95,6 +95,7 @@
     <Compile Include="Services\FileDialogResult.cs" />
     <Compile Include="Services\FileType.cs" />
     <Compile Include="Services\IProjectMigration.cs" />
+    <Compile Include="Services\ProjectMigrations\ProjectMigration3.cs" />
     <Compile Include="Services\ProjectMigrations\ProjectMigrationExtensions.cs" />
     <Compile Include="Services\SoundCorrespondenceSurrogate.cs" />
     <Compile Include="Services\GraphService.cs" />

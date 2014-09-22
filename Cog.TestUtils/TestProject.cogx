@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CogProject xmlns="http://www.sil.org/CogProject/1.0"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			version="2">
+			version="3">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -1993,6 +1993,68 @@
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
 				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
+			
+			<!-- extra-IPA alveolo-palatal consonants -->
+			<Symbol strRep="ȶ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ȡ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ȵ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ȴ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
 		</Consonants>
 		<Modifiers>
 			<Symbol strRep="ʰ">
@@ -2085,6 +2147,13 @@
 			<Symbol strRep="&#x030F;"/>
 			<Symbol strRep="&#x030C;"/>
 			<Symbol strRep="&#x0302;"/>
+			
+			<!-- extra-IPA tone numbers -->
+			<Symbol strRep="¹"/>
+			<Symbol strRep="²"/>
+			<Symbol strRep="³"/>
+			<Symbol strRep="⁴"/>
+			<Symbol strRep="⁵"/>
 		</Modifiers>
 		<Boundaries>
 			<Symbol strRep="-"/>

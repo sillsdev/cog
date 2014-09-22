@@ -9,7 +9,7 @@ namespace SIL.Cog.Domain
 		private readonly bool _overwrite;
 
 		public Symbol(string strRep)
-			: this(strRep, null)
+			: this(strRep, FeatureStruct.New().Value)
 		{
 			
 		}

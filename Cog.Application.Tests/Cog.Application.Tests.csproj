@@ -82,6 +82,7 @@
     <Compile Include="Import\WordSurv7WordListsImporterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ProjectMigrations\ProjectMigration2Tests.cs" />
+    <Compile Include="Services\ProjectMigrations\ProjectMigration3Tests.cs" />
     <Compile Include="ViewModels\GlobalCorrespondencesViewModelTests.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModelTests.cs" />
     <Compile Include="ViewModels\SegmentsViewModelTests.cs" />

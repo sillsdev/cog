@@ -19,7 +19,7 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		
-		<Image Grid.RowSpan="6" Grid.Column="0" Source="/Cog;component/Images/SIL-logo.jpg" VerticalAlignment="Top" Width="120" Margin="20,10,20,20" />
+		<Image Grid.RowSpan="6" Grid.Column="0" Source="/Cog;component/Images/SIL-logo.png" VerticalAlignment="Top" Width="120" Margin="20,10,20,20" />
 		<TextBlock Grid.Row="0" Grid.Column="1" FontSize="30" Margin="5">Cog</TextBlock>
 		<TextBlock Grid.Row="1" Grid.Column="1" Margin="5,5,5,20">
 			<TextBlock>Version</TextBlock>

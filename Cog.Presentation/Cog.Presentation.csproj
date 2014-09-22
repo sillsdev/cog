@@ -718,7 +718,7 @@
     <Resource Include="Images\closedhand.cur" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\SIL-logo.jpg" />
+    <Resource Include="Images\SIL-logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

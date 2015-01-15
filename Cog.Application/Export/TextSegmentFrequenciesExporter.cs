@@ -46,9 +46,10 @@ namespace SIL.Cog.Application.Export
 					break;
 			}
 
+			var comparer = new SegmentComparer();
 			Segment[] segments = project.Varieties
 				.SelectMany(v => v.SyllablePositionSegmentFrequencyDistributions[domainSyllablePosition].ObservedSamples)
-				.Distinct().Where(s => !s.IsComplex).OrderBy(GetSortOrder).ThenBy(s => s.StrRep).ToArray();
+				.Distinct().OrderBy(GetSortOrder).ThenBy(s => s, comparer).ToArray();
 
 			using (var writer = new StreamWriter(new NonClosingStreamWrapper(stream)))
 			{
@@ -72,10 +73,14 @@ namespace SIL.Cog.Application.Export
 			}
 		}
 
-		private static int GetSortOrder(Segment segment)
+		private int GetSortOrder(Segment segment)
 		{
-			return SortOrderLookup[segment.Type == CogFeatureSystem.VowelType ? ((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("manner")).ID
-				: ((FeatureSymbol) segment.FeatureStruct.GetValue<SymbolicFeatureValue>("place")).ID];
+			FeatureStruct fs = segment.FeatureStruct;
+			if (segment.IsComplex)
+				fs = segment.FeatureStruct.GetValue(CogFeatureSystem.First);
+
+			return segment.Type == CogFeatureSystem.VowelType ? SortOrderLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("manner")).ID]
+				: SortOrderLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("place")).ID];
 		}
 	}
 }

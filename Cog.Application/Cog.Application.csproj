@@ -88,6 +88,7 @@
     <Compile Include="Import\WordSurv6WordListsImporter.cs" />
     <Compile Include="Import\WordSurv7WordListsImporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SegmentComparer.cs" />
     <Compile Include="Services\AnalysisService.cs" />
     <Compile Include="Services\ProjectMigrations\ProjectMigration2.cs" />
     <Compile Include="Services\ExportService.cs" />

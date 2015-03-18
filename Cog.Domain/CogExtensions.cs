@@ -331,7 +331,7 @@ namespace SIL.Cog.Domain
 				}
 			}
 
-			double min = double.MaxValue, max = double.MinValue;
+			double min = double.MaxValue;
 			var distanceMatrix = new Dictionary<UnorderedTuple<Word, Word>, double>();
 			Word[] wordArray = words.ToArray();
 			for (int i = 0; i < wordArray.Length; i++)
@@ -349,12 +349,11 @@ namespace SIL.Cog.Domain
 					}
 					double distance = 1.0 - score;
 					min = Math.Min(min, distance);
-					max = Math.Max(max, distance);
 					distanceMatrix[UnorderedTuple.Create(w1, w2)] = distance;
 				}
 			}
 
-			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) => distanceMatrix[UnorderedTuple.Create(w1, w2)], (max + min) / 2);
+			var clusterer = new FlatUpgmaClusterer<Word>((w1, w2) => distanceMatrix[UnorderedTuple.Create(w1, w2)], (1.0 + min) / 2);
 			return clusterer.GenerateClusters(words).Concat(new Cluster<Word>(noise, true));
 		}
 	}

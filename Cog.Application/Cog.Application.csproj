@@ -120,6 +120,7 @@
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\AlineViewModel.cs" />
     <Compile Include="ViewModels\AnalyzeViewModel.cs" />
+    <Compile Include="ViewModels\MultipleWordAlignmentVarietyViewModel.cs" />
     <Compile Include="ViewModels\VowelBacknessVertex.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />
     <Compile Include="ViewModels\ChangeTrackingViewModelBase.cs" />

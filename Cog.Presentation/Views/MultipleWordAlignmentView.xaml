@@ -25,8 +25,16 @@
 				<DataTemplate DataType="{x:Type xcdg:Group}">
 					<TextBlock Padding="2" Background="{StaticResource DataGridGroupingBrush}" FontSize="16" Foreground="{StaticResource HeaderTextBrush}" Text="{Binding Value, Converter={StaticResource CognateSetConverter}}" />
 				</DataTemplate>
-				<DataTemplate DataType="{x:Type vm:VarietyViewModel}">
-					<TextBlock Padding="8,2,8,2" Text="{Binding Name}" />
+				<DataTemplate DataType="{x:Type vm:MultipleWordAlignmentVarietyViewModel}">
+					<TextBlock Padding="8,2,8,2">
+						<Run Text="{Binding Name, Mode=OneWay}" />
+						<Run Name="wordIndexRun" Text="{Binding WordIndex, Mode=OneWay}" BaselineAlignment="Subscript" FontSize="8" />
+					</TextBlock>
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding WordIndex}" Value="0">
+							<Setter TargetName="wordIndexRun" Property="Text" Value="" />
+						</DataTrigger>
+					</DataTemplate.Triggers>
 				</DataTemplate>
 				<Style TargetType="xcdg:DataCell" BasedOn="{StaticResource PhoneticDataCellStyle}">
 					<Style.Triggers>

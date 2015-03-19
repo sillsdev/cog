@@ -10,7 +10,7 @@ namespace SIL.Cog.Application.ViewModels
 {
 	public class MultipleWordAlignmentWordViewModel : ViewModelBase
 	{
-		private readonly VarietyViewModel _variety;
+		private readonly MultipleWordAlignmentVarietyViewModel _variety;
 		private readonly string _prefix;
 		private readonly ReadOnlyList<string> _columns;
 		private readonly string _suffix;
@@ -20,11 +20,17 @@ namespace SIL.Cog.Application.ViewModels
 		public MultipleWordAlignmentWordViewModel(Word word, AlignmentCell<ShapeNode> prefix, IEnumerable<AlignmentCell<ShapeNode>> columns, AlignmentCell<ShapeNode> suffix, int cognateSetIndex)
 		{
 			_word = word;
-			_variety = new VarietyViewModel(word.Variety);
+			IReadOnlyCollection<Word> words = word.Variety.Words[word.Meaning];
+			_variety = new MultipleWordAlignmentVarietyViewModel(word.Variety, words.Count == 1 ? 0 : IndexOf(words, word));
 			_prefix = prefix.StrRep();
 			_columns = new ReadOnlyList<string>(columns.Select(cell => cell.IsNull ? "-" : cell.StrRep()).ToArray());
 			_suffix = suffix.StrRep();
 			_cognateSetIndex = cognateSetIndex;
+		}
+
+		private static int IndexOf(IEnumerable<Word> words, Word word)
+		{
+			return words.Select((w, i) => new {Word = w, Index = i + 1}).First(wi => wi.Word == word).Index;
 		}
 
 		public string StrRep
@@ -37,7 +43,7 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _cognateSetIndex; }
 		}
 
-		public VarietyViewModel Variety
+		public MultipleWordAlignmentVarietyViewModel Variety
 		{
 			get { return _variety; }
 		}

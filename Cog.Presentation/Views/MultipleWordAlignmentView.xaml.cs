@@ -2,8 +2,10 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
@@ -118,18 +120,22 @@ namespace SIL.Cog.Presentation.Views
 		private void AlignmentGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
-			if (e.SelectionInfos.Count == 1 && e.SelectionInfos[0].AddedCellRanges.Count == 1)
-			{
-				SelectionCellRange range = e.SelectionInfos[0].AddedCellRanges[0];
-				vm.SelectedColumn = range.ColumnRange.StartIndex - 2;
-				vm.SelectedWord = (MultipleWordAlignmentWordViewModel) AlignmentGrid.Items[range.ItemRange.StartIndex];
-			}
-			else
-			{
-				vm.SelectedColumn = -1;
-				vm.SelectedWord = null;
-				AlignmentGrid.CurrentItem = null;
-			}
+			vm.SelectedWords.Clear();
+			vm.SelectedWords.AddRange(AlignmentGrid.SelectedItems.Cast<MultipleWordAlignmentWordViewModel>());
+		}
+
+		private void Cell_OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var cell = (DataCell)sender;
+			if (cell.ParentColumn.Index != 0)
+				cell.Focus();
+		}
+
+		private void Cell_OnPreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			var cell = (DataCell)sender;
+			if (cell.ParentColumn.Index != 0)
+				cell.Focus();
 		}
 	}
 }

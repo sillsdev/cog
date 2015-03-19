@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Collections;
@@ -19,17 +20,17 @@ namespace SIL.Cog.Application.ViewModels
 	{
 		private readonly IProjectService _projectService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
+	    private readonly BindableList<MultipleWordAlignmentWordViewModel> _selectedWords; 
 		private ICollectionView _wordsView;
 		private MirroredBindableList<Meaning, MeaningViewModel> _meanings;
 		private ICollectionView _meaningsView;
 		private MeaningViewModel _selectedMeaning;
 		private int _columnCount;
-		private int _selectedColumn;
-		private MultipleWordAlignmentWordViewModel _selectedWord;
 		private readonly IBusyService _busyService;
 		private readonly IExportService _exportService;
 		private bool _groupByCognateSet;
 		private string _sortByProp;
+		private readonly ICommand _showInVarietyPairsCommand;
 
 		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService)
 			: base("Multiple Word Alignment")
@@ -52,6 +53,9 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
 
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
+            _selectedWords = new BindableList<MultipleWordAlignmentWordViewModel>();
+
+			_showInVarietyPairsCommand = new RelayCommand(ShowInVarietyPairs, CanShowInVarietyPairs);
 
 			_groupByCognateSet = true;
 			_sortByProp = "StrRep";
@@ -68,6 +72,30 @@ namespace SIL.Cog.Application.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(_projectService.Project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
+		}
+
+		private void ShowInVarietyPairs()
+		{
+			VarietyPair vp = _selectedWords[0].Variety.DomainVariety.VarietyPairs[_selectedWords[1].Variety.DomainVariety];
+			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietyPairsViewModel), vp, _selectedMeaning.DomainMeaning));
+		}
+
+		private bool CanShowInVarietyPairs()
+		{
+			if (_selectedWords.Count != 2)
+				return false;
+
+			Word w1 = _selectedWords[0].DomainWord;
+			Word w2 = _selectedWords[1].DomainWord;
+
+			if (w1.Variety == w2.Variety)
+				return false;
+
+			VarietyPair vp = w1.Variety.VarietyPairs[w2.Variety];
+			WordPair wp;
+			if (vp.WordPairs.TryGetValue(_selectedMeaning.DomainMeaning, out wp))
+				return wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2;
+			return false;
 		}
 
 		private void ExportCognateSets()
@@ -152,18 +180,6 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
-		public int SelectedColumn
-		{
-			get { return _selectedColumn; }
-			set { Set(() => SelectedColumn, ref _selectedColumn, value); }
-		}
-
-		public MultipleWordAlignmentWordViewModel SelectedWord
-		{
-			get { return _selectedWord; }
-			set { Set(() => SelectedWord, ref _selectedWord, value); }
-		}
-
 		public bool GroupByCognateSet
 		{
 			get { return _groupByCognateSet; }
@@ -183,8 +199,6 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			_words.Clear();
 			ColumnCount = 0;
-			SelectedColumn = 0;
-			SelectedWord = null;
 		}
 
 		private void AlignWords()
@@ -240,7 +254,7 @@ namespace SIL.Cog.Application.ViewModels
 					IEnumerable<AlignmentCell<ShapeNode>> columns = Enumerable.Range(0, alignment.ColumnCount).Select(col => alignment[i, col]);
 					AlignmentCell<ShapeNode> suffix = alignment.Suffixes[i];
 					int cognateSetIndex = cognateSets.FindIndex(set => set.DataObjects.Contains(word));
-					_words.Add(new MultipleWordAlignmentWordViewModel(word, prefix, columns, suffix, cognateSetIndex == cognateSets.Count - 1 ? int.MaxValue : cognateSetIndex + 1));
+					_words.Add(new MultipleWordAlignmentWordViewModel(this, word, prefix, columns, suffix, cognateSetIndex == cognateSets.Count - 1 ? int.MaxValue : cognateSetIndex + 1));
 				}
 			}
 		}
@@ -253,6 +267,16 @@ namespace SIL.Cog.Application.ViewModels
 		public ObservableList<MultipleWordAlignmentWordViewModel> Words
 		{
 			get { return _words; }
+		}
+
+	    public ObservableList<MultipleWordAlignmentWordViewModel> SelectedWords
+	    {
+	        get { return _selectedWords; }
+	    }
+
+		public ICommand ShowInVarietyPairsCommand
+		{
+			get { return _showInVarietyPairsCommand; }
 		}
 	}
 }

@@ -104,6 +104,14 @@ namespace SIL.Cog.Application.ViewModels
 				Set(() => SelectedVariety2, ref _selectedVariety2, _varieties[pair.Variety2]);
 				VarietyPairState = pair.Variety1.VarietyPairs.Contains(pair.Variety2)
 					? VarietyPairState.SelectedAndCompared : VarietyPairState.SelectedAndNotCompared;
+				if (msg.DomainModels.Count > 1)
+				{
+					var meaning = (Meaning) msg.DomainModels[1];
+					_selectedVarietyPair.Cognates.SelectedWordPairs.Clear();
+					_selectedVarietyPair.Cognates.SelectedWordPairs.AddRange(_selectedVarietyPair.Cognates.WordPairs.Where(wp => wp.Meaning.DomainMeaning == meaning));
+					_selectedVarietyPair.Noncognates.SelectedWordPairs.Clear();
+					_selectedVarietyPair.Noncognates.SelectedWordPairs.AddRange(_selectedVarietyPair.Noncognates.WordPairs.Where(wp => wp.Meaning.DomainMeaning == meaning));
+				}
 			}
 		}
 

@@ -29,10 +29,16 @@ namespace SIL.Cog.Presentation.Views
 				return;
 
 			vm.WordPairsView = CollectionViewSource.GetDefaultView(vm.WordPairs);
+			SelectWordPairs();
 			vm.SelectedWordPairs.CollectionChanged += SelectedWordPairs_CollectionChanged;
 		}
 
 		private void SelectedWordPairs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			SelectWordPairs();
+		}
+
+		private void SelectWordPairs()
 		{
 			var vm = (WordPairsViewModel) DataContext;
 			if (_monitor.Busy)

@@ -430,8 +430,14 @@
 			<MultiDataTrigger>
 				<MultiDataTrigger.Conditions>
 					<Condition Binding="{Binding Path=ParentColumn.(b:DataGridControlBehaviors.IsRowHeader), RelativeSource={RelativeSource Self}}" Value="True" />
-					<Condition Binding="{Binding Path=(xcdg:DataGridControl.DataGridContext).DataGridControl.NavigationBehavior, RelativeSource={RelativeSource Self}}" Value="CellOnly" />
 					<Condition Binding="{Binding Path=ParentRow.IsCurrent, RelativeSource={RelativeSource Self}}" Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
+			</MultiDataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding Path=ParentColumn.(b:DataGridControlBehaviors.IsRowHeader), RelativeSource={RelativeSource Self}}" Value="True" />
+					<Condition Binding="{Binding Path=ParentRow.IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
 				</MultiDataTrigger.Conditions>
 				<Setter Property="Background" Value="{StaticResource DataGridHeaderSelectedBrush}" />
 			</MultiDataTrigger>

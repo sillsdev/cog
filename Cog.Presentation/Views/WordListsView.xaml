@@ -13,9 +13,8 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
-		<cnvtrs:WordsToInlinesConverter x:Key="InlinesConverter" />
-		<cnvtrs:IsTextTrimmedConverter x:Key="IsTextTrimmedConverter" />
-	</UserControl.Resources>
+        <cnvtrs:WordsToInlinesConverter x:Key="InlinesConverter" />
+    </UserControl.Resources>
     <DockPanel>
         <TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Word lists</TextBlock>
         <Grid>

@@ -20,7 +20,8 @@ namespace SIL.Cog.Application.ViewModels
 			_licenseCommand = new RelayCommand(() => Process.Start("http://sil.mit-license.org"));
 			_websiteCommand = new RelayCommand(() => Process.Start("http://sillsdev.github.io/cog/"));
 
-			_version = Assembly.GetEntryAssembly().GetName().Version.ToString();
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+			_version = fvi.FileVersion;
 
 			string filePath = Assembly.GetEntryAssembly().Location;
 			const int peHeaderOffset = 60;

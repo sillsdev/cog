@@ -25,7 +25,11 @@ File.WriteAllText(Path, content);
 	</UsingTask>
 	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 	
-	<Target Name="BuildAll">
+	<Target Name="StampBuildNumber">
+		<TokenReplace Path="$(RootDir)/GlobalAssemblyInfo.cs" Token="DEV_BUILD" Replacement="$(BUILD_NUMBER)" />
+	</Target>
+	
+	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber">
 		<MSBuild Projects="$(RootDir)/$(Solution)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 	
@@ -43,10 +47,13 @@ File.WriteAllText(Path, content);
 		</GetAssemblyIdentity>
 		<!-- Create the MSBuild property $(VersionNumber) -->
 		<CreateProperty Value="%(AsmInfo.Version)">
-		  <Output TaskParameter="Value" PropertyName="VersionNumber" />
+		  <Output TaskParameter="Value" PropertyName="AssemblyVersionNumber" />
 		</CreateProperty>
-		<CreateProperty Value="$(VersionNumber.Substring(0, $(VersionNumber.LastIndexOf('.'))))">
+		<CreateProperty Value="$(AssemblyVersionNumber.Substring(0, $(AssemblyVersionNumber.LastIndexOf('.'))))">
 		  <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+		</CreateProperty>
+		<CreateProperty Value="$(ShortVersionNumber).$(BUILD_NUMBER)">
+		  <Output TaskParameter="Value" PropertyName="VersionNumber" />
 		</CreateProperty>
 	</Target>
 	

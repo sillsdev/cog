@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Domain;
 using SIL.Collections;
 using SIL.Machine.Annotations;
@@ -19,7 +16,6 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly string _suffix;
 		private readonly int _cognateSetIndex;
 		private readonly Word _word;
-		private readonly ICommand _showInVarietiesCommand;
 		private readonly MultipleWordAlignmentViewModel _parent;
 
 		public MultipleWordAlignmentWordViewModel(MultipleWordAlignmentViewModel parent, Word word, AlignmentCell<ShapeNode> prefix, IEnumerable<AlignmentCell<ShapeNode>> columns, AlignmentCell<ShapeNode> suffix, int cognateSetIndex)
@@ -32,22 +28,11 @@ namespace SIL.Cog.Application.ViewModels
 			_suffix = suffix.StrRep();
 			_cognateSetIndex = cognateSetIndex;
 			_parent = parent;
-			_showInVarietiesCommand = new RelayCommand(ShowInVarieties);
 		}
 
 		private static int IndexOf(IEnumerable<Word> words, Word word)
 		{
 			return words.Select((w, i) => new {Word = w, Index = i + 1}).First(wi => wi.Word == word).Index;
-		}
-
-		private void ShowInVarieties()
-		{
-			Messenger.Default.Send(new SwitchViewMessage(typeof(VarietiesViewModel), _variety.DomainVariety, _word.Meaning));
-		}
-
-		public ICommand ShowInVarietiesCommand
-		{
-			get { return _showInVarietiesCommand; }
 		}
 
 		public string StrRep

@@ -29,7 +29,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
 			WordListsVarietyMeaningViewModel.Factory varietyMeaningFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyMeaningFactory, variety);
+			WordListsVarietyViewModel.Factory varietyFactory = (parent, variety) => new WordListsVarietyViewModel(projectService, varietyMeaningFactory, parent, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 
@@ -76,7 +76,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
 			WordListsVarietyMeaningViewModel.Factory varietyglossFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyglossFactory, variety);
+			WordListsVarietyViewModel.Factory varietyFactory = (parent, variety) => new WordListsVarietyViewModel(projectService, varietyglossFactory, parent, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 
@@ -122,7 +122,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
 			WordListsVarietyMeaningViewModel.Factory varietyglossFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyglossFactory, variety);
+			WordListsVarietyViewModel.Factory varietyFactory = (parent, variety) => new WordListsVarietyViewModel(projectService, varietyglossFactory, parent, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 
@@ -247,8 +247,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var exportService = Substitute.For<IExportService>();
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			WordListsVarietyMeaningViewModel.Factory varietyglossFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
-			WordListsVarietyViewModel.Factory varietyFactory = variety => new WordListsVarietyViewModel(projectService, varietyglossFactory, variety);
+			WordListsVarietyMeaningViewModel.Factory varietyMeaningFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, variety, meaning);
+			WordListsVarietyViewModel.Factory varietyFactory = (parent, variety) => new WordListsVarietyViewModel(projectService, varietyMeaningFactory, parent, variety);
 
 			var wordLists = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
 

@@ -20,7 +20,10 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			DispatcherHelper.Initialize();
 			var busyService = Substitute.For<IBusyService>();
 			var projectService = Substitute.For<IProjectService>();
+			var dialogService = Substitute.For<IDialogService>();
 			var analysisService = Substitute.For<IAnalysisService>();
+			var importService = Substitute.For<IImportService>();
+			var exportService = Substitute.For<IExportService>();
 
 			var project = new CogProject(_spanFactory);
 			project.Meanings.Add(new Meaning("gloss1", "cat1"));
@@ -28,10 +31,12 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
 			WordListsVarietyMeaningViewModel.Factory varietyMeaningFactory = (v, meaning) => new WordListsVarietyMeaningViewModel(busyService, analysisService, wordFactory, v, meaning);
+			WordListsVarietyViewModel.Factory varietyFactory = (p, v) => new WordListsVarietyViewModel(projectService, varietyMeaningFactory, p, v);
 
 			projectService.Project.Returns(project);
 
-			var variety = new WordListsVarietyViewModel(projectService, varietyMeaningFactory, project.Varieties[0]);
+			var parent = new WordListsViewModel(projectService, dialogService, importService, exportService, analysisService, varietyFactory);
+			WordListsVarietyViewModel variety = varietyFactory(parent, project.Varieties[0]);
 			WordListsVarietyMeaningViewModel varietyMeaning = variety.Meanings[0];
 
 			Assert.That(varietyMeaning.Words, Is.Empty);

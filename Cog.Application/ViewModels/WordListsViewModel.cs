@@ -65,7 +65,7 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			CogProject project = _projectService.Project;
 			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
-			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, WordListsVarietyViewModel>(project.Varieties, variety => _varietyFactory(variety), vm => vm.DomainVariety));
+			Set("Varieties", ref _varieties, new MirroredBindableList<Variety, WordListsVarietyViewModel>(project.Varieties, variety => _varietyFactory(this, variety), vm => vm.DomainVariety));
 			SetIsEmpty();
 			project.Varieties.CollectionChanged += VarietiesChanged;
 			project.Meanings.CollectionChanged += MeaningsChanged;

@@ -28,8 +28,12 @@
 					</Style>
 					<DataTemplate DataType="{x:Type vm:WordListsVarietyViewModel}">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock x:Name="ErrorIndicator" Padding="0,2,0,2" FontSize="10" Foreground="Red" VerticalAlignment="Center">&#x2717;</TextBlock>
-							<TextBlock Padding="0,2,8,2"><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
+							<TextBlock x:Name="ErrorIndicator" Padding="0,2,0,2" VerticalAlignment="Center">
+								<Hyperlink FontSize="10" Foreground="Red" TextDecorations="{x:Null}" Command="{Binding GoToNextInvalidWordCommand}">&#x2717;</Hyperlink>
+							</TextBlock>
+							<TextBlock Padding="0,2,8,2">
+								<Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink>
+							</TextBlock>
 						</StackPanel>
 						<DataTemplate.Triggers>
 							<DataTrigger Binding="{Binding IsValid}" Value="True">

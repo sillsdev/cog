@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
+using SIL.Cog.Presentation.Properties;
 using SIL.Cog.Presentation.Views;
 
 namespace SIL.Cog.Presentation
@@ -26,6 +27,13 @@ namespace SIL.Cog.Presentation
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			EventManager.RegisterClassHandler(typeof(TextBox), UIElement.GotFocusEvent, new RoutedEventHandler(TextBox_GotFocus));
+
+			if (Settings.Default.NeedsUpgrade)
+			{
+				Settings.Default.Upgrade();
+				Settings.Default.NeedsUpgrade = false;
+				Settings.Default.Save();
+			}
 
 			base.OnStartup(e);
 

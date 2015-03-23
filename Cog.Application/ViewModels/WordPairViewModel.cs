@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Domain;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
@@ -20,6 +23,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly VarietyViewModel _variety1;
 		private readonly VarietyViewModel _variety2;
 		private readonly bool _areVarietiesInOrder;
+		private readonly ICommand _showInMultipleWordAlignmentCommand;
 
 		public WordPairViewModel(IWordAligner aligner, WordPair wordPair, bool areVarietiesInOrder)
 		{
@@ -45,6 +49,13 @@ namespace SIL.Cog.Application.ViewModels
 			_suffixNode = new AlignedNodeViewModel(_alignment.Suffixes[0], _alignment.Suffixes[1]);
 
 			_alignedNodes = new ReadOnlyCollection<AlignedNodeViewModel>(nodes);
+
+			_showInMultipleWordAlignmentCommand = new RelayCommand(ShowInMultipleWordAlignment);
+		}
+
+		private void ShowInMultipleWordAlignment()
+		{
+			Messenger.Default.Send(new SwitchViewMessage(typeof(MultipleWordAlignmentViewModel), _wordPair.Meaning, _wordPair));
 		}
 
 		public bool AreVarietiesInOrder
@@ -90,6 +101,11 @@ namespace SIL.Cog.Application.ViewModels
 		public bool AreCognate
 		{
 			get { return _wordPair.AreCognatePredicted; }
+		}
+
+		public ICommand ShowInMultipleWordAlignmentCommand
+		{
+			get { return _showInMultipleWordAlignmentCommand; }
 		}
 
 		internal WordPair DomainWordPair

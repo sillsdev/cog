@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
@@ -19,11 +21,14 @@ namespace SIL.Cog.Presentation.Views
 	/// </summary>
 	public partial class MultipleWordAlignmentView
 	{
+		private readonly SimpleMonitor _monitor;
+
 		public MultipleWordAlignmentView()
 		{
 			InitializeComponent();
 			AlignmentGrid.ClipboardExporters.Clear();
 			BusyCursor.DisplayUntilIdle();
+			_monitor = new SimpleMonitor();
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -36,8 +41,11 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var vm = (MultipleWordAlignmentViewModel) DataContext;
 			vm.MeaningsView = CollectionViewSource.GetDefaultView(vm.Meanings);
+			MultipleWordAlignmentWordViewModel[] selectedWords = vm.SelectedWords.ToArray();
 			LoadCollectionView();
+			SelectWords(selectedWords);
 			vm.Words.CollectionChanged += WordsChanged;
+			vm.SelectedWords.CollectionChanged += SelectedWordsChanged;
 			vm.PropertyChanged += vm_PropertyChanged;
 		}
 
@@ -62,6 +70,31 @@ namespace SIL.Cog.Presentation.Views
 		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			LoadCollectionView();
+		}
+
+		private void SelectedWordsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (_monitor.Busy)
+				return;
+			
+			using (_monitor.Enter())
+				SelectWords((IEnumerable<MultipleWordAlignmentWordViewModel>) sender);
+		}
+
+		private void SelectWords(IEnumerable<MultipleWordAlignmentWordViewModel> selectedWords)
+		{
+			AlignmentGrid.SelectedItems.Clear();
+			foreach (MultipleWordAlignmentWordViewModel word in selectedWords)
+				AlignmentGrid.SelectedItems.Add(word);
+			if (AlignmentGrid.SelectedItems.Count > 0)
+			{
+				AlignmentGrid.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					int index = AlignmentGrid.SelectedItemRanges.Select(ir => ir.EndIndex).Max();
+					AlignmentGrid.BringItemIntoView(AlignmentGrid.Items[index]);
+					AlignmentGrid.Focus();
+				}), DispatcherPriority.Background);
+			}
 		}
 
 		private void LoadCollectionView()
@@ -119,21 +152,27 @@ namespace SIL.Cog.Presentation.Views
 
 		private void AlignmentGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
-			var vm = (MultipleWordAlignmentViewModel) DataContext;
-			vm.SelectedWords.Clear();
-			vm.SelectedWords.AddRange(AlignmentGrid.SelectedItems.Cast<MultipleWordAlignmentWordViewModel>());
+			if (_monitor.Busy)
+				return;
+
+			using (_monitor.Enter())
+			{
+				var vm = (MultipleWordAlignmentViewModel) DataContext;
+				vm.SelectedWords.Clear();
+				vm.SelectedWords.AddRange(AlignmentGrid.SelectedItems.Cast<MultipleWordAlignmentWordViewModel>());
+			}
 		}
 
 		private void Cell_OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			var cell = (DataCell)sender;
+			var cell = (DataCell) sender;
 			if (cell.ParentColumn.Index != 0)
 				cell.Focus();
 		}
 
 		private void Cell_OnPreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			var cell = (DataCell)sender;
+			var cell = (DataCell) sender;
 			if (cell.ParentColumn.Index != 0)
 				cell.Focus();
 		}

@@ -40,12 +40,12 @@ namespace SIL.Cog.Presentation.Views
 
 		private void SelectWordPairs()
 		{
-			var vm = (WordPairsViewModel) DataContext;
 			if (_monitor.Busy)
 				return;
 
 			using (_monitor.Enter())
 			{
+				var vm = (WordPairsViewModel) DataContext;
 				WordPairsListBox.SelectedItems.Clear();
 				foreach (WordPairViewModel wordPair in vm.SelectedWordPairs)
 					WordPairsListBox.SelectedItems.Add(wordPair);

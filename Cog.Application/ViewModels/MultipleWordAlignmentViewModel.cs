@@ -67,11 +67,13 @@ namespace SIL.Cog.Application.ViewModels
 						ResetAlignment();
 				});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetAlignment());
+			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(_projectService.Project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
+			_selectedMeaning = null;
 		}
 
 		private void ShowInVarietyPairs()
@@ -140,7 +142,8 @@ namespace SIL.Cog.Application.ViewModels
 				{
 					_meaningsView.SortDescriptions.Add(new SortDescription("Gloss", ListSortDirection.Ascending));
 					_meaningsView.CollectionChanged += MeaningsChanged;
-					SelectedMeaning = _meanings.Count > 0 ? _meaningsView.Cast<MeaningViewModel>().First() : null;
+					if (_selectedMeaning == null)
+						SelectedMeaning = !_meaningsView.IsEmpty ? _meaningsView.Cast<MeaningViewModel>().First() : null;
 				}
 			}
 		}
@@ -262,6 +265,22 @@ namespace SIL.Cog.Application.ViewModels
 		private bool NodeFilter(ShapeNode n)
 		{
 			return n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType);
+		}
+
+		private void HandleSwitchView(SwitchViewMessage msg)
+		{
+			if (msg.ViewModelType == GetType())
+			{
+				_busyService.ShowBusyIndicatorUntilFinishDrawing();
+
+				var meaning = (Meaning) msg.DomainModels[0];
+				SelectedMeaning = _meanings[meaning];
+				if (msg.DomainModels.Count > 1)
+				{
+					var wp = (WordPair) msg.DomainModels[1];
+					_selectedWords.ReplaceAll(new[] { _words.First(w => w.DomainWord == wp.Word1), _words.First(w => w.DomainWord == wp.Word2)});
+				}
+			}
 		}
 
 		public ObservableList<MultipleWordAlignmentWordViewModel> Words

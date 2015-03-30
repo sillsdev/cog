@@ -73,8 +73,10 @@ namespace SIL.Cog.Domain.Components
 				}
 				else if (u.Length == 0 || v.Length == 0)
 				{
-					if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode) || regular)
-						cat = _ignoreRegularInsertionDeletion ? 0 : 1;
+					if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
+						cat = 1;
+					else if (_ignoreRegularInsertionDeletion && regular)
+						cat = 0;
 				}
 				else if (u[0].Type == CogFeatureSystem.VowelType && v[0].Type == CogFeatureSystem.VowelType)
 				{

@@ -59,7 +59,6 @@
 	<Style x:Key="DataGrid_ColumnHeaderThumbStyle" TargetType="Thumb">
 		<Setter Property="Width" Value="8" />
 		<Setter Property="Background" Value="Transparent" />
-		<Setter Property="Cursor" Value="SizeWE" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Thumb">
@@ -76,7 +75,6 @@
 	<Style x:Key="DataGrid_RowHeaderThumbStyle" TargetType="Thumb">
 		<Setter Property="Height" Value="8" />
 		<Setter Property="Background" Value="Transparent" />
-		<Setter Property="Cursor" Value="SizeNS" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Thumb">

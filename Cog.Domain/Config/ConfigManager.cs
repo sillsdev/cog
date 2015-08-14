@@ -79,14 +79,17 @@ namespace SIL.Cog.Domain.Config
 			Debug.Assert(root != null);
 			if (root.GetDefaultNamespace() != DefaultNamespace)
 				throw new ConfigException("The specified file is not a valid Cog config file");
-			doc.Validate(Schema, (sender, args) =>
-				{
-					switch (args.Severity)
+			if (!Platform.IsMono)  // Bypass bug in Mono XSD validation. 2015-08 RM
+			{
+				doc.Validate(Schema, (sender, args) =>
 					{
-						case XmlSeverityType.Error:
-							throw new ConfigException("The specified file is not a valid Cog config file", args.Exception);
-					}
-				});
+						switch (args.Severity)
+						{
+							case XmlSeverityType.Error:
+								throw new ConfigException("The specified file is not a valid Cog config file", args.Exception);
+						}
+					});
+			}
 			segmentPool.Reset();
 			project.Version = (int) root.Attribute("version");
 			var featSys = new FeatureSystem();

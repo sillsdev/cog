@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using CommandLine;
@@ -11,30 +12,17 @@ namespace SIL.Cog.Application.CommandLine
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static int Main(string[] args)
 		{
-			ParserResult<object> parsed = Parser.Default.ParseArguments<SegmentOptions, CompareOptions>(args)
-				.WithParsed<SegmentOptions>(options =>
-				{
-					Console.WriteLine("Going to parse {0}", String.Join(", ", options.Words));
-					DoSegmentation(options);
-				})
-				.WithParsed<CompareOptions>(options =>
-				{
-					Console.WriteLine("ERROR: Compare not yet implemented, sorry.");
-				})
-				.WithNotParsed(errors =>
-				{
-					// Displaying errors is taken care of by the CommandLineParser library, so we don't need the following.
-					//foreach (var error in errors)
-					//{
-					//	Console.WriteLine("Unknown option -{0}", ((UnknownOptionError)error).Token);
-					//}
-					Console.WriteLine("Please fix the error{0} listed above, then try again.", (errors.Count() > 1) ? "s" : "");
-				});
+			int retcode = Parser.Default.ParseArguments<SegmentOptions, CompareOptions>(args)
+				.Return(
+					(SegmentOptions opts) => DoSegmentation(opts),
+					(CompareOptions opts) => { Console.WriteLine("Sorry, \"compare\" action not yet implemented."); return 2; },
+					(errs) => 3);
+			return retcode;
 		}
 
-		private static void DoSegmentation(SegmentOptions options)
+		private static int DoSegmentation(SegmentOptions options)
 		{
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 
@@ -63,8 +51,10 @@ namespace SIL.Cog.Application.CommandLine
 				else
 				{
 					Console.WriteLine("Failed to parse {0}", word);
+					return 1;
 				}
 			}
+			return 0;
 		}
 	}
 }

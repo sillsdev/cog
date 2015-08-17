@@ -13,45 +13,59 @@ namespace SIL.Cog.Application.CommandLine
 	{
 		static void Main(string[] args)
 		{
-			var options = new CogCommandLineOptions();
-			var parsed = Parser.Default.ParseArguments(args, options);
+			var options = new Options();
+			string invokedVerb = "";
+			object invokedVerbInstance = null;
+
+			var parsed = Parser.Default.ParseArguments(args, options,
+				(verb, subOptions) =>
+				{
+					invokedVerb = verb;
+					invokedVerbInstance = subOptions;
+				});
 
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 			if (parsed)
 			{
-				Console.WriteLine("Input from " + options.InputFilename + " and output to " + options.OutputFilename);
-				Console.WriteLine("Other args: " + String.Join(", ", options.OtherArgs));
+				var localOptions = (CommonOptions) invokedVerbInstance;
+				Console.WriteLine("Input from " + localOptions.InputFilename + " and output to " + localOptions.OutputFilename);
+				var words = ((SegmentOptions) invokedVerbInstance).Words;
+				Console.WriteLine("Other args: " + String.Join(", ", words));
 
-				foreach (string word in options.OtherArgs)
+				if (invokedVerb == "segment")
 				{
-					Console.WriteLine("Will parse {0}", word);
-					var segmenter = new Segmenter(spanFactory)
+					foreach (string word in words)
 					{
-						Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
-						Vowels = { "a", "e", "i", "o", "u" },
-						Boundaries = { "-" },
-						Modifiers = { "\u0303", "\u0308" },
-						Joiners = { "\u0361" }
-					};
+						Console.WriteLine("Will parse {0}", word);
+						var segmenter = new Segmenter(spanFactory)
+						{
+							Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
+							Vowels = { "a", "e", "i", "o", "u" },
+							Boundaries = { "-" },
+							Modifiers = { "\u0303", "\u0308" },
+							Joiners = { "\u0361" }
+						};
 
-					Shape shape;
-					bool success = segmenter.TrySegment(word, out shape);
-					if (success)
-					{
-						Console.WriteLine("Parsed {0}. Results:", word);
-						var nodes = shape.Annotations;
-						Console.WriteLine(nodes.ToString());
-					}
-					else
-					{
-						Console.WriteLine("Failed to parse {0}", word);
+						Shape shape;
+						bool success = segmenter.TrySegment(word, out shape);
+						if (success)
+						{
+							Console.WriteLine("Parsed {0}. Results:", word);
+							var nodes = shape.Annotations;
+							Console.WriteLine(nodes.ToString());
+						}
+						else
+						{
+							Console.WriteLine("Failed to parse {0}", word);
+						}
 					}
 				}
 			}
 			else
 			{
-				// Console.WriteLine("Failed to parse options...");
+				Console.WriteLine("Failed to parse options...");
 				// No need to print anything as the HelpOption function has already printed appropriate usage info
+				Environment.Exit(Parser.DefaultExitCodeFail);
 			}
 		}
 	}

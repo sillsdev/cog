@@ -13,59 +13,57 @@ namespace SIL.Cog.Application.CommandLine
 	{
 		static void Main(string[] args)
 		{
-			var options = new Options();
-			string invokedVerb = "";
-			object invokedVerbInstance = null;
-
-			var parsed = Parser.Default.ParseArguments(args, options,
-				(verb, subOptions) =>
+			ParserResult<object> parsed = Parser.Default.ParseArguments<SegmentOptions, CompareOptions>(args)
+				.WithParsed<SegmentOptions>(options =>
 				{
-					invokedVerb = verb;
-					invokedVerbInstance = subOptions;
+					Console.WriteLine("Going to parse {0}", String.Join(", ", options.Words));
+					DoSegmentation(options);
+				})
+				.WithParsed<CompareOptions>(options =>
+				{
+					Console.WriteLine("ERROR: Compare not yet implemented, sorry.");
+				})
+				.WithNotParsed(errors =>
+				{
+					// Displaying errors is taken care of by the CommandLineParser library, so we don't need the following.
+					//foreach (var error in errors)
+					//{
+					//	Console.WriteLine("Unknown option -{0}", ((UnknownOptionError)error).Token);
+					//}
+					Console.WriteLine("Please fix the error{0} listed above, then try again.", (errors.Count() > 1) ? "s" : "");
 				});
+		}
 
+		private static void DoSegmentation(SegmentOptions options)
+		{
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
-			if (parsed)
-			{
-				var localOptions = (CommonOptions) invokedVerbInstance;
-				Console.WriteLine("Input from " + localOptions.InputFilename + " and output to " + localOptions.OutputFilename);
-				var words = ((SegmentOptions) invokedVerbInstance).Words;
-				Console.WriteLine("Other args: " + String.Join(", ", words));
 
-				if (invokedVerb == "segment")
+			Console.WriteLine("Input from " + options.InputFilename + " and output to " + options.OutputFilename);
+
+			foreach (string word in options.Words)
+			{
+				Console.WriteLine("Will parse {0}", word);
+				var segmenter = new Segmenter(spanFactory)
 				{
-					foreach (string word in words)
-					{
-						Console.WriteLine("Will parse {0}", word);
-						var segmenter = new Segmenter(spanFactory)
-						{
-							Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
-							Vowels = { "a", "e", "i", "o", "u" },
-							Boundaries = { "-" },
-							Modifiers = { "\u0303", "\u0308" },
-							Joiners = { "\u0361" }
-						};
+					Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
+					Vowels = { "a", "e", "i", "o", "u" },
+					Boundaries = { "-" },
+					Modifiers = { "\u0303", "\u0308" },
+					Joiners = { "\u0361" }
+				};
 
-						Shape shape;
-						bool success = segmenter.TrySegment(word, out shape);
-						if (success)
-						{
-							Console.WriteLine("Parsed {0}. Results:", word);
-							var nodes = shape.Annotations;
-							Console.WriteLine(nodes.ToString());
-						}
-						else
-						{
-							Console.WriteLine("Failed to parse {0}", word);
-						}
-					}
+				Shape shape;
+				bool success = segmenter.TrySegment(word, out shape);
+				if (success)
+				{
+					Console.WriteLine("Parsed {0}. Results:", word);
+					var nodes = shape.Annotations;
+					Console.WriteLine(nodes.ToString());
 				}
-			}
-			else
-			{
-				Console.WriteLine("Failed to parse options...");
-				// No need to print anything as the HelpOption function has already printed appropriate usage info
-				Environment.Exit(Parser.DefaultExitCodeFail);
+				else
+				{
+					Console.WriteLine("Failed to parse {0}", word);
+				}
 			}
 		}
 	}

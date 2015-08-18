@@ -103,5 +103,30 @@ namespace SIL.Cog.Application.CommandLine
 			Console.WriteLine("Sorry, \"compare\" action not yet implemented.");
 			return (int)ReturnCodes.NotImplemented;
 		}
+
+		private abstract class CommonOptions
+		{
+			[Option('i', "input", Default = "-", HelpText = "Input filename (\"-\" for stdin)")]
+			public string InputFilename { get; set; }
+
+			[Option('o', "output", Default = "-", HelpText = "Output filename (\"-\" for stdout)")]
+			public string OutputFilename { get; set; }
+		}
+
+		[Verb("segment", HelpText = "Segment one or many words")]
+		private class SegmentOptions : CommonOptions
+		{
+			[Value(0)]
+			public IList<string> Words { get; set; }
+		}
+
+		[Verb("compare", HelpText = "Compare words (not yet implemented)")]
+		private class CompareOptions : CommonOptions
+		{
+			[Value(0)]
+			public IList<string> Words { get; set; }
+		}
+
 	}
+
 }

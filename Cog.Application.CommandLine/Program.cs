@@ -14,10 +14,10 @@ namespace SIL.Cog.Application.CommandLine
 	{
 		static int Main(string[] args)
 		{
-			int retcode = Parser.Default.ParseArguments<SegmentVerb, CompareVerb>(args)
+			int retcode = Parser.Default.ParseArguments<SegmentVerb, DistanceVerb>(args)
 				.Return(
 					(SegmentVerb opts) => opts.RunAsPipe(),
-					(CompareVerb opts) => opts.RunAsPipe(),
+					(DistanceVerb opts) => opts.RunAsPipe(),
 					(errs) => (int)ReturnCodes.UnknownVerb);
 			return retcode;
 		}

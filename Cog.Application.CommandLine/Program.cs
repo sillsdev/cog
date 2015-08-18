@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
-using CommandLine;
-using SIL.Cog.Domain;
-using SIL.Machine.Annotations;
-
+﻿using CommandLine;
 
 namespace SIL.Cog.Application.CommandLine
 {

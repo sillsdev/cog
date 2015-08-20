@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CommandLine;
+using SIL.Cog.Domain;
 
 namespace SIL.Cog.Application.CommandLine
 {
@@ -20,6 +22,16 @@ namespace SIL.Cog.Application.CommandLine
 			using (StreamReader input = OpenInput())
 			using (StreamWriter output = OpenOutput())
 				return DoWork(input, output);
+		}
+
+		protected Word ParseWord(string wordText, Meaning meaning)
+		{
+			int stemStartIdx = wordText.IndexOf("|", StringComparison.Ordinal);
+			int stemEndIdx = wordText.LastIndexOf("|", StringComparison.Ordinal) - 1; // -1 because we're going to remove the leading |
+			var word = (stemStartIdx == -1) ?
+				new Word(wordText, meaning) :
+				new Word(wordText.Replace("|", ""), stemStartIdx, stemEndIdx - stemStartIdx, meaning);
+			return word;
 		}
 
 		protected StreamReader OpenInput()

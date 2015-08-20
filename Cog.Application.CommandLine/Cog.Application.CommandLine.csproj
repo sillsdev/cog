@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineHelpers.cs" />
     <Compile Include="CommonOptions.cs" />
     <Compile Include="DistanceVerb.cs" />
     <Compile Include="MakePairsVerb.cs" />

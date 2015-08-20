@@ -25,8 +25,7 @@ namespace SIL.Cog.Application.CommandLine
 
 			retcode = (int) ReturnCodes.Okay;
 
-			string line;
-			while ((line = input.ReadLine()) != null)
+			foreach(string line in input.ReadLines())
 			{
 				StreamWriter stderr = new StreamWriter(Console.OpenStandardError()); // For demo. Real implementation might allow logging erros to a file.
 

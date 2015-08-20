@@ -9,10 +9,10 @@ using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.CommandLine
 {
-	[Verb("distance", HelpText = "Distance between words (not yet implemented)")]
+	[Verb("distance", HelpText = "Distance between words")]
 	public class DistanceVerb : CommonOptions
 	{
-		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)")]
+		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)", MetaName = "method")]
 		public string Method { get; set; }
 
 		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();

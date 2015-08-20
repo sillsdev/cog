@@ -9,7 +9,7 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("segment", HelpText = "Segment one or many words")]
 	class SegmentVerb : CommonOptions
 	{
-		public override int DoWork(StreamReader input, StreamWriter output)
+		public override int DoWork(TextReader input, TextWriter output)
 		{
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 
@@ -25,12 +25,9 @@ namespace SIL.Cog.Application.CommandLine
 
 			retcode = (int) ReturnCodes.Okay;
 
-			while (!input.EndOfStream)
+			string line;
+			while ((line = input.ReadLine()) != null)
 			{
-				string line = input.ReadLine();
-				if (line == null)
-					break;
-
 				StreamWriter stderr = new StreamWriter(Console.OpenStandardError()); // For demo. Real implementation might allow logging erros to a file.
 
 				string word = line; // For demo, one word per line. Real implementation might expect something like "word method" (space-separated) on each line.

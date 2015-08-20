@@ -8,17 +8,15 @@ using System.Text;
 namespace SIL.Cog.Application.CommandLine
 {
 	[Verb("make-pairs", HelpText = "Turn a list of words into unique word pairs")]
-	class MakePairsVerb : CommonOptions
+	public class MakePairsVerb : CommonOptions
 	{
-		public override int DoWork(StreamReader input, StreamWriter output)
+		public override int DoWork(TextReader input, TextWriter output)
 		{
 			int retcode = (int)ReturnCodes.Okay;
 			var words = new List<string>();
-			while (!input.EndOfStream)
+			string line;
+			while ((line = input.ReadLine()) != null)
 			{
-				string line = input.ReadLine();
-				if (line == null)
-					break;
 				words.Add(line);
 			}
 

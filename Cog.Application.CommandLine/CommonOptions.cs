@@ -5,7 +5,7 @@ using CommandLine;
 
 namespace SIL.Cog.Application.CommandLine
 {
-	abstract class CommonOptions
+	public abstract class CommonOptions
 	{
 		[Option('i', "input", Default = "-", HelpText = "Input filename (\"-\" for stdin)")]
 		public string InputFilename { get; set; }
@@ -13,7 +13,7 @@ namespace SIL.Cog.Application.CommandLine
 		[Option('o', "output", Default = "-", HelpText = "Output filename (\"-\" for stdout)")]
 		public string OutputFilename { get; set; }
 
-		public abstract int DoWork(StreamReader input, StreamWriter output);
+		public abstract int DoWork(TextReader input, TextWriter output);
 
 		public int RunAsPipe()
 		{

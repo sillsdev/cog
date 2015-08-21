@@ -15,31 +15,26 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
 	public class SyllabifyVerb : CommonOptions
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		public override int DoWork(TextReader input, TextWriter output)
 		{
-			var segmentPool = new SegmentPool();
-			CogProject project = CommandLineHelpers.GetProject(_spanFactory, segmentPool);
-			var variety = new Variety("variety1");
-			var meaning = new Meaning("gloss1", "cat1");
-			IProcessor<Variety> syllabifier = project.VarietyProcessors["syllabifier"];
-			project.Meanings.Add(meaning);
-			project.Varieties.Add(variety);
+			int retcode = (int)ReturnCodes.Okay;
+			SetUpProject();
+			IProcessor<Variety> syllabifier = _project.VarietyProcessors["syllabifier"];
+
 			foreach (string line in input.ReadLines())
 			{
 				string wordText = line; // In the future we might need to split the line into multiple words
-				Word word = ParseWord(wordText, meaning);
-				project.Segmenter.Segment(word);
-				variety.Words.Add(word);
+				Word word = ParseWord(wordText, _meaning);
+				_project.Segmenter.Segment(word);
+				_variety.Words.Add(word);
 			}
-			syllabifier.Process(variety);
-			foreach (Word word in variety.Words)
+			syllabifier.Process(_variety);
+			foreach (Word word in _variety.Words)
 			{
 //				output.WriteLine("{0} {1} {2}", word.StemIndex, word.StemLength, word.ToString().Replace(" ", ""));
 				output.WriteLine(word.ToString().Replace(" ", ""));
 			}
-			return 0;
+			return retcode;
 		}
 	}
 }

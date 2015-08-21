@@ -33,19 +33,13 @@ namespace SIL.Cog.Application.CommandLine
 		public override int DoWork(TextReader input, TextWriter output)
 		{
 			int retcode = (int)ReturnCodes.Okay;
-			var segmentPool = new SegmentPool();
-
-			var variety = new Variety("variety1");
-			var meaning = new Meaning("gloss1", "cat1");
-			CogProject project = CommandLineHelpers.GetProject(_spanFactory, segmentPool);
-			project.Meanings.Add(meaning);
-			project.Varieties.Add(variety);
+			SetUpProject();
 
 			WordAlignerBase wordAligner;
 			switch (Method.ToLower())
 			{
 				case "aline":
-					wordAligner = (Aline)project.WordAligners["primary"];
+					wordAligner = (Aline)_project.WordAligners["primary"];
 					break;
 
 				default:
@@ -56,7 +50,7 @@ namespace SIL.Cog.Application.CommandLine
 			foreach (string line in input.ReadLines())
 			{
 				string[] wordTexts = line.Split(' ');
-				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, meaning, project)).ToArray();
+				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, _meaning, _project)).ToArray();
 				if (words.Length < 2)
 					continue;
 				var result = wordAligner.Compute(words[0], words[1]);

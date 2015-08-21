@@ -11,9 +11,9 @@ namespace SIL.Cog.Application.CommandLine
 	{
 		public override int DoWork(TextReader input, TextWriter output)
 		{
+			int retcode = (int)ReturnCodes.Okay;
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 
-			int retcode;
 			var segmenter = new Segmenter(spanFactory)
 			{
 				Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
@@ -22,8 +22,6 @@ namespace SIL.Cog.Application.CommandLine
 				Modifiers = { "\u0303", "\u0308" },
 				Joiners = { "\u0361" }
 			};
-
-			retcode = (int) ReturnCodes.Okay;
 
 			foreach(string line in input.ReadLines())
 			{

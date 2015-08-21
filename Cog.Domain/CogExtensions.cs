@@ -215,7 +215,7 @@ namespace SIL.Cog.Domain
 			int maxSuffixLen = alignment.Suffixes.Select(s => s.StrRep()).Concat("").Max(s => s.DisplayLength());
 			for (int s = 0; s < alignment.SequenceCount; s++)
 			{
-				AppendSequence(sb, alignment.Prefixes[s].StrRep(), maxPrefixLen, Enumerable.Range(0, alignment.ColumnCount).Select(c => alignment[s, c].StrRep()), maxColLens,
+				AppendSequence(sb, alignment.Prefixes[s].StrRep(), maxPrefixLen, Enumerable.Range(0, alignment.ColumnCount).Select(c => alignment[s, c].IsNull ? "-" : alignment[s, c].StrRep()), maxColLens,
 					alignment.Suffixes[s].StrRep(), maxSuffixLen, "|");
 			}
 			if (hasNotes)

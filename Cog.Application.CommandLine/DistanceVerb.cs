@@ -6,6 +6,7 @@ using CommandLine;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Machine.Annotations;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Application.CommandLine
 {
@@ -56,9 +57,16 @@ namespace SIL.Cog.Application.CommandLine
 			{
 				string[] wordTexts = line.Split(' ');
 				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, meaning, project)).ToArray();
+				if (words.Length < 2)
+					continue;
 				var result = wordAligner.Compute(words[0], words[1]);
-				string[] outWords = words.Select(word => word.ToString().Replace(" ", "")).ToArray();
-				output.WriteLine("{0} {1} {2}", outWords[0], outWords[1], result.BestRawScore);
+				var alignments = result.GetAlignments();
+				foreach (Alignment<Word, ShapeNode> alignment in result.GetAlignments())
+				{
+					output.Write(alignment.ToString(Enumerable.Empty<string>()));
+					output.WriteLine(alignment.RawScore); // Could use alignment.NormalizedScore instead if that would be more useful
+					output.WriteLine();
+				}
 			}
 
 			return retcode;

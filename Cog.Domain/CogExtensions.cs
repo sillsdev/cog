@@ -206,11 +206,8 @@ namespace SIL.Cog.Domain
 			var sb = new StringBuilder();
 			List<string> notesList = notes.ToList();
 			bool hasNotes = notesList.Count > 0;
-			if (hasNotes)
-			{
-				while (notesList.Count < alignment.ColumnCount)
-					notesList.Add("");
-			}
+			while (notesList.Count < alignment.ColumnCount)
+				notesList.Add("");
 
 			int maxPrefixLen = alignment.Prefixes.Select(p => p.StrRep()).Concat("").Max(s => s.DisplayLength());
 			int[] maxColLens = Enumerable.Range(0, alignment.ColumnCount).Select(c => Enumerable.Range(0, alignment.SequenceCount)

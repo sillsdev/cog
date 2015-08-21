@@ -50,6 +50,7 @@
     <Compile Include="MakePairsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyllabifyTests.cs" />
+    <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

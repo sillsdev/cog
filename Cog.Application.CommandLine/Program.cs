@@ -2,7 +2,7 @@
 
 namespace SIL.Cog.Application.CommandLine
 {
-	enum ReturnCodes
+	public enum ReturnCodes
 	{
 		Okay = 0,
 		InputError = 1,
@@ -14,15 +14,15 @@ namespace SIL.Cog.Application.CommandLine
 	{
 		static int Main(string[] args)
 		{
-			int retcode = Parser.Default.ParseArguments<SegmentVerb, SyllabifyVerb, MakePairsVerb, DistanceVerb, ClusterVerb>(args)
+			ReturnCodes retcode = Parser.Default.ParseArguments<SegmentVerb, SyllabifyVerb, MakePairsVerb, DistanceVerb, ClusterVerb>(args)
 				.Return(
 					(SegmentVerb opts) => opts.RunAsPipe(),
 					(SyllabifyVerb opts) => opts.RunAsPipe(),
 					(MakePairsVerb opts) => opts.RunAsPipe(),
 					(DistanceVerb opts) => opts.RunAsPipe(),
 					(ClusterVerb opts) => opts.RunAsPipe(),
-					(errs) => (int)ReturnCodes.UnknownVerb);
-			return retcode;
+					(errs) => ReturnCodes.UnknownVerb);
+			return (int)retcode;
 		}
 	}
 

@@ -15,9 +15,9 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
 	public class SyllabifyVerb : CommonOptions
 	{
-		public override int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
 		{
-			int retcode = (int)ReturnCodes.Okay;
+			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
 			IProcessor<Variety> syllabifier = _project.VarietyProcessors["syllabifier"];
 

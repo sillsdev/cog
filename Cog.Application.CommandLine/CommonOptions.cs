@@ -33,19 +33,19 @@ namespace SIL.Cog.Application.CommandLine
 			_project.Varieties.Add(_variety);
 		}
 
-		public int DoWork(TextReader inputStream, TextWriter outputStream)
+		public ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream)
 		{
 			return DoWork(inputStream, outputStream, Console.Error);
 		}
 
-		public abstract int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream);
+		public abstract ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream);
 
-		public int RunAsPipe()
+		public ReturnCodes RunAsPipe()
 		{
 			return RunAsPipe(Console.Error);
 		}
 
-		public int RunAsPipe(TextWriter errorStream)
+		public ReturnCodes RunAsPipe(TextWriter errorStream)
 		{
 			using (StreamReader input = OpenInput())
 			using (StreamWriter output = OpenOutput())

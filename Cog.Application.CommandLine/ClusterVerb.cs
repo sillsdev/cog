@@ -14,9 +14,9 @@ namespace SIL.Cog.Application.CommandLine
 		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for a cluster (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Threshhold { get; set; }
 
-		public override int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
 		{
-			int retcode = (int)ReturnCodes.Okay;
+			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
 
 			var distances = new Dictionary<UnorderedTuple<string, string>, double>();
@@ -48,7 +48,7 @@ namespace SIL.Cog.Application.CommandLine
 			if (!errors.OK)
 			{
 				errors.DumpToStream(errorStream);
-				retcode = (int) ReturnCodes.InputError;
+				retcode = ReturnCodes.InputError;
 			}
 			return retcode;
 		}

@@ -30,9 +30,9 @@ namespace SIL.Cog.Application.CommandLine
 			return word;
 		}
 
-		public override int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
 		{
-			int retcode = (int)ReturnCodes.Okay;
+			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
 
 			WordAlignerBase wordAligner;
@@ -43,7 +43,7 @@ namespace SIL.Cog.Application.CommandLine
 					break;
 
 				default:
-					retcode = (int)ReturnCodes.InputError;
+					retcode = ReturnCodes.InputError;
 					return retcode;
 			}
 

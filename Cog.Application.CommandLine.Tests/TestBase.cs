@@ -29,12 +29,12 @@ namespace SIL.Cog.Application.CommandLine.Tests
 			if (expectedErrors == null)
 			{
 				Assert.That(ErrorText, Is.EqualTo(""));
-				Assert.That(retcode, Is.EqualTo(0));
+				Assert.That(retcode, Is.EqualTo(ReturnCodes.Okay));
 			}
 			else
 			{
 				Assert.That(ErrorText, Is.EqualTo(expectedErrors));
-				Assert.That(retcode, Is.Not.EqualTo(0));
+				Assert.That(retcode, Is.Not.EqualTo(ReturnCodes.Okay));
 			}
 		}
 

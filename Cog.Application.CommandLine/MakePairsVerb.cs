@@ -10,9 +10,9 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("make-pairs", HelpText = "Turn a list of words into unique word pairs")]
 	public class MakePairsVerb : CommonOptions
 	{
-		public override int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
 		{
-			int retcode = (int)ReturnCodes.Okay;
+			ReturnCodes retcode = ReturnCodes.Okay;
 			var words = new List<string>();
 			foreach (string line in inputStream.ReadLines())
 			{

@@ -9,9 +9,9 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("segment", HelpText = "Segment one or many words")]
 	class SegmentVerb : CommonOptions
 	{
-		public override int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
 		{
-			int retcode = (int)ReturnCodes.Okay;
+			ReturnCodes retcode = ReturnCodes.Okay;
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 
 			var segmenter = new Segmenter(spanFactory)
@@ -38,7 +38,7 @@ namespace SIL.Cog.Application.CommandLine
 				else
 				{
 					stderr.WriteLine("Failed to parse {0}", word);
-					retcode = (int)ReturnCodes.InputError;
+					retcode = ReturnCodes.InputError;
 				}
 			}
 			return retcode;

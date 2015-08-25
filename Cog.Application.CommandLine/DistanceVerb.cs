@@ -16,6 +16,12 @@ namespace SIL.Cog.Application.CommandLine
 		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)", MetaName = "method")]
 		public string Method { get; set; }
 
+		[Option('r', "raw-scores", Default = true, HelpText = "Produce raw similarity scores (integers from 0 to infinity, where higher means more similar)")]
+		public bool RawScores { get; set; }
+
+		[Option('n', "normalized-scores", Default = false, HelpText = "Produce normalized similarity scores (real numbers between 0.0 and 1.0, where higher means more similar)")]
+		public bool NormalizedScores { get; set; }
+
 		private Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
 
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
@@ -32,6 +38,17 @@ namespace SIL.Cog.Application.CommandLine
 		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
+			var errors = new Errors();
+			var warnings = new Errors();
+
+			if ((RawScores && NormalizedScores) ||
+				(!RawScores && !NormalizedScores))
+			{
+				warnings.Add("Please specify either raw or normalized scores, but not both. Defaulting to normalized.");
+				RawScores = false;
+				NormalizedScores = true;
+			}
+
 			SetUpProject();
 
 			WordAlignerBase wordAligner;
@@ -42,24 +59,44 @@ namespace SIL.Cog.Application.CommandLine
 					break;
 
 				default:
-					retcode = ReturnCodes.InputError;
-					return retcode;
+					warnings.Add("Unknown word aligner \"{0}\". Defaulting to Aline.", Method);
+					wordAligner = (Aline)_project.WordAligners["primary"];
+					break;
 			}
 
 			foreach (string line in inputReader.ReadLines())
 			{
 				string[] wordTexts = line.Split(' ');
-				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, _meaning, _project)).ToArray();
-				if (words.Length < 2)
+				if (wordTexts.Length != 2)
+				{
+					errors.Add(line, "Each line should have two space-separated words in it.");
 					continue;
+				}
+				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, _meaning, _project)).ToArray();
+				if (words.Length != 2)
+				{
+					errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Select(w => w.StrRep)));
+					continue;
+				}
 				var result = wordAligner.Compute(words[0], words[1]);
 				foreach (Alignment<Word, ShapeNode> alignment in result.GetAlignments())
 				{
 					outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));
-					outputWriter.WriteLine(alignment.RawScore); // Could use alignment.NormalizedScore instead if that would be more useful
+					outputWriter.WriteLine(RawScores ? alignment.RawScore : alignment.NormalizedScore);
 					outputWriter.WriteLine();
 				}
 			}
+			if (!warnings.Empty)
+			{
+				warnings.Write(errorWriter);
+				// Do not set retcode to non-0 if there were only warnings
+			}
+			if (!errors.Empty)
+			{
+				errors.Write(errorWriter);
+				retcode = ReturnCodes.InputError;
+			}
+
 
 			return retcode;
 		}

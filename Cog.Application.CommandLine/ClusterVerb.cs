@@ -45,9 +45,9 @@ namespace SIL.Cog.Application.CommandLine
 			var clusterer = new FlatUpgmaClusterer<string>((w1, w2) => distances[new UnorderedTuple<string, string>(w1, w2)], Threshhold);
 			IEnumerable<Cluster<string>> clusters = clusterer.GenerateClusters(allWords);
 			PrintResults(outputWriter, clusters);
-			if (!errors.OK)
+			if (!errors.Empty)
 			{
-				errors.DumpToStream(errorWriter);
+				errors.Write(errorWriter);
 				retcode = ReturnCodes.InputError;
 			}
 			return retcode;

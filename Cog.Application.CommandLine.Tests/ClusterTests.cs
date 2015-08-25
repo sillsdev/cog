@@ -36,10 +36,10 @@ namespace SIL.Cog.Application.CommandLine.Tests
 				)]
 			string input,
 			[Values(
-				"Each line should contain two words and one score, separated by spaces.\n  Above error caused by line: \"a\"\n\n",
-				"Each line should contain two words and one score, separated by spaces.\n  Above error caused by line: \"a\"\n" + 
-				"Each line should contain two words and one score, separated by spaces.\n  Above error caused by line: \"a\"\n\n",
-				"Could not parse score \"c\". Scores should be a number between 0 and 1.\n  Above error caused by line: \"a b c\"\n\n"
+				"Each line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n",
+				"Each line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n" +
+				"Each line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n",
+				"Could not parse score \"c\". Scores should be a number between 0 and 1.\n  This was caused by the line: \"a b c\"\n"
 				)]
 			string expectedErrors)
 		{

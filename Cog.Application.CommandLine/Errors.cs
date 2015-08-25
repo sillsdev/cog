@@ -5,48 +5,50 @@ using System.Text;
 
 namespace SIL.Cog.Application.CommandLine
 {
-	class Error
-	{
-		public string Message { get; set; }
-		private readonly string _source;
-
-		public string Source
-		{
-			get { return _source; }
-		}
-
-		public Error(string message, params object[] formatParams)
-			: this(null, message, formatParams)
-		{
-		}
-
-		public Error(string source, string message, params object[] formatParams)
-		{
-			_source = source;
-			Message = string.Format(message, formatParams);
-		}
-
-		public override string ToString()
-		{
-			if (_source == null)
-				return Message;
-			else
-			{
-				StringBuilder sb = new StringBuilder(Message);
-				sb.AppendLine();
-				sb.AppendFormat("  Above error caused by line: \"{0}\"", _source);
-				return sb.ToString();
-			}
-		}
-
-		// If needed, could implement ToXml(), ToJson(), or whatever
-	}
+	
 
 	public class Errors
 	{
+		public class Error
+		{
+			public string Message { get; set; }
+			private readonly string _source;
+
+			public string Source
+			{
+				get { return _source; }
+			}
+
+			public Error(string message, params object[] formatParams)
+				: this(null, message, formatParams)
+			{
+			}
+
+			public Error(string source, string message, params object[] formatParams)
+			{
+				_source = source;
+				Message = string.Format(message, formatParams);
+			}
+
+			public override string ToString()
+			{
+				if (_source == null)
+					return Message;
+				else
+				{
+					StringBuilder sb = new StringBuilder(Message);
+					sb.AppendLine();
+					sb.AppendFormat("  This was caused by the line: \"{0}\"", _source);
+					return sb.ToString();
+				}
+			}
+
+			// If needed, could implement ToXml(), ToJson(), or whatever
+		}
+
 		private List<Error> errors;
 
-		public bool OK { get { return (errors.Count == 0); } }
+		public bool Empty { get { return (errors.Count == 0); } }
 
 		public Errors()
 		{
@@ -65,21 +67,22 @@ namespace SIL.Cog.Application.CommandLine
 
 		public override string ToString()
 		{
-			return string.Join("\n", errors);
-		}
-
-		public void DumpToStream(TextWriter errorWriter)
-		{
+			StringBuilder result = new StringBuilder();
 			foreach (Error error in errors)
 			{
-				errorWriter.WriteLine(error.ToString());
+				result.AppendLine(error.ToString());
 			}
-			errorWriter.WriteLine();
+			return result.ToString();
 		}
 
-		public void DumpToStdErr()
+		public void Write(TextWriter errorWriter)
 		{
-			DumpToStream(Console.Error);
+			errorWriter.Write(ToString());
+		}
+
+		public void WriteToStdErr()
+		{
+			Write(Console.Error);
 		}
 	}
 

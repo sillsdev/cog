@@ -15,20 +15,9 @@ namespace SIL.Cog.Application.CommandLine
 			get { return _source; }
 		}
 
-		public Error(string message)
-			: this(null, message)
-		{
-		}
-
 		public Error(string message, params object[] formatParams)
 			: this(null, message, formatParams)
 		{
-		}
-
-		public Error(string source, string message)
-		{
-			_source = source;
-			Message = message;
 		}
 
 		public Error(string source, string message, params object[] formatParams)
@@ -64,19 +53,9 @@ namespace SIL.Cog.Application.CommandLine
 			errors = new List<Error>();
 		}
 
-		public void Add(string message)
-		{
-			Add(null, message);
-		}
-
 		public void Add(string message, params object[] formatParams)
 		{
 			Add(null, message, formatParams);
-		}
-
-		public void Add(string source, string message)
-		{
-			errors.Add(new Error(source, message));
 		}
 
 		public void Add(string source, string message, params object[] formatParams)
@@ -89,13 +68,13 @@ namespace SIL.Cog.Application.CommandLine
 			return string.Join("\n", errors);
 		}
 
-		public void DumpToStream(TextWriter errorStream)
+		public void DumpToStream(TextWriter errorWriter)
 		{
 			foreach (Error error in errors)
 			{
-				errorStream.WriteLine(error.ToString());
+				errorWriter.WriteLine(error.ToString());
 			}
-			errorStream.WriteLine();
+			errorWriter.WriteLine();
 		}
 
 		public void DumpToStdErr()

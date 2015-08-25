@@ -14,7 +14,7 @@ namespace SIL.Cog.Application.CommandLine
 		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for a cluster (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Threshhold { get; set; }
 
-		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
@@ -23,7 +23,7 @@ namespace SIL.Cog.Application.CommandLine
 			var allWords = new HashSet<string>();
 			var errors = new Errors();
 
-			foreach (string line in inputStream.ReadLines())
+			foreach (string line in inputReader.ReadLines())
 			{
 				string[] words = line.Split(' '); // Format: word1 word2 score (where score is a floating-point number with 1.0 = 100% similarity)
 				if (words.Length < 3)
@@ -44,10 +44,10 @@ namespace SIL.Cog.Application.CommandLine
 			}
 			var clusterer = new FlatUpgmaClusterer<string>((w1, w2) => distances[new UnorderedTuple<string, string>(w1, w2)], Threshhold);
 			IEnumerable<Cluster<string>> clusters = clusterer.GenerateClusters(allWords);
-			PrintResults(outputStream, clusters);
+			PrintResults(outputWriter, clusters);
 			if (!errors.OK)
 			{
-				errors.DumpToStream(errorStream);
+				errors.DumpToStream(errorWriter);
 				retcode = ReturnCodes.InputError;
 			}
 			return retcode;

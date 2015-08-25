@@ -15,13 +15,13 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
 	public class SyllabifyVerb : CommonOptions
 	{
-		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
 			IProcessor<Variety> syllabifier = _project.VarietyProcessors["syllabifier"];
 
-			foreach (string line in inputStream.ReadLines())
+			foreach (string line in inputReader.ReadLines())
 			{
 				string wordText = line; // In the future we might need to split the line into multiple words
 				Word word = ParseWord(wordText, _meaning);
@@ -32,7 +32,7 @@ namespace SIL.Cog.Application.CommandLine
 			foreach (Word word in _variety.Words)
 			{
 //				output.WriteLine("{0} {1} {2}", word.StemIndex, word.StemLength, word.ToString().Replace(" ", ""));
-				outputStream.WriteLine(word.ToString().Replace(" ", ""));
+				outputWriter.WriteLine(word.ToString().Replace(" ", ""));
 			}
 			return retcode;
 		}

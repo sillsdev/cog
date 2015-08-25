@@ -29,7 +29,7 @@ namespace SIL.Cog.Application.CommandLine
 			return word;
 		}
 
-		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
@@ -46,7 +46,7 @@ namespace SIL.Cog.Application.CommandLine
 					return retcode;
 			}
 
-			foreach (string line in inputStream.ReadLines())
+			foreach (string line in inputReader.ReadLines())
 			{
 				string[] wordTexts = line.Split(' ');
 				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, _meaning, _project)).ToArray();
@@ -55,9 +55,9 @@ namespace SIL.Cog.Application.CommandLine
 				var result = wordAligner.Compute(words[0], words[1]);
 				foreach (Alignment<Word, ShapeNode> alignment in result.GetAlignments())
 				{
-					outputStream.Write(alignment.ToString(Enumerable.Empty<string>()));
-					outputStream.WriteLine(alignment.RawScore); // Could use alignment.NormalizedScore instead if that would be more useful
-					outputStream.WriteLine();
+					outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));
+					outputWriter.WriteLine(alignment.RawScore); // Could use alignment.NormalizedScore instead if that would be more useful
+					outputWriter.WriteLine();
 				}
 			}
 

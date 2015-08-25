@@ -33,12 +33,12 @@ namespace SIL.Cog.Application.CommandLine
 			_project.Varieties.Add(_variety);
 		}
 
-		public ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream)
+		public ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter)
 		{
-			return DoWork(inputStream, outputStream, Console.Error);
+			return DoWork(inputReader, outputWriter, Console.Error);
 		}
 
-		public abstract ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream);
+		public abstract ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter);
 
 		public ReturnCodes RunAsPipe()
 		{

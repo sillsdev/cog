@@ -9,7 +9,7 @@ namespace SIL.Cog.Application.CommandLine
 	[Verb("segment", HelpText = "Segment one or many words")]
 	class SegmentVerb : CommonOptions
 	{
-		public override ReturnCodes DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream)
+		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
@@ -23,7 +23,7 @@ namespace SIL.Cog.Application.CommandLine
 				Joiners = { "\u0361" }
 			};
 
-			foreach(string line in inputStream.ReadLines())
+			foreach(string line in inputReader.ReadLines())
 			{
 				StreamWriter stderr = new StreamWriter(Console.OpenStandardError()); // For demo. Real implementation might allow logging erros to a file.
 
@@ -33,7 +33,7 @@ namespace SIL.Cog.Application.CommandLine
 				if (segmenter.TrySegment(word, out shape))
 				{
 					AnnotationList<ShapeNode> nodes = shape.Annotations;
-					outputStream.WriteLine(nodes.ToString());
+					outputWriter.WriteLine(nodes.ToString());
 				}
 				else
 				{

@@ -26,5 +26,25 @@ namespace SIL.Cog.Application.CommandLine.Tests
 			var clusterer = new ClusterVerb() { Threshhold = 0.2 };
 			CheckVerbOutput(input, expectedOutput, clusterer, false);
 		}
+
+		[Test, Sequential]
+		public void CheckErrors(
+			[Values(
+				"a\n",
+				"a\na\n", // Should produce two separate errors
+				"a b c"
+				)]
+			string input,
+			[Values(
+				"Each line should contain two words and one score, separated by spaces.\n  Above error caused by line: \"a\"\n\n",
+				"Each line should contain two words and one score, separated by spaces.\n  Above error caused by line: \"a\"\n" + 
+				"Each line should contain two words and one score, separated by spaces.\n  Above error caused by line: \"a\"\n\n",
+				"Could not parse score \"c\". Scores should be a number between 0 and 1.\n  Above error caused by line: \"a b c\"\n\n"
+				)]
+			string expectedErrors)
+		{
+			var clusterer = new ClusterVerb() { Threshhold = 0.2 };
+			CheckVerbOutput(input, "", expectedErrors, clusterer, false);
+		}
 	}
 }

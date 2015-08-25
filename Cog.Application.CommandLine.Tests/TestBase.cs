@@ -12,13 +12,22 @@ namespace SIL.Cog.Application.CommandLine.Tests
 
 		public void CheckVerbOutput(string input, string expectedOutput, CommonOptions verbUnderTest, bool stripNewlines)
 		{
+			CheckVerbOutput(input, expectedOutput, null, verbUnderTest, stripNewlines);
+		}
+
+		public void CheckVerbOutput(string input, string expectedOutput, string expectedErrors, CommonOptions verbUnderTest, bool stripNewlines)
+		{
 			var inputStream = new StringReader(input);
 			var outputStream = new StringWriter();
-			var retcode = verbUnderTest.DoWork(inputStream, outputStream);
+			var errorStream = new StringWriter();
+			var retcode = verbUnderTest.DoWork(inputStream, outputStream, errorStream);
 			string TextResult = outputStream.ToString().Replace("\r\n", "\n");
+			string ErrorText = errorStream.ToString().Replace("\r\n", "\n");
 			if (stripNewlines)
 				TextResult = TextResult.Replace("\n", "");
 			Assert.That(TextResult, Is.EqualTo(expectedOutput));
+			if (expectedErrors != null)
+				Assert.That(ErrorText, Is.EqualTo(expectedErrors));
 			Assert.That(retcode, Is.EqualTo(0));
 		}
 

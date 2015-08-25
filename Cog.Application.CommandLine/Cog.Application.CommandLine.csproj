@@ -96,6 +96,7 @@
     <Compile Include="CommandLineHelpers.cs" />
     <Compile Include="CommonOptions.cs" />
     <Compile Include="DistanceVerb.cs" />
+    <Compile Include="Errors.cs" />
     <Compile Include="MakePairsVerb.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

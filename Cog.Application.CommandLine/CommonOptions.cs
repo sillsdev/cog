@@ -33,13 +33,23 @@ namespace SIL.Cog.Application.CommandLine
 			_project.Varieties.Add(_variety);
 		}
 
-		public abstract int DoWork(TextReader input, TextWriter output);
+		public int DoWork(TextReader inputStream, TextWriter outputStream)
+		{
+			return DoWork(inputStream, outputStream, Console.Error);
+		}
+
+		public abstract int DoWork(TextReader inputStream, TextWriter outputStream, TextWriter errorStream);
 
 		public int RunAsPipe()
 		{
+			return RunAsPipe(Console.Error);
+		}
+
+		public int RunAsPipe(TextWriter errorStream)
+		{
 			using (StreamReader input = OpenInput())
 			using (StreamWriter output = OpenOutput())
-				return DoWork(input, output);
+				return DoWork(input, output, errorStream);
 		}
 
 		protected Word ParseWord(string wordText, Meaning meaning)

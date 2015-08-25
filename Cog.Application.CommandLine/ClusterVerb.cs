@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using CommandLine;
 using SIL.Collections;
@@ -31,7 +32,7 @@ namespace SIL.Cog.Application.CommandLine
 					continue;
 				}
 				double score = 0;
-				if (!Double.TryParse(words[2], out score))
+				if (!Double.TryParse(words[2], NumberStyles.Float, CultureInfo.InvariantCulture, out score))
 				{
 					errors.Add(line, "Could not parse score \"{0}\". Scores should be a number between 0 and 1.", words[2]);
 					continue;

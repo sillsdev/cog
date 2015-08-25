@@ -47,6 +47,7 @@ namespace SIL.Cog.Application.CommandLine
 			if (!errors.OK)
 			{
 				errors.DumpToStream(errorStream);
+				retcode = (int) ReturnCodes.InputError;
 			}
 			return retcode;
 		}

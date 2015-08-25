@@ -26,9 +26,16 @@ namespace SIL.Cog.Application.CommandLine.Tests
 			if (stripNewlines)
 				TextResult = TextResult.Replace("\n", "");
 			Assert.That(TextResult, Is.EqualTo(expectedOutput));
-			if (expectedErrors != null)
+			if (expectedErrors == null)
+			{
+				Assert.That(ErrorText, Is.EqualTo(""));
+				Assert.That(retcode, Is.EqualTo(0));
+			}
+			else
+			{
 				Assert.That(ErrorText, Is.EqualTo(expectedErrors));
-			Assert.That(retcode, Is.EqualTo(0));
+				Assert.That(retcode, Is.Not.EqualTo(0));
+			}
 		}
 
 	}

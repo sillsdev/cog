@@ -56,7 +56,7 @@ namespace SIL.Cog.Application.CommandLine
 		private static void PrintResults(TextWriter output, IEnumerable<Cluster<string>> clusters)
 		{
 			int groupnum = 0;
-			foreach (var item in clusters)
+			foreach (Cluster<string> item in clusters)
 			{
 				groupnum++;
 				output.WriteLine("{0} {1}", groupnum, String.Join(" ", item.DataObjects));

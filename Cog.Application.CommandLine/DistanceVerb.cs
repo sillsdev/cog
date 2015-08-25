@@ -16,7 +16,6 @@ namespace SIL.Cog.Application.CommandLine
 		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)", MetaName = "method")]
 		public string Method { get; set; }
 
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 		private Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
 
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
@@ -54,7 +53,6 @@ namespace SIL.Cog.Application.CommandLine
 				if (words.Length < 2)
 					continue;
 				var result = wordAligner.Compute(words[0], words[1]);
-				var alignments = result.GetAlignments();
 				foreach (Alignment<Word, ShapeNode> alignment in result.GetAlignments())
 				{
 					outputStream.Write(alignment.ToString(Enumerable.Empty<string>()));

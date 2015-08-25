@@ -49,6 +49,8 @@ namespace SIL.Cog.Application.CommandLine
 				return sb.ToString();
 			}
 		}
+
+		// If needed, could implement ToXml(), ToJson(), or whatever
 	}
 
 	public class Errors
@@ -82,14 +84,14 @@ namespace SIL.Cog.Application.CommandLine
 			errors.Add(new Error(source, message, formatParams));
 		}
 
-		public string ToString()
+		public override string ToString()
 		{
 			return string.Join("\n", errors);
 		}
 
 		public void DumpToStream(TextWriter errorStream)
 		{
-			foreach (var error in errors)
+			foreach (Error error in errors)
 			{
 				errorStream.WriteLine(error.ToString());
 			}

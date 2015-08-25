@@ -46,14 +46,19 @@ namespace SIL.Cog.Application.CommandLine
 			}
 			var clusterer = new FlatUpgmaClusterer<string>((w1, w2) => distances[new UnorderedTuple<string, string>(w1, w2)], Threshhold);
 			//var clusterer = new NeighborJoiningClusterer<Word>((w1, w2) => distances[new UnorderedTuple<Word, Word>(w1, w2)]);
+			IEnumerable<Cluster<string>> clusters = clusterer.GenerateClusters(allWords);
+			PrintResults(output, clusters);
+			return retcode;
+		}
+
+		private static void PrintResults(TextWriter output, IEnumerable<Cluster<string>> clusters)
+		{
 			int groupnum = 0;
-			var result = clusterer.GenerateClusters(allWords);
-			foreach (var item in result)
+			foreach (var item in clusters)
 			{
 				groupnum++;
 				output.WriteLine("{0} {1}", groupnum, String.Join(" ", item.DataObjects));
 			}
-			return retcode;
 		}
 	}
 }

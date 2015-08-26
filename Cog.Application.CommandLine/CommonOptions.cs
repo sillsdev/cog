@@ -41,11 +41,13 @@ namespace SIL.Cog.Application.CommandLine
 			ReturnCodes retcode = DoWork(inputReader, outputWriter, errorWriter);
 			if (!warnings.Empty)
 			{
+				errorWriter.WriteLine("Operation produced {0}:", CommandLineHelpers.CountedNoun(warnings.Count, "warning"));
 				warnings.Write(errorWriter);
 				// Do not change retcode for warnings
 			}
 			if (!errors.Empty)
 			{
+				errorWriter.WriteLine("Operation produced {0}:", CommandLineHelpers.CountedNoun(errors.Count, "error"));
 				errors.Write(errorWriter);
 				retcode = (retcode == ReturnCodes.Okay) ? ReturnCodes.InputError : retcode;
 			}

@@ -49,6 +49,7 @@ namespace SIL.Cog.Application.CommandLine
 		private List<Error> errors;
 
 		public bool Empty { get { return (errors.Count == 0); } }
+		public int Count { get { return errors.Count; } }
 
 		public Errors()
 		{

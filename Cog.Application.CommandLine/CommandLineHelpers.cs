@@ -23,5 +23,15 @@ namespace SIL.Cog.Application.CommandLine
 			Stream stream = Assembly.GetAssembly(typeof(CommandLineHelpers)).GetManifestResourceStream("SIL.Cog.Application.CommandLine.NewProject.cogx");
 			return ConfigManager.Load(spanFactory, segmentPool, stream);
 		}
+
+		public static string CountedNoun(int count, string singular)
+		{
+			return CountedNoun(count, singular, singular + "s");
+		}
+
+		public static string CountedNoun(int count, string singular, string plural)
+		{
+			return string.Format("{0} {1}", count, count == 1 ? singular : plural);
+		}
 	}
 }

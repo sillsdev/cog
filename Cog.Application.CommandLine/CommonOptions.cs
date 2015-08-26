@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using CommandLine;
 using SIL.Cog.Domain;
@@ -25,6 +26,15 @@ namespace SIL.Cog.Application.CommandLine
 		protected Errors errors = new Errors();
 		protected Errors warnings = new Errors();
 
+		public virtual string GetVerbName()
+		{
+			foreach (VerbAttribute attrib in GetType().GetCustomAttributes(typeof(VerbAttribute), true))
+			{
+				return attrib.Name;
+			}
+			return string.Empty;
+		}
+
 		protected void SetUpProject()
 		{
 			_spanFactory = new ShapeSpanFactory();
@@ -41,13 +51,13 @@ namespace SIL.Cog.Application.CommandLine
 			ReturnCodes retcode = DoWork(inputReader, outputWriter, errorWriter);
 			if (!warnings.Empty)
 			{
-				errorWriter.WriteLine("Operation produced {0}:", CommandLineHelpers.CountedNoun(warnings.Count, "warning"));
+				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CommandLineHelpers.CountedNoun(warnings.Count, "warning"));
 				warnings.Write(errorWriter);
 				// Do not change retcode for warnings
 			}
 			if (!errors.Empty)
 			{
-				errorWriter.WriteLine("Operation produced {0}:", CommandLineHelpers.CountedNoun(errors.Count, "error"));
+				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CommandLineHelpers.CountedNoun(errors.Count, "error"));
 				errors.Write(errorWriter);
 				retcode = (retcode == ReturnCodes.Okay) ? ReturnCodes.InputError : retcode;
 			}

@@ -79,12 +79,10 @@ namespace SIL.Cog.Application.CommandLine
 					continue;
 				}
 				var result = wordAligner.Compute(words[0], words[1]);
-				foreach (Alignment<Word, ShapeNode> alignment in result.GetAlignments())
-				{
-					outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));
-					outputWriter.WriteLine(RawScores ? alignment.RawScore : alignment.NormalizedScore);
-					outputWriter.WriteLine();
-				}
+				Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
+				outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));
+				outputWriter.WriteLine(RawScores ? alignment.RawScore : alignment.NormalizedScore);
+				outputWriter.WriteLine();
 			}
 			if (!warnings.Empty)
 			{

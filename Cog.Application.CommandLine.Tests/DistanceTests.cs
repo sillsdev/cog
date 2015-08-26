@@ -8,6 +8,8 @@ namespace SIL.Cog.Application.CommandLine.Tests
 		[Test, Sequential]
 		public void CheckDistanceWithRawScores(
 			[Values(
+				"a a",
+				"a b",
 				"chair apple",
 				"apple chair",
 				"chair cheer",
@@ -16,6 +18,8 @@ namespace SIL.Cog.Application.CommandLine.Tests
 				"ˈɛdɪt ˈɛdɪtəbl̩")]
 			string input,
 			[Values(
+				"|a|\n|a|\n3500\n\n",
+				"|a -|\n|- b|\n-2000\n\n",
 				"|c h a - - - i r|\n|- - a p p l e -|\n650\n\n",
 				"|- - a p p l e -|\n|c h a - - - i r|\n650\n\n",
 				"|c h a i r|\n|c h e e r|\n16500\n\n",
@@ -31,6 +35,8 @@ namespace SIL.Cog.Application.CommandLine.Tests
 		[Test, Sequential]
 		public void CheckDistanceWithNormalizedScores(
 			[Values(
+				"a a",
+				"a b",
 				"chair apple",
 				"apple chair",
 				"chair cheer",
@@ -39,6 +45,8 @@ namespace SIL.Cog.Application.CommandLine.Tests
 				"ˈɛdɪt ˈɛdɪtəbl̩")]
 			string input,
 			[Values(
+				"|a|\n|a|\n1\n\n",
+				"|a -|\n|- b|\n0\n\n",
 				"|c h a - - - i r|\n|- - a p p l e -|\n0.0371428571428571\n\n",
 				"|- - a p p l e -|\n|c h a - - - i r|\n0.0371428571428571\n\n",
 				"|c h a i r|\n|c h e e r|\n0.942857142857143\n\n",

@@ -56,6 +56,11 @@ namespace SIL.Cog.Application.CommandLine
 		{
 			int stemStartIdx = wordText.IndexOf("|", StringComparison.Ordinal);
 			int stemEndIdx = wordText.LastIndexOf("|", StringComparison.Ordinal) - 1; // -1 because we're going to remove the leading |
+			if (stemStartIdx != -1 && stemEndIdx < stemStartIdx)
+			{
+				// Only way this can happen is if there was only a single "|" in the word
+				throw new FormatException(string.Format("Words should have either 0 or 2 pipe characters representing word stems. Offending word: ", wordText));
+			}
 			var word = (stemStartIdx == -1) ?
 				new Word(wordText, meaning) :
 				new Word(wordText.Replace("|", ""), stemStartIdx, stemEndIdx - stemStartIdx, meaning);

@@ -14,6 +14,8 @@ namespace SIL.Cog.Application.CommandLine
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 
+			var errors = new Errors();
+
 			var segmenter = new Segmenter(spanFactory)
 			{
 				Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
@@ -25,8 +27,6 @@ namespace SIL.Cog.Application.CommandLine
 
 			foreach(string line in inputReader.ReadLines())
 			{
-				StreamWriter stderr = new StreamWriter(Console.OpenStandardError()); // For demo. Real implementation might allow logging erros to a file.
-
 				string word = line; // For demo, one word per line. Real implementation might expect something like "word method" (space-separated) on each line.
 
 				Shape shape;
@@ -37,9 +37,13 @@ namespace SIL.Cog.Application.CommandLine
 				}
 				else
 				{
-					stderr.WriteLine("Failed to parse {0}", word);
-					retcode = ReturnCodes.InputError;
+					errors.Add(line, "Failed to parse {0}", word);
 				}
+			}
+			if (!errors.Empty)
+			{
+				errors.Write(errorWriter);
+				retcode = ReturnCodes.InputError;
 			}
 			return retcode;
 		}

@@ -24,12 +24,24 @@ namespace SIL.Cog.Application.CommandLine
 
 		private Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
 
+		Errors errors = new Errors();
+		Errors warnings = new Errors();
+
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
 		{
 			// We expect to see a lot of duplicates in our input text; save time by memoizing
 			if (_parsedWords.ContainsKey(wordText))
 				return _parsedWords[wordText];
-			Word word = ParseWord(wordText, meaning);
+			Word word;
+			try
+			{
+				word = ParseWord(wordText, meaning);
+			}
+			catch (FormatException e)
+			{
+				errors.Add(e.Message);
+				return null;
+			}
 			project.Segmenter.Segment(word);
 			_parsedWords.Add(wordText, word);
 			return word;
@@ -38,8 +50,6 @@ namespace SIL.Cog.Application.CommandLine
 		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
-			var errors = new Errors();
-			var warnings = new Errors();
 
 			if (!RawScores && !NormalizedScores)
 			{
@@ -78,9 +88,9 @@ namespace SIL.Cog.Application.CommandLine
 					continue;
 				}
 				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, _meaning, _project)).ToArray();
-				if (words.Length != 2)
+				if (words.Length != 2 || words.Any(w => w == null))
 				{
-					errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Select(w => w.StrRep)));
+					errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
 					continue;
 				}
 				var result = wordAligner.Compute(words[0], words[1]);

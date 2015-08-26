@@ -21,18 +21,33 @@ namespace SIL.Cog.Application.CommandLine
 			SetUpProject();
 			IProcessor<Variety> syllabifier = _project.VarietyProcessors["syllabifier"];
 
+			var errors = new Errors();
+
 			foreach (string line in inputReader.ReadLines())
 			{
 				string wordText = line; // In the future we might need to split the line into multiple words
-				Word word = ParseWord(wordText, _meaning);
-				_project.Segmenter.Segment(word);
-				_variety.Words.Add(word);
+				Word word;
+				try
+				{
+					word = ParseWord(wordText, _meaning);
+					_project.Segmenter.Segment(word);
+					_variety.Words.Add(word);
+				}
+				catch (FormatException e)
+				{
+					errors.Add(line, e.Message);
+				}
 			}
 			syllabifier.Process(_variety);
 			foreach (Word word in _variety.Words)
 			{
 //				output.WriteLine("{0} {1} {2}", word.StemIndex, word.StemLength, word.ToString().Replace(" ", ""));
 				outputWriter.WriteLine(word.ToString().Replace(" ", ""));
+			}
+			if (!errors.Empty)
+			{
+				errors.Write(errorWriter);
+				retcode = ReturnCodes.InputError;
 			}
 			return retcode;
 		}

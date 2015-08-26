@@ -22,6 +22,9 @@ namespace SIL.Cog.Application.CommandLine
 		protected Variety _variety;
 		protected Meaning _meaning;
 
+		protected Errors errors = new Errors();
+		protected Errors warnings = new Errors();
+
 		protected void SetUpProject()
 		{
 			_spanFactory = new ShapeSpanFactory();
@@ -33,9 +36,20 @@ namespace SIL.Cog.Application.CommandLine
 			_project.Varieties.Add(_variety);
 		}
 
-		public ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter)
+		public ReturnCodes DoWorkWithErrorChecking(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			return DoWork(inputReader, outputWriter, Console.Error);
+			ReturnCodes retcode = DoWork(inputReader, outputWriter, errorWriter);
+			if (!warnings.Empty)
+			{
+				warnings.Write(errorWriter);
+				// Do not change retcode for warnings
+			}
+			if (!errors.Empty)
+			{
+				errors.Write(errorWriter);
+				retcode = (retcode == ReturnCodes.Okay) ? ReturnCodes.InputError : retcode;
+			}
+			return retcode;
 		}
 
 		public abstract ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter);
@@ -45,11 +59,11 @@ namespace SIL.Cog.Application.CommandLine
 			return RunAsPipe(Console.Error);
 		}
 
-		public ReturnCodes RunAsPipe(TextWriter errorStream)
+		public ReturnCodes RunAsPipe(TextWriter errorWriter)
 		{
 			using (StreamReader input = OpenInput())
 			using (StreamWriter output = OpenOutput())
-				return DoWork(input, output, errorStream);
+				return DoWorkWithErrorChecking(input, output, errorWriter);
 		}
 
 		protected Word ParseWord(string wordText, Meaning meaning)

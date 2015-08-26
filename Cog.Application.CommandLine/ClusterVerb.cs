@@ -21,7 +21,6 @@ namespace SIL.Cog.Application.CommandLine
 
 			var distances = new Dictionary<UnorderedTuple<string, string>, double>();
 			var allWords = new HashSet<string>();
-			var errors = new Errors();
 
 			foreach (string line in inputReader.ReadLines())
 			{
@@ -45,11 +44,6 @@ namespace SIL.Cog.Application.CommandLine
 			var clusterer = new FlatUpgmaClusterer<string>((w1, w2) => distances[new UnorderedTuple<string, string>(w1, w2)], Threshhold);
 			IEnumerable<Cluster<string>> clusters = clusterer.GenerateClusters(allWords);
 			PrintResults(outputWriter, clusters);
-			if (!errors.Empty)
-			{
-				errors.Write(errorWriter);
-				retcode = ReturnCodes.InputError;
-			}
 			return retcode;
 		}
 

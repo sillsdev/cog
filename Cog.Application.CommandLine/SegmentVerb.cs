@@ -14,8 +14,6 @@ namespace SIL.Cog.Application.CommandLine
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SpanFactory<ShapeNode> spanFactory = new ShapeSpanFactory();
 
-			var errors = new Errors();
-
 			var segmenter = new Segmenter(spanFactory)
 			{
 				Consonants = { "b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z" },
@@ -39,11 +37,6 @@ namespace SIL.Cog.Application.CommandLine
 				{
 					errors.Add(line, "Failed to parse {0}", word);
 				}
-			}
-			if (!errors.Empty)
-			{
-				errors.Write(errorWriter);
-				retcode = ReturnCodes.InputError;
 			}
 			return retcode;
 		}

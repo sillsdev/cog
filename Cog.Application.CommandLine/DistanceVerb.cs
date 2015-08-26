@@ -24,9 +24,6 @@ namespace SIL.Cog.Application.CommandLine
 
 		private Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
 
-		Errors errors = new Errors();
-		Errors warnings = new Errors();
-
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
 		{
 			// We expect to see a lot of duplicates in our input text; save time by memoizing
@@ -99,17 +96,6 @@ namespace SIL.Cog.Application.CommandLine
 				outputWriter.WriteLine(RawScores ? alignment.RawScore : alignment.NormalizedScore);
 				outputWriter.WriteLine();
 			}
-			if (!warnings.Empty)
-			{
-				warnings.Write(errorWriter);
-				// Do not set retcode to non-0 if there were only warnings
-			}
-			if (!errors.Empty)
-			{
-				errors.Write(errorWriter);
-				retcode = ReturnCodes.InputError;
-			}
-
 
 			return retcode;
 		}

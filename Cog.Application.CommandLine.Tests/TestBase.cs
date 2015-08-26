@@ -20,7 +20,7 @@ namespace SIL.Cog.Application.CommandLine.Tests
 			var inputStream = new StringReader(input);
 			var outputStream = new StringWriter();
 			var errorStream = new StringWriter();
-			var retcode = verbUnderTest.DoWork(inputStream, outputStream, errorStream);
+			var retcode = verbUnderTest.DoWorkWithErrorChecking(inputStream, outputStream, errorStream);
 			string TextResult = outputStream.ToString().Replace("\r\n", "\n");
 			string ErrorText = errorStream.ToString().Replace("\r\n", "\n");
 			if (stripNewlines)

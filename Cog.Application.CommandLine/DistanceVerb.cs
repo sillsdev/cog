@@ -22,6 +22,9 @@ namespace SIL.Cog.Application.CommandLine
 		[Option('n', "normalized-scores", Default = false, HelpText = "Produce normalized similarity scores (real numbers between 0.0 and 1.0, where higher means more similar)")]
 		public bool NormalizedScores { get; set; }
 
+		[Option('v', "verbose", Default = false, HelpText = "Produce more verbose output, showing possible alignments (changes output format)")]
+		public bool Verbose { get; set; }
+
 		private Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
 
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
@@ -92,9 +95,12 @@ namespace SIL.Cog.Application.CommandLine
 				}
 				var result = wordAligner.Compute(words[0], words[1]);
 				Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
-				outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));
-				outputWriter.WriteLine(RawScores ? alignment.RawScore : alignment.NormalizedScore);
-				outputWriter.WriteLine();
+				outputWriter.WriteLine("{0} {1} {2}", words[0].StrRep, words[1].StrRep, RawScores ? alignment.RawScore : alignment.NormalizedScore);
+				if (Verbose)
+				{
+					outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));
+					outputWriter.WriteLine();
+				}
 			}
 
 			return retcode;

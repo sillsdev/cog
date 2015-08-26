@@ -16,7 +16,7 @@ namespace SIL.Cog.Application.CommandLine
 		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)", MetaName = "method")]
 		public string Method { get; set; }
 
-		[Option('r', "raw-scores", Default = true, HelpText = "Produce raw similarity scores (integers from 0 to infinity, where higher means more similar)")]
+		[Option('r', "raw-scores", Default = false, HelpText = "Produce raw similarity scores (integers from 0 to infinity, where higher means more similar)")]
 		public bool RawScores { get; set; }
 
 		[Option('n', "normalized-scores", Default = false, HelpText = "Produce normalized similarity scores (real numbers between 0.0 and 1.0, where higher means more similar)")]
@@ -41,8 +41,13 @@ namespace SIL.Cog.Application.CommandLine
 			var errors = new Errors();
 			var warnings = new Errors();
 
-			if ((RawScores && NormalizedScores) ||
-				(!RawScores && !NormalizedScores))
+			if (!RawScores && !NormalizedScores)
+			{
+				warnings.Add("Neither raw scores nor normalized scores were selected. Defaulting to normalized.");
+				RawScores = false;
+				NormalizedScores = true;
+			}
+			if (RawScores && NormalizedScores)
 			{
 				warnings.Add("Please specify either raw or normalized scores, but not both. Defaulting to normalized.");
 				RawScores = false;

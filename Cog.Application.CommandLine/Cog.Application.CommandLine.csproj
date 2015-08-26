@@ -100,7 +100,6 @@
     <Compile Include="MakePairsVerb.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SegmentVerb.cs" />
     <Compile Include="SyllabifyVerb.cs" />
   </ItemGroup>
   <ItemGroup>

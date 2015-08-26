@@ -14,9 +14,8 @@ namespace SIL.Cog.Application.CommandLine
 	{
 		static int Main(string[] args)
 		{
-			ReturnCodes retcode = Parser.Default.ParseArguments<SegmentVerb, SyllabifyVerb, MakePairsVerb, DistanceVerb, ClusterVerb>(args)
+			ReturnCodes retcode = Parser.Default.ParseArguments<SyllabifyVerb, MakePairsVerb, DistanceVerb, ClusterVerb>(args)
 				.Return(
-					(SegmentVerb opts) => opts.RunAsPipe(),
 					(SyllabifyVerb opts) => opts.RunAsPipe(),
 					(MakePairsVerb opts) => opts.RunAsPipe(),
 					(DistanceVerb opts) => opts.RunAsPipe(),

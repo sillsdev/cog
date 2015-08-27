@@ -22,9 +22,20 @@ namespace SIL.Cog.Presentation
 				.All(Validate);
 		}
 
-		public static T FindVisualAncestor<T>(this DependencyObject child) where T : DependencyObject
+		public static T FindLogicalAncestor<T>(this DependencyObject child) where T : DependencyObject
 		{
-			DependencyObject parentObj = VisualTreeHelper.GetParent(child);
+			DependencyObject parentObj = LogicalTreeHelper.GetParent(child);
+			if (parentObj == null)
+				return null;
+			var parent = parentObj as T;
+			if (parent != null)
+				return parent;
+			return FindLogicalAncestor<T>(parentObj);
+		}
+
+		public static T FindVisualAncestor<T>(this Visual child) where T : Visual
+		{
+			var parentObj = (Visual) VisualTreeHelper.GetParent(child);
 			if (parentObj == null)
 				return null;
 			var parent = parentObj as T;
@@ -33,12 +44,12 @@ namespace SIL.Cog.Presentation
 			return FindVisualAncestor<T>(parentObj);
 		}
 
-		public static T FindVisualChild<T>(this DependencyObject obj) where T : DependencyObject
+		public static T FindVisualChild<T>(this Visual obj) where T : Visual
 		{
 			// Search immediate children first (breadth-first)
 			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
 			{
-				DependencyObject childObj = VisualTreeHelper.GetChild(obj, i);
+				var childObj = (Visual) VisualTreeHelper.GetChild(obj, i);
 
 				var child = childObj as T;
 				if (child != null)
@@ -52,19 +63,19 @@ namespace SIL.Cog.Presentation
 			return null;
 		}
 
-		public static bool IsAncestorOf(this DependencyObject obj1, DependencyObject obj2)
+		public static bool IsAncestorOf(this Visual obj1, Visual obj2)
 		{
-			DependencyObject curObj = obj2;
+			Visual curObj = obj2;
 			while (curObj != null)
 			{
-				curObj = VisualTreeHelper.GetParent(curObj);
+				curObj = (Visual) VisualTreeHelper.GetParent(curObj);
 				if (curObj == obj1)
 					return true;
 			}
 			return false;
 		}
 
-		public static bool IsDescendantOf(this DependencyObject obj1, DependencyObject obj2)
+		public static bool IsDescendantOf(this Visual obj1, Visual obj2)
 		{
 			return IsAncestorOf(obj2, obj1);
 		}
@@ -186,13 +197,13 @@ namespace SIL.Cog.Presentation
 			return Math.Min(extent - viewport, Math.Max(0, center - viewport / 2));
 		}
 
-		private static DependencyObject FirstVisualChild(Visual visual)
+		private static Visual FirstVisualChild(Visual visual)
 		{
 			if (visual == null)
 				return null;
 			if (VisualTreeHelper.GetChildrenCount(visual) == 0)
 				return null;
-			return VisualTreeHelper.GetChild(visual, 0);
+			return (Visual) VisualTreeHelper.GetChild(visual, 0);
 		}
 	}
 }

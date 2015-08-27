@@ -324,11 +324,14 @@ namespace SIL.Cog.Presentation.Behaviors
 			if (dataGrid.SelectionMode == SelectionMode.Single && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
 			{
 				var elem = (DependencyObject) e.OriginalSource;
+				var visual = elem as Visual;
+				if (visual == null)
+					visual = elem.FindLogicalAncestor<Visual>();
 
 				switch (dataGrid.SelectionUnit)
 				{
 					case SelectionUnit.Cell:
-						var cell = elem.FindVisualAncestor<DataCell>();
+						var cell = visual.FindVisualAncestor<DataCell>();
 						if (cell.IsSelected)
 						{
 							dataGrid.SelectedCellRanges.Clear();
@@ -338,7 +341,7 @@ namespace SIL.Cog.Presentation.Behaviors
 						break;
 
 					case SelectionUnit.Row:
-						var row = elem.FindVisualAncestor<DataRow>();
+						var row = visual.FindVisualAncestor<DataRow>();
 						if (row.IsSelected)
 						{
 							dataGrid.SelectedItem = null;

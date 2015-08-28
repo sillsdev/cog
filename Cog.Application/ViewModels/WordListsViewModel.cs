@@ -44,6 +44,7 @@ namespace SIL.Cog.Application.ViewModels
 			_varietyFactory = varietyFactory;
 
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
+			Messenger.Default.Register<DomainModelChangedMessage>(this, HandleDomainModelChanged);
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -94,6 +95,15 @@ namespace SIL.Cog.Application.ViewModels
 					var meaning = (Meaning) msg.DomainModels[1];
 					SelectedVarietyMeaning = _varieties[variety].Meanings.Single(m => m.DomainMeaning == meaning);
 				}
+			}
+		}
+
+		private void HandleDomainModelChanged(DomainModelChangedMessage msg)
+		{
+			if (msg.AffectsComparison)
+			{
+				foreach (WordListsVarietyViewModel variety in _varieties)
+					variety.CheckForErrors();
 			}
 		}
 

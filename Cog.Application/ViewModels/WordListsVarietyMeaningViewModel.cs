@@ -104,7 +104,6 @@ namespace SIL.Cog.Application.ViewModels
 						_variety.DomainVariety.Words.Remove(wordToRemove);
 
 					_analysisService.Segment(_variety.DomainVariety);
-					_variety.CheckForErrors();
 					Messenger.Default.Send(new DomainModelChangedMessage(true));
 				}
 			}

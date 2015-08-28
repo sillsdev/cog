@@ -70,15 +70,15 @@ File.WriteAllText(Path, content);
 	
 	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">
 		<ItemGroup>
-			<FilesToDelete Include="$(RootDir)/output/Cog-*-Setup.exe" />
+			<FilesToDelete Include="$(RootDir)\output\Cog-*-Setup.exe" />
 		</ItemGroup>
 		<Delete Files="@(FilesToDelete)" />
-		<Copy SourceFiles="$(RootDir)/Installer/Bootstrapper/bin/$(Configuration)/Cog-$(VersionNumber)-Setup.exe" DestinationFolder="$(RootDir)/output" />
-		<Exec Command='"$(WIX)/bin/insignia.exe" -ib "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)/output/BurnEngine.exe"' />
-		<Exec Command='sign "$(RootDir)/output/BurnEngine.exe"' />
-		<Exec Command='"$(WIX)/bin/insignia.exe" -ab "$(RootDir)/output/BurnEngine.exe" "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe"' />
-		<Delete Files="$(RootDir)/output/BurnEngine.exe" />
-		<Exec Command='sign "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe"' />
+		<Copy SourceFiles="$(RootDir)\Installer\Bootstrapper\bin\$(Configuration)\Cog-$(VersionNumber)-Setup.exe" DestinationFolder="$(RootDir)\output" />
+		<Exec Command='"$(WIX)bin\insignia.exe" -ib "$(RootDir)\output\Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)\output\BurnEngine.exe"' />
+		<Exec Command='sign "$(RootDir)\output\BurnEngine.exe"' />
+		<Exec Command='"$(WIX)bin\insignia.exe" -ab "$(RootDir)\output\BurnEngine.exe" "$(RootDir)\output\Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)\output\Cog-$(VersionNumber)-Setup.exe"' />
+		<Delete Files="$(RootDir)\output\BurnEngine.exe" />
+		<Exec Command='sign "$(RootDir)\output\Cog-$(VersionNumber)-Setup.exe"' />
 	</Target>
 	
 	<Target Name="UploadRelease" DependsOnTargets="VersionNumber;Installer;MakeDownloadPointers">

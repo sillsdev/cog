@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -73,9 +74,26 @@ namespace SIL.Cog.Application.CommandLine
 
 		public ReturnCodes RunAsPipe(TextWriter errorWriter)
 		{
-			using (StreamReader input = OpenInput())
-			using (StreamWriter output = OpenOutput())
-				return DoWorkWithErrorChecking(input, output, errorWriter);
+			try
+			{
+				using (StreamReader input = OpenInput())
+				using (StreamWriter output = OpenOutput())
+					return DoWorkWithErrorChecking(input, output, errorWriter);
+			}
+			catch (System.IO.IOException exception)
+			{
+				// On Mono, piping into a closed process throws an IOException with "Write fault on path (something)"
+
+				// Try to get the message in English, if we can (some exceptions are only localized when the .Message property is accessed)
+				CultureInfo originalCultureInfo = System.Threading.Thread.CurrentThread.CurrentUICulture;
+				System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+				string msg = exception.Message;
+				System.Threading.Thread.CurrentThread.CurrentUICulture = originalCultureInfo;
+
+				if (!msg.StartsWith("Write fault on path"))
+					throw;
+				return ReturnCodes.Okay; // Having our output pipe closed on us is not a real error
+			}
 		}
 
 		protected Word ParseWord(string wordText, Meaning meaning)

@@ -17,7 +17,7 @@ using CommandLine.Text;
 
 // Attributes from CommandLineParser, used in constructing usage help
 [assembly: AssemblyLicense("Code licensed under the MIT License (http://sil.mit-license.org/)")]
-[assembly: AssemblyUsage("cog (cmd) [-i input-fname] [-o output-fname]")]
+[assembly: AssemblyUsage("cog-cmdline.exe (cmd) [-i input-fname] [-o output-fname]")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

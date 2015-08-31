@@ -32,11 +32,14 @@ namespace SIL.Cog.Application.CommandLine.Tests
 			[Values(
 				"a\n",
 				"a\na\n", // Should produce two separate errors
+				"a\n\n\na\n", // Blank lines should not produce any extra errors
 				"a b c"
 				)]
 			string input,
 			[Values(
 				"Operation \"cluster\" produced 1 error:\nEach line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n",
+				"Operation \"cluster\" produced 2 errors:\nEach line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n" +
+				"Each line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n",
 				"Operation \"cluster\" produced 2 errors:\nEach line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n" +
 				"Each line should contain two words and one score, separated by spaces.\n  This was caused by the line: \"a\"\n",
 				"Operation \"cluster\" produced 1 error:\nCould not parse score \"c\". Scores should be a number between 0 and 1.\n  This was caused by the line: \"a b c\"\n"

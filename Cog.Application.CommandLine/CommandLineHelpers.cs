@@ -14,7 +14,8 @@ namespace SIL.Cog.Application.CommandLine
 			string line;
 			while ((line = input.ReadLine()) != null)
 			{
-				yield return line;
+				if (!string.IsNullOrWhiteSpace(line)) // Silently skip blank lines
+					yield return line;
 			}
 		}
 

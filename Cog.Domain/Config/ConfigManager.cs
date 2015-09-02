@@ -37,7 +37,10 @@ namespace SIL.Cog.Domain.Config
 		static ConfigManager()
 		{
 			Schema = new XmlSchemaSet {XmlResolver = new ResourceXmlResolver()};
-			Schema.Add(DefaultNamespace, "CogProject.xsd");
+			if (!Platform.IsMono)  // Bypass bug in old versions of Mono: in Mono 2.10.8, ResourceXmlResolver incorrectly searches the filesystem. 2015-09 RM
+			{
+				Schema.Add(DefaultNamespace, "CogProject.xsd");
+			}
 			Schema.Compile();
 		}
 

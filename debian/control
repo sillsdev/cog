@@ -1,0 +1,15 @@
+Package: cog-cmdline
+Version: 1.1.0.0-1
+Section: contrib/cli-mono
+Priority: optional
+Architecture: all
+Depends: mono-runtime, libmono-system-core4.0-cil, libmono-system-xml-linq4.0-cil
+Description: Command-line part of Cog, a computational linguistics tool
+ Cog helps you compare languages using lexicostatistics and comparative
+ linguistics techniques. It can be used to automate much of the process
+ of comparing word lists from different language varieties.
+ .
+ This package contains the command-line part of Cog, which allows users to
+ automate a small subset of Cog's functionality with command-line scripts.
+Maintainer: Robin Munn <robin_munn@sil.org>
+Homepage: http://www.sil.org/resources/software_fonts/cog

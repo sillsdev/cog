@@ -1,4 +1,4 @@
-﻿cog-cmdline.exe(1) -- Use Cog features from the Linux command line
+cog-cmdline.exe(1) -- Use Cog features from the Linux command line
 ==================================================================
 
 ## SYNOPSIS

@@ -1,5 +1,5 @@
 Package: cog-cmdline
-Version: 1.1.0.0-1
+Version: 1.1.0-0alpha1
 Section: contrib/cli-mono
 Priority: optional
 Architecture: all

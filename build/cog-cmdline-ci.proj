@@ -1,0 +1,120 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+		<Project>Cog.Application.CommandLine</Project>
+		<BuildFile>$(Project)/$(Project).csproj</BuildFile>
+		<Configuration>Debug</Configuration>
+		<Platform>AnyCPU</Platform>
+		<LifecycleStage>Stable</LifecycleStage>
+	</PropertyGroup>
+	
+	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+		<ParameterGroup>
+			<Path ParameterType="System.String" Required="true" />
+			<Token ParameterType="System.String" Required="true" />
+			<Replacement ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Code Type="Fragment" Language="cs">
+<![CDATA[
+string content = File.ReadAllText(Path);
+content = content.Replace(Token, Replacement);
+File.WriteAllText(Path, content);
+]]>
+			</Code>
+		</Task>
+	</UsingTask>
+	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+	
+	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="FileUpdate" />
+	<Target Name="StampBuildNumber">
+		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex="DEV_BUILD" ReplacementText="$(BUILD_NUMBER)" />
+	</Target>
+	
+	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber">
+		<MSBuild Projects="$(RootDir)/$(BuildFile)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+	</Target>
+
+	<Target Name="Test" DependsOnTargets="BuildAll">
+		<CreateItem Include="$(RootDir)/$(Project).Tests/bin/$(Configuration)/*Tests.dll">
+			<Output ItemName="TestAssemblies" TaskParameter="Include" />
+		</CreateItem>
+		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.6.2" />
+	</Target>
+	
+	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="Split" />
+	<Target Name="VersionNumber" DependsOnTargets="BuildAll">
+		<!-- Read the version from the .exe -->
+		<GetAssemblyIdentity AssemblyFiles="$(RootDir)/$(Project)/bin/$(Configuration)/cog-cmdline.exe">
+		  <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
+		</GetAssemblyIdentity>
+		<!-- Create the MSBuild property $(VersionNumber) -->
+		<CreateProperty Value="%(AsmInfo.Version)">
+		  <Output TaskParameter="Value" PropertyName="AssemblyVersionNumber" />
+		</CreateProperty>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="0">
+			<Output TaskParameter="ReturnValue" PropertyName="MajorVersionPart" />
+		</Split>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="1">
+			<Output TaskParameter="ReturnValue" PropertyName="MinorVersionPart" />
+		</Split>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="2">
+			<Output TaskParameter="ReturnValue" PropertyName="RevisionVersionPart" />
+		</Split>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="3">
+			<Output TaskParameter="ReturnValue" PropertyName="BuildVersionPart" />
+		</Split>
+		<CreateProperty Value="$(MajorVersionPart).$(MinorVersionPart).$(RevisionVersionPart)">
+		  <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+		</CreateProperty>
+		<CreateProperty Value="$(ShortVersionNumber).$(BUILD_NUMBER)">
+		  <Output TaskParameter="Value" PropertyName="VersionNumber" />
+		</CreateProperty>
+	</Target>
+	
+	<Target Name="StampVersionNumber" DependsOnTargets="VersionNumber">
+		<FileUpdate File="$(RootDir)/debian/control" Regex="UPSTREAM_VERSION" ReplacementText="$(ShortVersionNumber)" />
+	</Target>
+	
+	<Target Name="MakeDeb" DependsOnTargets="StampVersionNumber;BuildAll">
+		<Exec Command="build/make-deb.sh" WorkingDirectory="$(RootDir)" />
+	</Target>
+	
+	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
+		<Copy SourceFiles="$(RootDir)/build/DownloadPointers.html" DestinationFolder="$(RootDir)/output" />
+		<FileUpdate File="$(RootDir)/output/DownloadPointers.html" Regex="LIFECYCLE_STAGE" ReplacementText="$(LifecycleStage)" />
+		<FileUpdate File="$(RootDir)/output/DownloadPointers.html" Regex="VERSION_NUMBER" ReplacementText="$(ShortVersionNumber)" />
+		<FileUpdate File="$(RootDir)/output/DownloadPointers.html" Regex="RELEASE_DATE" ReplacementText="$([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
+		
+		<Copy SourceFiles="$(RootDir)/build/DownloadButton.html" DestinationFolder="$(RootDir)/output" />
+		<FileUpdate File="$(RootDir)/output/DownloadButton.html" Regex="LIFECYCLE_STAGE" ReplacementText="$(LifecycleStage.ToLower())" />
+		<FileUpdate File="$(RootDir)/output/DownloadButton.html" Regex="VERSION_NUMBER" ReplacementText="$(ShortVersionNumber)" />
+	</Target>
+	
+	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">
+		<ItemGroup>
+			<FilesToDelete Include="$(RootDir)/output/Cog-*-Setup.exe" />
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" />
+		<Copy SourceFiles="$(RootDir)/Installer/Bootstrapper/bin/$(Configuration)/Cog-$(VersionNumber)-Setup.exe" DestinationFolder="$(RootDir)/output" />
+		<Exec Command='"$(WIX)/bin/insignia.exe" -ib "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)/output/BurnEngine.exe"' />
+		<Exec Command='sign "$(RootDir)/output/BurnEngine.exe"' />
+		<Exec Command='"$(WIX)/bin/insignia.exe" -ab "$(RootDir)/output/BurnEngine.exe" "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe"' />
+		<Delete Files="$(RootDir)/output/BurnEngine.exe" />
+		<Exec Command='sign "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe"' />
+	</Target>
+	
+	<Target Name="UploadRelease" DependsOnTargets="VersionNumber;Installer;MakeDownloadPointers">
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/Cog-$(VersionNumber)-Setup.exe" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/Cog-$(ShortVersionNumber)-Setup.exe' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/DownloadPointers.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadPointers.html' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/DownloadButton.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadButton.html' />
+	</Target>
+	
+	<Target Name="UploadDev" DependsOnTargets="VersionNumber;Installer">
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -rvz --chmod=Fug+rw,Fo+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob" --delete "--exclude=*.html"  "../output/" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-dev/' />
+	</Target>
+	
+	<Target Name="UploadDeb" DependsOnTargets="VersionNumber;BuildAll">
+		<Exec Command ='rsync -rvz --chmod=Fug+rw,Fo+r -e"ssh -i /home/bob/.ssh/bob_key -l bob" "cog-cmdline_*_all.deb" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-deb/' />
+	</Target>
+</Project>

@@ -1,6 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+		<OutDir>$(RootDir)/build/output</OutDir>
 		<Project>Cog.Application.CommandLine</Project>
 		<BuildFile>$(Project)/$(Project).csproj</BuildFile>
 		<Configuration>Debug</Configuration>
@@ -34,7 +35,7 @@ File.WriteAllText(Path, content);
 	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber">
 		<MSBuild Projects="$(RootDir)/$(BuildFile)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
-
+	
 	<Target Name="Test" DependsOnTargets="BuildAll">
 		<CreateItem Include="$(RootDir)/$(Project).Tests/bin/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
@@ -76,8 +77,90 @@ File.WriteAllText(Path, content);
 		<FileUpdate File="$(RootDir)/debian/control" Regex="UPSTREAM_VERSION" ReplacementText="$(ShortVersionNumber)" />
 	</Target>
 	
-	<Target Name="MakeDeb" DependsOnTargets="StampVersionNumber;BuildAll">
-		<Exec Command="build/make-deb.sh" WorkingDirectory="$(RootDir)" />
+	<Target Name="MakeOutDir">
+		<MakeDir Directories="$(OutDir)" />
+	</Target>
+	
+	<Target Name="GetChangelogVersion" DependsOnTargets="MakeOutDir">
+		<CreateProperty Value="tmpfile-changelog-version.txt">
+			<Output TaskParameter="Value" PropertyName="TempFileName"></Output>
+		</CreateProperty>
+		<Exec Command="dpkg-parsechangelog | grep 'Version: ' | cut -d' ' -f2 &gt; $(OutDir)/$(TempFileName)" WorkingDirectory="$(RootDir)" />
+		<ReadLinesFromFile File="$(OutDir)/$(TempFileName)">
+			<Output TaskParameter="Lines" PropertyName="ChangelogVersion" />
+		</ReadLinesFromFile>
+		<Split Input="$(ChangelogVersion)" Delimiter="-" OutputSubString="0">
+			<Output TaskParameter="ReturnValue" PropertyName="UpstreamVersionFromChangelog" />
+		</Split>
+		<Split Input="$(ChangelogVersion)" Delimiter="-" OutputSubString="1">
+			<Output TaskParameter="ReturnValue" PropertyName="DebianRevisionFromChangelog" />
+		</Split>
+		<Delete Files="$(OutDir)/$(TempFileName)" />
+	</Target>
+	
+	<Target Name="MakeDeb" DependsOnTargets="StampVersionNumber;BuildAll;MakeOutDir;GetChangelogVersion">
+		<PropertyGroup>
+			<SrcDir>$(RootDir)/$(Project)</SrcDir>
+			<NewProjectFname>NewProject.cogx</NewProjectFname>
+			<BuildDir>$(SrcDir)/bin/$(Configuration)</BuildDir>
+			<!-- If we have a new upstream version, reset Debian revision to 1, otherwise increment it -->
+			<ExtraDchOptions Condition="$(ShortVersionNumber) == $(UpstreamVersionFromChangelog)">-i</ExtraDchOptions>
+			<NewDebRevision  Condition="$(ShortVersionNumber) == $(UpstreamVersionFromChangelog)">$([MSBuild]::Add($(DebianRevisionFromChangelog),1))</NewDebRevision>
+			<ExtraDchOptions Condition="$(ShortVersionNumber) != $(UpstreamVersionFromChangelog)">-v "$(ShortVersionNumber)-1"</ExtraDchOptions>
+			<NewDebRevision  Condition="$(ShortVersionNumber) != $(UpstreamVersionFromChangelog)">1</NewDebRevision>
+			<ChangelogMessage>Changelog automatically updated by TeamCity (build number $(BUILD_NUMBER))</ChangelogMessage>
+			<DchOptionsFirstCall>-U --maintmaint $(ExtraDchOptions) "$(ChangelogMessage)"</DchOptionsFirstCall>
+			<DchOptionsSecondCall>-U -r --vendor Debian --maintmaint "$(ChangelogMessage)"</DchOptionsSecondCall>
+			
+			<ProjectName>cog-cmdline</ProjectName>
+			<DebianPackageVersion>$(ShortVersionNumber)-$(NewDebRevision)</DebianPackageVersion>
+			<DebianPackageArchitecture>all</DebianPackageArchitecture>
+			<DebianPackageName>$(ProjectName)_$(DebianPackageVersion)_$(DebianPackageArchitecture).deb</DebianPackageName>
+			
+			<!-- Directories where parts of the Debian package will be installed -->
+			<DebRoot>$(OutDir)/debian-package-root</DebRoot>
+			<DebUsrLib>$(DebRoot)/usr/lib/$(ProjectName)</DebUsrLib>
+			<DebUsrBin>$(DebRoot)/usr/bin</DebUsrBin>
+			<DebDEBIAN>$(DebRoot)/DEBIAN</DebDEBIAN>
+			<DebData>$(DebRoot)/usr/share/$(ProjectName)</DebData>
+			<DebDocs>$(DebRoot)/usr/share/doc/$(ProjectName)</DebDocs>
+			<DebManpages>$(DebRoot)/usr/share/man/man1</DebManpages>
+		</PropertyGroup>
+		
+		<!-- First dch call adds a new "UNRELEASED" changelog entry, updating version and/or Debian revision -->
+		<Exec Command="dch $(DchOptionsFirstCall)" WorkingDirectory="$(RootDir)" />
+		<!-- Second dch call finalizes changelog by changing "UNRELEASED" to a real distro name, so that next dch call will again create a new changelog entry -->
+		<Exec Command="dch $(DchOptionsSecondCall)" WorkingDirectory="$(RootDir)" />
+		
+		<MakeDir Directories="$(DebRoot);$(DebUsrLib);$(DebUsrBin);$(DebDEBIAN);$(DebData);$(DebDocs);$(DebManpages)" />
+		<ItemGroup>
+			<CompiledFiles Include="$(BuildDir)/*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(CompiledFiles)" DestinationFolder="$(DebUsrLib)" />
+		<Exec Command="chmod -x $(DebUsrLib)/*.dll" />
+		
+		<!-- Use sed rather than FileUpdate because sed won't fail if search text not found -->
+		<Exec Command="sed -e &quot;s/DEBIAN_REVISION/$(DebianRevisionFromChangelog)/&quot; $(RootDir)/debian/control &gt; $(DebDEBIAN)/control" />
+		<Copy SourceFiles="$(SrcDir)/$(NewProjectFname)" DestinationFolder="$(DebData)" />
+		<Copy SourceFiles="$(RootDir)/debian/copyright" DestinationFolder="$(DebDocs)" />
+		<Copy SourceFiles="$(RootDir)/debian/changelog" DestinationFiles="$(DebDocs)/changelog.Debian" />
+		<Exec Command="gzip -f -9 &quot;$(DebDocs)/changelog.Debian&quot;" />
+		<Exec Command="ronn &lt; &quot;$(SrcDir)/README.md&quot; &gt; &quot;$(DebManpages)/$(ProjectName).1&quot;" />
+		<Exec Command="gzip -f -9 &quot;$(DebManpages)/$(ProjectName).1&quot;" />
+		
+		<Delete Files="$(DebUsrBin)/$(ProjectName)" />
+		<WriteLinesToFile File="$(DebUsrBin)/$(ProjectName)" Lines="#!/bin/bash" />
+		<WriteLinesToFile File="$(DebUsrBin)/$(ProjectName)" Lines="exec /usr/bin/cli /usr/lib/$(ProjectName)/$(ProjectName).exe &quot;$@&quot;" />
+		
+		<ItemGroup>
+			<FilesToDelete Include="$(OutDir)/$(ProjectName)_*_$(DebianPackageArchitecture).deb" />
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" />
+		<Exec Command="fakeroot dpkg-deb -b &quot;$(DebRoot)&quot;" />
+		<!-- Apparently xbuild doesn't implement the <Move> task (huh??), so instead of a Move here, we'll Copy and Delete -->
+		<Copy SourceFiles="$(DebRoot).deb" DestinationFiles="$(OutDir)/$(DebianPackageName)" />
+		<Delete Files="$(DebRoot).deb" />
+		<RemoveDir Directories="$(DebRoot)" />
 	</Target>
 	
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
@@ -114,7 +197,7 @@ File.WriteAllText(Path, content);
 		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -rvz --chmod=Fug+rw,Fo+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob" --delete "--exclude=*.html"  "../output/" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-dev/' />
 	</Target>
 	
-	<Target Name="UploadDeb" DependsOnTargets="VersionNumber;BuildAll">
-		<Exec Command ='rsync -rvz --chmod=Fug+rw,Fo+r -e"ssh -i /home/bob/.ssh/bob_key -l bob" "cog-cmdline_*_all.deb" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-deb/' />
+	<Target Name="UploadDeb" DependsOnTargets="MakeOutDir;VersionNumber;BuildAll;MakeDeb">
+		<Exec Command='rsync -rvz --chmod=Fug+rw,Fo+r -e"ssh -i /home/bob/.ssh/bob_key -l bob" "$(OutDir)/$(DebianPackageName)" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-deb/' />
 	</Target>
 </Project>

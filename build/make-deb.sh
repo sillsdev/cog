@@ -49,18 +49,21 @@ umask 022
 
 # Set up necessary directories inside the package
 SRCDIR="Cog.Application.CommandLine"
+NEWPROJ="NewProject.cogx"
 BUILDDIR="$SRCDIR/bin/$BUILDTYPE"
 WORKDIR=`mktemp -d`
 BASEDIR="$WORKDIR/usr/lib/$PACKAGENAME"
 BINDIR="$WORKDIR/usr/bin"
 DEBDIR="$WORKDIR/DEBIAN"
+DATADIR="$WORKDIR/usr/share/$PACKAGENAME"
 DOCDIR="$WORKDIR/usr/share/doc/$PACKAGENAME"
 MANDIR="$WORKDIR/usr/share/man/man1"
 OUTDIR="output"
-mkdir -p "$BASEDIR" "$BINDIR" "$DEBDIR" "$DOCDIR" "$MANDIR" "$OUTDIR"
+mkdir -p "$BASEDIR" "$BINDIR" "$DEBDIR" "$DATADIR" "$DOCDIR" "$MANDIR" "$OUTDIR"
 
 # Put the package contents together
 cp "$SRCDIR/bin/$BUILDTYPE"/* "$BASEDIR"
+cp "$SRCDIR/$NEWPROJ" "$DATADIR"
 chmod -x "$BASEDIR"/*.dll
 sed -e "s/DEBIAN_REVISION/${DEBIAN_REVISION}/" debian/control > "$DEBDIR/control"
 cp debian/copyright "$DOCDIR"

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -19,10 +20,27 @@ namespace SIL.Cog.Application.CommandLine
 			}
 		}
 
-		public static CogProject GetProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
+		public static CogProject GetProjectFromResource(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
 		{
 			Stream stream = Assembly.GetAssembly(typeof(CommandLineHelpers)).GetManifestResourceStream("SIL.Cog.Application.CommandLine.NewProject.cogx");
 			return ConfigManager.Load(spanFactory, segmentPool, stream);
+		}
+
+		public static CogProject GetProjectFromFilename(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string projectFilename)
+		{
+			if (projectFilename == null)
+			{
+				return GetProjectFromResource(spanFactory, segmentPool);
+			}
+			else
+			{
+				return ConfigManager.Load(spanFactory, segmentPool, projectFilename);
+			}
+		}
+
+		public static CogProject GetProjectFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
+		{
+			return ConfigManager.LoadFromXmlString(spanFactory, segmentPool, xmlString);
 		}
 
 		public static string CountedNoun(int count, string singular)

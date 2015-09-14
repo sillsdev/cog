@@ -74,6 +74,21 @@ namespace SIL.Cog.Domain.Config
 			return LoadProject(spanFactory, segmentPool, doc);
 		}
 
+		public static CogProject LoadFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
+		{
+			XDocument doc;
+			try
+			{
+				doc = XDocument.Parse(xmlString);
+			}
+			catch (XmlException xe)
+			{
+				throw new ConfigException("The specified file is not a valid Cog config file", xe);
+			}
+
+			return LoadProject(spanFactory, segmentPool, doc);
+		}
+
 		private static CogProject LoadProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, XDocument doc)
 		{
 			var project = new CogProject(spanFactory);

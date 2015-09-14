@@ -48,10 +48,12 @@
   <ItemGroup>
     <Compile Include="ClusterTests.cs" />
     <Compile Include="DistanceTests.cs" />
+    <Compile Include="FileTests.cs" />
     <Compile Include="MakePairsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyllabifyTests.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="XdgDirectoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -60,6 +62,18 @@
     <ProjectReference Include="..\Cog.Application.CommandLine\Cog.Application.CommandLine.csproj">
       <Project>{056afedf-63ef-4545-810a-dfa8f78346bd}</Project>
       <Name>Cog.Application.CommandLine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
+      <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
+      <Name>Cog.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
+      <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
+      <Name>Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\Machine\Machine\Machine.csproj">
+      <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
+      <Name>Machine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

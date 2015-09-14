@@ -10,7 +10,7 @@ using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.CommandLine
 {
-	public abstract class CommonOptions
+	public class CommonOptions // Non-abstract so we can unit test it
 	{
 		[Option('i', "input", Default = "-", HelpText = "Input filename (\"-\" for stdin)")]
 		public string InputFilename { get; set; }
@@ -18,9 +18,15 @@ namespace SIL.Cog.Application.CommandLine
 		[Option('o', "output", Default = "-", HelpText = "Output filename (\"-\" for stdout)")]
 		public string OutputFilename { get; set; }
 
+		[Option('c', "config-file", HelpText = "Config file to use instead of default config (--config-data will override this, if passed)")]
+		public string ConfigFilename { get; set; }
+
+		[Option("config-data", HelpText = "Configuration to use, as a single long string (if passed, overrides --config-file)")]
+		public string ConfigData { get; set; }
+
 		protected SpanFactory<ShapeNode> _spanFactory;
 		protected SegmentPool _segmentPool;
-		protected CogProject _project;
+		public CogProject _project; // Public because unit tests need access to it. TODO: Turn this (and the other protected members) into proper properties.
 		protected Variety _variety;
 		protected Meaning _meaning;
 
@@ -36,13 +42,53 @@ namespace SIL.Cog.Application.CommandLine
 			return string.Empty;
 		}
 
-		protected void SetUpProject()
+		protected IEnumerable<string> PossibleConfigFilenames
+		{ 
+			get
+			{
+				// We're slightly violating the XDG spec here: we look for the user's config in $XDG_CONFIG_HOME, but if
+				// he doesn't have a config file there, we get the default from $XDG_DATA_DIRS rather than $XDG_CONFIG_DIRS.
+				string assemblyName = typeof(Program).Assembly.GetName().Name;
+				string configFileName = assemblyName + ".conf";
+				yield return Path.Combine(XdgDirectories.ConfigHome, configFileName);
+				foreach (string BaseDir in XdgDirectories.DataDirs)
+					yield return Path.Combine(BaseDir, configFileName);
+			}
+		}
+
+		protected string FindConfigFilename()
 		{
+			// Note that we can't validate the config files due to the Mono XSD validation bug, so we just look for the first one that exists.
+			foreach (string candidateFilename in PossibleConfigFilenames)
+				if (File.Exists(candidateFilename))
+					return candidateFilename;
+			return null;
+		}
+
+		public void SetUpProject() // Should this be protected? But the unit test needs to call it.
+		{
+			if (ConfigData != null && ConfigFilename != null)
+			{
+				warnings.Add("WARNING: options --config-data and --config-file were both specified. Ignoring --config-file.");
+				ConfigFilename = null;
+			}
+			if (ConfigData == null && ConfigFilename == null)
+			{
+				ConfigFilename = FindConfigFilename();
+				// If ConfigFilename is STILL null at this point, it's because no config files were found at all, so we'll use the default one from the resource.
+			}
 			_spanFactory = new ShapeSpanFactory();
 			_segmentPool = new SegmentPool();
 			_variety = new Variety("variety1");
 			_meaning = new Meaning("gloss1", "cat1");
-			_project = CommandLineHelpers.GetProject(_spanFactory, _segmentPool);
+			if (ConfigData == null && ConfigFilename == null)
+				_project = CommandLineHelpers.GetProjectFromResource(_spanFactory, _segmentPool);
+			else if (ConfigData != null)
+				_project = CommandLineHelpers.GetProjectFromXmlString(_spanFactory, _segmentPool, ConfigData);
+			else if (ConfigFilename != null)
+				_project = CommandLineHelpers.GetProjectFromFilename(_spanFactory, _segmentPool, ConfigFilename);
+			else // Should never get here given checks above, but let's be safe and write the check anyway
+				_project = CommandLineHelpers.GetProjectFromResource(_spanFactory, _segmentPool);
 			_project.Meanings.Add(_meaning);
 			_project.Varieties.Add(_variety);
 		}
@@ -65,7 +111,10 @@ namespace SIL.Cog.Application.CommandLine
 			return retcode;
 		}
 
-		public abstract ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter);
+		public virtual ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		{
+			return ReturnCodes.NotImplemented;
+		}
 
 		public ReturnCodes RunAsPipe()
 		{
@@ -103,7 +152,7 @@ namespace SIL.Cog.Application.CommandLine
 			if (stemStartIdx != -1 && stemEndIdx < stemStartIdx)
 			{
 				// Only way this can happen is if there was only a single "|" in the word
-				throw new FormatException(string.Format("Words should have either 0 or 2 pipe characters representing word stems. Offending word: ", wordText));
+				throw new FormatException(string.Format("Words should have either 0 or 2 pipe characters representing word stems. Offending word: {0}", wordText));
 			}
 			var word = (stemStartIdx == -1) ?
 				new Word(wordText, meaning) :

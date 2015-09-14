@@ -40,14 +40,14 @@ namespace SIL.Cog.Application.CommandLine.Tests
 		public void CheckConfigDirs()
 		{
 			var ExpectedDirs = new string[] { Path.Combine("/etc/xdg", ExpectedAssemblyName) };
-			Assert.That(XdgDirectories.ConfigDirs, Is.EqualTo(ExpectedDirs));
+			Assert.That(ExpectedDirs, Is.SubsetOf(XdgDirectories.ConfigDirs));
 		}
 
 		[Test]
 		public void CheckDataDirs()
 		{
 			var ExpectedDirs = new string[] { Path.Combine("/usr/local/share", ExpectedAssemblyName), Path.Combine("/usr/share", ExpectedAssemblyName) };
-			Assert.That(XdgDirectories.DataDirs, Is.EqualTo(ExpectedDirs));
+			Assert.That(ExpectedDirs, Is.SubsetOf(XdgDirectories.DataDirs));
 		}
 	}
 }

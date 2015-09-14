@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace SIL.Cog.Application.CommandLine
+namespace SIL.Cog.CommandLine
 {
 	public enum ReturnCodes
 	{

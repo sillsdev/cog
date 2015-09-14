@@ -7,8 +7,8 @@
     <ProjectGuid>{CA020F99-1EDC-4C0C-883C-83BD28509916}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cog.Application.CommandLine.Tests</RootNamespace>
-    <AssemblyName>Cog.Application.CommandLine.Tests</AssemblyName>
+    <RootNamespace>Cog.CommandLine.Tests</RootNamespace>
+    <AssemblyName>Cog.CommandLine.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -59,9 +59,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cog.Application.CommandLine\Cog.Application.CommandLine.csproj">
+    <ProjectReference Include="..\Cog.CommandLine\Cog.CommandLine.csproj">
       <Project>{056afedf-63ef-4545-810a-dfa8f78346bd}</Project>
-      <Name>Cog.Application.CommandLine</Name>
+      <Name>Cog.CommandLine</Name>
     </ProjectReference>
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>

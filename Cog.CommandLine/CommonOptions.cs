@@ -8,7 +8,7 @@ using CommandLine;
 using SIL.Cog.Domain;
 using SIL.Machine.Annotations;
 
-namespace SIL.Cog.Application.CommandLine
+namespace SIL.Cog.CommandLine
 {
 	public class CommonOptions // Non-abstract so we can unit test it
 	{

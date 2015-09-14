@@ -48,7 +48,7 @@ echo "About to create package $DEBFILENAME"
 umask 022
 
 # Set up necessary directories inside the package
-SRCDIR="Cog.Application.CommandLine"
+SRCDIR="Cog.CommandLine"
 NEWPROJ="NewProject.cogx"
 BUILDDIR="$SRCDIR/bin/$BUILDTYPE"
 WORKDIR=`mktemp -d`

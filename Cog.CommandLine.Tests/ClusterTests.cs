@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace SIL.Cog.Application.CommandLine.Tests
+namespace SIL.Cog.CommandLine.Tests
 {
 	class ClusterTests : TestBase
 	{

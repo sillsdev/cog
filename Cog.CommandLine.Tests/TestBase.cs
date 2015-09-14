@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
 
-namespace SIL.Cog.Application.CommandLine.Tests
+namespace SIL.Cog.CommandLine.Tests
 {
 	public class TestBase
 	{

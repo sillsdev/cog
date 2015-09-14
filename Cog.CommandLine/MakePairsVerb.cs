@@ -5,7 +5,7 @@ using CommandLine;
 using System.Linq;
 using System.Text;
 
-namespace SIL.Cog.Application.CommandLine
+namespace SIL.Cog.CommandLine
 {
 	[Verb("make-pairs", HelpText = "Turn a list of words into unique word pairs")]
 	public class MakePairsVerb : CommonOptions

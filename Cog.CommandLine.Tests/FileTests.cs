@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.Cog.Application.CommandLine;
+using SIL.Cog.CommandLine;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
-namespace SIL.Cog.Application.CommandLine.Tests
+namespace SIL.Cog.CommandLine.Tests
 {
 	class FileTests : TestBase
 	{

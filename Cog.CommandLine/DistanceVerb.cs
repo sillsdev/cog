@@ -8,7 +8,7 @@ using SIL.Cog.Domain.Components;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
 
-namespace SIL.Cog.Application.CommandLine
+namespace SIL.Cog.CommandLine
 {
 	[Verb("distance", HelpText = "Distance between words")]
 	public class DistanceVerb : CommonOptions

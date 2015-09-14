@@ -6,7 +6,7 @@ using CommandLine;
 using SIL.Collections;
 using SIL.Machine.Clusterers;
 
-namespace SIL.Cog.Application.CommandLine
+namespace SIL.Cog.CommandLine
 {
 	[Verb("cluster", HelpText = "Cluster words")]
 	public class ClusterVerb : CommonOptions

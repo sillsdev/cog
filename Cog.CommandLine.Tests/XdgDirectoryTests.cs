@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.Cog.Application.CommandLine;
+using SIL.Cog.CommandLine;
 
-namespace SIL.Cog.Application.CommandLine.Tests
+namespace SIL.Cog.CommandLine.Tests
 {
 	[TestFixture]
 	[Category("LinuxOnly")]

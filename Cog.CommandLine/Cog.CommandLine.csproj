@@ -7,7 +7,7 @@
     <ProjectGuid>{056AFEDF-63EF-4545-810A-DFA8F78346BD}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SIL.Cog.Application.CommandLine</RootNamespace>
+    <RootNamespace>SIL.Cog.CommandLine</RootNamespace>
     <AssemblyName>cog-cmdline</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

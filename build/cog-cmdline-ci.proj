@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
 		<OutDir>$(RootDir)/build/output</OutDir>
-		<Project>Cog.Application.CommandLine</Project>
+		<Project>Cog.CommandLine</Project>
 		<BuildFile>$(Project)/$(Project).csproj</BuildFile>
 		<Configuration>Debug</Configuration>
 		<Platform>AnyCPU</Platform>

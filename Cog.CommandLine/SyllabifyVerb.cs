@@ -10,7 +10,7 @@ using SIL.Cog.Domain.Components;
 using SIL.Cog.Domain.Config;
 using SIL.Machine.Annotations;
 
-namespace SIL.Cog.Application.CommandLine
+namespace SIL.Cog.CommandLine
 {
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
 	public class SyllabifyVerb : CommonOptions

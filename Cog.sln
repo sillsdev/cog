@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collections", "lib\Machine\Collections\Collections.csproj", "{08691159-167B-4E5A-AE88-67DEF10AF7D3}"
 EndProject
@@ -97,12 +97,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.TestUtils", "Cog.TestUt
 		{08691159-167B-4E5A-AE88-67DEF10AF7D3} = {08691159-167B-4E5A-AE88-67DEF10AF7D3}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.Application.CommandLine", "Cog.Application.CommandLine\Cog.Application.CommandLine.csproj", "{056AFEDF-63EF-4545-810A-DFA8F78346BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.CommandLine", "Cog.CommandLine\Cog.CommandLine.csproj", "{056AFEDF-63EF-4545-810A-DFA8F78346BD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DA1D126F-5327-47C1-8967-03B44DCB2F02} = {DA1D126F-5327-47C1-8967-03B44DCB2F02}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.Application.CommandLine.Tests", "Cog.Application.CommandLine.Tests\Cog.Application.CommandLine.Tests.csproj", "{CA020F99-1EDC-4C0C-883C-83BD28509916}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.CommandLine.Tests", "Cog.CommandLine.Tests\Cog.CommandLine.Tests.csproj", "{CA020F99-1EDC-4C0C-883C-83BD28509916}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -69,7 +69,7 @@ namespace SIL.Cog.CommandLine.Tests
 			try
 			{
 				SaveProject(project, filename);
-				var options = new CommonOptions();
+				var options = new VerbBase();
 				options.ConfigFilename = filename;
 				options.SetUpProject();
 				CheckHasTestFeature(options._project);
@@ -90,7 +90,7 @@ namespace SIL.Cog.CommandLine.Tests
 			{
 				SaveProject(project, filename);
 				string xmlString = File.ReadAllText(filename, Encoding.UTF8);
-				var options = new CommonOptions();
+				var options = new VerbBase();
 				options.ConfigData = xmlString;
 				options.SetUpProject();
 				CheckHasTestFeature(options._project);
@@ -105,7 +105,7 @@ namespace SIL.Cog.CommandLine.Tests
 		[Test]
 		public void SetupProject_WithNoConfigFile_ShouldLoadDefaultProject()
 		{
-			var options = new CommonOptions();
+			var options = new VerbBase();
 			options.SetUpProject();
 			CheckDoesNotHaveTestFeature(options._project);
 			Assert.That(options._project.FeatureSystem.Count, Is.EqualTo(17));

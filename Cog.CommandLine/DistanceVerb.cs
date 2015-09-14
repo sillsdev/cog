@@ -11,7 +11,7 @@ using SIL.Machine.SequenceAlignment;
 namespace SIL.Cog.CommandLine
 {
 	[Verb("distance", HelpText = "Distance between words")]
-	public class DistanceVerb : CommonOptions
+	public class DistanceVerb : VerbBase
 	{
 		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)", MetaName = "method")]
 		public string Method { get; set; }

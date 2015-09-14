@@ -9,7 +9,7 @@ using SIL.Machine.Clusterers;
 namespace SIL.Cog.CommandLine
 {
 	[Verb("cluster", HelpText = "Cluster words")]
-	public class ClusterVerb : CommonOptions
+	public class ClusterVerb : VerbBase
 	{
 		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for a cluster (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Threshhold { get; set; }

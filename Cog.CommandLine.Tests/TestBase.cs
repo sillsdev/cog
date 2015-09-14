@@ -5,17 +5,17 @@ namespace SIL.Cog.CommandLine.Tests
 {
 	public class TestBase
 	{
-		public void CheckVerbOutput(string input, string expectedOutput, CommonOptions verbUnderTest)
+		public void CheckVerbOutput(string input, string expectedOutput, VerbBase verbUnderTest)
 		{
 			CheckVerbOutput(input, expectedOutput, verbUnderTest, true);
 		}
 
-		public void CheckVerbOutput(string input, string expectedOutput, CommonOptions verbUnderTest, bool stripNewlines)
+		public void CheckVerbOutput(string input, string expectedOutput, VerbBase verbUnderTest, bool stripNewlines)
 		{
 			CheckVerbOutput(input, expectedOutput, null, verbUnderTest, stripNewlines);
 		}
 
-		public void CheckVerbOutput(string input, string expectedOutput, string expectedErrors, CommonOptions verbUnderTest, bool stripNewlines)
+		public void CheckVerbOutput(string input, string expectedOutput, string expectedErrors, VerbBase verbUnderTest, bool stripNewlines)
 		{
 			var inputStream = new StringReader(input);
 			var outputStream = new StringWriter();

@@ -10,7 +10,7 @@ using SIL.Machine.Annotations;
 
 namespace SIL.Cog.CommandLine
 {
-	public class CommonOptions // Non-abstract so we can unit test it
+	public class VerbBase // Non-abstract so we can unit test it
 	{
 		[Option('i', "input", Default = "-", HelpText = "Input filename (\"-\" for stdin)")]
 		public string InputFilename { get; set; }

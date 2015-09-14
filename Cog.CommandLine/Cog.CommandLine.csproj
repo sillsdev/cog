@@ -97,7 +97,7 @@
     </Compile>
     <Compile Include="ClusterVerb.cs" />
     <Compile Include="CommandLineHelpers.cs" />
-    <Compile Include="CommonOptions.cs" />
+    <Compile Include="VerbBase.cs" />
     <Compile Include="DistanceVerb.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="XdgDirectories.cs" />

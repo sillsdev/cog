@@ -13,7 +13,7 @@ using SIL.Machine.Annotations;
 namespace SIL.Cog.CommandLine
 {
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
-	public class SyllabifyVerb : CommonOptions
+	public class SyllabifyVerb : VerbBase
 	{
 		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{

@@ -8,7 +8,7 @@ using System.Text;
 namespace SIL.Cog.CommandLine
 {
 	[Verb("make-pairs", HelpText = "Turn a list of words into unique word pairs")]
-	public class MakePairsVerb : CommonOptions
+	public class MakePairsVerb : VerbBase
 	{
 		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{

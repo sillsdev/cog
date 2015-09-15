@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using CommandLine;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
-using SIL.Cog.Domain.Config;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.CommandLine
 {

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.Cog.CommandLine;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
 using SIL.Machine.Annotations;

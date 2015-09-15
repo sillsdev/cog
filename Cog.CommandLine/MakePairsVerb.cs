@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using CommandLine;
-using System.Linq;
-using System.Text;
 
 namespace SIL.Cog.CommandLine
 {

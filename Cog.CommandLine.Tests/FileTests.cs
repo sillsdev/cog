@@ -19,7 +19,7 @@ namespace SIL.Cog.CommandLine.Tests
 		{
 			var spanFactory = new ShapeSpanFactory();
 			var segmentPool = new SegmentPool();
-			return CommandLineHelpers.GetProjectFromResource(spanFactory, segmentPool);
+			return VerbBase.GetProjectFromResource(spanFactory, segmentPool);
 		}
 
 		public CogProject GetTestProject()

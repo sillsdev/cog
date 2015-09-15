@@ -4,8 +4,10 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using CommandLine;
 using SIL.Cog.Domain;
+using SIL.Cog.Domain.Config;
 using SIL.Machine.Annotations;
 
 namespace SIL.Cog.CommandLine
@@ -39,7 +41,7 @@ namespace SIL.Cog.CommandLine
 			{
 				return attrib.Name;
 			}
-			return string.Empty;
+			return String.Empty;
 		}
 
 		protected IEnumerable<string> PossibleConfigFilenames
@@ -82,13 +84,13 @@ namespace SIL.Cog.CommandLine
 			_variety = new Variety("variety1");
 			_meaning = new Meaning("gloss1", "cat1");
 			if (ConfigData == null && ConfigFilename == null)
-				_project = CommandLineHelpers.GetProjectFromResource(_spanFactory, _segmentPool);
+				_project = GetProjectFromResource(_spanFactory, _segmentPool);
 			else if (ConfigData != null)
-				_project = CommandLineHelpers.GetProjectFromXmlString(_spanFactory, _segmentPool, ConfigData);
+				_project = GetProjectFromXmlString(_spanFactory, _segmentPool, ConfigData);
 			else if (ConfigFilename != null)
-				_project = CommandLineHelpers.GetProjectFromFilename(_spanFactory, _segmentPool, ConfigFilename);
+				_project = GetProjectFromFilename(_spanFactory, _segmentPool, ConfigFilename);
 			else // Should never get here given checks above, but let's be safe and write the check anyway
-				_project = CommandLineHelpers.GetProjectFromResource(_spanFactory, _segmentPool);
+				_project = GetProjectFromResource(_spanFactory, _segmentPool);
 			_project.Meanings.Add(_meaning);
 			_project.Varieties.Add(_variety);
 		}
@@ -129,15 +131,15 @@ namespace SIL.Cog.CommandLine
 				using (StreamWriter output = OpenOutput())
 					return DoWorkWithErrorChecking(input, output, errorWriter);
 			}
-			catch (System.IO.IOException exception)
+			catch (IOException exception)
 			{
 				// On Mono, piping into a closed process throws an IOException with "Write fault on path (something)"
 
 				// Try to get the message in English, if we can (some exceptions are only localized when the .Message property is accessed)
-				CultureInfo originalCultureInfo = System.Threading.Thread.CurrentThread.CurrentUICulture;
-				System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+				CultureInfo originalCultureInfo = Thread.CurrentThread.CurrentUICulture;
+				Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 				string msg = exception.Message;
-				System.Threading.Thread.CurrentThread.CurrentUICulture = originalCultureInfo;
+				Thread.CurrentThread.CurrentUICulture = originalCultureInfo;
 
 				if (!msg.StartsWith("Write fault on path"))
 					throw;
@@ -152,7 +154,7 @@ namespace SIL.Cog.CommandLine
 			if (stemStartIdx != -1 && stemEndIdx < stemStartIdx)
 			{
 				// Only way this can happen is if there was only a single "|" in the word
-				throw new FormatException(string.Format("Words should have either 0 or 2 pipe characters representing word stems. Offending word: {0}", wordText));
+				throw new FormatException(String.Format("Words should have either 0 or 2 pipe characters representing word stems. Offending word: {0}", wordText));
 			}
 			var word = (stemStartIdx == -1) ?
 				new Word(wordText, meaning) :
@@ -210,5 +212,28 @@ namespace SIL.Cog.CommandLine
 		}
 
 		#endregion
+
+		public static CogProject GetProjectFromResource(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
+		{
+			Stream stream = Assembly.GetAssembly(typeof(CommandLineHelpers)).GetManifestResourceStream("SIL.Cog.CommandLine.NewProject.cogx");
+			return ConfigManager.Load(spanFactory, segmentPool, stream);
+		}
+
+		public static CogProject GetProjectFromFilename(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string projectFilename)
+		{
+			if (projectFilename == null)
+			{
+				return GetProjectFromResource(spanFactory, segmentPool);
+			}
+			else
+			{
+				return ConfigManager.Load(spanFactory, segmentPool, projectFilename);
+			}
+		}
+
+		public static CogProject GetProjectFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
+		{
+			return ConfigManager.LoadFromXmlString(spanFactory, segmentPool, xmlString);
+		}
 	}
 }

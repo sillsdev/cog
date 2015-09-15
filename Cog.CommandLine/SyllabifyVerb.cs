@@ -8,7 +8,7 @@ namespace SIL.Cog.CommandLine
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
 	public class SyllabifyVerb : VerbBase
 	{
-		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();

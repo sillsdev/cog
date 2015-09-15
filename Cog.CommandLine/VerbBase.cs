@@ -156,7 +156,7 @@ namespace SIL.Cog.CommandLine
 			return retcode;
 		}
 
-		public virtual ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected virtual ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			return ReturnCodes.NotImplemented;
 		}

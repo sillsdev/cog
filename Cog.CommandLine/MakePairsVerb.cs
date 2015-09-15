@@ -8,7 +8,7 @@ namespace SIL.Cog.CommandLine
 	[Verb("make-pairs", HelpText = "Turn a list of words into unique word pairs")]
 	public class MakePairsVerb : VerbBase
 	{
-		public override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			var words = new List<string>();

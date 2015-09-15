@@ -13,9 +13,6 @@ namespace SIL.Cog.CommandLine
 	[Verb("distance", HelpText = "Distance between words")]
 	public class DistanceVerb : VerbBase
 	{
-		[Value(0, Default = "Aline", HelpText = "Process name (case-insensitive: e.g., Aline or aline)", MetaName = "method")]
-		public string Method { get; set; }
-
 		[Option('r', "raw-scores", Default = false, HelpText = "Produce raw similarity scores (integers from 0 to infinity, where higher means more similar)")]
 		public bool RawScores { get; set; }
 
@@ -66,19 +63,7 @@ namespace SIL.Cog.CommandLine
 
 			SetUpProject();
 
-			WordAlignerBase wordAligner;
-			switch (Method.ToLower())
-			{
-				case "aline":
-					wordAligner = (Aline)Project.WordAligners["primary"];
-					break;
-
-				default:
-					Warnings.Add("Unknown word aligner \"{0}\". Defaulting to Aline.", Method);
-					wordAligner = (Aline)Project.WordAligners["primary"];
-					break;
-			}
-
+			WordAlignerBase wordAligner = (Aline)Project.WordAligners["primary"];
 			foreach (string line in ReadLines(inputReader))
 			{
 				string[] wordTexts = line.Split(' ');

@@ -28,9 +28,9 @@ namespace SIL.Cog.CommandLine.Tests
 				"ˈɛdɪt ˈɛdɪtəbl̩ 11000\n|ɛ d ɪ t - - -|\n|ɛ d ɪ t ə b l̩|\n\n")]
 			string expectedOutput)
 		{
-			var distancer = new DistanceVerb { Method = "Aline", RawScores = true, NormalizedScores = false, Verbose = true };
+			var distancer = new DistanceVerb { RawScores = true, NormalizedScores = false, Verbose = true };
 			CheckVerbOutput(input, expectedOutput, distancer, false);
-			distancer = new DistanceVerb { Method = "Aline", RawScores = true, NormalizedScores = false, Verbose = false };
+			distancer = new DistanceVerb { RawScores = true, NormalizedScores = false, Verbose = false };
 			CheckVerbOutput(input, expectedOutput.Split('\n')[0], distancer, true);
 		}
 
@@ -57,9 +57,9 @@ namespace SIL.Cog.CommandLine.Tests
 				"ˈɛdɪt ˈɛdɪtəbl̩ 0.448979591836735\n|ɛ d ɪ t - - -|\n|ɛ d ɪ t ə b l̩|\n\n")]
 			string expectedOutput)
 		{
-			var distancer = new DistanceVerb { Method = "Aline", RawScores = false, NormalizedScores = true, Verbose = true };
+			var distancer = new DistanceVerb { RawScores = false, NormalizedScores = true, Verbose = true };
 			CheckVerbOutput(input, expectedOutput, distancer, false);
-			distancer = new DistanceVerb { Method = "Aline", RawScores = false, NormalizedScores = true, Verbose = false };
+			distancer = new DistanceVerb { RawScores = false, NormalizedScores = true, Verbose = false };
 			CheckVerbOutput(input, expectedOutput.Split('\n')[0], distancer, true);
 		}
 

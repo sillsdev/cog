@@ -26,14 +26,57 @@ namespace SIL.Cog.CommandLine
 		[Option("config-data", HelpText = "Configuration to use, as a single long string (if passed, overrides --config-file)")]
 		public string ConfigData { get; set; }
 
-		protected SpanFactory<ShapeNode> _spanFactory;
-		protected SegmentPool _segmentPool;
-		public CogProject _project; // Public because unit tests need access to it. TODO: Turn this (and the other protected members) into proper properties.
-		protected Variety _variety;
-		protected Meaning _meaning;
+		private SegmentPool _segmentPool;
+		private SpanFactory<ShapeNode> _spanFactory;
+		private CogProject _project;
+		private Meaning _meaning;
+		private Variety _variety;
 
-		protected Errors errors = new Errors();
-		protected Errors warnings = new Errors();
+		public SegmentPool SegmentPool
+		{
+			get { return _segmentPool; }
+			set { _segmentPool = value; }
+		}
+
+		public SpanFactory<ShapeNode> SpanFactory
+		{
+			get { return _spanFactory; }
+			set { _spanFactory = value; }
+		}
+
+		public CogProject Project
+		{
+			get { return _project; }
+			set { _project = value; }
+		}
+
+		public Variety Variety
+		{
+			get { return _variety; }
+			set { _variety = value; }
+		}
+
+		public Meaning Meaning
+		{
+			get { return _meaning; }
+			set { _meaning = value; }
+		}
+
+		private Errors _errors = new Errors();
+		private Errors _warnings = new Errors();
+
+		public Errors Errors
+		{
+			get { return _errors; }
+			set { _errors = value; }
+		}
+
+		public Errors Warnings
+		{
+			get { return _warnings; }
+			set { _warnings = value; }
+		}
+
 
 		public virtual string GetVerbName()
 		{
@@ -71,7 +114,7 @@ namespace SIL.Cog.CommandLine
 		{
 			if (ConfigData != null && ConfigFilename != null)
 			{
-				warnings.Add("WARNING: options --config-data and --config-file were both specified. Ignoring --config-file.");
+				Warnings.Add("WARNING: options --config-data and --config-file were both specified. Ignoring --config-file.");
 				ConfigFilename = null;
 			}
 			if (ConfigData == null && ConfigFilename == null)
@@ -79,35 +122,35 @@ namespace SIL.Cog.CommandLine
 				ConfigFilename = FindConfigFilename();
 				// If ConfigFilename is STILL null at this point, it's because no config files were found at all, so we'll use the default one from the resource.
 			}
-			_spanFactory = new ShapeSpanFactory();
-			_segmentPool = new SegmentPool();
-			_variety = new Variety("variety1");
-			_meaning = new Meaning("gloss1", "cat1");
+			SpanFactory = new ShapeSpanFactory();
+			SegmentPool = new SegmentPool();
+			Variety = new Variety("variety1");
+			Meaning = new Meaning("gloss1", "cat1");
 			if (ConfigData == null && ConfigFilename == null)
-				_project = GetProjectFromResource(_spanFactory, _segmentPool);
+				Project = GetProjectFromResource(SpanFactory, SegmentPool);
 			else if (ConfigData != null)
-				_project = GetProjectFromXmlString(_spanFactory, _segmentPool, ConfigData);
+				Project = GetProjectFromXmlString(SpanFactory, SegmentPool, ConfigData);
 			else if (ConfigFilename != null)
-				_project = GetProjectFromFilename(_spanFactory, _segmentPool, ConfigFilename);
+				Project = GetProjectFromFilename(SpanFactory, SegmentPool, ConfigFilename);
 			else // Should never get here given checks above, but let's be safe and write the check anyway
-				_project = GetProjectFromResource(_spanFactory, _segmentPool);
-			_project.Meanings.Add(_meaning);
-			_project.Varieties.Add(_variety);
+				Project = GetProjectFromResource(SpanFactory, SegmentPool);
+			Project.Meanings.Add(Meaning);
+			Project.Varieties.Add(Variety);
 		}
 
 		public ReturnCodes DoWorkWithErrorChecking(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = DoWork(inputReader, outputWriter, errorWriter);
-			if (!warnings.Empty)
+			if (!Warnings.Empty)
 			{
-				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(warnings.Count, "warning"));
-				warnings.Write(errorWriter);
+				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(Warnings.Count, "warning"));
+				Warnings.Write(errorWriter);
 				// Do not change retcode for warnings
 			}
-			if (!errors.Empty)
+			if (!Errors.Empty)
 			{
-				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(errors.Count, "error"));
-				errors.Write(errorWriter);
+				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(Errors.Count, "error"));
+				Errors.Write(errorWriter);
 				retcode = (retcode == ReturnCodes.Okay) ? ReturnCodes.InputError : retcode;
 			}
 			return retcode;

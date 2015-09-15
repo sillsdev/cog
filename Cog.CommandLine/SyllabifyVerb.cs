@@ -12,7 +12,7 @@ namespace SIL.Cog.CommandLine
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			SetUpProject();
-			IProcessor<Variety> syllabifier = _project.VarietyProcessors["syllabifier"];
+			IProcessor<Variety> syllabifier = Project.VarietyProcessors["syllabifier"];
 
 			foreach (string line in ReadLines(inputReader))
 			{
@@ -20,17 +20,17 @@ namespace SIL.Cog.CommandLine
 				Word word;
 				try
 				{
-					word = ParseWord(wordText, _meaning);
-					_project.Segmenter.Segment(word);
-					_variety.Words.Add(word);
+					word = ParseWord(wordText, Meaning);
+					Project.Segmenter.Segment(word);
+					Variety.Words.Add(word);
 				}
 				catch (FormatException e)
 				{
-					errors.Add(line, e.Message);
+					Errors.Add(line, e.Message);
 				}
 			}
-			syllabifier.Process(_variety);
-			foreach (Word word in _variety.Words)
+			syllabifier.Process(Variety);
+			foreach (Word word in Variety.Words)
 			{
 //				output.WriteLine("{0} {1} {2}", word.StemIndex, word.StemLength, word.ToString().Replace(" ", ""));
 				outputWriter.WriteLine(word.ToString().Replace(" ", ""));

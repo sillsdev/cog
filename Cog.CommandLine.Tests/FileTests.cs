@@ -70,8 +70,8 @@ namespace SIL.Cog.CommandLine.Tests
 				var options = new VerbBase();
 				options.ConfigFilename = filename;
 				options.SetUpProject();
-				CheckHasTestFeature(options._project);
-				Assert.That(options._project.FeatureSystem.Count, Is.EqualTo(18));
+				CheckHasTestFeature(options.Project);
+				Assert.That(options.Project.FeatureSystem.Count, Is.EqualTo(18));
 			}
 			finally
 			{
@@ -91,8 +91,8 @@ namespace SIL.Cog.CommandLine.Tests
 				var options = new VerbBase();
 				options.ConfigData = xmlString;
 				options.SetUpProject();
-				CheckHasTestFeature(options._project);
-				Assert.That(options._project.FeatureSystem.Count, Is.EqualTo(18));
+				CheckHasTestFeature(options.Project);
+				Assert.That(options.Project.FeatureSystem.Count, Is.EqualTo(18));
 			}
 			finally
 			{
@@ -105,8 +105,8 @@ namespace SIL.Cog.CommandLine.Tests
 		{
 			var options = new VerbBase();
 			options.SetUpProject();
-			CheckDoesNotHaveTestFeature(options._project);
-			Assert.That(options._project.FeatureSystem.Count, Is.EqualTo(17));
+			CheckDoesNotHaveTestFeature(options.Project);
+			Assert.That(options.Project.FeatureSystem.Count, Is.EqualTo(17));
 		}
 	}
 }

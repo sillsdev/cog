@@ -39,7 +39,7 @@ namespace SIL.Cog.CommandLine
 			}
 			catch (FormatException e)
 			{
-				errors.Add(e.Message);
+				Errors.Add(e.Message);
 				return null;
 			}
 			project.Segmenter.Segment(word);
@@ -53,13 +53,13 @@ namespace SIL.Cog.CommandLine
 
 			if (!RawScores && !NormalizedScores)
 			{
-				warnings.Add("Neither raw scores nor normalized scores were selected. Defaulting to normalized.");
+				Warnings.Add("Neither raw scores nor normalized scores were selected. Defaulting to normalized.");
 				RawScores = false;
 				NormalizedScores = true;
 			}
 			if (RawScores && NormalizedScores)
 			{
-				warnings.Add("Please specify either raw or normalized scores, but not both. Defaulting to normalized.");
+				Warnings.Add("Please specify either raw or normalized scores, but not both. Defaulting to normalized.");
 				RawScores = false;
 				NormalizedScores = true;
 			}
@@ -70,12 +70,12 @@ namespace SIL.Cog.CommandLine
 			switch (Method.ToLower())
 			{
 				case "aline":
-					wordAligner = (Aline)_project.WordAligners["primary"];
+					wordAligner = (Aline)Project.WordAligners["primary"];
 					break;
 
 				default:
-					warnings.Add("Unknown word aligner \"{0}\". Defaulting to Aline.", Method);
-					wordAligner = (Aline)_project.WordAligners["primary"];
+					Warnings.Add("Unknown word aligner \"{0}\". Defaulting to Aline.", Method);
+					wordAligner = (Aline)Project.WordAligners["primary"];
 					break;
 			}
 
@@ -84,13 +84,13 @@ namespace SIL.Cog.CommandLine
 				string[] wordTexts = line.Split(' ');
 				if (wordTexts.Length != 2)
 				{
-					errors.Add(line, "Each line should have two space-separated words in it.");
+					Errors.Add(line, "Each line should have two space-separated words in it.");
 					continue;
 				}
-				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, _meaning, _project)).ToArray();
+				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, Meaning, Project)).ToArray();
 				if (words.Length != 2 || words.Any(w => w == null))
 				{
-					errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
+					Errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
 					continue;
 				}
 				var result = wordAligner.Compute(words[0], words[1]);

@@ -27,13 +27,13 @@ namespace SIL.Cog.CommandLine
 				string[] words = line.Split(' '); // Format: word1 word2 score (where score is a floating-point number with 1.0 = 100% similarity)
 				if (words.Length < 3)
 				{
-					errors.Add(line, "Each line should contain two words and one score, separated by spaces.");
+					Errors.Add(line, "Each line should contain two words and one score, separated by spaces.");
 					continue;
 				}
 				double score = 0;
 				if (!Double.TryParse(words[2], NumberStyles.Float, CultureInfo.InvariantCulture, out score))
 				{
-					errors.Add(line, "Could not parse score \"{0}\". Scores should be a number between 0 and 1.", words[2]);
+					Errors.Add(line, "Could not parse score \"{0}\". Scores should be a number between 0 and 1.", words[2]);
 					continue;
 				}
 					

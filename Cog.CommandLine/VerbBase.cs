@@ -100,13 +100,13 @@ namespace SIL.Cog.CommandLine
 			ReturnCodes retcode = DoWork(inputReader, outputWriter, errorWriter);
 			if (!warnings.Empty)
 			{
-				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CommandLineHelpers.CountedNoun(warnings.Count, "warning"));
+				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(warnings.Count, "warning"));
 				warnings.Write(errorWriter);
 				// Do not change retcode for warnings
 			}
 			if (!errors.Empty)
 			{
-				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CommandLineHelpers.CountedNoun(errors.Count, "error"));
+				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(errors.Count, "error"));
 				errors.Write(errorWriter);
 				retcode = (retcode == ReturnCodes.Okay) ? ReturnCodes.InputError : retcode;
 			}
@@ -234,6 +234,16 @@ namespace SIL.Cog.CommandLine
 		public static CogProject GetProjectFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
 		{
 			return ConfigManager.LoadFromXmlString(spanFactory, segmentPool, xmlString);
+		}
+
+		public static string CountedNoun(int count, string singular)
+		{
+			return CountedNoun(count, singular, singular + "s");
+		}
+
+		public static string CountedNoun(int count, string singular, string plural)
+		{
+			return String.Format("{0} {1}", count, count == 1 ? singular : plural);
 		}
 	}
 }

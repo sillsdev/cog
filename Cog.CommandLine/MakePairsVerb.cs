@@ -17,7 +17,7 @@ namespace SIL.Cog.CommandLine
 				words.Add(line);
 			}
 
-			foreach (var wordPair in AllPossiblePairs(words))
+			foreach (Tuple<string, string> wordPair in AllPossiblePairs(words))
 			{
 				outputWriter.WriteLine("{0} {1}", wordPair.Item1, wordPair.Item2);
 			}

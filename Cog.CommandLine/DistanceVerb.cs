@@ -93,7 +93,7 @@ namespace SIL.Cog.CommandLine
 					Errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
 					continue;
 				}
-				var result = wordAligner.Compute(words[0], words[1]);
+				IWordAlignerResult result = wordAligner.Compute(words[0], words[1]);
 				Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
 				outputWriter.WriteLine("{0} {1} {2}", words[0].StrRep, words[1].StrRep, RawScores ? alignment.RawScore : alignment.NormalizedScore);
 				if (Verbose)

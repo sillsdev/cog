@@ -22,7 +22,7 @@ namespace SIL.Cog.CommandLine
 			var distances = new Dictionary<UnorderedTuple<string, string>, double>();
 			var allWords = new HashSet<string>();
 
-			foreach (string line in inputReader.ReadLines())
+			foreach (string line in ReadLines(inputReader))
 			{
 				string[] words = line.Split(' '); // Format: word1 word2 score (where score is a floating-point number with 1.0 = 100% similarity)
 				if (words.Length < 3)

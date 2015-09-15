@@ -245,5 +245,15 @@ namespace SIL.Cog.CommandLine
 		{
 			return String.Format("{0} {1}", count, count == 1 ? singular : plural);
 		}
+
+		public static IEnumerable<string> ReadLines(TextReader input)
+		{
+			string line;
+			while ((line = input.ReadLine()) != null)
+			{
+				if (!String.IsNullOrWhiteSpace(line)) // Silently skip blank lines
+					yield return line;
+			}
+		}
 	}
 }

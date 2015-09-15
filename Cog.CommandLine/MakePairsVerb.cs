@@ -14,7 +14,7 @@ namespace SIL.Cog.CommandLine
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;
 			var words = new List<string>();
-			foreach (string line in inputReader.ReadLines())
+			foreach (string line in ReadLines(inputReader))
 			{
 				words.Add(line);
 			}

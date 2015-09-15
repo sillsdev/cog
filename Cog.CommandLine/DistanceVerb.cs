@@ -79,7 +79,7 @@ namespace SIL.Cog.CommandLine
 					break;
 			}
 
-			foreach (string line in inputReader.ReadLines())
+			foreach (string line in ReadLines(inputReader))
 			{
 				string[] wordTexts = line.Split(' ');
 				if (wordTexts.Length != 2)

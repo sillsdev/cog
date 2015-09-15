@@ -21,7 +21,7 @@ namespace SIL.Cog.CommandLine
 			SetUpProject();
 			IProcessor<Variety> syllabifier = _project.VarietyProcessors["syllabifier"];
 
-			foreach (string line in inputReader.ReadLines())
+			foreach (string line in ReadLines(inputReader))
 			{
 				string wordText = line; // In the future we might need to split the line into multiple words
 				Word word;

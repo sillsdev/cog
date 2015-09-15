@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SIL.Cog.CommandLine
 {
-	public static class CommandLineHelpers
+	public static class CommandLineExtensions
 	{
 		public static IEnumerable<string> ReadLines(this TextReader input)
 		{

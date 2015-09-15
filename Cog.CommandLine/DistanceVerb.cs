@@ -29,10 +29,10 @@ namespace SIL.Cog.CommandLine
 
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
 		{
-			// We expect to see a lot of duplicates in our input text; save time by memoizing
-			if (_parsedWords.ContainsKey(wordText))
-				return _parsedWords[wordText];
 			Word word;
+			// We expect to see a lot of duplicates in our input text; save time by memoizing
+			if (_parsedWords.TryGetValue(wordText, out word))
+				return word;
 			try
 			{
 				word = ParseWord(wordText, meaning);

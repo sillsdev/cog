@@ -3,7 +3,7 @@
 namespace SIL.Cog.CommandLine.Tests
 {
 	[TestFixture]
-    public class MakePairsTests : TestBase
+    public class PairsTests : TestBase
 	{
 		[Test, Sequential]
 		public void MakePairsProducesAllCombinations(
@@ -12,8 +12,8 @@ namespace SIL.Cog.CommandLine.Tests
 			[Values("",    "one two\n",  "one two\n",  "1 2\n1 3\n2 3\n", "1 2\n1 3\n1 4\n2 3\n2 4\n3 4\n")]
 			string expectedOutput)
 		{
-			var makePairs = new MakePairsVerb();
-			CheckVerbOutput(input, expectedOutput, makePairs, stripNewlines:false);
+			var pairs = new PairsVerb();
+			CheckVerbOutput(input, expectedOutput, pairs, stripNewlines:false);
 		}
 	}
 }

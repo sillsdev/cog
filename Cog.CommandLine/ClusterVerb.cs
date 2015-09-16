@@ -15,8 +15,11 @@ namespace SIL.Cog.CommandLine
 		[Value(0, Default = "upgma", HelpText = "Process name (case-insensitive); valid values are \"upgma\", \"dbscan\", and \"lsdbc\"", MetaName = "method")]
 		public string Method { get; set; }
 
-		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for UPGMA or DBSCAN clustering (between 0.0 and 1.0, higher for easier clustering)")]
+		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for UPGMA clustering (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Threshhold { get; set; }
+
+		[Option('e', "epsilon", Default = 0.2, HelpText = "Epsilon value for DBSCAN clustering (between 0.0 and 1.0, higher for easier clustering)")]
+		public double Epsilon { get; set; }
 
 		[Option('m', "min-points", Default = 2, HelpText = "Minimum # of points to form a cluster in DBSCAN clustering")]
 		public int MinPoints { get; set; }
@@ -83,7 +86,7 @@ namespace SIL.Cog.CommandLine
 				case "dbscan":
 					// public DbscanClusterer(Func<T, IEnumerable<T>> getNeighbors, double minPoints)
 					KeepScoreForDbscanClusterer();
-					clusterer = new DbscanClusterer<string>(word => distanceGraph[word].TakeWhile(scoreWordTuple => scoreWordTuple.Item1 <= Threshhold).Select(scoreWordTuple => scoreWordTuple.Item2), MinPoints);
+					clusterer = new DbscanClusterer<string>(word => distanceGraph[word].TakeWhile(scoreWordTuple => scoreWordTuple.Item1 <= Epsilon).Select(scoreWordTuple => scoreWordTuple.Item2), MinPoints);
 					break;
 
 				case "lsdbc":

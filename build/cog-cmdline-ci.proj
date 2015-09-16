@@ -141,7 +141,7 @@ File.WriteAllText(Path, content);
 		
 		<!-- Use sed rather than FileUpdate because sed won't fail if search text not found -->
 		<Exec Command="sed -e &quot;s/DEBIAN_REVISION/$(NewDebRevision)/&quot; $(RootDir)/debian/control &gt; $(DebDEBIAN)/control" />
-		<Copy SourceFiles="$(SrcDir)/$(NewProjectFname)" DestinationFolder="$(DebData)" />
+		<Copy SourceFiles="$(SrcDir)/$(NewProjectFname)" DestinationFiles="$(DebData)/$(ProjectName).conf" />
 		<Copy SourceFiles="$(RootDir)/debian/copyright" DestinationFolder="$(DebDocs)" />
 		<Copy SourceFiles="$(RootDir)/debian/changelog" DestinationFiles="$(DebDocs)/changelog.Debian" />
 		<Exec Command="gzip -f -9 &quot;$(DebDocs)/changelog.Debian&quot;" />

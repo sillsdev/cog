@@ -5,7 +5,7 @@ namespace SIL.Cog.CommandLine.Tests
 	class ClusterTests : TestBase
 	{
 		[Test, Sequential]
-		public void CheckDistance(
+		public void CheckUpgmaClusterer(
 			[Values(
 				"a b 0.5\na c 0.4\na d 0.999\nb c 0.3\nb d 0.5\nc d 0.4\n",
 				"a b 0.5\na c 0.4\na d 0.801\nb c 0.3\nb d 0.5\nc d 0.4\n", // Pair of words, a and d, JUST above the threshhold
@@ -19,7 +19,33 @@ namespace SIL.Cog.CommandLine.Tests
 				)]
 			string expectedOutput)
 		{
-			var clusterer = new ClusterVerb() { Threshhold = 0.2 };
+			var clusterer = new ClusterVerb() { Method = "upgma", Threshhold = 0.2 };
+			CheckVerbOutput(input, expectedOutput, clusterer, false);
+		}
+
+		[Test, Sequential]
+		public void CheckLsdbcClusterer(
+			[Values("a b 0.5\na c 0.4\na d 0.999\nb c 0.3\nb d 0.5\nc d 0.4\n")]
+			string input,
+			[Values("1 a d b c\n")]
+			string expectedOutput)
+		{
+			var clusterer = new ClusterVerb() { Method = "lsdbc", Alpha = 4, K = 5 };
+			CheckVerbOutput(input, expectedOutput, clusterer, false);
+		}
+
+		[Test, Sequential]
+		public void CheckDbscanClusterer(
+			[Values(
+				"a b 0.5\na c 0.4\na d 0.999\nb c 0.3\nb d 0.5\nc d 0.4\n"
+				)]
+			string input,
+			[Values(
+				"1 a b c d\n"
+				)]
+			string expectedOutput)
+		{
+			var clusterer = new ClusterVerb() { Method = "dbscan", MinPoints = 3 };
 			CheckVerbOutput(input, expectedOutput, clusterer, false);
 		}
 
@@ -42,7 +68,7 @@ namespace SIL.Cog.CommandLine.Tests
 				)]
 			string expectedErrors)
 		{
-			var clusterer = new ClusterVerb() { Threshhold = 0.2 };
+			var clusterer = new ClusterVerb() { Method = "upgma", Threshhold = 0.2 };
 			CheckVerbOutput(input, "", expectedErrors, clusterer, false);
 		}
 	}

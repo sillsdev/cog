@@ -140,7 +140,7 @@ File.WriteAllText(Path, content);
 		<Exec Command="chmod -x $(DebUsrLib)/*.dll" />
 		
 		<!-- Use sed rather than FileUpdate because sed won't fail if search text not found -->
-		<Exec Command="sed -e &quot;s/DEBIAN_REVISION/$(DebianRevisionFromChangelog)/&quot; $(RootDir)/debian/control &gt; $(DebDEBIAN)/control" />
+		<Exec Command="sed -e &quot;s/DEBIAN_REVISION/$(NewDebRevision)/&quot; $(RootDir)/debian/control &gt; $(DebDEBIAN)/control" />
 		<Copy SourceFiles="$(SrcDir)/$(NewProjectFname)" DestinationFolder="$(DebData)" />
 		<Copy SourceFiles="$(RootDir)/debian/copyright" DestinationFolder="$(DebDocs)" />
 		<Copy SourceFiles="$(RootDir)/debian/changelog" DestinationFiles="$(DebDocs)/changelog.Debian" />

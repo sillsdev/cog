@@ -10,7 +10,7 @@ namespace SIL.Cog.CommandLine
 		private static readonly string DefaultDataHome = ".local/share";
 		private static readonly string[] DefaultConfigDirs = { "/etc/xdg" };
 		private static readonly string[] DefaultDataDirs = { "/usr/local/share", "/usr/share" };
-		private static readonly string AssemblyName = typeof(Program).Assembly.GetName().Name; // Should be "cog-cmdline". TODO: Check that this is really cog-cmdline (write unit test)
+		private static readonly string AssemblyName = typeof(Program).Assembly.GetName().Name; // Currently "cog-cmdline"
 
 		public static string Home
 		{

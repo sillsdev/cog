@@ -53,7 +53,7 @@ namespace SIL.Cog.CommandLine.Tests
 				)]
 			string expectedOutput)
 		{
-			var clusterer = new ClusterVerb() { Method = "dbscan", Epsilon = 0.2, MinPoints = 3 };
+			var clusterer = new ClusterVerb() { Method = "dbscan", Epsilon = 0.2, MinWords = 3 };
 			CheckVerbOutput(input, expectedOutput, clusterer, false);
 		}
 
@@ -110,7 +110,7 @@ namespace SIL.Cog.CommandLine.Tests
 				)]
 			string expectedOutput)
 		{
-			var clusterer = new ClusterVerb() { Method = "dbscan", Epsilon = epsilon, MinPoints = minPoints };
+			var clusterer = new ClusterVerb() { Method = "dbscan", Epsilon = epsilon, MinWords = minPoints };
 			CheckVerbOutput(InputWithSimilarityScores, expectedOutput, clusterer, false);
 		}
 

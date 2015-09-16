@@ -12,7 +12,7 @@ namespace SIL.Cog.CommandLine
 	[Verb("cluster", HelpText = "Cluster words")]
 	public class ClusterVerb : VerbBase
 	{
-		[Value(0, Default = "upgma", HelpText = "Process name (case-insensitive); valid values are \"upgma\", \"dbscan\", and \"lsdbc\"", MetaName = "method")]
+		[Option('m', "method", Default = "upgma", HelpText = "Process name (case-insensitive); valid values are \"upgma\", \"dbscan\", and \"lsdbc\"")]
 		public string Method { get; set; }
 
 		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for UPGMA clustering (between 0.0 and 1.0, higher for easier clustering)")]
@@ -21,10 +21,10 @@ namespace SIL.Cog.CommandLine
 		[Option('e', "epsilon", Default = 0.2, HelpText = "Epsilon value for DBSCAN clustering (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Epsilon { get; set; }
 
-		[Option('m', "min-points", Default = 2, HelpText = "Minimum # of points to form a cluster in DBSCAN clustering")]
-		public int MinPoints { get; set; }
+		[Option('M', "min-words", Default = 2, HelpText = "Minimum # of words to form a cluster in DBSCAN clustering")]
+		public int MinWords { get; set; }
 
-		[Option('a', "alpha", Default = 4, HelpText = "Alpha value for LSDBC clustering (weight factor for forming new clusters)")]
+		[Option('a', "alpha", Default = 0.2, HelpText = "Alpha value for LSDBC clustering (weight factor for forming new clusters)")]
 		public double Alpha { get; set; }
 
 		[Option('k', Default = 3, HelpText = "How many neighbors to consider in LSDBC clustering (value of K for the K-nearest-neighbors algorithm)")]
@@ -86,7 +86,7 @@ namespace SIL.Cog.CommandLine
 				case "dbscan":
 					// public DbscanClusterer(Func<T, IEnumerable<T>> getNeighbors, double minPoints)
 					KeepScoreForDbscanClusterer();
-					clusterer = new DbscanClusterer<string>(word => distanceGraph[word].TakeWhile(scoreWordTuple => scoreWordTuple.Item1 <= Epsilon).Select(scoreWordTuple => scoreWordTuple.Item2), MinPoints);
+					clusterer = new DbscanClusterer<string>(word => distanceGraph[word].TakeWhile(scoreWordTuple => scoreWordTuple.Item1 <= Epsilon).Select(scoreWordTuple => scoreWordTuple.Item2), MinWords);
 					break;
 
 				case "lsdbc":

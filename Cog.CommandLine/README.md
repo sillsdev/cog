@@ -182,9 +182,11 @@ in order to calculate the clustering.
    Write output to FNAME instead of stdin (to explicitly specify stdout, use `-` for FNAME)
  * `-c` CONFIG_FILE, `--config-file`=CONFIG_FILE:
    Configuration file to use instead of the default. By default, config files will be searched for in the following order:
-     + The file specified with `-c` or `--config-file`, if any
-     + `$HOME/.config/cog-cmdline/cog-cmdline.conf`
-     + `/usr/share/cog-cmdline/cog-cmdline.conf`
+
+     1. The file specified with `-c` or `--config-file`, if any
+     1. `$HOME/.config/cog-cmdline/cog-cmdline.conf`
+     1. `/usr/share/cog-cmdline/cog-cmdline.conf`
+
  * `--config-data`=STRING:
    Configuration data to use instead of a config file; takes precedence over `--config-file` if both are specified. The entire contents of Cog's config file (which is in XML format) will be expected as a single parameter; since this XML data will likely contain both double-quote and single-quote characters, properly quoting that parameter is left as an exercise for the user.
 
@@ -223,14 +225,14 @@ DBSCAN options:
 
  + `-e` NUM, `--epsilon`=NUM:
    Epsilon value for DBSCAN clustering. Words must be within distance "epsilon" of each other to be considered for a cluster. Should be a real number between 0.0 and 1.0, where higher means "easier clustering". A threshhold of 1 will produce a single cluster containing every word in the input, while a threshhold of 0 will produce as many clusters as there are input words, with each cluster containing a single word. Default is 0.2, as that seems to produce somewhat reasonable clustering results.
- + `-M` NUM, `--min-words`=NUM
+ + `-M` NUM, `--min-words`=NUM:
    Minimum number of "close" words to form the core of a cluster in DBSCAN clustering. If this value is higher, clusters will be harder to form, and more words will be left outside clusters (more "clusters" of just one word will appear in the output). A lower value will make clusters easier to form, and fewer words will tend to remain unclustered. Default is 2.
 
 LSDBC options:
 
  + `-a` NUM, `--alpha`=NUM:
    Alpha value for LSDBC clustering. Should be a real number between 0.0 and infinity, where higher means "easier clustering". A value of 0 will tend to produce more clusters with fewer words per cluster, while higher values tend towards very few clusters with many words in each cluster. Default is 0.2.
- + `-k` NUM
+ + `-k` NUM:
    How many neighbors of each word to consider while clustering. (The `K` value in LSDBC's "K nearest neighbors" algorithm). Should be an integer between 0 and infinity, but values of 0 or 1 tend to produce nothing but 1-word or 2-word clusters, so a value of 2 or more is recommended. Default is 3.
 
 UPGMA options:

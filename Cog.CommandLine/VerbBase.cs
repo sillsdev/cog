@@ -298,5 +298,16 @@ namespace SIL.Cog.CommandLine
 					yield return line;
 			}
 		}
+
+		protected IEnumerable<Tuple<string, string>> AllPossiblePairs(IEnumerable<string> words)
+		{
+			var queue = new Queue<string>(words);
+			while (queue.Count > 0) // This is O(1), because Queue<T> keeps track of its count
+			{
+				string first = queue.Dequeue();
+				foreach (string second in queue)
+					yield return new Tuple<string, string>(first, second);
+			}
+		}
 	}
 }

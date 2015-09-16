@@ -151,6 +151,7 @@ File.WriteAllText(Path, content);
 		<Delete Files="$(DebUsrBin)/$(ProjectName)" />
 		<WriteLinesToFile File="$(DebUsrBin)/$(ProjectName)" Lines="#!/bin/bash" />
 		<WriteLinesToFile File="$(DebUsrBin)/$(ProjectName)" Lines="exec /usr/bin/cli /usr/lib/$(ProjectName)/$(ProjectName).exe &quot;$@&quot;" />
+		<Exec Command="chmod +x $(DebUsrBin)/$(ProjectName)" />
 		
 		<ItemGroup>
 			<FilesToDelete Include="$(OutDir)/$(ProjectName)_*_$(DebianPackageArchitecture).deb" />

@@ -3,37 +3,35 @@
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
 		<OutDir>$(RootDir)/build/output</OutDir>
 		<Project>Cog.CommandLine</Project>
-		<BuildFile>$(Project)/$(Project).csproj</BuildFile>
+		<TestProject>$(Project).Tests</TestProject>
 		<Configuration>Debug</Configuration>
 		<Platform>AnyCPU</Platform>
 		<LifecycleStage>Stable</LifecycleStage>
 	</PropertyGroup>
+	<ItemGroup>
+		<BuildFiles Include="$(RootDir)/$(Project)/$(Project).csproj" />
+		<BuildFiles Include="$(RootDir)/$(TestProject)/$(TestProject).csproj" />
+	</ItemGroup>
 	
-	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-		<ParameterGroup>
-			<Path ParameterType="System.String" Required="true" />
-			<Token ParameterType="System.String" Required="true" />
-			<Replacement ParameterType="System.String" Required="true" />
-		</ParameterGroup>
-		<Task>
-			<Code Type="Fragment" Language="cs">
-<![CDATA[
-string content = File.ReadAllText(Path);
-content = content.Replace(Token, Replacement);
-File.WriteAllText(Path, content);
-]]>
-			</Code>
-		</Task>
-	</UsingTask>
 	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 	
 	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="FileUpdate" />
 	<Target Name="StampBuildNumber">
-		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex="DEV_BUILD" ReplacementText="$(BUILD_NUMBER)" />
+		<PropertyGroup>
+			<InformationalVersionNumber>$(GIT_VN_FULL)</InformationalVersionNumber>
+			<ShortVersionNumber>$(GIT_VN_TAG)</ShortVersionNumber>
+			<VersionNumber>$(GIT_VN_TAG).$(GIT_VN_COMMITS)</VersionNumber>
+			<DebVersionNumber>$(GIT_VN_TAG)-$(GIT_VN_COMMITS)</DebVersionNumber>
+		</PropertyGroup>
+		<!-- Awkward syntax in regexes below is because MSBuild autoconverts \ to /, which messes up \( and \) and so on. -->
+		<!-- Uncomment next line after AssemblyInformationalVersion has been added to GlobalAssemblyInfo.cs: -->
+		<!-- <FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyInformationalVersion[(]"[^"]+"[)]' ReplacementText='AssemblyInformationalVersion("$(InformationalVersionNumber)")' /> -->
+		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyFileVersion[(]"[^"]+"[)]' ReplacementText='AssemblyFileVersion("$(VersionNumber)")' />
+		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyVersion[(]"[^"]+"[)]' ReplacementText='AssemblyVersion("$(ShortVersionNumber)")' />
 	</Target>
 	
 	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber">
-		<MSBuild Projects="$(RootDir)/$(BuildFile)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+		<MSBuild Projects="@(BuildFiles)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 	
 	<Target Name="Test" DependsOnTargets="BuildAll">
@@ -68,54 +66,31 @@ File.WriteAllText(Path, content);
 		<CreateProperty Value="$(MajorVersionPart).$(MinorVersionPart).$(RevisionVersionPart)">
 		  <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
 		</CreateProperty>
-		<CreateProperty Value="$(ShortVersionNumber).$(BUILD_NUMBER)">
+		<CreateProperty Value="$(ShortVersionNumber).$(GIT_VN_COMMITS)">
 		  <Output TaskParameter="Value" PropertyName="VersionNumber" />
 		</CreateProperty>
 	</Target>
 	
-	<Target Name="StampVersionNumber" DependsOnTargets="VersionNumber">
-		<FileUpdate File="$(RootDir)/debian/control" Regex="UPSTREAM_VERSION" ReplacementText="$(ShortVersionNumber)" />
+	<Target Name="StampDebVersionNumber" DependsOnTargets="StampBuildNumber">
+		<FileUpdate File="$(RootDir)/debian/control" Regex="DEBIAN_VERSION_NUMBER" ReplacementText="$(DebVersionNumber)" />
 	</Target>
 	
 	<Target Name="MakeOutDir">
 		<MakeDir Directories="$(OutDir)" />
 	</Target>
 	
-	<Target Name="GetChangelogVersion" DependsOnTargets="MakeOutDir">
-		<CreateProperty Value="tmpfile-changelog-version.txt">
-			<Output TaskParameter="Value" PropertyName="TempFileName"></Output>
-		</CreateProperty>
-		<Exec Command="dpkg-parsechangelog | grep 'Version: ' | cut -d' ' -f2 &gt; $(OutDir)/$(TempFileName)" WorkingDirectory="$(RootDir)" />
-		<ReadLinesFromFile File="$(OutDir)/$(TempFileName)">
-			<Output TaskParameter="Lines" PropertyName="ChangelogVersion" />
-		</ReadLinesFromFile>
-		<Split Input="$(ChangelogVersion)" Delimiter="-" OutputSubString="0">
-			<Output TaskParameter="ReturnValue" PropertyName="UpstreamVersionFromChangelog" />
-		</Split>
-		<Split Input="$(ChangelogVersion)" Delimiter="-" OutputSubString="1">
-			<Output TaskParameter="ReturnValue" PropertyName="DebianRevisionFromChangelog" />
-		</Split>
-		<Delete Files="$(OutDir)/$(TempFileName)" />
-	</Target>
-	
-	<Target Name="MakeDeb" DependsOnTargets="StampVersionNumber;BuildAll;MakeOutDir;GetChangelogVersion">
+	<Target Name="MakeDeb" DependsOnTargets="MakeOutDir;StampDebVersionNumber;BuildAll">
 		<PropertyGroup>
 			<SrcDir>$(RootDir)/$(Project)</SrcDir>
 			<NewProjectFname>NewProject.cogx</NewProjectFname>
 			<BuildDir>$(SrcDir)/bin/$(Configuration)</BuildDir>
-			<!-- If we have a new upstream version, reset Debian revision to 1, otherwise increment it -->
-			<ExtraDchOptions Condition="$(ShortVersionNumber) == $(UpstreamVersionFromChangelog)">-i</ExtraDchOptions>
-			<NewDebRevision  Condition="$(ShortVersionNumber) == $(UpstreamVersionFromChangelog)">$([MSBuild]::Add($(DebianRevisionFromChangelog),1))</NewDebRevision>
-			<ExtraDchOptions Condition="$(ShortVersionNumber) != $(UpstreamVersionFromChangelog)">-v "$(ShortVersionNumber)-1"</ExtraDchOptions>
-			<NewDebRevision  Condition="$(ShortVersionNumber) != $(UpstreamVersionFromChangelog)">1</NewDebRevision>
-			<ChangelogMessage>Changelog automatically updated by TeamCity (build number $(BUILD_NUMBER))</ChangelogMessage>
-			<DchOptionsFirstCall>-U --maintmaint $(ExtraDchOptions) "$(ChangelogMessage)"</DchOptionsFirstCall>
-			<DchOptionsSecondCall>-U -r --vendor Debian --maintmaint "$(ChangelogMessage)"</DchOptionsSecondCall>
-			
 			<ProjectName>cog-cmdline</ProjectName>
-			<DebianPackageVersion>$(ShortVersionNumber)-$(NewDebRevision)</DebianPackageVersion>
 			<DebianPackageArchitecture>all</DebianPackageArchitecture>
-			<DebianPackageName>$(ProjectName)_$(DebianPackageVersion)_$(DebianPackageArchitecture).deb</DebianPackageName>
+			<DebianPackageName>$(ProjectName)_$(DebVersionNumber)_$(DebianPackageArchitecture).deb</DebianPackageName>
+			
+			<ChangelogMessage>Debian package autobuilt by TeamCity (build number $(BUILD_NUMBER))</ChangelogMessage>
+			<DchOptionsFirstCall>-U --maintmaint -v "$(DebVersionNumber)" "$(ChangelogMessage)"</DchOptionsFirstCall>
+			<DchOptionsSecondCall>-U -r --vendor Debian --maintmaint ""</DchOptionsSecondCall>
 			
 			<!-- Directories where parts of the Debian package will be installed -->
 			<DebRoot>$(OutDir)/debian-package-root</DebRoot>
@@ -139,8 +114,7 @@ File.WriteAllText(Path, content);
 		<Copy SourceFiles="@(CompiledFiles)" DestinationFolder="$(DebUsrLib)" />
 		<Exec Command="chmod -x $(DebUsrLib)/*.dll" />
 		
-		<!-- Use sed rather than FileUpdate because sed won't fail if search text not found -->
-		<Exec Command="sed -e &quot;s/DEBIAN_REVISION/$(NewDebRevision)/&quot; $(RootDir)/debian/control &gt; $(DebDEBIAN)/control" />
+		<Copy SourceFiles="$(RootDir)/debian/control" DestinationFolder="$(DebDEBIAN)" />
 		<Copy SourceFiles="$(SrcDir)/$(NewProjectFname)" DestinationFiles="$(DebData)/$(ProjectName).conf" />
 		<Copy SourceFiles="$(RootDir)/debian/copyright" DestinationFolder="$(DebDocs)" />
 		<Copy SourceFiles="$(RootDir)/debian/changelog" DestinationFiles="$(DebDocs)/changelog.Debian" />
@@ -162,6 +136,7 @@ File.WriteAllText(Path, content);
 		<Copy SourceFiles="$(DebRoot).deb" DestinationFiles="$(OutDir)/$(DebianPackageName)" />
 		<Delete Files="$(DebRoot).deb" />
 		<RemoveDir Directories="$(DebRoot)" />
+		<Message Text="Build completed on $([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
 	</Target>
 	
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
@@ -198,7 +173,7 @@ File.WriteAllText(Path, content);
 		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -rvz --chmod=Fug+rw,Fo+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob" --delete "--exclude=*.html"  "../output/" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-dev/' />
 	</Target>
 	
-	<Target Name="UploadDeb" DependsOnTargets="MakeOutDir;VersionNumber;BuildAll;MakeDeb">
+	<Target Name="UploadDeb" DependsOnTargets="MakeOutDir;MakeDeb">
 		<Exec Command='rsync -rvz --chmod=Fug+rw,Fo+r -e"ssh -i /home/bob/.ssh/bob_key -l bob" "$(OutDir)/$(DebianPackageName)" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-deb/' />
 	</Target>
 </Project>

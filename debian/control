@@ -1,5 +1,5 @@
 Package: cog-cmdline
-Version: UPSTREAM_VERSION-DEBIAN_REVISION
+Version: DEBIAN_VERSION_NUMBER
 Section: contrib/cli-mono
 Priority: optional
 Architecture: all

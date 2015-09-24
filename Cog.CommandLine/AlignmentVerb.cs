@@ -92,27 +92,3 @@ namespace SIL.Cog.CommandLine
 		}
 	}
 }
-
-
-
-/* Implement the following algorithm from AnalysisService:
-		public void Compare(VarietyPair varietyPair)
-		{
-			_busyService.ShowBusyIndicatorUntilFinishDrawing();
-			var pipeline = new Pipeline<VarietyPair>(GetCompareProcessors());
-			pipeline.Process(varietyPair.ToEnumerable());
-		}
-
-		private IEnumerable<IProcessor<VarietyPair>> GetCompareProcessors()
-		{
-			CogProject project = _projectService.Project;
-			var processors = new List<IProcessor<VarietyPair>>
-				{
-					project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator],
-					new EMSoundChangeInducer(_segmentPool, project, ComponentIdentifiers.PrimaryWordAligner, ComponentIdentifiers.PrimaryCognateIdentifier),
-					new SoundCorrespondenceIdentifier(_segmentPool, project, ComponentIdentifiers.PrimaryWordAligner)
-				};
-			return processors;
-		}
-	}
-*/

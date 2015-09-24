@@ -98,7 +98,7 @@
     <Compile Include="ClusterVerb.cs" />
     <Compile Include="ReturnCodes.cs" />
     <Compile Include="VerbBase.cs" />
-    <Compile Include="DistanceVerb.cs" />
+    <Compile Include="AlignmentVerb.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="XdgDirectories.cs" />
     <Compile Include="PairsVerb.cs" />

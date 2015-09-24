@@ -137,7 +137,7 @@ namespace SIL.Cog.CommandLine.Tests
 			CheckVerbOutput(input, "", expectedErrors, clusterer, false);
 		}
 
-		// This is what would be output by running a simple word list through PairVerb and DistanceVerb
+		// This is what would be output by running a simple word list through PairVerb and AlignmentVerb
 		public readonly string InputWithSimilarityScores = @"
 brother bother 0.816326530612245
 brother dog 0.163265306122449

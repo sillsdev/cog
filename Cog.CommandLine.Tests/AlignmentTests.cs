@@ -3,10 +3,10 @@
 namespace SIL.Cog.CommandLine.Tests
 {
 	[TestFixture]
-	public class DistanceTests : TestBase
+	public class AlignmentTests : TestBase
 	{
 		[Test, Sequential]
-		public void CheckDistanceWithRawScores(
+		public void CheckAlignmentWithRawScores(
 			[Values(
 				"a a",
 				"a b",
@@ -28,14 +28,14 @@ namespace SIL.Cog.CommandLine.Tests
 				"ˈɛdɪt ˈɛdɪtəbl̩ 11000\n|ɛ d ɪ t - - -|\n|ɛ d ɪ t ə b l̩|\n\n")]
 			string expectedOutput)
 		{
-			var distancer = new DistanceVerb { RawScores = true, NormalizedScores = false, Verbose = true };
-			CheckVerbOutput(input, expectedOutput, distancer, false);
-			distancer = new DistanceVerb { RawScores = true, NormalizedScores = false, Verbose = false };
-			CheckVerbOutput(input, expectedOutput.Split('\n')[0], distancer, true);
+			var aligner = new AlignmentVerb { RawScores = true, NormalizedScores = false, Verbose = true };
+			CheckVerbOutput(input, expectedOutput, aligner, false);
+			aligner = new AlignmentVerb { RawScores = true, NormalizedScores = false, Verbose = false };
+			CheckVerbOutput(input, expectedOutput.Split('\n')[0], aligner, true);
 		}
 
 		[Test, Sequential]
-		public void CheckDistanceWithNormalizedScores(
+		public void CheckAlignmentWithNormalizedScores(
 			[Values(
 				"a a",
 				"a b",
@@ -57,10 +57,10 @@ namespace SIL.Cog.CommandLine.Tests
 				"ˈɛdɪt ˈɛdɪtəbl̩ 0.448979591836735\n|ɛ d ɪ t - - -|\n|ɛ d ɪ t ə b l̩|\n\n")]
 			string expectedOutput)
 		{
-			var distancer = new DistanceVerb { RawScores = false, NormalizedScores = true, Verbose = true };
-			CheckVerbOutput(input, expectedOutput, distancer, false);
-			distancer = new DistanceVerb { RawScores = false, NormalizedScores = true, Verbose = false };
-			CheckVerbOutput(input, expectedOutput.Split('\n')[0], distancer, true);
+			var aligner = new AlignmentVerb { RawScores = false, NormalizedScores = true, Verbose = true };
+			CheckVerbOutput(input, expectedOutput, aligner, false);
+			aligner = new AlignmentVerb { RawScores = false, NormalizedScores = true, Verbose = false };
+			CheckVerbOutput(input, expectedOutput.Split('\n')[0], aligner, true);
 		}
 
 	}

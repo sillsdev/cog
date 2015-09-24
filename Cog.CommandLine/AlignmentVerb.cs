@@ -10,13 +10,13 @@ using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.CommandLine
 {
-	[Verb("distance", HelpText = "Distance between words")]
-	public class DistanceVerb : VerbBase
+	[Verb("alignment", HelpText = "Alignment between words")]
+	public class AlignmentVerb : VerbBase
 	{
-		[Option('r', "raw-scores", Default = false, HelpText = "Produce raw similarity scores (integers from 0 to infinity, where higher means more similar)")]
+		[Option('r', "raw-scores", Default = false, HelpText = "Produce raw alignment scores (integers from 0 to infinity, where higher means better-aligned)")]
 		public bool RawScores { get; set; }
 
-		[Option('n', "normalized-scores", Default = false, HelpText = "Produce normalized similarity scores (real numbers between 0.0 and 1.0, where higher means more similar)")]
+		[Option('n', "normalized-scores", Default = false, HelpText = "Produce normalized alignment scores (real numbers between 0.0 and 1.0, where higher means better-aligned)")]
 		public bool NormalizedScores { get; set; }
 
 		[Option('v', "verbose", Default = false, HelpText = "Produce more verbose output, showing possible alignments (changes output format)")]
@@ -63,7 +63,7 @@ namespace SIL.Cog.CommandLine
 
 			SetUpProject();
 
-			WordAlignerBase wordAligner = (Aline)Project.WordAligners["primary"];
+			IWordAligner wordAligner = Project.WordAligners["primary"];
 			foreach (string line in ReadLines(inputReader))
 			{
 				string[] wordTexts = line.Split(' ');
@@ -92,3 +92,27 @@ namespace SIL.Cog.CommandLine
 		}
 	}
 }
+
+
+
+/* Implement the following algorithm from AnalysisService:
+		public void Compare(VarietyPair varietyPair)
+		{
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
+			var pipeline = new Pipeline<VarietyPair>(GetCompareProcessors());
+			pipeline.Process(varietyPair.ToEnumerable());
+		}
+
+		private IEnumerable<IProcessor<VarietyPair>> GetCompareProcessors()
+		{
+			CogProject project = _projectService.Project;
+			var processors = new List<IProcessor<VarietyPair>>
+				{
+					project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator],
+					new EMSoundChangeInducer(_segmentPool, project, ComponentIdentifiers.PrimaryWordAligner, ComponentIdentifiers.PrimaryCognateIdentifier),
+					new SoundCorrespondenceIdentifier(_segmentPool, project, ComponentIdentifiers.PrimaryWordAligner)
+				};
+			return processors;
+		}
+	}
+*/

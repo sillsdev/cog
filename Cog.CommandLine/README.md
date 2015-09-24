@@ -9,7 +9,7 @@ cog-cmdline.exe(1) -- Use Cog features from the Linux command line
 
 `mono cog-cmdline.exe` syllabify
 `mono cog-cmdline.exe` pairs
-`mono cog-cmdline.exe` distance -n
+`mono cog-cmdline.exe` alignment -n
 `mono cog-cmdline.exe` cluster dbscan -e 0.2 -m 3
 `mono cog-cmdline.exe` cluster lsdbc -a 4 -k 5
 `mono cog-cmdline.exe` cluster upgma -t 0.2
@@ -20,7 +20,7 @@ Operations currently defined:
 
  + `syllabify`
  + `pairs`
- + `distance`
+ + `alignment`
  + `cluster`
 
 Each operation's output can be chained into the input of the next operation. For example, if you have a UTF-8 text file called `words.txt` containing these words:
@@ -33,7 +33,7 @@ Each operation's output can be chained into the input of the next operation. For
 
 You can run:
 
-`cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe distance -n | mono cog-cmdline.exe cluster upgma -t 0.2`
+`cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe alignment -n | mono cog-cmdline.exe cluster upgma -t 0.2`
 
 And the output should be:
 
@@ -68,7 +68,7 @@ The `syllabify` output will be:
 
 ### Making pairs
 
-The `pairs` operation is designed to be used as input to the `distance` operation. It takes a
+The `pairs` operation is designed to be used as input to the `alignment` operation. It takes a
 list of words, one word per line, as its input, and produces as output a list of every pairwise
 combination of those words. Thus the input:
 
@@ -91,13 +91,13 @@ will produce:
     |bat| |kill.|
     |bal.l| |kill.|
 
-This output can then be piped into the `distance` operation. Alternately, it could be chopped into
-any number of segments that could each be passed to a `distance` operation on a separate machine,
+This output can then be piped into the `alignment` operation. Alternately, it could be chopped into
+any number of segments that could each be passed to a `alignment` operation on a separate machine,
 if you want parallel processing.
 
-### Distance measurement
+### Alignment measurement
 
-The distance measurement expects two words per line, and each line of output will be the two input
+The alignment measurement expects two words per line, and each line of output will be the two input
 words plus a score (either an integer or a real number, depending on whether raw or normalized scores
 were chosen). See [OPTIONS](#OPTIONS) for more on how to specify raw or normalized scores. (Summary:
 `-r` or `-n`).
@@ -115,13 +115,13 @@ With raw scores, the output of the above `pairs` operation will be:
     bat kill. 0.285714285714286
     bal.l kill. 0.75
 
-Note that the stem separators (`|`) have vanished in the output of `distance`. That's because they
+Note that the stem separators (`|`) have vanished in the output of `alignment`. That's because they
 are not needed in the `cluster` operation, which only cares about the scores.
 
-The `--verbose` or `-v` output from `distance` looks a little different: below each "word1 word2 score"
+The `--verbose` or `-v` output from `alignment` looks a little different: below each "word1 word2 score"
 line will be two more lines showing the alignment of the two words that was used to calculate their
 similarity score, followed by a blank line to visually separate each word pair. For example, the first
-few lines of our sample text would look like this if `distance` was run with `-n` and `-v`:
+few lines of our sample text would look like this if `alignment` was run with `-n` and `-v`:
 
     cat call. 0.535714285714286
     |c a - t|
@@ -139,7 +139,7 @@ few lines of our sample text would look like this if `distance` was run with `-n
 
 ### Clustering
 
-The `cluster` operation expects input in the format produced by the `distance` operation without `-v`,
+The `cluster` operation expects input in the format produced by the `alignment` operation without `-v`,
 e.g. two words per line, with a numeric score after the two words. It takes several parameters: the
 `-m` or `--method` parameter specifies the clustering method (DBSCAN, LSDBC, or UPGMA) and the other
 parameters are used for adjusting the clustering method. See [OPTIONS](#OPTIONS) for details, but the
@@ -148,18 +148,18 @@ more words will end up in the same cluster, or "stricter" clustering, where more
 produced with fewer words in each. Thus, the `-t` or `--threshhold` parameter (used with UPGMA) will
 produce stricter clustering when it is lower, but looser clustering when it is higher:
 
-`cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe distance -n | mono cog-cmdline.exe cluster upgma -t 0.2` produces:
+`cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe alignment -n | mono cog-cmdline.exe cluster upgma -t 0.2` produces:
 
     1 bal.l call. kill.
     2 cat bat
 
-`cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe distance -n | mono cog-cmdline.exe cluster upgma -t 0.19` produces:
+`cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe alignment -n | mono cog-cmdline.exe cluster upgma -t 0.19` produces:
 
     1 cat
     2 bat
     3 bal.l call. kill.
 
-And `cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe distance -n | mono cog-cmdline.exe cluster upgma -t 0.18` produces:
+And `cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs | mono cog-cmdline.exe alignment -n | mono cog-cmdline.exe cluster upgma -t 0.18` produces:
 
     1 cat
     2 bat
@@ -169,7 +169,7 @@ And `cat words.txt | mono cog-cmdline.exe syllabify | mono cog-cmdline.exe pairs
 Similar effects (more or fewer words per cluster) can be achieved by tweaking the numeric parameters of
 the other two clustering methods; examples omitted to save space.
 
-**NOTE** that `cluster` cannot be run in parallel, as it needs to have the complete list of words and distances
+**NOTE** that `cluster` cannot be run in parallel, as it needs to have the complete list of words and alignments
 in order to calculate the clustering.
 
 ## OPTIONS
@@ -200,7 +200,7 @@ No options specific to the `syllabify` command.
 
 No options specific to the `pairs` command.
 
-### Distance
+### Alignment
 
  + `-n`, `--normalized-scores`:
    Produce normalized scores (real numbers between 0.0 and 1.0, where 1.0 is a perfect match)
@@ -212,7 +212,7 @@ No options specific to the `pairs` command.
    suitable for piping directly into the `cluster` operation, but the output could still be parsed
    using a script).
 
-Note that `-r` may not work well for passing into the `cluster` operation, as `cluster`'s results tend to be better if its input is normalized. Therefore `-n` is the default; if no scoring method is specified, the `distance` operation will default to normalized scores (and will produce a warning so that you know it has made this choice).
+Note that `-r` may not work well for passing into the `cluster` operation, as `cluster`'s results tend to be better if its input is normalized. Therefore `-n` is the default; if no scoring method is specified, the `alignment` operation will default to normalized scores (and will produce a warning so that you know it has made this choice).
 
 ### Cluster
 

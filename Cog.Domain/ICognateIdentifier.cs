@@ -2,6 +2,6 @@
 {
 	public interface ICognateIdentifier
 	{
-		void UpdateCognicity(WordPair wordPair, IWordAlignerResult alignerResult);
+		void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult);
 	}
 }

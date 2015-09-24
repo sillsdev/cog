@@ -345,7 +345,7 @@ namespace SIL.Cog.Domain
 					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(meaning, out wp) && wp.AreCognatePredicted
 					    && wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
 					{
-						score = wp.CognicityScore;
+						score = wp.CognacyScore;
 					}
 					double distance = 1.0 - score;
 					min = Math.Min(min, distance);

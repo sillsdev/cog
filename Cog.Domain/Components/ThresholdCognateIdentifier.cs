@@ -17,7 +17,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _threshold; }
 		}
 
-		public void UpdateCognicity(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
 			int alignmentCount = 0;
 			double totalAlignmentScore = 0.0;
@@ -26,8 +26,8 @@ namespace SIL.Cog.Domain.Components
 				totalAlignmentScore += alignment.NormalizedScore;
 				alignmentCount++;
 			}
-			wordPair.CognicityScore = totalAlignmentScore / alignmentCount;
-			wordPair.AreCognatePredicted = wordPair.CognicityScore >= _threshold;
+			wordPair.CognacyScore = totalAlignmentScore / alignmentCount;
+			wordPair.AreCognatePredicted = wordPair.CognacyScore >= _threshold;
 		}
 	}
 }

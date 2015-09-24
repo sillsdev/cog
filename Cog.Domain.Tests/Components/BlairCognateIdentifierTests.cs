@@ -13,7 +13,7 @@ namespace SIL.Cog.Domain.Tests.Components
 		private readonly ShapeSpanFactory _spanFactory = new ShapeSpanFactory();
 
 		[Test]
-		public void UpdateCognicity_NoSimilarSegments()
+		public void UpdateCognacy_NoSimilarSegments()
 		{
 			var segmentPool = new SegmentPool();
 
@@ -38,20 +38,20 @@ namespace SIL.Cog.Domain.Tests.Components
 			var similarSegmentsMappings = Substitute.For<ISegmentMappings>();
 			var cognateIdentifier = new BlairCognateIdentifier(segmentPool, false, false, ignoredMappings, similarSegmentsMappings);
 			var wp = vp.WordPairs[0];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.False);
 
 			wp = vp.WordPairs[1];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 
 			wp = vp.WordPairs[2];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.False);
 		}
 
 		[Test]
-		public void UpdateCognicity_SimilarSegments()
+		public void UpdateCognacy_SimilarSegments()
 		{
 			var segmentPool = new SegmentPool();
 
@@ -77,20 +77,20 @@ namespace SIL.Cog.Domain.Tests.Components
 			similarSegmentsMappings.IsMapped(Arg.Any<ShapeNode>(), Arg.Any<Ngram<Segment>>(), Arg.Any<ShapeNode>(), Arg.Any<ShapeNode>(), Arg.Any<Ngram<Segment>>(), Arg.Any<ShapeNode>()).Returns(true);
 			var cognateIdentifier = new BlairCognateIdentifier(segmentPool, false, false, ignoredMappings, similarSegmentsMappings);
 			var wp = vp.WordPairs[0];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 
 			wp = vp.WordPairs[1];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 
 			wp = vp.WordPairs[2];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 		}
 
 		[Test]
-		public void UpdateCognicity_RegularCorrespondences()
+		public void UpdateCognacy_RegularCorrespondences()
 		{
 			var segmentPool = new SegmentPool();
 
@@ -120,15 +120,15 @@ namespace SIL.Cog.Domain.Tests.Components
 			similarSegmentsMappings.IsMapped(Arg.Any<ShapeNode>(), segmentPool.GetExisting("b"), Arg.Any<ShapeNode>(), Arg.Any<ShapeNode>(), segmentPool.GetExisting("p"), Arg.Any<ShapeNode>()).Returns(true);
 			var cognateIdentifier = new BlairCognateIdentifier(segmentPool, false, false, ignoredMappings, similarSegmentsMappings);
 			var wp = vp.WordPairs[0];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 
 			wp = vp.WordPairs[1];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 
 			wp = vp.WordPairs[2];
-			cognateIdentifier.UpdateCognicity(wp, aligner.Compute(wp));
+			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
 			Assert.That(wp.AreCognatePredicted, Is.True);
 		}
 	}

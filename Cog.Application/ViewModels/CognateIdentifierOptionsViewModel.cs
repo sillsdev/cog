@@ -30,7 +30,7 @@ namespace SIL.Cog.Application.ViewModels
 				index = 2;
 			SelectedOption = Options[index];
 
-			var wordPairGenerator = (CognicityWordPairGenerator) _projectService.Project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator];
+			var wordPairGenerator = (CognacyWordPairGenerator) _projectService.Project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator];
 			Set(() => InitialAlignmentThreshold, ref _initialAlignmentThreshold, wordPairGenerator.InitialAlignmentThreshold);
 
 			base.Setup();
@@ -44,7 +44,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var wordPairGenerator = new CognicityWordPairGenerator(_segmentPool, _projectService.Project, _initialAlignmentThreshold,
+			var wordPairGenerator = new CognacyWordPairGenerator(_segmentPool, _projectService.Project, _initialAlignmentThreshold,
 				ComponentIdentifiers.PrimaryWordAligner, ComponentIdentifiers.PrimaryCognateIdentifier);
 			_projectService.Project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator] = wordPairGenerator;
 			return base.UpdateComponent();

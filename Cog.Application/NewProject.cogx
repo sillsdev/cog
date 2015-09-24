@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CogProject xmlns="http://www.sil.org/CogProject/1.0"
+<CogProject xmlns="http://www.sil.org/CogProject/1.2"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			version="3">
 	<FeatureSystem>
@@ -2418,7 +2418,7 @@
 		</VarietyProcessor>
 	</VarietyProcessors>
 	<VarietyPairProcessors>
-		<VarietyPairProcessor id="wordPairGenerator" xsi:type="CognicityWordPairGenerator">
+		<VarietyPairProcessor id="wordPairGenerator" xsi:type="CognacyWordPairGenerator">
 			<InitialAlignmentThreshold>0.3</InitialAlignmentThreshold>
 			<ApplicableWordAligner ref="primary" />
 			<ApplicableCognateIdentifier ref="primary" />

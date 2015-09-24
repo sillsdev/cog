@@ -10,7 +10,7 @@ using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.Components
 {
-	public class CognicityWordPairGenerator : IProcessor<VarietyPair>
+	public class CognacyWordPairGenerator : IProcessor<VarietyPair>
 	{
 		private readonly CogProject _project;
 		private readonly string _alignerID;
@@ -18,7 +18,7 @@ namespace SIL.Cog.Domain.Components
 		private readonly string _cognateIdentifierID;
 		private readonly double _initialAlignmentThreshold;
 
-		public CognicityWordPairGenerator(SegmentPool segmentPool, CogProject project, double initialAlignmentThreshold, string alignerID, string cognateIdentifierID)
+		public CognacyWordPairGenerator(SegmentPool segmentPool, CogProject project, double initialAlignmentThreshold, string alignerID, string cognateIdentifierID)
 		{
 			_project = project;
 			_alignerID = alignerID;
@@ -90,7 +90,7 @@ namespace SIL.Cog.Domain.Components
 					varietyPair.SoundChangeFrequencyDistribution = alignmentCounts;
 					varietyPair.WordPairs.Remove(ambiguousMeanings[i].Item1);
 					WordPair wordPair = varietyPair.WordPairs.Add(alignerResult.Words[0], alignerResult.Words[1]);
-					cognateIdentifier.UpdateCognicity(wordPair, alignerResult);
+					cognateIdentifier.UpdateCognacy(wordPair, alignerResult);
 					wordPair.PhoneticSimilarityScore = alignment.NormalizedScore;
 					if (bestWordPair == null || Compare(wordPair, bestWordPair) > 0)
 					{
@@ -113,7 +113,7 @@ namespace SIL.Cog.Domain.Components
 			if (x.AreCognatePredicted != y.AreCognatePredicted)
 				return x.AreCognatePredicted ? 1 : -1;
 
-			int res = x.CognicityScore.CompareTo(y.CognicityScore);
+			int res = x.CognacyScore.CompareTo(y.CognacyScore);
 			if (res != 0)
 				return res;
 

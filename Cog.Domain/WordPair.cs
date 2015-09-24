@@ -10,7 +10,7 @@ namespace SIL.Cog.Domain
 		private bool _areCognateActual;
 		private bool _areCognatePredicted;
 		private double _phoneticSimilarityScore;
-		private double _cognicityScore;
+		private double _cognacyScore;
 
 		public WordPair(Word word1, Word word2)
 		{
@@ -66,10 +66,10 @@ namespace SIL.Cog.Domain
 			set { Set(() => PhoneticSimilarityScore, ref _phoneticSimilarityScore, value); }
 		}
 
-		public double CognicityScore
+		public double CognacyScore
 		{
-			get { return _cognicityScore; }
-			set { Set(() => CognicityScore, ref _cognicityScore, value); }
+			get { return _cognacyScore; }
+			set { Set(() => CognacyScore, ref _cognacyScore, value); }
 		}
 	}
 }

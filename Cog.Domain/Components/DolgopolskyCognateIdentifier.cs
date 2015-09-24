@@ -28,7 +28,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _initialEquivalenceThreshold; }
 		}
 
-		public void UpdateCognicity(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
 			wordPair.AlignmentNotes.Clear();
 			Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
@@ -75,7 +75,7 @@ namespace SIL.Cog.Domain.Components
 			}
 
 			wordPair.AreCognatePredicted = !mismatchFound || initialEquivalentClasses >= _initialEquivalenceThreshold;
-			wordPair.CognicityScore = (double) initialEquivalentClasses / alignment.ColumnCount;
+			wordPair.CognacyScore = (double) initialEquivalentClasses / alignment.ColumnCount;
 		}
 	}
 }

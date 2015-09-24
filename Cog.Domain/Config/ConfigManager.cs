@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -28,20 +29,32 @@ namespace SIL.Cog.Domain.Config
 			}
 		}
 
-		private const string DefaultNamespace = "http://www.sil.org/CogProject/1.0";
+		private const string DefaultNamespace = "http://www.sil.org/CogProject/1.2";
 		internal static readonly XNamespace Cog = DefaultNamespace;
 		private const string XsiNamespace = "http://www.w3.org/2001/XMLSchema-instance";
-		private static readonly XNamespace Xsi = XsiNamespace;
+		internal static readonly XNamespace Xsi = XsiNamespace;
 		private static readonly XmlSchemaSet Schema;
+		private static readonly Dictionary<XNamespace, IConfigMigration> ConfigMigrations;
 
 		static ConfigManager()
 		{
 			Schema = new XmlSchemaSet {XmlResolver = new ResourceXmlResolver()};
 			Schema.Add(DefaultNamespace, "CogProject.xsd");
 			Schema.Compile();
+
+			ConfigMigrations = Assembly.GetExecutingAssembly().GetTypes()
+				.Where(t => t.GetInterfaces().Contains(typeof(IConfigMigration)))
+				.Select(t => (IConfigMigration) Activator.CreateInstance(t)).ToDictionary(cm => cm.FromNamespace);
 		}
 
 		public static CogProject Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, Stream configFileStream)
+		{
+			CogProject project;
+			Load(spanFactory, segmentPool, configFileStream, out project);
+			return project;
+		}
+
+		public static bool Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, Stream configFileStream, out CogProject project)
 		{
 			XDocument doc;
 			try
@@ -53,10 +66,17 @@ namespace SIL.Cog.Domain.Config
 				throw new ConfigException("The specified file is not a valid Cog config file", xe);
 			}
 
-			return LoadProject(spanFactory, segmentPool, doc);
+			return LoadProject(spanFactory, segmentPool, doc, out project);
 		}
 
 		public static CogProject Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string configFilePath)
+		{
+			CogProject project;
+			Load(spanFactory, segmentPool, configFilePath, out project);
+			return project;
+		}
+
+		public static bool Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string configFilePath, out CogProject project)
 		{
 			XDocument doc;
 			try
@@ -68,17 +88,29 @@ namespace SIL.Cog.Domain.Config
 				throw new ConfigException("The specified file is not a valid Cog config file", xe);
 			}
 
-			return LoadProject(spanFactory, segmentPool, doc);
+			return LoadProject(spanFactory, segmentPool, doc, out project);
 		}
 
-		private static CogProject LoadProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, XDocument doc)
+		private static bool LoadProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, XDocument doc, out CogProject project)
 		{
-			var project = new CogProject(spanFactory);
+			project = new CogProject(spanFactory);
 
 			XElement root = doc.Root;
 			Debug.Assert(root != null);
-			if (root.GetDefaultNamespace() != DefaultNamespace)
-				throw new ConfigException("The specified file is not a valid Cog config file");
+
+			bool migrated = false;
+			while (root.GetDefaultNamespace() != Cog)
+			{
+				IConfigMigration cm;
+				if (ConfigMigrations.TryGetValue(root.GetDefaultNamespace(), out cm))
+				{
+					cm.Migrate(doc);
+					migrated = true;
+				}
+				else
+					throw new ConfigException("The specified file is not a valid Cog config file");
+			}
+
 			doc.Validate(Schema, (sender, args) =>
 				{
 					switch (args.Severity)
@@ -231,7 +263,7 @@ namespace SIL.Cog.Domain.Config
 			foreach (XElement varietyPairProcessorElem in varietyPairProcessorsElem.Elements(Cog + "VarietyPairProcessor"))
 				LoadComponent(spanFactory, segmentPool, project, varietyPairProcessorElem, project.VarietyPairProcessors);
 
-			return project;
+			return migrated;
 		}
 
 		internal static T LoadComponent<T>(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)

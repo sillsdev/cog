@@ -46,14 +46,16 @@ namespace SIL.Cog.Domain.Components
 
 		protected virtual void OnProgressUpdated(ProgressEventArgs pea)
 		{
-			if (ProgressUpdated != null)
-				ProgressUpdated(this, pea);
+			EventHandler<ProgressEventArgs> handler = ProgressUpdated;
+			if (handler != null)
+				handler(this, pea);
 		}
 
 		protected virtual void OnCompleted(EventArgs e)
 		{
-			if (Completed != null)
-				Completed(this, e);
+			EventHandler<EventArgs> handler = Completed;
+			if (handler != null)
+				handler(this, e);
 		}
 	}
 }

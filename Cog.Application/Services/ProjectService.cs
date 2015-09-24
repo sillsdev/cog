@@ -397,8 +397,9 @@ namespace SIL.Cog.Application.Services
 
 		private void OnProjectOpened(EventArgs e)
 		{
-			if (ProjectOpened != null)
-				ProjectOpened(this, e);
+			EventHandler<EventArgs> handler = ProjectOpened;
+			if (handler != null)
+				handler(this, e);
 		}
 
 		public bool IsChanged

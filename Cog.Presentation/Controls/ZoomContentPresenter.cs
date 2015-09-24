@@ -21,8 +21,9 @@ namespace SIL.Cog.Presentation.Controls
                     return;
 
                 _contentSize = value;
-                if (ContentSizeChanged != null)
-                    ContentSizeChanged(this, new ContentSizeChangedEventArgs(_contentSize));
+                EventHandler<ContentSizeChangedEventArgs> handler = ContentSizeChanged;
+                if (handler != null)
+                    handler(this, new ContentSizeChangedEventArgs(_contentSize));
             }
         }
 

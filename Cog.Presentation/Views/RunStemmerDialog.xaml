@@ -13,7 +13,7 @@
     </Window.Resources>
     <StackPanel Margin="10">
         <StackPanel.Resources>
-            <Style TargetType="Button">
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                 <Setter Property="Margin" Value="5,0,0,0" />
                 <Setter Property="Width" Value="70" />
             </Style>

@@ -44,7 +44,7 @@ namespace SIL.Cog.Presentation.Behaviors
 				if (formattedText.Width > maxWidth)
 					maxWidth = formattedText.Width;
 			}
-			comboBox.Width = maxWidth + 25;
+			comboBox.Width = maxWidth + 28;
 		}
 
 		public static void SetAutoSize(ComboBox comboBox, bool value)

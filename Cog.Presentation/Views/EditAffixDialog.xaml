@@ -18,11 +18,11 @@
                 <Setter Property="Margin" Value="0,0,0,5" />
                 <Setter Property="Width" Value="200" />
             </Style>
-			<Style TargetType="ComboBox">
+            <Style TargetType="ComboBox">
                 <Setter Property="Margin" Value="0,0,0,5" />
                 <Setter Property="Width" Value="200" />
             </Style>
-            <Style TargetType="Button">
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                 <Setter Property="Margin" Value="5,0,0,0" />
                 <Setter Property="Width" Value="70" />
             </Style>
@@ -41,9 +41,9 @@
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=AffixTextBox}">Affix:</Label>
         <TextBox Name="AffixTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding StrRep, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
         <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=TypeComboBox}">Type:</Label>
-		<ComboBox Name="TypeComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AffixViewModelType}}}"
-				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
-		<Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=CategoryTextBox}">Category:</Label>
+        <ComboBox Name="TypeComboBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AffixViewModelType}}}"
+                  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
+        <Label Grid.Column="0" Grid.Row="2" Target="{Binding ElementName=CategoryTextBox}">Category:</Label>
         <TextBox Name="CategoryTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Category}" />
         <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Click="okButton_Click" IsDefault="True">OK</Button>

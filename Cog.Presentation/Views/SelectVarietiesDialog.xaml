@@ -8,42 +8,42 @@
         Title="Select Varieties" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=VarietiesListBox}" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:SelectVarietiesViewModel}">
-	<Window.Resources>
-		<CollectionViewSource x:Key="VarietiesSource" Source="{Binding Varieties}">
-			<CollectionViewSource.SortDescriptions>
-				<scm:SortDescription PropertyName="Name" Direction="Ascending" />
-			</CollectionViewSource.SortDescriptions>
-		</CollectionViewSource>
-	</Window.Resources>
-	<StackPanel Margin="10">
-		<ListBox Name="VarietiesListBox" ItemsSource="{Binding Source={StaticResource VarietiesSource}}" Height="250" Width="200">
-			<ListBox.ItemContainerStyle>
-				<Style TargetType="{x:Type ListBoxItem}">
-					<Style.Resources>
-						<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-						<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
-					</Style.Resources>
-				</Style>
-			</ListBox.ItemContainerStyle>
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-		<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
-			<CheckBox Margin="3,5,5,5" IsChecked="{Binding SelectAll}">Select/Unselect All</CheckBox>
-		</Border>
+    <Window.Resources>
+        <CollectionViewSource x:Key="VarietiesSource" Source="{Binding Varieties}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Name" Direction="Ascending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+    <StackPanel Margin="10">
+        <ListBox Name="VarietiesListBox" ItemsSource="{Binding Source={StaticResource VarietiesSource}}" Height="250" Width="200">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+                    </Style.Resources>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
+            <CheckBox Margin="3,5,5,5" IsChecked="{Binding SelectAll}">Select/Unselect All</CheckBox>
+        </Border>
 
-		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-			<StackPanel.Resources>
-				<Style TargetType="Button">
-					<Setter Property="Margin" Value="5,5,0,0" />
-					<Setter Property="Width" Value="70" />
-				</Style>
-			</StackPanel.Resources>
-			<Button Click="okButton_Click" IsDefault="True">OK</Button>
-			<Button IsCancel="True">Cancel</Button>
-		</StackPanel>
-	</StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin" Value="5,5,0,0" />
+                    <Setter Property="Width" Value="70" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Click="okButton_Click" IsDefault="True">OK</Button>
+            <Button IsCancel="True">Cancel</Button>
+        </StackPanel>
+    </StackPanel>
 </Window>

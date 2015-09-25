@@ -9,9 +9,9 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SettingsWorkspaceViewModelBase}">
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource ViewTitleStyle}">
-			<Run Text="{Binding Title, Mode=OneWay}" />
-			<Run> settings</Run>
-		</TextBlock>
+            <Run Text="{Binding Title, Mode=OneWay}" />
+            <Run> settings</Run>
+        </TextBlock>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Grid.IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
@@ -23,40 +23,40 @@
                         <DataTemplate>
                             <HeaderedContentControl HorizontalAlignment="Left" Margin="0,10,0,0" Width="600" Style="{StaticResource SettingsAreaStyle}" Header="{Binding DisplayName}">
                                 <ContentPresenter Content="{Binding}">
-									<ContentPresenter.Resources>
-										<DataTemplate DataType="{x:Type vm:ComponentOptionsViewModel}">
-											<v:ComponentOptionsView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:CognateIdentifierOptionsViewModel}">
-											<v:CognateIdentifierOptionsView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:AlineViewModel}">
-											<v:AlineView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:BlairCognateIdentifierViewModel}">
-											<v:BlairCognateIdentifierView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:ThresholdCognateIdentifierViewModel}">
-											<v:ThresholdCognateIdentifierView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:DolgopolskyCognateIdentifierViewModel}">
-											<v:DolgopolskyCognateIdentifierView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:SyllabifierViewModel}">
-											<v:SyllabifierView />
-										</DataTemplate>
-										<DataTemplate DataType="{x:Type vm:PoorMansAffixIdentifierViewModel}">
-											<v:PoorMansAffixIdentifierView />
-										</DataTemplate>
-									</ContentPresenter.Resources>
-								</ContentPresenter>
+                                    <ContentPresenter.Resources>
+                                        <DataTemplate DataType="{x:Type vm:ComponentOptionsViewModel}">
+                                            <v:ComponentOptionsView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:CognateIdentifierOptionsViewModel}">
+                                            <v:CognateIdentifierOptionsView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:AlineViewModel}">
+                                            <v:AlineView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:BlairCognateIdentifierViewModel}">
+                                            <v:BlairCognateIdentifierView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:ThresholdCognateIdentifierViewModel}">
+                                            <v:ThresholdCognateIdentifierView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:DolgopolskyCognateIdentifierViewModel}">
+                                            <v:DolgopolskyCognateIdentifierView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:SyllabifierViewModel}">
+                                            <v:SyllabifierView />
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:PoorMansAffixIdentifierViewModel}">
+                                            <v:PoorMansAffixIdentifierView />
+                                        </DataTemplate>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
                             </HeaderedContentControl>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <StackPanel Margin="0,10,0,0" Grid.Row="1" Orientation="Horizontal" DockPanel.Dock="Bottom">
                     <StackPanel.Resources>
-                        <Style TargetType="Button">
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Margin" Value="5,0,0,0" />
                             <Setter Property="Width" Value="70" />
                         </Style>

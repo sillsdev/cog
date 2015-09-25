@@ -155,23 +155,23 @@ namespace SIL.Cog.Domain.Components
 		{
 			SymbolicFeatureValue pValue;
 			if (!fs1.TryGetValue(feature, out pValue))
-				return 0;
+				pValue = null;
 			SymbolicFeatureValue qValue;
 			if (!fs2.TryGetValue(feature, out qValue))
+				qValue = null;
+
+			if (pValue == null && qValue == null)
 				return 0;
 
-			int sum = 0;
-			int count = 0;
-			foreach (FeatureSymbol pSymbol in pValue.Values)
+			FeatureSymbol[] values1 = pValue == null ? feature.PossibleSymbols.ToArray() : pValue.Values.ToArray();
+			FeatureSymbol[] values2 = qValue == null ? feature.PossibleSymbols.ToArray() : qValue.Values.ToArray();
+			if (values2.Length > values1.Length)
 			{
-				foreach (FeatureSymbol qSymbol in qValue.Values)
-				{
-					sum += Math.Abs(_valueMetrics[pSymbol] - _valueMetrics[qSymbol]);
-					count++;
-				}
+				FeatureSymbol[] temp = values1;
+				values1 = values2;
+				values2 = temp;
 			}
-
-			return sum / count;
+			return (int) Math.Round(values1.Average(s1 => values2.Min(s2 => Math.Abs(_valueMetrics[s1] - _valueMetrics[s2]))));
 		}
 
 		private int GetVowelCost(ShapeNode node)

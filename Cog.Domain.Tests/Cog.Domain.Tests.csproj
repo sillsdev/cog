@@ -54,6 +54,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Components\AlineScorerTests.cs" />
     <Compile Include="Components\BlairCognateIdentifierTests.cs" />
     <Compile Include="Components\CognacyWordPairGeneratorTests.cs" />
     <Compile Include="Components\ListSegmentMappingsTests.cs" />

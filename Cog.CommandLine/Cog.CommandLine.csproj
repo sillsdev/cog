@@ -96,6 +96,8 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ClusterVerb.cs" />
+    <Compile Include="CognatesVerb.cs" />
+    <Compile Include="MeaningFactory.cs" />
     <Compile Include="ReturnCodes.cs" />
     <Compile Include="VerbBase.cs" />
     <Compile Include="AlignmentVerb.cs" />

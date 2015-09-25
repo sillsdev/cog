@@ -6,7 +6,7 @@ namespace SIL.Cog.CommandLine
 	{
 		static int Main(string[] args)
 		{
-			ReturnCodes retcode = Parser.Default.ParseArguments<SyllabifyVerb, PairsVerb, AlignmentVerb, ClusterVerb>(args)
+			ReturnCodes retcode = Parser.Default.ParseArguments<SyllabifyVerb, PairsVerb, AlignmentVerb, CognatesVerb, ClusterVerb>(args)
 				.Return((VerbBase opts) => opts.RunAsPipe(), (errs) => ReturnCodes.UnknownVerb);
 			return (int)retcode;
 		}

@@ -22,15 +22,15 @@ namespace SIL.Cog.CommandLine
 				{
 					word = ParseWord(wordText, Meaning);
 					Project.Segmenter.Segment(word);
-					Variety.Words.Add(word);
+					Variety1.Words.Add(word);
 				}
 				catch (FormatException e)
 				{
 					Errors.Add(line, e.Message);
 				}
 			}
-			syllabifier.Process(Variety);
-			foreach (Word word in Variety.Words)
+			syllabifier.Process(Variety1);
+			foreach (Word word in Variety1.Words)
 			{
 //				output.WriteLine("{0} {1} {2}", word.StemIndex, word.StemLength, word.ToString().Replace(" ", ""));
 				outputWriter.WriteLine(word.ToString().Replace(" ", ""));

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ClusterTests.cs" />
     <Compile Include="AlignmentTests.cs" />
+    <Compile Include="CognatesTests.cs" />
     <Compile Include="FileTests.cs" />
     <Compile Include="PairsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

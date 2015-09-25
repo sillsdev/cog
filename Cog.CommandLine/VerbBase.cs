@@ -26,11 +26,12 @@ namespace SIL.Cog.CommandLine
 		[Option("config-data", HelpText = "Configuration to use, as a single long string (if passed, overrides --config-file)")]
 		public string ConfigData { get; set; }
 
-		private SegmentPool _segmentPool;
-		private SpanFactory<ShapeNode> _spanFactory;
-		private CogProject _project;
-		private Meaning _meaning;
-		private Variety _variety;
+		protected SegmentPool _segmentPool;
+		protected SpanFactory<ShapeNode> _spanFactory;
+		protected CogProject _project;
+		protected Meaning _meaning;
+		protected Variety _variety1;
+		protected Variety _variety2;
 
 		public SegmentPool SegmentPool
 		{
@@ -50,10 +51,16 @@ namespace SIL.Cog.CommandLine
 			set { _project = value; }
 		}
 
-		public Variety Variety
+		public Variety Variety1
 		{
-			get { return _variety; }
-			set { _variety = value; }
+			get { return _variety1; }
+			set { _variety1 = value; }
+		}
+
+		public Variety Variety2
+		{
+			get { return _variety2; }
+			set { _variety2 = value; }
 		}
 
 		public Meaning Meaning
@@ -124,7 +131,8 @@ namespace SIL.Cog.CommandLine
 			}
 			SpanFactory = new ShapeSpanFactory();
 			SegmentPool = new SegmentPool();
-			Variety = new Variety("variety1");
+			Variety1 = new Variety("variety1");
+			Variety2 = new Variety("variety2");
 			Meaning = new Meaning("gloss1", "cat1");
 			if (ConfigData == null && ConfigFilename == null)
 				Project = GetProjectFromResource(SpanFactory, SegmentPool);
@@ -135,7 +143,9 @@ namespace SIL.Cog.CommandLine
 			else // Should never get here given checks above, but let's be safe and write the check anyway
 				Project = GetProjectFromResource(SpanFactory, SegmentPool);
 			Project.Meanings.Add(Meaning);
-			Project.Varieties.Add(Variety);
+			Project.Varieties.Add(Variety1);
+			Project.Varieties.Add(Variety2);
+			Project.VarietyPairs.Add(new VarietyPair(Variety1, Variety2));
 		}
 
 		public ReturnCodes DoWorkWithErrorChecking(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)

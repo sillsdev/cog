@@ -10,6 +10,7 @@ cog-cmdline.exe(1) -- Use Cog features from the Linux command line
 `mono cog-cmdline.exe` syllabify
 `mono cog-cmdline.exe` pairs
 `mono cog-cmdline.exe` alignment -n
+`mono cog-cmdline.exe` cognates
 `mono cog-cmdline.exe` cluster dbscan -e 0.2 -m 3
 `mono cog-cmdline.exe` cluster lsdbc -a 4 -k 5
 `mono cog-cmdline.exe` cluster upgma -t 0.2
@@ -21,6 +22,7 @@ Operations currently defined:
  + `syllabify`
  + `pairs`
  + `alignment`
+ + `cognates`
  + `cluster`
 
 Each operation's output can be chained into the input of the next operation. For example, if you have a UTF-8 text file called `words.txt` containing these words:
@@ -97,7 +99,7 @@ if you want parallel processing.
 
 ### Alignment measurement
 
-The alignment measurement expects two words per line, and each line of output will be the two input
+The `alignment` operation expects two words per line, and each line of output will be the two input
 words plus a score (either an integer or a real number, depending on whether raw or normalized scores
 were chosen). See [OPTIONS](#OPTIONS) for more on how to specify raw or normalized scores. (Summary:
 `-r` or `-n`).
@@ -136,6 +138,13 @@ few lines of our sample text would look like this if `alignment` was run with `-
     |b a l l|
 
     (etc., etc., etc.)
+
+### Cognate identification
+
+The cognate identification operation, like the alignment operation, expects two words per line. Each
+line of output will be the two input words followed by either `True` or `False` (True if the two words
+were cognates, and False otherwise.) There are several possible methods of cognate identification, and
+they (and their parameters) are controlled by the `cog-cmdline.conf` file rather than by command-line options.
 
 ### Clustering
 
@@ -213,6 +222,10 @@ No options specific to the `pairs` command.
    using a script).
 
 Note that `-r` may not work well for passing into the `cluster` operation, as `cluster`'s results tend to be better if its input is normalized. Therefore `-n` is the default; if no scoring method is specified, the `alignment` operation will default to normalized scores (and will produce a warning so that you know it has made this choice).
+
+### Cognates
+
+No options specific to the `cognates` command.
 
 ### Cluster
 

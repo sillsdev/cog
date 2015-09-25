@@ -6,89 +6,86 @@
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
-			 mc:Ignorable="d" DataContextChanged="OnDataContextChanged" 
+             mc:Ignorable="d" DataContextChanged="OnDataContextChanged" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordsViewModel}">
-	<UserControl.Resources>
-		<cnvtrs:ListBoxScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
-	</UserControl.Resources>
-	<Border BorderThickness="1" BorderBrush="{StaticResource ListBorderBrush}">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="18" />
-			</Grid.ColumnDefinitions>
-			<ListBox BorderThickness="0" SelectionMode="Extended" Name="WordsListBox" ItemsSource="{Binding WordsView}" AlternationCount="2" SelectionChanged="WordsListBox_OnSelectionChanged">
-				<ListBox.CommandBindings>
-					<CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
-					<CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
-				</ListBox.CommandBindings>
-				<ListBox.ItemContainerStyle>
-					<Style TargetType="ListBoxItem">
-						<Setter Property="Template">
-							<Setter.Value>
-								<ControlTemplate TargetType="ListBoxItem">
-									<Grid>
-										<Grid.ContextMenu>
-											<ContextMenu>
-												<MenuItem Command="Copy" />
-												<MenuItem Command="SelectAll" />
-												<Separator />
-												<MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
-											</ContextMenu>
-										</Grid.ContextMenu>
-										<Border CornerRadius="5" Name="IconBorder" Background="White" Margin="5" Padding="3" />
-										<Border Margin="5" Padding="3" Background="Transparent" PreviewMouseRightButtonDown="ListBoxItem_OnPreviewMouseRightButtonDown">
-											<ContentPresenter />
-										</Border>
-									</Grid>
-									<ControlTemplate.Triggers>
-										<Trigger Property="ItemsControl.AlternationIndex" Value="1">
-											<Setter TargetName="IconBorder" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
-										</Trigger>
-										<Trigger Property="IsSelected" Value="True">
-											<Setter TargetName="IconBorder" Property="Effect">
-												<Setter.Value>
-													<DropShadowEffect ShadowDepth="0" Color="#FFF9D460" BlurRadius="10" />
-												</Setter.Value>
-											</Setter>
-										</Trigger>
-									</ControlTemplate.Triggers>
-								</ControlTemplate>
-							</Setter.Value>
-						</Setter>
-					</Style>
-				</ListBox.ItemContainerStyle>
-				<ListBox.ItemTemplate>
-					<DataTemplate DataType="{x:Type vm:WordViewModel}">
-						<v:WordView HorizontalAlignment="Stretch" />
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-			<ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedSegmentWords}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<Rectangle Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-				<ItemsControl.ItemContainerStyle>
-					<Style TargetType="ContentPresenter">
-						<Setter Property="Canvas.Top">
-							<Setter.Value>
-								<MultiBinding Converter="{StaticResource MarkerPosConverter}">
-									<Binding Path="." />
-									<Binding ElementName="WordsListBox" />
-									<Binding ElementName="WordsListBox" Path="ActualHeight" />
-								</MultiBinding>
-							</Setter.Value>
-						</Setter>
-					</Style>
-				</ItemsControl.ItemContainerStyle>
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<Canvas />
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-			</ItemsControl>
-		</Grid>
-	</Border>
+    <UserControl.Resources>
+        <cnvtrs:ListBoxScrollbarMarkerPositionConverter x:Key="MarkerPosConverter" />
+    </UserControl.Resources>
+    <Border BorderThickness="1" BorderBrush="{StaticResource ListBorderBrush}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="18" />
+            </Grid.ColumnDefinitions>
+            <ListBox BorderThickness="0" SelectionMode="Extended" Name="WordsListBox" ItemsSource="{Binding WordsView}" AlternationCount="2"
+                     ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="WordsListBox_OnSelectionChanged">
+                <ListBox.CommandBindings>
+                    <CommandBinding Command="Copy" Executed="Copy_OnExecuted" />
+                    <CommandBinding Command="SelectAll" Executed="SelectAll_OnExecuted" />
+                </ListBox.CommandBindings>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Grid>
+                                        <Grid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Command="Copy" />
+                                                <MenuItem Command="SelectAll" />
+                                                <Separator />
+                                                <MenuItem Header="Show in word lists" Command="{Binding ShowInWordListsCommand}" />
+                                            </ContextMenu>
+                                        </Grid.ContextMenu>
+                                        <Border Name="IconBorder" Background="White" Margin="2" BorderThickness="3" Opacity="0.5" />
+                                        <Border Margin="5" Padding="3" Background="Transparent" PreviewMouseRightButtonDown="ListBoxItem_OnPreviewMouseRightButtonDown">
+                                            <ContentPresenter />
+                                        </Border>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                            <Setter TargetName="IconBorder" Property="Background" Value="{StaticResource AlternatingRowBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="IconBorder" Property="BorderBrush" Value="#FFF9D460" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:WordViewModel}">
+                        <v:WordView HorizontalAlignment="Stretch" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ItemsControl Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedSegmentWords}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Width="16" Height="3" MouseLeftButtonDown="MarkerClicked" Cursor="Hand" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Top">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource MarkerPosConverter}">
+                                    <Binding Path="." />
+                                    <Binding ElementName="WordsListBox" />
+                                    <Binding ElementName="WordsListBox" Path="ActualHeight" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Grid>
+    </Border>
 </UserControl>

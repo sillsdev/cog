@@ -824,7 +824,6 @@
 
                             <!-- Controls -->
                             <Border Padding="5"
-                                    CornerRadius="5"
                                     Background="{StaticResource OverlayBackgroundBrush}"
                                     Canvas.Left="10"
                                     Canvas.Top="10"
@@ -846,7 +845,6 @@
                                                                 BorderBrush="Black"
                                                                 Background="Silver"
                                                                 BorderThickness="1"
-                                                                CornerRadius="5"
                                                                 Width="40"
                                                                 Height="40"
                                                                 Margin="2"

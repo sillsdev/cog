@@ -10,142 +10,142 @@
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              mc:Ignorable="d" Loaded="GeographicalView_OnLoaded" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:GeographicalViewModel}">
-	<UserControl.Resources>
-		<cnvtrs:IndexToColorConverter x:Key="IndexConverter" />
-	</UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="190" />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid Grid.Row="0" Grid.Column="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<TextBox Grid.Column="0" Name="SearchTextBox" KeyUp="SearchTextBox_OnKeyUp" Margin="0,0,5,5" ToolTip="Search map for location" />
-			<Button Grid.Column="1" Click="SearchButton_OnClick" Margin="0,0,0,5">Search map</Button>
-		</Grid>
-		<HeaderedContentControl Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" Header="Regions">
-			<TreeView Name="RegionsTreeView" ItemsSource="{Binding Varieties}" PreviewMouseDoubleClick="RegionsTreeView_OnPreviewMouseDoubleClick">
-				<TreeView.Resources>
-					<HierarchicalDataTemplate DataType="{x:Type vm:GeographicalVarietyViewModel}" ItemsSource="{Binding Regions}">
-						<StackPanel Orientation="Horizontal">
-							<CheckBox VerticalAlignment="Center" IsChecked="True" IsThreeState="True" Click="CheckBox_OnClick" Loaded="CheckBox_OnLoaded" />
-							<Grid Margin="3,0,0,0">
-								<Ellipse Width="16" Height="16">
-									<Ellipse.Fill>
-										<SolidColorBrush Color="{Binding ClusterIndex, Converter={StaticResource IndexConverter}, ConverterParameter={x:Static Colors.CornflowerBlue}}" />
-									</Ellipse.Fill>
-								</Ellipse>
-								<Image Opacity="0.7" Source="../Images/world.png" />
-							</Grid>
-							<TextBlock Margin="3,0,0,0" Text="{Binding Name}" />
-						</StackPanel>
-					</HierarchicalDataTemplate>
-					<HierarchicalDataTemplate DataType="{x:Type vm:GeographicalRegionViewModel}">
-						<StackPanel Orientation="Horizontal">
-							<StackPanel.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="Edit" Command="{Binding EditCommand}" />
-									<MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
-								</ContextMenu>
-							</StackPanel.ContextMenu>
-							<CheckBox VerticalAlignment="Center" IsChecked="True" Click="CheckBox_OnClick" />
-							<Image Margin="3,0,0,0" Source="../Images/polygon-icon.png" />
-							<TextBlock Margin="3,0,0,0" Text="{Binding Description, TargetNullValue='No Description'}" />
-						</StackPanel>
-					</HierarchicalDataTemplate>
-				</TreeView.Resources>
-				<TreeView.ItemContainerStyle>
-					<Style TargetType="{x:Type TreeViewItem}">
-						<Setter Property="IsExpanded" Value="True" />
-						<EventSetter Event="PreviewMouseRightButtonDown" Handler="TreeViewItem_OnPreviewMouseRightButtonDown" />
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Regions.Count}" Value="0">
-								<Setter Property="IsEnabled" Value="False" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</TreeView.ItemContainerStyle>
-			</TreeView>
-		</HeaderedContentControl>
-		<GridSplitter Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Margin="3,0,3,0" Width="4" />
-		<Grid Grid.RowSpan="2" Grid.Column="2">
-			<StackPanel Margin="10" ZIndex="1">
-				<Border Padding="5" CornerRadius="5" Background="{StaticResource OverlayBackgroundBrush}" ToolTipService.InitialShowDelay="0" HorizontalAlignment="Left">
-					<Border.ToolTip>
-						<StackPanel Orientation="Vertical">
-							<TextBlock><Run FontWeight="Bold">Wheel:</Run> Zoom In / Out</TextBlock>
-							<TextBlock><Run FontWeight="Bold">Drag:</Run> Pan</TextBlock>
-						</StackPanel>
-					</Border.ToolTip>
-					<StackPanel>
-						<StackPanel.Resources>
-							<Style TargetType="{x:Type RadioButton}">
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate TargetType="{x:Type RadioButton}">
-											<Border x:Name="border" BorderBrush="Black" Background="Silver" BorderThickness="1" CornerRadius="5" Width="40" Height="40" Margin="2"
-												HorizontalAlignment="Center" VerticalAlignment="Center">
-												<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-											</Border>
+    <UserControl.Resources>
+        <cnvtrs:IndexToColorConverter x:Key="IndexConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="190" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Name="SearchTextBox" KeyUp="SearchTextBox_OnKeyUp" Margin="0,0,5,5" ToolTip="Search map for location" />
+            <Button Grid.Column="1" Click="SearchButton_OnClick" Margin="0,0,0,5">Search map</Button>
+        </Grid>
+        <HeaderedContentControl Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" Header="Regions">
+            <TreeView Name="RegionsTreeView" ItemsSource="{Binding Varieties}" PreviewMouseDoubleClick="RegionsTreeView_OnPreviewMouseDoubleClick">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type vm:GeographicalVarietyViewModel}" ItemsSource="{Binding Regions}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox VerticalAlignment="Center" IsChecked="True" IsThreeState="True" Click="CheckBox_OnClick" Loaded="CheckBox_OnLoaded" />
+                            <Grid Margin="3,0,0,0">
+                                <Ellipse Width="16" Height="16">
+                                    <Ellipse.Fill>
+                                        <SolidColorBrush Color="{Binding ClusterIndex, Converter={StaticResource IndexConverter}, ConverterParameter={x:Static Colors.CornflowerBlue}}" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Image Opacity="0.7" Source="../Images/world.png" />
+                            </Grid>
+                            <TextBlock Margin="3,0,0,0" Text="{Binding Name}" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type vm:GeographicalRegionViewModel}">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Edit" Command="{Binding EditCommand}" />
+                                    <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
+                            <CheckBox VerticalAlignment="Center" IsChecked="True" Click="CheckBox_OnClick" />
+                            <Image Margin="3,0,0,0" Source="../Images/polygon-icon.png" />
+                            <TextBlock Margin="3,0,0,0" Text="{Binding Description, TargetNullValue='No Description'}" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="True" />
+                        <EventSetter Event="PreviewMouseRightButtonDown" Handler="TreeViewItem_OnPreviewMouseRightButtonDown" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Regions.Count}" Value="0">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+        </HeaderedContentControl>
+        <GridSplitter Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Margin="3,0,3,0" Width="4" />
+        <Grid Grid.RowSpan="2" Grid.Column="2">
+            <StackPanel Margin="10" ZIndex="1">
+                <Border Padding="5" Background="{StaticResource OverlayBackgroundBrush}" ToolTipService.InitialShowDelay="0" HorizontalAlignment="Left">
+                    <Border.ToolTip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock><Run FontWeight="Bold">Wheel:</Run> Zoom In / Out</TextBlock>
+                            <TextBlock><Run FontWeight="Bold">Drag:</Run> Pan</TextBlock>
+                        </StackPanel>
+                    </Border.ToolTip>
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type RadioButton}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type RadioButton}">
+                                            <Border x:Name="border" BorderBrush="Black" Background="Silver" BorderThickness="1" Width="40" Height="40" Margin="2"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
 
-											<ControlTemplate.Triggers>
-												<Trigger Property="IsMouseOver" Value="True">
-													<Setter TargetName="border" Property="Background" Value="WhiteSmoke" />
-												</Trigger>
-												<Trigger Property="IsChecked" Value="True">
-													<Setter TargetName="border" Property="Background" Value="DarkGray" />
-													<Setter TargetName="border" Property="TextBlock.FontWeight" Value="Bold" />
-												</Trigger>
-											</ControlTemplate.Triggers>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-						</StackPanel.Resources>
-						<Slider Height="150" Minimum="2" Maximum="24" Margin="0,0,0,5" Value="{Binding ElementName=MapControl, Path=Zoom}" HorizontalAlignment="Center"
-								AutoToolTipPlacement="None" TickPlacement="None" IsSnapToTickEnabled="True" Orientation="Vertical" />
-						<RadioButton Name="HomeButton" Click="HomeButton_OnClick">Home</RadioButton>
-						<RadioButton Name="FullButton" Click="FullButton_OnClick">World</RadioButton>
-					</StackPanel>
-				</Border>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" Height="30" VerticalAlignment="Top" Margin="90,10,10,10" ZIndex="1">
-				<StackPanel.Resources>
-					<Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-						<Setter Property="Width" Value="30" />
-						<Setter Property="Height" Value="30" />
-					</Style>
-				</StackPanel.Resources>
-				<RadioButton GroupName="Tools" Name="SelectToolButton" IsChecked="True" Checked="SelectToolButton_OnChecked">
-					<Image Stretch="None" Source="..\Images\cursor_arrow.png" />
-				</RadioButton>
-				<RadioButton GroupName="Tools" Name="ShapeToolButton" Checked="ShapeToolButton_OnChecked">
-					<Image Stretch="None" Source="..\Images\polygon-icon.png" />
-				</RadioButton>
-			</StackPanel>
-			<gmap:GMapControl x:Name="MapControl" MaxZoom="24" Zoom="2" MinZoom="2" MapProvider="{x:Static prov:GMapProviders.OpenStreetMap}" MouseWheelZoomType="ViewCenter"
-							 MouseLeftButtonDown="MapControl_OnMouseLeftButtonDown" MouseMove="MapControl_OnMouseMove" MouseDoubleClick="MapControl_OnMouseDoubleClick"
-							 PreviewKeyDown="MapControl_OnPreviewKeyDown" OnMapZoomChanged="MapControl_OnMapZoomChanged" PreviewMouseLeftButtonUp="MapControl_OnPreviewMouseLeftButtonUp"
-							 OnPositionChanged="MapControl_OnOnPositionChanged" Focusable="True" />
-			
-			<Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="{StaticResource OverlayBackgroundBrush}" CornerRadius="5" Margin="10">
-				<Grid Margin="5">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					<Label Target="{Binding ElementName=FilterSlider}" Grid.Column="0" Margin="0,0,3,0">Cluster threshold:</Label>
-					<c:PercentageSlider Grid.Column="1" x:Name="FilterSlider" Value="{Binding SimilarityScoreThreshold}" Width="250" />
-				</Grid>
-			</Border>
-		</Grid>
-	</Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="WhiteSmoke" />
+                                                </Trigger>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="DarkGray" />
+                                                    <Setter TargetName="border" Property="TextBlock.FontWeight" Value="Bold" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Slider Height="150" Minimum="2" Maximum="24" Margin="0,0,0,5" Value="{Binding ElementName=MapControl, Path=Zoom}" HorizontalAlignment="Center"
+                                AutoToolTipPlacement="None" TickPlacement="None" IsSnapToTickEnabled="True" Orientation="Vertical" />
+                        <RadioButton Name="HomeButton" Click="HomeButton_OnClick">Home</RadioButton>
+                        <RadioButton Name="FullButton" Click="FullButton_OnClick">World</RadioButton>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="30" VerticalAlignment="Top" Margin="90,10,10,10" ZIndex="1">
+                <StackPanel.Resources>
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                        <Setter Property="Width" Value="30" />
+                        <Setter Property="Height" Value="30" />
+                    </Style>
+                </StackPanel.Resources>
+                <RadioButton GroupName="Tools" Name="SelectToolButton" IsChecked="True" Checked="SelectToolButton_OnChecked">
+                    <Image Stretch="None" Source="..\Images\cursor_arrow.png" />
+                </RadioButton>
+                <RadioButton GroupName="Tools" Name="ShapeToolButton" Checked="ShapeToolButton_OnChecked">
+                    <Image Stretch="None" Source="..\Images\polygon-icon.png" />
+                </RadioButton>
+            </StackPanel>
+            <gmap:GMapControl x:Name="MapControl" MaxZoom="24" Zoom="2" MinZoom="2" MapProvider="{x:Static prov:GMapProviders.OpenStreetMap}" MouseWheelZoomType="ViewCenter"
+                             MouseLeftButtonDown="MapControl_OnMouseLeftButtonDown" MouseMove="MapControl_OnMouseMove" MouseDoubleClick="MapControl_OnMouseDoubleClick"
+                             PreviewKeyDown="MapControl_OnPreviewKeyDown" OnMapZoomChanged="MapControl_OnMapZoomChanged" PreviewMouseLeftButtonUp="MapControl_OnPreviewMouseLeftButtonUp"
+                             OnPositionChanged="MapControl_OnOnPositionChanged" Focusable="True" />
+            
+            <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="{StaticResource OverlayBackgroundBrush}" Margin="10">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Target="{Binding ElementName=FilterSlider}" Grid.Column="0" Margin="0,0,3,0">Cluster threshold:</Label>
+                    <c:PercentageSlider Grid.Column="1" x:Name="FilterSlider" Value="{Binding SimilarityScoreThreshold}" Width="250" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

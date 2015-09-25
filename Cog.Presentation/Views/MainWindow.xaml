@@ -10,7 +10,7 @@
         <KeyBinding Command="{Binding NewCommand}" Gesture="CTRL+N" />
         <KeyBinding Command="{Binding OpenCommand}" Gesture="CTRL+O" />
         <KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S" />
-		<KeyBinding Command="{Binding FindCommand}" Gesture="CTRL+F" />
+        <KeyBinding Command="{Binding FindCommand}" Gesture="CTRL+F" />
     </Window.InputBindings>
     <DockPanel>
         <Menu Height="23" DockPanel.Dock="Top">
@@ -19,36 +19,36 @@
                 <MenuItem Header="_Open..." Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
-				<MenuItem Header="_Import">
-					<MenuItem Header="Word Lists..." Command="{Binding ImportWordListsCommand}" />
-					<MenuItem Header="Regions..." Command="{Binding ImportGeographicRegionsCommand}" />
-				</MenuItem>
-				<MenuItem Header="_Export">
-					<MenuItem Header="Word Lists..." Command="{Binding ExportWordListsCommand}" />
-					<MenuItem Header="Similarity Matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
-					<MenuItem Header="Cognate Sets..." Command="{Binding ExportCognateSetsCommand}" />
-					<MenuItem Header="Segment Frequencies..." Command="{Binding ExportSegmentFrequenciesCommand}" />
-					<MenuItem Header="Hierarchical Graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
-					<MenuItem Header="Network Graph..." Command="{Binding ExportNetworkGraphCommand}" />
-					<MenuItem Header="Global Correspondences Chart..." Command="{Binding ExportGlobalCorrespondencesChartCommand}" />
-				</MenuItem>
+                <MenuItem Header="_Import">
+                    <MenuItem Header="Word Lists..." Command="{Binding ImportWordListsCommand}" />
+                    <MenuItem Header="Regions..." Command="{Binding ImportGeographicRegionsCommand}" />
+                </MenuItem>
+                <MenuItem Header="_Export">
+                    <MenuItem Header="Word Lists..." Command="{Binding ExportWordListsCommand}" />
+                    <MenuItem Header="Similarity Matrix..." Command="{Binding ExportSimilarityMatrixCommand}" />
+                    <MenuItem Header="Cognate Sets..." Command="{Binding ExportCognateSetsCommand}" />
+                    <MenuItem Header="Segment Frequencies..." Command="{Binding ExportSegmentFrequenciesCommand}" />
+                    <MenuItem Header="Hierarchical Graph..." Command="{Binding ExportHierarchicalGraphCommand}" />
+                    <MenuItem Header="Network Graph..." Command="{Binding ExportNetworkGraphCommand}" />
+                    <MenuItem Header="Global Correspondences Chart..." Command="{Binding ExportGlobalCorrespondencesChartCommand}" />
+                </MenuItem>
                 <MenuItem Header="E_xit" Click="Exit_Click" InputGestureText="Alt+F4" />
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Header="Cu_t" Command="Cut" />
                 <MenuItem Header="_Copy" Command="Copy" />
                 <MenuItem Header="_Paste" Command="Paste" />
-				<Separator />
-				<MenuItem Header="_Find..." Command="{Binding FindCommand}" InputGestureText="Ctrl+F" />
+                <Separator />
+                <MenuItem Header="_Find..." Command="{Binding FindCommand}" InputGestureText="Ctrl+F" />
             </MenuItem>
-			<MenuItem Header="_Tools">
-				<MenuItem Header="Remove affixes from all words..." Command="{Binding RunStemmerCommand}" />
-				<MenuItem Header="Compare all variety pairs" Command="{Binding PerformComparisonCommand}" />
-			</MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Remove affixes from all words..." Command="{Binding RunStemmerCommand}" />
+                <MenuItem Header="Compare all variety pairs" Command="{Binding PerformComparisonCommand}" />
+            </MenuItem>
             <MenuItem Header="_Help">
-				<MenuItem Header="Cog _Help" Command="Help" />
-				<MenuItem Header="Getting Started with Cog" Click="QuickReference_Click" />
-				<Separator />
+                <MenuItem Header="Cog _Help" Command="Help" />
+                <MenuItem Header="Getting Started with Cog" Click="QuickReference_Click" />
+                <Separator />
                 <MenuItem Header="About Cog" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>
@@ -61,7 +61,7 @@
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <c:TabControlEx Padding="0" Style="{StaticResource SubTabControlStyle}" TabStripPlacement="Top" ItemsSource="{Binding Views}"
-									ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding SelectedView}">
+                                    ItemContainerStyle="{StaticResource SubTabItemStyle}" SelectedItem="{Binding SelectedView}">
                         <TabControl.Template>
                             <ControlTemplate TargetType="TabControl">
                                 <DockPanel>
@@ -80,17 +80,17 @@
                                 <DockPanel Background="{StaticResource ViewBackgroundBrush}">
                                     <Border Width="140" BorderThickness="0,0,1,0" BorderBrush="{StaticResource TaskAreaBorderBrush}" Background="{StaticResource TaskAreaBackgroundBrush}">
                                         <ItemsControl ItemsSource="{Binding TaskAreas}">
-											<ItemsControl.Resources>
-												<DataTemplate DataType="{x:Type vm:TaskAreaCommandGroupViewModel}">
-													<v:TaskAreaCommandGroupView />
-												</DataTemplate>
-												<DataTemplate DataType="{x:Type vm:TaskAreaItemsViewModel}">
-													<v:TaskAreaItemsView />
-												</DataTemplate>
-												<DataTemplate DataType="{x:Type vm:TaskAreaIntegerViewModel}">
-													<v:TaskAreaIntegerView />
-												</DataTemplate>
-											</ItemsControl.Resources>
+                                            <ItemsControl.Resources>
+                                                <DataTemplate DataType="{x:Type vm:TaskAreaCommandGroupViewModel}">
+                                                    <v:TaskAreaCommandGroupView />
+                                                </DataTemplate>
+                                                <DataTemplate DataType="{x:Type vm:TaskAreaItemsViewModel}">
+                                                    <v:TaskAreaItemsView />
+                                                </DataTemplate>
+                                                <DataTemplate DataType="{x:Type vm:TaskAreaIntegerViewModel}">
+                                                    <v:TaskAreaIntegerView />
+                                                </DataTemplate>
+                                            </ItemsControl.Resources>
                                         </ItemsControl>
                                     </Border>
                                     <ContentPresenter Margin="10" DockPanel.Dock="Right" Content="{Binding}">
@@ -119,19 +119,19 @@
                                             <DataTemplate DataType="{x:Type vm:NetworkGraphViewModel}">
                                                 <v:NetworkGraphView />
                                             </DataTemplate>
-											<DataTemplate DataType="{x:Type vm:GeographicalViewModel}">
-												<v:GeographicalView />
-											</DataTemplate>
-											<DataTemplate DataType="{x:Type vm:GlobalCorrespondencesViewModel}">
-												<v:GlobalCorrespondencesView />
-											</DataTemplate>
-											<DataTemplate DataType="{x:Type vm:MultipleWordAlignmentViewModel}">
-												<v:MultipleWordAlignmentView />
-											</DataTemplate>
-											<DataTemplate DataType="{x:Type vm:SegmentsViewModel}">
-												<v:SegmentsView />
-											</DataTemplate>
-										</ContentPresenter.Resources>
+                                            <DataTemplate DataType="{x:Type vm:GeographicalViewModel}">
+                                                <v:GeographicalView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:GlobalCorrespondencesViewModel}">
+                                                <v:GlobalCorrespondencesView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:MultipleWordAlignmentViewModel}">
+                                                <v:MultipleWordAlignmentView />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type vm:SegmentsViewModel}">
+                                                <v:SegmentsView />
+                                            </DataTemplate>
+                                        </ContentPresenter.Resources>
                                     </ContentPresenter>
                                 </DockPanel>
                             </DataTemplate>

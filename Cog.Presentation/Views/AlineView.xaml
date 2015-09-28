@@ -32,69 +32,69 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ModeComboBox}">Alignment mode:</Label>
-		<ComboBox Grid.Column="1" Grid.Row="0" Width="150" Name="ModeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
-				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Mode}" />
+        <ComboBox Grid.Column="1" Grid.Row="0" Width="150" Name="ModeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
+                  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Mode}" />
         <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding ExpansionCompressionEnabled}">Enable expansion/compression</CheckBox>
-		<Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=FeaturesTreeListView}">Features</Label>
-		<c:TreeListView x:Name="FeaturesTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
-			<c:TreeListView.Columns>
-				<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Description}" Width="Auto" />
-				<GridViewColumn Header="Weight" Width="Auto">
-					<GridViewColumn.CellTemplate>
-						<DataTemplate>
-							<ContentPresenter Content="{Binding}">
-								<ContentPresenter.Resources>
-									<DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
-										<xctk:IntegerUpDown Value="{Binding Weight, UpdateSourceTrigger=PropertyChanged}" />
-									</DataTemplate>
-									<DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
-										<xctk:IntegerUpDown Value="{Binding Metric, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="100" />
-									</DataTemplate>
-								</ContentPresenter.Resources>
-							</ContentPresenter>
-						</DataTemplate>
-					</GridViewColumn.CellTemplate>
-				</GridViewColumn>
-				<GridViewColumn Header="Vowel" Width="Auto">
-					<GridViewColumn.CellTemplate>
-						<DataTemplate>
-							<ContentPresenter Content="{Binding}">
-								<ContentPresenter.Resources>
-									<DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
-										<CheckBox HorizontalAlignment="Center" IsChecked="{Binding Vowel}" />
-									</DataTemplate>
-									<DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
-									</DataTemplate>
-								</ContentPresenter.Resources>
-							</ContentPresenter>
-						</DataTemplate>
-					</GridViewColumn.CellTemplate>
-				</GridViewColumn>
-				<GridViewColumn Header="Consonant" Width="Auto">
-					<GridViewColumn.CellTemplate>
-						<DataTemplate>
-							<ContentPresenter Content="{Binding}">
-								<ContentPresenter.Resources>
-									<DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
-										<CheckBox HorizontalAlignment="Center" IsChecked="{Binding Consonant}" />
-									</DataTemplate>
-									<DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
-									</DataTemplate>
-								</ContentPresenter.Resources>
-							</ContentPresenter>
-						</DataTemplate>
-					</GridViewColumn.CellTemplate>
-				</GridViewColumn>
-			</c:TreeListView.Columns>
-			<c:TreeListView.ItemTemplate>
-				<HierarchicalDataTemplate ItemsSource="{Binding Values}" />
-			</c:TreeListView.ItemTemplate>
-		</c:TreeListView>
-		<Label Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0">Contextual sound classes</Label>
-		<v:SoundClassesView Grid.ColumnSpan="2" Grid.Row="5" DataContext="{Binding SoundClasses}" />
+        <Label Grid.ColumnSpan="2" Grid.Row="2" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=FeaturesTreeListView}">Features</Label>
+        <c:TreeListView x:Name="FeaturesTreeListView" Grid.ColumnSpan="2" Grid.Row="3" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">
+            <c:TreeListView.Columns>
+                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Description}" Width="Auto" />
+                <GridViewColumn Header="Weight" Width="Auto">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentPresenter Content="{Binding}">
+                                <ContentPresenter.Resources>
+                                    <DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
+                                        <xctk:IntegerUpDown Value="{Binding Weight, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
+                                        <xctk:IntegerUpDown Value="{Binding Metric, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="100" />
+                                    </DataTemplate>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Vowel" Width="Auto">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentPresenter Content="{Binding}">
+                                <ContentPresenter.Resources>
+                                    <DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
+                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Vowel}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
+                                    </DataTemplate>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Consonant" Width="Auto">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentPresenter Content="{Binding}">
+                                <ContentPresenter.Resources>
+                                    <DataTemplate DataType="{x:Type vm:RelevantFeatureViewModel}">
+                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Consonant}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type vm:RelevantValueViewModel}">
+                                    </DataTemplate>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+            </c:TreeListView.Columns>
+            <c:TreeListView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Values}" />
+            </c:TreeListView.ItemTemplate>
+        </c:TreeListView>
+        <Label Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0">Contextual sound classes</Label>
+        <v:SoundClassesView Grid.ColumnSpan="2" Grid.Row="5" DataContext="{Binding SoundClasses}" />
     </Grid>
 </UserControl>

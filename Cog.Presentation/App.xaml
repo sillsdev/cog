@@ -7,6 +7,7 @@
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls" xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:mmc="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              x:Class="SIL.Cog.Presentation.App">
     <Application.Resources>
@@ -23,6 +24,7 @@
             <cnvtrs:ContentToMarginConverter x:Key="Content2MarginConverter"/>
             <cnvtrs:PercentageToStrokeThicknessConverter x:Key="StrokeThicknessConverter" />
             <cnvtrs:IsTextTrimmedConverter x:Key="IsTextTrimmedConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
             <SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FF315599" />
             <SolidColorBrush x:Key="TabBackgroundBrush" Color="#FF7388B0" />
@@ -48,9 +50,128 @@
             <SolidColorBrush x:Key="ContextMenuBorderBrush" Color="#FFA9B4BF" />
             <SolidColorBrush x:Key="ContextMenuHighlightedBrush" Color="#FF98C0EB" />
             
-            <Style x:Key="MainWindowStyle" TargetType="Window">
+            <Style x:Key="DisableImageStyle" TargetType="Image">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="MetroWindowButtonBaseStyle" TargetType="ButtonBase">
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="Width" Value="34" />
+                <Setter Property="MaxHeight" Value="34" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#55FFFFFF" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#44FFFFFF" />
+                        <Setter Property="Foreground" Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="MetroWindowButtonStyle" TargetType="Button" BasedOn="{StaticResource MetroWindowButtonBaseStyle}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ContentPresenter x:Name="contentPresenter"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          RecognizesAccessKey="True"
+                                          Opacity="0.9" />
+                                <Rectangle x:Name="border"
+                                           Visibility="{Binding ShowSeparators, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mmc:WindowCommands}}, FallbackValue='Collapsed'}"
+                                           SnapsToDevicePixels="True"
+                                           IsHitTestVisible="False"
+                                           Opacity="0.25"
+                                           Width="1"
+                                           Height="15"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalAlignment="Right"
+                                           Fill="{TemplateBinding Foreground}"
+                                           Margin="8,0,0,0" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="contentPresenter" Property="Opacity" Value="1" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="contentPresenter" Property="Opacity" Value="0.5" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="MetroWindowDropDownButtonStyle" TargetType="c:DropDownButton" BasedOn="{StaticResource MetroWindowButtonBaseStyle}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type c:DropDownButton}">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ContentPresenter x:Name="contentPresenter"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          RecognizesAccessKey="True"
+                                          Opacity="0.9" />
+                                <Rectangle x:Name="border"
+                                           Visibility="{Binding ShowSeparators, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mmc:WindowCommands}}, FallbackValue='Collapsed'}"
+                                           SnapsToDevicePixels="True"
+                                           IsHitTestVisible="False"
+                                           Opacity="0.25"
+                                           Width="1"
+                                           Height="15"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalAlignment="Right"
+                                           Fill="{TemplateBinding Foreground}"
+                                           Margin="8,0,0,0" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="contentPresenter" Property="Opacity" Value="1" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="contentPresenter" Property="Opacity" Value="1" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="contentPresenter" Property="Opacity" Value="0.5" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="#44FFFFFF" />
+                        <Setter Property="Foreground" Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="MainWindowStyle" TargetType="mmc:MetroWindow">
                 <Setter Property="Background" Value="{StaticResource MainWindowBrush}" />
                 <Setter Property="FontSize" Value="12" />
+                <Setter Property="GlowBrush" Value="{StaticResource ListBorderBrush}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="TitleForeground" Value="White" />
+                <Setter Property="TitleCaps" Value="False" />
+                <Setter Property="NonActiveWindowTitleBrush" Value="Transparent" />
             </Style>
 
             <Style x:Key="MainTabControlStyle" TargetType="TabControl">

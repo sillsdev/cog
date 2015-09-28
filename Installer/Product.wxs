@@ -158,6 +158,14 @@
 			<Component Id="NBug.dll" Win64="$(var.Win64)">
 				<File Id="NBug.dll" Name="NBug.dll" Source="$(var.Cog.Presentation.TargetDir)\NBug.dll" KeyPath="yes" />
 			</Component>
+			
+			<!-- MahApps.Metro -->
+			<Component Id="MahApps.Metro.dll" Win64="$(var.Win64)">
+				<File Id="MahApps.Metro.dll" Name="MahApps.Metro.dll" Source="$(var.Cog.Presentation.TargetDir)\MahApps.Metro.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="System.Windows.Interactivity.dll" Win64="$(var.Win64)">
+				<File Id="System.Windows.Interactivity.dll" Name="System.Windows.Interactivity.dll" Source="$(var.Cog.Presentation.TargetDir)\System.Windows.Interactivity.dll" KeyPath="yes" />
+			</Component>
 		</ComponentGroup>
 		<Component Id="ProgramMenuShortcut" Directory="AppProgramMenuFolder" Guid="F34CBDA4-7885-49C8-8256-71148666888E" Win64="$(var.Win64)">
 			<Condition>PROGRAMMENUSHORTCUT = "1"</Condition>

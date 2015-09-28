@@ -134,7 +134,7 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				Messenger.Default.Send(new HookFindMessage(_findCommand));
 			}
-			else
+			else if (_findViewModel != null)
 			{
 				_dialogService.CloseDialog(_findViewModel);
 				Messenger.Default.Send(new HookFindMessage(null));

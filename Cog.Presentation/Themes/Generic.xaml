@@ -13,7 +13,7 @@
     <cnvtrs:EqualityConverter x:Key="EqualityConverter" />
     <cnvtrs:FirstGroupRowConverter x:Key="GroupRowConverter" />
 
-    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFCE8AA" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#FFFCE8AA" />
     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
     <SolidColorBrush x:Key="ListBorderBrush" Color="#FF88B0E4" />
     <SolidColorBrush x:Key="HeaderTextBrush" Color="#FF10257F" />
@@ -24,36 +24,6 @@
     <SolidColorBrush x:Key="DataGridHeaderSelectedBrush" Color="#FFBBCFE9" />
     <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#88D0D0D0" />
     <SolidColorBrush x:Key="DataGridGroupingBrush" Color="#FFE4F1FB" />
-
-    <Style TargetType="Button">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
-                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsDefaulted" Value="true">
-                            <Setter Property="BorderBrush" TargetName="border" Value="#FF3399FF"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" TargetName="border" Value="#FFBEE6FD"/>
-                            <Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Background" TargetName="border" Value="#FFC4E5F6"/>
-                            <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
-                            <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
-                            <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="#FF838383"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
     
     <Style TargetType="HeaderedContentControl">
         <Setter Property="BorderBrush" Value="Silver" />
@@ -234,7 +204,7 @@
     </Style>
     
     <Style TargetType="xcdg:DataRow">
-        <Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+        <Setter Property="SelectionBackground" Value="{StaticResource SelectionBrush}" />
         <Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
         <Setter Property="BorderThickness" Value="{Binding RelativeSource={RelativeSource Self}, Path=(xcdg:DataGridControl.DataGridContext).HorizontalGridLineThickness, Converter={StaticResource ThicknessConverter},ConverterParameter='Bottom'}" />
         <Setter Property="Template">
@@ -332,7 +302,7 @@
     </ControlTemplate>
 
     <Style TargetType="xcdg:DataCell">
-        <Setter Property="SelectionBackground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+        <Setter Property="SelectionBackground" Value="{StaticResource SelectionBrush}" />
         <Setter Property="InactiveSelectionBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
         <Setter Property="CurrentBackground" Value="{x:Null}" />
         <Setter Property="Template">
@@ -723,8 +693,8 @@
                             <Setter Property="BorderBrush" TargetName="item" Value="{StaticResource ListMouseOverBrush}" />
                         </Trigger>
                         <Trigger Property="TreeViewItem.IsSelected" Value="True">
-                            <Setter Property="Background" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                            <Setter Property="BorderBrush" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            <Setter Property="Background" TargetName="item" Value="{StaticResource SelectionBrush}" />
+                            <Setter Property="BorderBrush" TargetName="item" Value="{StaticResource SelectionBrush}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -739,8 +709,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                            <Setter Property="BorderBrush" TargetName="item" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            <Setter Property="Background" TargetName="item" Value="{StaticResource SelectionBrush}" />
+                            <Setter Property="BorderBrush" TargetName="item" Value="{StaticResource SelectionBrush}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="TextElement.Foreground" TargetName="item" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />

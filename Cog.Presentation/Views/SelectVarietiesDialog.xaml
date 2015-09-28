@@ -37,7 +37,7 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>
-                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Style TargetType="Button">
                     <Setter Property="Margin" Value="5,5,0,0" />
                     <Setter Property="Width" Value="70" />
                 </Style>

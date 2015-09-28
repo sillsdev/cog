@@ -21,7 +21,7 @@
             <Style TargetType="CheckBox">
                 <Setter Property="Margin" Value="0,0,0,5" />
             </Style>
-            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Style TargetType="Button">
                 <Setter Property="Margin" Value="5,0,0,0" />
                 <Setter Property="Width" Value="70" />
             </Style>

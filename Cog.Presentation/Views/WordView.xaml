@@ -13,89 +13,89 @@
         <DataTemplate x:Key="BlankTemplate" />
         <BooleanToVisibilityConverter x:Key="BoolConverter" />
         <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="InverseBoolConverter" />
-		<Cursor x:Key="OpenHandCursor">../Images/openhand.cur</Cursor>
+        <Cursor x:Key="OpenHandCursor">../Images/openhand.cur</Cursor>
     </UserControl.Resources>
-	<StackPanel>
-		<TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
-			<TextBlock Text="{Binding Meaning.Gloss}" />
-			<TextBlock Text="{Binding Meaning.Category, StringFormat={}({0})}">
-				<TextBlock.Style>
-					<Style TargetType="TextBlock">
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Meaning.Category}" Value="{x:Null}">
-								<Setter Property="Visibility" Value="Collapsed" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Meaning.Category}" Value="{x:Static s:String.Empty}">
-								<Setter Property="Visibility" Value="Collapsed" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</TextBlock.Style>
-			</TextBlock>
-		</TextBlock>
-		<Grid>
-			<TextBlock Margin="3,0,0,0" Style="{StaticResource PhoneticTextBlockStyle}" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">
-				<TextBlock.TextDecorations>
-					<TextDecorationCollection>
-						<TextDecoration Location="Underline" PenOffset="1">
-							<TextDecoration.Pen>
-								<Pen Brush="Red" Thickness="2">
-									<Pen.DashStyle>
-										<DashStyle Dashes="2,2" />
-									</Pen.DashStyle>
-								</Pen>
-							</TextDecoration.Pen>
-						</TextDecoration>
-					</TextDecorationCollection>
-				</TextBlock.TextDecorations>
-			</TextBlock>
-			<ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
-					 Background="Transparent" ItemsSource="{Binding Segments}" b:ItemsControlBehaviors.IsDragSource="True" b:ItemsControlBehaviors.CanDragItem="ListBox_OnCanDragItem"
-					 b:ItemsControlBehaviors.IsDropTarget="True" b:ItemsControlBehaviors.CanDropItem="ListBox_OnCanDropItem" b:ItemsControlBehaviors.DragDropTemplate="{StaticResource BlankTemplate}"
-					 GiveFeedback="ListBox_OnGiveFeedback" PreviewMouseLeftButtonDown="ListBox_OnPreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_OnPreviewMouseLeftButtonUp">
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<StackPanel Orientation="Horizontal" />
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-				<ListBox.Template>
-					<ControlTemplate>
-						<ItemsPresenter />
-					</ControlTemplate>
-				</ListBox.Template>
-				<ListBox.ItemContainerStyle>
-					<Style TargetType="ListBoxItem" BasedOn="{StaticResource PhoneticListBoxItemStyle}">
-						<Setter Property="Padding" Value="3" />
-						<Setter Property="Template">
-							<Setter.Value>
-								<ControlTemplate TargetType="ListBoxItem">
-									<Border Name="Bd"
-											Background="{TemplateBinding Background}"
-											BorderBrush="{TemplateBinding BorderBrush}"
-											BorderThickness="{TemplateBinding BorderThickness}"
-											Padding="{TemplateBinding Padding}"
-											SnapsToDevicePixels="true">
-										<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-														  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-														  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-									</Border>
-								</ControlTemplate>
-							</Setter.Value>
-						</Setter>
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding IsSelected}" Value="True">
-								<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding IsNotInOriginal}" Value="True">
-								<Setter Property="Foreground" Value="Gray" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding IsBoundary}" Value="True">
-								<Setter Property="Cursor" Value="{StaticResource OpenHandCursor}" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</ListBox.ItemContainerStyle>
-			</ListBox>
-		</Grid>
-	</StackPanel>
+    <StackPanel>
+        <TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
+            <TextBlock Text="{Binding Meaning.Gloss}" />
+            <TextBlock Text="{Binding Meaning.Category, StringFormat={}({0})}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Meaning.Category}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Meaning.Category}" Value="{x:Static s:String.Empty}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </TextBlock>
+        <Grid>
+            <TextBlock Margin="3,0,0,0" Style="{StaticResource PhoneticTextBlockStyle}" Visibility="{Binding IsValid, Converter={StaticResource InverseBoolConverter}}" Text="{Binding StrRep}">
+                <TextBlock.TextDecorations>
+                    <TextDecorationCollection>
+                        <TextDecoration Location="Underline" PenOffset="1">
+                            <TextDecoration.Pen>
+                                <Pen Brush="Red" Thickness="2">
+                                    <Pen.DashStyle>
+                                        <DashStyle Dashes="2,2" />
+                                    </Pen.DashStyle>
+                                </Pen>
+                            </TextDecoration.Pen>
+                        </TextDecoration>
+                    </TextDecorationCollection>
+                </TextBlock.TextDecorations>
+            </TextBlock>
+            <ListBox BorderThickness="0" x:Name="ListBox" Visibility="{Binding IsValid, Converter={StaticResource BoolConverter}}" SelectionChanged="_listBox_SelectionChanged"
+                     Background="Transparent" ItemsSource="{Binding Segments}" b:ItemsControlBehaviors.IsDragSource="True" b:ItemsControlBehaviors.CanDragItem="ListBox_OnCanDragItem"
+                     b:ItemsControlBehaviors.IsDropTarget="True" b:ItemsControlBehaviors.CanDropItem="ListBox_OnCanDropItem" b:ItemsControlBehaviors.DragDropTemplate="{StaticResource BlankTemplate}"
+                     GiveFeedback="ListBox_OnGiveFeedback" PreviewMouseLeftButtonDown="ListBox_OnPreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="ListBox_OnPreviewMouseLeftButtonUp">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.Template>
+                    <ControlTemplate>
+                        <ItemsPresenter />
+                    </ControlTemplate>
+                </ListBox.Template>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource PhoneticListBoxItemStyle}">
+                        <Setter Property="Padding" Value="3" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border Name="Bd"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="{TemplateBinding Padding}"
+                                            SnapsToDevicePixels="true">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SelectionBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsNotInOriginal}" Value="True">
+                                <Setter Property="Foreground" Value="Gray" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsBoundary}" Value="True">
+                                <Setter Property="Cursor" Value="{StaticResource OpenHandCursor}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
+    </StackPanel>
 </UserControl>

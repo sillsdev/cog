@@ -92,8 +92,8 @@
                         </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                <Setter TargetName="strRep1TextBlock" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                                <Setter TargetName="strRep2TextBlock" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                                <Setter TargetName="strRep1TextBlock" Property="Background" Value="{StaticResource SelectionBrush}" />
+                                <Setter TargetName="strRep2TextBlock" Property="Background" Value="{StaticResource SelectionBrush}" />
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>

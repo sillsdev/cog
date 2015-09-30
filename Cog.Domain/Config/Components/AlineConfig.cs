@@ -12,7 +12,8 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public override IWordAligner Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
 		{
-			WordPairAlignerSettings settings = LoadSettings(project.Segmenter, project.FeatureSystem, elem);
+			var settings = new AlineSettings();
+			LoadSettings(project.Segmenter, project.FeatureSystem, elem, settings);
 			XElement relevantFeaturesElem = elem.Element(ConfigManager.Cog + "RelevantFeatures");
 			Debug.Assert(relevantFeaturesElem != null);
 
@@ -36,6 +37,9 @@ namespace SIL.Cog.Domain.Config.Components
 				}
 			}
 
+			settings.SoundChangeScoringEnabled = (bool?) elem.Element(ConfigManager.Cog + "SoundChangeScoringEnabled") ?? true;
+			settings.SyllablePositionCostEnabled = (bool?) elem.Element(ConfigManager.Cog + "SyllablePositionCostEnabled") ?? true;
+
 			return new Aline(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings);
 		}
 
@@ -49,6 +53,8 @@ namespace SIL.Cog.Domain.Config.Components
 					new XAttribute("consonant", aline.RelevantConsonantFeatures.Contains(kvp.Key)),
 					kvp.Key.PossibleSymbols.Select(fs =>
 						new XElement(ConfigManager.Cog + "RelevantValue", new XAttribute("ref", fs.ID), new XAttribute("metric", aline.ValueMetrics[fs])))))));
+			elem.Add(new XElement(ConfigManager.Cog + "SoundChangeScoringEnabled", aline.Settings.SoundChangeScoringEnabled));
+			elem.Add(new XElement(ConfigManager.Cog + "SyllablePositionCostEnabled", aline.Settings.SyllablePositionCostEnabled));
 		}
 	}
 }

@@ -25,9 +25,12 @@ namespace SIL.Cog.Domain.Components
 		private readonly IReadOnlyDictionary<SymbolicFeature, int> _featureWeights;
 		private readonly IReadOnlyDictionary<FeatureSymbol, int> _valueMetrics;
 		private readonly SoundClass[] _contextualSoundClasses;
+		private readonly bool _soundChangeScoringEnabled;
+		private readonly bool _syllablePositionCostEnabled;
 
 		public AlineScorer(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
-			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, IEnumerable<SoundClass> contextualSoundClasses)
+			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, IEnumerable<SoundClass> contextualSoundClasses,
+			bool soundChangeScoringEnabled, bool syllablePositionCostEnabled)
 		{
 			_segmentPool = segmentPool;
 			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures).ToReadOnlySet();
@@ -35,6 +38,8 @@ namespace SIL.Cog.Domain.Components
 			_featureWeights = new Dictionary<SymbolicFeature, int>(featureWeights).ToReadOnlyDictionary();
 			_valueMetrics = new Dictionary<FeatureSymbol, int>(valueMetrics).ToReadOnlyDictionary();
 			_contextualSoundClasses = contextualSoundClasses.ToArray();
+			_soundChangeScoringEnabled = soundChangeScoringEnabled;
+			_syllablePositionCostEnabled = syllablePositionCostEnabled;
 		}
 
 		public IReadOnlySet<SymbolicFeature> RelevantVowelFeatures
@@ -55,6 +60,16 @@ namespace SIL.Cog.Domain.Components
 		public IReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
 		{
 			get { return _valueMetrics; }
+		}
+
+		public bool SoundChangeScoringEnabled
+		{
+			get { return _soundChangeScoringEnabled; }
+		}
+
+		public bool SyllablePositionCostEnabled
+		{
+			get { return _syllablePositionCostEnabled; }
 		}
 
 		public int GetGapPenalty(Word sequence1, Word sequence2)
@@ -104,6 +119,9 @@ namespace SIL.Cog.Domain.Components
 
 		private int GetSyllablePositionCost(ShapeNode p1, ShapeNode q1)
 		{
+			if (!_syllablePositionCostEnabled)
+				return 0;
+
 			SymbolicFeatureValue pos1, pos2;
 			if (p1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos1) && q1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos2))
 				return (FeatureSymbol) pos1 == (FeatureSymbol) pos2 ? 0 : SyllablePositionCost;
@@ -112,6 +130,9 @@ namespace SIL.Cog.Domain.Components
 
 		private int GetMaxSoundChangeScore(Word word, ShapeNode node, Word otherWord)
 		{
+			if (!_soundChangeScoringEnabled)
+				return 0;
+
 			if (word.Variety == otherWord.Variety)
 				return 0;
 
@@ -181,6 +202,9 @@ namespace SIL.Cog.Domain.Components
 
 		private int GetSoundChangeScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1, ShapeNode q2)
 		{
+			if (!_soundChangeScoringEnabled)
+				return 0;
+
 			if (sequence1.Variety == sequence2.Variety)
 				return 0;
 

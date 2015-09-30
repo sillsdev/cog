@@ -9,18 +9,21 @@ namespace SIL.Cog.Domain.Components
 	public class Aline : WordAlignerBase
 	{
 		private readonly AlineScorer _scorer;
+		private readonly AlineSettings _settings;
 
 		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
 			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics)
-			: this(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new WordPairAlignerSettings())
+			: this(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new AlineSettings())
 		{
 		}
 
 		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
-			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, WordPairAlignerSettings settings)
+			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, AlineSettings settings)
 			: base(settings)
 		{
-			_scorer = new AlineScorer(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, settings.ContextualSoundClasses);
+			_settings = settings;
+			_scorer = new AlineScorer(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
+				settings.ContextualSoundClasses, settings.SoundChangeScoringEnabled, settings.SyllablePositionCostEnabled);
 		}
 
 		public IReadOnlySet<SymbolicFeature> RelevantVowelFeatures
@@ -41,6 +44,11 @@ namespace SIL.Cog.Domain.Components
 		public IReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
 		{
 			get { return _scorer.ValueMetrics; }
+		}
+
+		public AlineSettings Settings
+		{
+			get { return _settings; }
 		}
 
 		protected override IPairwiseAlignmentScorer<Word, ShapeNode> Scorer

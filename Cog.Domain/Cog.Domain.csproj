@@ -49,6 +49,7 @@
     <Compile Include="Affix.cs" />
     <Compile Include="Components\AffixStripper.cs" />
     <Compile Include="Components\AlineScorer.cs" />
+    <Compile Include="Components\AlineSettings.cs" />
     <Compile Include="Components\SoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
     <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />

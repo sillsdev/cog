@@ -2,16 +2,22 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.NgramModeling;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.Tests.Components
 {
 	[TestFixture]
 	public class AlineScorerTests
 	{
+		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 		private FeatureSystem _featSys;
-		private AlineScorer _scorer;
 		private SegmentPool _segmentPool;
+		private Segmenter _segmenter;
+		private Word _word1;
+		private Word _word2;
 
 		[SetUp]
 		public void SetUp()
@@ -63,7 +69,52 @@ namespace SIL.Cog.Domain.Tests.Components
 			};
 
 			_segmentPool = new SegmentPool();
-			_scorer = new AlineScorer(_segmentPool, new[] {_featSys.GetFeature<SymbolicFeature>("height"), _featSys.GetFeature<SymbolicFeature>("backness"), _featSys.GetFeature<SymbolicFeature>("round")},
+			_segmenter = new Segmenter(_spanFactory)
+				{
+					Consonants =
+					{
+						{"c", FeatureStruct.New(_featSys).Symbol("palatal").Symbol("stop").Symbol("voice-").Value},
+						{"b", FeatureStruct.New(_featSys).Symbol("bilabial").Symbol("stop").Symbol("voice+").Value},
+						{"r", FeatureStruct.New(_featSys).Symbol("alveolar").Symbol("trill").Symbol("voice+").Value}
+					},
+					Vowels =
+					{
+						{"a", FeatureStruct.New(_featSys).Symbol("open").Symbol("front").Symbol("round-").Symbol("open-vowel").Symbol("voice+").Value}
+					},
+					Boundaries = {"-"},
+					Modifiers = {"\u0303", "\u0308"},
+					Joiners = {"\u0361"}
+				};
+
+			var syllabifier = new SimpleSyllabifier(false, false);
+
+			var meaning = new Meaning("test", null);
+			var v1 = new Variety("variety1");
+			_word1 = new Word("car", meaning);
+			_segmenter.Segment(_word1);
+			v1.Words.Add(_word1);
+
+			syllabifier.Process(v1);
+			
+			var v2 = new Variety("variety2");
+			_word2 = new Word("bar", meaning);
+			_segmenter.Segment(_word2);
+			v2.Words.Add(_word2);
+
+			syllabifier.Process(v2);
+
+			var vp = new VarietyPair(v1, v2);
+			vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			vp.SoundChangeFrequencyDistribution[_word1.Shape.First.ToSoundContext(_segmentPool, Enumerable.Empty<SoundClass>())].Increment(_segmentPool.Get(_word2.Shape.First));
+			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution,
+				(sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
+			v1.VarietyPairs.VarietyPairAdded(vp);
+			v2.VarietyPairs.VarietyPairAdded(vp);
+		}
+
+		private AlineScorer CreateScorer(bool soundChangeScoringEnabled, bool syllablePositionCostEnabled)
+		{
+			return new AlineScorer(_segmentPool, new[] {_featSys.GetFeature<SymbolicFeature>("height"), _featSys.GetFeature<SymbolicFeature>("backness"), _featSys.GetFeature<SymbolicFeature>("round")},
 				new[] {_featSys.GetFeature<SymbolicFeature>("place"), _featSys.GetFeature<SymbolicFeature>("manner"), _featSys.GetFeature<SymbolicFeature>("voice")},
 				new Dictionary<SymbolicFeature, int>
 				{
@@ -116,79 +167,144 @@ namespace SIL.Cog.Domain.Tests.Components
 
 					{_featSys.GetSymbol("round+"), 100},
 					{_featSys.GetSymbol("round-"), 0}
-				}, Enumerable.Empty<SoundClass>());
+				}, Enumerable.Empty<SoundClass>(), soundChangeScoringEnabled, syllablePositionCostEnabled);
 		}
 
 		[Test]
 		public void Delta_SameConsonants_ReturnsZero()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial").Symbol("stop").Symbol("voice+").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial").Symbol("stop").Symbol("voice+").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(0));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(0));
 		}
 
 		[Test]
 		public void Delta_ConsonantsDifferByOneFeature_ReturnsCorrectDelta()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial").Symbol("stop").Symbol("voice+").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("labiodental").Symbol("stop").Symbol("voice+").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(400));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(400));
 		}
 
 		[Test]
 		public void Delta_ConsonantsDifferByTwoFeatures_ReturnsCorrectDelta()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial").Symbol("stop").Symbol("voice+").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("labiodental").Symbol("fricative").Symbol("voice+").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(900));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(900));
 		}
 
 		[Test]
 		public void Delta_SameConsonantClusters_ReturnsZero()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial", "alveolar").Symbol("stop", "trill").Symbol("voice+").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial", "alveolar").Symbol("stop", "trill").Symbol("voice+").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(0));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(0));
 		}
 
 		[Test]
 		public void Delta_ConsonantClustersEmptyFeature_ReturnsCorrectDelta()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial", "alveolar").Symbol("stop", "trill").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial", "alveolar").Symbol("stop", "trill").Symbol("voice-").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(250));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(250));
 		}
 
 		[Test]
 		public void Delta_ConsonantClustersDifferByOneFeature_ReturnsCorrectDelta()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial", "alveolar").Symbol("stop", "trill").Symbol("voice-").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("bilabial", "palatal").Symbol("stop", "trill").Symbol("voice-").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(600));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(600));
 		}
 
 		[Test]
 		public void Delta_SameVowels_ReturnsZero()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.VowelType).Symbol("close").Symbol("front").Symbol("round+").Symbol("voice+").Symbol("velar").Symbol("close-vowel").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.VowelType).Symbol("close").Symbol("front").Symbol("round+").Symbol("voice+").Symbol("velar").Symbol("close-vowel").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(0));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(0));
 		}
 
 		[Test]
 		public void Delta_VowelsDifferByOneFeature_ReturnsCorrectDelta()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.VowelType).Symbol("close").Symbol("front").Symbol("round+").Symbol("voice+").Symbol("velar").Symbol("close-vowel").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.VowelType).Symbol("close").Symbol("front").Symbol("round-").Symbol("voice+").Symbol("velar").Symbol("close-vowel").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(200));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(200));
 		}
 
 		[Test]
 		public void Delta_VowelAndConsonant_ReturnsCorrectDelta()
 		{
+			AlineScorer scorer = CreateScorer(false, false);
 			var fs1 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.VowelType).Symbol("close").Symbol("front").Symbol("round+").Symbol("voice+").Symbol("velar").Symbol("close-vowel").Value;
 			var fs2 = FeatureStruct.New(_featSys).Symbol(CogFeatureSystem.ConsonantType).Symbol("velar").Symbol("stop").Symbol("voice+").Value;
-			Assert.That(_scorer.Delta(fs1, fs2), Is.EqualTo(3500));
+			Assert.That(scorer.Delta(fs1, fs2), Is.EqualTo(3500));
+		}
+
+		[Test]
+		public void GetSubstitutionScore_SoundChangeScoringEnabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(true, false);
+			Assert.That(scorer.GetSubstitutionScore(_word1, _word1.Shape.First, _word2, _word2.Shape.First), Is.EqualTo(1400));
+		}
+
+		[Test]
+		public void GetSubstitutionScore_SoundChangeScoringDisabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(false, false);
+			Assert.That(scorer.GetSubstitutionScore(_word1, _word1.Shape.First, _word2, _word2.Shape.First), Is.EqualTo(600));
+		}
+
+		[Test]
+		public void GetSubstitutionScore_SyllablePositionCostEnabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(false, true);
+			Assert.That(scorer.GetSubstitutionScore(_word1, _word1.Shape.First, _word2, _word2.Shape.Last), Is.EqualTo(-700));
+		}
+
+		[Test]
+		public void GetSubstitutionScore_SyllablePositionCostDisabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(false, false);
+			Assert.That(scorer.GetSubstitutionScore(_word1, _word1.Shape.First, _word2, _word2.Shape.Last), Is.EqualTo(-200));
+		}
+
+		[Test]
+		public void GetMaxScore1_SoundChangeScoringEnabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(true, false);
+			Assert.That(scorer.GetMaxScore1(_word1, _word1.Shape.First, _word2), Is.EqualTo(4300));
+		}
+
+		[Test]
+		public void GetMaxScore1_SoundChangeScoringDisabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(false, false);
+			Assert.That(scorer.GetMaxScore1(_word1, _word1.Shape.First, _word2), Is.EqualTo(3500));
+		}
+		
+		[Test]
+		public void GetMaxScore2_SoundChangeScoringEnabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(true, false);
+			Assert.That(scorer.GetMaxScore2(_word1, _word2, _word2.Shape.First), Is.EqualTo(4300));
+		}
+
+		[Test]
+		public void GetMaxScore2_SoundChangeScoringDisabled_ReturnsCorrectScore()
+		{
+			AlineScorer scorer = CreateScorer(false, false);
+			Assert.That(scorer.GetMaxScore2(_word1, _word2, _word2.Shape.First), Is.EqualTo(3500));
 		}
 	}
 }

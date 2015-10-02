@@ -9,37 +9,46 @@
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500" d:DataContext="{d:DesignInstance vm:SimilarSegmentMappingsViewModel}">
-	<UserControl.Resources>
-		<cnvtrs:SoundTypeToMultigraphStringConverter x:Key="SoundTypeConverter" />
-	</UserControl.Resources>
-	<Grid>
-		<Grid.Resources>
-			<Style TargetType="Label">
-				<Setter Property="Margin" Value="0,3,5,5" />
-				<Setter Property="Padding" Value="0,0,0,5" />
-			</Style>
-			<Style TargetType="xctk:IntegerUpDown">
-				<Setter Property="Margin" Value="0,0,0,5" />
-				<Setter Property="HorizontalAlignment" Value="Left" />
-				<Setter Property="Width" Value="60" />
-			</Style>
-		</Grid.Resources>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ThresholdUpDown}">Distance threshold:</Label>
-		<xctk:IntegerUpDown Grid.Column="1" Grid.Row="0" Name="ThresholdUpDown" Value="{Binding Threshold, UpdateSourceTrigger=PropertyChanged}" Increment="100" Minimum="0"  />
-		<Label Grid.Column="0" Grid.Row="1" Padding="0">Correspondences</Label>
-		<v:SegmentMappingsView Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,0,5" HorizontalAlignment="Left" Width="280" DataContext="{Binding Mappings}" />
-		<CheckBox Grid.ColumnSpan="2" Grid.Row="3" Margin="0,0,0,5" IsChecked="{Binding ImplicitComplexSegments}" ContentStringFormat="Check components of {0} for similar segments"
-				  Content="{Binding SoundType, Converter={StaticResource SoundTypeConverter}}">
-		</CheckBox>
-	</Grid>
+    <UserControl.Resources>
+        <cnvtrs:SoundTypeToMultigraphStringConverter x:Key="SoundTypeConverter" />
+        <cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="xctk:IntegerUpDown">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Width" Value="60" />
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0">
+            <Hyperlink Command="{Binding EditSegmentMappingsChartCommand}">Edit Similar <Run Text="{Binding SoundType, Converter={StaticResource EnumConverter}, Mode=OneWay}" />s Chart...</Hyperlink>
+        </TextBlock>
+        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=ThresholdUpDown}">Distance threshold:</Label>
+        <xctk:IntegerUpDown Grid.Column="1" Grid.Row="1" Name="ThresholdUpDown" Value="{Binding Threshold, UpdateSourceTrigger=PropertyChanged}" Increment="100" Minimum="0"  />
+        <Label Grid.Column="0" Grid.Row="2" Padding="0">Correspondences</Label>
+        <v:SegmentMappingsView Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="3" Margin="0,0,0,5" HorizontalAlignment="Left" Width="280" DataContext="{Binding Mappings}" />
+        <CheckBox Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="4" Margin="0,0,0,5" IsChecked="{Binding ImplicitComplexSegments}" ContentStringFormat="Check components of {0} for similar segments"
+                  Content="{Binding SoundType, Converter={StaticResource SoundTypeConverter}}">
+        </CheckBox>
+    </Grid>
 </UserControl>

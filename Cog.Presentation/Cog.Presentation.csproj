@@ -214,6 +214,9 @@
     <Compile Include="Views\EditNaturalClassDialog.xaml.cs">
       <DependentUpon>EditNaturalClassDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SegmentMappingsChartDialog.xaml.cs">
+      <DependentUpon>SegmentMappingsChartDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditUnnaturalClassDialog.xaml.cs">
       <DependentUpon>EditUnnaturalClassDialog.xaml</DependentUpon>
     </Compile>
@@ -409,6 +412,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditNaturalClassDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SegmentMappingsChartDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -111,8 +111,12 @@ namespace SIL.Cog.Presentation.Controls
 			int fixedCount = TableView.GetFixedColumnCount(_context);
 			foreach (MergedHeader header in mergedHeaders)
 			{
-				MergedHeadersSubPanel subPanel = _context.Columns[header.ColumnNames[0]].VisiblePosition < fixedCount ? _fixedSubPanel : _scrollingSubPanel;
-				subPanel.Children.Add(new MergedHeaderCell {MergedHeader = header, Content = header.Title});
+				ColumnBase c = _context.Columns[header.ColumnNames[0]];
+				if (c != null)
+				{
+					MergedHeadersSubPanel subPanel = c.VisiblePosition < fixedCount ? _fixedSubPanel : _scrollingSubPanel;
+					subPanel.Children.Add(new MergedHeaderCell {MergedHeader = header, Content = header.Title});
+				}
 			}
 		}
 

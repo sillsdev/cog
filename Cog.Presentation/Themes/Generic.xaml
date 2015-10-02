@@ -149,7 +149,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <ContentPresenter Grid.Column="0" Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -163,12 +163,6 @@
                         <Thumb x:Name="PART_ColumnResizerThumb" Style="{StaticResource DataGrid_ColumnHeaderThumbStyle}" Margin="0,0,-4,0" HorizontalAlignment="Right" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Value="Center" Binding="{Binding RelativeSource={RelativeSource Self}, Path=HorizontalContentAlignment}" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter TargetName="HeaderContent" Property="Margin" Value="12,0,0,0" />
-                        </MultiDataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}" Value="Ascending">
                             <Setter TargetName="UpArrow" Property="Visibility" Value="Visible" />
                         </DataTrigger>
@@ -420,8 +414,6 @@
                 <Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
                 <Setter Property="BorderThickness" Value="0,0,1,1" />
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="xcdg:DataGridControl.NavigationBehavior" Value="None" />
                 <Setter Property="Template" Value="{StaticResource RowHeaderCell}" />
             </DataTrigger>

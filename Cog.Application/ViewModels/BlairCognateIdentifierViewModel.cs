@@ -1,8 +1,8 @@
-using System;
 using System.Linq;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
+using SIL.Collections;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -50,7 +50,7 @@ namespace SIL.Cog.Application.ViewModels
 				Set(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, blair.IgnoreRegularInsertionDeletion);
 				Set(() => RegularConsonantsEqual, ref _regularConsEqual, blair.RegularConsonantEqual);
 				var ignoredMappings = (ListSegmentMappings) blair.IgnoredMappings;
-				foreach (Tuple<string, string> mapping in ignoredMappings.Mappings)
+				foreach (UnorderedTuple<string, string> mapping in ignoredMappings.Mappings)
 					_ignoredMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
 				var segmentMappings = (TypeSegmentMappings) blair.SimilarSegments;
 				_similarVowels.SegmentMappings = (UnionSegmentMappings) segmentMappings.VowelMappings;
@@ -100,7 +100,7 @@ namespace SIL.Cog.Application.ViewModels
 			_similarVowels.UpdateComponent();
 			_similarConsonants.UpdateComponent();
 			var cognateIdentifier = new BlairCognateIdentifier(_segmentPool, _ignoreRegularInsertionDeletion, _regularConsEqual,
-				new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => Tuple.Create(m.Segment1, m.Segment2)), false),
+				new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => UnorderedTuple.Create(m.Segment1, m.Segment2)), false),
 				new TypeSegmentMappings(_similarVowels.SegmentMappings, _similarConsonants.SegmentMappings));
 			_projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier] = cognateIdentifier;
 			return cognateIdentifier;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
@@ -15,41 +14,6 @@ namespace SIL.Cog.Application.ViewModels
 {
 	public class SegmentsViewModel : WorkspaceViewModelBase
 	{
-		private readonly static Dictionary<string, string> PlaceCategoryLookup = new Dictionary<string, string>
-			{
-				{"bilabial", "Labial"},
-				{"labiodental", "Labial"},
-				{"dental", "Coronal"},
-				{"alveolar", "Coronal"},
-				{"retroflex", "Coronal"},
-				{"palato-alveolar", "Coronal"},
-				{"alveolo-palatal", "Coronal"},
-				{"palatal", "Dorsal"},
-				{"velar", "Dorsal"},
-				{"uvular", "Dorsal"},
-				{"pharyngeal", "Guttural"},
-				{"epiglottal", "Guttural"},
-				{"glottal", "Guttural"}
-			};
-
-		private readonly static Dictionary<string, string> HeightCategoryLookup = new Dictionary<string, string>
-			{
-				{"close-vowel", "Close"},
-				{"mid-vowel", "Mid"},
-				{"open-vowel", "Open"}
-			};
-
-		private readonly static Dictionary<string, int> CategorySortOrderLookup = new Dictionary<string, int>
-			{
-				{"Close", 0},
-				{"Mid", 1},
-				{"Open", 2},
-				{"Labial", 0},
-				{"Coronal", 1},
-				{"Dorsal", 2},
-				{"Guttural", 3}
-			};
-
 		private readonly IProjectService _projectService;
 		private readonly IBusyService _busyService;
 		private readonly BulkObservableList<Segment> _domainSegments; 
@@ -148,7 +112,8 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void PopulateSegments()
 		{
-			var comparer = new SegmentComparer();
+			var segmentComparer = new SegmentComparer();
+			var categoryComparer = new SegmentCategoryComparer();
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			using (_domainSegments.BulkUpdate())
 			using (_segments.BulkUpdate())
@@ -157,25 +122,15 @@ namespace SIL.Cog.Application.ViewModels
 				_segments.Clear();
 				foreach (Segment segment in _projectService.Project.Varieties
 					.SelectMany(v => v.SyllablePositionSegmentFrequencyDistributions[DomainSyllablePosition].ObservedSamples)
-					.Distinct().OrderBy(s => CategorySortOrderLookup[GetCategory(s)]).ThenBy(s => s, comparer))
+					.Distinct().OrderBy(s => s.Category(), categoryComparer).ThenBy(s => s, segmentComparer))
 				{
 					_domainSegments.Add(segment);
 					_segments.Add(new SegmentViewModel(segment));
 				}
 			}
 
-			_categories.ReplaceAll(_segments.GroupBy(s => GetCategory(s.DomainSegment)).OrderBy(g => CategorySortOrderLookup[g.Key]).Select(g => new SegmentCategoryViewModel(g.Key, g)));
+			_categories.ReplaceAll(_segments.GroupBy(s => s.DomainSegment.Category()).OrderBy(g => g.Key, categoryComparer).Select(g => new SegmentCategoryViewModel(g.Key, g)));
 			HasSegments = _segments.Count > 0;
-		}
-
-		private string GetCategory(Segment segment)
-		{
-			FeatureStruct fs = segment.FeatureStruct;
-			if (segment.IsComplex)
-				fs = segment.FeatureStruct.GetValue(CogFeatureSystem.First);
-
-			return segment.Type == CogFeatureSystem.VowelType ? HeightCategoryLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("manner")).ID]
-				: PlaceCategoryLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("place")).ID];
 		}
 
 		public bool HasSegments

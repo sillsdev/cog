@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -17,8 +17,8 @@ namespace SIL.Cog.Application.ViewModels
 			_segment1 = segment1;
 			_segment2 = segment2;
 
-			_isSegment1Valid = IsValid(segmenter, _segment1);
-			_isSegment2Valid = IsValid(segmenter, _segment2);
+			_isSegment1Valid = ListSegmentMappings.IsValid(segmenter, _segment1);
+			_isSegment2Valid = ListSegmentMappings.IsValid(segmenter, _segment2);
 		}
 
 		public string Segment1
@@ -29,6 +29,11 @@ namespace SIL.Cog.Application.ViewModels
 		public string Segment2
 		{
 			get { return _segment2; }
+		}
+
+		public bool IsValid
+		{
+			get { return _isSegment1Valid && _isSegment2Valid; }
 		}
 
 		string IDataErrorInfo.this[string columnName]
@@ -50,17 +55,6 @@ namespace SIL.Cog.Application.ViewModels
 
 				return null;
 			}
-		}
-
-		private bool IsValid(Segmenter segmenter, string segment)
-		{
-			if (string.IsNullOrEmpty(segment) || segment.IsOneOf("#", "C", "V"))
-				return false;
-			if (segment[0].IsOneOf('#', 'C', 'V'))
-				segment = segment.Remove(0, 1);
-			if (segment[segment.Length - 1].IsOneOf('#', 'C', 'V'))
-				segment = segment.Remove(segment.Length - 1, 1);
-			return segment.IsOneOf("-", "_") || segmenter.IsValidSegment(segment);
 		}
 
 		string IDataErrorInfo.Error

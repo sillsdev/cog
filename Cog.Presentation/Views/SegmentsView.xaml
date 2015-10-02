@@ -10,51 +10,51 @@
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentsViewModel}" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoaded" DataContextChanged="OnDataContextChanged">
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="BoolConverter" />
-		<cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
-	</UserControl.Resources>
-	<DockPanel>
-		<TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Segments</TextBlock>
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="0.6*" />
-			</Grid.RowDefinitions>
-			<HeaderedContentControl Grid.Row="0" Margin="0,10,0,0" Header="Segment frequencies">
-				<Grid>
-					<TextBlock Margin="0,10,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding HasSegments, Converter={StaticResource ReverseBoolConverter}}">This project does not contain any words.</TextBlock>
-					<xcdg:DataGridControl x:Name="SegmentsDataGrid" SelectionUnit="Cell" ReadOnly="True" SelectionChanged="SegmentsDataGrid_OnSelectionChanged"
-										  Visibility="{Binding HasSegments, Converter={StaticResource BoolConverter}}">
-						<xcdg:DataGridControl.Resources>
-							<DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
-								<TextBlock Padding="8,2,8,2"><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
-							</DataTemplate>
-							<Style TargetType="{x:Type xcdg:ColumnManagerCell}" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
-								<Setter Property="FontSize" Value="15" />
-								<Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-							</Style>
-						</xcdg:DataGridControl.Resources>
-						<xcdg:DataGridControl.View>
-							<xcdg:TableView FixedColumnCount="1">
-								<xcdg:TableView.FixedHeaders>
-									<DataTemplate>
-										<c:MergedHeadersPanel />
-									</DataTemplate>
-									<DataTemplate>
-										<xcdg:ColumnManagerRow AllowColumnReorder="False" AllowColumnResize="False" />
-									</DataTemplate>
-								</xcdg:TableView.FixedHeaders>
-							</xcdg:TableView>
-						</xcdg:DataGridControl.View>
-					</xcdg:DataGridControl>
-				</Grid>
-			</HeaderedContentControl>
-			<GridSplitter Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="4" Margin="0,5,0,1" />
-			<HeaderedContentControl Grid.Row="2" Header="Observed words">
-				<v:SegmentsWordsView DataContext="{Binding ObservedWords}" />
-			</HeaderedContentControl>
-		</Grid>
-	</DockPanel>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
+    </UserControl.Resources>
+    <DockPanel>
+        <TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Segments</TextBlock>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="0.6*" />
+            </Grid.RowDefinitions>
+            <HeaderedContentControl Grid.Row="0" Margin="0,10,0,0" Header="Segment frequencies">
+                <Grid>
+                    <TextBlock Margin="0,10,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding HasSegments, Converter={StaticResource ReverseBoolConverter}}">This project does not contain any words.</TextBlock>
+                    <xcdg:DataGridControl x:Name="SegmentsDataGrid" SelectionUnit="Cell" ReadOnly="True" SelectionChanged="SegmentsDataGrid_OnSelectionChanged"
+                                          Visibility="{Binding HasSegments, Converter={StaticResource BoolConverter}}">
+                        <xcdg:DataGridControl.Resources>
+                            <DataTemplate DataType="{x:Type vm:SegmentsVarietyViewModel}">
+                                <TextBlock Padding="8,2,8,2"><Hyperlink Command="{Binding SwitchToVarietyCommand}"><Run Text="{Binding Name, Mode=OneWay}" /></Hyperlink></TextBlock>
+                            </DataTemplate>
+                            <Style TargetType="{x:Type xcdg:ColumnManagerCell}" BasedOn="{StaticResource {x:Type xcdg:ColumnManagerCell}}">
+                                <Setter Property="FontSize" Value="15" />
+                                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+                            </Style>
+                        </xcdg:DataGridControl.Resources>
+                        <xcdg:DataGridControl.View>
+                            <xcdg:TableView FixedColumnCount="1">
+                                <xcdg:TableView.FixedHeaders>
+                                    <DataTemplate>
+                                        <c:MergedHeadersPanel />
+                                    </DataTemplate>
+                                    <DataTemplate>
+                                        <xcdg:ColumnManagerRow AllowColumnReorder="False" AllowColumnResize="False" />
+                                    </DataTemplate>
+                                </xcdg:TableView.FixedHeaders>
+                            </xcdg:TableView>
+                        </xcdg:DataGridControl.View>
+                    </xcdg:DataGridControl>
+                </Grid>
+            </HeaderedContentControl>
+            <GridSplitter Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="4" Margin="0,5,0,1" />
+            <HeaderedContentControl Grid.Row="2" Header="Observed words">
+                <v:SegmentsWordsView DataContext="{Binding ObservedWords}" />
+            </HeaderedContentControl>
+        </Grid>
+    </DockPanel>
 </UserControl>

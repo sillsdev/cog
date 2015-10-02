@@ -12,7 +12,7 @@ using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain
 {
-	public static class CogExtensions
+	public static class DomainExtensions
 	{
 		public static string OriginalStrRep(this ShapeNode node)
 		{

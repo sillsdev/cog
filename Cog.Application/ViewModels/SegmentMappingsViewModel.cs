@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Application.Collections;
@@ -58,9 +59,7 @@ namespace SIL.Cog.Application.ViewModels
 			IEnumerable<Tuple<string, string>> mappings;
 			if (_importService.ImportSegmentMappings(this, out mappings))
 			{
-				_mappings.Clear();
-				foreach (Tuple<string, string> mapping in mappings)
-					_mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+				_mappings.ReplaceAll(mappings.Select(m => new SegmentMappingViewModel(_projectService.Project.Segmenter, m.Item1, m.Item2)));
 				IsChanged = true;
 			}
 		}
@@ -74,6 +73,16 @@ namespace SIL.Cog.Application.ViewModels
 		public ObservableList<SegmentMappingViewModel> Mappings
 		{
 			get { return _mappings; }
+		}
+
+		internal void ReplaceAllValidMappings(IEnumerable<UnorderedTuple<string, string>> mappings)
+		{
+			using (_mappings.BulkUpdate())
+			{
+				_mappings.RemoveAll(m => m.IsValid);
+				_mappings.AddRange(mappings.Select(m => new SegmentMappingViewModel(_projectService.Project.Segmenter, m.Item1, m.Item2)));
+				IsChanged = true;
+			}
 		}
 
 		public ICommand NewCommand

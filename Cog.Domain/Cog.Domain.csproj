@@ -108,7 +108,7 @@
     <Compile Include="SoundCorrespondenceCollection.cs" />
     <Compile Include="CogFeatureSystem.cs" />
     <Compile Include="CogProject.cs" />
-    <Compile Include="CogExtensions.cs" />
+    <Compile Include="DomainExtensions.cs" />
     <Compile Include="IWordAligner.cs" />
     <Compile Include="IWordAlignerResult.cs" />
     <Compile Include="IProcessor.cs" />

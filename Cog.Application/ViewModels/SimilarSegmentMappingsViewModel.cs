@@ -20,9 +20,10 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ICommand _editSegmentMappingsChartCommand;
 		private readonly IDialogService _dialogService;
 		private readonly SegmentMappingsChartViewModel.Factory _segmentMappingsChartFactory;
+		private readonly SegmentMappingViewModel.Factory _mappingFactory;
 		
 		public SimilarSegmentMappingsViewModel(IProjectService projectService, IDialogService dialogService, SegmentMappingsChartViewModel.Factory segmentMappingsChartFactory,
-			SegmentMappingsViewModel mappings, SoundType soundType)
+			SegmentMappingsViewModel mappings, SegmentMappingViewModel.Factory mappingFactory, SoundType soundType)
 		{
 			_projectService = projectService;
 			_mappings = mappings;
@@ -30,6 +31,7 @@ namespace SIL.Cog.Application.ViewModels
 			_soundType = soundType;
 			_dialogService = dialogService;
 			_segmentMappingsChartFactory = segmentMappingsChartFactory;
+			_mappingFactory = mappingFactory;
 			_editSegmentMappingsChartCommand = new RelayCommand(EditSegmentMappingsChart);
 		}
 
@@ -73,7 +75,12 @@ namespace SIL.Cog.Application.ViewModels
 			SegmentMappingsChartViewModel vm = _segmentMappingsChartFactory(_mappings.Mappings, _soundType, _threshold);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
-				_mappings.ReplaceAllValidMappings(vm.Segments.SelectMany(s => s.SegmentPairs).Where(sp => sp.IsEnabled).SelectMany(sp => sp.Mappings));
+				using (_mappings.Mappings.BulkUpdate())
+				{
+					_mappings.Mappings.RemoveAll(m => m.IsValid);
+					_mappings.Mappings.AddRange(vm.Segments.SelectMany(s => s.SegmentPairs).Where(sp => sp.IsEnabled)
+						.SelectMany(sp => sp.Mappings.Mappings));
+				}
 				Threshold = vm.Threshold;
 			}
 		}
@@ -92,8 +99,7 @@ namespace SIL.Cog.Application.ViewModels
 				Set(() => Threshold, ref _threshold, ((ThresholdSegmentMappings) SegmentMappings.SegmentMappingsComponents[0]).Threshold);
 
 				var listSegmentMappings = (ListSegmentMappings) SegmentMappings.SegmentMappingsComponents[1];
-				foreach (UnorderedTuple<string, string> mapping in listSegmentMappings.Mappings)
-					_mappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+				_mappings.Mappings.AddRange(listSegmentMappings.Mappings.Select(m => _mappingFactory(m.Item1, m.Item2)));
 				Set(() => ImplicitComplexSegments, ref _implicitComplexSegments, listSegmentMappings.ImplicitComplexSegments);
 			}
 		}

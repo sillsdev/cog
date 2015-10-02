@@ -18,8 +18,10 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ReadOnlyList<SegmentCategoryViewModel> _categories;
 		private int _threshold;
 		private readonly SoundType _soundType;
+		private SegmentMappingsChartSegmentPairViewModel _selectedSegmentPair;
+		private bool _segmentPairSelected;
 
-		public SegmentMappingsChartViewModel(IProjectService projectService, SegmentMappingsChartSegmentViewModel.Factory segmentFactory,
+		public SegmentMappingsChartViewModel(IProjectService projectService, SegmentMappingsChartSegmentPairViewModel.Factory segmentPairFactory, SegmentMappingViewModel.Factory mappingFactory,
 			IEnumerable<SegmentMappingViewModel> mappings, SoundType soundType, int threshold)
 		{
 			_threshold = threshold;
@@ -42,7 +44,7 @@ namespace SIL.Cog.Application.ViewModels
 			var categoryComparer = new SegmentCategoryComparer();
 			_segments = new ReadOnlyList<SegmentMappingsChartSegmentViewModel>(projectService.Project.Varieties.SelectMany(v => v.SegmentFrequencyDistribution.ObservedSamples)
 				.Where(s => s.Type == segmentType).Distinct().OrderBy(s => s.Category(), categoryComparer).ThenBy(s => s, segmentComparer)
-				.Select(s => segmentFactory(s, _soundType)).Concat(segmentFactory(null, _soundType)).ToArray());
+				.Select(s => new SegmentMappingsChartSegmentViewModel(s, _soundType)).Concat(new SegmentMappingsChartSegmentViewModel(null, _soundType)).ToArray());
 			_categories = new ReadOnlyList<SegmentCategoryViewModel>(_segments.GroupBy(s => s.DomainSegment == null ? string.Empty : s.DomainSegment.Category())
 				.OrderBy(g => g.Key, categoryComparer).Select(g => new SegmentCategoryViewModel(g.Key, g)).ToArray());
 
@@ -61,14 +63,23 @@ namespace SIL.Cog.Application.ViewModels
 			}
 
 			IWordAligner aligner = projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
-			foreach (SegmentMappingsChartSegmentPairViewModel segmentPair in _segments.SelectMany(s => s.SegmentPairs).Where(sp => sp.IsEnabled))
+			foreach (SegmentMappingsChartSegmentViewModel segment1 in _segments)
 			{
-				HashSet<UnorderedTuple<string, string>> pairMappings;
-				if (mappingLookup.TryGetValue(UnorderedTuple.Create(segmentPair.StrRep1, segmentPair.StrRep2), out pairMappings))
-					segmentPair.Mappings.UnionWith(pairMappings);
-				segmentPair.Delta = segmentPair.DomainSegment1 == null || segmentPair.DomainSegment2 == null ? int.MaxValue
-					: aligner.Delta(segmentPair.DomainSegment1.FeatureStruct, segmentPair.DomainSegment2.FeatureStruct);
-				segmentPair.MeetsThreshold = segmentPair.Delta <= _threshold;
+				bool isEnabled = true;
+				foreach (SegmentMappingsChartSegmentViewModel segment2 in _segments)
+				{
+					if (EqualityComparer<Segment>.Default.Equals(segment1.DomainSegment, segment2.DomainSegment))
+						isEnabled = false;
+
+					int delta = segment1.DomainSegment == null || segment2.DomainSegment == null ? -1
+						: aligner.Delta(segment1.DomainSegment.FeatureStruct, segment2.DomainSegment.FeatureStruct);
+					SegmentMappingsChartSegmentPairViewModel segmentPair = segmentPairFactory(segment1, segment2, delta, isEnabled);
+					segmentPair.MeetsThreshold = delta != -1 && delta <= _threshold;
+					HashSet<UnorderedTuple<string, string>> pairMappings;
+					if (mappingLookup.TryGetValue(UnorderedTuple.Create(segment1.StrRep, segment2.StrRep), out pairMappings))
+						segmentPair.Mappings.Mappings.AddRange(pairMappings.Select(m => mappingFactory(m.Item1, m.Item2)));
+					segment1.SegmentPairs.Add(segmentPair);
+				}
 			}
 		}
 
@@ -93,6 +104,22 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		public SegmentMappingsChartSegmentPairViewModel SelectedSegmentPair
+		{
+			get { return _selectedSegmentPair; }
+			set
+			{
+				if (Set(() => SelectedSegmentPair, ref _selectedSegmentPair, value))
+					IsSegmentPairSelected = _selectedSegmentPair != null;
+			}
+		}
+
+		public bool IsSegmentPairSelected
+		{
+			get { return _segmentPairSelected; }
+			set { Set(() => IsSegmentPairSelected, ref _segmentPairSelected, value); }
+		}
+
 		public ReadOnlyList<SegmentCategoryViewModel> Categories
 		{
 			get { return _categories; }
@@ -111,7 +138,7 @@ namespace SIL.Cog.Application.ViewModels
 				if (Set(() => Threshold, ref _threshold, value))
 				{
 					foreach (SegmentMappingsChartSegmentPairViewModel segmentPair in _segments.SelectMany(s => s.SegmentPairs).Where(sp => sp.IsEnabled))
-						segmentPair.MeetsThreshold = segmentPair.Delta <= _threshold;
+						segmentPair.MeetsThreshold = segmentPair.Delta != -1 && segmentPair.Delta <= _threshold;
 				}
 			}
 		}

@@ -264,6 +264,9 @@
     <Compile Include="Views\GlobalCorrespondencesView.xaml.cs">
       <DependentUpon>GlobalCorrespondencesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SegmentMappingsChartSegmentPairView.xaml.cs">
+      <DependentUpon>SegmentMappingsChartSegmentPairView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SegmentsView.xaml.cs">
       <DependentUpon>SegmentsView.xaml</DependentUpon>
     </Compile>
@@ -474,6 +477,10 @@
     <Page Include="Views\GlobalCorrespondencesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SegmentMappingsChartSegmentPairView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SegmentsView.xaml">
       <SubType>Designer</SubType>

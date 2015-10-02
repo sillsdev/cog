@@ -137,12 +137,12 @@ namespace SIL.Cog.Presentation.Views
 
 		private void WordListsGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
-			var vm = (WordListsViewModel) DataContext;
 			if (_selectMonitor.Busy)
 				return;
 
 			using (_selectMonitor.Enter())
 			{
+				var vm = (WordListsViewModel) DataContext;
 				if (WordListsGrid.SelectedCellRanges.Count == 1)
 				{
 					SelectionCellRange cellRange = WordListsGrid.SelectedCellRanges[0];

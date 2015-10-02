@@ -41,7 +41,7 @@
         <ComboBox Grid.Column="1" Grid.Row="0" Width="150" Name="ModeComboBox" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:AlineMode}}}"
                   DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Mode}" />
         <CheckBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding ExpansionCompressionEnabled}">Enable expansion/compression</CheckBox>
-        <CheckBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding SoundChangeScoringEnabled}">Reward frequently occurring segment pairs</CheckBox>
+        <CheckBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" IsChecked="{Binding SoundChangeScoringEnabled}">Reward segment pairs proportional to their frequency of correspondence</CheckBox>
         <CheckBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" IsChecked="{Binding SyllablePositionCostEnabled}">Penalize segment pairs in different syllable positions</CheckBox>
         <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" Margin="0,3,0,0" Padding="0" Target="{Binding ElementName=FeaturesTreeListView}">Features</Label>
         <c:TreeListView x:Name="FeaturesTreeListView" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" Height="125" ItemsSource="{Binding Features}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="TreeListView_Loaded">

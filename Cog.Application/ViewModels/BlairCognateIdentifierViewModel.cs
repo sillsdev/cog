@@ -10,6 +10,7 @@ namespace SIL.Cog.Application.ViewModels
 	{
 		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
+		private readonly SegmentMappingViewModel.Factory _mappingFactory;
 
 		private bool _ignoreRegularInsertionDeletion;
 		private bool _regularConsEqual;
@@ -18,11 +19,12 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly SegmentMappingsViewModel _ignoredMappings;
 
 		public BlairCognateIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService, SegmentMappingsViewModel ignoredMappings,
-			SimilarSegmentMappingsViewModel.Factory similarSegmentMappingsFactory)
+			SimilarSegmentMappingsViewModel.Factory similarSegmentMappingsFactory, SegmentMappingViewModel.Factory mappingFactory)
 			: base("Blair")
 		{
 			_segmentPool = segmentPool;
 			_projectService = projectService;
+			_mappingFactory = mappingFactory;
 			_ignoredMappings = ignoredMappings;
 			_ignoredMappings.PropertyChanged += ChildPropertyChanged;
 			_similarVowels = similarSegmentMappingsFactory(SoundType.Vowel);
@@ -51,7 +53,7 @@ namespace SIL.Cog.Application.ViewModels
 				Set(() => RegularConsonantsEqual, ref _regularConsEqual, blair.RegularConsonantEqual);
 				var ignoredMappings = (ListSegmentMappings) blair.IgnoredMappings;
 				foreach (UnorderedTuple<string, string> mapping in ignoredMappings.Mappings)
-					_ignoredMappings.Mappings.Add(new SegmentMappingViewModel(_projectService.Project.Segmenter, mapping.Item1, mapping.Item2));
+					_ignoredMappings.Mappings.Add(_mappingFactory(mapping.Item1, mapping.Item2));
 				var segmentMappings = (TypeSegmentMappings) blair.SimilarSegments;
 				_similarVowels.SegmentMappings = (UnionSegmentMappings) segmentMappings.VowelMappings;
 				_similarConsonants.SegmentMappings = (UnionSegmentMappings) segmentMappings.ConsonantMappings;

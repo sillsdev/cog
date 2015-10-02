@@ -14,17 +14,25 @@
                 <Setter Property="Padding" Value="0,0,0,5" />
             </Style>
             <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                <Setter Property="Margin" Value="0,0,0,5" />
-                <Setter Property="Width" Value="200" />
+                <Setter Property="Margin" Value="3,0,3,5" />
+                <Setter Property="Width" Value="50" />
+				<Setter Property="FontSize" Value="15" />
             </Style>
-            <Style TargetType="Button">
+			<Style TargetType="ComboBox">
+				<Setter Property="Margin" Value="0,0,0,5" />
+				<Setter Property="Width" Value="40" />
+				<Setter Property="FontSize" Value="15" />
+			</Style>
+			<Style TargetType="Button">
                 <Setter Property="Margin" Value="5,0,0,0" />
                 <Setter Property="Width" Value="70" />
             </Style>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -33,10 +41,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=Seg1TextBox}">Segment 1:</Label>
-        <TextBox Name="Seg1TextBox" Grid.Column="1" Grid.Row="0" Text="{Binding Segment1, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
+		<ComboBox Grid.Column="1" Grid.Row="0" Text="{Binding LeftEnvironment1}" ItemsSource="{Binding EnvironmentOptions}" />
+        <TextBox Name="Seg1TextBox" Grid.Column="2" Grid.Row="0" Text="{Binding Segment1, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding SegmentsEnabled}" />
+		<ComboBox Grid.Column="3" Grid.Row="0" Text="{Binding RightEnvironment1}" ItemsSource="{Binding EnvironmentOptions}" />
         <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=Seg2TextBox}">Segment 2:</Label>
-        <TextBox Name="Seg2TextBox" Grid.Column="1" Grid.Row="1" Text="{Binding Segment2, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
-        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+		<ComboBox Grid.Column="1" Grid.Row="1" Text="{Binding LeftEnvironment2}" ItemsSource="{Binding EnvironmentOptions}" />
+        <TextBox Name="Seg2TextBox" Grid.Column="2" Grid.Row="1" Text="{Binding Segment2, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding SegmentsEnabled}" />
+		<ComboBox Grid.Column="3" Grid.Row="1" Text="{Binding RightEnvironment2}" ItemsSource="{Binding EnvironmentOptions}" />
+        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Click="okButton_Click" IsDefault="True">OK</Button>
             <Button IsCancel="True">Cancel</Button>
         </StackPanel>

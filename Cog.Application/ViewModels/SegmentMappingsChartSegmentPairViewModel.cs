@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using SIL.Cog.Domain;
 using SIL.Collections;
 
 namespace SIL.Cog.Application.ViewModels
@@ -18,41 +17,51 @@ namespace SIL.Cog.Application.ViewModels
 
 	public class SegmentMappingsChartSegmentPairViewModel : ViewModelBase
 	{
-		private readonly Segment _segment1;
-		private readonly Segment _segment2;
+		public delegate SegmentMappingsChartSegmentPairViewModel Factory(SegmentMappingsChartSegmentViewModel segment1, SegmentMappingsChartSegmentViewModel segment2, int delta, bool enabled);
+
+		private readonly SegmentMappingViewModel.Factory _mappingFactory;
+		private readonly SegmentMappingsChartSegmentViewModel _segment1;
+		private readonly SegmentMappingsChartSegmentViewModel _segment2;
 		private SegmentMappingState _mappingState;
 		private bool _meetsThreshold;
 		private readonly bool _enabled;
 		private readonly ICommand _toggleMappingCommand;
-		private readonly HashSet<UnorderedTuple<string, string>> _mappings;
+		private readonly int _delta;
+		private readonly SegmentMappingsViewModel _mappings;
 
-		public SegmentMappingsChartSegmentPairViewModel(Segment segment1, Segment segment2, bool enabled)
+		public SegmentMappingsChartSegmentPairViewModel(SegmentMappingsViewModel mappings, SegmentMappingViewModel.Factory mappingFactory,
+			SegmentMappingsChartSegmentViewModel segment1, SegmentMappingsChartSegmentViewModel segment2, int delta, bool enabled)
 		{
+			_mappingFactory = mappingFactory;
 			_segment1 = segment1;
 			_segment2 = segment2;
 			_enabled = enabled;
-			_mappings = new HashSet<UnorderedTuple<string, string>>();
+			_delta = delta;
+			_mappings = mappings;
+			_mappings.ConstrainToSegmentPair(_segment1.StrRep, _segment2.StrRep);
+			_mappings.ImportEnabled = false;
+			_mappings.Mappings.CollectionChanged += MappingsChanged;
 			_toggleMappingCommand = new RelayCommand(ToggleMapping);
 		}
 
-		internal Segment DomainSegment1
+		private void MappingsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			UpdateMappingState();
+		}
+
+		public SegmentMappingsChartSegmentViewModel Segment1
 		{
 			get { return _segment1; }
 		}
 
-		internal Segment DomainSegment2
+		public SegmentMappingsChartSegmentViewModel Segment2
 		{
 			get { return _segment2; }
 		}
 
-		public string StrRep1
+		public SegmentMappingsViewModel Mappings
 		{
-			get { return _segment1 == null ? "-" : _segment1.StrRep; }
-		}
-
-		public string StrRep2
-		{
-			get { return _segment2 == null ? "-" : _segment2.StrRep; }
+			get { return _mappings; }
 		}
 
 		public SegmentMappingState MappingState
@@ -71,22 +80,25 @@ namespace SIL.Cog.Application.ViewModels
 			switch (_mappingState)
 			{
 				case SegmentMappingState.ThresholdMapped:
-					_mappings.Add(UnorderedTuple.Create(StrRep1, StrRep2));
+					_mappings.Mappings.Add(_mappingFactory(_segment1.StrRep, _segment2.StrRep));
 					MappingState = SegmentMappingState.DefiniteListMapped;
 					break;
 				case SegmentMappingState.DefiniteListMapped:
 				case SegmentMappingState.IndefiniteListMapped:
-					_mappings.Clear();
+					_mappings.Mappings.Clear();
 					MappingState = _meetsThreshold ? SegmentMappingState.ThresholdMapped : SegmentMappingState.Unmapped;
 					break;
 				case SegmentMappingState.Unmapped:
-					_mappings.Add(UnorderedTuple.Create(StrRep1, StrRep2));
+					_mappings.Mappings.Add(_mappingFactory(_segment1.StrRep, _segment2.StrRep));
 					MappingState = SegmentMappingState.DefiniteListMapped;
 					break;
 			}
 		}
 
-		internal int Delta { get; set; }
+		public int Delta
+		{
+			get { return _delta; }
+		}
 
 		internal bool MeetsThreshold
 		{
@@ -98,15 +110,10 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
-		internal ISet<UnorderedTuple<string, string>> Mappings
-		{
-			get { return _mappings; }
-		}
-
 		private void UpdateMappingState()
 		{
-			if (_mappings.Count > 0)
-				MappingState = _mappings.All(m => HasEnvironment(m.Item1) || HasEnvironment(m.Item2)) ? SegmentMappingState.IndefiniteListMapped : SegmentMappingState.DefiniteListMapped;
+			if (_mappings.Mappings.Count > 0)
+				MappingState = _mappings.Mappings.All(m => HasEnvironment(m.Segment1) || HasEnvironment(m.Segment2)) ? SegmentMappingState.IndefiniteListMapped : SegmentMappingState.DefiniteListMapped;
 			else if (_meetsThreshold)
 				MappingState = SegmentMappingState.ThresholdMapped;
 			else

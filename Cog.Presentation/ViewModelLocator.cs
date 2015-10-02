@@ -102,10 +102,12 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<SimilarSegmentMappingsViewModel>();
 			builder.RegisterType<SoundClassesViewModel>();
 			builder.RegisterType<SegmentMappingsViewModel>();
+			builder.RegisterType<SegmentMappingViewModel>();
 			builder.RegisterType<VarietyPairViewModel>();
 			builder.RegisterType<WordPairsViewModel>();
 			builder.RegisterType<SegmentMappingsChartViewModel>();
-			builder.RegisterType<SegmentMappingsChartSegmentViewModel>();
+			builder.RegisterType<SegmentMappingsChartSegmentPairViewModel>();
+			builder.RegisterType<NewSegmentMappingViewModel>();
 
 			_container = builder.Build();
 		}

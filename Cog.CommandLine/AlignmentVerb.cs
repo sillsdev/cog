@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using SIL.Cog.Domain;
-using SIL.Cog.Domain.Components;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
 

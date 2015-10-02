@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using CommandLine;
+using CommandLine.Text;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
 using SIL.Machine.Annotations;
@@ -25,6 +26,16 @@ namespace SIL.Cog.CommandLine
 
 		[Option("config-data", HelpText = "Configuration to use, as a single long string (if passed, overrides --config-file)")]
 		public string ConfigData { get; set; }
+
+		[Usage(ApplicationAlias = "cog-cmdline")]
+		public static IEnumerable<Example> Examples
+		{
+			get
+			{
+				yield return new Example("Specify a config file on the command line", new VerbBase { ConfigFilename = "cog-cmdline.conf" } );
+				yield return new Example("Read/write from files instead of stdin/out", new VerbBase { InputFilename = "infile.txt", OutputFilename = "outfile.txt" } );
+			}
+		}
 
 		protected SegmentPool _segmentPool;
 		protected SpanFactory<ShapeNode> _spanFactory;

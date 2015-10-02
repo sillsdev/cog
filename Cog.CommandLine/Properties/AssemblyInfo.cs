@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using CommandLine.Text;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -8,10 +7,6 @@ using CommandLine.Text;
 [assembly: AssemblyTitle("SIL.Cog.CommandLine")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-
-// Attributes from CommandLineParser, used in constructing usage help
-[assembly: AssemblyLicense("Code licensed under the MIT License (http://sil.mit-license.org/)")]
-[assembly: AssemblyUsage("cog-cmdline.exe (operation) [-i input-fname] [-o output-fname]")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

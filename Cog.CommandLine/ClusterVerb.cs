@@ -34,6 +34,19 @@ namespace SIL.Cog.CommandLine
 		Dictionary<string, List<Tuple<double, string>>> distanceGraph = new Dictionary<string, List<Tuple<double, string>>>();
 		HashSet<string> allWords = new HashSet<string>();
 
+/* Commented out for now, because the CommandLine library doesn't like finding two Usage attributes and we already have one on VerbBase
+		[Usage(ApplicationAlias = "cog-cmdline")]
+		public new static IEnumerable<Example> Examples
+		{
+			get
+			{
+				yield return new Example("UPGMA clustering (specify a threshhold value)", new ClusterVerb { Method = "upgma", Threshhold = 0.2 });
+				yield return new Example("DBSCAN clustering (specify epsilon and min-words values)", new ClusterVerb { Method = "dbscan", Epsilon = 0.2, MinWords = 2 });
+				yield return new Example("LSDBC clustering (specify alpha and K values)", new ClusterVerb { Method = "lsdbc", Alpha = 0.2, K = 3 });
+			}
+		}
+*/
+
 		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			ReturnCodes retcode = ReturnCodes.Okay;

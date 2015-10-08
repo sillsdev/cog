@@ -2,6 +2,11 @@
 
 from __future__ import print_function
 
+# Edit these constants if desired. NOTE that if you change DEFAULT_TAG_FORMAT,
+# you'll need to change the .lstrip('v") part of parse_tag() as well.
+DEFAULT_TAG_FORMAT="v[0-9]*"  # Shell glob format, not regex
+DEFAULT_VERSION_IF_NO_TAGS="0.0.0"
+
 import subprocess
 import os
 
@@ -12,7 +17,7 @@ def cmd_output(cmd):
 
 def git_describe(commitish = None):
     "Run `git describe` (on commitish, if passed) and return its stdout"
-    cmd = ['git', 'describe', '--long', '--match=v[0-9]*', '--always']
+    cmd = ['git', 'describe', '--long', '--match={}'.format(DEFAULT_TAG_FORMAT), '--always']
     if commitish:
         cmd.append(commitish)
     return cmd_output(cmd)
@@ -30,7 +35,7 @@ def parse_tag(git_tag):
         # No version tags found; build our own
         result['GIT_VN_SHA'] = parts[0]
         result['GIT_VN_COMMITS'] = git_commit_count()
-        result['GIT_VN_TAG'] = "0.0.0"
+        result['GIT_VN_TAG'] = DEFAULT_VERSION_IF_NO_TAGS
         # Reconstruct GIT_VN_FULL to match normal "git describe" output
         result['GIT_VN_FULL'] = "v{GIT_VN_TAG}-{GIT_VN_COMMITS}-g{GIT_VN_SHA}".format(**result)
     else:

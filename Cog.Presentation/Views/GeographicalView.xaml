@@ -8,6 +8,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" Loaded="GeographicalView_OnLoaded" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:GeographicalViewModel}">
     <UserControl.Resources>
@@ -28,7 +29,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Name="SearchTextBox" KeyUp="SearchTextBox_OnKeyUp" Margin="0,0,5,5" ToolTip="Search map for location" />
+            <xctk:AutoSelectTextBox Grid.Column="0" Name="SearchTextBox" AutoSelectBehavior="OnFocus" KeyUp="SearchTextBox_OnKeyUp" Margin="0,0,5,5" ToolTip="Search map for location" />
             <Button Grid.Column="1" Click="SearchButton_OnClick" Margin="0,0,0,5">Search map</Button>
         </Grid>
         <HeaderedContentControl Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" Header="Regions">

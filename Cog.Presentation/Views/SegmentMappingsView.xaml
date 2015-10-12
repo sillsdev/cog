@@ -8,9 +8,9 @@
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="250" d:DataContext="{d:DesignInstance vm:SegmentMappingsViewModel}">
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="BoolConverter" />
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+    </UserControl.Resources>
     <StackPanel Width="250">
         <Grid>
             <xcdg:DataGridControl Name="MappingsGrid" ItemsSource="{Binding Mappings}" b:DataGridControlBehaviors.AutoScrollOnSelection="True" Height="150" SelectedItem="{Binding SelectedMapping}" ReadOnly="True">
@@ -50,13 +50,13 @@
                 <Style TargetType="Image" BasedOn="{StaticResource DisableImageStyle}" />
             </Border.Resources>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button Command="{Binding NewCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\add-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
-					</StackPanel>
-				</Button>
-				<Button Command="{Binding RemoveCommand}">
+                <Button Command="{Binding NewCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\add-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding RemoveCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="..\Images\delete-icon.png" />
                         <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>

@@ -135,7 +135,7 @@ namespace SIL.Cog.Presentation.Controls
 		{
 			if (!_fixedTransformApplied)
 			{
-				var parentScrollViewer = this.FindVisualAncestor<ScrollViewer>();
+				ScrollViewer parentScrollViewer = this.FindVisualAncestors<ScrollViewer>().FirstOrDefault();
 				if (parentScrollViewer != null)
 				{
 					var fixedTranslation = new TranslateTransform();

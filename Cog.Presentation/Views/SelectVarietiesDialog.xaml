@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
-        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" mc:Ignorable="d"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+        mc:Ignorable="d"
         Title="Select Varieties" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-        FocusManager.FocusedElement="{Binding ElementName=VarietiesListBox}" SizeToContent="WidthAndHeight"
+        b:WindowBehaviors.InitialFocusElement="{Binding ElementName=VarietiesListBox}" b:WindowBehaviors.CloseOnDefaultButtonClick="True" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:SelectVarietiesViewModel}">
     <Window.Resources>
         <CollectionViewSource x:Key="VarietiesSource" Source="{Binding Varieties}">
@@ -42,7 +44,7 @@
                     <Setter Property="Width" Value="70" />
                 </Style>
             </StackPanel.Resources>
-            <Button Click="okButton_Click" IsDefault="True">OK</Button>
+            <Button IsDefault="True">OK</Button>
             <Button IsCancel="True">Cancel</Button>
         </StackPanel>
     </StackPanel>

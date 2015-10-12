@@ -22,29 +22,31 @@ namespace SIL.Cog.Presentation
 				.All(Validate);
 		}
 
-		public static T FindLogicalAncestor<T>(this DependencyObject child) where T : DependencyObject
+		public static IEnumerable<T> FindLogicalAncestors<T>(this DependencyObject child) where T : DependencyObject
 		{
 			DependencyObject parentObj = LogicalTreeHelper.GetParent(child);
 			if (parentObj == null)
-				return null;
+				yield break;
 			var parent = parentObj as T;
 			if (parent != null)
-				return parent;
-			return FindLogicalAncestor<T>(parentObj);
+				yield return parent;
+			foreach (T ancestor in FindLogicalAncestors<T>(parentObj))
+				yield return ancestor;
 		}
 
-		public static T FindVisualAncestor<T>(this Visual child) where T : Visual
+		public static IEnumerable<T> FindVisualAncestors<T>(this Visual child) where T : Visual
 		{
 			var parentObj = (Visual) VisualTreeHelper.GetParent(child);
 			if (parentObj == null)
-				return null;
+				yield break;
 			var parent = parentObj as T;
 			if (parent != null)
-				return parent;
-			return FindVisualAncestor<T>(parentObj);
+				yield return parent;
+			foreach (T ancestor in FindVisualAncestors<T>(parentObj))
+				yield return ancestor;
 		}
 
-		public static T FindVisualChild<T>(this Visual obj) where T : Visual
+		public static IEnumerable<T> FindVisualDescendants<T>(this Visual obj) where T : Visual
 		{
 			// Search immediate children first (breadth-first)
 			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
@@ -53,14 +55,11 @@ namespace SIL.Cog.Presentation
 
 				var child = childObj as T;
 				if (child != null)
-					return child;
+					yield return child;
 
-				var childOfChild = FindVisualChild<T>(childObj);
-				if (childOfChild != null)
-					return childOfChild;
+				foreach (T descendant in FindVisualDescendants<T>(childObj))
+					yield return descendant;
 			}
-
-			return null;
 		}
 
 		public static bool IsAncestorOf(this Visual obj1, Visual obj2)

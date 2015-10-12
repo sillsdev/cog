@@ -3,9 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application" mc:Ignorable="d"
+        xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+        mc:Ignorable="d"
         Title="Add Segment" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-        SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=SegmentTextBox}"
+        SizeToContent="WidthAndHeight" b:WindowBehaviors.InitialFocusElement="{Binding ElementName=SegmentTextBox}" b:WindowBehaviors.CloseOnDefaultButtonClick="True"
         d:DataContext="{d:DesignInstance vm:AddUnnaturalClassSegmentViewModel}">
     <Grid Margin="10">
         <Grid.Resources>
@@ -13,9 +16,10 @@
                 <Setter Property="Margin" Value="0,3,5,5" />
                 <Setter Property="Padding" Value="0,0,0,5" />
             </Style>
-            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Style TargetType="xctk:AutoSelectTextBox" BasedOn="{StaticResource {x:Type xctk:AutoSelectTextBox}}">
                 <Setter Property="Margin" Value="0,0,0,5" />
                 <Setter Property="Width" Value="200" />
+                <Setter Property="AutoSelectBehavior" Value="OnFocus" />
             </Style>
             <Style TargetType="Button">
                 <Setter Property="Margin" Value="5,0,0,0" />
@@ -32,9 +36,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=SegmentTextBox}">Segment:</Label>
-        <TextBox Name="SegmentTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding Segment, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
+        <xctk:AutoSelectTextBox Name="SegmentTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding Segment, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
         <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Click="okButton_Click" IsDefault="True">OK</Button>
+            <Button IsDefault="True">OK</Button>
             <Button IsCancel="True">Cancel</Button>
         </StackPanel>
     </Grid>

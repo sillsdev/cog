@@ -5,7 +5,8 @@
                     xmlns:gsb="clr-namespace:GraphSharp.Behaviors;assembly=GraphSharp.Controls"
                     xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
                     xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
-                    xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls">
+                    xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
+                    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
     <cnvtrs:LevelToIndentConverter x:Key="LevelToIndentConverter"/>
     <cnvtrs:DoubleToLog10Converter x:Key="Log10Converter"/>
     <cnvtrs:EnumMatchToBooleanConverter x:Key="EnumMatchConverter" />
@@ -747,7 +748,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource ListBorderBrush}" />
     </Style>
 
-    <Style TargetType="TextBox">
+    <Style TargetType="xctk:AutoSelectTextBox">
         <Setter Property="Validation.ErrorTemplate">
             <Setter.Value>
                 <ControlTemplate>

@@ -77,12 +77,6 @@ namespace SIL.Cog.Presentation.Views
 			LoadMergedHeaders();
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (this.Validate())
-				DialogResult = true;
-		}
-
 		private void LoadCollectionView()
 		{
 			var vm = (SegmentMappingsChartViewModel) DataContext;

@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
         xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-        xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" mc:Ignorable="d"
+        xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+        mc:Ignorable="d"
         Title="{Binding Title}"  WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-        FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" SizeToContent="WidthAndHeight"
+        b:WindowBehaviors.InitialFocusElement="{Binding ElementName=NameTextBox}" b:WindowBehaviors.CloseOnDefaultButtonClick="True" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:EditNaturalClassViewModel}">
     <StackPanel Margin="10">
         <Grid>
@@ -21,7 +24,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=NameTextBox}" Padding="0,0,0,5" Margin="0,3,5,5">Name:</Label>
-            <TextBox Name="NameTextBox" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5" Width="200" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
+            <xctk:AutoSelectTextBox Name="NameTextBox" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5" Width="200" AutoSelectBehavior="OnFocus" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
             <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=TypeComboBox}" Padding="0,0,0,5" Margin="0,3,5,5">Type:</Label>
             <ComboBox Name="TypeComboBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" Width="200" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SoundType}}}"
                   DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
@@ -89,7 +92,7 @@
                     <Setter Property="Width" Value="70" />
                 </Style>
             </StackPanel.Resources>
-            <Button Click="okButton_Click" IsDefault="True">OK</Button>
+            <Button IsDefault="True">OK</Button>
             <Button IsCancel="True">Cancel</Button>
         </StackPanel>
     </StackPanel>

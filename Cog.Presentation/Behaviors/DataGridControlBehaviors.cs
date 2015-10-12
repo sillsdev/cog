@@ -135,7 +135,7 @@ namespace SIL.Cog.Presentation.Behaviors
 			return (bool) column.GetValue(AutoSizeProperty);
 		}
 
-		public static readonly DependencyProperty FontSizeHintProperty = DependencyProperty.RegisterAttached("FontSizeHint", typeof(double), typeof(DataGridControl),
+		public static readonly DependencyProperty FontSizeHintProperty = DependencyProperty.RegisterAttached("FontSizeHint", typeof(double), typeof(DataGridControlBehaviors),
 			new UIPropertyMetadata(0.0));
 
 		public static void SetFontSizeHint(ColumnBase column, double value)
@@ -148,7 +148,7 @@ namespace SIL.Cog.Presentation.Behaviors
 			return (double) column.GetValue(FontSizeHintProperty);
 		}
 
-		public static readonly DependencyProperty AutoSizePaddingProperty = DependencyProperty.RegisterAttached("AutoSizePadding", typeof(double), typeof(DataGridControl),
+		public static readonly DependencyProperty AutoSizePaddingProperty = DependencyProperty.RegisterAttached("AutoSizePadding", typeof(double), typeof(DataGridControlBehaviors),
 			new UIPropertyMetadata(0.0));
 
 		public static void SetAutoSizePadding(ColumnBase column, double value)
@@ -326,12 +326,12 @@ namespace SIL.Cog.Presentation.Behaviors
 				var elem = (DependencyObject) e.OriginalSource;
 				var visual = elem as Visual;
 				if (visual == null)
-					visual = elem.FindLogicalAncestor<Visual>();
+					visual = elem.FindLogicalAncestors<Visual>().First();
 
 				switch (dataGrid.SelectionUnit)
 				{
 					case SelectionUnit.Cell:
-						var cell = visual.FindVisualAncestor<DataCell>();
+						DataCell cell = visual.FindVisualAncestors<DataCell>().First();
 						if (cell.IsSelected)
 						{
 							dataGrid.SelectedCellRanges.Clear();
@@ -341,7 +341,7 @@ namespace SIL.Cog.Presentation.Behaviors
 						break;
 
 					case SelectionUnit.Row:
-						var row = visual.FindVisualAncestor<DataRow>();
+						DataRow row = visual.FindVisualAncestors<DataRow>().First();
 						if (row.IsSelected)
 						{
 							dataGrid.SelectedItem = null;

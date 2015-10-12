@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -14,7 +15,7 @@ namespace SIL.Cog.Presentation.Converters
 			object item = values[0];
 			var listBox = (ListBox) values[1];
 
-			var sv = listBox.FindVisualChild<ScrollViewer>();
+			ScrollViewer sv = listBox.FindVisualDescendants<ScrollViewer>().First();
 
 			int index = listBox.Items.IndexOf(item);
 

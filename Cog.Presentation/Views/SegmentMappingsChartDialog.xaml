@@ -9,7 +9,8 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
         xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
-        mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentMappingsChartViewModel}"
+        xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:SegmentMappingsChartViewModel}" b:WindowBehaviors.CloseOnDefaultButtonClick="True"
         Title="{Binding Title}" DataContextChanged="OnDataContextChanged" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Loaded="OnLoaded" Height="600" Width="800">
     <Window.Resources>
         <Style x:Key="CheckmarkPathStyle" TargetType="Path">
@@ -17,8 +18,8 @@
             <Setter Property="Stretch" Value="None" />
             <Setter Property="Fill" Value="ForestGreen" />
         </Style>
-		<BooleanToVisibilityConverter x:Key="BoolConverter" />
-		<cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+        <cnvtrs:InvertedBooleanToVisibilityConverter x:Key="ReverseBoolConverter" />
     </Window.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -29,7 +30,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <xcdg:DataGridControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="SegmentsDataGrid" SelectionUnit="Cell" EditTriggers="CellIsCurrent" SelectionChanged="SegmentsDataGrid_OnSelectionChanged">
@@ -99,16 +100,16 @@
                 </xcdg:TableView>
             </xcdg:DataGridControl.View>
         </xcdg:DataGridControl>
-		<Border Grid.Column="2" Grid.Row="0" BorderThickness="0,1,1,1" BorderBrush="{StaticResource ListBorderBrush}" Padding="5">
-			<HeaderedContentControl Header="Segment pair">
-				<Grid>
-					<StackPanel Visibility="{Binding IsSegmentPairSelected, Converter={StaticResource BoolConverter}}">
-						<v:SegmentMappingsChartSegmentPairView DataContext="{Binding SelectedSegmentPair}" />
-					</StackPanel>
-					<TextBlock Visibility="{Binding IsSegmentPairSelected, Converter={StaticResource ReverseBoolConverter}}" FontSize="15">No segment pair selected.</TextBlock>
-				</Grid>
-			</HeaderedContentControl>
-		</Border>
+        <Border Grid.Column="2" Grid.Row="0" BorderThickness="0,1,1,1" BorderBrush="{StaticResource ListBorderBrush}" Padding="5">
+            <HeaderedContentControl Header="Segment pair">
+                <Grid>
+                    <StackPanel Visibility="{Binding IsSegmentPairSelected, Converter={StaticResource BoolConverter}}">
+                        <v:SegmentMappingsChartSegmentPairView DataContext="{Binding SelectedSegmentPair}" />
+                    </StackPanel>
+                    <TextBlock Visibility="{Binding IsSegmentPairSelected, Converter={StaticResource ReverseBoolConverter}}" FontSize="15">No segment pair selected.</TextBlock>
+                </Grid>
+            </HeaderedContentControl>
+        </Border>
         <Border Grid.Column="2" Grid.Row="1" BorderThickness="0,0,1,1" BorderBrush="{StaticResource ListBorderBrush}" Padding="5">
             <HeaderedContentControl Header="Legend" Height="150">
                 <Grid>
@@ -146,7 +147,7 @@
                     <Setter Property="Width" Value="70" />
                 </Style>
             </StackPanel.Resources>
-            <Button Click="okButton_Click" IsDefault="True">OK</Button>
+            <Button IsDefault="True">OK</Button>
             <Button IsCancel="True">Cancel</Button>
         </StackPanel>
     </Grid>

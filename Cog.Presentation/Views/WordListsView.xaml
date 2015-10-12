@@ -7,6 +7,7 @@
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"  DataContextChanged="OnDataContextChanged" IsVisibleChanged="OnIsVisibleChanged"
              d:DesignHeight="300" d:DesignWidth="300"
              Loaded="OnLoaded" d:DataContext="{d:DesignInstance vm:WordListsViewModel}">
@@ -80,9 +81,12 @@
                 </xcdg:DataGridControl.Resources>
                 <xcdg:DataGridControl.DefaultCellEditors>
                     <xcdg:CellEditor x:Key="{x:Type vm:WordListsVarietyMeaningViewModel}">
+                        <xcdg:CellEditor.ActivationGestures>
+                            <xcdg:TextInputActivationGesture />
+                        </xcdg:CellEditor.ActivationGestures>
                         <xcdg:CellEditor.EditTemplate>
                             <DataTemplate DataType="vm:WordListsVarietyMeaningViewModel">
-                                <TextBox BorderThickness="0" Style="{StaticResource PhoneticTextBoxStyle}" Text="{Binding StrRep}" />
+                                <xctk:AutoSelectTextBox BorderThickness="0" Style="{StaticResource PhoneticTextBoxStyle}" Text="{Binding StrRep}" AutoSelectBehavior="OnFocus" AutoMoveFocus="True" />
                             </DataTemplate>
                         </xcdg:CellEditor.EditTemplate>
                     </xcdg:CellEditor>

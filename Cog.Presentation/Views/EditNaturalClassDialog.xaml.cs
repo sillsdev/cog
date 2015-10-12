@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace SIL.Cog.Presentation.Views
+﻿namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
 	/// Interaction logic for EditNaturalClassDialog.xaml
@@ -11,12 +9,6 @@ namespace SIL.Cog.Presentation.Views
 		{
 			InitializeComponent();
 			SelectedFeaturesDataGrid.ClipboardExporters.Clear();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (this.Validate())
-				DialogResult = true;
 		}
 	}
 }

@@ -17,34 +17,33 @@ namespace SIL.Cog.Application.Export
 
 				writer.WriteLine("BEGIN Taxa;");
 				writer.WriteLine("\tDIMENSIONS NTax={0};", project.Varieties.Count);
-				writer.WriteLine("\tTAXLABELS");
+				writer.Write("\tTAXLABELS");
+
 				int maxNameLen = 0;
-				for (int i = 0; i < project.Varieties.Count; i++)
+				foreach (Variety variety in project.Varieties)
 				{
-					string name = RemoveSpecialChars(project.Varieties[i].Name);
+					string name = variety.Name.RemoveNexusSpecialChars();
 					maxNameLen = Math.Max(maxNameLen, name.Length);
-					writer.Write("\t\t{0}", name);
-					if (i == project.Varieties.Count - 1)
-						writer.Write(";");
 					writer.WriteLine();
-
-
+					writer.Write("\t\t{0}", name);
 				}
+
+				writer.WriteLine(";");
 				writer.WriteLine("END;");
 
 				writer.WriteLine("BEGIN Characters;");
 				writer.WriteLine("\tDIMENSIONS NChar={0};", project.Meanings.Count);
 				writer.WriteLine("\tFORMAT Datatype=STANDARD Missing=? Symbols=\"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\";");
-				writer.WriteLine("\tMATRIX");
+				writer.Write("\tMATRIX");
 
 				var meaningClusters = new Dictionary<Meaning, List<Cluster<Word>>>();
 				foreach (Meaning meaning in project.Meanings)
 					meaningClusters[meaning] = project.GenerateCognateSets(meaning).ToList();
 
-				for (int i = 0; i < project.Varieties.Count; i++)
+				foreach (Variety variety in project.Varieties)
 				{
-					Variety variety = project.Varieties[i];
-					string name = RemoveSpecialChars(variety.Name);
+					string name = variety.Name.RemoveNexusSpecialChars();
+					writer.WriteLine();
 					writer.Write("\t\t{0}{1} ", name, new string(' ', maxNameLen - name.Length));
 					foreach (Meaning meaning in project.Meanings)
 					{
@@ -81,19 +80,11 @@ namespace SIL.Cog.Application.Export
 							writer.Write("?");
 						}
 					}
-					if (i == project.Varieties.Count - 1)
-						writer.Write(";");
-					writer.WriteLine();
 				}
 
-				writer.Write("END;");
+				writer.WriteLine(";");
+				writer.WriteLine("END;");
 			}
-		}
-
-		private static readonly char[] SpecialChars = new[] {'(', ')', '[', ']', '{', '}', '/', '\\', ',', ';', ':', '=', '*', '\'', '"', '<', '>', '^', '`'}; 
-		private static string RemoveSpecialChars(string str)
-		{
-			return string.Concat(str.Replace(" ", "_").Split(SpecialChars, StringSplitOptions.RemoveEmptyEntries));
 		}
 	}
 }

@@ -60,6 +60,8 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Export\NexusCognateSetsExporterTests.cs" />
+    <Compile Include="Export\NexusSimilarityMatrixExporterTests.cs" />
     <Compile Include="Import\TextWordListsImporterTests.cs" />
     <Compile Include="Import\WordSurv6WordListsImporterTests.cs" />
     <Compile Include="Import\WordSurv7WordListsImporterTests.cs" />

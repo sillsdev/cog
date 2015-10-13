@@ -98,7 +98,7 @@ namespace SIL.Cog.Domain
 
 		public override string ToString()
 		{
-			if (_shape.Count == 0)
+			if (_shape == null || _shape.Count == 0)
 				return _strRep;
 
 			var sb = new StringBuilder();

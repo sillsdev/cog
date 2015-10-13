@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
+using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 
@@ -34,13 +34,13 @@ namespace SIL.Cog.Domain.Tests.Components
 
 			var mappings = new ListSegmentMappings(_segmenter, new[]
 				{
-					Tuple.Create("m", "n"),
-					Tuple.Create("t", "-"),
-					Tuple.Create("h#", "-#"),
-					Tuple.Create("c", "#g"),
-					Tuple.Create("f", "@"),
-					Tuple.Create("a", "o"),
-					Tuple.Create("Cw", "-V")
+					UnorderedTuple.Create("m", "n"),
+					UnorderedTuple.Create("t", "-"),
+					UnorderedTuple.Create("h#", "-#"),
+					UnorderedTuple.Create("c", "#g"),
+					UnorderedTuple.Create("f", "@"),
+					UnorderedTuple.Create("a", "o"),
+					UnorderedTuple.Create("Cw", "-V")
 				}, false);
 
 			Shape shape1 = _segmenter.Segment("ma͡et");
@@ -79,11 +79,11 @@ namespace SIL.Cog.Domain.Tests.Components
 
 			var mappings = new ListSegmentMappings(_segmenter, new[]
 				{
-					Tuple.Create("m", "n"),
-					Tuple.Create("t", "-"),
-					Tuple.Create("h#", "-#"),
-					Tuple.Create("c", "#g"),
-					Tuple.Create("f", "@")
+					UnorderedTuple.Create("m", "n"),
+					UnorderedTuple.Create("t", "-"),
+					UnorderedTuple.Create("h#", "-#"),
+					UnorderedTuple.Create("c", "#g"),
+					UnorderedTuple.Create("f", "@")
 				}, true);
 
 			Shape shape1 = _segmenter.Segment("s͡mat͡h");
@@ -111,7 +111,7 @@ namespace SIL.Cog.Domain.Tests.Components
 		{
 			var segmentPool = new SegmentPool();
 
-			var mappings = new ListSegmentMappings(_segmenter, new Tuple<string, string>[0], false);
+			var mappings = new ListSegmentMappings(_segmenter, new UnorderedTuple<string, string>[0], false);
 
 			Shape shape1 = _segmenter.Segment("mat");
 			Shape shape2 = _segmenter.Segment("no");

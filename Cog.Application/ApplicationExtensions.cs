@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SIL.Cog.Domain;
 using SIL.Machine.FeatureModel;
 
@@ -38,6 +39,13 @@ namespace SIL.Cog.Application
 
 			return segment.Type == CogFeatureSystem.VowelType ? HeightCategoryLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("manner")).ID]
 				: PlaceCategoryLookup[((FeatureSymbol) fs.GetValue<SymbolicFeatureValue>("place")).ID];
+		}
+
+		private static readonly char[] NexusSpecialChars = {'(', ')', '[', ']', '{', '}', '/', '\\', ',', ';', ':', '=', '*', '\'', '"', '<', '>', '^', '`'};
+
+		public static string RemoveNexusSpecialChars(this string str)
+		{
+			return string.Concat(str.Replace(" ", "_").Split(NexusSpecialChars, StringSplitOptions.RemoveEmptyEntries));
 		}
 	}
 }

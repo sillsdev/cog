@@ -71,7 +71,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 		public void OpenFindDialog()
 		{
-			_dialogService.ShowModelessDialog(_wordLists, Arg.Do<FindViewModel>(vm => _findViewModel = vm), Arg.Do<Action>(callback => {}));
+			_dialogService.ShowModelessDialog(_wordLists, Arg.Do<FindViewModel>(vm => _findViewModel = vm), Arg.Any<Action>());
 			_wordLists.FindCommand.Execute(null);
 		}
 

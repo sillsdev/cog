@@ -269,7 +269,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void ResetSelectedVarietyPair()
 		{
-			if (_varieties.Count > 0)
+			if (_varieties != null && _varieties.Count > 0)
 			{
 				if (_varietiesView1 == null || _varietiesView2 == null)
 				{

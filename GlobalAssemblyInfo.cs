@@ -5,10 +5,10 @@
 // associated with an assembly.
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("Cog")]
-[assembly: AssemblyCopyright("Copyright © 2013 SIL International")]
+[assembly: AssemblyCopyright("Copyright © 2015 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 
-[assembly: AssemblyFileVersion("1.1.1.DEV_BUILD")]
-[assembly: AssemblyVersion("1.1.1.0")]
+[assembly: AssemblyFileVersion("1.2.0.DEV_BUILD")]
+[assembly: AssemblyVersion("1.2.0.0")]

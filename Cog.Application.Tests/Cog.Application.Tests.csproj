@@ -70,6 +70,7 @@
     <Compile Include="Services\ProjectMigrations\ProjectMigration3Tests.cs" />
     <Compile Include="ViewModels\GlobalCorrespondencesViewModelTests.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModelTests.cs" />
+    <Compile Include="ViewModels\SegmentMappingsChartSegmentPairViewModelTests.cs" />
     <Compile Include="ViewModels\SegmentsViewModelTests.cs" />
     <Compile Include="ViewModels\VarietiesViewModelTests.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModelTests.cs" />

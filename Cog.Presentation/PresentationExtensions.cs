@@ -34,6 +34,20 @@ namespace SIL.Cog.Presentation
 				yield return ancestor;
 		}
 
+		public static IEnumerable<T> FindLogicalDescendants<T>(this DependencyObject obj) where T : DependencyObject
+		{
+			// Search immediate children first (breadth-first)
+			foreach (DependencyObject childObj in LogicalTreeHelper.GetChildren(obj))
+			{
+				var child = childObj as T;
+				if (child != null)
+					yield return child;
+
+				foreach (T descendant in FindLogicalDescendants<T>(childObj))
+					yield return descendant;
+			}
+		}
+
 		public static IEnumerable<T> FindVisualAncestors<T>(this Visual child) where T : Visual
 		{
 			var parentObj = (Visual) VisualTreeHelper.GetParent(child);

@@ -59,14 +59,36 @@ namespace SIL.Cog.Presentation.Behaviors
 			if (window == null)
 				return;
 
+			Button defaultButton = null;
+			if (window.IsLoaded)
+				defaultButton = window.FindVisualDescendants<Button>().FirstOrDefault(b => b.IsDefault);
+
+			if ((bool) e.NewValue)
+			{
+				if (defaultButton != null)
+					defaultButton.Click += defaultButton_Click;
+				else
+					window.Loaded += window_Loaded;
+			}
+			else
+			{
+				if (defaultButton != null)
+					defaultButton.Click -= defaultButton_Click;
+				window.Loaded -= window_Loaded;
+			}
+		}
+
+		private static void window_Loaded(object sender, RoutedEventArgs routedEventArgs)
+		{
+			var window = sender as Window;
+			if (window == null)
+				return;
+
 			Button defaultButton = window.FindVisualDescendants<Button>().FirstOrDefault(b => b.IsDefault);
 			if (defaultButton == null)
 				return;
 
-			if ((bool) e.NewValue)
-				defaultButton.Click += defaultButton_Click;
-			else
-				defaultButton.Click -= defaultButton_Click;
+			defaultButton.Click += defaultButton_Click;
 		}
 
 		private static void defaultButton_Click(object sender, RoutedEventArgs e)

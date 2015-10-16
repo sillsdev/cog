@@ -10,5 +10,5 @@
 [assembly: AssemblyCulture("")]
 
 
-[assembly: AssemblyFileVersion("1.2.0.DEV_BUILD")]
-[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.1.DEV_BUILD")]
+[assembly: AssemblyVersion("1.2.1.0")]

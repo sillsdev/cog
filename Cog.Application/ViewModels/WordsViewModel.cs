@@ -34,6 +34,7 @@ namespace SIL.Cog.Application.ViewModels
 			_selectedWords.CollectionChanged += _selectedWords_CollectionChanged;
 			_selectedSegmentWords = new BindableList<WordViewModel>();
 			_selectedWordsMonitor = new SimpleMonitor();
+			AddWords(_words);
 			UpdateWordCounts();
 		}
 

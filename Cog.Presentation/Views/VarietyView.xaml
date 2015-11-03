@@ -103,7 +103,10 @@
             </Grid>
         </HeaderedContentControl>
         <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Height="4" Margin="0,5,0,1" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-        <HeaderedContentControl Grid.Row="2" Grid.Column="0" Header="Words">
+        <HeaderedContentControl Grid.Row="2" Grid.Column="0">
+            <HeaderedContentControl.Header>
+                <TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold">Words <TextBlock Foreground="Gray" FontWeight="Normal">(<Run Text="{Binding Words.ValidWordCount, Mode=OneWay}" /> valid, <Run Text="{Binding Words.InvalidWordCount, Mode=OneWay}" /> invalid)</TextBlock></TextBlock>
+            </HeaderedContentControl.Header>
             <v:WordsView DataContext="{Binding Words}" />
         </HeaderedContentControl>
         <GridSplitter Grid.Row="2" Grid.Column="1" Width="4" Margin="3,10,3,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" />

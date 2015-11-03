@@ -22,6 +22,8 @@ namespace SIL.Cog.Application.ViewModels
 		private SortDescription? _deferredSortDesc;
 		private WordViewModel _startWord;
 		private readonly SimpleMonitor _selectedWordsMonitor;
+		private int _validWordCount;
+		private int _invalidWordCount;
 
 		public WordsViewModel(IBusyService busyService, ReadOnlyBindableList<WordViewModel> words)
 		{
@@ -32,6 +34,7 @@ namespace SIL.Cog.Application.ViewModels
 			_selectedWords.CollectionChanged += _selectedWords_CollectionChanged;
 			_selectedSegmentWords = new BindableList<WordViewModel>();
 			_selectedWordsMonitor = new SimpleMonitor();
+			UpdateWordCounts();
 		}
 
 		private void WordsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -58,6 +61,7 @@ namespace SIL.Cog.Application.ViewModels
 					break;
 			}
 			ResetSearch();
+			UpdateWordCounts();
 		}
 
 		private void AddWords(IEnumerable<WordViewModel> words)
@@ -66,6 +70,7 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				if (word.Segments.Any(s => s.IsSelected))
 					_selectedSegmentWords.Add(word);
+				word.PropertyChanged += word_PropertyChanged;
 			}
 		}
 
@@ -75,7 +80,28 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				_selectedSegmentWords.Remove(word);
 				_selectedWords.Remove(word);
+				word.PropertyChanged -= word_PropertyChanged;
 			}
+		}
+
+		private void word_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "IsValid")
+				UpdateWordCounts();
+		}
+
+		private void UpdateWordCounts()
+		{
+			int validCount = 0, invalidCount = 0;
+			foreach (WordViewModel word in _words)
+			{
+				if (word.IsValid)
+					validCount++;
+				else
+					invalidCount++;
+			}
+			ValidWordCount = validCount;
+			InvalidWordCount = invalidCount;
 		}
 
 		internal void UpdateSort(string propertyName, ListSortDirection sortDirection)
@@ -195,7 +221,20 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _words; }
 		}
 
+		public int ValidWordCount
+		{
+			get { return _validWordCount; }
+			private set { Set(() => ValidWordCount, ref _validWordCount, value); }
+		}
+
+		public int InvalidWordCount
+		{
+			get { return _invalidWordCount; }
+			private set { Set(() => InvalidWordCount, ref _invalidWordCount, value); }
+		}
+
 		public ICollectionView WordsView
+
 		{
 			get { return _wordsView; }
 			set

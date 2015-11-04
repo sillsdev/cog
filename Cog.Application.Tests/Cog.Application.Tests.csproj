@@ -73,6 +73,7 @@
     <Compile Include="ViewModels\MultipleWordAlignmentViewModelTests.cs" />
     <Compile Include="ViewModels\SegmentMappingsChartSegmentPairViewModelTests.cs" />
     <Compile Include="ViewModels\SegmentsViewModelTests.cs" />
+    <Compile Include="ViewModels\SettingsWorkspaceViewModelBaseTests.cs" />
     <Compile Include="ViewModels\VarietiesViewModelTests.cs" />
     <Compile Include="ViewModels\VarietyPairsViewModelTests.cs" />
     <Compile Include="ViewModels\WordListsVarietyMeaningViewModelTests.cs" />

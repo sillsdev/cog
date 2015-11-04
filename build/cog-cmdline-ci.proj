@@ -1,0 +1,179 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+		<OutDir>$(RootDir)/build/output</OutDir>
+		<Project>Cog.CommandLine</Project>
+		<TestProject>$(Project).Tests</TestProject>
+		<Configuration>Debug</Configuration>
+		<Platform>AnyCPU</Platform>
+		<LifecycleStage>Stable</LifecycleStage>
+	</PropertyGroup>
+	<ItemGroup>
+		<BuildFiles Include="$(RootDir)/$(Project)/$(Project).csproj" />
+		<BuildFiles Include="$(RootDir)/$(TestProject)/$(TestProject).csproj" />
+	</ItemGroup>
+	
+	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+	
+	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="FileUpdate" />
+	<Target Name="StampBuildNumber">
+		<PropertyGroup>
+			<InformationalVersionNumber>$(GIT_VN_FULL)</InformationalVersionNumber>
+			<ShortVersionNumber>$(GIT_VN_TAG)</ShortVersionNumber>
+			<VersionNumber>$(GIT_VN_TAG).$(GIT_VN_COMMITS)</VersionNumber>
+			<DebVersionNumber>$(GIT_VN_TAG)-$(GIT_VN_COMMITS)</DebVersionNumber>
+		</PropertyGroup>
+		<!-- Awkward syntax in regexes below is because MSBuild autoconverts \ to /, which messes up \( and \) and so on. -->
+		<!-- Uncomment next line after AssemblyInformationalVersion has been added to GlobalAssemblyInfo.cs: -->
+		<!-- <FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyInformationalVersion[(]"[^"]+"[)]' ReplacementText='AssemblyInformationalVersion("$(InformationalVersionNumber)")' /> -->
+		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyFileVersion[(]"[^"]+"[)]' ReplacementText='AssemblyFileVersion("$(VersionNumber)")' />
+		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyVersion[(]"[^"]+"[)]' ReplacementText='AssemblyVersion("$(ShortVersionNumber)")' />
+	</Target>
+	
+	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber">
+		<MSBuild Projects="@(BuildFiles)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+	</Target>
+	
+	<Target Name="Test" DependsOnTargets="BuildAll">
+		<CreateItem Include="$(RootDir)/$(Project).Tests/bin/$(Configuration)/*Tests.dll">
+			<Output ItemName="TestAssemblies" TaskParameter="Include" />
+		</CreateItem>
+		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.6.2" />
+	</Target>
+	
+	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="Split" />
+	<Target Name="VersionNumber" DependsOnTargets="BuildAll">
+		<!-- Read the version from the .exe -->
+		<GetAssemblyIdentity AssemblyFiles="$(RootDir)/$(Project)/bin/$(Configuration)/cog-cmdline.exe">
+		  <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
+		</GetAssemblyIdentity>
+		<!-- Create the MSBuild property $(VersionNumber) -->
+		<CreateProperty Value="%(AsmInfo.Version)">
+		  <Output TaskParameter="Value" PropertyName="AssemblyVersionNumber" />
+		</CreateProperty>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="0">
+			<Output TaskParameter="ReturnValue" PropertyName="MajorVersionPart" />
+		</Split>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="1">
+			<Output TaskParameter="ReturnValue" PropertyName="MinorVersionPart" />
+		</Split>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="2">
+			<Output TaskParameter="ReturnValue" PropertyName="RevisionVersionPart" />
+		</Split>
+		<Split Input="$(AssemblyVersionNumber)" Delimiter="." OutputSubString="3">
+			<Output TaskParameter="ReturnValue" PropertyName="BuildVersionPart" />
+		</Split>
+		<CreateProperty Value="$(MajorVersionPart).$(MinorVersionPart).$(RevisionVersionPart)">
+		  <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+		</CreateProperty>
+		<CreateProperty Value="$(ShortVersionNumber).$(GIT_VN_COMMITS)">
+		  <Output TaskParameter="Value" PropertyName="VersionNumber" />
+		</CreateProperty>
+	</Target>
+	
+	<Target Name="StampDebVersionNumber" DependsOnTargets="StampBuildNumber">
+		<FileUpdate File="$(RootDir)/debian/control" Regex="DEBIAN_VERSION_NUMBER" ReplacementText="$(DebVersionNumber)" />
+	</Target>
+	
+	<Target Name="MakeOutDir">
+		<MakeDir Directories="$(OutDir)" />
+	</Target>
+	
+	<Target Name="MakeDeb" DependsOnTargets="MakeOutDir;StampDebVersionNumber;BuildAll">
+		<PropertyGroup>
+			<SrcDir>$(RootDir)/$(Project)</SrcDir>
+			<NewProjectFname>NewProject.cogx</NewProjectFname>
+			<BuildDir>$(SrcDir)/bin/$(Configuration)</BuildDir>
+			<ProjectName>cog-cmdline</ProjectName>
+			<DebianPackageArchitecture>all</DebianPackageArchitecture>
+			<DebianPackageName>$(ProjectName)_$(DebVersionNumber)_$(DebianPackageArchitecture).deb</DebianPackageName>
+			
+			<ChangelogMessage>Debian package autobuilt by TeamCity (build number $(BUILD_NUMBER))</ChangelogMessage>
+			<DchOptionsFirstCall>-U --maintmaint -v "$(DebVersionNumber)" "$(ChangelogMessage)"</DchOptionsFirstCall>
+			<DchOptionsSecondCall>-U -r --vendor Debian --maintmaint ""</DchOptionsSecondCall>
+			
+			<!-- Directories where parts of the Debian package will be installed -->
+			<DebRoot>$(OutDir)/debian-package-root</DebRoot>
+			<DebUsrLib>$(DebRoot)/usr/lib/$(ProjectName)</DebUsrLib>
+			<DebUsrBin>$(DebRoot)/usr/bin</DebUsrBin>
+			<DebDEBIAN>$(DebRoot)/DEBIAN</DebDEBIAN>
+			<DebData>$(DebRoot)/usr/share/$(ProjectName)</DebData>
+			<DebDocs>$(DebRoot)/usr/share/doc/$(ProjectName)</DebDocs>
+			<DebManpages>$(DebRoot)/usr/share/man/man1</DebManpages>
+		</PropertyGroup>
+		
+		<!-- First dch call adds a new "UNRELEASED" changelog entry, updating version and/or Debian revision -->
+		<Exec Command="dch $(DchOptionsFirstCall)" WorkingDirectory="$(RootDir)" />
+		<!-- Second dch call finalizes changelog by changing "UNRELEASED" to a real distro name, so that next dch call will again create a new changelog entry -->
+		<Exec Command="dch $(DchOptionsSecondCall)" WorkingDirectory="$(RootDir)" />
+		
+		<MakeDir Directories="$(DebRoot);$(DebUsrLib);$(DebUsrBin);$(DebDEBIAN);$(DebData);$(DebDocs);$(DebManpages)" />
+		<ItemGroup>
+			<CompiledFiles Include="$(BuildDir)/*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(CompiledFiles)" DestinationFolder="$(DebUsrLib)" />
+		<Exec Command="chmod -x $(DebUsrLib)/*.dll" />
+		
+		<Copy SourceFiles="$(RootDir)/debian/control" DestinationFolder="$(DebDEBIAN)" />
+		<Copy SourceFiles="$(SrcDir)/$(NewProjectFname)" DestinationFiles="$(DebData)/$(ProjectName).conf" />
+		<Copy SourceFiles="$(RootDir)/debian/copyright" DestinationFolder="$(DebDocs)" />
+		<Copy SourceFiles="$(RootDir)/debian/changelog" DestinationFiles="$(DebDocs)/changelog.Debian" />
+		<Exec Command="gzip -f -9 &quot;$(DebDocs)/changelog.Debian&quot;" />
+		<Exec Command="ronn &lt; &quot;$(SrcDir)/README.md&quot; &gt; &quot;$(DebManpages)/$(ProjectName).1&quot;" />
+		<Exec Command="gzip -f -9 &quot;$(DebManpages)/$(ProjectName).1&quot;" />
+		
+		<Delete Files="$(DebUsrBin)/$(ProjectName)" />
+		<WriteLinesToFile File="$(DebUsrBin)/$(ProjectName)" Lines="#!/bin/bash" />
+		<WriteLinesToFile File="$(DebUsrBin)/$(ProjectName)" Lines="exec /usr/bin/cli /usr/lib/$(ProjectName)/$(ProjectName).exe &quot;$@&quot;" />
+		<Exec Command="chmod +x $(DebUsrBin)/$(ProjectName)" />
+		
+		<ItemGroup>
+			<FilesToDelete Include="$(OutDir)/$(ProjectName)_*_$(DebianPackageArchitecture).deb" />
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" />
+		<Exec Command="fakeroot dpkg-deb -b &quot;$(DebRoot)&quot;" />
+		<!-- Apparently xbuild doesn't implement the <Move> task (huh??), so instead of a Move here, we'll Copy and Delete -->
+		<Copy SourceFiles="$(DebRoot).deb" DestinationFiles="$(OutDir)/$(DebianPackageName)" />
+		<Delete Files="$(DebRoot).deb" />
+		<RemoveDir Directories="$(DebRoot)" />
+		<Message Text="Build completed on $([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
+	</Target>
+	
+	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
+		<Copy SourceFiles="$(RootDir)/build/DownloadPointers.html" DestinationFolder="$(RootDir)/output" />
+		<FileUpdate File="$(RootDir)/output/DownloadPointers.html" Regex="LIFECYCLE_STAGE" ReplacementText="$(LifecycleStage)" />
+		<FileUpdate File="$(RootDir)/output/DownloadPointers.html" Regex="VERSION_NUMBER" ReplacementText="$(ShortVersionNumber)" />
+		<FileUpdate File="$(RootDir)/output/DownloadPointers.html" Regex="RELEASE_DATE" ReplacementText="$([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
+		
+		<Copy SourceFiles="$(RootDir)/build/DownloadButton.html" DestinationFolder="$(RootDir)/output" />
+		<FileUpdate File="$(RootDir)/output/DownloadButton.html" Regex="LIFECYCLE_STAGE" ReplacementText="$(LifecycleStage.ToLower())" />
+		<FileUpdate File="$(RootDir)/output/DownloadButton.html" Regex="VERSION_NUMBER" ReplacementText="$(ShortVersionNumber)" />
+	</Target>
+	
+	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">
+		<ItemGroup>
+			<FilesToDelete Include="$(RootDir)/output/Cog-*-Setup.exe" />
+		</ItemGroup>
+		<Delete Files="@(FilesToDelete)" />
+		<Copy SourceFiles="$(RootDir)/Installer/Bootstrapper/bin/$(Configuration)/Cog-$(VersionNumber)-Setup.exe" DestinationFolder="$(RootDir)/output" />
+		<Exec Command='"$(WIX)/bin/insignia.exe" -ib "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)/output/BurnEngine.exe"' />
+		<Exec Command='sign "$(RootDir)/output/BurnEngine.exe"' />
+		<Exec Command='"$(WIX)/bin/insignia.exe" -ab "$(RootDir)/output/BurnEngine.exe" "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe" -o "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe"' />
+		<Delete Files="$(RootDir)/output/BurnEngine.exe" />
+		<Exec Command='sign "$(RootDir)/output/Cog-$(VersionNumber)-Setup.exe"' />
+	</Target>
+	
+	<Target Name="UploadRelease" DependsOnTargets="VersionNumber;Installer;MakeDownloadPointers">
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/Cog-$(VersionNumber)-Setup.exe" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/Cog-$(ShortVersionNumber)-Setup.exe' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/DownloadPointers.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadPointers.html' />
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/DownloadButton.html" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/DownloadButton.html' />
+	</Target>
+	
+	<Target Name="UploadDev" DependsOnTargets="VersionNumber;Installer">
+		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -rvz --chmod=Fug+rw,Fo+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob" --delete "--exclude=*.html"  "../output/" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-dev/' />
+	</Target>
+	
+	<Target Name="UploadDeb" DependsOnTargets="MakeOutDir;MakeDeb">
+		<Exec Command='rsync -rvz --chmod=Fug+rw,Fo+r -e"ssh -i /home/bob/.ssh/bob_key -l bob" "$(OutDir)/$(DebianPackageName)" bob@palaso.org:/var/www/virtual/palaso.org/downloads/htdocs/cog/latest-deb/' />
+	</Target>
+</Project>

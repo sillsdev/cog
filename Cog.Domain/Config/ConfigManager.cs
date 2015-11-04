@@ -39,7 +39,10 @@ namespace SIL.Cog.Domain.Config
 		static ConfigManager()
 		{
 			Schema = new XmlSchemaSet {XmlResolver = new ResourceXmlResolver()};
-			Schema.Add(DefaultNamespace, "CogProject.xsd");
+			if (!Platform.IsMono)  // Bypass bug in old versions of Mono: in Mono 2.10.8, ResourceXmlResolver incorrectly searches the filesystem. 2015-09 RM
+			{
+				Schema.Add(DefaultNamespace, "CogProject.xsd");
+			}
 			Schema.Compile();
 
 			ConfigMigrations = Assembly.GetExecutingAssembly().GetTypes()
@@ -91,6 +94,28 @@ namespace SIL.Cog.Domain.Config
 			return LoadProject(spanFactory, segmentPool, doc, out project);
 		}
 
+		public static CogProject LoadFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
+		{
+			CogProject project;
+			LoadFromXmlString(spanFactory, segmentPool, xmlString, out project);
+			return project;
+		}
+
+		public static bool LoadFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString, out CogProject project)
+		{
+			XDocument doc;
+			try
+			{
+				doc = XDocument.Parse(xmlString);
+			}
+			catch (XmlException xe)
+			{
+				throw new ConfigException("The specified file is not a valid Cog config file", xe);
+			}
+
+			return LoadProject(spanFactory, segmentPool, doc, out project);
+		}
+
 		private static bool LoadProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, XDocument doc, out CogProject project)
 		{
 			project = new CogProject(spanFactory);
@@ -111,14 +136,17 @@ namespace SIL.Cog.Domain.Config
 					throw new ConfigException("The specified file is not a valid Cog config file");
 			}
 
-			doc.Validate(Schema, (sender, args) =>
-				{
-					switch (args.Severity)
+			if (!Platform.IsMono)  // Bypass bug in Mono XSD validation. 2015-08 RM
+			{
+				doc.Validate(Schema, (sender, args) =>
 					{
-						case XmlSeverityType.Error:
-							throw new ConfigException("The specified file is not a valid Cog config file", args.Exception);
-					}
-				});
+						switch (args.Severity)
+						{
+							case XmlSeverityType.Error:
+								throw new ConfigException("The specified file is not a valid Cog config file", args.Exception);
+						}
+					});
+			}
 			segmentPool.Reset();
 			project.Version = (int) root.Attribute("version");
 			var featSys = new FeatureSystem();

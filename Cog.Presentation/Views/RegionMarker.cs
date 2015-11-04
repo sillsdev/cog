@@ -180,8 +180,9 @@ namespace SIL.Cog.Presentation.Views
 		{
 			if (IsSelectable)
 			{
-				if (Click != null)
-					Click(this, new EventArgs());
+				EventHandler handler = Click;
+				if (handler != null)
+					handler(this, new EventArgs());
 			}
 		}
 
@@ -260,8 +261,9 @@ namespace SIL.Cog.Presentation.Views
 			}
 			else
 			{
-				if (Click != null)
-					Click(this, new EventArgs());
+				EventHandler handler = Click;
+				if (handler != null)
+					handler(this, new EventArgs());
 			}
 			var pointShape = (UIElement) sender;
 			pointShape.MouseMove -= RegionPoint_MouseMove;

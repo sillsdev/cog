@@ -18,7 +18,7 @@ namespace SIL.Cog.Application.Services
 	public class ProjectService : IProjectService
 	{
 		private const int CacheVersion = 3;
-		private const int ProjectVersion = 3;
+		private const int ProjectVersion = 4;
 
 		private static readonly FileType CogProjectFileType = new FileType("Cog Project", ".cogx");
 		private static readonly List<IProjectMigration> ProjectMigrations;

@@ -22,10 +22,15 @@ def git_describe(commitish = None):
         cmd.append(commitish)
     return cmd_output(cmd)
 
-def git_commit_count():
+def git_commit_count_whole_repo():
     "Get total commit count in repo"
     cmd = ['git', 'rev-list', 'HEAD', '--count']
     return cmd_output(cmd)
+
+def git_log_ancestry_path(origin_sha, described_sha = "HEAD"):
+    "Run `git log --ancestry-path` to get commits since a certain SHA"
+    cmd = ['git', 'log', '--oneline', '--ancestry-path', '{}..{}'.format(origin_sha, described_sha)]
+    return cmd_output(cmd).splitlines()
 
 def parse_tag(git_tag):
     "Parse git describe output into its component parts"
@@ -34,14 +39,22 @@ def parse_tag(git_tag):
     if len(parts) == 1:
         # No version tags found; build our own
         result['GIT_VN_SHA'] = parts[0]
-        result['GIT_VN_COMMITS'] = git_commit_count()
+        result['GIT_VN_COMMITS'] = git_commit_count_whole_repo()
         result['GIT_VN_TAG'] = DEFAULT_VERSION_IF_NO_TAGS
         # Reconstruct GIT_VN_FULL to match normal "git describe" output
         result['GIT_VN_FULL'] = "v{GIT_VN_TAG}-{GIT_VN_COMMITS}-g{GIT_VN_SHA}".format(**result)
     else:
-        result['GIT_VN_SHA'] = parts[-1].lstrip('g')
-        result['GIT_VN_COMMITS'] = parts[-2]
-        result['GIT_VN_TAG'] = '-'.join(parts[:-2]).lstrip('v')
+        sha = parts[-1].lstrip('g')
+        unused_commit_count = parts[-2] # See comment below
+        tag = '-'.join(parts[:-2])
+        # Because `git describe` uses a strange algorithm for counting commits
+        # after a merge, count them ourselves with `git log --ancestry-path`
+        log_lines = git_log_ancestry_path(tag, sha)
+        commit_count = len(log_lines)
+        result['GIT_VN_SHA'] = sha
+        result['GIT_VN_COMMITS'] = str(commit_count)
+        result['GIT_VN_TAG'] = tag.lstrip('v')
+        result['GIT_VN_FULL'] = "v{GIT_VN_TAG}-{GIT_VN_COMMITS}-g{GIT_VN_SHA}".format(**result)
     return result
 
 def teamcity_log(tag_parts):

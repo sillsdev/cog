@@ -136,7 +136,7 @@
                     <xcdg:Column FieldName="FeatureStructure" Title="Features" Width="1100" />
                 </xcdg:DataGridControl.Columns>
                 <xcdg:DataGridControl.View>
-                    <xcdg:TableView>
+                    <xcdg:TableView IsColumnVirtualizationEnabled="False">
                         <xcdg:TableView.FixedHeaders>
                             <DataTemplate>
                                 <xcdg:ColumnManagerRow />

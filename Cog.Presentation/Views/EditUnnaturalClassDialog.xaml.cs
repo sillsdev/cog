@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace SIL.Cog.Presentation.Views
+﻿namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
 	/// Interaction logic for EditUnnaturalClassDialog.xaml
@@ -10,12 +8,6 @@ namespace SIL.Cog.Presentation.Views
 		public EditUnnaturalClassDialog()
 		{
 			InitializeComponent();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (this.Validate())
-				DialogResult = true;
 		}
 	}
 }

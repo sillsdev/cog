@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CogProject xmlns="http://www.sil.org/CogProject/1.0"
+<CogProject xmlns="http://www.sil.org/CogProject/1.2"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			version="3">
+			version="4">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -817,21 +817,6 @@
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
 				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
-			<Symbol strRep="ᵐ">
-				<FeatureValue feature="place" value="bilabial"/>
-				<FeatureValue feature="manner" value="stop"/>
-				<FeatureValue feature="syllabic" value="syllabic-"/>
-				<FeatureValue feature="voice" value="voice+"/>
-				<FeatureValue feature="nasal" value="nasal+"/>
-				<FeatureValue feature="lateral" value="lateral-"/>
-				<FeatureValue feature="aspirated" value="aspirated-"/>
-				<FeatureValue feature="palatalized" value="palatalized-"/>
-				<FeatureValue feature="labialized" value="labialized-"/>
-				<FeatureValue feature="velarized" value="velarized-"/>
-				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
-				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
-				<FeatureValue feature="airstream" value="pulmonic"/>
-			</Symbol>
 			<Symbol strRep="n">
 				<FeatureValue feature="place" value="alveolar"/>
 				<FeatureValue feature="manner" value="stop"/>
@@ -1029,21 +1014,6 @@
 				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ŋ">
-				<FeatureValue feature="place" value="velar"/>
-				<FeatureValue feature="manner" value="stop"/>
-				<FeatureValue feature="syllabic" value="syllabic-"/>
-				<FeatureValue feature="voice" value="voice+"/>
-				<FeatureValue feature="nasal" value="nasal+"/>
-				<FeatureValue feature="lateral" value="lateral-"/>
-				<FeatureValue feature="aspirated" value="aspirated-"/>
-				<FeatureValue feature="palatalized" value="palatalized-"/>
-				<FeatureValue feature="labialized" value="labialized-"/>
-				<FeatureValue feature="velarized" value="velarized-"/>
-				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
-				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
-				<FeatureValue feature="airstream" value="pulmonic"/>
-			</Symbol>
-			<Symbol strRep="ᵑ">
 				<FeatureValue feature="place" value="velar"/>
 				<FeatureValue feature="manner" value="stop"/>
 				<FeatureValue feature="syllabic" value="syllabic-"/>
@@ -2055,6 +2025,53 @@
 				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
 				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
+			
+			<!-- extra-IPA prenasalized consonant superscripts -->
+			<Symbol strRep="ᵐ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ⁿ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ᵑ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
 		</Consonants>
 		<Modifiers>
 			<Symbol strRep="ʰ">
@@ -2323,102 +2340,109 @@
 		<VarietyProcessor id="syllabifier" xsi:type="SspSyllabifier">
 			<SonorityScale>
 				<SonorityClass sonority="1">
+					<UnnaturalClass name="Prenasal">
+						<Segment>ᵐ</Segment>
+						<Segment>ⁿ</Segment>
+						<Segment>ᵑ</Segment>
+					</UnnaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="2">
 					<NaturalClass name="Stop" type="consonant">
 						<FeatureValue feature="manner" value="stop" />
 						<FeatureValue feature="nasal" value="nasal-" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="2">
+				<SonorityClass sonority="3">
 					<NaturalClass name="Affricate" type="consonant">
 						<FeatureValue feature="manner" value="affricate" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="3">
+				<SonorityClass sonority="4">
 					<NaturalClass name="Fricative" type="consonant">
 						<FeatureValue feature="manner" value="fricative" />
 						<FeatureValue feature="lateral" value="lateral-" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="4">
+				<SonorityClass sonority="5">
 					<NaturalClass name="Nasal" type="consonant">
 						<FeatureValue feature="nasal" value="nasal+" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="5">
+				<SonorityClass sonority="6">
 					<NaturalClass name="Trill" type="consonant">
 						<FeatureValue feature="manner" value="trill" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="6">
+				<SonorityClass sonority="7">
 					<NaturalClass name="Lateral" type="consonant">
 						<FeatureValue feature="lateral" value="lateral+" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="7">
+				<SonorityClass sonority="8">
 					<NaturalClass name="Flap" type="consonant">
 						<FeatureValue feature="manner" value="flap" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="8">
-					<UnnaturalClass name="Glide">
+				<SonorityClass sonority="9">
+					<UnnaturalClass name="Glide" ignoreModifiers="true">
 						<Segment>j</Segment>
 						<Segment>ɥ</Segment>
 						<Segment>ɰ</Segment>
 						<Segment>w</Segment>
 					</UnnaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="8">
+				<SonorityClass sonority="9">
 					<NaturalClass name="Non-syllabic vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic-" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="9">
+				<SonorityClass sonority="10">
 					<NaturalClass name="Close vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="height" value="close" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="10">
+				<SonorityClass sonority="11">
 					<NaturalClass name="Near-close vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="height" value="near-close" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="11">
+				<SonorityClass sonority="12">
 					<NaturalClass name="Close-mid vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="height" value="close-mid" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="12">
+				<SonorityClass sonority="13">
 					<NaturalClass name="Mid vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="height" value="mid" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="13">
+				<SonorityClass sonority="14">
 					<NaturalClass name="Open-mid vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="height" value="open-mid" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="14">
+				<SonorityClass sonority="15">
 					<NaturalClass name="Near-open vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
 						<FeatureValue feature="height" value="near-open" />
 					</NaturalClass>
 				</SonorityClass>
-				<SonorityClass sonority="15">
+				<SonorityClass sonority="16">
 					<NaturalClass name="Open vowel" type="vowel">
 						<FeatureValue feature="syllabic" value="syllabic+" />
-						<FeatureValue feature="manner" value="open-vowel" />
+						<FeatureValue feature="height" value="open" />
 					</NaturalClass>
 				</SonorityClass>
 			</SonorityScale>
 		</VarietyProcessor>
 	</VarietyProcessors>
 	<VarietyPairProcessors>
-		<VarietyPairProcessor id="wordPairGenerator" xsi:type="CognicityWordPairGenerator">
+		<VarietyPairProcessor id="wordPairGenerator" xsi:type="CognacyWordPairGenerator">
 			<InitialAlignmentThreshold>0.3</InitialAlignmentThreshold>
 			<ApplicableWordAligner ref="primary" />
 			<ApplicableCognateIdentifier ref="primary" />

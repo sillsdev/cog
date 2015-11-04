@@ -11,16 +11,16 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:VarietyPairViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-		<xcdg:DataGridCollectionViewSource x:Key="SoundChangesSource" Source="{Binding SoundChanges}">
-			<xcdg:DataGridCollectionViewSource.GroupDescriptions>
-				<xcdg:DataGridGroupDescription PropertyName="Lhs" />
-			</xcdg:DataGridCollectionViewSource.GroupDescriptions>
-			<xcdg:DataGridCollectionViewSource.SortDescriptions>
-				<scm:SortDescription PropertyName="Lhs" Direction="Ascending" />
-				<scm:SortDescription PropertyName="Probability" Direction="Descending" />
-			</xcdg:DataGridCollectionViewSource.SortDescriptions>
-		</xcdg:DataGridCollectionViewSource>
-	</UserControl.Resources>
+        <xcdg:DataGridCollectionViewSource x:Key="SoundChangesSource" Source="{Binding SoundChanges}">
+            <xcdg:DataGridCollectionViewSource.GroupDescriptions>
+                <xcdg:DataGridGroupDescription PropertyName="Lhs" />
+            </xcdg:DataGridCollectionViewSource.GroupDescriptions>
+            <xcdg:DataGridCollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Lhs" Direction="Ascending" />
+                <scm:SortDescription PropertyName="Probability" Direction="Descending" />
+            </xcdg:DataGridCollectionViewSource.SortDescriptions>
+        </xcdg:DataGridCollectionViewSource>
+    </UserControl.Resources>
     <DockPanel>
         <HeaderedContentControl Header="Similarity" Margin="0,10,0,0" DockPanel.Dock="Top">
             <Grid>
@@ -47,81 +47,87 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-			<HeaderedContentControl Grid.Column="0" Grid.Row="0" Margin="0,10,0,0" Header="Likely cognates">
-				<v:WordPairsView DataContext="{Binding Cognates}" />
-			</HeaderedContentControl>
-			<GridSplitter Grid.Row="1" Height="4" Margin="0,5,0,1" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-			<HeaderedContentControl Grid.Column="0" Grid.Row="2" Header="Likely non-cognates">
-				<v:WordPairsView DataContext="{Binding Noncognates}" />
-			</HeaderedContentControl>
-			<GridSplitter Grid.Column="1" Grid.RowSpan="3" Margin="3,10,3,0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="4" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <HeaderedContentControl Grid.Column="0" Grid.Row="0" Margin="0,10,0,0">
+                <HeaderedContentControl.Header>
+                    <TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold">Likely cognates <TextBlock Foreground="Gray" FontWeight="Normal">(<Run Text="{Binding Cognates.WordPairs.Count, Mode=OneWay}" />)</TextBlock></TextBlock>
+                </HeaderedContentControl.Header>
+                <v:WordPairsView DataContext="{Binding Cognates}" />
+            </HeaderedContentControl>
+            <GridSplitter Grid.Row="1" Height="4" Margin="0,5,0,1" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+            <HeaderedContentControl Grid.Column="0" Grid.Row="2">
+                <HeaderedContentControl.Header>
+                    <TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold">Likely non-cognates <TextBlock Foreground="Gray" FontWeight="Normal">(<Run Text="{Binding Noncognates.WordPairs.Count, Mode=OneWay}" />)</TextBlock></TextBlock>
+                </HeaderedContentControl.Header>
+                <v:WordPairsView DataContext="{Binding Noncognates}" />
+            </HeaderedContentControl>
+            <GridSplitter Grid.Column="1" Grid.RowSpan="3" Margin="3,10,3,0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="4" />
             <HeaderedContentControl Margin="0,10,0,0" Grid.Column="2" Grid.RowSpan="3" Header="Sound changes">
                 <xcdg:DataGridControl Name="CorrespondenceDataGrid" ItemsSource="{Binding Source={StaticResource SoundChangesSource}}" AutoCreateColumns="False"
-									  ReadOnly="True" SelectedItem="{Binding SelectedSoundChange}">
-					<xcdg:DataGridControl.Resources>
-						<DataTemplate DataType="{x:Type xcdg:Group}">
-							<TextBlock Style="{StaticResource PhoneticTextBlockStyle}" Margin="2,0,0,0" Foreground="{StaticResource HeaderTextBrush}">
-								<Run Text="{Binding Value.Target, Mode=OneWay}">
-									<Run.Style>
-										<Style TargetType="Run">
-											<Style.Triggers>
-												<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
-													<Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
-												</DataTrigger>
-												<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
-													<Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
-												</DataTrigger>
-											</Style.Triggers>
-										</Style>
-									</Run.Style>
-								</Run>
-								<Run Foreground="{StaticResource HeaderTextBrush}"> &#x2192; ?</Run>
-								<Run Text="{Binding Value.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
-							</TextBlock>
-						</DataTemplate>
-					</xcdg:DataGridControl.Resources>
+                                      ReadOnly="True" SelectedItem="{Binding SelectedSoundChange}">
+                    <xcdg:DataGridControl.Resources>
+                        <DataTemplate DataType="{x:Type xcdg:Group}">
+                            <TextBlock Style="{StaticResource PhoneticTextBlockStyle}" Margin="2,0,0,0" Foreground="{StaticResource HeaderTextBrush}">
+                                <Run Text="{Binding Value.Target, Mode=OneWay}">
+                                    <Run.Style>
+                                        <Style TargetType="Run">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource Variety1Brush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
+                                                    <Setter Property="Foreground" Value="{StaticResource Variety2Brush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Run.Style>
+                                </Run>
+                                <Run Foreground="{StaticResource HeaderTextBrush}"> &#x2192; ?</Run>
+                                <Run Text="{Binding Value.Environment, Mode=OneWay}" Foreground="{StaticResource HeaderTextBrush}" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </xcdg:DataGridControl.Resources>
                     <xcdg:DataGridControl.Columns>
-						<xcdg:Column FieldName="Correspondence" Title="Segment" Width="80">
-							<xcdg:Column.CellContentTemplate>
-								<DataTemplate>
-									<TextBlock Name="ContentTextBlock" Style="{StaticResource PhoneticTextBlockStyle}" Margin="4,0,0,0" Text="{Binding}" />
-									<DataTemplate.Triggers>
-										<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
-											<Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety2Brush}" />
-										</DataTrigger>
-										<DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
-											<Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety1Brush}" />
-										</DataTrigger>
-									</DataTemplate.Triggers>
-								</DataTemplate>
-							</xcdg:Column.CellContentTemplate>
-						</xcdg:Column>
-						<xcdg:Column FieldName="Probability" Title="Probability" Width="135">
-							<xcdg:Column.CellContentTemplate>
-								<DataTemplate>
-									<c:PercentageControl />
-								</DataTemplate>
-							</xcdg:Column.CellContentTemplate>
-						</xcdg:Column>
-						<xcdg:Column FieldName="Frequency" Title="Frequency" Width="*" />
+                        <xcdg:Column FieldName="Correspondence" Title="Segment" Width="80">
+                            <xcdg:Column.CellContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Name="ContentTextBlock" Style="{StaticResource PhoneticTextBlockStyle}" Margin="4,0,0,0" Text="{Binding}" />
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="True">
+                                            <Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety2Brush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding DataContext.AreVarietiesInOrder, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type v:VarietyPairView}}}" Value="False">
+                                            <Setter TargetName="ContentTextBlock" Property="Foreground" Value="{StaticResource Variety1Brush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </xcdg:Column.CellContentTemplate>
+                        </xcdg:Column>
+                        <xcdg:Column FieldName="Probability" Title="Probability" Width="135">
+                            <xcdg:Column.CellContentTemplate>
+                                <DataTemplate>
+                                    <c:PercentageControl />
+                                </DataTemplate>
+                            </xcdg:Column.CellContentTemplate>
+                        </xcdg:Column>
+                        <xcdg:Column FieldName="Frequency" Title="Frequency" Width="*" />
                     </xcdg:DataGridControl.Columns>
-					<xcdg:DataGridControl.View>
-						<xcdg:TableView>
-							<xcdg:TableView.FixedHeaders>
-								<DataTemplate>
-									<xcdg:ColumnManagerRow />
-								</DataTemplate>
-							</xcdg:TableView.FixedHeaders>
-						</xcdg:TableView>
-					</xcdg:DataGridControl.View>
+                    <xcdg:DataGridControl.View>
+                        <xcdg:TableView>
+                            <xcdg:TableView.FixedHeaders>
+                                <DataTemplate>
+                                    <xcdg:ColumnManagerRow />
+                                </DataTemplate>
+                            </xcdg:TableView.FixedHeaders>
+                        </xcdg:TableView>
+                    </xcdg:DataGridControl.View>
                 </xcdg:DataGridControl>
             </HeaderedContentControl>
         </Grid>

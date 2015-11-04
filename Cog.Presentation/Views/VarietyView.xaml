@@ -6,58 +6,58 @@
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
-			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="500"
              d:DataContext="{d:DesignInstance vm:VarietiesVarietyViewModel}">
     <UserControl.Resources>
-		<cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
-		<xcdg:DataGridCollectionViewSource x:Key="SegmentsSource" Source="{Binding Segments}">
-			<xcdg:DataGridCollectionViewSource.SortDescriptions>
-				<scm:SortDescription PropertyName="Probability" Direction="Descending" />
-			</xcdg:DataGridCollectionViewSource.SortDescriptions>
-		</xcdg:DataGridCollectionViewSource>
+        <cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
+        <xcdg:DataGridCollectionViewSource x:Key="SegmentsSource" Source="{Binding Segments}">
+            <xcdg:DataGridCollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Probability" Direction="Descending" />
+            </xcdg:DataGridCollectionViewSource.SortDescriptions>
+        </xcdg:DataGridCollectionViewSource>
     </UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="200" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<HeaderedContentControl Grid.Row="0" Grid.ColumnSpan="3" Margin="0,10,0,0" Header="Affixes">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <HeaderedContentControl Grid.Row="0" Grid.ColumnSpan="3" Margin="0,10,0,0" Header="Affixes">
             <Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <xcdg:DataGridControl Name="AffixesGrid" ItemsSource="{Binding Affixes}" SelectedItem="{Binding SelectedAffix}" ReadOnly="True" b:DataGridControlBehaviors.AutoScrollOnSelection="True">
                         <xcdg:DataGridControl.Columns>
-							<xcdg:Column FieldName="StrRep" Title="Affix" Width="200" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
-							<xcdg:Column FieldName="Type" Title="Type" Width="70">
-								<xcdg:Column.DisplayMemberBindingInfo>
-									<xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
-								</xcdg:Column.DisplayMemberBindingInfo>
-							</xcdg:Column>
-							<xcdg:Column FieldName="Category" Title="Category" Width="*" />
+                            <xcdg:Column FieldName="StrRep" Title="Affix" Width="200" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
+                            <xcdg:Column FieldName="Type" Title="Type" Width="70">
+                                <xcdg:Column.DisplayMemberBindingInfo>
+                                    <xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
+                                </xcdg:Column.DisplayMemberBindingInfo>
+                            </xcdg:Column>
+                            <xcdg:Column FieldName="Category" Title="Category" Width="*" />
                         </xcdg:DataGridControl.Columns>
-						<xcdg:DataGridControl.View>
-							<xcdg:TableView>
-								<xcdg:TableView.FixedHeaders>
-									<DataTemplate>
-										<xcdg:ColumnManagerRow />
-									</DataTemplate>
-								</xcdg:TableView.FixedHeaders>
-							</xcdg:TableView>
-						</xcdg:DataGridControl.View>
-					</xcdg:DataGridControl>
+                        <xcdg:DataGridControl.View>
+                            <xcdg:TableView>
+                                <xcdg:TableView.FixedHeaders>
+                                    <DataTemplate>
+                                        <xcdg:ColumnManagerRow />
+                                    </DataTemplate>
+                                </xcdg:TableView.FixedHeaders>
+                            </xcdg:TableView>
+                        </xcdg:DataGridControl.View>
+                    </xcdg:DataGridControl>
                     <TextBlock Margin="3,23,3,0" Text="Click New to add an affix">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -71,76 +71,80 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-				<Border Grid.Row="1" Background="{StaticResource ControlPanelBackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{StaticResource ListBorderBrush}">
-					<Border.Resources>
-						<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-							<Setter Property="Margin" Value="0,3,5,3" />
-							<Setter Property="Padding" Value="3" />
-						</Style>
-					</Border.Resources>
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-						<Button Command="{Binding NewAffixCommand}">
-							<StackPanel Orientation="Horizontal">
-								<Image Source="..\Images\add-icon.png" />
-								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
-							</StackPanel>
-						</Button>
-						<Button Command="{Binding EditAffixCommand}">
-							<StackPanel Orientation="Horizontal">
-								<Image Source="..\Images\edit-icon.png" />
-								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
-							</StackPanel>
-						</Button>
-						<Button Command="{Binding RemoveAffixCommand}">
-							<StackPanel Orientation="Horizontal">
-								<Image Source="..\Images\delete-icon.png" />
-								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
-							</StackPanel>
-						</Button>
-					</StackPanel>
-				</Border>
+                <Border Grid.Row="1" Background="{StaticResource ControlPanelBackgroundBrush}" BorderThickness="1,0,1,1" BorderBrush="{StaticResource ListBorderBrush}">
+                    <Border.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <Setter Property="Margin" Value="0,3,5,3" />
+                            <Setter Property="Padding" Value="3" />
+                        </Style>
+                        <Style TargetType="Image" BasedOn="{StaticResource DisableImageStyle}" />
+                    </Border.Resources>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Command="{Binding NewAffixCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\add-icon.png" />
+                                <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding EditAffixCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\edit-icon.png" />
+                                <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding RemoveAffixCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\delete-icon.png" />
+                                <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
             </Grid>
-		</HeaderedContentControl>
-		<GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Height="4" Margin="0,5,0,1" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-		<HeaderedContentControl Grid.Row="2" Grid.Column="0" Header="Words">
-			<v:WordsView DataContext="{Binding Words}" />
         </HeaderedContentControl>
-		<GridSplitter Grid.Row="2" Grid.Column="1" Width="4" Margin="3,10,3,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+        <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Height="4" Margin="0,5,0,1" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+        <HeaderedContentControl Grid.Row="2" Grid.Column="0">
+            <HeaderedContentControl.Header>
+                <TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold">Words <TextBlock Foreground="Gray" FontWeight="Normal">(<Run Text="{Binding Words.ValidWordCount, Mode=OneWay}" /> valid, <Run Text="{Binding Words.InvalidWordCount, Mode=OneWay}" /> invalid)</TextBlock></TextBlock>
+            </HeaderedContentControl.Header>
+            <v:WordsView DataContext="{Binding Words}" />
+        </HeaderedContentControl>
+        <GridSplitter Grid.Row="2" Grid.Column="1" Width="4" Margin="3,10,3,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
         <HeaderedContentControl Grid.Row="2" Grid.Column="2" Header="Segments">
-			<xcdg:DataGridControl Name="SegmentsDataGrid" ItemsSource="{Binding Source={StaticResource SegmentsSource}}" SelectedItem="{Binding SelectedSegment}" ReadOnly="True">
-				<xcdg:DataGridControl.Columns>
-					<xcdg:Column FieldName="StrRep" Title="Segment" Width="80">
-						<xcdg:Column.CellContentTemplate>
-							<DataTemplate>
-								<TextBlock Style="{StaticResource PhoneticTextBlockStyle}" Text="{Binding}" />
-							</DataTemplate>
-						</xcdg:Column.CellContentTemplate>
-					</xcdg:Column>
-					<xcdg:Column FieldName="Probability" Title="Probability" Width="135">
-						<xcdg:Column.CellContentTemplate>
-							<DataTemplate>
-								<c:PercentageControl MaxPercentage="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=DataContext.MaxSegmentProbability}" />
-							</DataTemplate>
-						</xcdg:Column.CellContentTemplate>
-					</xcdg:Column>
-					<xcdg:Column FieldName="Frequency" Title="Frequency" Width="85" />
-					<xcdg:Column FieldName="Type" Title="Type" Width="70">
-						<xcdg:Column.DisplayMemberBindingInfo>
-							<xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
-						</xcdg:Column.DisplayMemberBindingInfo>
-					</xcdg:Column>
-					<xcdg:Column FieldName="FeatureStructure" Title="Features" Width="1100" />
-				</xcdg:DataGridControl.Columns>
-				<xcdg:DataGridControl.View>
-					<xcdg:TableView>
-						<xcdg:TableView.FixedHeaders>
-							<DataTemplate>
-								<xcdg:ColumnManagerRow />
-							</DataTemplate>
-						</xcdg:TableView.FixedHeaders>
-					</xcdg:TableView>
-				</xcdg:DataGridControl.View>
-			</xcdg:DataGridControl>
+            <xcdg:DataGridControl Name="SegmentsDataGrid" ItemsSource="{Binding Source={StaticResource SegmentsSource}}" SelectedItem="{Binding SelectedSegment}" ReadOnly="True">
+                <xcdg:DataGridControl.Columns>
+                    <xcdg:Column FieldName="StrRep" Title="Segment" Width="80">
+                        <xcdg:Column.CellContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource PhoneticTextBlockStyle}" Text="{Binding}" />
+                            </DataTemplate>
+                        </xcdg:Column.CellContentTemplate>
+                    </xcdg:Column>
+                    <xcdg:Column FieldName="Probability" Title="Probability" Width="135">
+                        <xcdg:Column.CellContentTemplate>
+                            <DataTemplate>
+                                <c:PercentageControl MaxPercentage="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=DataContext.MaxSegmentProbability}" />
+                            </DataTemplate>
+                        </xcdg:Column.CellContentTemplate>
+                    </xcdg:Column>
+                    <xcdg:Column FieldName="Frequency" Title="Frequency" Width="85" />
+                    <xcdg:Column FieldName="Type" Title="Type" Width="70">
+                        <xcdg:Column.DisplayMemberBindingInfo>
+                            <xcdg:DataGridBindingInfo Path="Type" Converter="{StaticResource EnumConverter}" ReadOnly="True" />
+                        </xcdg:Column.DisplayMemberBindingInfo>
+                    </xcdg:Column>
+                    <xcdg:Column FieldName="FeatureStructure" Title="Features" Width="1100" />
+                </xcdg:DataGridControl.Columns>
+                <xcdg:DataGridControl.View>
+                    <xcdg:TableView IsColumnVirtualizationEnabled="False">
+                        <xcdg:TableView.FixedHeaders>
+                            <DataTemplate>
+                                <xcdg:ColumnManagerRow />
+                            </DataTemplate>
+                        </xcdg:TableView.FixedHeaders>
+                    </xcdg:TableView>
+                </xcdg:DataGridControl.View>
+            </xcdg:DataGridControl>
         </HeaderedContentControl>
     </Grid>
 </UserControl>

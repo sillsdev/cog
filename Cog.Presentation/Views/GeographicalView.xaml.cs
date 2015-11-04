@@ -185,7 +185,7 @@ namespace SIL.Cog.Presentation.Views
 		private void SetVarietyChecked(GeographicalVarietyViewModel variety, bool check)
 		{
 			var varietyItem = (TreeViewItem) RegionsTreeView.ItemContainerGenerator.ContainerFromItem(variety);
-			var checkBox = varietyItem.FindVisualChild<CheckBox>();
+			CheckBox checkBox = varietyItem.FindVisualDescendants<CheckBox>().First();
 			checkBox.IsChecked = check;
 		}
 
@@ -574,13 +574,13 @@ namespace SIL.Cog.Presentation.Views
 
 				foreach (RegionMarker marker in MapControl.Markers.OfType<RegionMarker>().Where(rm => rm.Region.Variety == variety))
 					marker.Shape.Visibility = checkBox.IsChecked.Value ? Visibility.Visible : Visibility.Hidden;
-				var item = checkBox.FindVisualAncestor<TreeViewItem>();
+				TreeViewItem item = checkBox.FindVisualAncestors<TreeViewItem>().First();
 				foreach (GeographicalRegionViewModel child in item.Items)
 				{
 					var childItem = item.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
 					if (childItem != null)
 					{
-						var childCheckBox = childItem.FindVisualChild<CheckBox>();
+						CheckBox childCheckBox = childItem.FindVisualDescendants<CheckBox>().First();
 						childCheckBox.IsChecked = checkBox.IsChecked;
 						SetRegionVisibility(child, checkBox.IsChecked != null && (bool) checkBox.IsChecked);
 					}
@@ -593,15 +593,15 @@ namespace SIL.Cog.Presentation.Views
 				{
 					Debug.Assert(checkBox.IsChecked.HasValue);
 					SetRegionVisibility(region, (bool) checkBox.IsChecked);
-					var item = checkBox.FindVisualAncestor<TreeViewItem>();
-					var parentItem = item.FindVisualAncestor<TreeViewItem>();
+					TreeViewItem item = checkBox.FindVisualAncestors<TreeViewItem>().First();
+					TreeViewItem parentItem = item.FindVisualAncestors<TreeViewItem>().First();
 					bool? check = null;
 					foreach (GeographicalRegionViewModel child in parentItem.Items)
 					{
 						var childItem = parentItem.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
 						if (childItem != null)
 						{
-							var childCheckBox = childItem.FindVisualChild<CheckBox>();
+							CheckBox childCheckBox = childItem.FindVisualDescendants<CheckBox>().First();
 							if (!check.HasValue)
 							{
 								check = childCheckBox.IsChecked;
@@ -613,7 +613,7 @@ namespace SIL.Cog.Presentation.Views
 							}
 						}
 					}
-					var parentCheckBox = parentItem.FindVisualChild<CheckBox>();
+					CheckBox parentCheckBox = parentItem.FindVisualDescendants<CheckBox>().First();
 					parentCheckBox.IsChecked = check;
 				}
 			}

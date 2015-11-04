@@ -5,26 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
-			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SegmentMappingsViewModel}">
-    <StackPanel>
+             d:DesignHeight="300" d:DesignWidth="250" d:DataContext="{d:DesignInstance vm:SegmentMappingsViewModel}">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolConverter" />
+    </UserControl.Resources>
+    <StackPanel Width="250">
         <Grid>
-            <xcdg:DataGridControl Name="MappingsGrid" ItemsSource="{Binding Mappings}" b:DataGridControlBehaviors.AutoScrollOnSelection="True" Height="125" SelectedItem="{Binding SelectedMapping}" ReadOnly="True">
+            <xcdg:DataGridControl Name="MappingsGrid" ItemsSource="{Binding Mappings}" b:DataGridControlBehaviors.AutoScrollOnSelection="True" Height="150" SelectedItem="{Binding SelectedMapping}" ReadOnly="True">
                 <xcdg:DataGridControl.Columns>
-					<xcdg:Column FieldName="Segment1" Title="Segment 1" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
-					<xcdg:Column FieldName="Segment2" Title="Segment 2" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
+                    <xcdg:Column FieldName="Segment1" Title="Segment 1" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
+                    <xcdg:Column FieldName="Segment2" Title="Segment 2" Width="*" CellContentTemplate="{StaticResource PhoneticCellContentTemplate}" />
                 </xcdg:DataGridControl.Columns>
-				<xcdg:DataGridControl.View>
-					<xcdg:TableView>
-						<xcdg:TableView.FixedHeaders>
-							<DataTemplate>
-								<xcdg:ColumnManagerRow />
-							</DataTemplate>
-						</xcdg:TableView.FixedHeaders>
-					</xcdg:TableView>
-				</xcdg:DataGridControl.View>
-			</xcdg:DataGridControl>
+                <xcdg:DataGridControl.View>
+                    <xcdg:TableView>
+                        <xcdg:TableView.FixedHeaders>
+                            <DataTemplate>
+                                <xcdg:ColumnManagerRow />
+                            </DataTemplate>
+                        </xcdg:TableView.FixedHeaders>
+                    </xcdg:TableView>
+                </xcdg:DataGridControl.View>
+            </xcdg:DataGridControl>
             <TextBlock Margin="3,23,3,0" Text="Click New to add a correspondence">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
@@ -38,33 +41,34 @@
                 </TextBlock.Style>
             </TextBlock>
         </Grid>
-		<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
-			<Border.Resources>
-				<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-					<Setter Property="Margin" Value="0,3,5,3" />
-					<Setter Property="Padding" Value="3" />
-				</Style>
-			</Border.Resources>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button Command="{Binding NewCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\add-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
-					</StackPanel>
-				</Button>
-				<Button Command="{Binding RemoveCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\delete-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
-					</StackPanel>
-				</Button>
-				<Button Command="{Binding ImportCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\import-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Import</TextBlock>
-					</StackPanel>
-				</Button>
-			</StackPanel>
-		</Border>
+        <Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
+            <Border.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Setter Property="Margin" Value="0,3,5,3" />
+                    <Setter Property="Padding" Value="3" />
+                </Style>
+                <Style TargetType="Image" BasedOn="{StaticResource DisableImageStyle}" />
+            </Border.Resources>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Command="{Binding NewCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\add-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding RemoveCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\delete-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ImportCommand}" Visibility="{Binding ImportEnabled, Converter={StaticResource BoolConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\import-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Import</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
     </StackPanel>
 </UserControl>

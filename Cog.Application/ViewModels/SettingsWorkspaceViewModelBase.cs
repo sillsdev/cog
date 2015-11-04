@@ -56,8 +56,8 @@ namespace SIL.Cog.Application.ViewModels
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 			{
 				componentVM.UpdateComponent();
-				componentVM.AcceptChanges();
 				componentVM.Setup();
+				componentVM.AcceptChanges();
 			}
 			Messenger.Default.Send(new DomainModelChangedMessage(true));
 			_isDirty = false;

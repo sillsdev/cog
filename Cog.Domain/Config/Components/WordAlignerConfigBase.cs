@@ -11,9 +11,8 @@ namespace SIL.Cog.Domain.Config.Components
 	{
 		public abstract IWordAligner Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem);
 
-		protected WordPairAlignerSettings LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem)
+		protected void LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem, WordPairAlignerSettings settings)
 		{
-			var settings = new WordPairAlignerSettings();
 			var modeStr = (string) elem.Element(ConfigManager.Cog + "Mode");
 			if (modeStr != null)
 			{
@@ -37,7 +36,6 @@ namespace SIL.Cog.Domain.Config.Components
 			XElement soundClassesElem = elem.Element(ConfigManager.Cog + "ContextualSoundClasses");
 			if (soundClassesElem != null && soundClassesElem.HasElements)
 				settings.ContextualSoundClasses = ConfigManager.LoadSoundClasses(segmenter, featSys, soundClassesElem);
-			return settings;
 		}
 
 		public abstract void Save(IWordAligner component, XElement elem);

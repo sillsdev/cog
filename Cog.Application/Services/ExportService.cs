@@ -11,12 +11,13 @@ namespace SIL.Cog.Application.Services
 	{
 		private static readonly Dictionary<FileType, IWordListsExporter> WordListsExporters = new Dictionary<FileType, IWordListsExporter>
 			{
-				{new FileType("Tab-delimited Text", ".txt"), new TextWordListsExporter()},
+				{new FileType("Tab-delimited Text", ".txt"), new TextWordListsExporter()}
 			};
 
 		private static readonly Dictionary<FileType, ISimilarityMatrixExporter> SimilarityMatrixExporters = new Dictionary<FileType, ISimilarityMatrixExporter>
 			{
 				{new FileType("Tab-delimited Text", ".txt"), new TextSimilarityMatrixExporter()},
+				{new FileType("NEXUS", ".nex"), new NexusSimilarityMatrixExporter()}
 			};
 
 		private static readonly Dictionary<FileType, ICognateSetsExporter> CognateSetsExporters = new Dictionary<FileType, ICognateSetsExporter>

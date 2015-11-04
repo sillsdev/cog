@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema
-    targetNamespace="http://www.sil.org/CogProject/1.0"
-    elementFormDefault="qualified"
-    xmlns="http://www.sil.org/CogProject/1.0"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.sil.org/CogProject/1.2"
+	elementFormDefault="qualified"
+	xmlns="http://www.sil.org/CogProject/1.2"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 	<xs:element name="FeatureValue">
 		<xs:complexType>
@@ -131,6 +131,8 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
+					<xs:element name="SoundChangeScoringEnabled" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="SyllablePositionCostEnabled" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -190,7 +192,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="CognicityWordPairGenerator">
+	<xs:complexType name="CognacyWordPairGenerator">
 		<xs:complexContent>
 			<xs:extension base="VarietyPairProcessorBase">
 				<xs:sequence>

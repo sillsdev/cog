@@ -6,41 +6,41 @@
              xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
-			 xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
              mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:SoundClassesViewModel}">
-	<StackPanel>
-		<Grid>
-			<xcdg:DataGridControl Name="SoundClassesGrid" Height="125" ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding SelectedSoundClass}" ReadOnly="True"
-								  b:DataGridControlBehaviors.AutoScrollOnSelection="True">
-				<xcdg:DataGridControl.Columns>
-					<xcdg:Column FieldName="Name" Title="Name" Width="150" />
-					<xcdg:Column FieldName="Type" Title="Type" Width="70" />
-					<xcdg:Column FieldName="Description" Title="Description" Width="*" />
-					<xcdg:Column FieldName="Sonority" Title="Sonority" Width="80"
-								 Visible="{Binding Path=DataGridControl.DataContext.DisplaySonority, RelativeSource={RelativeSource Self}}">
-						<xcdg:Column.DisplayMemberBindingInfo>
-							<xcdg:DataGridBindingInfo Path="." />
-						</xcdg:Column.DisplayMemberBindingInfo>
-						<xcdg:Column.CellContentTemplate>
-							<DataTemplate DataType="{x:Type vm:SoundClassViewModel}">
-								<xctk:IntegerUpDown Value="{Binding Sonority, UpdateSourceTrigger=PropertyChanged}" Minimum="0" />
-							</DataTemplate>
-						</xcdg:Column.CellContentTemplate>
-					</xcdg:Column>
-				</xcdg:DataGridControl.Columns>
-				<xcdg:DataGridControl.View>
-					<xcdg:TableView>
-						<xcdg:TableView.FixedHeaders>
-							<DataTemplate>
-								<xcdg:ColumnManagerRow />
-							</DataTemplate>
-						</xcdg:TableView.FixedHeaders>
-					</xcdg:TableView>
-				</xcdg:DataGridControl.View>
-			</xcdg:DataGridControl>
-			<TextBlock Margin="3,23,3,0" Text="Click New to add a sound class">
+    <StackPanel>
+        <Grid>
+            <xcdg:DataGridControl Name="SoundClassesGrid" Height="125" ItemsSource="{Binding SoundClasses}" SelectedItem="{Binding SelectedSoundClass}" ReadOnly="True"
+                                  b:DataGridControlBehaviors.AutoScrollOnSelection="True">
+                <xcdg:DataGridControl.Columns>
+                    <xcdg:Column FieldName="Name" Title="Name" Width="150" />
+                    <xcdg:Column FieldName="Type" Title="Type" Width="70" />
+                    <xcdg:Column FieldName="Description" Title="Description" Width="*" />
+                    <xcdg:Column FieldName="Sonority" Title="Sonority" Width="80"
+                                 Visible="{Binding Path=DataGridControl.DataContext.DisplaySonority, RelativeSource={RelativeSource Self}}">
+                        <xcdg:Column.DisplayMemberBindingInfo>
+                            <xcdg:DataGridBindingInfo Path="." />
+                        </xcdg:Column.DisplayMemberBindingInfo>
+                        <xcdg:Column.CellContentTemplate>
+                            <DataTemplate DataType="{x:Type vm:SoundClassViewModel}">
+                                <xctk:IntegerUpDown Value="{Binding Sonority, UpdateSourceTrigger=PropertyChanged}" Minimum="0" />
+                            </DataTemplate>
+                        </xcdg:Column.CellContentTemplate>
+                    </xcdg:Column>
+                </xcdg:DataGridControl.Columns>
+                <xcdg:DataGridControl.View>
+                    <xcdg:TableView>
+                        <xcdg:TableView.FixedHeaders>
+                            <DataTemplate>
+                                <xcdg:ColumnManagerRow />
+                            </DataTemplate>
+                        </xcdg:TableView.FixedHeaders>
+                    </xcdg:TableView>
+                </xcdg:DataGridControl.View>
+            </xcdg:DataGridControl>
+            <TextBlock Margin="3,23,3,0" Text="Click New to add a sound class">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -51,59 +51,60 @@
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
-			</TextBlock>
-		</Grid>
-		<Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
-			<Border.Resources>
-				<Style TargetType="c:DropDownButton" BasedOn="{StaticResource ToolbarDropDownButtonStyle}">
-					<Setter Property="Margin" Value="0,3,5,3" />
-					<Setter Property="Padding" Value="3" />
-				</Style>
-				<Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-					<Setter Property="Margin" Value="0,3,5,3" />
-					<Setter Property="Padding" Value="3" />
-				</Style>
-			</Border.Resources>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button Command="{Binding MoveSoundClassUpCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\up-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Move Up</TextBlock>
-					</StackPanel>
-				</Button>
-				<Button Command="{Binding MoveSoundClassDownCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\down-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Move Down</TextBlock>
-					</StackPanel>
-				</Button>
-				<c:DropDownButton>
-					<c:DropDownButton.Content>
-						<StackPanel Orientation="Horizontal">
-							<Image Source="..\Images\add-icon.png" />
-							<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
-						</StackPanel>
-					</c:DropDownButton.Content>
-					<c:DropDownButton.DropDown>
-						<ContextMenu>
-							<MenuItem Header="Feature-based Class" Command="{Binding NewNaturalClassCommand}" />
-							<MenuItem Header="Segment-based Class" Command="{Binding NewUnnaturalClassCommand}" />
-						</ContextMenu>
-					</c:DropDownButton.DropDown>
-				</c:DropDownButton>
-				<Button Command="{Binding EditSoundClassCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\edit-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
-					</StackPanel>
-				</Button>
-				<Button Command="{Binding RemoveSoundClassCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="..\Images\delete-icon.png" />
-						<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
-					</StackPanel>
-				</Button>
-			</StackPanel>
-		</Border>
-	</StackPanel>
+            </TextBlock>
+        </Grid>
+        <Border Background="{StaticResource ControlPanelBackgroundBrush}" BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1">
+            <Border.Resources>
+                <Style TargetType="c:DropDownButton" BasedOn="{StaticResource ToolbarDropDownButtonStyle}">
+                    <Setter Property="Margin" Value="0,3,5,3" />
+                    <Setter Property="Padding" Value="3" />
+                </Style>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Setter Property="Margin" Value="0,3,5,3" />
+                    <Setter Property="Padding" Value="3" />
+                </Style>
+                <Style TargetType="Image" BasedOn="{StaticResource DisableImageStyle}" />
+            </Border.Resources>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Command="{Binding MoveSoundClassUpCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\up-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Move Up</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding MoveSoundClassDownCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\down-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Move Down</TextBlock>
+                    </StackPanel>
+                </Button>
+                <c:DropDownButton>
+                    <c:DropDownButton.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="..\Images\add-icon.png" />
+                            <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">New</TextBlock>
+                        </StackPanel>
+                    </c:DropDownButton.Content>
+                    <c:DropDownButton.DropDown>
+                        <ContextMenu>
+                            <MenuItem Header="Feature-based Class" Command="{Binding NewNaturalClassCommand}" />
+                            <MenuItem Header="Segment-based Class" Command="{Binding NewUnnaturalClassCommand}" />
+                        </ContextMenu>
+                    </c:DropDownButton.DropDown>
+                </c:DropDownButton>
+                <Button Command="{Binding EditSoundClassCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\edit-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding RemoveSoundClassCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="..\Images\delete-icon.png" />
+                        <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
+    </StackPanel>
 </UserControl>

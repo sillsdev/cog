@@ -48,7 +48,7 @@ namespace SIL.Cog.Presentation.Views
 			SimMatrixGrid.Columns.Add(headerColumn);
 			for (int i = 0; i < vm.Varieties.Count; i++)
 			{
-				var column = new Column {FieldName = "Variety" + i, Width = 32};
+				var column = new Column {FieldName = "Variety" + i, Width = 30};
 				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Varieties[{0}].Name", i)) {RelativeSource = RelativeSource.Self};
 				BindingOperations.SetBinding(column, ColumnBase.TitleProperty, titleBinding);
 				SimMatrixGrid.Columns.Add(column);

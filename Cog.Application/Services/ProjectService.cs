@@ -18,7 +18,7 @@ namespace SIL.Cog.Application.Services
 	public class ProjectService : IProjectService
 	{
 		private const int CacheVersion = 3;
-		private const int ProjectVersion = 3;
+		private const int ProjectVersion = 4;
 
 		private static readonly FileType CogProjectFileType = new FileType("Cog Project", ".cogx");
 		private static readonly List<IProjectMigration> ProjectMigrations;
@@ -219,7 +219,8 @@ namespace SIL.Cog.Application.Services
 			try
 			{
 				fileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-				project = ConfigManager.Load(_spanFactory, _segmentPool, fileStream);
+				if (ConfigManager.Load(_spanFactory, _segmentPool, fileStream, out project))
+					_isChanged = true;
 			}
 			catch (ConfigException)
 			{
@@ -247,7 +248,7 @@ namespace SIL.Cog.Application.Services
 			return true;
 		}
 
-		private bool MigrateProjectfNeeded(ProgressViewModel vm, CogProject project)
+		private bool MigrateProjectIfNeeded(ProgressViewModel vm, CogProject project)
 		{
 			if (project.Version == ProjectVersion)
 				return false;
@@ -313,7 +314,8 @@ namespace SIL.Cog.Application.Services
 		private void SetupProject(ProgressViewModel vm, string path, string name, CogProject project)
 		{
 			_settingsService.LastProject = path;
-			_isChanged = MigrateProjectfNeeded(vm, project);
+			if (MigrateProjectIfNeeded(vm, project))
+				_isChanged = true;
 			_project = project;
 			_projectName = name;
 

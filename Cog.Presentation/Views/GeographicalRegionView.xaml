@@ -5,61 +5,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              mc:Ignorable="d" d:DesignHeight="170" d:DesignWidth="205" d:DataContext="{d:DesignInstance vm:GeographicalRegionViewModel}">
-	<Canvas>
-		<Path Canvas.Left="0" Canvas.Top="0" Fill="White" Stroke="{StaticResource ListBorderBrush}" StrokeThickness="1">
-			<Path.Data>
-				<PathGeometry>
-					<PathFigure StartPoint="0,0">
-						<PathFigure.Segments>
-							<LineSegment Point="0,119" />
-							<LineSegment Point="105,119" />
-							<LineSegment Point="80,169" />
-							<LineSegment Point="130,119" />
-							<LineSegment Point="199,119" />
-							<LineSegment Point="199,0" />
-							<LineSegment Point="0,0" />
-						</PathFigure.Segments>
-					</PathFigure>
-				</PathGeometry>
-			</Path.Data>
-			<Path.Effect>
-				<DropShadowEffect />
-			</Path.Effect>
-		</Path>
-		<Border Canvas.Left="1" Canvas.Top="1" Background="White" BorderThickness="0" Width="198">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<TextBlock Grid.Row="0" Text="{Binding Variety.Name}" Margin="5" FontWeight="Bold" />
-				<ScrollViewer Grid.Row="1" Height="50" Margin="5" VerticalScrollBarVisibility="Auto">
-					<TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
-				</ScrollViewer>
-				<Border Grid.Row="2">
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-						<StackPanel.Resources>
-							<Style TargetType="Button">
-								<Setter Property="Margin" Value="0,5,3,5" />
-								<Setter Property="Width" Value="75" />
-							</Style>
-						</StackPanel.Resources>
-						<Button Command="{Binding EditCommand}">
-							<StackPanel Orientation="Horizontal">
-								<Image Source="..\Images\edit-icon.png" />
-								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
-							</StackPanel>
-						</Button>
-						<Button Command="{Binding RemoveCommand}">
-							<StackPanel Orientation="Horizontal">
-								<Image Source="..\Images\delete-icon.png" />
-								<TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
-							</StackPanel>
-						</Button>
-					</StackPanel>
-				</Border>
-			</Grid>
-		</Border>
-	</Canvas>
+    <Canvas>
+        <Path Canvas.Left="0" Canvas.Top="0" Fill="White" Stroke="{StaticResource ListBorderBrush}" StrokeThickness="1">
+            <Path.Data>
+                <PathGeometry>
+                    <PathFigure StartPoint="0,0">
+                        <PathFigure.Segments>
+                            <LineSegment Point="0,119" />
+                            <LineSegment Point="105,119" />
+                            <LineSegment Point="80,169" />
+                            <LineSegment Point="130,119" />
+                            <LineSegment Point="199,119" />
+                            <LineSegment Point="199,0" />
+                            <LineSegment Point="0,0" />
+                        </PathFigure.Segments>
+                    </PathFigure>
+                </PathGeometry>
+            </Path.Data>
+            <Path.Effect>
+                <DropShadowEffect />
+            </Path.Effect>
+        </Path>
+        <Border Canvas.Left="1" Canvas.Top="1" Background="White" BorderThickness="0" Width="198">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{Binding Variety.Name}" Margin="5" FontWeight="Bold" />
+                <ScrollViewer Grid.Row="1" Height="50" Margin="5" VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+                </ScrollViewer>
+                <Border Grid.Row="2">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="0,5,3,5" />
+                                <Setter Property="Width" Value="75" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Command="{Binding EditCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\edit-icon.png" />
+                                <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Edit</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding RemoveCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\delete-icon.png" />
+                                <TextBlock Padding="5,0,0,0" VerticalAlignment="Center">Remove</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Canvas>
 </UserControl>

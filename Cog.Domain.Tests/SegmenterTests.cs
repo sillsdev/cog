@@ -8,13 +8,12 @@ namespace SIL.Cog.Domain.Tests
 	[TestFixture]
 	public class SegmenterTests
 	{
-		private SpanFactory<ShapeNode> _spanFactory;
+		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 		private Segmenter _segmenter;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_spanFactory = new ShapeSpanFactory();
 			_segmenter = new Segmenter(_spanFactory)
 				{
 					Consonants = {"b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z"},

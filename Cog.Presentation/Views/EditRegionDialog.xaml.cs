@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace SIL.Cog.Presentation.Views
+﻿namespace SIL.Cog.Presentation.Views
 {
 	/// <summary>
 	/// Interaction logic for EditRegionDialog.xaml
@@ -10,12 +8,6 @@ namespace SIL.Cog.Presentation.Views
 		public EditRegionDialog()
 		{
 			InitializeComponent();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (this.Validate())
-				DialogResult = true;
 		}
 	}
 }

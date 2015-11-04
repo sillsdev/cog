@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using SIL.Cog.Presentation.Controls;
 
@@ -18,7 +19,7 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var treeListView = (TreeListView) sender;
 			double w = treeListView.ActualWidth;
-			var sv = treeListView.FindVisualChild<ScrollViewer>();
+			ScrollViewer sv = treeListView.FindVisualDescendants<ScrollViewer>().First();
 			if (sv.ComputedVerticalScrollBarVisibility == Visibility.Visible)
 				w -= SystemParameters.VerticalScrollBarWidth;
 			double total = 0;

@@ -78,7 +78,7 @@ namespace SIL.Cog.Presentation.Views
 			var item = (ListBoxItem) WordsListBox.ItemContainerGenerator.ContainerFromItem(word);
 			if (item != null)
 			{
-				var wordListBox = item.FindVisualChild<ListBox>();
+				ListBox wordListBox = item.FindVisualDescendants<ListBox>().FirstOrDefault();
 				if (wordListBox != null)
 					wordListBox.UnselectAll();
 			}

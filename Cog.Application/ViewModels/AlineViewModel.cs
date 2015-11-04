@@ -30,6 +30,8 @@ namespace SIL.Cog.Application.ViewModels
 		private bool _expansionCompressionEnabled;
 		private ReadOnlyList<RelevantFeatureViewModel> _features;
 		private readonly SoundClassesViewModel _soundClasses;
+		private bool _soundChangeScoringEnabled;
+		private bool _syllablePositionCostEnabled;
 
 		public AlineViewModel(SegmentPool segmentPool, IProjectService projectService, SoundClassesViewModel soundClasses)
 			: base("Alignment")
@@ -67,6 +69,8 @@ namespace SIL.Cog.Application.ViewModels
 					break;
 			}
 			Set(() => ExpansionCompressionEnabled, ref _expansionCompressionEnabled, aligner.Settings.ExpansionCompressionEnabled);
+			Set(() => SoundChangeScoringEnabled, ref _soundChangeScoringEnabled, aligner.Settings.SoundChangeScoringEnabled);
+			Set(() => SyllablePositionCostEnabled, ref _syllablePositionCostEnabled, aligner.Settings.SyllablePositionCostEnabled);
 
 			_soundClasses.SelectedSoundClass = null;
 			_soundClasses.SoundClasses.Clear();
@@ -94,6 +98,18 @@ namespace SIL.Cog.Application.ViewModels
 		public SoundClassesViewModel SoundClasses
 		{
 			get { return _soundClasses; }
+		}
+
+		public bool SoundChangeScoringEnabled
+		{
+			get { return _soundChangeScoringEnabled; }
+			set { SetChanged(() => SoundChangeScoringEnabled, ref _soundChangeScoringEnabled, value); }
+		}
+
+		public bool SyllablePositionCostEnabled
+		{
+			get { return _syllablePositionCostEnabled; }
+			set { SetChanged(() => SyllablePositionCostEnabled, ref _syllablePositionCostEnabled, value); }
 		}
 
 		public override void AcceptChanges()
@@ -138,7 +154,14 @@ namespace SIL.Cog.Application.ViewModels
 			}
 
 			var aligner = new Aline(_segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
-				new WordPairAlignerSettings {ExpansionCompressionEnabled = _expansionCompressionEnabled, Mode = mode, ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass)});
+				new AlineSettings
+				{
+					ExpansionCompressionEnabled = _expansionCompressionEnabled,
+					Mode = mode,
+					ContextualSoundClasses = _soundClasses.SoundClasses.Select(nc => nc.DomainSoundClass),
+					SoundChangeScoringEnabled = _soundChangeScoringEnabled,
+					SyllablePositionCostEnabled = _syllablePositionCostEnabled
+				});
 			_projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner] = aligner;
 			return aligner;
 		}

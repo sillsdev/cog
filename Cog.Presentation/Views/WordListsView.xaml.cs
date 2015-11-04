@@ -123,7 +123,7 @@ namespace SIL.Cog.Presentation.Views
 			WordListsGrid.Columns.Add(headerColumn);
 			for (int i = 0; i < vm.Meanings.Count; i++)
 			{
-				var column = new Column {FieldName = "Meaning" + i, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof (WordListsVarietyMeaningViewModel)]};
+				var column = new Column {FieldName = "Meaning" + i, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof(WordListsVarietyMeaningViewModel)]};
 				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Meanings[{0}].Gloss", i)) {RelativeSource = RelativeSource.Self};
 				BindingOperations.SetBinding(column, ColumnBase.TitleProperty, titleBinding);
 				WordListsGrid.Columns.Add(column);
@@ -137,12 +137,12 @@ namespace SIL.Cog.Presentation.Views
 
 		private void WordListsGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
 		{
-			var vm = (WordListsViewModel) DataContext;
 			if (_selectMonitor.Busy)
 				return;
 
 			using (_selectMonitor.Enter())
 			{
+				var vm = (WordListsViewModel) DataContext;
 				if (WordListsGrid.SelectedCellRanges.Count == 1)
 				{
 					SelectionCellRange cellRange = WordListsGrid.SelectedCellRanges[0];

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CogProject xmlns="http://www.sil.org/CogProject/1.0"
+<CogProject xmlns="http://www.sil.org/CogProject/1.2"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			version="3">
+			version="4">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -833,6 +833,21 @@
 				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="n">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ⁿ">
 				<FeatureValue feature="place" value="alveolar"/>
 				<FeatureValue feature="manner" value="stop"/>
 				<FeatureValue feature="syllabic" value="syllabic-"/>

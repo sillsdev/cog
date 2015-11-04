@@ -49,6 +49,7 @@
     <Compile Include="Affix.cs" />
     <Compile Include="Components\AffixStripper.cs" />
     <Compile Include="Components\AlineScorer.cs" />
+    <Compile Include="Components\AlineSettings.cs" />
     <Compile Include="Components\SoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
     <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />
@@ -77,9 +78,9 @@
     <Compile Include="Components\TypeSegmentMappings.cs" />
     <Compile Include="Components\PoorMansAffixIdentifier.cs" />
     <Compile Include="Components\VarietyPairGenerator.cs" />
-    <Compile Include="Components\CognicityWordPairGenerator.cs" />
+    <Compile Include="Components\CognacyWordPairGenerator.cs" />
     <Compile Include="Components\SimpleWordPairGenerator.cs" />
-    <Compile Include="Config\Components\CognicityWordPairGeneratorConfig.cs" />
+    <Compile Include="Config\Components\CognacyWordPairGeneratorConfig.cs" />
     <Compile Include="Config\Components\SimpleSyllabifierConfig.cs" />
     <Compile Include="Config\Components\SimpleWordPairGeneratorConfig.cs" />
     <Compile Include="Config\Components\SspSyllabifierConfig.cs" />
@@ -97,6 +98,9 @@
     <Compile Include="Config\ConfigException.cs" />
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\IComponentConfig.cs" />
+    <Compile Include="Config\IConfigMigration.cs" />
+    <Compile Include="Config\Migrations\ConfigMigration1_2.cs" />
+    <Compile Include="Config\Migrations\ConfigMigrationExtensions.cs" />
     <Compile Include="GeographicCoordinate.cs" />
     <Compile Include="GeographicRegion.cs" />
     <Compile Include="ICognateIdentifier.cs" />
@@ -105,7 +109,7 @@
     <Compile Include="SoundCorrespondenceCollection.cs" />
     <Compile Include="CogFeatureSystem.cs" />
     <Compile Include="CogProject.cs" />
-    <Compile Include="CogExtensions.cs" />
+    <Compile Include="DomainExtensions.cs" />
     <Compile Include="IWordAligner.cs" />
     <Compile Include="IWordAlignerResult.cs" />
     <Compile Include="IProcessor.cs" />

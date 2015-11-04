@@ -4,93 +4,96 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
-		xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-        xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" mc:Ignorable="d"
+        xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+        xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:b="clr-namespace:SIL.Cog.Presentation.Behaviors"
+        mc:Ignorable="d"
         Title="{Binding Title}"  WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-        FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" SizeToContent="WidthAndHeight"
+        b:WindowBehaviors.InitialFocusElement="{Binding ElementName=NameTextBox}" b:WindowBehaviors.CloseOnDefaultButtonClick="True" SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance vm:EditNaturalClassViewModel}">
-	<StackPanel Margin="10">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="20" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=NameTextBox}" Padding="0,0,0,5" Margin="0,3,5,5">Name:</Label>
-			<TextBox Name="NameTextBox" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5" Width="200" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
-			<Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=TypeComboBox}" Padding="0,0,0,5" Margin="0,3,5,5">Type:</Label>
-			<ComboBox Name="TypeComboBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" Width="200" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SoundType}}}"
-				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
-		</Grid>
-		<Grid>
-			<Grid.Resources>
-				<Style TargetType="Label">
-					<Setter Property="Margin" Value="0,3,0,0" />
-					<Setter Property="Padding" Value="0" />
-				</Style>
-			</Grid.Resources>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=AvailableFeaturesListBox}">Available features:</Label>
-			<ListBox Grid.Column="0" Grid.Row="1" Name="AvailableFeaturesListBox" Height="250" Width="150" ItemsSource="{Binding AvailableFeatures}"
-					 SelectedItem="{Binding SelectedAvailableFeature}" DisplayMemberPath="Name" />
-			<StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
-				<StackPanel.Resources>
-					<Style TargetType="Button">
-						<Setter Property="Margin" Value="5" />
-						<Setter Property="Width" Value="70" />
-					</Style>
-				</StackPanel.Resources>
-				<Button Command="{Binding AddCommand}">Add</Button>
-				<Button Command="{Binding RemoveCommand}">Remove</Button>
-			</StackPanel>
-			<Label Grid.Column="2" Grid.Row="0" Target="{Binding ElementName=SelectedFeaturesDataGrid}">Selected features:</Label>
-			<xcdg:DataGridControl Name="SelectedFeaturesDataGrid" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding ActiveFeatures}" Height="250" Width="240"
-								  SelectedItem="{Binding SelectedActiveFeature}" ReadOnly="True">
-				<xcdg:DataGridControl.Columns>
-					<xcdg:Column FieldName="Name" Title="Feature" Width="*" />
-					<xcdg:Column FieldName="SelectedValue" Title="Value" Width="*">
-						<xcdg:Column.DisplayMemberBindingInfo>
-							<xcdg:DataGridBindingInfo Path="." />
-						</xcdg:Column.DisplayMemberBindingInfo>
-						<xcdg:Column.CellContentTemplate>
-							<DataTemplate DataType="{x:Type vm:FeatureViewModel}">
-								<ComboBox ItemsSource="{Binding Values}" SelectedItem="{Binding SelectedValue, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
-							</DataTemplate>
-						</xcdg:Column.CellContentTemplate>
-					</xcdg:Column>
-				</xcdg:DataGridControl.Columns>
-				<xcdg:DataGridControl.View>
-					<xcdg:TableView>
-						<xcdg:TableView.FixedHeaders>
-							<DataTemplate>
-								<xcdg:ColumnManagerRow AllowSort="False" />
-							</DataTemplate>
-						</xcdg:TableView.FixedHeaders>
-					</xcdg:TableView>
-				</xcdg:DataGridControl.View>
-			</xcdg:DataGridControl>
-		</Grid>
-		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-			<StackPanel.Resources>
-				<Style TargetType="Button">
-					<Setter Property="Margin" Value="5,5,0,0" />
-					<Setter Property="Width" Value="70" />
-				</Style>
-			</StackPanel.Resources>
-			<Button Click="okButton_Click" IsDefault="True">OK</Button>
-			<Button IsCancel="True">Cancel</Button>
-		</StackPanel>
-	</StackPanel>
+    <StackPanel Margin="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="20" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=NameTextBox}" Padding="0,0,0,5" Margin="0,3,5,5">Name:</Label>
+            <xctk:AutoSelectTextBox Name="NameTextBox" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5" Width="200" AutoSelectBehavior="OnFocus" Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=LostFocus}" />
+            <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=TypeComboBox}" Padding="0,0,0,5" Margin="0,3,5,5">Type:</Label>
+            <ComboBox Name="TypeComboBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" Width="200" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SoundType}}}"
+                  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding Type}" />
+        </Grid>
+        <Grid>
+            <Grid.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="Margin" Value="0,3,0,0" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=AvailableFeaturesListBox}">Available features:</Label>
+            <ListBox Grid.Column="0" Grid.Row="1" Name="AvailableFeaturesListBox" Height="250" Width="150" ItemsSource="{Binding AvailableFeatures}"
+                     SelectedItem="{Binding SelectedAvailableFeature}" DisplayMemberPath="Name" />
+            <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="Width" Value="70" />
+                    </Style>
+                </StackPanel.Resources>
+                <Button Command="{Binding AddCommand}">Add</Button>
+                <Button Command="{Binding RemoveCommand}">Remove</Button>
+            </StackPanel>
+            <Label Grid.Column="2" Grid.Row="0" Target="{Binding ElementName=SelectedFeaturesDataGrid}">Selected features:</Label>
+            <xcdg:DataGridControl Name="SelectedFeaturesDataGrid" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding ActiveFeatures}" Height="250" Width="240"
+                                  SelectedItem="{Binding SelectedActiveFeature}" ReadOnly="True">
+                <xcdg:DataGridControl.Columns>
+                    <xcdg:Column FieldName="Name" Title="Feature" Width="*" />
+                    <xcdg:Column FieldName="SelectedValue" Title="Value" Width="*">
+                        <xcdg:Column.DisplayMemberBindingInfo>
+                            <xcdg:DataGridBindingInfo Path="." />
+                        </xcdg:Column.DisplayMemberBindingInfo>
+                        <xcdg:Column.CellContentTemplate>
+                            <DataTemplate DataType="{x:Type vm:FeatureViewModel}">
+                                <ComboBox ItemsSource="{Binding Values}" SelectedItem="{Binding SelectedValue, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
+                            </DataTemplate>
+                        </xcdg:Column.CellContentTemplate>
+                    </xcdg:Column>
+                </xcdg:DataGridControl.Columns>
+                <xcdg:DataGridControl.View>
+                    <xcdg:TableView>
+                        <xcdg:TableView.FixedHeaders>
+                            <DataTemplate>
+                                <xcdg:ColumnManagerRow AllowSort="False" />
+                            </DataTemplate>
+                        </xcdg:TableView.FixedHeaders>
+                    </xcdg:TableView>
+                </xcdg:DataGridControl.View>
+            </xcdg:DataGridControl>
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="5,5,0,0" />
+                    <Setter Property="Width" Value="70" />
+                </Style>
+            </StackPanel.Resources>
+            <Button IsDefault="True">OK</Button>
+            <Button IsCancel="True">Cancel</Button>
+        </StackPanel>
+    </StackPanel>
 </Window>

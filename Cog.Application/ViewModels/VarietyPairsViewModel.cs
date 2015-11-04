@@ -140,7 +140,7 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				Messenger.Default.Send(new HookFindMessage(_findCommand));
 			}
-			else
+			else if (_findViewModel != null)
 			{
 				_dialogService.CloseDialog(_findViewModel);
 				Messenger.Default.Send(new HookFindMessage(null));
@@ -269,7 +269,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void ResetSelectedVarietyPair()
 		{
-			if (_varieties.Count > 0)
+			if (_varieties != null && _varieties.Count > 0)
 			{
 				if (_varietiesView1 == null || _varietiesView2 == null)
 				{

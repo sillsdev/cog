@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -41,10 +42,10 @@ namespace SIL.Cog.Presentation.Services
 				switch (type)
 				{
 					case HierarchicalGraphType.Tree:
-						graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<HierarchicalGraphLayout>();
+						graphLayout = System.Windows.Application.Current.MainWindow.FindVisualDescendants<HierarchicalGraphLayout>().FirstOrDefault();
 						break;
 					case HierarchicalGraphType.Dendrogram:
-						graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<DendrogramLayout>();
+						graphLayout = System.Windows.Application.Current.MainWindow.FindVisualDescendants<DendrogramLayout>().FirstOrDefault();
 						break;
 				}
 
@@ -103,7 +104,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Network Graph", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<NetworkGraphLayout>();
+				NetworkGraphLayout graphLayout = System.Windows.Application.Current.MainWindow.FindVisualDescendants<NetworkGraphLayout>().FirstOrDefault();
 				if (graphLayout == null)
 					throw new InvalidOperationException();
 
@@ -145,7 +146,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Map", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var mapControl = System.Windows.Application.Current.MainWindow.FindVisualChild<GMapControl>();
+				GMapControl mapControl = System.Windows.Application.Current.MainWindow.FindVisualDescendants<GMapControl>().FirstOrDefault();
 				if (mapControl == null)
 					throw new InvalidOperationException();
 
@@ -191,7 +192,7 @@ namespace SIL.Cog.Presentation.Services
 			FileDialogResult result = _dialogService.ShowSaveFileDialog("Export Global Correspondences Chart", ownerViewModel, new FileType("PNG image", ".png"));
 			if (result.IsValid)
 			{
-				var graphLayout = System.Windows.Application.Current.MainWindow.FindVisualChild<GlobalCorrespondencesGraphLayout>();
+				GlobalCorrespondencesGraphLayout graphLayout = System.Windows.Application.Current.MainWindow.FindVisualDescendants<GlobalCorrespondencesGraphLayout>().FirstOrDefault();
 				if (graphLayout == null)
 					throw new InvalidOperationException();
 

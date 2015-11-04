@@ -32,25 +32,27 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		private readonly List<Tuple<string, string>> _mappings;
+		private readonly List<UnorderedTuple<string, string>> _mappings;
 		private readonly bool _implicitComplexSegments;
 		private readonly Segmenter _segmenter;
 
 		private readonly Dictionary<string, Dictionary<string, List<Tuple<Environment, Environment>>>> _mappingLookup;
 
-		public ListSegmentMappings(Segmenter segmenter, IEnumerable<Tuple<string, string>> mappings, bool implicitComplexSegments)
+		public ListSegmentMappings(Segmenter segmenter, IEnumerable<UnorderedTuple<string, string>> mappings, bool implicitComplexSegments)
 		{
 			_segmenter = segmenter;
 			_mappings = mappings.ToList();
 			_implicitComplexSegments = implicitComplexSegments;
 
 			_mappingLookup = new Dictionary<string, Dictionary<string, List<Tuple<Environment, Environment>>>>();
-			foreach (Tuple<string, string> mapping in _mappings)
+			foreach (UnorderedTuple<string, string> mapping in _mappings)
 			{
-				Environment env1, env2;
+				FeatureSymbol leftEnv1, rightEnv1, leftEnv2, rightEnv2;
 				string str1, str2;
-				if (Normalize(mapping.Item1, out str1, out env1) && Normalize(mapping.Item2, out str2, out env2))
+				if (Normalize(_segmenter, mapping.Item1, out str1, out leftEnv1, out rightEnv1) && Normalize(_segmenter, mapping.Item2, out str2, out leftEnv2, out rightEnv2))
 				{
+					var env1 = new Environment(leftEnv1, rightEnv1);
+					var env2 = new Environment(leftEnv2, rightEnv2);
 					Dictionary<string, List<Tuple<Environment, Environment>>> segments = _mappingLookup.GetValue(str1, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
 					List<Tuple<Environment, Environment>> contexts = segments.GetValue(str2, () => new List<Tuple<Environment, Environment>>());
 					contexts.Add(Tuple.Create(env1, env2));
@@ -61,45 +63,53 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		private bool Normalize(string segment, out string normalizedSegment, out Environment env)
+		public static bool IsValid(Segmenter segmenter, string segment)
+		{
+			string normalizedSegment;
+			FeatureSymbol leftEnv, rightEnv;
+			return Normalize(segmenter, segment, out normalizedSegment, out leftEnv, out rightEnv);
+		}
+
+		public static bool Normalize(Segmenter segmenter, string segment, out string normalizedSegment, out FeatureSymbol leftEnv, out FeatureSymbol rightEnv)
 		{
 			normalizedSegment = null;
 			if (string.IsNullOrEmpty(segment) || segment.IsOneOf("#", "C", "V"))
 			{
-				env = null;
+				leftEnv = null;
+				rightEnv = null;
 				return false;
 			}
 
-			string strRep = StripContext(segment, out env);
+			string strRep = StripContext(segment, out leftEnv, out rightEnv);
 			if (strRep.IsOneOf("-", "_"))
 			{
 				normalizedSegment = "-";
 				return true;
 			}
 			string normalized;
-			if (_segmenter.NormalizeSegmentString(strRep, out normalized))
+			if (segmenter.NormalizeSegmentString(strRep, out normalized))
 			{
 				normalizedSegment = normalized;
 				return true;
 			}
 
-			env = null;
+			leftEnv = null;
+			rightEnv = null;
 			return false;
 		}
 
-		private string StripContext(string strRep, out Environment env)
+		private static string StripContext(string strRep, out FeatureSymbol leftEnv, out FeatureSymbol rightEnv)
 		{
-			FeatureSymbol leftEnv = GetEnvironment(strRep[0]);
+			leftEnv = GetEnvironment(strRep[0]);
 			if (leftEnv != null)
 				strRep = strRep.Remove(0, 1);
-			FeatureSymbol rightEnv = GetEnvironment(strRep[strRep.Length - 1]);
+			rightEnv = GetEnvironment(strRep[strRep.Length - 1]);
 			if (rightEnv != null)
 				strRep = strRep.Remove(strRep.Length - 1, 1);
-			env = new Environment(leftEnv, rightEnv);
 			return strRep;
 		}
 
-		private FeatureSymbol GetEnvironment(char c)
+		private static FeatureSymbol GetEnvironment(char c)
 		{
 			switch (c)
 			{
@@ -114,7 +124,7 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		public IEnumerable<Tuple<string, string>> Mappings
+		public IEnumerable<UnorderedTuple<string, string>> Mappings
 		{
 			get { return _mappings; }
 		}

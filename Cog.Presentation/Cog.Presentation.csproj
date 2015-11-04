@@ -76,6 +76,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\GMap.NET\GMap.NET.WindowsPresentation.dll</HintPath>
     </Reference>
+    <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net40\MahApps.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NBug, Version=1.2.0.0, Culture=neutral, PublicKeyToken=a4292a325f69b123, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NBug.1.2.2\lib\net40-client\NBug.dll</HintPath>
@@ -85,6 +89,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -121,6 +129,7 @@
     <Compile Include="Behaviors\TextBlockBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaviors.cs" />
     <Compile Include="Behaviors\UIElementBehaviors.cs" />
+    <Compile Include="Behaviors\WindowBehaviors.cs" />
     <Compile Include="Controls\Block.xaml.cs">
       <DependentUpon>Block.xaml</DependentUpon>
     </Compile>
@@ -206,6 +215,9 @@
     <Compile Include="Views\EditNaturalClassDialog.xaml.cs">
       <DependentUpon>EditNaturalClassDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SegmentMappingsChartDialog.xaml.cs">
+      <DependentUpon>SegmentMappingsChartDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditUnnaturalClassDialog.xaml.cs">
       <DependentUpon>EditUnnaturalClassDialog.xaml</DependentUpon>
     </Compile>
@@ -252,6 +264,9 @@
     <Compile Include="Views\RegionPointMarker.cs" />
     <Compile Include="Views\GlobalCorrespondencesView.xaml.cs">
       <DependentUpon>GlobalCorrespondencesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SegmentMappingsChartSegmentPairView.xaml.cs">
+      <DependentUpon>SegmentMappingsChartSegmentPairView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SegmentsView.xaml.cs">
       <DependentUpon>SegmentsView.xaml</DependentUpon>
@@ -404,6 +419,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SegmentMappingsChartDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EditUnnaturalClassDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -459,6 +478,10 @@
     <Page Include="Views\GlobalCorrespondencesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SegmentMappingsChartSegmentPairView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SegmentsView.xaml">
       <SubType>Designer</SubType>
@@ -719,6 +742,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\SIL-logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\menu-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />

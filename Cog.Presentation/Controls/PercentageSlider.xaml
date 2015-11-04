@@ -7,11 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="300" Name="Root">
     <Grid VerticalAlignment="Top">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
-		</Grid.ColumnDefinitions>
-		<Slider Name="Slider" Grid.Column="0" Minimum="0" Maximum="1" Value="{Binding ElementName=Root, Path=Value}" TickFrequency="0.01" IsSnapToTickEnabled="True" />
-		<xctk:DoubleUpDown Grid.Column="1" Value="{Binding ElementName=Slider, Path=Value, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="1" Increment="0.01" FormatString="P0" Width="60" />
-	</Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Slider Name="Slider" Grid.Column="0" Minimum="0" Maximum="1" Value="{Binding ElementName=Root, Path=Value}" TickFrequency="0.01" IsSnapToTickEnabled="True" />
+        <xctk:DoubleUpDown Grid.Column="1" Value="{Binding ElementName=Slider, Path=Value, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="1" Increment="0.01" FormatString="P0" Width="60" />
+    </Grid>
 </UserControl>

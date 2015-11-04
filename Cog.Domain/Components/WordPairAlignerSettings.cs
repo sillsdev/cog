@@ -5,7 +5,7 @@ using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Domain.Components
 {
-	public sealed class WordPairAlignerSettings
+	public class WordPairAlignerSettings
 	{
 		private AlignmentMode _mode;
 		private bool _expansionCompressionEnabled;
@@ -48,7 +48,7 @@ namespace SIL.Cog.Domain.Components
 			}
 		}
 
-		private void CheckReadOnly()
+		protected void CheckReadOnly()
 		{
 			if (ReadOnly)
 				throw new InvalidOperationException("Settings cannot be changed after an Aligner object has been created.");

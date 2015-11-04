@@ -7,45 +7,45 @@
         xmlns:v="clr-namespace:SIL.Cog.Presentation.Views" xmlns:c="clr-namespace:SIL.Cog.Presentation.Controls"
         mc:Ignorable="d"
         Title="Export Network Graph" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize"
-		SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=SimilarityMetricComboBox}"
+        SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=SimilarityMetricComboBox}"
         d:DataContext="{d:DesignInstance vm:ExportNetworkGraphViewModel}">
-	<Grid Margin="10">
-		<Grid.Resources>
-			<Style TargetType="Label">
-				<Setter Property="Margin" Value="0,3,5,5" />
-				<Setter Property="Padding" Value="0,0,0,5" />
-			</Style>
-			<Style TargetType="ComboBox">
-				<Setter Property="Margin" Value="0,0,0,5" />
-				<Setter Property="Width" Value="200" />
-			</Style>
-			<Style TargetType="c:PercentageSlider">
-				<Setter Property="Margin" Value="0,0,0,5" />
-				<Setter Property="Width" Value="200" />
-			</Style>
-			<Style TargetType="Button">
-				<Setter Property="Margin" Value="5,0,0,0" />
-				<Setter Property="Width" Value="70" />
-			</Style>
-		</Grid.Resources>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="20" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=SimilarityMetricComboBox}">Similarity metric:</Label>
-		<ComboBox Name="SimilarityMetricComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SimilarityMetric}}}"
-				  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding SimilarityMetric}" />
-		<Label Target="{Binding ElementName=FilterSlider}" Grid.Column="0" Grid.Row="1" Margin="0,0,3,0">Edge filter:</Label>
-		<c:PercentageSlider Grid.Column="1" Grid.Row="1" x:Name="FilterSlider" Value="{Binding SimilarityScoreFilter}" />
-		<StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button IsDefault="True" Click="exportButton_Click">Export</Button>
-			<Button IsCancel="True">Cancel</Button>
-		</StackPanel>
-	</Grid>
+    <Grid Margin="10">
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="ComboBox">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="Width" Value="200" />
+            </Style>
+            <Style TargetType="c:PercentageSlider">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="Width" Value="200" />
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Margin" Value="5,0,0,0" />
+                <Setter Property="Width" Value="70" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=SimilarityMetricComboBox}">Similarity metric:</Label>
+        <ComboBox Name="SimilarityMetricComboBox" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={v:Enumeration {x:Type vm:SimilarityMetric}}}"
+                  DisplayMemberPath="Description" SelectedValuePath="Value" SelectedValue="{Binding SimilarityMetric}" />
+        <Label Target="{Binding ElementName=FilterSlider}" Grid.Column="0" Grid.Row="1" Margin="0,0,3,0">Edge filter:</Label>
+        <c:PercentageSlider Grid.Column="1" Grid.Row="1" x:Name="FilterSlider" Value="{Binding SimilarityScoreFilter}" />
+        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button IsDefault="True" Click="exportButton_Click">Export</Button>
+            <Button IsCancel="True">Cancel</Button>
+        </StackPanel>
+    </Grid>
 </Window>

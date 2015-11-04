@@ -44,11 +44,6 @@ namespace SIL.Cog.Domain.Components
 			return new MultipleWordAlignerResult(this, Scorer, wordArray);
 		}
 
-		public WordPairAlignerSettings Settings
-		{
-			get { return _settings; }
-		}
-
 		protected abstract IPairwiseAlignmentScorer<Word, ShapeNode> Scorer { get; }
 
 		public abstract int Delta(FeatureStruct fs1, FeatureStruct fs2);

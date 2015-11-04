@@ -44,7 +44,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _similarSegments; }
 		}
 
-		public void UpdateCognicity(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
 			wordPair.AlignmentNotes.Clear();
 			int cat1Count = 0;
@@ -112,7 +112,7 @@ namespace SIL.Cog.Domain.Components
 			double type1Score = (double) cat1Count / totalCount;
 			double type1And2Score = (double) cat1And2Count / totalCount;
 			wordPair.AreCognatePredicted = type1Score >= 0.5 && type1And2Score >= 0.75;
-			wordPair.CognicityScore = (type1Score * 0.75) + (type1And2Score * 0.25);
+			wordPair.CognacyScore = (type1Score * 0.75) + (type1And2Score * 0.25);
 		}
 	}
 }

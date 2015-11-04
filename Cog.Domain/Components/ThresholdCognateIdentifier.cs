@@ -1,5 +1,4 @@
-using SIL.Machine.Annotations;
-using SIL.Machine.SequenceAlignment;
+using System.Linq;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -17,17 +16,10 @@ namespace SIL.Cog.Domain.Components
 			get { return _threshold; }
 		}
 
-		public void UpdateCognicity(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
-			int alignmentCount = 0;
-			double totalAlignmentScore = 0.0;
-			foreach (Alignment<Word, ShapeNode> alignment in alignerResult.GetAlignments())
-			{
-				totalAlignmentScore += alignment.NormalizedScore;
-				alignmentCount++;
-			}
-			wordPair.CognicityScore = totalAlignmentScore / alignmentCount;
-			wordPair.AreCognatePredicted = wordPair.CognicityScore >= _threshold;
+			wordPair.CognacyScore = alignerResult.GetAlignments().First().NormalizedScore;
+			wordPair.AreCognatePredicted = wordPair.CognacyScore >= _threshold;
 		}
 	}
 }

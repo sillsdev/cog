@@ -1,6 +1,0 @@
-[submodule "lib/Machine"]
-	path = lib/Machine
-	url = https://github.com/sillsdev/machine.git
-[submodule "lib/graphsharp"]
-	path = lib/graphsharp
-	url = https://github.com/sillsdev/graphsharp.git

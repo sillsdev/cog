@@ -38,6 +38,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
+    <Reference Include="GraphSharp, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphSharp.SIL.1.1.0-build00001\lib\net40-Client\GraphSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NSubstitute, Version=1.8.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <HintPath>..\packages\NSubstitute.1.8.2.0\lib\net40\NSubstitute.dll</HintPath>
       <Private>True</Private>
@@ -50,6 +54,15 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00001\lib\net40-Client\SIL.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00001\lib\net40-Client\SIL.Machine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -100,18 +113,6 @@
     <ProjectReference Include="..\Cog.TestUtils\Cog.TestUtils.csproj">
       <Project>{2A62C29E-F51F-46D4-AF16-475DC4C2069B}</Project>
       <Name>Cog.TestUtils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\graphsharp\Source\Graph#\GraphSharp.csproj">
-      <Project>{9C59C516-FCA0-4FCF-AE11-E20F0F1B1949}</Project>
-      <Name>GraphSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
-      <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
-      <Name>Collections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\Machine\Machine\Machine.csproj">
-      <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
-      <Name>Machine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

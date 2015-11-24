@@ -69,30 +69,47 @@
       <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
     <Reference Include="GMap.NET.Core, Version=1.7.0.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\GMap.NET\GMap.NET.Core.dll</HintPath>
+      <HintPath>..\packages\GMap.NET.Presentation.1.7.1\lib\net40\GMap.NET.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GMap.NET.WindowsPresentation, Version=1.7.0.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\GMap.NET\GMap.NET.WindowsPresentation.dll</HintPath>
+      <HintPath>..\packages\GMap.NET.Presentation.1.7.1\lib\net40\GMap.NET.WindowsPresentation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GraphSharp, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphSharp.SIL.1.1.0-build00001\lib\net40-Client\GraphSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GraphSharp.Controls, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphSharp.SIL.1.1.0-build00001\lib\net40-Client\GraphSharp.Controls.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net40\MahApps.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=2.6.1.30, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NBug, Version=1.2.0.0, Culture=neutral, PublicKeyToken=a4292a325f69b123, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NBug.1.2.2\lib\net40-client\NBug.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph">
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00001\lib\net40-Client\SIL.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00001\lib\net40-Client\SIL.Machine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -664,22 +681,6 @@
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
       <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
       <Name>Cog.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\graphsharp\Source\Graph#.Controls\GraphSharp.Controls.csproj">
-      <Project>{90D874F2-486E-477E-93A9-FFA6FC92A2F4}</Project>
-      <Name>GraphSharp.Controls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\graphsharp\Source\Graph#\GraphSharp.csproj">
-      <Project>{9C59C516-FCA0-4FCF-AE11-E20F0F1B1949}</Project>
-      <Name>GraphSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\Machine\Collections\Collections.csproj">
-      <Project>{08691159-167B-4E5A-AE88-67DEF10AF7D3}</Project>
-      <Name>Collections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\Machine\Machine\Machine.csproj">
-      <Project>{8C9AB5D2-22CA-4559-ABB0-83E97D7F0E58}</Project>
-      <Name>Machine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

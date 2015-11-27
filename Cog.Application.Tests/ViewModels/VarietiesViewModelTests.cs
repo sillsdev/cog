@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 using System.Linq;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using NSubstitute;
 using NUnit.Framework;
@@ -15,224 +16,347 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	[TestFixture]
 	public class VarietiesViewModelTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
+		private class TestEnvironment : IDisposable
+		{
+			private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
+			private readonly IProjectService _projectService;
+			private readonly IDialogService _dialogService;
+			private readonly VarietiesViewModel _varietiesViewModel;
+			private FindViewModel _findViewModel;
+
+			public TestEnvironment()
+			{
+				DispatcherHelper.Initialize();
+				_projectService = Substitute.For<IProjectService>();
+				_dialogService = Substitute.For<IDialogService>();
+				var busyService = Substitute.For<IBusyService>();
+				var analysisService = Substitute.For<IAnalysisService>();
+
+				WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
+				WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
+				VarietiesVarietyViewModel.Factory varietyFactory = variety => new VarietiesVarietyViewModel(_projectService, _dialogService, wordsFactory, wordFactory, variety);
+
+				_varietiesViewModel = new VarietiesViewModel(_projectService, _dialogService, analysisService, varietyFactory);
+			}
+
+			public SpanFactory<ShapeNode> SpanFactory
+			{
+				get { return _spanFactory; }
+			}
+
+			public void OpenProject(CogProject project)
+			{
+				_projectService.Project.Returns(project);
+				_projectService.ProjectOpened += Raise.Event();
+				_varietiesViewModel.VarietiesView = new ListCollectionView(_varietiesViewModel.Varieties);
+				if (_varietiesViewModel.SelectedVariety != null)
+				{
+					WordsViewModel wordsViewModel = _varietiesViewModel.SelectedVariety.Words;
+					wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
+				}
+			}
+
+			public void OpenFindDialog()
+			{
+				_dialogService.ShowModelessDialog(_varietiesViewModel, Arg.Do<FindViewModel>(vm => _findViewModel = vm), Arg.Any<Action>());
+				_varietiesViewModel.FindCommand.Execute(null);
+			}
+
+			public IDialogService DialogService
+			{
+				get { return _dialogService; }
+			}
+
+			public VarietiesViewModel VarietiesViewModel
+			{
+				get { return _varietiesViewModel; }
+			}
+
+			public FindViewModel FindViewModel
+			{
+				get { return _findViewModel; }
+			}
+
+			public void Dispose()
+			{
+				Messenger.Reset();
+			}
+		}
 
 		[Test]
-		public void Varieties()
+		public void Varieties_AddVariety_NewVarietySelected()
 		{
-			DispatcherHelper.Initialize();
-			var projectService = Substitute.For<IProjectService>();
-			var dialogService = Substitute.For<IDialogService>();
-			var busyService = Substitute.For<IBusyService>();
-			var analysisService = Substitute.For<IAnalysisService>();
+			using (var env = new TestEnvironment())
+			{
+				var project = new CogProject(env.SpanFactory);
+				env.OpenProject(project);
 
-			WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
-			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			VarietiesVarietyViewModel.Factory varietyFactory = variety => new VarietiesVarietyViewModel(projectService, dialogService, wordsFactory, wordFactory, variety);
+				Assert.That(env.VarietiesViewModel.Varieties, Is.Empty);
+				Assert.That(env.VarietiesViewModel.IsVarietySelected, Is.False);
+				Assert.That(env.VarietiesViewModel.SelectedVariety, Is.Null);
 
-			var varieties = new VarietiesViewModel(projectService, dialogService, analysisService, varietyFactory);
+				project.Varieties.Add(new Variety("variety1"));
 
-			var project = new CogProject(_spanFactory);
-			projectService.Project.Returns(project);
-			projectService.ProjectOpened += Raise.Event();
+				Assert.That(env.VarietiesViewModel.Varieties.Count, Is.EqualTo(1));
+				Assert.That(env.VarietiesViewModel.Varieties[0].Name, Is.EqualTo("variety1"));
+				Assert.That(env.VarietiesViewModel.IsVarietySelected, Is.True);
+				Assert.That(env.VarietiesViewModel.SelectedVariety, Is.EqualTo(env.VarietiesViewModel.VarietiesView.Cast<VarietiesVarietyViewModel>().First()));
+			}
+		}
 
-			varieties.VarietiesView = new ListCollectionView(varieties.Varieties);
+		[Test]
+		public void Varieties_ExistingVarieties_VarietiesSorted()
+		{
+			using (var env = new TestEnvironment())
+			{
+				Assert.That(env.VarietiesViewModel.IsVarietySelected, Is.False);
+				Assert.That(env.VarietiesViewModel.SelectedVariety, Is.Null);
 
-			Assert.That(varieties.Varieties, Is.Empty);
-			Assert.That(varieties.IsVarietySelected, Is.False);
-			Assert.That(varieties.SelectedVariety, Is.Null);
-
-			project.Varieties.Add(new Variety("variety1"));
-
-			Assert.That(varieties.Varieties.Count, Is.EqualTo(1));
-			Assert.That(varieties.Varieties[0].Name, Is.EqualTo("variety1"));
-			Assert.That(varieties.IsVarietySelected, Is.True);
-			Assert.That(varieties.SelectedVariety, Is.EqualTo(varieties.VarietiesView.Cast<VarietiesVarietyViewModel>().First()));
-
-			project = new CogProject(_spanFactory)
+				var project = new CogProject(env.SpanFactory)
 				{
 					Varieties = {new Variety("French"), new Variety("English"), new Variety("Spanish")}
 				};
-			projectService.Project.Returns(project);
-			projectService.ProjectOpened += Raise.Event();
+				env.OpenProject(project);
 
-			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"French", "English", "Spanish"}));
-			Assert.That(varieties.IsVarietySelected, Is.False);
-			Assert.That(varieties.SelectedVariety, Is.Null);
-
-			varieties.VarietiesView = new ListCollectionView(varieties.Varieties);
-			VarietiesVarietyViewModel[] varietiesViewArray = varieties.VarietiesView.Cast<VarietiesVarietyViewModel>().ToArray();
-			Assert.That(varieties.IsVarietySelected, Is.True);
-			Assert.That(varieties.SelectedVariety, Is.EqualTo(varietiesViewArray[0]));
-			// should be sorted
-			Assert.That(varietiesViewArray.Select(v => v.Name), Is.EqualTo(new[] {"English", "French", "Spanish"}));
+				env.VarietiesViewModel.VarietiesView = new ListCollectionView(env.VarietiesViewModel.Varieties);
+				VarietiesVarietyViewModel[] varietiesViewArray = env.VarietiesViewModel.VarietiesView.Cast<VarietiesVarietyViewModel>().ToArray();
+				Assert.That(env.VarietiesViewModel.IsVarietySelected, Is.True);
+				Assert.That(env.VarietiesViewModel.SelectedVariety, Is.EqualTo(varietiesViewArray[0]));
+				// should be sorted
+				Assert.That(varietiesViewArray.Select(v => v.Name), Is.EqualTo(new[] {"English", "French", "Spanish"}));
+			}
 		}
 
-		[Test]
-		public void FindCommand()
+		private CogProject SetupProjectWithWords(TestEnvironment env)
 		{
-			DispatcherHelper.Initialize();
-			var projectService = Substitute.For<IProjectService>();
-			var dialogService = Substitute.For<IDialogService>();
-			var busyService = Substitute.For<IBusyService>();
-			var analysisService = Substitute.For<IAnalysisService>();
-
-			WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
-			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			VarietiesVarietyViewModel.Factory varietyFactory = variety => new VarietiesVarietyViewModel(projectService, dialogService, wordsFactory, wordFactory, variety);
-
-			var varieties = new VarietiesViewModel(projectService, dialogService, analysisService, varietyFactory);
-
-			var project = new CogProject(_spanFactory)
+			var project = new CogProject(env.SpanFactory)
 				{
 					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
 					Varieties = {new Variety("variety1"), new Variety("variety2")}
 				};
 			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Meanings[0]), new Word("good", project.Meanings[1]), new Word("bad", project.Meanings[2])});
 			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google", project.Meanings[1]), new Word("goofy", project.Meanings[2])});
-			projectService.Project.Returns(project);
-			projectService.ProjectOpened += Raise.Event();
 
-			varieties.VarietiesView = new ListCollectionView(varieties.Varieties);
-			WordsViewModel wordsViewModel = varieties.SelectedVariety.Words;
-			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
-			WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
-
-			FindViewModel findViewModel = null;
-			Action closeCallback = null;
-			dialogService.ShowModelessDialog(varieties, Arg.Do<FindViewModel>(vm => findViewModel = vm), Arg.Do<Action>(callback => closeCallback = callback));
-			varieties.FindCommand.Execute(null);
-			Assert.That(findViewModel, Is.Not.Null);
-			Assert.That(closeCallback, Is.Not.Null);
-
-			// already open, shouldn't get opened twice
-			dialogService.ClearReceivedCalls();
-			varieties.FindCommand.Execute(null);
-			dialogService.DidNotReceive().ShowModelessDialog(varieties, Arg.Any<FindViewModel>(), Arg.Any<Action>());
-
-			// form searches
-			findViewModel.Field = FindField.Form;
-
-			// nothing selected, no match
-			findViewModel.String = "fall";
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.Empty);
-
-			// nothing selected, matches
-			findViewModel.String = "he";
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
-
-			// first word selected, matches
-			findViewModel.String = "o";
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
-			// start search over
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
-
-			// last word selected, matches
-			wordsViewModel.SelectedWords.Clear();
-			wordsViewModel.SelectedWords.Add(wordsViewArray[2]);
-			findViewModel.String = "ba";
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
-
-			// switch variety, nothing selected, matches, change selected word
-			varieties.SelectedVariety = varieties.Varieties[1];
-			wordsViewModel = varieties.SelectedVariety.Words;
-			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
-			wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
-			findViewModel.String = "go";
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
-			wordsViewModel.SelectedWords.Clear();
-			wordsViewModel.SelectedWords.Add(wordsViewArray[0]);
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
-
-			// gloss searches
-			findViewModel.Field = FindField.Gloss;
-			findViewModel.String = "gloss2";
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
-			findViewModel.FindNextCommand.Execute(null);
-			Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+			env.OpenProject(project);
+			return project;
 		}
 
 		[Test]
-		public void TaskAreas()
+		public void FindCommand_DialogOpen_NotOpenedAgain()
 		{
-			DispatcherHelper.Initialize();
-			var projectService = Substitute.For<IProjectService>();
-			var dialogService = Substitute.For<IDialogService>();
-			var busyService = Substitute.For<IBusyService>();
-			var analysisService = Substitute.For<IAnalysisService>();
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
 
-			WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
-			WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-			VarietiesVarietyViewModel.Factory varietyFactory = variety => new VarietiesVarietyViewModel(projectService, dialogService, wordsFactory, wordFactory, variety);
+				env.DialogService.ClearReceivedCalls();
+				env.VarietiesViewModel.FindCommand.Execute(null);
+				env.DialogService.DidNotReceive().ShowModelessDialog(env.VarietiesViewModel, Arg.Any<FindViewModel>(), Arg.Any<Action>());
+			}
+		}
 
-			var varieties = new VarietiesViewModel(projectService, dialogService, analysisService, varietyFactory);
+		[Test]
+		public void FindCommand_FormNothingSelectedNoMatches_NoWordSelected()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
 
-			var project = new CogProject(_spanFactory)
-				{
-					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
-					Varieties = {new Variety("variety1"), new Variety("variety2")}
-				};
-			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Meanings[0]), new Word("good", project.Meanings[1]), new Word("bad", project.Meanings[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google", project.Meanings[1]), new Word("goofy", project.Meanings[2])});
-			projectService.Project.Returns(project);
-			projectService.ProjectOpened += Raise.Event();
+				env.FindViewModel.Field = FindField.Form;
+				env.FindViewModel.String = "fall";
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(env.VarietiesViewModel.SelectedVariety.Words.SelectedWords, Is.Empty);
+			}
+		}
 
-			varieties.VarietiesView = new ListCollectionView(varieties.Varieties);
+		[Test]
+		public void FindCommand_FormNothingSelectedMatches_CorrectWordsSelected()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
 
-			var commonTasks = (TaskAreaItemsViewModel) varieties.TaskAreas[0];
+				env.FindViewModel.Field = FindField.Form;
+				env.FindViewModel.String = "he";
+				env.FindViewModel.FindNextCommand.Execute(null);
 
-			var addVariety = (TaskAreaCommandViewModel) commonTasks.Items[0];
-			dialogService.ShowModalDialog(varieties, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety3")).Returns(true);
-			addVariety.Command.Execute(null);
-			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety3"));
-			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety3"}));
+				WordsViewModel wordsViewModel = env.VarietiesViewModel.SelectedVariety.Words;
+				WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
+			}
+		}
 
-			var renameVariety = (TaskAreaCommandViewModel) commonTasks.Items[1];
-			dialogService.ShowModalDialog(varieties, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety4")).Returns(true);
-			renameVariety.Command.Execute(null);
-			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety4"));
-			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety4"}));
+		[Test]
+		public void FindCommand_FormFirstWordSelectedMatches_CorrectWordsSelected()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
 
-			var removeVariety = (TaskAreaCommandViewModel) commonTasks.Items[2];
-			dialogService.ShowYesNoQuestion(varieties, Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-			removeVariety.Command.Execute(null);
-			Assert.That(varieties.SelectedVariety.Name, Is.EqualTo("variety1"));
-			Assert.That(varieties.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2"}));
+				env.FindViewModel.Field = FindField.Form;
+				WordsViewModel wordsViewModel = env.VarietiesViewModel.SelectedVariety.Words;
+				WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
+				wordsViewModel.SelectedWords.Add(wordsViewArray[0]);
+				env.FindViewModel.String = "o";
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[0].ToEnumerable()));
+				// start search over
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+			}
+		}
 
-			varieties.SelectedVariety = varieties.Varieties.First(v => v.Name == "variety2");
+		[Test]
+		public void FindCommand_FormLastWordSelectedMatches_CorrectWordsSelected()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
 
-			WordsViewModel wordsViewModel = varieties.SelectedVariety.Words;
-			wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
-			var sortWordsByItems = (TaskAreaItemsViewModel) commonTasks.Items[4];
-			var sortWordsByGroup = (TaskAreaCommandGroupViewModel) sortWordsByItems.Items[0];
-			// default sorting is by gloss, change to form
-			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
-			sortWordsByGroup.SelectedCommand.Command.Execute(null);
-			Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"goofy", "google", "help"}));
-			// change sorting back to gloss
-			sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[0];
-			sortWordsByGroup.SelectedCommand.Command.Execute(null);
-			Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"help", "google", "goofy"}));
+				env.FindViewModel.Field = FindField.Form;
+				WordsViewModel wordsViewModel = env.VarietiesViewModel.SelectedVariety.Words;
+				WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
+				wordsViewModel.SelectedWords.Add(wordsViewArray[2]);
+				env.FindViewModel.String = "ba";
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
+			}
+		}
+
+		[Test]
+		public void FindCommand_SwitchVarietyFormNothingSelectedMatches_CorrectWordsSelected()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
+
+				env.VarietiesViewModel.SelectedVariety = env.VarietiesViewModel.Varieties[1];
+				WordsViewModel wordsViewModel = env.VarietiesViewModel.SelectedVariety.Words;
+				wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
+				WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
+				env.FindViewModel.Field = FindField.Form;
+				env.FindViewModel.String = "go";
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+				wordsViewModel.SelectedWords.Clear();
+				wordsViewModel.SelectedWords.Add(wordsViewArray[0]);
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[2].ToEnumerable()));
+			}
+		}
+
+		[Test]
+		public void FindCommand_GlossNothingSelectedMatches_CorrectWordsSelected()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+				env.OpenFindDialog();
+
+				// gloss searches
+				env.FindViewModel.Field = FindField.Gloss;
+				env.FindViewModel.String = "gloss2";
+				env.FindViewModel.FindNextCommand.Execute(null);
+				WordsViewModel wordsViewModel = env.VarietiesViewModel.SelectedVariety.Words;
+				WordViewModel[] wordsViewArray = wordsViewModel.WordsView.Cast<WordViewModel>().ToArray();
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+				env.FindViewModel.FindNextCommand.Execute(null);
+				Assert.That(wordsViewModel.SelectedWords, Is.EquivalentTo(wordsViewArray[1].ToEnumerable()));
+			}
+		}
+
+		[Test]
+		public void TaskAreas_AddVariety_VarietyAdded()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+
+				var commonTasks = (TaskAreaItemsViewModel) env.VarietiesViewModel.TaskAreas[0];
+
+				var addVariety = (TaskAreaCommandViewModel) commonTasks.Items[0];
+				env.DialogService.ShowModalDialog(env.VarietiesViewModel, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety3")).Returns(true);
+				addVariety.Command.Execute(null);
+				Assert.That(env.VarietiesViewModel.SelectedVariety.Name, Is.EqualTo("variety3"));
+				Assert.That(env.VarietiesViewModel.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety3"}));
+			}
+		}
+
+		[Test]
+		public void TaskAreas_RenameVariety_VarietyRenamed()
+		{
+			using (var env = new TestEnvironment())
+			{
+				CogProject project = SetupProjectWithWords(env);
+
+				var commonTasks = (TaskAreaItemsViewModel) env.VarietiesViewModel.TaskAreas[0];
+				var renameVariety = (TaskAreaCommandViewModel) commonTasks.Items[1];
+				env.VarietiesViewModel.SelectedVariety = env.VarietiesViewModel.Varieties.First(v => v.Name == "variety2");
+				env.DialogService.ShowModalDialog(env.VarietiesViewModel, Arg.Do<EditVarietyViewModel>(vm => vm.Name = "variety3")).Returns(true);
+				renameVariety.Command.Execute(null);
+				Assert.That(env.VarietiesViewModel.SelectedVariety.Name, Is.EqualTo("variety3"));
+				Assert.That(env.VarietiesViewModel.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety3"}));
+				Assert.That(project.Varieties.Contains("variety2"), Is.False);
+			}
+		}
+
+		[Test]
+		public void TaskAreas_RemoveVariety_VarietyRemoved()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+
+				var commonTasks = (TaskAreaItemsViewModel) env.VarietiesViewModel.TaskAreas[0];
+				var removeVariety = (TaskAreaCommandViewModel) commonTasks.Items[2];
+				env.VarietiesViewModel.SelectedVariety = env.VarietiesViewModel.Varieties.First(v => v.Name == "variety2");
+				env.DialogService.ShowYesNoQuestion(env.VarietiesViewModel, Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+				removeVariety.Command.Execute(null);
+				Assert.That(env.VarietiesViewModel.SelectedVariety.Name, Is.EqualTo("variety1"));
+				Assert.That(env.VarietiesViewModel.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1"}));
+			}
+		}
+
+		[Test]
+		public void TaskAreas_SortBy_WordsSortedCorrectly()
+		{
+			using (var env = new TestEnvironment())
+			{
+				SetupProjectWithWords(env);
+
+				var commonTasks = (TaskAreaItemsViewModel) env.VarietiesViewModel.TaskAreas[0];
+				env.VarietiesViewModel.SelectedVariety = env.VarietiesViewModel.Varieties.First(v => v.Name == "variety2");
+
+				WordsViewModel wordsViewModel = env.VarietiesViewModel.SelectedVariety.Words;
+				wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
+				var sortWordsByItems = (TaskAreaItemsViewModel) commonTasks.Items[4];
+				var sortWordsByGroup = (TaskAreaCommandGroupViewModel) sortWordsByItems.Items[0];
+				// default sorting is by gloss, change to form
+				sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
+				sortWordsByGroup.SelectedCommand.Command.Execute(null);
+				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"goofy", "google", "help"}));
+				// change sorting back to gloss
+				sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[0];
+				sortWordsByGroup.SelectedCommand.Command.Execute(null);
+				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"help", "google", "goofy"}));
+			}
 		}
 	}
 }

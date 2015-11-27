@@ -27,7 +27,12 @@ namespace SIL.Cog.Domain
 		public string Name
 		{
 			get { return _name; }
-			set { Set(() => Name, ref _name, value); }
+			set
+			{
+				if (Collection != null)
+					Collection.ChangeVarietyName(this, value);
+				Set(() => Name, ref _name, value);
+			}
 		}
 
 		public WordCollection Words
@@ -60,6 +65,8 @@ namespace SIL.Cog.Domain
 		{
 			get { return _syllablePositionSegmentFreqDists; }
 		}
+
+		internal VarietyCollection Collection { get; set; }
 
 		public override string ToString()
 		{

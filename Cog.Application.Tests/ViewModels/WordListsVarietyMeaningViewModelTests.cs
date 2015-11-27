@@ -9,13 +9,24 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	[TestFixture]
 	public class WordListsVarietyMeaningViewModelTests
 	{
+		private CogProject SetupProject(WordListsViewModelTestEnvironment env)
+		{
+			var project = new CogProject(env.SpanFactory)
+			{
+				Meanings = {new Meaning("gloss1", "cat1")},
+				Varieties = {new Variety("variety1")}
+			};
+			env.OpenProject(project);
+			return project;
+		}
+
 		[Test]
 		public void Words_AddWord_StrRepAndWordsUpdated()
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				CogProject project = env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				CogProject project = SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				project.Varieties[0].Words.Add(new Word("hɛ.loʊ", project.Meanings[0]));
 				Assert.That(varietyMeaning.StrRep, Is.EqualTo("hɛ.loʊ"));
@@ -33,8 +44,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				varietyMeaning.StrRep = "hɛ.lp,gu.gəl";
 				Assert.That(varietyMeaning.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.lp", "gu.gəl"}));
@@ -49,8 +60,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				CogProject project = env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				CogProject project = SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				project.Varieties[0].Words.Add(new Word("hɛ.loʊ", project.Meanings[0]));
 
@@ -64,8 +75,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				CogProject project = env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				CogProject project = SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				project.Varieties[0].Words.Add(new Word("hɛ.loʊ", project.Meanings[0]));
 
@@ -79,8 +90,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				varietyMeaning.StrRep = " hɛ.lp,gu.gəl ,gu.fi ";
 				Assert.That(varietyMeaning.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.lp", "gu.gəl", "gu.fi"}));
@@ -93,8 +104,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				varietyMeaning.StrRep = " hɛ.lp,gu.gəl,gu.fi";
 				Assert.That(varietyMeaning.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"hɛ.lp", "gu.gəl", "gu.fi"}));
@@ -116,16 +127,16 @@ namespace SIL.Cog.Application.Tests.ViewModels
 					Vowels = {"a"}
 				};
 				env.AnalysisService.Segment(Arg.Do<Variety>(variety => segmenter.Segment(variety.Words.First())));
-				env.OpenProject(new[] {new Meaning("gloss1", "cat1")}, new[] {new Variety("variety1")});
-				WordListsVarietyMeaningViewModel varietyMeaning = env.WordLists.Varieties[0].Meanings[0];
+				SetupProject(env);
+				WordListsVarietyMeaningViewModel varietyMeaning = env.WordListsViewModel.Varieties[0].Meanings[0];
 
 				varietyMeaning.StrRep = "cat";
 				Assert.That(varietyMeaning.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"cat"}));
-				Assert.That(env.WordLists.Varieties[0].IsValid, Is.False);
+				Assert.That(env.WordListsViewModel.Varieties[0].IsValid, Is.False);
 
 				varietyMeaning.StrRep = "bat";
 				Assert.That(varietyMeaning.Words.Select(w => w.StrRep), Is.EqualTo(new[] {"bat"}));
-				Assert.That(env.WordLists.Varieties[0].IsValid, Is.True);
+				Assert.That(env.WordListsViewModel.Varieties[0].IsValid, Is.True);
 			}
 		}
 	}

@@ -16,7 +16,12 @@ namespace SIL.Cog.Domain
 		public string Gloss
 		{
 			get { return _gloss; }
-			set { Set(() => Gloss, ref _gloss, value); }
+			set
+			{
+				if (Collection != null)
+					Collection.ChangeMeaningGloss(this, value);
+				Set(() => Gloss, ref _gloss, value);
+			}
 		}
 
 		public string Category
@@ -24,6 +29,8 @@ namespace SIL.Cog.Domain
 			get { return _category; }
 			set { Set(() => Category, ref _category, value); }
 		}
+
+		internal MeaningCollection Collection { get; set; }
 
 		public override string ToString()
 		{

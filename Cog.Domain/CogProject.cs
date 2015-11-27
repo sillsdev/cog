@@ -12,8 +12,8 @@ namespace SIL.Cog.Domain
 		private FeatureSystem _featSys;
 		private readonly Segmenter _segmenter;
 
-		private readonly KeyedBulkObservableList<string, Variety> _varieties;
-		private readonly KeyedBulkObservableList<string, Meaning> _meanings;
+		private readonly VarietyCollection _varieties;
+		private readonly MeaningCollection _meanings;
 		private readonly VarietyPairCollection _varietyPairs;
 
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners;
@@ -26,9 +26,9 @@ namespace SIL.Cog.Domain
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
 			_segmenter = new Segmenter(spanFactory);
-			_meanings = new KeyedBulkObservableList<string, Meaning>(meaning => meaning.Gloss);
+			_meanings = new MeaningCollection();
 			_meanings.CollectionChanged += MeaningsChanged;
-			_varieties = new KeyedBulkObservableList<string, Variety>(variety => variety.Name);
+			_varieties = new VarietyCollection();
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
 

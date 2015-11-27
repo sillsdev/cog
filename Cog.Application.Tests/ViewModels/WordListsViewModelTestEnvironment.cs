@@ -14,11 +14,10 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	internal class WordListsViewModelTestEnvironment : IDisposable
 	{
 		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-		private readonly WordListsViewModel _wordLists;
+		private readonly WordListsViewModel _wordListsViewModel;
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly IAnalysisService _analysisService;
-
 		private FindViewModel _findViewModel;
 
 		public WordListsViewModelTestEnvironment()
@@ -35,7 +34,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			WordListsVarietyMeaningViewModel.Factory varietyMeaningFactory = (variety, meaning) => new WordListsVarietyMeaningViewModel(busyService, _analysisService, wordFactory, variety, meaning);
 			WordListsVarietyViewModel.Factory varietyFactory = (parent, variety) => new WordListsVarietyViewModel(_projectService, varietyMeaningFactory, parent, variety);
 
-			_wordLists = new WordListsViewModel(_projectService, _dialogService, importService, exportService, _analysisService, varietyFactory);
+			_wordListsViewModel = new WordListsViewModel(_projectService, _dialogService, importService, exportService, _analysisService, varietyFactory);
 		}
 
 		public SpanFactory<ShapeNode> SpanFactory
@@ -43,9 +42,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			get { return _spanFactory; }
 		}
 
-		public WordListsViewModel WordLists
+		public WordListsViewModel WordListsViewModel
 		{
-			get { return _wordLists; }
+			get { return _wordListsViewModel; }
 		}
 
 		public IDialogService DialogService
@@ -58,21 +57,17 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			get { return _analysisService; }
 		}
 
-		public CogProject OpenProject(IEnumerable<Meaning> meanings, IEnumerable<Variety> varieties)
+		public void OpenProject(CogProject project)
 		{
-			var project = new CogProject(_spanFactory);
-			project.Meanings.AddRange(meanings);
-			project.Varieties.AddRange(varieties);
 			_projectService.Project.Returns(project);
 			_projectService.ProjectOpened += Raise.Event();
-			_wordLists.VarietiesView = new ListCollectionView(_wordLists.Varieties);
-			return project;
+			_wordListsViewModel.VarietiesView = new ListCollectionView(_wordListsViewModel.Varieties);
 		}
 
 		public void OpenFindDialog()
 		{
-			_dialogService.ShowModelessDialog(_wordLists, Arg.Do<FindViewModel>(vm => _findViewModel = vm), Arg.Any<Action>());
-			_wordLists.FindCommand.Execute(null);
+			_dialogService.ShowModelessDialog(_wordListsViewModel, Arg.Do<FindViewModel>(vm => _findViewModel = vm), Arg.Any<Action>());
+			_wordListsViewModel.FindCommand.Execute(null);
 		}
 
 		public FindViewModel FindViewModel

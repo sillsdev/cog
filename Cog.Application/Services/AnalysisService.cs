@@ -108,6 +108,9 @@ namespace SIL.Cog.Application.Services
 
 		public void CompareAll(object ownerViewModel)
 		{
+			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Meanings.Count == 0)
+				return;
+
 			Messenger.Default.Send(new PerformingComparisonMessage());
 			var generator = new VarietyPairGenerator();
 			generator.Process(_projectService.Project);
@@ -145,8 +148,10 @@ namespace SIL.Cog.Application.Services
 		public void Compare(VarietyPair varietyPair)
 		{
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
+			Messenger.Default.Send(new PerformingComparisonMessage(varietyPair));
 			var pipeline = new Pipeline<VarietyPair>(GetCompareProcessors());
 			pipeline.Process(varietyPair.ToEnumerable());
+			Messenger.Default.Send(new ComparisonPerformedMessage(varietyPair));
 		}
 
 		private IEnumerable<IProcessor<VarietyPair>> GetCompareProcessors()

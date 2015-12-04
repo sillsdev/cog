@@ -20,7 +20,7 @@ namespace SIL.Cog.Application.ViewModels
 	{
 		private readonly IProjectService _projectService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
-	    private readonly BindableList<MultipleWordAlignmentWordViewModel> _selectedWords; 
+		private readonly BindableList<MultipleWordAlignmentWordViewModel> _selectedWords; 
 		private ICollectionView _wordsView;
 		private MirroredBindableList<Meaning, MeaningViewModel> _meanings;
 		private ICollectionView _meaningsView;
@@ -53,7 +53,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
 
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
-            _selectedWords = new BindableList<MultipleWordAlignmentWordViewModel>();
+			_selectedWords = new BindableList<MultipleWordAlignmentWordViewModel>();
 
 			_showInVarietyPairsCommand = new RelayCommand(ShowInVarietyPairs, CanShowInVarietyPairs);
 
@@ -288,10 +288,10 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _words; }
 		}
 
-	    public ObservableList<MultipleWordAlignmentWordViewModel> SelectedWords
-	    {
-	        get { return _selectedWords; }
-	    }
+		public ObservableList<MultipleWordAlignmentWordViewModel> SelectedWords
+		{
+			get { return _selectedWords; }
+		}
 
 		public ICommand ShowInVarietyPairsCommand
 		{

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Config;
@@ -28,7 +27,7 @@ namespace SIL.Cog.Domain.Tests.Config.Migrations
 			cm.Migrate(doc);
 
 			XElement root = doc.Root;
-			Debug.Assert(root != null);
+			Assert.That(root, Is.Not.Null);
 			Assert.That(root.GetDefaultNamespace(), Is.EqualTo((XNamespace) "http://www.sil.org/CogProject/1.2"));
 			XNamespace toNamespace = "http://www.sil.org/CogProject/1.2";
 			XElement wordPairGeneratorElem = root.Elements(toNamespace + "VarietyPairProcessors").Elements(toNamespace + "VarietyPairProcessor")

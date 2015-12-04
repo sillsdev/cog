@@ -5,6 +5,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
@@ -13,6 +14,8 @@ namespace SIL.Cog.Application.ViewModels
 {
 	public class WordPairViewModel : ViewModelBase
 	{
+		public delegate WordPairViewModel Factory(WordPair wordPair, bool areVarietiesInOrder);
+
 		private readonly WordPair _wordPair;
 
 		private readonly AlignedNodeViewModel _prefixNode;
@@ -24,16 +27,21 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly VarietyViewModel _variety2;
 		private readonly bool _areVarietiesInOrder;
 		private readonly ICommand _showInMultipleWordAlignmentCommand;
+		private readonly ICommand _pinUnpinCommand;
+		private readonly IProjectService _projectService;
+		private readonly IAnalysisService _analysisService;
 
-		public WordPairViewModel(IWordAligner aligner, WordPair wordPair, bool areVarietiesInOrder)
+		public WordPairViewModel(IProjectService projectService, IAnalysisService analysisService, WordPair wordPair, bool areVarietiesInOrder)
 		{
+			_projectService = projectService;
+			_analysisService = analysisService;
 			_wordPair = wordPair;
 			_areVarietiesInOrder = areVarietiesInOrder;
 			_meaning = new MeaningViewModel(_wordPair.Word1.Meaning);
 			_variety1 = new VarietyViewModel(_wordPair.VarietyPair.Variety1);
 			_variety2 = new VarietyViewModel(_wordPair.VarietyPair.Variety2);
 
-			IWordAlignerResult results = aligner.Compute(_wordPair);
+			IWordAlignerResult results = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner].Compute(_wordPair);
 			_alignment = results.GetAlignments().First();
 			_prefixNode = new AlignedNodeViewModel(_alignment.Prefixes[0], _alignment.Prefixes[1]);
 			var nodes = new List<AlignedNodeViewModel>();
@@ -51,11 +59,21 @@ namespace SIL.Cog.Application.ViewModels
 			_alignedNodes = new ReadOnlyCollection<AlignedNodeViewModel>(nodes);
 
 			_showInMultipleWordAlignmentCommand = new RelayCommand(ShowInMultipleWordAlignment);
+			_pinUnpinCommand = new RelayCommand(PinUnpin);
 		}
 
 		private void ShowInMultipleWordAlignment()
 		{
 			Messenger.Default.Send(new SwitchViewMessage(typeof(MultipleWordAlignmentViewModel), _wordPair.Meaning, _wordPair));
+		}
+
+		private void PinUnpin()
+		{
+			if (!_projectService.Project.CognacyDecisions.Remove(_wordPair))
+				_projectService.Project.CognacyDecisions.Add(_wordPair, !_wordPair.PredictedCognacy);
+			Messenger.Default.Send(new DomainModelChangedMessage(false));
+
+			_analysisService.Compare(_wordPair.VarietyPair);
 		}
 
 		public bool AreVarietiesInOrder
@@ -98,14 +116,39 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _wordPair.PhoneticSimilarityScore; }
 		}
 
-		public bool AreCognate
+		public bool Cognacy
 		{
-			get { return _wordPair.AreCognatePredicted; }
+			get { return _wordPair.Cognacy; }
+		}
+
+		public bool PredictedCognacy
+		{
+			get { return _wordPair.PredictedCognacy; }
+		}
+
+		public bool IsPinned
+		{
+			get { return _wordPair.ActualCognacy != null; }
 		}
 
 		public ICommand ShowInMultipleWordAlignmentCommand
 		{
 			get { return _showInMultipleWordAlignmentCommand; }
+		}
+
+		public ICommand PinUnpinCommand
+		{
+			get { return _pinUnpinCommand; }
+		}
+
+		public string PinUnpinText
+		{
+			get
+			{
+				if (_wordPair.ActualCognacy == null)
+					return string.Format("Pin to {0}", _wordPair.PredictedCognacy ? "non-cognates" : "cognates");
+				return "Unpin";
+			}
 		}
 
 		internal WordPair DomainWordPair

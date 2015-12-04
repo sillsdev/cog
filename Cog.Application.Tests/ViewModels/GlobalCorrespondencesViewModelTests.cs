@@ -35,8 +35,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
 
 			WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
-
-			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory);
+			WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(projectService, analysisService, pair, order);
+			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory, wordPairFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
@@ -59,7 +59,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
-					wp.AreCognatePredicted = true;
+					wp.PredictedCognacy = true;
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, (sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
@@ -92,8 +92,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
 
 			WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
-
-			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory);
+			WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(projectService, analysisService, pair, order);
+			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory, wordPairFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
@@ -112,7 +112,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
-					wp.AreCognatePredicted = true;
+					wp.PredictedCognacy = true;
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, (sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);
@@ -159,8 +159,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
 
 			WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
-
-			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory);
+			WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(projectService, analysisService, pair, order);
+			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory, wordPairFactory);
 
 			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
@@ -179,7 +179,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			{
 				wordPairGenerator.Process(vp);
 				foreach (WordPair wp in vp.WordPairs)
-					wp.AreCognatePredicted = true;
+					wp.PredictedCognacy = true;
 				vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 				vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution, (sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 				globalCorrIdentifier.Process(vp);

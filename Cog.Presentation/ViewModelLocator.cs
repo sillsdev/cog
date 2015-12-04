@@ -108,6 +108,7 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<SegmentMappingsChartViewModel>();
 			builder.RegisterType<SegmentMappingsChartSegmentPairViewModel>();
 			builder.RegisterType<NewSegmentMappingViewModel>();
+			builder.RegisterType<WordPairViewModel>();
 
 			_container = builder.Build();
 		}

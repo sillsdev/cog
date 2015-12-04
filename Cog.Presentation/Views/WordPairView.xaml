@@ -6,6 +6,7 @@
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:cnvtrs="clr-namespace:SIL.Cog.Presentation.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:WordPairViewModel}">
     <UserControl.Resources>
@@ -35,6 +36,11 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Padding" Value="3" />
         </Style>
+        <BooleanToVisibilityConverter x:Key="VisConverter" />
+        <cnvtrs:SwitchConverter x:Key="CognacyConverter">
+            <cnvtrs:SwitchCase When="True" Then="cognate" />
+            <cnvtrs:SwitchCase When="False" Then="non-cognate" />
+        </cnvtrs:SwitchConverter>
     </UserControl.Resources>
     <StackPanel>
         <TextBlock FontSize="14" Foreground="{StaticResource HeaderTextBrush}">
@@ -52,6 +58,11 @@
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
+            </TextBlock>
+            <Image Width="9" Height="9" Source="../Images/pin.png" Visibility="{Binding IsPinned, Converter={StaticResource VisConverter}}" />
+            <TextBlock Visibility="{Binding IsPinned, Converter={StaticResource VisConverter}}" Foreground="Gray" FontWeight="Normal" FontSize="10">
+                <Run>identified as</Run>
+                <Run Text="{Binding PredictedCognacy, Converter={StaticResource CognacyConverter}, Mode=OneWay}" />
             </TextBlock>
         </TextBlock>
         <StackPanel Orientation="Horizontal" Grid.IsSharedSizeScope="True">

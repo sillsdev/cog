@@ -53,8 +53,8 @@ namespace SIL.Cog.Application.Tests.Export
 					Word w1 = vp.Variety1.Words[meaning].First();
 					Word w2 = vp.Variety2.Words[meaning].First();
 					WordPair wp = vp.WordPairs.Add(w1, w2);
-					wp.CognacyScore = score;
-					wp.AreCognatePredicted = true;
+					wp.PredictedCognacyScore = score;
+					wp.PredictedCognacy = true;
 					score -= 0.1;
 				}
 			}

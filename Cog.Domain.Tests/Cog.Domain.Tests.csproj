@@ -64,6 +64,7 @@
     <Compile Include="Components\CognacyWordPairGeneratorTests.cs" />
     <Compile Include="Components\ListSegmentMappingsTests.cs" />
     <Compile Include="Config\Migrations\ConfigMigration1_2Tests.cs" />
+    <Compile Include="Config\Migrations\ConfigMigration1_3Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmenterTests.cs" />
   </ItemGroup>

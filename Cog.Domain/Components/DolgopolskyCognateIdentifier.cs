@@ -74,8 +74,8 @@ namespace SIL.Cog.Domain.Components
 				}
 			}
 
-			wordPair.AreCognatePredicted = !mismatchFound || initialEquivalentClasses >= _initialEquivalenceThreshold;
-			wordPair.CognacyScore = (double) initialEquivalentClasses / alignment.ColumnCount;
+			wordPair.PredictedCognacy = !mismatchFound || initialEquivalentClasses >= _initialEquivalenceThreshold;
+			wordPair.PredictedCognacyScore = (double) initialEquivalentClasses / alignment.ColumnCount;
 		}
 	}
 }

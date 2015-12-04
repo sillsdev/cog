@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CogProject xmlns="http://www.sil.org/CogProject/1.2"
+<CogProject xmlns="http://www.sil.org/CogProject/1.3"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			version="4">
 	<FeatureSystem>
@@ -2331,6 +2331,7 @@
 	</CognateIdentifiers>
 	<Meanings />
 	<Varieties />
+	<CognacyDecisions />
 	<ProjectProcessors />
 	<VarietyProcessors>
 		<VarietyProcessor id="affixIdentifier" xsi:type="PoorMansAffixIdentifier">

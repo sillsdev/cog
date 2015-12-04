@@ -53,8 +53,8 @@ namespace SIL.Cog.Application.ViewModels
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",
-			    new TaskAreaCommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),
-			    new TaskAreaCommandViewModel("Tree", new RelayCommand(() => GraphType = HierarchicalGraphType.Tree))));
+				new TaskAreaCommandViewModel("Dendrogram", new RelayCommand(() => GraphType = HierarchicalGraphType.Dendrogram)),
+				new TaskAreaCommandViewModel("Tree", new RelayCommand(() => GraphType = HierarchicalGraphType.Tree))));
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Clustering method",
 				new TaskAreaCommandViewModel("UPGMA", new RelayCommand(() => ClusteringMethod = ClusteringMethod.Upgma)),
 				new TaskAreaCommandViewModel("Neighbor-joining", new RelayCommand(() => ClusteringMethod = ClusteringMethod.NeighborJoining))));
@@ -80,11 +80,11 @@ namespace SIL.Cog.Application.ViewModels
 		public HierarchicalGraphType GraphType
 		{
 			get { return _graphType; }
-		    set
-		    {
-		        if (Set(() => GraphType, ref _graphType, value) && _graph != null)
-                    Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
-		    }
+			set
+			{
+				if (Set(() => GraphType, ref _graphType, value) && _graph != null)
+					Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+			}
 		}
 
 		public ClusteringMethod ClusteringMethod

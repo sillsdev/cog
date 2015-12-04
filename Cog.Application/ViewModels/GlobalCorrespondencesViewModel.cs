@@ -27,11 +27,12 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ICommand _findCommand;
 		private IBidirectionalGraph<GlobalCorrespondencesGraphVertex, GlobalCorrespondencesGraphEdge> _graph;
 		private readonly HashSet<Variety> _selectedVarieties;
+		private readonly WordPairViewModel.Factory _wordPairFactory;
 
 		private FindViewModel _findViewModel;
 
 		public GlobalCorrespondencesViewModel(IProjectService projectService, IBusyService busyService, IDialogService dialogService, IImageExportService imageExportService, IGraphService graphService,
-			WordPairsViewModel.Factory wordPairsFactory)
+			WordPairsViewModel.Factory wordPairsFactory, WordPairViewModel.Factory wordPairFactory)
 			: base("Global Correspondences")
 		{
 			_projectService = projectService;
@@ -39,6 +40,7 @@ namespace SIL.Cog.Application.ViewModels
 			_dialogService = dialogService;
 			_imageExportService = imageExportService;
 			_graphService = graphService;
+			_wordPairFactory = wordPairFactory;
 
 			_selectedVarieties = new HashSet<Variety>();
 
@@ -177,10 +179,9 @@ namespace SIL.Cog.Application.ViewModels
 
 						var seg1 = (GlobalSegmentVertex) _selectedCorrespondence.Source;
 						var seg2 = (GlobalSegmentVertex) _selectedCorrespondence.Target;
-						IWordAligner aligner = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 						foreach (WordPair wp in _selectedCorrespondence.DomainWordPairs)
 						{
-							var vm = new WordPairViewModel(aligner, wp, true);
+							WordPairViewModel vm = _wordPairFactory(wp, true);
 							foreach (AlignedNodeViewModel an in vm.AlignedNodes)
 							{
 								if ((seg1.StrReps.Contains(an.StrRep1) && seg2.StrReps.Contains(an.StrRep2))

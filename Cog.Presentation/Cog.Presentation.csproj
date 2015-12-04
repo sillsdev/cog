@@ -201,8 +201,9 @@
     <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ListBoxScrollbarMarkerPositionConverter.cs" />
     <Compile Include="Converters\MultipleWordAlignmentHighlightSegmentConverter.cs" />
-    <Compile Include="Converters\SoundTypeToMultigraphStringConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\SwitchCase.cs" />
+    <Compile Include="Converters\SwitchConverter.cs" />
     <Compile Include="Converters\WordsToInlinesConverter.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\ImageExportService.cs" />
@@ -749,6 +750,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\save-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pin.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />

@@ -7,10 +7,11 @@ namespace SIL.Cog.Domain
 		private readonly Word _word1;
 		private readonly Word _word2;
 		private readonly ObservableList<string> _alignmentNotes;
-		private bool _areCognateActual;
-		private bool _areCognatePredicted;
+		private bool _cognacy;
+		private bool? _actualCognacy;
+		private bool _predictedCognacy;
 		private double _phoneticSimilarityScore;
-		private double _cognacyScore;
+		private double _predictedCognacyScore;
 
 		public WordPair(Word word1, Word word2)
 		{
@@ -48,16 +49,35 @@ namespace SIL.Cog.Domain
 			get { return _alignmentNotes; }
 		}
 
-		public bool AreCognateActual
+		public bool Cognacy
 		{
-			get { return _areCognateActual; }
-			set { Set(() => AreCognateActual, ref _areCognateActual, value); }
+			get { return _cognacy; }
+			private set { Set(() => Cognacy, ref _cognacy, value); }
 		}
 
-		public bool AreCognatePredicted
+		public bool? ActualCognacy
 		{
-			get { return _areCognatePredicted; }
-			set { Set(() => AreCognatePredicted, ref _areCognatePredicted, value); }
+			get { return _actualCognacy; }
+			set
+			{
+				if (Set(() => ActualCognacy, ref _actualCognacy, value))
+					UpdateCognacy();
+			}
+		}
+
+		public bool PredictedCognacy
+		{
+			get { return _predictedCognacy; }
+			set
+			{
+				if (Set(() => PredictedCognacy, ref _predictedCognacy, value))
+					UpdateCognacy();
+			}
+		}
+
+		private void UpdateCognacy()
+		{
+			Cognacy = _actualCognacy ?? _predictedCognacy;
 		}
 
 		public double PhoneticSimilarityScore
@@ -66,10 +86,10 @@ namespace SIL.Cog.Domain
 			set { Set(() => PhoneticSimilarityScore, ref _phoneticSimilarityScore, value); }
 		}
 
-		public double CognacyScore
+		public double PredictedCognacyScore
 		{
-			get { return _cognacyScore; }
-			set { Set(() => CognacyScore, ref _cognacyScore, value); }
+			get { return _predictedCognacyScore; }
+			set { Set(() => PredictedCognacyScore, ref _predictedCognacyScore, value); }
 		}
 	}
 }

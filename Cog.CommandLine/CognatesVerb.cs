@@ -47,7 +47,7 @@ namespace SIL.Cog.CommandLine
 				foreach (WordPair wordPair in varietyPair.WordPairs)
 				{
 					// Output format: "word1 word2 True/False score" where True means cognate and False means not cognate, and score is a number between 0.0 and 1.0
-					outputWriter.WriteLine("{0} {1} {2} {3}", wordPair.Word1.StrRep, wordPair.Word2.StrRep, wordPair.AreCognatePredicted, wordPair.CognacyScore);
+					outputWriter.WriteLine("{0} {1} {2} {3}", wordPair.Word1.StrRep, wordPair.Word2.StrRep, wordPair.PredictedCognacy, wordPair.PredictedCognacyScore);
 				}
 			}
 

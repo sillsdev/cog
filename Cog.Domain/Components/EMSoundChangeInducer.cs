@@ -54,7 +54,7 @@ namespace SIL.Cog.Domain.Components
 			{
 				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
 				cognateIdentifier.UpdateCognacy(wordPair, alignerResult);
-				if (wordPair.AreCognatePredicted)
+				if (wordPair.Cognacy)
 				{
 					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 					for (int column = 0; column < alignment.ColumnCount; column++)

@@ -23,12 +23,12 @@ namespace SIL.Cog.Application.Export
 
 				writer.WriteLine("Likely cognates");
 				writer.WriteLine("--------------");
-				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => wp.AreCognatePredicted));
+				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => wp.Cognacy));
 				writer.WriteLine();
 
 				writer.WriteLine("Likely non-cognates");
 				writer.WriteLine("-------------------");
-				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => !wp.AreCognatePredicted));
+				WriteWordPairs(writer, aligner, varietyPair.WordPairs.Where(wp => !wp.Cognacy));
 				writer.WriteLine();
 
 				writer.WriteLine("Sound correspondences");

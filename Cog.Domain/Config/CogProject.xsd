@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema
-	targetNamespace="http://www.sil.org/CogProject/1.2"
+	targetNamespace="http://www.sil.org/CogProject/1.3"
 	elementFormDefault="qualified"
-	xmlns="http://www.sil.org/CogProject/1.2"
+	xmlns="http://www.sil.org/CogProject/1.3"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 	<xs:element name="FeatureValue">
@@ -358,7 +358,6 @@
 						<xs:sequence>
 							<xs:element name="Meaning" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
-									<xs:attribute name="id" type="xs:string" use="required" />
 									<xs:attribute name="gloss" type="xs:string" use="required" />
 									<xs:attribute name="category" type="xs:string" />
 								</xs:complexType>
@@ -446,6 +445,20 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="CognacyDecisions">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CognacyDecision" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="variety1" type="xs:string" use="required" />
+									<xs:attribute name="variety2" type="xs:string" use="required" />
+									<xs:attribute name="meaning" type="xs:string" use="required" />
+									<xs:attribute name="cognacy" type="xs:boolean" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="ProjectProcessors">
 					<xs:complexType>
 						<xs:sequence>
@@ -488,9 +501,9 @@
 		</xs:keyref>
 		<xs:key name="MeaningKey">
 			<xs:selector xpath="Meaning" />
-			<xs:field xpath="@id" />
+			<xs:field xpath="@gloss" />
 		</xs:key>
-		<xs:keyref name="MeaningKeyRef" refer="MeaningKey">
+		<xs:keyref name="WordMeaningKeyRef" refer="MeaningKey">
 			<xs:selector xpath="Word" />
 			<xs:field xpath="@meaning" />
 		</xs:keyref>
@@ -517,6 +530,22 @@
 		<xs:keyref name="RelevantValueKeyRef" refer="ValueKey">
 			<xs:selector xpath="RelevantValue" />
 			<xs:field xpath="@ref" />
+		</xs:keyref>
+		<xs:key name="VarietyKey">
+			<xs:selector xpath="Variety" />
+			<xs:field xpath="@name" />
+		</xs:key>
+		<xs:keyref name="CognacyDecisionVariety1KeyRef" refer="VarietyKey">
+			<xs:selector xpath="CognacyDecision" />
+			<xs:field xpath="@variety1" />
+		</xs:keyref>
+		<xs:keyref name="CognacyDecisionVariety2KeyRef" refer="VarietyKey">
+			<xs:selector xpath="CognacyDecision" />
+			<xs:field xpath="@variety2" />
+		</xs:keyref>
+		<xs:keyref name="CognacyDecisionMeaningKeyRef" refer="MeaningKey">
+			<xs:selector xpath="CognacyDecision" />
+			<xs:field xpath="@meaning" />
 		</xs:keyref>
 	</xs:element>
 </xs:schema>

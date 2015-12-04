@@ -53,11 +53,12 @@ namespace SIL.Cog.Domain.Components
 				Word[] words1 = varietyPair.Variety1.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
 				Word[] words2 = varietyPair.Variety2.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
 
+				WordPair wp = null;
 				if (words1.Length == 1 && words2.Length == 1)
 				{
 					Word word1 = words1.Single();
 					Word word2 = words2.Single();
-					WordPair wp = varietyPair.WordPairs.Add(word1, word2);
+					wp = varietyPair.WordPairs.Add(word1, word2);
 
 					IWordAlignerResult alignerResult = aligner.Compute(wp);
 					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
@@ -69,8 +70,11 @@ namespace SIL.Cog.Domain.Components
 					IWordAlignerResult[] alignerResults = words1.SelectMany(w1 => words2.Select(w2 => aligner.Compute(w1, w2))).ToArray();
 					IWordAlignerResult maxAlignerResult = alignerResults.MaxBy(a => a.BestRawScore);
 					ambiguousMeanings.Add(Tuple.Create(meaning, maxAlignerResult, alignerResults));
-					varietyPair.WordPairs.Add(maxAlignerResult.Words[0], maxAlignerResult.Words[1]);
+					wp = varietyPair.WordPairs.Add(maxAlignerResult.Words[0], maxAlignerResult.Words[1]);
 				}
+
+				if (wp != null)
+					_project.CognacyDecisions.UpdateActualCognacy(wp);
 			}
 
 			ICognateIdentifier cognateIdentifier = _project.CognateIdentifiers[_cognateIdentifierID];
@@ -110,10 +114,10 @@ namespace SIL.Cog.Domain.Components
 
 		private static int Compare(WordPair x, WordPair y)
 		{
-			if (x.AreCognatePredicted != y.AreCognatePredicted)
-				return x.AreCognatePredicted ? 1 : -1;
+			if (x.PredictedCognacy != y.PredictedCognacy)
+				return x.PredictedCognacy ? 1 : -1;
 
-			int res = x.CognacyScore.CompareTo(y.CognacyScore);
+			int res = x.PredictedCognacyScore.CompareTo(y.PredictedCognacyScore);
 			if (res != 0)
 				return res;
 

@@ -18,8 +18,8 @@ namespace SIL.Cog.Domain.Components
 
 		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
-			wordPair.CognacyScore = alignerResult.GetAlignments().First().NormalizedScore;
-			wordPair.AreCognatePredicted = wordPair.CognacyScore >= _threshold;
+			wordPair.PredictedCognacyScore = alignerResult.GetAlignments().First().NormalizedScore;
+			wordPair.PredictedCognacy = wordPair.PredictedCognacyScore >= _threshold;
 		}
 	}
 }

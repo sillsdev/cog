@@ -39,15 +39,15 @@ namespace SIL.Cog.Domain.Tests.Components
 			var cognateIdentifier = new BlairCognateIdentifier(segmentPool, false, false, ignoredMappings, similarSegmentsMappings);
 			var wp = vp.WordPairs[0];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.False);
+			Assert.That(wp.PredictedCognacy, Is.False);
 
 			wp = vp.WordPairs[1];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 
 			wp = vp.WordPairs[2];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.False);
+			Assert.That(wp.PredictedCognacy, Is.False);
 		}
 
 		[Test]
@@ -78,15 +78,15 @@ namespace SIL.Cog.Domain.Tests.Components
 			var cognateIdentifier = new BlairCognateIdentifier(segmentPool, false, false, ignoredMappings, similarSegmentsMappings);
 			var wp = vp.WordPairs[0];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 
 			wp = vp.WordPairs[1];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 
 			wp = vp.WordPairs[2];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 		}
 
 		[Test]
@@ -121,15 +121,15 @@ namespace SIL.Cog.Domain.Tests.Components
 			var cognateIdentifier = new BlairCognateIdentifier(segmentPool, false, false, ignoredMappings, similarSegmentsMappings);
 			var wp = vp.WordPairs[0];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 
 			wp = vp.WordPairs[1];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 
 			wp = vp.WordPairs[2];
 			cognateIdentifier.UpdateCognacy(wp, aligner.Compute(wp));
-			Assert.That(wp.AreCognatePredicted, Is.True);
+			Assert.That(wp.PredictedCognacy, Is.True);
 		}
 	}
 }

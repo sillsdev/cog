@@ -61,13 +61,21 @@ namespace SIL.Cog.Application.ViewModels
 			_sortPropertyName = "PhoneticSimilarityScore";
 			_sortDirection = ListSortDirection.Descending;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => SetSelectedVarietyPair());
+			Messenger.Default.Register<PerformingComparisonMessage>(this, msg =>
+			{
+				if (msg.VarietyPair == null)
+					ClearComparison();
+			});
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg =>
+			{
+				if (msg.VarietyPair == null)
+					SetSelectedVarietyPair();
+			});
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
-				{
-					if (msg.AffectsComparison)
-						ClearComparison();
-				});
-			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ClearComparison());
+			{
+				if (msg.AffectsComparison)
+					ClearComparison();
+			});
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
@@ -110,7 +118,8 @@ namespace SIL.Cog.Application.ViewModels
 					_selectedVarietyPair.Cognates.SelectedWordPairs.Clear();
 					_selectedVarietyPair.Cognates.SelectedWordPairs.AddRange(_selectedVarietyPair.Cognates.WordPairs.Where(wp => wp.Meaning.DomainMeaning == meaning));
 					_selectedVarietyPair.Noncognates.SelectedWordPairs.Clear();
-					_selectedVarietyPair.Noncognates.SelectedWordPairs.AddRange(_selectedVarietyPair.Noncognates.WordPairs.Where(wp => wp.Meaning.DomainMeaning == meaning));
+					if (_selectedVarietyPair.Cognates.SelectedWordPairs.Count == 0)
+						_selectedVarietyPair.Noncognates.SelectedWordPairs.AddRange(_selectedVarietyPair.Noncognates.WordPairs.Where(wp => wp.Meaning.DomainMeaning == meaning));
 				}
 			}
 		}
@@ -152,7 +161,6 @@ namespace SIL.Cog.Application.ViewModels
 			if (_varietyPairState == VarietyPairState.NotSelected || _selectedVarietyPair != null)
 				return;
 
-			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			CogProject project = _projectService.Project;
 			var pair = new VarietyPair(_selectedVariety1.DomainVariety, _selectedVariety2.DomainVariety);
 			project.VarietyPairs.Add(pair);

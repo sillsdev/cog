@@ -323,7 +323,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				foreach (WordPair wp in env.Project.VarietyPairs[0].WordPairs)
 				{
 					wp.PhoneticSimilarityScore = (1.0 / env.Project.VarietyPairs[0].WordPairs.Count) * (i + 1);
-					wp.AreCognatePredicted = wp.Meaning.Gloss.IsOneOf("gloss1", "gloss3");
+					wp.PredictedCognacy = wp.Meaning.Gloss.IsOneOf("gloss1", "gloss3");
 					i++;
 				}
 
@@ -375,7 +375,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			foreach (WordPair wp in env.Project.VarietyPairs[0].WordPairs)
 			{
 				wp.PhoneticSimilarityScore = (1.0 / env.Project.VarietyPairs[0].WordPairs.Count) * (env.Project.VarietyPairs[0].WordPairs.Count - i);
-				wp.AreCognatePredicted = wp.Meaning.Gloss.IsOneOf("gloss1", "gloss3");
+				wp.PredictedCognacy = wp.Meaning.Gloss.IsOneOf("gloss1", "gloss3");
 				i++;
 			}
 
@@ -409,7 +409,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				_analysisService = new AnalysisService(_spanFactory, _segmentPool, _projectService, _dialogService, busyService);
 
 				WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
-				VarietyPairViewModel.Factory varietyPairFactory = (vp, order) => new VarietyPairViewModel(_segmentPool, _projectService, wordPairsFactory, vp, order);
+				WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(_projectService, _analysisService, pair, order);
+				VarietyPairViewModel.Factory varietyPairFactory = (vp, order) => new VarietyPairViewModel(_segmentPool, _projectService, wordPairsFactory, wordPairFactory, vp, order);
 
 				_varietyPairs = new VarietyPairsViewModel(_projectService, busyService, _dialogService, exportService, _analysisService, varietyPairFactory);
 

@@ -31,7 +31,7 @@ namespace SIL.Cog.Domain.Components
 					{CogFeatureSystem.Coda, new SoundCorrespondenceCollection()}
 				};
 
-			foreach (WordPair wordPair in data.WordPairs.Where(wp => wp.AreCognatePredicted))
+			foreach (WordPair wordPair in data.WordPairs.Where(wp => wp.Cognacy))
 			{
 				Alignment<Word, ShapeNode> alignment = aligner.Compute(wordPair).GetAlignments().First();
 				for (int i = 0; i < alignment.ColumnCount; i++)

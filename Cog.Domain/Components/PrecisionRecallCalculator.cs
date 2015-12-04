@@ -9,16 +9,19 @@ namespace SIL.Cog.Domain.Components
 			int fn = 0;
 			foreach (WordPair wp in varietyPair.WordPairs)
 			{
-				if (wp.AreCognatePredicted)
+				if (wp.ActualCognacy != null)
 				{
-					if (wp.AreCognateActual)
-						tp++;
-					else
-						fp++;
-				}
-				else if (wp.AreCognateActual)
-				{
+					if (wp.PredictedCognacy)
+					{
+						if ((bool) wp.ActualCognacy)
+							tp++;
+						else
+							fp++;
+					}
+					else if ((bool) wp.ActualCognacy)
+					{
 						fn++;
+					}
 				}
 			}
 

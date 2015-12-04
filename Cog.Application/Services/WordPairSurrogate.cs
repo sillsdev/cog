@@ -22,9 +22,9 @@ namespace SIL.Cog.Application.Services
 			Word1 = wp.Word1.StrRep;
 			Word2 = wp.Word2.StrRep;
 			_alignmentNotes = wp.AlignmentNotes.ToList();
-			AreCognatePredicted = wp.AreCognatePredicted;
+			PredictedCognacy = wp.PredictedCognacy;
 			PhoneticSimilarityScore = wp.PhoneticSimilarityScore;
-			CognacyScore = wp.CognacyScore;
+			PredictedCognacyScore = wp.PredictedCognacyScore;
 		}
 
 		[ProtoMember(1)]
@@ -40,11 +40,11 @@ namespace SIL.Cog.Application.Services
 			get { return _alignmentNotes; }
 		}
 		[ProtoMember(5)]
-		public bool AreCognatePredicted { get; set; }
+		public bool PredictedCognacy { get; set; }
 		[ProtoMember(6)]
 		public double PhoneticSimilarityScore { get; set; }
 		[ProtoMember(7)]
-		public double CognacyScore { get; set; }
+		public double PredictedCognacyScore { get; set; }
 
 		public WordPair ToWordPair(CogProject project, VarietyPair vp)
 		{
@@ -53,9 +53,9 @@ namespace SIL.Cog.Application.Services
 			Word word2 = vp.Variety2.Words[meaning].First(w => w.StrRep == Word2);
 			var wp = new WordPair(word1, word2)
 				{
-					AreCognatePredicted = AreCognatePredicted,
+					PredictedCognacy = PredictedCognacy,
 					PhoneticSimilarityScore = PhoneticSimilarityScore,
-					CognacyScore = CognacyScore
+					PredictedCognacyScore = PredictedCognacyScore
 				};
 			wp.AlignmentNotes.AddRange(_alignmentNotes);
 			return wp;

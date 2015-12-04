@@ -30,8 +30,8 @@ namespace SIL.Cog.Domain.Tests.Components
 					    || (wordPair.Word1.StrRep == "bæ" && wordPair.Word2.StrRep == "pæ")
 					    || (wordPair.Word1.StrRep == "ban" && wordPair.Word2.StrRep == "pæ"))
 					{
-						wordPair.AreCognatePredicted = true;
-						wordPair.CognacyScore = 1.0;
+						wordPair.PredictedCognacy = true;
+						wordPair.PredictedCognacyScore = 1.0;
 					}
 				});
 			project.CognateIdentifiers["primary"] = cognateIdentifier;

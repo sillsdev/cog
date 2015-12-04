@@ -15,6 +15,7 @@ namespace SIL.Cog.Domain
 		private readonly VarietyCollection _varieties;
 		private readonly MeaningCollection _meanings;
 		private readonly VarietyPairCollection _varietyPairs;
+		private readonly CognacyDecisionCollection _cognacyDecisions;
 
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners;
 		private readonly ObservableDictionary<string, ICognateIdentifier> _cognateIdentifiers; 
@@ -31,6 +32,7 @@ namespace SIL.Cog.Domain
 			_varieties = new VarietyCollection();
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
+			_cognacyDecisions = new CognacyDecisionCollection();
 
 			_wordAligners = new ObservableDictionary<string, IWordAligner>();
 			_cognateIdentifiers = new ObservableDictionary<string, ICognateIdentifier>();
@@ -109,32 +111,37 @@ namespace SIL.Cog.Domain
 			get { return _varieties; }
 		}
 
+		public CognacyDecisionCollection CognacyDecisions
+		{
+			get { return _cognacyDecisions; }
+		}
+
 		public BulkObservableList<VarietyPair> VarietyPairs
 		{
 			get { return _varietyPairs; }
 		}
 
-		public ObservableDictionary<string, IWordAligner> WordAligners
+		public IObservableDictionary<string, IWordAligner> WordAligners
 		{
 			get { return _wordAligners; }
 		}
 
-		public ObservableDictionary<string, ICognateIdentifier> CognateIdentifiers
+		public IObservableDictionary<string, ICognateIdentifier> CognateIdentifiers
 		{
 			get { return _cognateIdentifiers; }
 		}
 
-		public ObservableDictionary<string, IProcessor<CogProject>> ProjectProcessors
+		public IObservableDictionary<string, IProcessor<CogProject>> ProjectProcessors
 		{
 			get { return _projectProcessors; }
 		}
 
-		public ObservableDictionary<string, IProcessor<Variety>> VarietyProcessors
+		public IObservableDictionary<string, IProcessor<Variety>> VarietyProcessors
 		{
 			get { return _varietyProcessors; }
 		}
 
-		public ObservableDictionary<string, IProcessor<VarietyPair>> VarietyPairProcessors
+		public IObservableDictionary<string, IProcessor<VarietyPair>> VarietyPairProcessors
 		{
 			get { return _varietyPairProcessors; }
 		}

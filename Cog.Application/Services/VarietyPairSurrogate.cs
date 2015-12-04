@@ -91,7 +91,13 @@ namespace SIL.Cog.Application.Services
 					DefaultCorrespondenceProbability = DefaultCorrespondenceProbability
 				};
 			var wordPairs = new Dictionary<WordPairSurrogate, WordPair>();
-			vp.WordPairs.AddRange(_wordPairs.Select(surrogate => wordPairs.GetValue(surrogate, () => surrogate.ToWordPair(project, vp))));
+			foreach (WordPairSurrogate wpSurrogate in _wordPairs)
+			{
+				WordPair wp = wpSurrogate.ToWordPair(project, vp);
+				vp.WordPairs.Add(wp);
+				project.CognacyDecisions.UpdateActualCognacy(wp);
+				wordPairs[wpSurrogate] = wp;
+			}
 			var soundChanges = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			foreach (KeyValuePair<SoundContextSurrogate, Tuple<string[], int>[]> fd in _soundChanges)
 			{

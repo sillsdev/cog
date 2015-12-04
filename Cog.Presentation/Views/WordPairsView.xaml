@@ -34,6 +34,7 @@
                                                 <MenuItem Command="Copy" />
                                                 <MenuItem Command="SelectAll" />
                                                 <Separator />
+                                                <MenuItem Header="{Binding PinUnpinText}" Command="{Binding PinUnpinCommand}" />
                                                 <MenuItem Header="Show in multiple word alignment" Command="{Binding ShowInMultipleWordAlignmentCommand}" />
                                             </ContextMenu>
                                         </Grid.ContextMenu>

@@ -29,7 +29,7 @@ namespace SIL.Cog.Domain.Config
 			}
 		}
 
-		private const string DefaultNamespace = "http://www.sil.org/CogProject/1.2";
+		private const string DefaultNamespace = "http://www.sil.org/CogProject/1.3";
 		internal static readonly XNamespace Cog = DefaultNamespace;
 		private const string XsiNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 		internal static readonly XNamespace Xsi = XsiNamespace;
@@ -208,13 +208,11 @@ namespace SIL.Cog.Domain.Config
 			foreach (XElement cognateIdentifierElem in cognateIdentifiersElem.Elements(Cog + "CognateIdentifier"))
 				LoadComponent(spanFactory, segmentPool, project, cognateIdentifierElem, project.CognateIdentifiers);
 
-			var meanings = new Dictionary<string, Meaning>();
 			XElement meaningsElem = root.Element(Cog + "Meanings");
 			Debug.Assert(meaningsElem != null);
 			foreach (XElement meaningElem in meaningsElem.Elements(Cog + "Meaning"))
 			{
 				var meaning = new Meaning((string) meaningElem.Attribute("gloss"), (string) meaningElem.Attribute("category"));
-				meanings[(string) meaningElem.Attribute("id")] = meaning;
 				project.Meanings.Add(meaning);
 			}
 
@@ -228,14 +226,11 @@ namespace SIL.Cog.Domain.Config
 				{
 					foreach (XElement wordElem in wordsElem.Elements(Cog + "Word"))
 					{
-						Meaning meaning;
-						if (meanings.TryGetValue((string) wordElem.Attribute("meaning"), out meaning))
-						{
-							var strRep = ((string) wordElem).Trim();
-							var stemIndex = (int?) wordElem.Attribute("stemIndex") ?? 0;
-							var stemLen = (int?) wordElem.Attribute("stemLength") ?? strRep.Length - stemIndex;
-							variety.Words.Add(new Word(strRep, stemIndex, stemLen, meaning));
-						}
+						Meaning meaning = project.Meanings[(string) wordElem.Attribute("meaning")];
+						var strRep = ((string) wordElem).Trim();
+						var stemIndex = (int?) wordElem.Attribute("stemIndex") ?? 0;
+						var stemLen = (int?) wordElem.Attribute("stemLength") ?? strRep.Length - stemIndex;
+						variety.Words.Add(new Word(strRep, stemIndex, stemLen, meaning));
 					}
 				}
 				XElement affixesElem = varietyElem.Element(Cog + "Affixes");
@@ -274,6 +269,15 @@ namespace SIL.Cog.Domain.Config
 					}
 				}
 				project.Varieties.Add(variety);
+			}
+
+			XElement cognacyDecisionsElem = root.Element(Cog + "CognacyDecisions");
+			Debug.Assert(cognacyDecisionsElem != null);
+			foreach (XElement cognacyDecisionElem in cognacyDecisionsElem.Elements(Cog + "CognacyDecision"))
+			{
+				project.CognacyDecisions.Add(new CognacyDecision(project.Varieties[(string) cognacyDecisionElem.Attribute("variety1")],
+					project.Varieties[(string) cognacyDecisionElem.Attribute("variety2")], project.Meanings[(string) cognacyDecisionElem.Attribute("meaning")],
+					(bool) cognacyDecisionElem.Attribute("cognacy")));
 			}
 
 			XElement projectProcessorsElem = root.Element(Cog + "ProjectProcessors");
@@ -346,23 +350,25 @@ namespace SIL.Cog.Domain.Config
 			root.Add(new XElement(Cog + "WordAligners", project.WordAligners.Select(kvp => SaveComponent("WordAligner", kvp.Key, kvp.Value))));
 			root.Add(new XElement(Cog + "CognateIdentifiers", project.CognateIdentifiers.Select(kvp => SaveComponent("CognateIdentifier", kvp.Key, kvp.Value))));
 
-			var meaningIds = new Dictionary<Meaning, string>();
 			var meaningsElem = new XElement(Cog + "Meanings");
-			int i = 1;
 			foreach (Meaning meaning in project.Meanings)
 			{
-				string meaningId = "meaning" + i++;
-				var meaningElem = new XElement(Cog + "Meaning", new XAttribute("id", meaningId), new XAttribute("gloss", meaning.Gloss));
+				var meaningElem = new XElement(Cog + "Meaning", new XAttribute("gloss", meaning.Gloss));
 				if (!string.IsNullOrEmpty(meaning.Category))
 					meaningElem.Add(new XAttribute("category", meaning.Category));
 				meaningsElem.Add(meaningElem);
-				meaningIds[meaning] = meaningId;
 			}
 			root.Add(meaningsElem);
 
 			root.Add(new XElement(Cog + "Varieties",
-				project.Varieties.Select(variety => SaveVariety(meaningIds, variety))));
+				project.Varieties.Select(SaveVariety)));
 
+			root.Add(new XElement(Cog + "CognacyDecisions", project.CognacyDecisions.Select(cd =>
+				new XElement(Cog + "CognacyDecision",
+					new XAttribute("variety1", cd.Variety1.Name),
+					new XAttribute("variety2", cd.Variety2.Name),
+					new XAttribute("meaning", cd.Meaning.Gloss),
+					new XAttribute("cognacy", cd.Cognacy)))));
 			root.Add(new XElement(Cog + "ProjectProcessors", project.ProjectProcessors.Select(kvp => SaveComponent("ProjectProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement(Cog + "VarietyProcessors", project.VarietyProcessors.Select(kvp => SaveComponent("VarietyProcessor", kvp.Key, kvp.Value))));
 			root.Add(new XElement(Cog + "VarietyPairProcessors", project.VarietyPairProcessors.Select(kvp => SaveComponent("VarietyPairProcessor", kvp.Key, kvp.Value))));
@@ -382,11 +388,11 @@ namespace SIL.Cog.Domain.Config
 			root.Save(configFilePath);
 		}
 
-		private static XElement SaveVariety(Dictionary<Meaning, string> meaningIds, Variety variety)
+		private static XElement SaveVariety(Variety variety)
 		{
 			var varietyElem = new XElement(Cog + "Variety", new XAttribute("name", variety.Name));
 			if (variety.Words.Count > 0)
-				varietyElem.Add(new XElement(Cog + "Words", variety.Words.Select(word => SaveWord(word, meaningIds[word.Meaning]))));
+				varietyElem.Add(new XElement(Cog + "Words", variety.Words.Select(word => SaveWord(word, word.Meaning.Gloss))));
 			if (variety.Affixes.Count > 0)
 				varietyElem.Add(new XElement(Cog + "Affixes", variety.Affixes.Select(SaveAffix)));
 			if (variety.Regions.Count > 0)
@@ -400,9 +406,9 @@ namespace SIL.Cog.Domain.Config
 				CreateFeatureStruct(symbol.FeatureStruct)));
 		}
 
-		private static XElement SaveWord(Word word, string meaningId)
+		private static XElement SaveWord(Word word, string gloss)
 		{
-			var wordElem = new XElement(Cog + "Word", new XAttribute("meaning", meaningId));
+			var wordElem = new XElement(Cog + "Word", new XAttribute("meaning", gloss));
 			if (word.StemIndex != 0 || word.StemLength != word.StrRep.Length - word.StemIndex)
 			{
 				wordElem.Add(new XAttribute("stemIndex", word.StemIndex));

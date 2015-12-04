@@ -10,15 +10,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500" d:DataContext="{d:DesignInstance vm:SimilarSegmentMappingsViewModel}">
     <UserControl.Resources>
-        <cnvtrs:SoundTypeToMultigraphStringConverter x:Key="SoundTypeConverter" />
-		<cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
-	</UserControl.Resources>
-	<Grid>
-		<Grid.ColumnDefinitions>
+        <cnvtrs:SwitchConverter x:Key="SoundTypeConverter">
+            <cnvtrs:SwitchCase When="{x:Static vm:SoundType.Consonant}" Then="consonant clusters" />
+            <cnvtrs:SwitchCase When="{x:Static vm:SoundType.Vowel}" Then="polyphthongs" />
+        </cnvtrs:SwitchConverter>
+        <cnvtrs:EnumToFriendlyNameConverter x:Key="EnumConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
             <ColumnDefinition Width="258" />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -27,20 +30,20 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-		<TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,3,5,5" Padding="0,0,0,5">
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,3,5,5" Padding="0,0,0,5">
             <Hyperlink Command="{Binding EditSegmentMappingsChartCommand}">Edit Similar <Run Text="{Binding SoundType, Converter={StaticResource EnumConverter}, Mode=OneWay}" />s Chart...</Hyperlink>
-		</TextBlock>
-		<Label Grid.Column="0" Grid.Row="1" Margin="0" Padding="0">Correspondences</Label>
+        </TextBlock>
+        <Label Grid.Column="0" Grid.Row="1" Margin="0" Padding="0">Correspondences</Label>
         <v:SegmentMappingsView Grid.Column="0" Grid.Row="2" Margin="0,0,0,5" HorizontalAlignment="Left" DataContext="{Binding Mappings}" />
         <CheckBox Grid.Column="0" Grid.Row="3" Margin="0,0,0,5" IsChecked="{Binding ImplicitComplexSegments}">
-			<TextBlock TextWrapping="Wrap">
-				<Run>Check components of </Run>
-				<Run Text="{Binding SoundType, Converter={StaticResource SoundTypeConverter}, Mode=OneWay}" />
-				<Run> for similar segments</Run>
-			</TextBlock>
+            <TextBlock TextWrapping="Wrap">
+                <Run>Check components of </Run>
+                <Run Text="{Binding SoundType, Converter={StaticResource SoundTypeConverter}, Mode=OneWay}" />
+                <Run> for similar segments</Run>
+            </TextBlock>
         </CheckBox>
-		<Separator Grid.Row="1" Grid.Column="1" Grid.RowSpan="4" Margin="10,0,10,0" Background="#FFD5DFE5" Style="{StaticResource VerticalSeparatorStyle}" />
-		<Label Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Margin="0,8,5,5" Padding="0,0,0,5" Target="{Binding ElementName=ThresholdUpDown}">Distance threshold:</Label>
-		<xctk:IntegerUpDown Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,8,0,5" Width="60" Name="ThresholdUpDown" Value="{Binding Threshold, UpdateSourceTrigger=PropertyChanged}" Increment="100" Minimum="0"  />
-	</Grid>
+        <Separator Grid.Row="1" Grid.Column="1" Grid.RowSpan="4" Margin="10,0,10,0" Background="#FFD5DFE5" Style="{StaticResource VerticalSeparatorStyle}" />
+        <Label Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Margin="0,8,5,5" Padding="0,0,0,5" Target="{Binding ElementName=ThresholdUpDown}">Distance threshold:</Label>
+        <xctk:IntegerUpDown Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,8,0,5" Width="60" Name="ThresholdUpDown" Value="{Binding Threshold, UpdateSourceTrigger=PropertyChanged}" Increment="100" Minimum="0"  />
+    </Grid>
 </UserControl>

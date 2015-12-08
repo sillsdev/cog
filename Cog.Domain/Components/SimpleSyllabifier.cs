@@ -77,18 +77,21 @@ namespace SIL.Cog.Domain.Components
 				int i;
 				for (i = 0; i < annNodes.Length && annNodes[i].Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType); i++)
 					newShape.Add(annNodes[i].DeepClone());
-				ShapeNode syllableStart = annNodes[i];
-				ShapeNode node = syllableStart.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
-				while (ann.Span.Contains(node))
+				if (i < annNodes.Length)
 				{
-					if (syllableStart != node)
-						ProcessSyllable(syllableStart, node.Prev, newShape);
-					newShape.Add(node.DeepClone());
-					syllableStart = node.Next;
-					node = node.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
+					ShapeNode syllableStart = annNodes[i];
+					ShapeNode node = syllableStart.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
+					while (ann.Span.Contains(node))
+					{
+						if (syllableStart != node)
+							ProcessSyllable(syllableStart, node.Prev, newShape);
+						newShape.Add(node.DeepClone());
+						syllableStart = node.Next;
+						node = node.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
+					}
+					if (ann.Span.Contains(syllableStart))
+						ProcessSyllable(syllableStart, ann.Span.End, newShape);
 				}
-				if (ann.Span.Contains(syllableStart))
-					ProcessSyllable(syllableStart, ann.Span.End, newShape);
 			}
 			else
 			{

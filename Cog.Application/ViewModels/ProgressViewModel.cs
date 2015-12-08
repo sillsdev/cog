@@ -20,6 +20,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly bool _indeterminate;
 		private readonly bool _cancelable;
 		private string _displayName;
+		private Exception _exception;
 
 		public ProgressViewModel(Action<ProgressViewModel> action, bool indeterminate, bool cancelable)
 		{
@@ -98,6 +99,11 @@ namespace SIL.Cog.Application.ViewModels
 			set { Set(() => Canceled, ref _canceled, value); }
 		}
 
+		public Exception Exception
+		{
+			get { return _exception; }
+		}
+
 		public ICommand CancelCommand
 		{
 			get { return _cancelCommand; }
@@ -105,11 +111,21 @@ namespace SIL.Cog.Application.ViewModels
 
 		public void Execute()
 		{
-			Executing = true;
 			Task.Factory.StartNew(() =>
 				{
-					_action(this);
-					Executing = false;
+					Executing = true;
+					try
+					{
+						_action(this);
+					}
+					catch (Exception ex)
+					{
+						_exception = ex;
+					}
+					finally
+					{
+						Executing = false;
+					}
 				});
 			_firstTime = DateTime.Now;
 		}

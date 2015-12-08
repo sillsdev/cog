@@ -27,12 +27,16 @@ namespace SIL.Cog.Presentation.Views
 			switch (e.PropertyName)
 			{
 				case "Executing":
-					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+					if (!((ProgressViewModel) sender).Executing)
+					{
+						DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
 							var vm = (ProgressViewModel) DataContext;
-							if (IsLoaded && !vm.Executing)
-								DialogResult = !vm.Canceled;
+							if (vm.Exception != null)
+								throw vm.Exception;
+							DialogResult = !vm.Canceled;
 						});
+					}
 					break;
 			}
 		}

@@ -72,7 +72,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Select varieties", new RelayCommand(SelectVarieties))
 				));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart))));
+				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart, CanExportChart))));
 			_observedWordPairs = wordPairsFactory();
 			_observedWordPairs.IncludeVarietyNamesInSelectedText = true;
 			_observedWordPairs.UpdateSort("Meaning.Gloss", ListSortDirection.Ascending);
@@ -108,10 +108,14 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanExportChart()
+		{
+			return _projectService.AreAllVarietiesCompared;
+		}
+
 		private void ExportChart()
 		{
-			if (_projectService.AreAllVarietiesCompared)
-				_imageExportService.ExportCurrentGlobalCorrespondencesChart(this);
+			_imageExportService.ExportCurrentGlobalCorrespondencesChart(this);
 		}
 
 		private void Find()

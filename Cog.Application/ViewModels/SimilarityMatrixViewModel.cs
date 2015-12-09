@@ -44,7 +44,7 @@ namespace SIL.Cog.Application.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Compare all variety pairs", new RelayCommand(PerformComparison))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export this matrix", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Export this matrix", new RelayCommand(Export, CanExport))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -68,10 +68,14 @@ namespace SIL.Cog.Application.ViewModels
 			_analysisService.CompareAll(this);
 		}
 
+		private bool CanExport()
+		{
+			return !_isEmpty;
+		}
+
 		private void Export()
 		{
-			if (!_isEmpty)
-				_exportService.ExportSimilarityMatrix(this, _similarityMetric);
+			_exportService.ExportSimilarityMatrix(this, _similarityMetric);
 		}
 
 		private void CreateSimilarityMatrix()

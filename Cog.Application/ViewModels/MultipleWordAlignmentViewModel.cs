@@ -50,7 +50,7 @@ namespace SIL.Cog.Application.ViewModels
 						new TaskAreaCommandViewModel("Variety", new RelayCommand(() => SortBy("Variety", ListSortDirection.Ascending)))),
 					showCognateSets)));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets))));
+				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets, CanExportCognateSets))));
 
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
 			_selectedWords = new BindableList<MultipleWordAlignmentWordViewModel>();
@@ -100,10 +100,14 @@ namespace SIL.Cog.Application.ViewModels
 			return false;
 		}
 
+		private bool CanExportCognateSets()
+		{
+			return _projectService.AreAllVarietiesCompared;
+		}
+
 		private void ExportCognateSets()
 		{
-			if (_projectService.AreAllVarietiesCompared)
-				_exportService.ExportCognateSets(this);
+			_exportService.ExportCognateSets(this);
 		}
 
 		private void _showCognateSets_PropertyChanged(object sender, PropertyChangedEventArgs e)

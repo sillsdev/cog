@@ -27,8 +27,8 @@ namespace SIL.Cog.Application.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Add a new meaning", new RelayCommand(AddNewMeaning)),
-				new TaskAreaCommandViewModel("Edit selected meaning", new RelayCommand(EditSelectedMeaning)), 
-				new TaskAreaCommandViewModel("Remove selected meaning", new RelayCommand(RemoveSelectedMeaning))));
+				new TaskAreaCommandViewModel("Edit selected meaning", new RelayCommand(EditSelectedMeaning, CanEditSelectedMeaning)), 
+				new TaskAreaCommandViewModel("Remove selected meaning", new RelayCommand(RemoveSelectedMeaning, CanRemoveSelectedMeaning))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -50,11 +50,13 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanEditSelectedMeaning()
+		{
+			return _selectedMeaning != null;
+		}
+
 		private void EditSelectedMeaning()
 		{
-			if (_selectedMeaning == null)
-				return;
-
 			var vm = new EditMeaningViewModel(_projectService.Project.Meanings, _selectedMeaning.DomainMeaning);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
@@ -64,11 +66,13 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanRemoveSelectedMeaning()
+		{
+			return _selectedMeaning != null;
+		}
+
 		private void RemoveSelectedMeaning()
 		{
-			if (_selectedMeaning == null)
-				return;
-
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this Meaning?", "Cog"))
 			{
 				int index = _meanings.IndexOf(_selectedMeaning);

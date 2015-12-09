@@ -36,7 +36,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export, CanExport))));
 			_similarityScoreFilter = 0.7;
 		}
 
@@ -45,10 +45,14 @@ namespace SIL.Cog.Application.ViewModels
 			Graph = _projectService.AreAllVarietiesCompared ? _graphService.GenerateNetworkGraph(_similarityMetric) : null;
 		}
 
+		private bool CanExport()
+		{
+			return _projectService.AreAllVarietiesCompared;
+		}
+
 		private void Export()
 		{
-			if (_projectService.AreAllVarietiesCompared)
-				_imageExportService.ExportCurrentNetworkGraph(this);
+			_imageExportService.ExportCurrentNetworkGraph(this);
 		}
 
 		public SimilarityMetric SimilarityMetric

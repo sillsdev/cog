@@ -49,15 +49,15 @@ namespace SIL.Cog.Application.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
-					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameSelectedVariety)), 
-					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveSelectedVariety)),
+					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameSelectedVariety, CanRenameSelectedVariety)), 
+					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveSelectedVariety, CanRemoveSelectedVariety)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
 						new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordsBy("Meaning.Gloss", ListSortDirection.Ascending))),
 						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
-				new TaskAreaCommandViewModel("Remove affixes from words in this variety", new RelayCommand(RunStemmer))));
+				new TaskAreaCommandViewModel("Remove affixes from words in this variety", new RelayCommand(RunStemmer, CanRunStemmer))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -141,11 +141,13 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanRenameSelectedVariety()
+		{
+			return _selectedVariety != null;
+		}
+
 		private void RenameSelectedVariety()
 		{
-			if (_selectedVariety == null)
-				return;
-
 			var vm = new EditVarietyViewModel(_projectService.Project.Varieties, _selectedVariety.DomainVariety);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
@@ -154,11 +156,13 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanRemoveSelectedVariety()
+		{
+			return _selectedVariety != null;
+		}
+
 		private void RemoveSelectedVariety()
 		{
-			if (_selectedVariety == null)
-				return;
-
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this variety?", "Cog"))
 			{
 				int index = _varieties.IndexOf(_selectedVariety);
@@ -170,11 +174,13 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanRunStemmer()
+		{
+			return _selectedVariety != null;
+		}
+
 		private void RunStemmer()
 		{
-			if (_selectedVariety == null)
-				return;
-
 			var vm = new RunStemmerViewModel(false);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_analysisService.Stem(vm.Method, _selectedVariety.DomainVariety);

@@ -57,8 +57,8 @@ namespace SIL.Cog.Application.ViewModels
 					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export)),
-					new TaskAreaCommandViewModel("Remove affixes from all words", new RelayCommand(RunStemmer))));
+					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export, CanExport)),
+					new TaskAreaCommandViewModel("Remove affixes from all words", new RelayCommand(RunStemmer, CanRunStemmer))));
 			_isEmpty = true;
 		}
 
@@ -222,16 +222,23 @@ namespace SIL.Cog.Application.ViewModels
 			_importService.ImportWordLists(this);
 		}
 
+		private bool CanExport()
+		{
+			return !_isEmpty;
+		}
+
 		private void Export()
 		{
 			_exportService.ExportWordLists(this);
 		}
 
+		private bool CanRunStemmer()
+		{
+			return !_isEmpty;
+		}
+
 		private void RunStemmer()
 		{
-			if (_projectService.Project.Varieties.Count == 0 || _projectService.Project.Meanings.Count == 0)
-				return;
-
 			var vm = new RunStemmerViewModel(true);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 				_analysisService.StemAll(this, vm.Method);
@@ -240,7 +247,7 @@ namespace SIL.Cog.Application.ViewModels
 		public bool IsEmpty
 		{
 			get { return _isEmpty; }
-			set { Set(() => IsEmpty, ref _isEmpty, value); }
+			private set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
 		public WordListsVarietyMeaningViewModel SelectedVarietyMeaning

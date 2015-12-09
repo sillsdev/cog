@@ -61,7 +61,7 @@ namespace SIL.Cog.Application.ViewModels
 					new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export segment frequencies", new RelayCommand(() => _exportService.ExportSegmentFrequencies(this, _syllablePosition)))));
+				new TaskAreaCommandViewModel("Export segment frequencies", new RelayCommand(ExportSegmentFrequencies, CanExportSegmentFrequencies))));
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -108,6 +108,16 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			if (!_observedWords.FindNext(_findViewModel.Field, _findViewModel.String))
 				_findViewModel.ShowSearchEndedMessage();
+		}
+
+		private bool CanExportSegmentFrequencies()
+		{
+			return _projectService.Project.Varieties.Count > 0 && _projectService.Project.Meanings.Count > 0;
+		}
+
+		private void ExportSegmentFrequencies()
+		{
+			_exportService.ExportSegmentFrequencies(this, _syllablePosition);
 		}
 
 		private void PopulateSegments()

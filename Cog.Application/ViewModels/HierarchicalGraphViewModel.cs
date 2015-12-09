@@ -62,7 +62,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export, CanExport))));
 			_graphType = HierarchicalGraphType.Dendrogram;
 		}
 
@@ -71,10 +71,14 @@ namespace SIL.Cog.Application.ViewModels
 			Graph = _projectService.AreAllVarietiesCompared ? _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric) : null;
 		}
 
+		private bool CanExport()
+		{
+			return _projectService.AreAllVarietiesCompared;
+		}
+
 		private void Export()
 		{
-			if (_projectService.AreAllVarietiesCompared)
-				_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
+			_exportService.ExportCurrentHierarchicalGraph(this, _graphType);
 		}
 
 		public HierarchicalGraphType GraphType

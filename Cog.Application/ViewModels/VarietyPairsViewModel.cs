@@ -83,13 +83,13 @@ namespace SIL.Cog.Application.ViewModels
 			_selectedWordPairsMonitor = new SimpleMonitor();
 			_varietyPairState = VarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
-				new TaskAreaCommandViewModel("Compare this variety pair", new RelayCommand(PerformComparison)),
+				new TaskAreaCommandViewModel("Compare this variety pair", new RelayCommand(PerformComparison, CanPerformComparison)),
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending))),
 					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordPairsBy("Meaning.Gloss", ListSortDirection.Ascending)))))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair))));
+				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair, CanExportVarietyPair))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -156,18 +156,29 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		private bool CanPerformComparison()
+		{
+			return _varietyPairState != VarietyPairState.NotSelected;
+		}
+
 		private void PerformComparison()
 		{
-			if (_varietyPairState == VarietyPairState.NotSelected || _selectedVarietyPair != null)
-				return;
-
 			CogProject project = _projectService.Project;
-			var pair = new VarietyPair(_selectedVariety1.DomainVariety, _selectedVariety2.DomainVariety);
-			project.VarietyPairs.Add(pair);
+			VarietyPair pair;
+			if (_selectedVarietyPair == null)
+			{
+				pair = new VarietyPair(_selectedVariety1.DomainVariety, _selectedVariety2.DomainVariety);
+				project.VarietyPairs.Add(pair);
+			}
+			else
+			{
+				pair = _selectedVarietyPair.DomainVarietyPair;
+			}
 
 			_analysisService.Compare(pair);
 
-			SelectedVarietyPair = _varietyPairFactory(pair, true);
+			if (_selectedVarietyPair == null)
+				SelectedVarietyPair = _varietyPairFactory(pair, true);
 			VarietyPairState = VarietyPairState.SelectedAndCompared;
 		}
 
@@ -267,11 +278,13 @@ namespace SIL.Cog.Application.ViewModels
 			ResetSearch();
 		}
 
+		private bool CanExportVarietyPair()
+		{
+			return _varietyPairState == VarietyPairState.SelectedAndCompared;
+		}
+
 		private void ExportVarietyPair()
 		{
-			if (_varietyPairState != VarietyPairState.SelectedAndCompared)
-				return;
-
 			_exportService.ExportVarietyPair(this, _selectedVarietyPair.DomainVarietyPair);
 		}
 

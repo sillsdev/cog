@@ -10,51 +10,51 @@
              xmlns:hl="clr-namespace:GraphSharp.Algorithms.Highlight;assembly=GraphSharp"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="400" d:DataContext="{d:DesignInstance vm:GlobalCorrespondencesViewModel}">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<ScrollViewer Grid.Row="0" Margin="0,10,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-			<c:GlobalCorrespondencesGraphLayout x:Name="GraphLayout" VerticalAlignment="Top" HorizontalAlignment="Left" LayoutAlgorithmType="Grid" Background="White"
-												HighlightAlgorithmType="Undirected" EdgeRoutingAlgorithmType="Bundle"
-												Graph="{Binding Graph}" WeightFilter="{Binding CorrespondenceFilter}" SyllablePosition="{Binding SyllablePosition}">
-				<c:GlobalCorrespondencesGraphLayout.Resources>
-					<Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource GlobalCorrespondenceEdgeControlStyle}">
-						<Style.Resources>
-							<ToolTip x:Key="ToolTipContent">
-								<TextBlock Text="{Binding Frequency}" />
-							</ToolTip>
-						</Style.Resources>
-						<Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
-						<EventSetter Event="PreviewMouseDown" Handler="Edge_OnPreviewMouseDown" />
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding IsSelected}" Value="True">
-								<Setter Property="Foreground" Value="Black" />
-								<Setter Property="Canvas.ZIndex" Value="100" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-					<Style TargetType="gsc:VertexControl" BasedOn="{StaticResource {x:Type gsc:VertexControl}}">
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding IsProperty}" Value="True">
-								<Setter Property="BorderThickness" Value="0" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</c:GlobalCorrespondencesGraphLayout.Resources>
-				<c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
-					<er:BundleEdgeRoutingParameters VertexMargin="2" LengthCoefficient="1" InkCoefficient="0" />
-				</c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
-				<c:GlobalCorrespondencesGraphLayout.HighlightParameters>
-					<hl:UndirectedHighlightParameters />
-				</c:GlobalCorrespondencesGraphLayout.HighlightParameters>
-			</c:GlobalCorrespondencesGraphLayout>
-		</ScrollViewer>
-		<GridSplitter Grid.Row="1" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,5,0,1" />
-		<HeaderedContentControl Grid.Row="2" Header="Observed word pairs">
-			<v:GlobalWordPairsView DataContext="{Binding ObservedWordPairs}" />
-		</HeaderedContentControl>
-	</Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" Margin="0,10,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <c:GlobalCorrespondencesGraphLayout x:Name="GraphLayout" VerticalAlignment="Top" HorizontalAlignment="Left" LayoutAlgorithmType="Grid" Background="White"
+                                                HighlightAlgorithmType="Undirected" EdgeRoutingAlgorithmType="Bundle"
+                                                Graph="{Binding Graph}" WeightFilter="{Binding CorrespondenceFilter}" SyllablePosition="{Binding SyllablePosition}">
+                <c:GlobalCorrespondencesGraphLayout.Resources>
+                    <Style TargetType="gsc:EdgeControl" BasedOn="{StaticResource GlobalCorrespondenceEdgeControlStyle}">
+                        <Style.Resources>
+                            <ToolTip x:Key="ToolTipContent">
+                                <TextBlock Text="{Binding Frequency}" />
+                            </ToolTip>
+                        </Style.Resources>
+                        <Setter Property="ToolTip" Value="{StaticResource ToolTipContent}" />
+                        <EventSetter Event="PreviewMouseDown" Handler="Edge_OnPreviewMouseDown" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="Canvas.ZIndex" Value="100" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                    <Style TargetType="gsc:VertexControl" BasedOn="{StaticResource {x:Type gsc:VertexControl}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsProperty}" Value="True">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </c:GlobalCorrespondencesGraphLayout.Resources>
+                <c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
+                    <er:BundleEdgeRoutingParameters VertexMargin="2" LengthCoefficient="1" InkCoefficient="0" />
+                </c:GlobalCorrespondencesGraphLayout.EdgeRoutingParameters>
+                <c:GlobalCorrespondencesGraphLayout.HighlightParameters>
+                    <hl:UndirectedHighlightParameters />
+                </c:GlobalCorrespondencesGraphLayout.HighlightParameters>
+            </c:GlobalCorrespondencesGraphLayout>
+        </ScrollViewer>
+        <GridSplitter Grid.Row="1" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,5,0,1" />
+        <HeaderedContentControl Grid.Row="2" Header="Observed word pairs">
+            <v:GlobalWordPairsView DataContext="{Binding ObservedWordPairs}" />
+        </HeaderedContentControl>
+    </Grid>
 </UserControl>

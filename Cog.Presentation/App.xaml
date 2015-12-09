@@ -505,6 +505,7 @@
                         </MultiBinding>
                     </Setter.Value>
                 </Setter>
+                <Setter Property="Cursor" Value="Hand" />
             </Style>
 
             <Style x:Key="ToolbarDropDownButtonStyle" TargetType="c:DropDownButton" BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
@@ -563,20 +564,20 @@
                 </DataTemplate.Triggers>
             </DataTemplate>
 
-			<Style x:Key="VerticalSeparatorStyle" TargetType="{x:Type Separator}" BasedOn="{StaticResource {x:Type Separator}}">
-				<Setter Property="Margin" Value="6,0,6,0"/>
-				<Setter Property="LayoutTransform">
-					<Setter.Value>
-						<TransformGroup>
-							<TransformGroup.Children>
-								<TransformCollection>
-									<RotateTransform Angle="90"/>
-								</TransformCollection>
-							</TransformGroup.Children>
-						</TransformGroup>
-					</Setter.Value>
-				</Setter>
-			</Style>
-		</ResourceDictionary>
+            <Style x:Key="VerticalSeparatorStyle" TargetType="{x:Type Separator}" BasedOn="{StaticResource {x:Type Separator}}">
+                <Setter Property="Margin" Value="6,0,6,0"/>
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <TransformCollection>
+                                    <RotateTransform Angle="90"/>
+                                </TransformCollection>
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

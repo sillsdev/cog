@@ -88,7 +88,7 @@
                 <xcdg:CellEditor x:Key="{x:Type vm:SegmentMappingsChartSegmentPairViewModel}" EditTemplate="{StaticResource SegmentPairTemplate}" />
             </xcdg:DataGridControl.DefaultCellEditors>
             <xcdg:DataGridControl.View>
-                <xcdg:TableView FixedColumnCount="1">
+                <xcdg:TableView FixedColumnCount="1" IsColumnVirtualizationEnabled="False">
                     <xcdg:TableView.FixedHeaders>
                         <DataTemplate>
                             <c:MergedHeadersPanel />

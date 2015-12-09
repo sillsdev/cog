@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using SIL.Cog.Application.Collections;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
 
@@ -161,14 +162,24 @@ namespace SIL.Cog.Presentation.Behaviors
 			return (double) column.GetValue(AutoSizePaddingProperty);
 		}
 
-		private static readonly DependencyPropertyKey MergedHeadersPropertyKey = DependencyProperty.RegisterAttachedReadOnly("MergedHeaders", typeof(ObservableCollection<MergedHeader>),
-			typeof(DataGridControlBehaviors), new FrameworkPropertyMetadata(new ObservableCollection<MergedHeader>()));
+		public static readonly DependencyProperty MergedHeadersProperty = DependencyProperty.RegisterAttached("MergedHeadersInternal", typeof(ObservableCollection<MergedHeader>),
+			typeof(DataGridControlBehaviors), new FrameworkPropertyMetadata(null));
 
-		public static readonly DependencyProperty MergedHeadersProperty = MergedHeadersPropertyKey.DependencyProperty;
-
+		public static void SetMergedHeaders(DataGridControl dataGrid, ObservableCollection<MergedHeader> headers)
+		{
+			dataGrid.SetValue(MergedHeadersProperty, headers);
+		}
+		
 		public static ObservableCollection<MergedHeader> GetMergedHeaders(DataGridControl dataGrid)
 		{
-			return (ObservableCollection<MergedHeader>) dataGrid.GetValue(MergedHeadersProperty);
+			var headers = (ObservableCollection<MergedHeader>) dataGrid.GetValue(MergedHeadersProperty);
+			if (headers == null)
+			{
+				headers = new ObservableCollection<MergedHeader>();
+				dataGrid.SetValue(MergedHeadersProperty, headers);
+			}
+
+			return headers;
 		}
 
 		public static readonly DependencyProperty IsRowVirtualizationEnabledProperty = DependencyProperty.RegisterAttached("IsRowVirtualizationEnabled", typeof(bool), typeof(DataGridControlBehaviors),

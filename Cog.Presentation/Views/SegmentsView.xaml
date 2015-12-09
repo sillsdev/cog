@@ -37,7 +37,7 @@
                             </Style>
                         </xcdg:DataGridControl.Resources>
                         <xcdg:DataGridControl.View>
-                            <xcdg:TableView FixedColumnCount="1">
+                            <xcdg:TableView FixedColumnCount="1" IsColumnVirtualizationEnabled="False">
                                 <xcdg:TableView.FixedHeaders>
                                     <DataTemplate>
                                         <c:MergedHeadersPanel />

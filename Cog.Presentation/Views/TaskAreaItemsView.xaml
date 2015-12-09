@@ -7,29 +7,29 @@
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:TaskAreaItemsViewModel}">
     <HeaderedContentControl Margin="8,20,8,0" Header="{Binding DisplayName}" Style="{StaticResource TaskAreaHeaderStyle}">
         <ItemsControl ItemsSource="{Binding Items}">
-			<ItemsControl.Resources>
-				<DataTemplate DataType="{x:Type vm:TaskAreaCommandViewModel}">
-					<TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+            <ItemsControl.Resources>
+                <DataTemplate DataType="{x:Type vm:TaskAreaCommandViewModel}">
+                    <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
                         <Hyperlink Style="{StaticResource TaskAreaHyperlinkStyle}" Command="{Binding Command}">
                             <Run Text="{Binding DisplayName, Mode=OneWay}" />
                         </Hyperlink>
-					</TextBlock>
-				</DataTemplate>
-				<DataTemplate DataType="{x:Type vm:TaskAreaItemsViewModel}">
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Margin="0,5,0,0" TextWrapping="Wrap">
+                    </TextBlock>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:TaskAreaItemsViewModel}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,5,0,0" TextWrapping="Wrap">
                             <Hyperlink Style="{StaticResource TaskAreaHyperlinkStyle}" Click="Hyperlink_Click">
                                 <Run Text="{Binding DisplayName, Mode=OneWay}" />
                             </Hyperlink>
-						</TextBlock>
-						<Polygon Grid.Column="1" Margin="2,7,0,0" VerticalAlignment="Center" Fill="{StaticResource HeaderTextBrush}" Points="0,0 0,8 4,4" />
-					</Grid>
-				</DataTemplate>
-			</ItemsControl.Resources>
-		</ItemsControl>
+                        </TextBlock>
+                        <Polygon Grid.Column="1" Margin="2,7,0,0" VerticalAlignment="Center" Fill="{StaticResource HeaderTextBrush}" Points="0,0 0,8 4,4" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.Resources>
+        </ItemsControl>
     </HeaderedContentControl>
 </UserControl>

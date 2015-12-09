@@ -291,9 +291,15 @@
             <Style x:Key="TaskAreaHyperlinkStyle" TargetType="Hyperlink" BasedOn="{StaticResource {x:Type Hyperlink}}">
                 <Setter Property="TextDecorations" Value="None" />
                 <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="true">
-                        <Setter Property="TextDecorations" Value="Underline" />
-                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsEnabled" Value="True" />
+                            <Condition Property="IsMouseOver" Value="True" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <Setter Property="TextDecorations" Value="Underline" />
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
                 </Style.Triggers>
             </Style>
 

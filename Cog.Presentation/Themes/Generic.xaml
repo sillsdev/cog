@@ -51,8 +51,11 @@
     <Style TargetType="Hyperlink">
         <Setter Property="Foreground" Value="{StaticResource HeaderTextBrush}" />
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="true">
+            <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="Blue" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#7F10257F" />
             </Trigger>
         </Style.Triggers>
     </Style>

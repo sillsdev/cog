@@ -4,6 +4,6 @@
 	{
 		public abstract string StrRep { get; }
 
-        public abstract bool IsProperty { get; }
+		public abstract bool IsProperty { get; }
 	}
 }

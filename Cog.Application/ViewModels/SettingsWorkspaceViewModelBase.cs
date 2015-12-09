@@ -10,7 +10,6 @@ namespace SIL.Cog.Application.ViewModels
 {
 	public abstract class SettingsWorkspaceViewModelBase : WorkspaceViewModelBase
 	{
-		private readonly IProjectService _projectService;
 		private readonly ReadOnlyList<ComponentSettingsViewModelBase> _components;
 		private readonly ICommand _applyCommand;
 		private readonly ICommand _resetCommand;
@@ -22,19 +21,23 @@ namespace SIL.Cog.Application.ViewModels
 			: base("Settings")
 		{
 			_title = title;
-			_projectService = projectService;
 			_busyService = busyService;
 
-			_projectService.ProjectOpened += _projectService_ProjectOpened;
+			_applyCommand = new RelayCommand(Apply, CanApply);
+			_resetCommand = new RelayCommand(Reset);
+
+			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
+				new TaskAreaCommandViewModel("Apply changes", _applyCommand),
+				new TaskAreaCommandViewModel("Reset changes", _resetCommand)));
+
+			projectService.ProjectOpened += projectService_ProjectOpened;
 
 			_components = new ReadOnlyList<ComponentSettingsViewModelBase>(components);
 			foreach (ComponentSettingsViewModelBase componentVM in _components)
 				componentVM.PropertyChanged += Component_PropertyChanged;
-			_applyCommand = new RelayCommand(Apply, CanApply);
-			_resetCommand = new RelayCommand(Reset);
 		}
 
-		private void _projectService_ProjectOpened(object sender, EventArgs e)
+		private void projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			_isDirty = true;
 			Reset();

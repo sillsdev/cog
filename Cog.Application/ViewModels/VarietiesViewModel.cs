@@ -49,15 +49,15 @@ namespace SIL.Cog.Application.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
-					new TaskAreaCommandViewModel("Rename this variety", new RelayCommand(RenameSelectedVariety, CanRenameSelectedVariety)), 
-					new TaskAreaCommandViewModel("Remove this variety", new RelayCommand(RemoveSelectedVariety, CanRemoveSelectedVariety)),
+					new TaskAreaCommandViewModel("Rename variety", new RelayCommand(RenameSelectedVariety, CanRenameSelectedVariety)), 
+					new TaskAreaCommandViewModel("Remove variety", new RelayCommand(RemoveSelectedVariety, CanRemoveSelectedVariety)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
 						new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordsBy("Meaning.Gloss", ListSortDirection.Ascending))),
 						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
-				new TaskAreaCommandViewModel("Remove affixes from words in this variety", new RelayCommand(RunStemmer, CanRunStemmer))));
+				new TaskAreaCommandViewModel("Remove affixes from words", new RelayCommand(RunStemmer, CanRunStemmer))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

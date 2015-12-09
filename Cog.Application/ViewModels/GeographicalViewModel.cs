@@ -59,7 +59,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Import regions", new RelayCommand(ImportRegions)),
-				new TaskAreaCommandViewModel("Export this map", new RelayCommand(Export))));
+				new TaskAreaCommandViewModel("Export map", new RelayCommand(Export))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

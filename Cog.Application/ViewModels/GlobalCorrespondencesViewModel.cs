@@ -72,7 +72,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Select varieties", new RelayCommand(SelectVarieties))
 				));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export current chart", new RelayCommand(ExportChart, CanExportChart))));
+				new TaskAreaCommandViewModel("Export chart", new RelayCommand(ExportChart, CanExportChart))));
 			_observedWordPairs = wordPairsFactory();
 			_observedWordPairs.IncludeVarietyNamesInSelectedText = true;
 			_observedWordPairs.UpdateSort("Meaning.Gloss", ListSortDirection.Ascending);

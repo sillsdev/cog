@@ -36,7 +36,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Lexical", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Lexical)),
 				new TaskAreaCommandViewModel("Phonetic", new RelayCommand(() => SimilarityMetric = SimilarityMetric.Phonetic))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export this graph", new RelayCommand(Export, CanExport))));
+				new TaskAreaCommandViewModel("Export graph", new RelayCommand(Export, CanExport))));
 			_similarityScoreFilter = 0.7;
 		}
 

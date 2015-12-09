@@ -44,7 +44,7 @@ namespace SIL.Cog.Application.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Compare all variety pairs", new RelayCommand(PerformComparison))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export this matrix", new RelayCommand(Export, CanExport))));
+				new TaskAreaCommandViewModel("Export matrix", new RelayCommand(Export, CanExport))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

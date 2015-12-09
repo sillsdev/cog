@@ -58,7 +58,7 @@ namespace SIL.Cog.Application.ViewModels
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export, CanExport)),
-					new TaskAreaCommandViewModel("Remove affixes from all words", new RelayCommand(RunStemmer, CanRunStemmer))));
+					new TaskAreaCommandViewModel("Remove affixes from words in all varieties", new RelayCommand(RunStemmer, CanRunStemmer))));
 			_isEmpty = true;
 		}
 

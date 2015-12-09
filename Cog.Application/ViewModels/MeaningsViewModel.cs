@@ -14,21 +14,26 @@ namespace SIL.Cog.Application.ViewModels
 	{
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
+		private readonly IBusyService _busyService;
 		private MirroredBindableList<Meaning, MeaningViewModel> _meanings;
 		private MeaningViewModel _selectedMeaning;
 
-		public MeaningsViewModel(IProjectService projectService, IDialogService dialogService)
+		public MeaningsViewModel(IProjectService projectService, IDialogService dialogService, IBusyService busyService)
 			: base("Meanings")
 		{
 			_projectService = projectService;
 			_dialogService = dialogService;
+			_busyService = busyService;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaCommandViewModel("Add a new meaning", new RelayCommand(AddNewMeaning)),
-				new TaskAreaCommandViewModel("Edit selected meaning", new RelayCommand(EditSelectedMeaning, CanEditSelectedMeaning)), 
-				new TaskAreaCommandViewModel("Remove selected meaning", new RelayCommand(RemoveSelectedMeaning, CanRemoveSelectedMeaning))));
+				new TaskAreaCommandViewModel("Edit meaning", new RelayCommand(EditSelectedMeaning, CanEditSelectedMeaning)),
+				new TaskAreaCommandViewModel("Remove meaning", new RelayCommand(RemoveSelectedMeaning, CanRemoveSelectedMeaning))));
+			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
+				new TaskAreaCommandViewModel("Move meaning up", new RelayCommand(MoveSelectedMeaningUp, CanMoveSelectedMeaningUp)),
+				new TaskAreaCommandViewModel("Move meaning down", new RelayCommand(MoveSelectedMeaningDown, CanMoveSelectedMeaningDown))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -88,6 +93,32 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			if (_selectedMeaning == null || !_meanings.Contains(_selectedMeaning))
 				SelectedMeaning = _meanings.Count > 0 ? _meanings[0] : null;
+		}
+
+		private bool CanMoveSelectedMeaningUp()
+		{
+			return _meanings.IndexOf(_selectedMeaning) > 0;
+		}
+
+		private void MoveSelectedMeaningUp()
+		{
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
+			int index = _meanings.IndexOf(_selectedMeaning);
+			_projectService.Project.Meanings.Move(index, index - 1);
+			Messenger.Default.Send(new DomainModelChangedMessage(false));
+		}
+
+		private bool CanMoveSelectedMeaningDown()
+		{
+			return _meanings.IndexOf(_selectedMeaning) < _meanings.Count - 1;
+		}
+
+		private void MoveSelectedMeaningDown()
+		{
+			_busyService.ShowBusyIndicatorUntilFinishDrawing();
+			int index = _meanings.IndexOf(_selectedMeaning);
+			_projectService.Project.Meanings.Move(index, index + 1);
+			Messenger.Default.Send(new DomainModelChangedMessage(false));
 		}
 
 		public ReadOnlyObservableList<MeaningViewModel> Meanings

@@ -83,13 +83,13 @@ namespace SIL.Cog.Application.ViewModels
 			_selectedWordPairsMonitor = new SimpleMonitor();
 			_varietyPairState = VarietyPairState.NotSelected;
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks", 
-				new TaskAreaCommandViewModel("Compare this variety pair", new RelayCommand(PerformComparison, CanPerformComparison)),
+				new TaskAreaCommandViewModel("Compare variety pair", new RelayCommand(PerformComparison, CanPerformComparison)),
 				new TaskAreaCommandViewModel("Find words", _findCommand),
 				new TaskAreaItemsViewModel("Sort word pairs by", new TaskAreaCommandGroupViewModel(
 					new TaskAreaCommandViewModel("Similarity", new RelayCommand(() => SortWordPairsBy("PhoneticSimilarityScore", ListSortDirection.Descending))),
 					new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordPairsBy("Meaning.Gloss", ListSortDirection.Ascending)))))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export results for this variety pair", new RelayCommand(ExportVarietyPair, CanExportVarietyPair))));
+				new TaskAreaCommandViewModel("Export results for variety pair", new RelayCommand(ExportVarietyPair, CanExportVarietyPair))));
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)

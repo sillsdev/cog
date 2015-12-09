@@ -12,11 +12,11 @@ using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views
 {
-	public partial class SegmentMappingsChartDialog
+	public partial class SegmentMappingsTableDialog
 	{
 		private readonly SimpleMonitor _selectMonitor;
 
-		public SegmentMappingsChartDialog()
+		public SegmentMappingsTableDialog()
 		{
 			_selectMonitor = new SimpleMonitor();
 			InitializeComponent();
@@ -26,7 +26,7 @@ namespace SIL.Cog.Presentation.Views
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var vm = DataContext as SegmentMappingsChartViewModel;
+			var vm = DataContext as SegmentMappingsTableViewModel;
 			if (vm == null)
 				return;
 
@@ -35,7 +35,7 @@ namespace SIL.Cog.Presentation.Views
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var vm = (SegmentMappingsChartViewModel) sender;
+			var vm = (SegmentMappingsTableViewModel) sender;
 			switch (e.PropertyName)
 			{
 				case "SelectedSegmentPair":
@@ -49,7 +49,7 @@ namespace SIL.Cog.Presentation.Views
 							SegmentsDataGrid.SelectedCellRanges.Clear();
 							if (vm.SelectedSegmentPair != null)
 							{
-								SegmentMappingsChartSegmentViewModel segment = vm.SelectedSegmentPair.Segment1;
+								SegmentMappingsTableSegmentViewModel segment = vm.SelectedSegmentPair.Segment1;
 								int itemIndex = SegmentsDataGrid.Items.IndexOf(segment);
 								SegmentsDataGrid.BringItemIntoView(segment);
 								SegmentsDataGrid.Dispatcher.BeginInvoke(new Action(() =>
@@ -79,14 +79,14 @@ namespace SIL.Cog.Presentation.Views
 
 		private void LoadCollectionView()
 		{
-			var vm = (SegmentMappingsChartViewModel) DataContext;
+			var vm = (SegmentMappingsTableViewModel) DataContext;
 
 			SegmentsDataGrid.CurrentColumn = null;
 			SegmentsDataGrid.Columns.Clear();
-			var view = new DataGridCollectionView(vm.Segments.Reverse(), typeof (SegmentMappingsChartSegmentViewModel), false, false);
-			view.ItemProperties.Add(new DataGridItemProperty("Segment", ".", typeof(SegmentMappingsChartSegmentViewModel)));
+			var view = new DataGridCollectionView(vm.Segments.Reverse(), typeof (SegmentMappingsTableSegmentViewModel), false, false);
+			view.ItemProperties.Add(new DataGridItemProperty("Segment", ".", typeof(SegmentMappingsTableSegmentViewModel)));
 			for (int i = 0; i < vm.Segments.Count; i++)
-				view.ItemProperties.Add(new DataGridItemProperty(vm.Segments[i].StrRep, string.Format("SegmentPairs[{0}]", i), typeof(SegmentMappingsChartSegmentPairViewModel)));
+				view.ItemProperties.Add(new DataGridItemProperty(vm.Segments[i].StrRep, string.Format("SegmentPairs[{0}]", i), typeof(SegmentMappingsTableSegmentPairViewModel)));
 			SegmentsDataGrid.ItemsSource = view;
 
 			var headerColumn = new Column {FieldName = "Segment"};
@@ -95,7 +95,7 @@ namespace SIL.Cog.Presentation.Views
 			headerColumn.CellVerticalContentAlignment = VerticalAlignment.Center;
 			headerColumn.CellHorizontalContentAlignment = HorizontalAlignment.Center;
 			SegmentsDataGrid.Columns.Add(headerColumn);
-			foreach (SegmentMappingsChartSegmentViewModel segment in vm.Segments)
+			foreach (SegmentMappingsTableSegmentViewModel segment in vm.Segments)
 			{
 				SegmentsDataGrid.Columns.Add(new Column
 				{
@@ -106,7 +106,7 @@ namespace SIL.Cog.Presentation.Views
 					CellHorizontalContentAlignment = HorizontalAlignment.Center,
 					CellVerticalContentAlignment = VerticalAlignment.Center,
 					CellContentTemplate = (DataTemplate) SegmentsDataGrid.Resources["SegmentPairTemplate"],
-					CellEditor = SegmentsDataGrid.DefaultCellEditors[typeof(SegmentMappingsChartSegmentPairViewModel)]
+					CellEditor = SegmentsDataGrid.DefaultCellEditors[typeof(SegmentMappingsTableSegmentPairViewModel)]
 				});
 			}
 		}
@@ -114,7 +114,7 @@ namespace SIL.Cog.Presentation.Views
 		private void LoadMergedHeaders()
 		{
 			ObservableCollection<MergedHeader> mergedHeaders = DataGridControlBehaviors.GetMergedHeaders(SegmentsDataGrid);
-			var vm = (SegmentMappingsChartViewModel) DataContext;
+			var vm = (SegmentMappingsTableViewModel) DataContext;
 			mergedHeaders.Clear();
 			if (vm.Categories.Count > 0)
 			{
@@ -135,14 +135,14 @@ namespace SIL.Cog.Presentation.Views
 
 			using (_selectMonitor.Enter())
 			{
-				var vm = (SegmentMappingsChartViewModel) DataContext;
+				var vm = (SegmentMappingsTableViewModel) DataContext;
 				if (SegmentsDataGrid.SelectedCellRanges.Count == 1)
 				{
 					SelectionCellRange cellRange = SegmentsDataGrid.SelectedCellRanges[0];
 					int itemIndex = cellRange.ItemRange.StartIndex;
-					var segment = (SegmentMappingsChartSegmentViewModel) SegmentsDataGrid.Items[itemIndex];
+					var segment = (SegmentMappingsTableSegmentViewModel) SegmentsDataGrid.Items[itemIndex];
 					int columnIndex = cellRange.ColumnRange.StartIndex;
-					SegmentMappingsChartSegmentPairViewModel segmentPair = segment.SegmentPairs[columnIndex - 1];
+					SegmentMappingsTableSegmentPairViewModel segmentPair = segment.SegmentPairs[columnIndex - 1];
 					vm.SelectedSegmentPair = segmentPair.IsEnabled ? segmentPair : null;
 				}
 				else

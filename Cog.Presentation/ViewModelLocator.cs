@@ -105,8 +105,8 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<SegmentMappingViewModel>();
 			builder.RegisterType<VarietyPairViewModel>();
 			builder.RegisterType<WordPairsViewModel>();
-			builder.RegisterType<SegmentMappingsChartViewModel>();
-			builder.RegisterType<SegmentMappingsChartSegmentPairViewModel>();
+			builder.RegisterType<SegmentMappingsTableViewModel>();
+			builder.RegisterType<SegmentMappingsTableSegmentPairViewModel>();
 			builder.RegisterType<NewSegmentMappingViewModel>();
 			builder.RegisterType<WordPairViewModel>();
 

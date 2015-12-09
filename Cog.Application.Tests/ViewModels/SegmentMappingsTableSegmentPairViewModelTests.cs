@@ -12,7 +12,7 @@ using SIL.Machine.FeatureModel;
 namespace SIL.Cog.Application.Tests.ViewModels
 {
 	[TestFixture]
-	public class SegmentMappingsChartSegmentPairViewModelTests
+	public class SegmentMappingsTableSegmentPairViewModelTests
 	{
 		[Test]
 		public void ToggleMappingCommand_MeetsThreshold_DefiniteListMapped()
@@ -103,7 +103,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		private class TestEnvironment : IDisposable
 		{
 			private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-			private readonly SegmentMappingsChartSegmentPairViewModel _segmentPair;
+			private readonly SegmentMappingsTableSegmentPairViewModel _segmentPair;
 			private readonly IProjectService _projectService;
 
 			public TestEnvironment()
@@ -117,9 +117,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				NewSegmentMappingViewModel.Factory newMappingFactory = () => new NewSegmentMappingViewModel(_projectService);
 
 				var segmentMappings = new SegmentMappingsViewModel(dialogService, importService, mappingFactory, newMappingFactory);
-				_segmentPair = new SegmentMappingsChartSegmentPairViewModel(segmentMappings, mappingFactory,
-					new SegmentMappingsChartSegmentViewModel(new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.ConsonantType).Feature(CogFeatureSystem.StrRep).EqualTo("b").Value), SoundType.Consonant),
-					new SegmentMappingsChartSegmentViewModel(new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.ConsonantType).Feature(CogFeatureSystem.StrRep).EqualTo("c").Value), SoundType.Consonant),
+				_segmentPair = new SegmentMappingsTableSegmentPairViewModel(segmentMappings, mappingFactory,
+					new SegmentMappingsTableSegmentViewModel(new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.ConsonantType).Feature(CogFeatureSystem.StrRep).EqualTo("b").Value), SoundType.Consonant),
+					new SegmentMappingsTableSegmentViewModel(new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.ConsonantType).Feature(CogFeatureSystem.StrRep).EqualTo("c").Value), SoundType.Consonant),
 					100, true);
 
 				var project = new CogProject(_spanFactory);
@@ -131,7 +131,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				get { return _projectService; }
 			}
 
-			public SegmentMappingsChartSegmentPairViewModel SegmentPair
+			public SegmentMappingsTableSegmentPairViewModel SegmentPair
 			{
 				get { return _segmentPair; }
 			}

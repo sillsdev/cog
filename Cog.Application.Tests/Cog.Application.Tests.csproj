@@ -85,7 +85,7 @@
     <Compile Include="ViewModels\GlobalCorrespondencesViewModelTests.cs" />
     <Compile Include="ViewModels\MeaningsViewModelTests.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentViewModelTests.cs" />
-    <Compile Include="ViewModels\SegmentMappingsChartSegmentPairViewModelTests.cs" />
+    <Compile Include="ViewModels\SegmentMappingsTableSegmentPairViewModelTests.cs" />
     <Compile Include="ViewModels\SegmentsViewModelTests.cs" />
     <Compile Include="ViewModels\SettingsWorkspaceViewModelBaseTests.cs" />
     <Compile Include="ViewModels\VarietiesViewModelTests.cs" />

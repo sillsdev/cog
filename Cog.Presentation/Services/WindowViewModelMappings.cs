@@ -35,7 +35,7 @@ namespace SIL.Cog.Presentation.Services
 				{typeof(ExportSegmentFrequenciesViewModel), typeof(ExportSegmentFrequenciesDialog)},
 				{typeof(SelectVarietiesViewModel), typeof(SelectVarietiesDialog)},
 				{typeof(AboutViewModel), typeof(AboutDialog)},
-				{typeof(SegmentMappingsChartViewModel), typeof(SegmentMappingsChartDialog)}
+				{typeof(SegmentMappingsTableViewModel), typeof(SegmentMappingsTableDialog)}
 			};
 		}
 

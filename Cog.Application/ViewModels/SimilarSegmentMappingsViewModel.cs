@@ -17,12 +17,12 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly SoundType _soundType;
 		private int _threshold;
 		private bool _implicitComplexSegments;
-		private readonly ICommand _editSegmentMappingsChartCommand;
+		private readonly ICommand _editSegmentMappingsTableCommand;
 		private readonly IDialogService _dialogService;
-		private readonly SegmentMappingsChartViewModel.Factory _segmentMappingsChartFactory;
+		private readonly SegmentMappingsTableViewModel.Factory _segmentMappingsTableFactory;
 		private readonly SegmentMappingViewModel.Factory _mappingFactory;
 		
-		public SimilarSegmentMappingsViewModel(IProjectService projectService, IDialogService dialogService, SegmentMappingsChartViewModel.Factory segmentMappingsChartFactory,
+		public SimilarSegmentMappingsViewModel(IProjectService projectService, IDialogService dialogService, SegmentMappingsTableViewModel.Factory segmentMappingsTableFactory,
 			SegmentMappingsViewModel mappings, SegmentMappingViewModel.Factory mappingFactory, SoundType soundType)
 		{
 			_projectService = projectService;
@@ -30,9 +30,9 @@ namespace SIL.Cog.Application.ViewModels
 			_mappings.PropertyChanged += ChildPropertyChanged;
 			_soundType = soundType;
 			_dialogService = dialogService;
-			_segmentMappingsChartFactory = segmentMappingsChartFactory;
+			_segmentMappingsTableFactory = segmentMappingsTableFactory;
 			_mappingFactory = mappingFactory;
-			_editSegmentMappingsChartCommand = new RelayCommand(EditSegmentMappingsChart);
+			_editSegmentMappingsTableCommand = new RelayCommand(EditSegmentMappingsTable);
 		}
 
 		public override void AcceptChanges()
@@ -65,14 +65,14 @@ namespace SIL.Cog.Application.ViewModels
 
 		public UnionSegmentMappings SegmentMappings { get; set; }
 
-		public ICommand EditSegmentMappingsChartCommand
+		public ICommand EditSegmentMappingsTableCommand
 		{
-			get { return _editSegmentMappingsChartCommand; }
+			get { return _editSegmentMappingsTableCommand; }
 		}
 
-		private void EditSegmentMappingsChart()
+		private void EditSegmentMappingsTable()
 		{
-			SegmentMappingsChartViewModel vm = _segmentMappingsChartFactory(_mappings.Mappings, _soundType, _threshold);
+			SegmentMappingsTableViewModel vm = _segmentMappingsTableFactory(_mappings.Mappings, _soundType, _threshold);
 			if (_dialogService.ShowModalDialog(this, vm) == true)
 			{
 				using (_mappings.Mappings.BulkUpdate())

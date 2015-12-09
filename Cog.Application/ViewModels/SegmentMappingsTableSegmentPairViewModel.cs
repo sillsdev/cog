@@ -15,13 +15,13 @@ namespace SIL.Cog.Application.ViewModels
 		IndefiniteListMapped,
 	}
 
-	public class SegmentMappingsChartSegmentPairViewModel : ViewModelBase
+	public class SegmentMappingsTableSegmentPairViewModel : ViewModelBase
 	{
-		public delegate SegmentMappingsChartSegmentPairViewModel Factory(SegmentMappingsChartSegmentViewModel segment1, SegmentMappingsChartSegmentViewModel segment2, int delta, bool enabled);
+		public delegate SegmentMappingsTableSegmentPairViewModel Factory(SegmentMappingsTableSegmentViewModel segment1, SegmentMappingsTableSegmentViewModel segment2, int delta, bool enabled);
 
 		private readonly SegmentMappingViewModel.Factory _mappingFactory;
-		private readonly SegmentMappingsChartSegmentViewModel _segment1;
-		private readonly SegmentMappingsChartSegmentViewModel _segment2;
+		private readonly SegmentMappingsTableSegmentViewModel _segment1;
+		private readonly SegmentMappingsTableSegmentViewModel _segment2;
 		private SegmentMappingState _mappingState;
 		private bool _meetsThreshold;
 		private readonly bool _enabled;
@@ -29,8 +29,8 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly int _delta;
 		private readonly SegmentMappingsViewModel _mappings;
 
-		public SegmentMappingsChartSegmentPairViewModel(SegmentMappingsViewModel mappings, SegmentMappingViewModel.Factory mappingFactory,
-			SegmentMappingsChartSegmentViewModel segment1, SegmentMappingsChartSegmentViewModel segment2, int delta, bool enabled)
+		public SegmentMappingsTableSegmentPairViewModel(SegmentMappingsViewModel mappings, SegmentMappingViewModel.Factory mappingFactory,
+			SegmentMappingsTableSegmentViewModel segment1, SegmentMappingsTableSegmentViewModel segment2, int delta, bool enabled)
 		{
 			_mappingFactory = mappingFactory;
 			_segment1 = segment1;
@@ -49,12 +49,12 @@ namespace SIL.Cog.Application.ViewModels
 			UpdateMappingState();
 		}
 
-		public SegmentMappingsChartSegmentViewModel Segment1
+		public SegmentMappingsTableSegmentViewModel Segment1
 		{
 			get { return _segment1; }
 		}
 
-		public SegmentMappingsChartSegmentViewModel Segment2
+		public SegmentMappingsTableSegmentViewModel Segment2
 		{
 			get { return _segment2; }
 		}

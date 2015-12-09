@@ -138,9 +138,9 @@
     <Compile Include="ViewModels\AlignedNodeViewModel.cs" />
     <Compile Include="ViewModels\AlineViewModel.cs" />
     <Compile Include="ViewModels\AnalyzeViewModel.cs" />
-    <Compile Include="ViewModels\SegmentMappingsChartSegmentPairViewModel.cs" />
-    <Compile Include="ViewModels\SegmentMappingsChartSegmentViewModel.cs" />
-    <Compile Include="ViewModels\SegmentMappingsChartViewModel.cs" />
+    <Compile Include="ViewModels\SegmentMappingsTableSegmentPairViewModel.cs" />
+    <Compile Include="ViewModels\SegmentMappingsTableSegmentViewModel.cs" />
+    <Compile Include="ViewModels\SegmentMappingsTableViewModel.cs" />
     <Compile Include="ViewModels\MultipleWordAlignmentVarietyViewModel.cs" />
     <Compile Include="ViewModels\VowelBacknessVertex.cs" />
     <Compile Include="ViewModels\BlairCognateIdentifierViewModel.cs" />

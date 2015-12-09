@@ -31,7 +31,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,3,5,5" Padding="0,0,0,5">
-            <Hyperlink Command="{Binding EditSegmentMappingsChartCommand}">Edit Similar <Run Text="{Binding SoundType, Converter={StaticResource EnumConverter}, Mode=OneWay}" />s Chart...</Hyperlink>
+            <Hyperlink Command="{Binding EditSegmentMappingsTableCommand}">Edit Similar <Run Text="{Binding SoundType, Converter={StaticResource EnumConverter}, Mode=OneWay}" />s Table...</Hyperlink>
         </TextBlock>
         <Label Grid.Column="0" Grid.Row="1" Margin="0" Padding="0">Correspondences</Label>
         <v:SegmentMappingsView Grid.Column="0" Grid.Row="2" Margin="0,0,0,5" HorizontalAlignment="Left" DataContext="{Binding Mappings}" />

@@ -233,8 +233,8 @@
     <Compile Include="Views\EditNaturalClassDialog.xaml.cs">
       <DependentUpon>EditNaturalClassDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SegmentMappingsChartDialog.xaml.cs">
-      <DependentUpon>SegmentMappingsChartDialog.xaml</DependentUpon>
+    <Compile Include="Views\SegmentMappingsTableDialog.xaml.cs">
+      <DependentUpon>SegmentMappingsTableDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditUnnaturalClassDialog.xaml.cs">
       <DependentUpon>EditUnnaturalClassDialog.xaml</DependentUpon>
@@ -283,8 +283,8 @@
     <Compile Include="Views\GlobalCorrespondencesView.xaml.cs">
       <DependentUpon>GlobalCorrespondencesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SegmentMappingsChartSegmentPairView.xaml.cs">
-      <DependentUpon>SegmentMappingsChartSegmentPairView.xaml</DependentUpon>
+    <Compile Include="Views\SegmentMappingsTableSegmentPairView.xaml.cs">
+      <DependentUpon>SegmentMappingsTableSegmentPairView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SegmentsView.xaml.cs">
       <DependentUpon>SegmentsView.xaml</DependentUpon>
@@ -437,7 +437,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SegmentMappingsChartDialog.xaml">
+    <Page Include="Views\SegmentMappingsTableDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -497,7 +497,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SegmentMappingsChartSegmentPairView.xaml">
+    <Page Include="Views\SegmentMappingsTableSegmentPairView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -26,8 +26,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				DispatcherHelper.Initialize();
 				_projectService = Substitute.For<IProjectService>();
 				_dialogService = Substitute.For<IDialogService>();
+				var busyService = Substitute.For<IBusyService>();
 
-				_meaningsViewModel = new MeaningsViewModel(_projectService, _dialogService);
+				_meaningsViewModel = new MeaningsViewModel(_projectService, _dialogService, busyService);
 			}
 
 			public SpanFactory<ShapeNode> SpanFactory

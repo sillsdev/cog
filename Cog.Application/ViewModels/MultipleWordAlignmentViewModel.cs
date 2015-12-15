@@ -19,6 +19,7 @@ namespace SIL.Cog.Application.ViewModels
 	public class MultipleWordAlignmentViewModel : WorkspaceViewModelBase
 	{
 		private readonly IProjectService _projectService;
+		private readonly IAnalysisService _analysisService;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _words;
 		private readonly BindableList<MultipleWordAlignmentWordViewModel> _selectedWords; 
 		private ICollectionView _wordsView;
@@ -31,13 +32,16 @@ namespace SIL.Cog.Application.ViewModels
 		private bool _groupByCognateSet;
 		private string _sortByProp;
 		private readonly ICommand _showInVarietyPairsCommand;
+		private readonly ICommand _performComparisonCommand;
+		private bool _isEmpty;
 
-		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService)
+		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService, IAnalysisService analysisService)
 			: base("Multiple Word Alignment")
 		{
 			_projectService = projectService;
 			_busyService = busyService;
 			_exportService = exportService;
+			_analysisService = analysisService;
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
@@ -56,22 +60,24 @@ namespace SIL.Cog.Application.ViewModels
 			_selectedWords = new BindableList<MultipleWordAlignmentWordViewModel>();
 
 			_showInVarietyPairsCommand = new RelayCommand(ShowInVarietyPairs, CanShowInVarietyPairs);
+			_performComparisonCommand = new RelayCommand(PerformComparison);
 
 			_groupByCognateSet = true;
 			_sortByProp = "StrRep";
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => AlignWords());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
-				{
-					if (msg.AffectsComparison)
-						ResetAlignment();
-				});
+			{
+				if (msg.AffectsComparison)
+					ResetAlignment();
+			});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetAlignment());
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
+			IsEmpty = true;
 			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(_projectService.Project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
 			_selectedMeaning = null;
 		}
@@ -98,6 +104,11 @@ namespace SIL.Cog.Application.ViewModels
 			if (vp.WordPairs.TryGetValue(_selectedMeaning.DomainMeaning, out wp))
 				return wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2;
 			return false;
+		}
+
+		private void PerformComparison()
+		{
+			_analysisService.CompareAll(this);
 		}
 
 		private bool CanExportCognateSets()
@@ -204,13 +215,17 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void ResetAlignment()
 		{
+			if (IsEmpty)
+				return;
+
 			_words.Clear();
 			ColumnCount = 0;
+			IsEmpty = true;
 		}
 
 		private void AlignWords()
 		{
-			if (_selectedMeaning == null)
+			if (_selectedMeaning == null || !_projectService.AreAllVarietiesCompared)
 				return;
 
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
@@ -264,6 +279,7 @@ namespace SIL.Cog.Application.ViewModels
 					_words.Add(new MultipleWordAlignmentWordViewModel(this, word, prefix, columns, suffix, cognateSetIndex == cognateSets.Count - 1 ? int.MaxValue : cognateSetIndex + 1));
 				}
 			}
+			IsEmpty = false;
 		}
 
 		private bool NodeFilter(ShapeNode n)
@@ -287,6 +303,12 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
+		public bool IsEmpty
+		{
+			get { return _isEmpty; }
+			private set { Set(() => IsEmpty, ref _isEmpty, value); }
+		}
+
 		public ObservableList<MultipleWordAlignmentWordViewModel> Words
 		{
 			get { return _words; }
@@ -300,6 +322,11 @@ namespace SIL.Cog.Application.ViewModels
 		public ICommand ShowInVarietyPairsCommand
 		{
 			get { return _showInVarietyPairsCommand; }
+		}
+
+		public ICommand PerformComparisonCommand
+		{
+			get { return _performComparisonCommand; }
 		}
 	}
 }

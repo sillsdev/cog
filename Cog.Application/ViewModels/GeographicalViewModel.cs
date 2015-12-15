@@ -44,12 +44,12 @@ namespace SIL.Cog.Application.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => ClusterVarieties());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
-				{
-					if (msg.AffectsComparison)
-						ResetClusters();
-					if (_selectedRegion != null && (!_varieties.Contains(_selectedRegion.Variety) || !_selectedRegion.Variety.Regions.Contains(_selectedRegion)))
-						SelectedRegion = null;
-				});
+			{
+				if (msg.AffectsComparison)
+					ResetClusters();
+				if (_selectedRegion != null && (!_varieties.Contains(_selectedRegion.Variety) || !_selectedRegion.Variety.Regions.Contains(_selectedRegion)))
+					SelectedRegion = null;
+			});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetClusters());
 
 			_similarityScoreThreshold = 0.7;

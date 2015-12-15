@@ -44,12 +44,16 @@ namespace SIL.Cog.Application.ViewModels
 
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
-			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric));
+			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg =>
+			{
+				if (_projectService.AreAllVarietiesCompared)
+					Graph = _graphService.GenerateHierarchicalGraph(_graphType, _clusteringMethod, _similarityMetric);
+			});
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
-				{
-					if (msg.AffectsComparison)
-						Graph = null;
-				});
+			{
+				if (msg.AffectsComparison)
+					Graph = null;
+			});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => Graph = null);
 
 			TaskAreas.Add(new TaskAreaCommandGroupViewModel("Graph type",

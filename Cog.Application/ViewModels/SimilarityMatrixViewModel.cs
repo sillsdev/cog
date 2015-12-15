@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Services;
@@ -19,6 +20,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly List<Variety> _modelVarieties;
 		private bool _isEmpty;
 		private SimilarityMetric _similarityMetric;
+		private readonly ICommand _performComparisonCommand;
 
 		public SimilarityMatrixViewModel(IProjectService projectService, IExportService exportService, IAnalysisService analysisService)
 			: base("Similarity Matrix")
@@ -31,10 +33,10 @@ namespace SIL.Cog.Application.ViewModels
 			_projectService.ProjectOpened += _projectService_ProjectOpened;
 
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
-				{
-					if (msg.AffectsComparison)
-						ResetVarieties();
-				});
+			{
+				if (msg.AffectsComparison)
+					ResetVarieties();
+			});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ResetVarieties());
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => CreateSimilarityMatrix());
 
@@ -45,6 +47,7 @@ namespace SIL.Cog.Application.ViewModels
 				new TaskAreaCommandViewModel("Compare all variety pairs", new RelayCommand(PerformComparison))));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 				new TaskAreaCommandViewModel("Export matrix", new RelayCommand(Export, CanExport))));
+			_performComparisonCommand = new RelayCommand(PerformComparison);
 		}
 
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
@@ -80,6 +83,9 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void CreateSimilarityMatrix()
 		{
+			if (!_projectService.AreAllVarietiesCompared)
+				return;
+
 			var optics = new Optics<Variety>(variety => variety.VarietyPairs.Select(pair =>
 				{
 					double score = 0;
@@ -117,13 +123,18 @@ namespace SIL.Cog.Application.ViewModels
 		public bool IsEmpty
 		{
 			get { return _isEmpty; }
-			set { Set(() => IsEmpty, ref _isEmpty, value); }
+			private set { Set(() => IsEmpty, ref _isEmpty, value); }
 		}
 
 		public ReadOnlyList<SimilarityMatrixVarietyViewModel> Varieties
 		{
 			get { return _varieties; }
 			private set { Set(() => Varieties, ref _varieties, value); }
+		}
+
+		public ICommand PerformComparisonCommand
+		{
+			get { return _performComparisonCommand; }
 		}
 	}
 }

@@ -19,7 +19,9 @@
     <DockPanel>
         <TextBlock Style="{StaticResource ViewTitleStyle}" DockPanel.Dock="Top">Word lists</TextBlock>
         <Grid>
-            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">To get started, click on "Add a new variety" or "Add a new meaning" to begin creating word lists, or click on "Import word lists" if you have already created word lists in another application. <LineBreak /><LineBreak />Check out <Hyperlink Click="QuickReference_Click">"Getting Started with Cog"</Hyperlink> for more information.</TextBlock>
+            <TextBlock Margin="0,20,0,0" FontSize="14" TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource BoolConverter}}">
+                To get started, <Hyperlink Command="{Binding ImportWordListsCommand}">import word lists</Hyperlink> if you have already created word lists in another application, otherwise add a <Hyperlink Command="{Binding AddNewVarietyCommand}">variety</Hyperlink> or <Hyperlink Command="{Binding AddNewMeaningCommand}">meaning</Hyperlink> to begin creating new word lists. <LineBreak /><LineBreak />Check out <Hyperlink Command="{Binding ShowGettingStartedCommand}">"Getting Started with Cog"</Hyperlink> for more information.
+            </TextBlock>
             <xcdg:DataGridControl x:Name="WordListsGrid" ItemsSource="{Binding VarietiesView}" Visibility="{Binding IsEmpty, Converter={StaticResource ReverseBoolConverter}}"
                                   Margin="0,10,0,0" SelectionUnit="Cell" SelectionChanged="WordListsGrid_OnSelectionChanged">
                 <xcdg:DataGridControl.Resources>

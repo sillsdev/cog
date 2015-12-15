@@ -301,7 +301,7 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			string exeDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			if (!string.IsNullOrEmpty(exeDir))
-				Process.Start(Path.Combine(exeDir, "Help\\GettingStartedWithCog.pdf"));
+				Process.Start(Path.Combine(exeDir, "Help", "GettingStartedWithCog.pdf"));
 		}
 
 		public ICommand NewCommand

@@ -48,10 +48,10 @@ namespace SIL.Cog.Application.ViewModels
 
 			Messenger.Default.Register<ComparisonPerformedMessage>(this, msg => GenerateGraph());
 			Messenger.Default.Register<DomainModelChangedMessage>(this, msg =>
-				{
-					if (msg.AffectsComparison)
-						ClearGraph();
-				});
+			{
+				if (msg.AffectsComparison)
+					ClearGraph();
+			});
 			Messenger.Default.Register<PerformingComparisonMessage>(this, msg => ClearGraph());
 
 			_findCommand = new RelayCommand(Find);
@@ -149,6 +149,9 @@ namespace SIL.Cog.Application.ViewModels
 
 		private void GenerateGraph()
 		{
+			if (!_projectService.AreAllVarietiesCompared)
+				return;
+
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			SelectedCorrespondence = null;
 			Graph = _graphService.GenerateGlobalCorrespondencesGraph(_syllablePosition, _selectedVarieties);

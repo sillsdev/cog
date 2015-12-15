@@ -35,6 +35,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IExportService _exportService;
 		private readonly IDialogService _dialogService;
 		private readonly ICommand _findCommand;
+		private readonly ICommand _performComparisonCommand;
 
 		private string _sortPropertyName;
 		private ListSortDirection _sortDirection;
@@ -79,6 +80,7 @@ namespace SIL.Cog.Application.ViewModels
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
 
 			_findCommand = new RelayCommand(Find);
+			_performComparisonCommand = new RelayCommand(PerformComparison);
 
 			_selectedWordPairsMonitor = new SimpleMonitor();
 			_varietyPairState = VarietyPairState.NotSelected;
@@ -317,6 +319,14 @@ namespace SIL.Cog.Application.ViewModels
 		public ICommand FindCommand
 		{
 			get { return _findCommand; }
+		}
+
+		public ICommand PerformComparisonCommand
+		{
+			get
+			{
+				return _performComparisonCommand;
+			}
 		}
 
 		public ReadOnlyObservableList<VarietyViewModel> Varieties

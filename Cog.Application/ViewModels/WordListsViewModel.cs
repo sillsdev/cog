@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -28,6 +30,10 @@ namespace SIL.Cog.Application.ViewModels
 		private bool _isEmpty;
 		private readonly ICommand _findCommand;
 		private ICollectionView _varietiesView;
+		private readonly ICommand _addNewVarietyCommand;
+		private readonly ICommand _addNewMeaningCommand;
+		private readonly ICommand _importWordListsCommand;
+		private readonly ICommand _showGettingStartedCommand;
 
 		private WordListsVarietyMeaningViewModel _startVarietyMeaning;
 		private FindViewModel _findViewModel;
@@ -59,6 +65,10 @@ namespace SIL.Cog.Application.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export, CanExport)),
 					new TaskAreaCommandViewModel("Remove affixes from words in all varieties", new RelayCommand(RunStemmer, CanRunStemmer))));
+			_addNewVarietyCommand = new RelayCommand(AddNewVariety);
+			_addNewMeaningCommand = new RelayCommand(AddNewMeaning);
+			_importWordListsCommand = new RelayCommand(Import);
+			_showGettingStartedCommand = new RelayCommand(ShowGettingStarted);
 			_isEmpty = true;
 		}
 
@@ -244,6 +254,13 @@ namespace SIL.Cog.Application.ViewModels
 				_analysisService.StemAll(this, vm.Method);
 		}
 
+		private void ShowGettingStarted()
+		{
+			string exeDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			if (!string.IsNullOrEmpty(exeDir))
+				Process.Start(Path.Combine(exeDir, "Help", "GettingStartedWithCog.pdf"));
+		}
+
 		public bool IsEmpty
 		{
 			get { return _isEmpty; }
@@ -279,6 +296,26 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			get { return _varietiesView; }
 			set { Set(() => VarietiesView, ref _varietiesView, value); }
+		}
+
+		public ICommand AddNewVarietyCommand
+		{
+			get { return _addNewVarietyCommand; }
+		}
+
+		public ICommand AddNewMeaningCommand
+		{
+			get { return _addNewMeaningCommand; }
+		}
+
+		public ICommand ImportWordListsCommand
+		{
+			get { return _importWordListsCommand; }
+		}
+
+		public ICommand ShowGettingStartedCommand
+		{
+			get { return _showGettingStartedCommand; }
 		}
 
 		private void MeaningsChanged(object sender, NotifyCollectionChangedEventArgs e)

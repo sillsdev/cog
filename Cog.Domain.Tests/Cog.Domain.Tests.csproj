@@ -63,6 +63,7 @@
     <Compile Include="Components\BlairCognateIdentifierTests.cs" />
     <Compile Include="Components\CognacyWordPairGeneratorTests.cs" />
     <Compile Include="Components\ListSegmentMappingsTests.cs" />
+    <Compile Include="Components\RegularSoundCorrespondenceThresholdTableTests.cs" />
     <Compile Include="Config\Migrations\ConfigMigration1_2Tests.cs" />
     <Compile Include="Config\Migrations\ConfigMigration1_3Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -14,14 +14,14 @@ namespace SIL.Cog.Application.Services
 	internal class VarietyPairSurrogate
 	{
 		private readonly List<WordPairSurrogate> _wordPairs;
-		private readonly Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> _soundChanges;
-		private readonly Dictionary<string, List<SoundCorrespondenceSurrogate>> _soundCorrespondenceCollections;
+		private readonly Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> _cognateSoundCorrespondenceFrequencyDistribution;
+		private readonly Dictionary<string, List<SoundCorrespondenceSurrogate>> _cognateSoundCorrespondenceByPosition;
 
 		public VarietyPairSurrogate()
 		{
 			_wordPairs = new List<WordPairSurrogate>();
-			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
-			_soundCorrespondenceCollections = new Dictionary<string, List<SoundCorrespondenceSurrogate>>();
+			_cognateSoundCorrespondenceFrequencyDistribution = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
+			_cognateSoundCorrespondenceByPosition = new Dictionary<string, List<SoundCorrespondenceSurrogate>>();
 		}
 
 		public VarietyPairSurrogate(VarietyPair vp)
@@ -32,15 +32,15 @@ namespace SIL.Cog.Application.Services
 			_wordPairs = vp.WordPairs.Select(wp => wordPairSurrogates.GetValue(wp, () => new WordPairSurrogate(wp))).ToList();
 			PhoneticSimilarityScore = vp.PhoneticSimilarityScore;
 			LexicalSimilarityScore = vp.LexicalSimilarityScore;
-			DefaultCorrespondenceProbability = vp.DefaultCorrespondenceProbability;
-			_soundChanges = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
-			foreach (SoundContext lhs in vp.SoundChangeFrequencyDistribution.Conditions)
+			DefaultSoundCorrespondenceProbability = vp.DefaultSoundCorrespondenceProbability;
+			_cognateSoundCorrespondenceFrequencyDistribution = new Dictionary<SoundContextSurrogate, Tuple<string[], int>[]>();
+			foreach (SoundContext lhs in vp.CognateSoundCorrespondenceFrequencyDistribution.Conditions)
 			{
-				FrequencyDistribution<Ngram<Segment>> freqDist = vp.SoundChangeFrequencyDistribution[lhs];
-				_soundChanges[new SoundContextSurrogate(lhs)] = freqDist.ObservedSamples.Select(ngram => Tuple.Create(ngram.Select(seg => seg.StrRep).ToArray(), freqDist[ngram])).ToArray();
+				FrequencyDistribution<Ngram<Segment>> freqDist = vp.CognateSoundCorrespondenceFrequencyDistribution[lhs];
+				_cognateSoundCorrespondenceFrequencyDistribution[new SoundContextSurrogate(lhs)] = freqDist.ObservedSamples.Select(ngram => Tuple.Create(ngram.Select(seg => seg.StrRep).ToArray(), freqDist[ngram])).ToArray();
 			}
-			_soundCorrespondenceCollections = new Dictionary<string, List<SoundCorrespondenceSurrogate>>();
-			foreach (KeyValuePair<FeatureSymbol, SoundCorrespondenceCollection> kvp in vp.SoundCorrespondenceCollections)
+			_cognateSoundCorrespondenceByPosition = new Dictionary<string, List<SoundCorrespondenceSurrogate>>();
+			foreach (KeyValuePair<FeatureSymbol, SoundCorrespondenceCollection> kvp in vp.CognateSoundCorrespondencesByPosition)
 			{
 				string pos;
 				if (kvp.Key == CogFeatureSystem.Onset)
@@ -49,7 +49,7 @@ namespace SIL.Cog.Application.Services
 					pos = "nucleus";
 				else
 					pos = "coda";
-				_soundCorrespondenceCollections[pos] = kvp.Value.Select(corr => new SoundCorrespondenceSurrogate(wordPairSurrogates, corr)).ToList();
+				_cognateSoundCorrespondenceByPosition[pos] = kvp.Value.Select(corr => new SoundCorrespondenceSurrogate(wordPairSurrogates, corr)).ToList();
 			}
 		}
 
@@ -69,17 +69,17 @@ namespace SIL.Cog.Application.Services
 		[ProtoMember(5)]
 		public double LexicalSimilarityScore { get; set; }
 		[ProtoMember(6)]
-		public double DefaultCorrespondenceProbability { get; set; }
+		public double DefaultSoundCorrespondenceProbability { get; set; }
 		[ProtoMember(7)]
-		public Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> SoundChangeFrequencyDistribution
+		public Dictionary<SoundContextSurrogate, Tuple<string[], int>[]> CognateSoundCorrespondenceFrequencyDistribution
 		{
-			get { return _soundChanges; }
+			get { return _cognateSoundCorrespondenceFrequencyDistribution; }
 		}
 
 		[ProtoMember(8)]
-		public Dictionary<string, List<SoundCorrespondenceSurrogate>> SoundCorrespondenceCollections
+		public Dictionary<string, List<SoundCorrespondenceSurrogate>> CognateSoundCorrespondenceByPosition
 		{
-			get { return _soundCorrespondenceCollections; }
+			get { return _cognateSoundCorrespondenceByPosition; }
 		}
 
 		public VarietyPair ToVarietyPair(SegmentPool segmentPool, CogProject project)
@@ -88,7 +88,7 @@ namespace SIL.Cog.Application.Services
 				{
 					PhoneticSimilarityScore = PhoneticSimilarityScore,
 					LexicalSimilarityScore = LexicalSimilarityScore,
-					DefaultCorrespondenceProbability = DefaultCorrespondenceProbability
+					DefaultSoundCorrespondenceProbability = DefaultSoundCorrespondenceProbability
 				};
 			var wordPairs = new Dictionary<WordPairSurrogate, WordPair>();
 			foreach (WordPairSurrogate wpSurrogate in _wordPairs)
@@ -98,25 +98,25 @@ namespace SIL.Cog.Application.Services
 				project.CognacyDecisions.UpdateActualCognacy(wp);
 				wordPairs[wpSurrogate] = wp;
 			}
-			var soundChanges = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-			foreach (KeyValuePair<SoundContextSurrogate, Tuple<string[], int>[]> fd in _soundChanges)
+			var cognateCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			foreach (KeyValuePair<SoundContextSurrogate, Tuple<string[], int>[]> fd in _cognateSoundCorrespondenceFrequencyDistribution)
 			{
 				SoundContext ctxt = fd.Key.ToSoundContext(project, segmentPool);
-				FrequencyDistribution<Ngram<Segment>> freqDist = soundChanges[ctxt];
+				FrequencyDistribution<Ngram<Segment>> freqDist = cognateCorrCounts[ctxt];
 				foreach (Tuple<string[], int> sample in fd.Value)
 				{
 					Ngram<Segment> corr = sample.Item1 == null ? new Ngram<Segment>() : new Ngram<Segment>(sample.Item1.Select(segmentPool.GetExisting));
 					freqDist.Increment(corr, sample.Item2);
 				}
 			}
-			vp.SoundChangeFrequencyDistribution = soundChanges;
+			vp.CognateSoundCorrespondenceFrequencyDistribution = cognateCorrCounts;
 			IWordAligner aligner = project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
 			int segmentCount = vp.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
-			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(soundChanges,
+			vp.CognateSoundCorrespondenceProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(cognateCorrCounts,
 				(sc, freqDist) => new WittenBellProbabilityDistribution<Ngram<Segment>>(freqDist, possCorrCount));
 
-			foreach (KeyValuePair<string, List<SoundCorrespondenceSurrogate>> kvp in _soundCorrespondenceCollections)
+			foreach (KeyValuePair<string, List<SoundCorrespondenceSurrogate>> kvp in _cognateSoundCorrespondenceByPosition)
 			{
 				if (kvp.Value != null)
 				{
@@ -133,7 +133,7 @@ namespace SIL.Cog.Application.Services
 							pos = CogFeatureSystem.Coda;
 							break;
 					}
-					vp.SoundCorrespondenceCollections[pos].AddRange(kvp.Value.Select(surrogate => surrogate.ToSoundCorrespondence(segmentPool, wordPairs)));
+					vp.CognateSoundCorrespondencesByPosition[pos].AddRange(kvp.Value.Select(surrogate => surrogate.ToSoundCorrespondence(segmentPool, wordPairs)));
 				}
 			}
 			return vp;

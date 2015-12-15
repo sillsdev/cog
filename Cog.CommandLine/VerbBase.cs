@@ -279,8 +279,8 @@ namespace SIL.Cog.CommandLine
 
 		public static CogProject GetProjectFromResource(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
 		{
-			Stream stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("SIL.Cog.CommandLine.NewProject.cogx");
-			return ConfigManager.Load(spanFactory, segmentPool, stream);
+			using (Stream stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("SIL.Cog.CommandLine.NewProject.cogx"))
+				return ConfigManager.Load(spanFactory, segmentPool, stream);
 		}
 
 		public static CogProject GetProjectFromFilename(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string projectFilename)

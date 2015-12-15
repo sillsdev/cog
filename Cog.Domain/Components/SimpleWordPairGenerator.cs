@@ -35,7 +35,8 @@ namespace SIL.Cog.Domain.Components
 		{
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			varietyPair.WordPairs.Clear();
-			var counts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			var cognateCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			var allCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			foreach (Meaning meaning in varietyPair.Variety1.Words.Meanings)
 			{
 				Word[] words1 = varietyPair.Variety1.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
@@ -45,9 +46,10 @@ namespace SIL.Cog.Domain.Components
 					Word word1 = words1.Single();
 					Word word2 = words2.Single();
 					WordPair wp = varietyPair.WordPairs.Add(word1, word2);
+					_project.CognacyDecisions.UpdateActualCognacy(wp);
 					Alignment<Word, ShapeNode> alignment = aligner.Compute(wp).GetAlignments().First();
 					wp.PhoneticSimilarityScore = alignment.NormalizedScore;
-					UpdateCounts(aligner, counts, alignment);
+					UpdateCounts(aligner, cognateCorrCounts, allCorrCounts, wp, alignment);
 				}
 				else if (words1.Length > 0 && words2.Length > 0)
 				{
@@ -68,23 +70,24 @@ namespace SIL.Cog.Domain.Components
 					}
 
 					varietyPair.WordPairs.Add(bestWordPair);
-					UpdateCounts(aligner, counts, bestAlignment);
+					UpdateCounts(aligner, cognateCorrCounts, allCorrCounts, bestWordPair, bestAlignment);
 				}
 			}
 
-			varietyPair.SoundChangeFrequencyDistribution = counts;
+			varietyPair.CognateSoundCorrespondenceFrequencyDistribution = cognateCorrCounts;
+			varietyPair.AllSoundCorrespondenceFrequencyDistribution = allCorrCounts;
 		}
 
-		private void UpdateCounts(IWordAligner aligner, ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> counts, Alignment<Word, ShapeNode> alignment)
+		private void UpdateCounts(IWordAligner aligner, ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> cognateCorrCounts,
+			ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> allCorrCounts, WordPair wp, Alignment<Word, ShapeNode> alignment)
 		{
-			if (alignment.NormalizedScore < _initialAlignmentThreshold)
-				return;
-
 			for (int column = 0; column < alignment.ColumnCount; column++)
 			{
 				SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
 				Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
-				counts[lhs].Increment(corr);
+				if (wp.ActualCognacy == true || alignment.NormalizedScore >= _initialAlignmentThreshold)
+					cognateCorrCounts[lhs].Increment(corr);
+				allCorrCounts[lhs].Increment(corr);
 			}
 		}
 	}

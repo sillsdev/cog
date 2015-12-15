@@ -57,6 +57,7 @@
     <Compile Include="Components\AffixStripper.cs" />
     <Compile Include="Components\AlineScorer.cs" />
     <Compile Include="Components\AlineSettings.cs" />
+    <Compile Include="Components\RegularSoundCorrespondenceThresholdTable.cs" />
     <Compile Include="Components\SoundCorrespondenceIdentifier.cs" />
     <Compile Include="Components\MultipleWordAlignerResult.cs" />
     <Compile Include="Components\SegmentFrequencyDistributionCalculator.cs" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="Components\RegularSoundCorrespondenceThresholdTable.bin" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

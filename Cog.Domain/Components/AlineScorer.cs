@@ -137,23 +137,23 @@ namespace SIL.Cog.Domain.Components
 				return 0;
 
 			VarietyPair varietyPair = word.Variety.VarietyPairs[otherWord.Variety];
-			if (varietyPair.SoundChangeProbabilityDistribution == null)
+			if (varietyPair.CognateSoundCorrespondenceProbabilityDistribution == null)
 				return 0;
 
 			double prob;
 			if (varietyPair.Variety1 == word.Variety)
 			{
 				SoundContext lhs = node.ToSoundContext(_segmentPool, _contextualSoundClasses);
-				prob = varietyPair.DefaultCorrespondenceProbability;
+				prob = varietyPair.DefaultSoundCorrespondenceProbability;
 				IProbabilityDistribution<Ngram<Segment>> probDist;
-				if (varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
+				if (varietyPair.CognateSoundCorrespondenceProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
 					prob = probDist.Samples.Max(nseg => probDist[nseg]);
 			}
 			else
 			{
 				Ngram<Segment> corr = _segmentPool.GetExisting(node);
-				prob = varietyPair.SoundChangeProbabilityDistribution.Conditions.Count == 0 ? 0
-					: varietyPair.SoundChangeProbabilityDistribution.Conditions.Max(lhs => varietyPair.SoundChangeProbabilityDistribution[lhs][corr]);
+				prob = varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions.Count == 0 ? 0
+					: varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions.Max(lhs => varietyPair.CognateSoundCorrespondenceProbabilityDistribution[lhs][corr]);
 			}
 			return (int) (MaxSoundChangeScore * prob);
 		}
@@ -210,7 +210,7 @@ namespace SIL.Cog.Domain.Components
 
 			VarietyPair varietyPair = sequence1.Variety.VarietyPairs[sequence2.Variety];
 
-			if (varietyPair.SoundChangeProbabilityDistribution == null)
+			if (varietyPair.CognateSoundCorrespondenceProbabilityDistribution == null)
 				return 0;
 
 			if (sequence1.Variety == varietyPair.Variety2)
@@ -258,8 +258,8 @@ namespace SIL.Cog.Domain.Components
 
 			var lhs = new SoundContext(leftEnv, target, rightEnv);
 			IProbabilityDistribution<Ngram<Segment>> probDist;
-			double prob = varietyPair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
-				: varietyPair.DefaultCorrespondenceProbability;
+			double prob = varietyPair.CognateSoundCorrespondenceProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
+				: varietyPair.DefaultSoundCorrespondenceProbability;
 			return (int) (MaxSoundChangeScore * prob);
 		}
 

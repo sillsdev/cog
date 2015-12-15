@@ -14,6 +14,8 @@ namespace SIL.Cog.Application.ViewModels
 
 		private bool _ignoreRegularInsertionDeletion;
 		private bool _regularConsEqual;
+		private bool _automaticRegularCorrespondenceThreshold;
+		private int _defaultRegularCorrepondenceThreshold;
 		private readonly SimilarSegmentMappingsViewModel _similarVowels;
 		private readonly SimilarSegmentMappingsViewModel _similarConsonants;
 		private readonly SegmentMappingsViewModel _ignoredMappings;
@@ -44,6 +46,8 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				Set(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, false);
 				Set(() => RegularConsonantsEqual, ref _regularConsEqual, false);
+				Set(() => AutomaticRegularCorrespondenceThreshold, ref _automaticRegularCorrespondenceThreshold, false);
+				Set(() => DefaultRegularCorrepondenceThreshold, ref _defaultRegularCorrepondenceThreshold, 3);
 				_similarVowels.SegmentMappings = null;
 				_similarConsonants.SegmentMappings = null;
 			}
@@ -51,6 +55,8 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				Set(() => IgnoreRegularInsertionDeletion, ref _ignoreRegularInsertionDeletion, blair.IgnoreRegularInsertionDeletion);
 				Set(() => RegularConsonantsEqual, ref _regularConsEqual, blair.RegularConsonantEqual);
+				Set(() => AutomaticRegularCorrespondenceThreshold, ref _automaticRegularCorrespondenceThreshold, blair.AutomaticRegularCorrespondenceThreshold);
+				Set(() => DefaultRegularCorrepondenceThreshold, ref _defaultRegularCorrepondenceThreshold, blair.DefaultRegularCorrespondenceThreshold);
 				var ignoredMappings = (ListSegmentMappings) blair.IgnoredMappings;
 				foreach (UnorderedTuple<string, string> mapping in ignoredMappings.Mappings)
 					_ignoredMappings.Mappings.Add(_mappingFactory(mapping.Item1, mapping.Item2));
@@ -82,6 +88,18 @@ namespace SIL.Cog.Application.ViewModels
 			set { SetChanged(() => RegularConsonantsEqual, ref _regularConsEqual, value); }
 		}
 
+		public bool AutomaticRegularCorrespondenceThreshold
+		{
+			get { return _automaticRegularCorrespondenceThreshold; }
+			set { SetChanged(() => AutomaticRegularCorrespondenceThreshold, ref _automaticRegularCorrespondenceThreshold, value); }
+		}
+
+		public int DefaultRegularCorrepondenceThreshold
+		{
+			get { return _defaultRegularCorrepondenceThreshold; }
+			set { SetChanged(() => DefaultRegularCorrepondenceThreshold, ref _defaultRegularCorrepondenceThreshold, value); }
+		}
+
 		public SegmentMappingsViewModel IgnoredMappings
 		{
 			get { return _ignoredMappings; }
@@ -102,6 +120,7 @@ namespace SIL.Cog.Application.ViewModels
 			_similarVowels.UpdateComponent();
 			_similarConsonants.UpdateComponent();
 			var cognateIdentifier = new BlairCognateIdentifier(_segmentPool, _ignoreRegularInsertionDeletion, _regularConsEqual,
+				_automaticRegularCorrespondenceThreshold, _defaultRegularCorrepondenceThreshold,
 				new ListSegmentMappings(_projectService.Project.Segmenter, _ignoredMappings.Mappings.Select(m => UnorderedTuple.Create(m.Segment1, m.Segment2)), false),
 				new TypeSegmentMappings(_similarVowels.SegmentMappings, _similarConsonants.SegmentMappings));
 			_projectService.Project.CognateIdentifiers[ComponentIdentifiers.PrimaryCognateIdentifier] = cognateIdentifier;

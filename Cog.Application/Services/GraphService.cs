@@ -206,7 +206,7 @@ namespace SIL.Cog.Application.Services
 
 				foreach (VarietyPair vp in project.VarietyPairs.Where(vp => varietiesSet.Contains(vp.Variety1) && varietiesSet.Contains(vp.Variety2)))
 				{
-					foreach (SoundCorrespondence corr in vp.SoundCorrespondenceCollections[CogFeatureSystem.Nucleus])
+					foreach (SoundCorrespondence corr in vp.CognateSoundCorrespondencesByPosition[CogFeatureSystem.Nucleus])
 					{
 						VowelHeight height1, height2;
 						VowelBackness backness1, backness2;
@@ -259,10 +259,10 @@ namespace SIL.Cog.Application.Services
 					switch (syllablePosition)
 					{
 						case SyllablePosition.Onset:
-							corrs = vp.SoundCorrespondenceCollections[CogFeatureSystem.Onset];
+							corrs = vp.CognateSoundCorrespondencesByPosition[CogFeatureSystem.Onset];
 							break;
 						case SyllablePosition.Coda:
-							corrs = vp.SoundCorrespondenceCollections[CogFeatureSystem.Coda];
+							corrs = vp.CognateSoundCorrespondencesByPosition[CogFeatureSystem.Coda];
 							break;
 					}
 					Debug.Assert(corrs != null);

@@ -69,7 +69,7 @@ namespace SIL.Cog.Domain.Components
 			}
 
 			foreach (KeyValuePair<FeatureSymbol, SoundCorrespondenceCollection> kvp in correspondenceColls)
-				data.SoundCorrespondenceCollections[kvp.Key].ReplaceAll(kvp.Value);
+				data.CognateSoundCorrespondencesByPosition[kvp.Key].ReplaceAll(kvp.Value);
 		}
 	}
 }

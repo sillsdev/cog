@@ -10,8 +10,8 @@ namespace SIL.Cog.TestUtils
 	{
 		public static CogProject GetTestProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
 		{
-			Stream stream = Assembly.GetAssembly(typeof(TestHelpers)).GetManifestResourceStream("SIL.Cog.TestUtils.TestProject.cogx");
-			return ConfigManager.Load(spanFactory, segmentPool, stream);
+			using (Stream stream = Assembly.GetAssembly(typeof(TestHelpers)).GetManifestResourceStream("SIL.Cog.TestUtils.TestProject.cogx"))
+				return ConfigManager.Load(spanFactory, segmentPool, stream);
 		}
 	}
 }

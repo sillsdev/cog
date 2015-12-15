@@ -269,6 +269,8 @@
 				<xs:sequence>
 					<xs:element name="IgnoreRegularInsertionDeletion" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 					<xs:element name="RegularConsonantsAreEqual" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="AutomaticRegularCorrespondenceThreshold" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+					<xs:element name="DefaultRegularCorrespondenceThreshold" minOccurs="0" maxOccurs="1" type="xs:int" />
 					<xs:element name="IgnoredCorrespondences" type="SegmentMappingsBase" />
 					<xs:element name="SimilarSegments" type="SegmentMappingsBase" />
 				</xs:sequence>

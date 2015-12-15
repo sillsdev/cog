@@ -47,53 +47,53 @@ namespace SIL.Cog.Domain.Components
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			var ambiguousMeanings = new List<Tuple<Meaning, IWordAlignerResult, IWordAlignerResult[]>>();
 			varietyPair.WordPairs.Clear();
-			var counts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			var cognateCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			var allCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			foreach (Meaning meaning in varietyPair.Variety1.Words.Meanings)
 			{
 				Word[] words1 = varietyPair.Variety1.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
 				Word[] words2 = varietyPair.Variety2.Words[meaning].Where(w => w.Shape.Count > 0).ToArray();
 
-				WordPair wp = null;
 				if (words1.Length == 1 && words2.Length == 1)
 				{
 					Word word1 = words1.Single();
 					Word word2 = words2.Single();
-					wp = varietyPair.WordPairs.Add(word1, word2);
-
+					WordPair wp = varietyPair.WordPairs.Add(word1, word2);
+					_project.CognacyDecisions.UpdateActualCognacy(wp);
 					IWordAlignerResult alignerResult = aligner.Compute(wp);
 					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 					wp.PhoneticSimilarityScore = alignment.NormalizedScore;
-					UpdateCounts(aligner, counts, alignment);
+					UpdateCounts(aligner, cognateCorrCounts, allCorrCounts, wp, alignment);
 				}
 				else if (words1.Length > 0 && words2.Length > 0)
 				{
 					IWordAlignerResult[] alignerResults = words1.SelectMany(w1 => words2.Select(w2 => aligner.Compute(w1, w2))).ToArray();
 					IWordAlignerResult maxAlignerResult = alignerResults.MaxBy(a => a.BestRawScore);
 					ambiguousMeanings.Add(Tuple.Create(meaning, maxAlignerResult, alignerResults));
-					wp = varietyPair.WordPairs.Add(maxAlignerResult.Words[0], maxAlignerResult.Words[1]);
+					varietyPair.WordPairs.Add(maxAlignerResult.Words[0], maxAlignerResult.Words[1]);
 				}
-
-				if (wp != null)
-					_project.CognacyDecisions.UpdateActualCognacy(wp);
 			}
 
 			ICognateIdentifier cognateIdentifier = _project.CognateIdentifiers[_cognateIdentifierID];
 			for (int i = 0; i < ambiguousMeanings.Count; i++)
 			{
-				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> newCounts = counts.DeepClone();
+				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> newCognateCorrCounts = cognateCorrCounts.DeepClone();
+				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> newAllCorrCounts = allCorrCounts.DeepClone();
 				for (int j = i + 1; j < ambiguousMeanings.Count; j++)
-					UpdateCounts(aligner, newCounts, ambiguousMeanings[j].Item2.GetAlignments().First());
+					UpdateCounts(aligner, newCognateCorrCounts, newAllCorrCounts, varietyPair.WordPairs[ambiguousMeanings[j].Item1], ambiguousMeanings[j].Item2.GetAlignments().First());
 
 				IWordAlignerResult bestAlignerResult = null;
 				WordPair bestWordPair = null;
 				foreach (IWordAlignerResult alignerResult in ambiguousMeanings[i].Item3)
 				{
-					ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> alignmentCounts = counts.DeepClone();
+					ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> alignmentCognateCorrCounts = newCognateCorrCounts.DeepClone();
+					ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> alignmentAllCorrCounts = newAllCorrCounts.DeepClone();
 					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
-					UpdateCounts(aligner, alignmentCounts, alignment);
-					varietyPair.SoundChangeFrequencyDistribution = alignmentCounts;
 					varietyPair.WordPairs.Remove(ambiguousMeanings[i].Item1);
 					WordPair wordPair = varietyPair.WordPairs.Add(alignerResult.Words[0], alignerResult.Words[1]);
+					UpdateCounts(aligner, alignmentCognateCorrCounts, alignmentAllCorrCounts, wordPair, alignment);
+					varietyPair.CognateSoundCorrespondenceFrequencyDistribution = alignmentCognateCorrCounts;
+					varietyPair.AllSoundCorrespondenceFrequencyDistribution = alignmentAllCorrCounts;
 					cognateIdentifier.UpdateCognacy(wordPair, alignerResult);
 					wordPair.PhoneticSimilarityScore = alignment.NormalizedScore;
 					if (bestWordPair == null || Compare(wordPair, bestWordPair) > 0)
@@ -106,10 +106,12 @@ namespace SIL.Cog.Domain.Components
 				Debug.Assert(bestWordPair != null);
 				varietyPair.WordPairs.Remove(ambiguousMeanings[i].Item1);
 				varietyPair.WordPairs.Add(bestWordPair);
-				UpdateCounts(aligner, counts, bestAlignerResult.GetAlignments().First());
+				_project.CognacyDecisions.UpdateActualCognacy(bestWordPair);
+				UpdateCounts(aligner, cognateCorrCounts, allCorrCounts, bestWordPair, bestAlignerResult.GetAlignments().First());
 			}
 
-			varietyPair.SoundChangeFrequencyDistribution = counts;
+			varietyPair.CognateSoundCorrespondenceFrequencyDistribution = cognateCorrCounts;
+			varietyPair.AllSoundCorrespondenceFrequencyDistribution = allCorrCounts;
 		}
 
 		private static int Compare(WordPair x, WordPair y)
@@ -124,16 +126,16 @@ namespace SIL.Cog.Domain.Components
 			return x.PhoneticSimilarityScore.CompareTo(y.PhoneticSimilarityScore);
 		}
 
-		private void UpdateCounts(IWordAligner aligner, ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> counts, Alignment<Word, ShapeNode> alignment)
+		private void UpdateCounts(IWordAligner aligner, ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> cognateCorrCounts,
+			ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> allCorrCounts, WordPair wp, Alignment<Word, ShapeNode> alignment)
 		{
-			if (alignment.NormalizedScore < _initialAlignmentThreshold)
-				return;
-
 			for (int column = 0; column < alignment.ColumnCount; column++)
 			{
 				SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
 				Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
-				counts[lhs].Increment(corr);
+				if (wp.ActualCognacy == true || alignment.NormalizedScore >= _initialAlignmentThreshold)
+					cognateCorrCounts[lhs].Increment(corr);
+				allCorrCounts[lhs].Increment(corr);
 			}
 		}
 	}

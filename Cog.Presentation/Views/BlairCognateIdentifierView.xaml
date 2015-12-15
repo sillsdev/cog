@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:SIL.Cog.Application.ViewModels;assembly=SIL.Cog.Application"
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="370" d:DataContext="{d:DesignInstance vm:BlairCognateIdentifierViewModel}">
     <Grid>
@@ -14,6 +15,9 @@
                 <Setter Property="Padding" Value="0,0,0,5" />
             </Style>
             <Style TargetType="CheckBox">
+                <Setter Property="Margin" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="xctk:IntegerUpDown">
                 <Setter Property="Margin" Value="0,0,0,5" />
             </Style>
         </Grid.Resources>
@@ -28,15 +32,20 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.ColumnSpan="2" Grid.Row="0" IsChecked="{Binding IgnoreRegularInsertionDeletion}">Ignore regular insertions/deletions</CheckBox>
-        <CheckBox Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="1" IsChecked="{Binding RegularConsonantsEqual}">Regular consonants are category 1</CheckBox>
-        <Label Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="2" Margin="0,0,5,0" Padding="0">Ignored correspondences</Label>
-        <v:SegmentMappingsView HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="3" Margin="0,0,5,5" DataContext="{Binding IgnoredMappings}" />
-        <GroupBox Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" Margin="0" DataContext="{Binding SimilarVowels}" Header="Similar vowels">
+        <CheckBox Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutomaticRegularCorrespondenceThreshold}">Automatically determine regular correspondence threshold if possible</CheckBox>
+        <Label Grid.Column="0" Grid.Row="1" Target="{Binding ElementName=CorrespondenceThreshold}">Default regular correspondence threshold:</Label>
+        <xctk:IntegerUpDown HorizontalAlignment="Left" x:Name="CorrespondenceThreshold" Grid.Column="1" Grid.Row="1" Minimum="2" Value="{Binding DefaultRegularCorrepondenceThreshold}" />
+        <CheckBox Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="2" IsChecked="{Binding IgnoreRegularInsertionDeletion}">Ignore regular insertions/deletions</CheckBox>
+        <CheckBox Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="3" IsChecked="{Binding RegularConsonantsEqual}">Regular consonant correspondences are treated as category 1</CheckBox>
+        <Label Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="4" Margin="0,0,5,0" Padding="0">Ignored correspondences</Label>
+        <v:SegmentMappingsView HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="5" Margin="0,0,5,5" DataContext="{Binding IgnoredMappings}" />
+        <GroupBox Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="0" Margin="0" DataContext="{Binding SimilarVowels}" Header="Similar vowels">
             <v:SimilarSegmentMappingsView />
         </GroupBox>
-        <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="0" DataContext="{Binding SimilarConsonants}" Header="Similar consonants">
+        <GroupBox Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="0" Margin="0" DataContext="{Binding SimilarConsonants}" Header="Similar consonants">
             <v:SimilarSegmentMappingsView />
         </GroupBox>
     </Grid>

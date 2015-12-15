@@ -10,16 +10,17 @@ namespace SIL.Cog.Domain
 	{
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
-		private readonly WordPairCollection _wordPairs; 
-		private IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> _soundChangeProbabilityDistribution;
-		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _soundFreqDist;
-		private double _defaultCorrProb;
+		private readonly WordPairCollection _wordPairs;
+		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _allSoundCorrespondenceFrequencyDistribution;  
+		private IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> _cognateSoundCorrespondenceProbabilityDistribution;
+		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _cognateSoundCorrespondenceFrequencyDistribution;
+		private double _defaultSoundCorrespondenceProb;
 		private double _phoneticSimilarityScore;
 		private double _lexicalSimilarityScore;
 		private double _significance;
 		private double _precision;
 		private double _recall;
-		private readonly ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> _soundCorrespondenceCollections;
+		private readonly ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> _cognateSoundCorrespondencesByPosition;
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
@@ -27,7 +28,7 @@ namespace SIL.Cog.Domain
 			_variety2 = variety2;
 			_wordPairs = new WordPairCollection(this);
 
-			_soundCorrespondenceCollections = new ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection>(new Dictionary<FeatureSymbol, SoundCorrespondenceCollection>
+			_cognateSoundCorrespondencesByPosition = new ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection>(new Dictionary<FeatureSymbol, SoundCorrespondenceCollection>
 				{
 					{CogFeatureSystem.Onset, new SoundCorrespondenceCollection()},
 					{CogFeatureSystem.Nucleus, new SoundCorrespondenceCollection()},
@@ -90,27 +91,33 @@ namespace SIL.Cog.Domain
 			set { Set(() => Recall, ref _recall, value); }
 		}
 
-		public ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> SoundCorrespondenceCollections
+		public ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> CognateSoundCorrespondencesByPosition
 		{
-			get { return _soundCorrespondenceCollections; }
+			get { return _cognateSoundCorrespondencesByPosition; }
 		}
 
-		public IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> SoundChangeProbabilityDistribution
+		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> AllSoundCorrespondenceFrequencyDistribution
 		{
-			get { return _soundChangeProbabilityDistribution; }
-			set { Set(() => SoundChangeProbabilityDistribution, ref _soundChangeProbabilityDistribution, value); }
+			get { return _allSoundCorrespondenceFrequencyDistribution; }
+			set { Set(() => AllSoundCorrespondenceFrequencyDistribution, ref _allSoundCorrespondenceFrequencyDistribution, value); }
 		}
 
-		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> SoundChangeFrequencyDistribution
+		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> CognateSoundCorrespondenceFrequencyDistribution
 		{
-			get { return _soundFreqDist; }
-			set { Set(() => SoundChangeFrequencyDistribution, ref _soundFreqDist, value); }
+			get { return _cognateSoundCorrespondenceFrequencyDistribution; }
+			set { Set(() => CognateSoundCorrespondenceFrequencyDistribution, ref _cognateSoundCorrespondenceFrequencyDistribution, value); }
 		}
 
-		public double DefaultCorrespondenceProbability
+		public IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> CognateSoundCorrespondenceProbabilityDistribution
 		{
-			get { return _defaultCorrProb; }
-			set { Set(() => DefaultCorrespondenceProbability, ref _defaultCorrProb, value); }
+			get { return _cognateSoundCorrespondenceProbabilityDistribution; }
+			set { Set(() => CognateSoundCorrespondenceProbabilityDistribution, ref _cognateSoundCorrespondenceProbabilityDistribution, value); }
+		}
+
+		public double DefaultSoundCorrespondenceProbability
+		{
+			get { return _defaultSoundCorrespondenceProb; }
+			set { Set(() => DefaultSoundCorrespondenceProbability, ref _defaultSoundCorrespondenceProb, value); }
 		}
 	}
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.SequenceAlignment;
+using SIL.Machine.Statistics;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -13,15 +14,22 @@ namespace SIL.Cog.Domain.Components
 		private readonly bool _regularConsEqual;
 		private readonly ISegmentMappings _ignoredMappings;
 		private readonly ISegmentMappings _similarSegments;
+		private readonly bool _automaticRegularCorrespondenceThreshold;
+		private readonly int _defaultRegularCorrepondenceThreshold;
+		private readonly RegularSoundCorrespondenceThresholdTable _regularCorrespondenceThresholdTable;
 
 		public BlairCognateIdentifier(SegmentPool segmentPool, bool ignoreRegularInsertionDeletion, bool regularConsEqual,
-			ISegmentMappings ignoredMappings, ISegmentMappings similarSegments)
+			bool automaticRegularCorrespondenceThreshold, int defaultRegularCorrepondenceThreshold, ISegmentMappings ignoredMappings, ISegmentMappings similarSegments)
 		{
 			_segmentPool = segmentPool;
 			_ignoreRegularInsertionDeletion = ignoreRegularInsertionDeletion;
 			_regularConsEqual = regularConsEqual;
 			_ignoredMappings = ignoredMappings;
 			_similarSegments = similarSegments;
+			_automaticRegularCorrespondenceThreshold = automaticRegularCorrespondenceThreshold;
+			_defaultRegularCorrepondenceThreshold = defaultRegularCorrepondenceThreshold;
+			if (_automaticRegularCorrespondenceThreshold)
+				_regularCorrespondenceThresholdTable = new RegularSoundCorrespondenceThresholdTable();
 		}
 
 		public bool IgnoreRegularInsertionDeletion
@@ -32,6 +40,16 @@ namespace SIL.Cog.Domain.Components
 		public bool RegularConsonantEqual
 		{
 			get { return _regularConsEqual; }
+		}
+
+		public bool AutomaticRegularCorrespondenceThreshold
+		{
+			get { return _automaticRegularCorrespondenceThreshold; }
+		}
+
+		public int DefaultRegularCorrespondenceThreshold
+		{
+			get { return _defaultRegularCorrepondenceThreshold; }
 		}
 
 		public ISegmentMappings IgnoredMappings
@@ -60,8 +78,6 @@ namespace SIL.Cog.Domain.Components
 				Ngram<Segment> v = alignment[1, column].ToNgram(_segmentPool);
 				ShapeNode vRightNode = alignment.GetRightNode(1, column);
 
-				bool regular = wordPair.VarietyPair.SoundChangeFrequencyDistribution[alignment.ToSoundContext(_segmentPool, 0, column, alignerResult.WordAligner.ContextualSoundClasses)][v] >= 3;
-
 				int cat = 3;
 				if (u.Equals(v))
 				{
@@ -75,7 +91,7 @@ namespace SIL.Cog.Domain.Components
 				{
 					if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
 						cat = 1;
-					else if (_ignoreRegularInsertionDeletion && regular)
+					else if (_ignoreRegularInsertionDeletion && IsRegular(wordPair, alignerResult, alignment, column, v))
 						cat = 0;
 				}
 				else if (u[0].Type == CogFeatureSystem.VowelType && v[0].Type == CogFeatureSystem.VowelType)
@@ -86,7 +102,7 @@ namespace SIL.Cog.Domain.Components
 				{
 					if (_regularConsEqual)
 					{
-						if (regular)
+						if (IsRegular(wordPair, alignerResult, alignment, column, v))
 							cat = 1;
 						else if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
 							cat = 2;
@@ -94,7 +110,7 @@ namespace SIL.Cog.Domain.Components
 					else
 					{
 						if (_similarSegments.IsMapped(uLeftNode, u, uRightNode, vLeftNode, v, vRightNode))
-							cat = regular ? 1 : 2;
+							cat = IsRegular(wordPair, alignerResult, alignment, column, v) ? 1 : 2;
 					}
 				}
 
@@ -113,6 +129,26 @@ namespace SIL.Cog.Domain.Components
 			double type1And2Score = (double) cat1And2Count / totalCount;
 			wordPair.PredictedCognacy = type1Score >= 0.5 && type1And2Score >= 0.75;
 			wordPair.PredictedCognacyScore = (type1Score * 0.75) + (type1And2Score * 0.25);
+		}
+
+		private bool IsRegular(WordPair wordPair, IWordAlignerResult alignerResult, Alignment<Word, ShapeNode> alignment, int column, Ngram<Segment> v)
+		{
+			VarietyPair vp = wordPair.VarietyPair;
+			SoundContext context = alignment.ToSoundContext(_segmentPool, 0, column, alignerResult.WordAligner.ContextualSoundClasses);
+			FrequencyDistribution<Ngram<Segment>> freqDist = vp.AllSoundCorrespondenceFrequencyDistribution[context];
+			int threshold;
+			if (_automaticRegularCorrespondenceThreshold)
+			{
+				int seg2Count = vp.AllSoundCorrespondenceFrequencyDistribution.Conditions.Where(sc => sc.LeftEnvironment == context.LeftEnvironment && sc.RightEnvironment == context.RightEnvironment)
+					.Sum(sc => vp.AllSoundCorrespondenceFrequencyDistribution[sc][v]);
+				if (!_regularCorrespondenceThresholdTable.TryGetThreshold(vp.WordPairs.Count, freqDist.SampleOutcomeCount, seg2Count, out threshold))
+					threshold = _defaultRegularCorrepondenceThreshold;
+			}
+			else
+			{
+				threshold = _defaultRegularCorrepondenceThreshold;
+			}
+			return freqDist[v] >= threshold;
 		}
 	}
 }

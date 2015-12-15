@@ -145,8 +145,9 @@ namespace SIL.Cog.Application.Services
 		{
 			vm.DisplayName = "Opening New Project - Cog";
 			vm.Text = "Loading project file...";
-			Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Application.NewProject.cogx");
-			CogProject project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
+			CogProject project;
+			using (Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Application.NewProject.cogx"))
+				project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
 			SetupProject(vm, null, "New Project", project);
 			_isNew = true;
 		}

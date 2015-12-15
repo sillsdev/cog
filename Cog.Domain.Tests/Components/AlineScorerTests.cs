@@ -104,9 +104,9 @@ namespace SIL.Cog.Domain.Tests.Components
 			syllabifier.Process(v2);
 
 			var vp = new VarietyPair(v1, v2);
-			vp.SoundChangeFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-			vp.SoundChangeFrequencyDistribution[_word1.Shape.First.ToSoundContext(_segmentPool, Enumerable.Empty<SoundClass>())].Increment(_segmentPool.Get(_word2.Shape.First));
-			vp.SoundChangeProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.SoundChangeFrequencyDistribution,
+			vp.CognateSoundCorrespondenceFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			vp.CognateSoundCorrespondenceFrequencyDistribution[_word1.Shape.First.ToSoundContext(_segmentPool, Enumerable.Empty<SoundClass>())].Increment(_segmentPool.Get(_word2.Shape.First));
+			vp.CognateSoundCorrespondenceProbabilityDistribution = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(vp.CognateSoundCorrespondenceFrequencyDistribution,
 				(sc, fd) => new MaxLikelihoodProbabilityDistribution<Ngram<Segment>>(fd));
 			v1.VarietyPairs.VarietyPairAdded(vp);
 			v2.VarietyPairs.VarietyPairAdded(vp);

@@ -73,8 +73,8 @@ namespace SIL.Cog.Application.ViewModels
 				noncognates.WordPairs.Add(_wordPairFactory(wp, _areVarietiesInOrder));
 			Noncognates = noncognates;
 
-			SoundChanges = new ReadOnlyList<SoundChangeViewModel>(_varietyPair.SoundChangeProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.SoundChangeProbabilityDistribution[lhs].Samples,
-				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.SoundChangeProbabilityDistribution[lhs][segment], _varietyPair.SoundChangeFrequencyDistribution[lhs][segment])).ToList());
+			SoundChanges = new ReadOnlyList<SoundChangeViewModel>(_varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions.SelectMany(lhs => _varietyPair.CognateSoundCorrespondenceProbabilityDistribution[lhs].Samples,
+				(lhs, segment) => new SoundChangeViewModel(lhs, segment, _varietyPair.CognateSoundCorrespondenceProbabilityDistribution[lhs][segment], _varietyPair.CognateSoundCorrespondenceFrequencyDistribution[lhs][segment])).ToList());
 		}
 
 		public SoundChangeViewModel SelectedSoundChange

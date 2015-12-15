@@ -34,12 +34,12 @@ namespace SIL.Cog.Application.Export
 				writer.WriteLine("Sound correspondences");
 				writer.WriteLine("---------------------");
 				bool first = true;
-				foreach (SoundContext lhs in varietyPair.SoundChangeProbabilityDistribution.Conditions)
+				foreach (SoundContext lhs in varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions)
 				{
 					if (!first)
 						writer.WriteLine();
-					IProbabilityDistribution<Ngram<Segment>> probDist = varietyPair.SoundChangeProbabilityDistribution[lhs];
-					FrequencyDistribution<Ngram<Segment>> freqDist = varietyPair.SoundChangeFrequencyDistribution[lhs];
+					IProbabilityDistribution<Ngram<Segment>> probDist = varietyPair.CognateSoundCorrespondenceProbabilityDistribution[lhs];
+					FrequencyDistribution<Ngram<Segment>> freqDist = varietyPair.CognateSoundCorrespondenceFrequencyDistribution[lhs];
 					writer.WriteLine(lhs.ToString());
 					foreach (var correspondence in freqDist.ObservedSamples.Select(corr => new {Segment = corr, Probability = probDist[corr], Frequency = freqDist[corr]}).OrderByDescending(corr => corr.Probability))
 						writer.WriteLine("{0}: {1:p}, {2}", correspondence.Segment, correspondence.Probability, correspondence.Frequency);

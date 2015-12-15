@@ -46,7 +46,8 @@ namespace SIL.Cog.Domain.Components
 		private void E(VarietyPair pair)
 		{
 			ICognateIdentifier cognateIdentifier = _project.CognateIdentifiers[_cognateIdentifierID];
-			var expectedCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			var cognateCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+			var allCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			int cognateCount = 0;
 			double totalScore = 0;
@@ -54,22 +55,23 @@ namespace SIL.Cog.Domain.Components
 			{
 				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
 				cognateIdentifier.UpdateCognacy(wordPair, alignerResult);
-				if (wordPair.Cognacy)
+				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
+				for (int column = 0; column < alignment.ColumnCount; column++)
 				{
-					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
-					for (int column = 0; column < alignment.ColumnCount; column++)
-					{
-						SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
-						Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
-						expectedCounts[lhs].Increment(corr);
-					}
-					cognateCount++;
+					SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
+					Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
+					if (wordPair.Cognacy)
+						cognateCorrCounts[lhs].Increment(corr);
+					allCorrCounts[lhs].Increment(corr);
 				}
+				if (wordPair.Cognacy)
+					cognateCount++;
 				wordPair.PhoneticSimilarityScore = alignerResult.GetAlignments().First().NormalizedScore;
 				totalScore += wordPair.PhoneticSimilarityScore;
 			}
 
-			pair.SoundChangeFrequencyDistribution = expectedCounts;
+			pair.CognateSoundCorrespondenceFrequencyDistribution = cognateCorrCounts;
+			pair.AllSoundCorrespondenceFrequencyDistribution = allCorrCounts;
 			if (pair.WordPairs.Count == 0)
 			{
 				pair.LexicalSimilarityScore = 0;
@@ -87,10 +89,10 @@ namespace SIL.Cog.Domain.Components
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			int segmentCount = pair.Variety2.SegmentFrequencyDistribution.ObservedSamples.Count;
 			int possCorrCount = aligner.ExpansionCompressionEnabled ? (segmentCount * segmentCount) + segmentCount + 1 : segmentCount + 1;
-			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(pair.SoundChangeFrequencyDistribution, (sc, fd) => new WittenBellProbabilityDistribution<Ngram<Segment>>(fd, possCorrCount));
+			var cpd = new ConditionalProbabilityDistribution<SoundContext, Ngram<Segment>>(pair.CognateSoundCorrespondenceFrequencyDistribution, (sc, fd) => new WittenBellProbabilityDistribution<Ngram<Segment>>(fd, possCorrCount));
 
 			bool converged = true;
-			if (pair.SoundChangeProbabilityDistribution == null || pair.SoundChangeProbabilityDistribution.Conditions.Count != cpd.Conditions.Count)
+			if (pair.CognateSoundCorrespondenceProbabilityDistribution == null || pair.CognateSoundCorrespondenceProbabilityDistribution.Conditions.Count != cpd.Conditions.Count)
 			{
 				converged = false;
 			}
@@ -100,7 +102,7 @@ namespace SIL.Cog.Domain.Components
 				{
 					IProbabilityDistribution<Ngram<Segment>> probDist = cpd[lhs];
 					IProbabilityDistribution<Ngram<Segment>> oldProbDist;
-					if (!pair.SoundChangeProbabilityDistribution.TryGetProbabilityDistribution(lhs, out oldProbDist) || probDist.Samples.Count != oldProbDist.Samples.Count)
+					if (!pair.CognateSoundCorrespondenceProbabilityDistribution.TryGetProbabilityDistribution(lhs, out oldProbDist) || probDist.Samples.Count != oldProbDist.Samples.Count)
 					{
 						converged = false;
 						break;
@@ -122,8 +124,8 @@ namespace SIL.Cog.Domain.Components
 
 			if (!converged)
 			{
-				pair.SoundChangeProbabilityDistribution = cpd;
-				pair.DefaultCorrespondenceProbability = 1.0 / possCorrCount;
+				pair.CognateSoundCorrespondenceProbabilityDistribution = cpd;
+				pair.DefaultSoundCorrespondenceProbability = 1.0 / possCorrCount;
 			}
 
 			return converged;

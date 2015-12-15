@@ -259,27 +259,6 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="SettingsAreaStyle" TargetType="HeaderedContentControl">
-                <Setter Property="HeaderTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <Border BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1" Background="{StaticResource DataGridHeaderBrush}" Padding="10">
-                                <TextBlock Foreground="{StaticResource HeaderTextBrush}" FontWeight="Bold" Text="{TemplateBinding ContentControl.Content}" />
-                            </Border>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="ContentTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <Border BorderBrush="{StaticResource ListBorderBrush}" BorderThickness="1,0,1,1" Background="{StaticResource SettingsAreaBackgroundBrush}" Padding="10">
-                                <ContentPresenter Content="{TemplateBinding Content}" />
-                            </Border>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
             <Style x:Key="BlackHyperlinkStyle" TargetType="Hyperlink" BasedOn="{StaticResource {x:Type Hyperlink}}">
                 <Setter Property="Foreground" Value="Black" />
             </Style>

@@ -7,38 +7,38 @@
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SyllabifierViewModel}">
-	<Grid>
-		<Grid.Resources>
-			<Style TargetType="Label">
-				<Setter Property="Margin" Value="0,3,5,5" />
-				<Setter Property="Padding" Value="0,0,0,5" />
-			</Style>
-			<Style TargetType="CheckBox">
-				<Setter Property="Margin" Value="0,0,0,5" />
-				<Setter Property="VerticalAlignment" Value="Center" />
-			</Style>
-		</Grid.Resources>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<CheckBox Grid.ColumnSpan="2" Grid.Row="0" IsChecked="{Binding CombineVowels}">Combine vowels in the same syllable position</CheckBox>
-		<CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding CombineConsonants}">Combine consonants in the same syllable position</CheckBox>
-		<Separator Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,0,10" Background="#FFD5DFE5" />
-		<CheckBox Grid.ColumnSpan="2" Grid.Row="3" IsChecked="{Binding AutomaticSyllabificationEnabled}">Enable automatic syllabification</CheckBox>
-		<Label Grid.ColumnSpan="2" Grid.Row="4" Padding="0">Sonority scale</Label>
-		<Grid Grid.ColumnSpan="2" Grid.Row="5" Margin="0,0,0,5" IsEnabled="{Binding AutomaticSyllabificationEnabled}">
-			<v:SoundClassesView DataContext="{Binding SonorityClasses}" />
-		</Grid>
-		<CheckBox Grid.ColumnSpan="2" Grid.Row="6" IsEnabled="{Binding AutomaticSyllabificationEnabled}" IsChecked="{Binding VowelsSameSonorityTautosyllabic}">Successive vowels with same sonority are tautosyllabic</CheckBox>
-	</Grid>
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="CheckBox">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="0" IsChecked="{Binding CombineVowels}">Combine vowels in the same syllable position</CheckBox>
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="1" IsChecked="{Binding CombineConsonants}">Combine consonants in the same syllable position</CheckBox>
+        <Separator Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,0,10" Background="#FFD5DFE5" />
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="3" IsChecked="{Binding AutomaticSyllabificationEnabled}">Enable automatic syllabification</CheckBox>
+        <Label Grid.ColumnSpan="2" Grid.Row="4" Padding="0">Sonority scale</Label>
+        <Grid Grid.ColumnSpan="2" Grid.Row="5" Margin="0,0,0,5" IsEnabled="{Binding AutomaticSyllabificationEnabled}">
+            <v:SoundClassesView DataContext="{Binding SonorityClasses}" />
+        </Grid>
+        <CheckBox Grid.ColumnSpan="2" Grid.Row="6" IsEnabled="{Binding AutomaticSyllabificationEnabled}" IsChecked="{Binding VowelsSameSonorityTautosyllabic}">Successive vowels with same sonority are tautosyllabic</CheckBox>
+    </Grid>
 </UserControl>

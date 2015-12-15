@@ -12,7 +12,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public CognateIdentifierOptionsViewModel(SegmentPool segmentPool, IProjectService projectService, BlairCognateIdentifierViewModel blairCognateIdentifier,
 			ThresholdCognateIdentifierViewModel thresholdCognateIdentifier, DolgopolskyCognateIdentifierViewModel dolgopolskyCognateIdentifier)
-			: base("Likely cognate identification", "Method", blairCognateIdentifier, thresholdCognateIdentifier, dolgopolskyCognateIdentifier)
+			: base("Likely cognate identification", "Comparison-Settings#likely-cognate-identification", "Method", blairCognateIdentifier, thresholdCognateIdentifier, dolgopolskyCognateIdentifier)
 		{
 			_segmentPool = segmentPool;
 			_projectService = projectService;

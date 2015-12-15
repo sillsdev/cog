@@ -22,7 +22,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public BlairCognateIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService, SegmentMappingsViewModel ignoredMappings,
 			SimilarSegmentMappingsViewModel.Factory similarSegmentMappingsFactory, SegmentMappingViewModel.Factory mappingFactory)
-			: base("Blair")
+			: base("Blair", "Blair-Method-Settings")
 		{
 			_segmentPool = segmentPool;
 			_projectService = projectService;

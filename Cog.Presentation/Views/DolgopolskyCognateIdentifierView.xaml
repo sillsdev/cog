@@ -8,30 +8,30 @@
              xmlns:v="clr-namespace:SIL.Cog.Presentation.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:DolgopolskyCognateIdentifierViewModel}">
-	<Grid>
-		<Grid.Resources>
-			<Style TargetType="Label">
-				<Setter Property="Margin" Value="0,3,5,5" />
-				<Setter Property="Padding" Value="0,0,0,5" />
-			</Style>
-			<Style TargetType="xctk:IntegerUpDown">
-				<Setter Property="Margin" Value="0,0,0,5" />
-				<Setter Property="HorizontalAlignment" Value="Left" />
-				<Setter Property="Width" Value="60" />
-			</Style>
-		</Grid.Resources>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ThresholdUpDown}">Initial equivalence threshold:</Label>
-		<xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Name="ThresholdUpDown" Minimum="1" Maximum="9" Value="{Binding InitialEquivalenceThreshold, UpdateSourceTrigger=PropertyChanged}" />
-		<Label Grid.ColumnSpan="2" Grid.Row="1" Margin="0,3,0,0" Padding="0">Sound classes</Label>
-		<v:SoundClassesView Grid.ColumnSpan="2" Grid.Row="2" DataContext="{Binding SoundClasses}" />
-	</Grid>
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="xctk:IntegerUpDown">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Width" Value="60" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=ThresholdUpDown}">Initial equivalence threshold:</Label>
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Name="ThresholdUpDown" Minimum="1" Maximum="9" Value="{Binding InitialEquivalenceThreshold, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Grid.ColumnSpan="2" Grid.Row="1" Margin="0,3,0,0" Padding="0">Sound classes</Label>
+        <v:SoundClassesView Grid.ColumnSpan="2" Grid.Row="2" DataContext="{Binding SoundClasses}" />
+    </Grid>
 </UserControl>

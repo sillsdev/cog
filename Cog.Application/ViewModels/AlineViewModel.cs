@@ -34,7 +34,7 @@ namespace SIL.Cog.Application.ViewModels
 		private bool _syllablePositionCostEnabled;
 
 		public AlineViewModel(SegmentPool segmentPool, IProjectService projectService, SoundClassesViewModel soundClasses)
-			: base("Alignment")
+			: base("Alignment", "Comparison-Settings#alignment")
 		{
 			_segmentPool = segmentPool;
 			_projectService = projectService;

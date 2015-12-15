@@ -15,10 +15,10 @@
             </Style>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="labels" Width="Auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Label Grid.Column="0" Target="{Binding ElementName=ThresholdSlider}">Threshold:</Label>
-		<c:PercentageSlider HorizontalAlignment="Left" x:Name="ThresholdSlider" Grid.Column="1" Value="{Binding Threshold}" Width="250" />
+        <c:PercentageSlider HorizontalAlignment="Left" x:Name="ThresholdSlider" Grid.Column="1" Value="{Binding Threshold}" Width="250" />
     </Grid>
 </UserControl>

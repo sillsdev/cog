@@ -14,7 +14,7 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly SoundClassesViewModel _soundClasses;
 
 		public DolgopolskyCognateIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService, SoundClassesViewModel soundClassesViewModel)
-			: base("Dolgopolsky")
+			: base("Dolgopolsky", "Dolgopolsky-Method-Settings")
 		{
 			_segmentPool = segmentPool;
 			_projectService = projectService;
@@ -56,11 +56,11 @@ namespace SIL.Cog.Application.ViewModels
 						new UnnaturalClass("Ø", new[] {"ʔ", "ħ", "ʕ", "h", "ɦ", "-", "#ŋ"}, true, project.Segmenter),
 						new UnnaturalClass("J", new[] {"j", "ɥ", "ɰ"}, true, project.Segmenter),
 						new UnnaturalClass("M", new[] {"m", "ɱ", "ʍ"}, true, project.Segmenter),
- 						new UnnaturalClass("N", new[] {"n", "ɳ", "ŋ", "ɴ", "ɲ"}, true, project.Segmenter),
- 						new UnnaturalClass("S", new[] {"s", "z", "ʃ", "ʒ", "ʂ", "ʐ", "ç", "ʝ", "ɕ", "ʑ", "ɧ"}, true, project.Segmenter),
+						new UnnaturalClass("N", new[] {"n", "ɳ", "ŋ", "ɴ", "ɲ"}, true, project.Segmenter),
+						new UnnaturalClass("S", new[] {"s", "z", "ʃ", "ʒ", "ʂ", "ʐ", "ç", "ʝ", "ɕ", "ʑ", "ɧ"}, true, project.Segmenter),
 						new UnnaturalClass("R", new[] {"ɹ", "ɻ", "ʀ", "ɾ", "r", "ʁ", "ɽ", "l", "ɭ", "ʎ", "ʟ", "ɬ", "ɮ", "ɫ", "ł"}, true, project.Segmenter),
 						new UnnaturalClass("T", new[] {"t", "d", "ɗ", "ʈ", "ɖ", "θ", "ð"}, true, project.Segmenter),
- 						new UnnaturalClass("W", new[] {"w", "ʋ", "v", "ʙ"}, true, project.Segmenter)
+						new UnnaturalClass("W", new[] {"w", "ʋ", "v", "ʙ"}, true, project.Segmenter)
 					};
 			}
 			else

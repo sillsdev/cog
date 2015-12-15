@@ -10,7 +10,7 @@ namespace SIL.Cog.Application.ViewModels
 		private double _threshold;
 
 		public ThresholdCognateIdentifierViewModel(IProjectService projectService)
-			: base("Phonetic")
+			: base("Phonetic", "Phonetic-Method-Settings")
 		{
 			_projectService = projectService;
 		}

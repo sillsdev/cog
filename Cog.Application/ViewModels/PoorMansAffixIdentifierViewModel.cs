@@ -14,7 +14,7 @@ namespace SIL.Cog.Application.ViewModels
 		private int _maxAffixLength;
 
 		public PoorMansAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService)
-			: base("Automatic stemmer")
+			: base("Automatic stemmer", "Input-Settings#automatic-stemmer")
 		{
 			_spanFactory = spanFactory;
 			_segmentPool = segmentPool;

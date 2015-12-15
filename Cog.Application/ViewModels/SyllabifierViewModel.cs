@@ -19,7 +19,7 @@ namespace SIL.Cog.Application.ViewModels
 		private bool _vowelsSameSonorityTautosyllabic;
 
 		public SyllabifierViewModel(SegmentPool segmentPool, IProjectService projectService, IAnalysisService analysisService, SoundClassesViewModel sonorityClasses)
-			: base("Syllabification")
+			: base("Syllabification", "Input-Settings#syllabification")
 		{
 			_segmentPool = segmentPool;
 			_projectService = projectService;

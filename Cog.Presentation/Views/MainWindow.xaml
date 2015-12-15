@@ -44,7 +44,8 @@
                         <MenuItem Header="Compare all variety pairs" Command="{Binding PerformComparisonCommand}" />
                         <Separator />
                         <MenuItem Header="Cog _Help" Command="Help" />
-                        <MenuItem Header="Getting Started with Cog" Click="QuickReference_Click" />
+                        <MenuItem Header="Getting Started with Cog" Command="{Binding ShowGettingStartedCommand}" />
+                        <MenuItem Header="Cog Tutorial" Command="{Binding ShowTutorialCommand}" />
                         <MenuItem Header="About Cog" Command="{Binding AboutCommand}"/>
                         <Separator />
                         <MenuItem Header="E_xit" Click="Exit_Click" InputGestureText="Alt+F4" />

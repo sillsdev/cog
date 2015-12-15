@@ -8,8 +8,8 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ReadOnlyList<ComponentSettingsViewModelBase> _options;
 		private ComponentSettingsViewModelBase _selectedOption;
 
-		protected ComponentOptionsViewModel(string displayName, string optionDisplayName, params ComponentSettingsViewModelBase[] options)
-			: base(displayName)
+		protected ComponentOptionsViewModel(string displayName, string wikiTopic, string optionDisplayName, params ComponentSettingsViewModelBase[] options)
+			: base(displayName, wikiTopic)
 		{
 			_optionDisplayName = optionDisplayName;
 			_options = new ReadOnlyList<ComponentSettingsViewModelBase>(options);

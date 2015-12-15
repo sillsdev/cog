@@ -1,5 +1,8 @@
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -28,6 +31,8 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly ICommand _runStemmerCommand;
 		private ICommand _findCommand;
 		private readonly ICommand _aboutCommand;
+		private readonly ICommand _showTutorialCommand;
+		private readonly ICommand _showGettingStartedCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
@@ -63,6 +68,8 @@ namespace SIL.Cog.Application.ViewModels
 			_performComparisonCommand = new RelayCommand(PerformComparison, CanPerformComparison);
 			_runStemmerCommand = new RelayCommand(RunStemmer, CanRunStemmer);
 			_aboutCommand = new RelayCommand(ShowAbout);
+			_showTutorialCommand = new RelayCommand(() => Process.Start("https://github.com/sillsdev/cog/wiki/Cog-Tutorial"));
+			_showGettingStartedCommand = new RelayCommand(ShowGettingStarted);
 
 			foreach (ContainerViewModelBase childView in Views.OfType<ContainerViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
@@ -290,6 +297,13 @@ namespace SIL.Cog.Application.ViewModels
 			_dialogService.ShowModalDialog(this, new AboutViewModel());
 		}
 
+		private void ShowGettingStarted()
+		{
+			string exeDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			if (!string.IsNullOrEmpty(exeDir))
+				Process.Start(Path.Combine(exeDir, "Help\\GettingStartedWithCog.pdf"));
+		}
+
 		public ICommand NewCommand
 		{
 			get { return _newCommand; }
@@ -374,6 +388,16 @@ namespace SIL.Cog.Application.ViewModels
 		public ICommand AboutCommand
 		{
 			get { return _aboutCommand; }
+		}
+
+		public ICommand ShowTutorialCommand
+		{
+			get { return _showTutorialCommand; }
+		}
+
+		public ICommand ShowGettingStartedCommand
+		{
+			get { return _showGettingStartedCommand; }
 		}
 	}
 }

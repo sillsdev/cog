@@ -27,8 +27,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var projectService = Substitute.For<IProjectService>();
 			var busyService = Substitute.For<IBusyService>();
 			var exportService = Substitute.For<IExportService>();
+			var analysisService = Substitute.For<IAnalysisService>();
 
-			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService);
+			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService, analysisService);
 
 			var project = new CogProject(_spanFactory)
 				{
@@ -59,7 +60,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var dialogService = Substitute.For<IDialogService>();
 			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
 
-			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService);
+			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService, analysisService);
 
 			var project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});

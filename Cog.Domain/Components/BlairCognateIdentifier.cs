@@ -62,7 +62,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _similarSegments; }
 		}
 
-		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdatePredictedCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
 			wordPair.AlignmentNotes.Clear();
 			int cat1Count = 0;
@@ -135,13 +135,13 @@ namespace SIL.Cog.Domain.Components
 		{
 			VarietyPair vp = wordPair.VarietyPair;
 			SoundContext context = alignment.ToSoundContext(_segmentPool, 0, column, alignerResult.WordAligner.ContextualSoundClasses);
-			FrequencyDistribution<Ngram<Segment>> freqDist = vp.AllSoundCorrespondenceFrequencyDistribution[context];
+			FrequencyDistribution<Ngram<Segment>> freqDist = vp.CognateSoundCorrespondenceFrequencyDistribution[context];
 			int threshold;
 			if (_automaticRegularCorrespondenceThreshold)
 			{
-				int seg2Count = vp.AllSoundCorrespondenceFrequencyDistribution.Conditions.Where(sc => sc.LeftEnvironment == context.LeftEnvironment && sc.RightEnvironment == context.RightEnvironment)
-					.Sum(sc => vp.AllSoundCorrespondenceFrequencyDistribution[sc][v]);
-				if (!_regularCorrespondenceThresholdTable.TryGetThreshold(vp.WordPairs.Count, freqDist.SampleOutcomeCount, seg2Count, out threshold))
+				int seg2Count = vp.CognateSoundCorrespondenceFrequencyDistribution.Conditions.Where(sc => sc.LeftEnvironment == context.LeftEnvironment && sc.RightEnvironment == context.RightEnvironment)
+					.Sum(sc => vp.CognateSoundCorrespondenceFrequencyDistribution[sc][v]);
+				if (!_regularCorrespondenceThresholdTable.TryGetThreshold(vp.CognateCount, freqDist.SampleOutcomeCount, seg2Count, out threshold))
 					threshold = _defaultRegularCorrepondenceThreshold;
 			}
 			else

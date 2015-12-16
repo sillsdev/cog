@@ -65,6 +65,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				globalCorrIdentifier.Process(vp);
 			}
 
+			projectService.AreAllVarietiesCompared.Returns(true);
 			Messenger.Default.Send(new ComparisonPerformedMessage());
 
 			Assert.That(globalCorrespondences.Graph, Is.Not.Null);

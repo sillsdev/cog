@@ -11,7 +11,6 @@ namespace SIL.Cog.Domain
 		private readonly Variety _variety1;
 		private readonly Variety _variety2;
 		private readonly WordPairCollection _wordPairs;
-		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _allSoundCorrespondenceFrequencyDistribution;  
 		private IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> _cognateSoundCorrespondenceProbabilityDistribution;
 		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _cognateSoundCorrespondenceFrequencyDistribution;
 		private double _defaultSoundCorrespondenceProb;
@@ -21,6 +20,7 @@ namespace SIL.Cog.Domain
 		private double _precision;
 		private double _recall;
 		private readonly ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> _cognateSoundCorrespondencesByPosition;
+		private int _cognateCount;
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
@@ -96,12 +96,6 @@ namespace SIL.Cog.Domain
 			get { return _cognateSoundCorrespondencesByPosition; }
 		}
 
-		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> AllSoundCorrespondenceFrequencyDistribution
-		{
-			get { return _allSoundCorrespondenceFrequencyDistribution; }
-			set { Set(() => AllSoundCorrespondenceFrequencyDistribution, ref _allSoundCorrespondenceFrequencyDistribution, value); }
-		}
-
 		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> CognateSoundCorrespondenceFrequencyDistribution
 		{
 			get { return _cognateSoundCorrespondenceFrequencyDistribution; }
@@ -118,6 +112,12 @@ namespace SIL.Cog.Domain
 		{
 			get { return _defaultSoundCorrespondenceProb; }
 			set { Set(() => DefaultSoundCorrespondenceProbability, ref _defaultSoundCorrespondenceProb, value); }
+		}
+
+		public int CognateCount
+		{
+			get { return _cognateCount; }
+			set { Set(() => CognateCount, ref _cognateCount, value); }
 		}
 	}
 }

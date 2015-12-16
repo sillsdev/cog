@@ -28,7 +28,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _initialEquivalenceThreshold; }
 		}
 
-		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdatePredictedCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
 			wordPair.AlignmentNotes.Clear();
 			Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();

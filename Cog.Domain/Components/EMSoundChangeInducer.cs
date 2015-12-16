@@ -47,31 +47,30 @@ namespace SIL.Cog.Domain.Components
 		{
 			ICognateIdentifier cognateIdentifier = _project.CognateIdentifiers[_cognateIdentifierID];
 			var cognateCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
-			var allCorrCounts = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 			IWordAligner aligner = _project.WordAligners[_alignerID];
 			int cognateCount = 0;
 			double totalScore = 0;
 			foreach (WordPair wordPair in pair.WordPairs)
 			{
 				IWordAlignerResult alignerResult = aligner.Compute(wordPair);
-				cognateIdentifier.UpdateCognacy(wordPair, alignerResult);
+				cognateIdentifier.UpdatePredictedCognacy(wordPair, alignerResult);
 				Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
-				for (int column = 0; column < alignment.ColumnCount; column++)
-				{
-					SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
-					Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
-					if (wordPair.Cognacy)
-						cognateCorrCounts[lhs].Increment(corr);
-					allCorrCounts[lhs].Increment(corr);
-				}
 				if (wordPair.Cognacy)
+				{
+					for (int column = 0; column < alignment.ColumnCount; column++)
+					{
+						SoundContext lhs = alignment.ToSoundContext(_segmentPool, 0, column, aligner.ContextualSoundClasses);
+						Ngram<Segment> corr = alignment[1, column].ToNgram(_segmentPool);
+						cognateCorrCounts[lhs].Increment(corr);
+					}
 					cognateCount++;
-				wordPair.PhoneticSimilarityScore = alignerResult.GetAlignments().First().NormalizedScore;
+				}
+				wordPair.PhoneticSimilarityScore = alignment.NormalizedScore;
 				totalScore += wordPair.PhoneticSimilarityScore;
 			}
 
+			pair.CognateCount = cognateCount;
 			pair.CognateSoundCorrespondenceFrequencyDistribution = cognateCorrCounts;
-			pair.AllSoundCorrespondenceFrequencyDistribution = allCorrCounts;
 			if (pair.WordPairs.Count == 0)
 			{
 				pair.LexicalSimilarityScore = 0;

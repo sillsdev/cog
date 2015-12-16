@@ -34,7 +34,7 @@ namespace SIL.Cog.Domain.Tests.Components
 			});
 			project.WordAligners["primary"] = new TestWordAligner(segmentPool);
 			var cognateIdentifier = Substitute.For<ICognateIdentifier>();
-			cognateIdentifier.When(ci => ci.UpdateCognacy(Arg.Any<WordPair>(), Arg.Any<IWordAlignerResult>())).Do(ci =>
+			cognateIdentifier.When(ci => ci.UpdatePredictedCognacy(Arg.Any<WordPair>(), Arg.Any<IWordAlignerResult>())).Do(ci =>
 				{
 					var wordPair = ci.Arg<WordPair>();
 					if ((wordPair.Word1.StrRep == "hɛ.loʊ" && wordPair.Word2.StrRep == "hɛ.ɬa")
@@ -74,12 +74,9 @@ namespace SIL.Cog.Domain.Tests.Components
 			Assert.That(wp.Word1.StrRep, Is.EqualTo("bæ"));
 			Assert.That(wp.Word2.StrRep, Is.EqualTo("pæ"));
 
-			Assert.That(vp.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("d"))][segmentPool.GetExisting("n")], Is.EqualTo(2));
-			Assert.That(vp.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("h"))][segmentPool.GetExisting("h")], Is.EqualTo(1));
-			Assert.That(vp.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("h"))][segmentPool.GetExisting("b")], Is.EqualTo(1));
-
-			Assert.That(vp.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("d"))][segmentPool.GetExisting("n")], Is.EqualTo(1));
-			Assert.That(vp.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("h"))][segmentPool.GetExisting("h")], Is.EqualTo(0));
+			Assert.That(vp.CognateCount, Is.EqualTo(4));
+			Assert.That(vp.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("d"))][segmentPool.GetExisting("n")], Is.EqualTo(2));
+			Assert.That(vp.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("h"))][segmentPool.GetExisting("h")], Is.EqualTo(1));
 			Assert.That(vp.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(segmentPool.GetExisting("h"))][segmentPool.GetExisting("b")], Is.EqualTo(1));
 		}
 	}

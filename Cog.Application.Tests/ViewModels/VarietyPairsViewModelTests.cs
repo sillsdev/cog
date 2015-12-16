@@ -383,6 +383,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			foreach (WordPair wp in env.Project.VarietyPairs[1].WordPairs)
 			{
 				wp.PhoneticSimilarityScore = (1.0 / env.Project.VarietyPairs[1].WordPairs.Count) * (env.Project.VarietyPairs[1].WordPairs.Count - i);
+				wp.PredictedCognacy = false;
 				i++;
 			}
 		}

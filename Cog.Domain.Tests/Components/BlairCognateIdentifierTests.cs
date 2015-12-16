@@ -37,7 +37,7 @@ namespace SIL.Cog.Domain.Tests.Components
 
 				var wordPairGenerator = new SimpleWordPairGenerator(_segmentPool, _project, 0.3, "primary");
 				wordPairGenerator.Process(vp);
-				vp.AllSoundCorrespondenceFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
+				vp.CognateSoundCorrespondenceFrequencyDistribution = new ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>>();
 
 				var ignoredMappings = Substitute.For<ISegmentMappings>();
 				var similarSegmentsMappings = Substitute.For<ISegmentMappings>();
@@ -49,7 +49,7 @@ namespace SIL.Cog.Domain.Tests.Components
 
 			public void UpdateCognacy()
 			{
-				_cognateIdentifier.UpdateCognacy(WordPair, _aligner.Compute(WordPair));
+				_cognateIdentifier.UpdatePredictedCognacy(WordPair, _aligner.Compute(WordPair));
 			}
 
 			public BlairCognateIdentifier CognateIdentifier
@@ -88,7 +88,7 @@ namespace SIL.Cog.Domain.Tests.Components
 			var env = new TestEnvironment("hɛ.lo", "he.ɬa");
 			env.CognateIdentifier.SimilarSegments.IsMapped(Arg.Any<ShapeNode>(), env.SegmentPool.GetExisting("l"), Arg.Any<ShapeNode>(), Arg.Any<ShapeNode>(),
 				env.SegmentPool.GetExisting("ɬ"), Arg.Any<ShapeNode>()).Returns(true);
-			env.VarietyPair.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 2);
+			env.VarietyPair.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 2);
 			env.UpdateCognacy();
 			Assert.That(env.WordPair.PredictedCognacy, Is.False);
 			Assert.That(env.WordPair.AlignmentNotes, Is.EqualTo(new[] {"1", "2", "2", "2"}));
@@ -100,7 +100,7 @@ namespace SIL.Cog.Domain.Tests.Components
 			var env = new TestEnvironment("hɛ.lo", "he.ɬa");
 			env.CognateIdentifier.SimilarSegments.IsMapped(Arg.Any<ShapeNode>(), env.SegmentPool.GetExisting("l"), Arg.Any<ShapeNode>(), Arg.Any<ShapeNode>(),
 				env.SegmentPool.GetExisting("ɬ"), Arg.Any<ShapeNode>()).Returns(true);
-			env.VarietyPair.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 3);
+			env.VarietyPair.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 3);
 			env.UpdateCognacy();
 			Assert.That(env.WordPair.PredictedCognacy, Is.True);
 			Assert.That(env.WordPair.AlignmentNotes, Is.EqualTo(new[] {"1", "2", "1", "2"}));
@@ -121,7 +121,7 @@ namespace SIL.Cog.Domain.Tests.Components
 		public void UpdateCognacy_IgnoreRegularInsertionDeletion()
 		{
 			var env = new TestEnvironment("hɛ.lo", "he.l", true);
-			env.VarietyPair.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("o"))].Increment(new Ngram<Segment>(), 3);
+			env.VarietyPair.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("o"))].Increment(new Ngram<Segment>(), 3);
 			env.UpdateCognacy();
 			Assert.That(env.WordPair.PredictedCognacy, Is.True);
 			Assert.That(env.WordPair.AlignmentNotes, Is.EqualTo(new[] {"1", "2", "1", "-"}));
@@ -131,7 +131,7 @@ namespace SIL.Cog.Domain.Tests.Components
 		public void UpdateCognacy_RegularConsonantEqual()
 		{
 			var env = new TestEnvironment("hɛ.lo", "he.ɬa", regularConsEqual: true);
-			env.VarietyPair.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 3);
+			env.VarietyPair.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 3);
 			env.UpdateCognacy();
 			Assert.That(env.WordPair.PredictedCognacy, Is.True);
 			Assert.That(env.WordPair.AlignmentNotes, Is.EqualTo(new[] {"1", "2", "1", "2"}));
@@ -143,7 +143,8 @@ namespace SIL.Cog.Domain.Tests.Components
 			var env = new TestEnvironment("hɛ.lo", "he.ɬa", automaticRegularCorrThreshold: true);
 			env.CognateIdentifier.SimilarSegments.IsMapped(Arg.Any<ShapeNode>(), env.SegmentPool.GetExisting("l"), Arg.Any<ShapeNode>(), Arg.Any<ShapeNode>(),
 				env.SegmentPool.GetExisting("ɬ"), Arg.Any<ShapeNode>()).Returns(true);
-			env.VarietyPair.AllSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 3);
+			env.VarietyPair.CognateCount = 10;
+			env.VarietyPair.CognateSoundCorrespondenceFrequencyDistribution[new SoundContext(env.SegmentPool.GetExisting("l"))].Increment(env.SegmentPool.GetExisting("ɬ"), 3);
 			env.UpdateCognacy();
 			Assert.That(env.WordPair.PredictedCognacy, Is.True);
 			Assert.That(env.WordPair.AlignmentNotes, Is.EqualTo(new[] {"1", "2", "1", "2"}));

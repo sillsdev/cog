@@ -11,7 +11,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		private class TestComponentSettingsViewModel : ComponentSettingsViewModelBase
 		{
 			public TestComponentSettingsViewModel()
-				: base("Test Component")
+				: base("Test Component", "test")
 			{
 			}
 

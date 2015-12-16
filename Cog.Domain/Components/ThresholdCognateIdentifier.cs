@@ -16,7 +16,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _threshold; }
 		}
 
-		public void UpdateCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
+		public void UpdatePredictedCognacy(WordPair wordPair, IWordAlignerResult alignerResult)
 		{
 			wordPair.PredictedCognacyScore = alignerResult.GetAlignments().First().NormalizedScore;
 			wordPair.PredictedCognacy = wordPair.PredictedCognacyScore >= _threshold;

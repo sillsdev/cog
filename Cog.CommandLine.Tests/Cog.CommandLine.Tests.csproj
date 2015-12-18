@@ -7,8 +7,8 @@
     <ProjectGuid>{CA020F99-1EDC-4C0C-883C-83BD28509916}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cog.CommandLine.Tests</RootNamespace>
-    <AssemblyName>Cog.CommandLine.Tests</AssemblyName>
+    <RootNamespace>SIL.Cog.CommandLine.Tests</RootNamespace>
+    <AssemblyName>SIL.Cog.CommandLine.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

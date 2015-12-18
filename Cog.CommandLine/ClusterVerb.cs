@@ -163,8 +163,16 @@ namespace SIL.Cog.CommandLine
 			{
 				if (item.DataObjects.Count == 0)
 					continue; // Skip any empty clusters
-				groupnum++;
-				output.WriteLine("{0} {1}", groupnum, String.Join(" ", item.DataObjects));
+				string clusterStr = string.Join(" ", item.DataObjects);
+				if (item.Noise)
+				{
+					output.WriteLine("NOISE {0}", clusterStr);
+				}
+				else
+				{
+					groupnum++;
+					output.WriteLine("{0} {1}", groupnum, clusterStr);
+				}
 			}
 		}
 	}

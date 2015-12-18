@@ -32,8 +32,8 @@ namespace SIL.Cog.CommandLine.Tests
 			[Values(
 				"1 a d b c\n",
 				"1 a d b c\n",
-				"1 a d b\n2 c\n",
-				"1 a d b\n2 c\n"
+				"1 a d b\nNOISE c\n",
+				"1 a d b\nNOISE c\n"
 			)]
 			string expectedOutput)
 		{
@@ -49,11 +49,11 @@ namespace SIL.Cog.CommandLine.Tests
 				)]
 			string input,
 			[Values(
-				"1 a b c d\n"
+				"1 d b a\nNOISE c\n"
 				)]
 			string expectedOutput)
 		{
-			var clusterer = new ClusterVerb() { Method = "dbscan", Epsilon = 0.2, MinWords = 3 };
+			var clusterer = new ClusterVerb { Method = "dbscan", Epsilon = 0.5, MinWords = 2 };
 			CheckVerbOutput(input, expectedOutput, clusterer, false);
 		}
 
@@ -80,37 +80,36 @@ namespace SIL.Cog.CommandLine.Tests
 			[Values(2, 2, 5, 5)]
 			int k,
 			[Values(
-				"1 call kill ball\n2 bother mother brother\n3 bog dog bat cat\n4 bird word\n",
-				"1 call kill ball\n2 bother mother brother\n3 bog dog bat cat\n4 bird word\n",
-				"1 bird ball word kill bat call dog bog cat\n2 brother bother mother\n",
-				"1 bird ball word kill bat call dog bog cat\n2 brother bother mother\n"
+				"1 call kill ball\n2 bother mother brother\n3 bog dog bat cat\nNOISE bird word\n",
+				"1 call kill ball\n2 bother mother brother\n3 bog dog bat cat\nNOISE bird word\n",
+				"1 bird ball word kill bat call dog bog cat\nNOISE brother bother mother\n",
+				"1 bird ball word kill bat call dog bog cat\nNOISE brother bother mother\n"
 			)]
 			string expectedOutput)
 		{
-			string input = "a b 0.5\na c 0.4\na d 0.999\nb c 0.3\nb d 0.5\nc d 0.4\n";
-			var clusterer = new ClusterVerb() { Method = "lsdbc", Alpha = alpha, K = k };
+			var clusterer = new ClusterVerb { Method = "lsdbc", Alpha = alpha, K = k };
 			CheckVerbOutput(InputWithSimilarityScores, expectedOutput, clusterer, false);
 		}
 
 		[Test, Sequential]
 		public void CheckDbscanClusterer_WithRealInput(
-			[Values(0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2)]
+			[Values(0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.4, 0.4)]
 			double epsilon,
-			[Values(2, 3, 4, 5, 2, 3, 4, 5)]
+			[Values(2, 3, 2, 3, 2, 3, 2, 3)]
 			int minPoints,
 			[Values(
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n",
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n",
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n",
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n",
-				"1 mother brother\n2 kill ball\n3 dog bog bird word cat bat\n",
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n",
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n",
-				"1 brother bother dog bog bird word mother cat call bat ball kill\n"
+				"NOISE brother bother dog bog bird word mother cat call bat ball kill\n",
+				"NOISE brother bother dog bog bird word mother cat call bat ball kill\n",
+				"1 mother brother\n2 kill ball\nNOISE dog bog bird word cat bat\n",
+				"NOISE brother bother dog bog bird word mother cat call bat ball kill\n",
+				"1 bother mother brother\n2 kill ball call bird\nNOISE dog bog bat word cat\n",
+				"1 call kill bird\nNOISE brother bother dog bog word mother cat bat\n",
+				"1 bother mother brother\n2 dog bat cat bog\n3 ball word kill call bird\n",
+				"1 ball word kill call bird\nNOISE brother bother dog bog mother cat bat\n"
 				)]
 			string expectedOutput)
 		{
-			var clusterer = new ClusterVerb() { Method = "dbscan", Epsilon = epsilon, MinWords = minPoints };
+			var clusterer = new ClusterVerb { Method = "dbscan", Epsilon = epsilon, MinWords = minPoints };
 			CheckVerbOutput(InputWithSimilarityScores, expectedOutput, clusterer, false);
 		}
 

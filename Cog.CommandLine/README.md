@@ -45,8 +45,7 @@ And the output should be:
 ### Syllabification
 
 The `syllabify` operation expects its input to contain one word per line, and outputs one word
-per line with syllables marked by periods (`.`) between each syllable. It also tries to identify
-word stems, and marks the stem by using pipe characters (`|`) before and after the stem.
+per line with syllables marked by periods (`.`) between each syllable.
 
 Note that the `syllabify` operation was designed for IPA input. So with our sample input in the Latin alphabet,
 it has gotten the syllabification wrong in some words. To correct that, you can pass in input that has been

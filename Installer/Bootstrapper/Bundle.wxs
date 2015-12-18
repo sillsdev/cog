@@ -11,8 +11,7 @@
 		<Variable Name="DesktopCheckbox" Type="numeric" Value="1" />
 		
 		<Chain>
-			<PackageGroupRef Id="NetFx40ClientWeb"/>
-			<PackageGroupRef Id="KB2468871"/>
+			<PackageGroupRef Id="NetFx452Web"/>
 			<MsiPackage InstallCondition="NOT VersionNT64" SourceFile="$(var.Setup32.TargetPath)" Visible="no">
 				<MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]"/>
 				<MsiProperty Name="PROGRAMMENUSHORTCUT" Value="[ProgramMenuCheckbox]" />
@@ -25,55 +24,4 @@
 			</MsiPackage>
 		</Chain>
 	</Bundle>
-	<Fragment>
-		<util:RegistrySearch
-			Id="NETFRAMEWORK45"
-			Variable="NETFRAMEWORK45"
-			Root="HKLM"
-			Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full"
-			Value="Release"
-			Result="value" />
-		<util:RegistrySearch
-			Id="KB2468871Installed"
-			Variable="KB2468871Installed"
-			Root="HKLM"
-			Key="SOFTWARE\Microsoft\Updates\Microsoft .NET Framework 4 Client Profile\KB2468871"
-			Value="ThisVersionInstalled"
-			Result="value" />
-
-		<PackageGroup Id="KB2468871">
-			<ExePackage InstallCondition="NOT VersionNT64 AND NOT NETFRAMEWORK45" DetectCondition="NOT VersionNT64 AND KB2468871Installed" Name="NDP40-KB2468871-v2-x86.exe"
-						DisplayName="Microsoft .NET Framework 4.0 Update (KB2468871)"
-						Permanent="yes" Vital="yes" Cache="no" Compressed="no" PerMachine="yes"
-						DownloadUrl="http://download.microsoft.com/download/2/B/F/2BF4D7D1-E781-4EE0-9E4F-FDD44A2F8934/NDP40-KB2468871-v2-x86.exe"
-						InstallCommand="/q /norestart /ChainingPackage &quot;[WixBundleName]&quot;"
-						RepairCommand="/q /norestart /repair /ChainingPackage &quot;[WixBundleName]&quot;"
-						UninstallCommand="/uninstall /q /norestart /ChainingPackage &quot;[WixBundleName]&quot;">
-				<RemotePayload
-					CertificatePublicKey="5C499B10F7EF186DC729991A262AB52066423909"
-					CertificateThumbprint="93859EBF98AFDEB488CCFA263899640E81BC49F1"
-					Description="Microsoft .NET Framework 4.0 Setup"
-					Hash="8CB1F5EB7EDA5329E69629DFF3FD3757BF980717"
-					ProductName="Microsoft .NET Framework 4.0"
-					Size="19556328"
-					Version="10.0.30319.233" />
-			</ExePackage>
-			<ExePackage InstallCondition="VersionNT64 AND NOT NETFRAMEWORK45" DetectCondition="VersionNT64 AND KB2468871Installed" Name="NDP40-KB2468871-v2-x64.exe"
-						DisplayName="Microsoft .NET Framework 4.0 Update (KB2468871)"
-						Permanent="yes" Vital="yes" Cache="no" Compressed="no" PerMachine="yes"
-						DownloadUrl="http://download.microsoft.com/download/2/B/F/2BF4D7D1-E781-4EE0-9E4F-FDD44A2F8934/NDP40-KB2468871-v2-x64.exe"
-						InstallCommand="/q /norestart /ChainingPackage &quot;[WixBundleName]&quot;"
-						RepairCommand="/q /norestart /repair /ChainingPackage &quot;[WixBundleName]&quot;"
-						UninstallCommand="/uninstall /q /norestart /ChainingPackage &quot;[WixBundleName]&quot;">
-				<RemotePayload
-					CertificatePublicKey="5C499B10F7EF186DC729991A262AB52066423909"
-					CertificateThumbprint="93859EBF98AFDEB488CCFA263899640E81BC49F1"
-					Description="Microsoft .NET Framework 4.0 Setup"
-					Hash="51840E466684608D431B728916CB8BC6EFC1A552"
-					ProductName="Microsoft .NET Framework 4.0"
-					Size="28640160"
-					Version="10.0.30319.233" />
-			</ExePackage>
-		</PackageGroup>
-	</Fragment>
 </Wix>

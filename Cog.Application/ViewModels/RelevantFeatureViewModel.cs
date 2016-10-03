@@ -12,7 +12,7 @@ namespace SIL.Cog.Application.ViewModels
 		private int _weight;
 		private readonly ReadOnlyList<RelevantValueViewModel> _values; 
 
-		public RelevantFeatureViewModel(SymbolicFeature feature, int weight, bool vowel, bool consonant, IReadOnlyDictionary<FeatureSymbol, int> valueMetrics)
+		public RelevantFeatureViewModel(SymbolicFeature feature, int weight, bool vowel, bool consonant, ReadOnlyDictionary<FeatureSymbol, int> valueMetrics)
 		{
 			_feature = feature;
 			_weight = weight;

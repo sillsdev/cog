@@ -9,7 +9,7 @@ namespace SIL.Cog.Domain
 	{
 		IWordAligner WordAligner { get; }
 
-		IReadOnlyList<Word> Words { get; }
+		ReadOnlyList<Word> Words { get; }
 
 		IEnumerable<Alignment<Word, ShapeNode>> GetAlignments();
 

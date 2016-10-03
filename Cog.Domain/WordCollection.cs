@@ -47,7 +47,7 @@ namespace SIL.Cog.Domain
 			get { return _words.Keys; }
 		}
 
-		public IReadOnlyCollection<Word> this[Meaning meaning]
+		public ReadOnlyCollection<Word> this[Meaning meaning]
 		{
 			get
 			{

@@ -21,7 +21,7 @@ namespace SIL.Cog.Application.ViewModels
 		public MultipleWordAlignmentWordViewModel(MultipleWordAlignmentViewModel parent, Word word, AlignmentCell<ShapeNode> prefix, IEnumerable<AlignmentCell<ShapeNode>> columns, AlignmentCell<ShapeNode> suffix, int cognateSetIndex)
 		{
 			_word = word;
-			IReadOnlyCollection<Word> words = word.Variety.Words[word.Meaning];
+			ReadOnlyCollection<Word> words = word.Variety.Words[word.Meaning];
 			_variety = new MultipleWordAlignmentVarietyViewModel(word.Variety, words.Count == 1 ? 0 : IndexOf(words, word));
 			_prefix = prefix.StrRep();
 			_columns = new ReadOnlyList<string>(columns.Select(cell => cell.IsNull ? "-" : cell.StrRep()).ToArray());

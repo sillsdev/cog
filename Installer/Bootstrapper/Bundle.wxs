@@ -11,7 +11,7 @@
 		<Variable Name="DesktopCheckbox" Type="numeric" Value="1" />
 		
 		<Chain>
-			<PackageGroupRef Id="NetFx452Web"/>
+			<PackageGroupRef Id="NetFx461Web"/>
 			<MsiPackage InstallCondition="NOT VersionNT64" SourceFile="$(var.Setup32.TargetPath)" Visible="no">
 				<MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]"/>
 				<MsiProperty Name="PROGRAMMENUSHORTCUT" Value="[ProgramMenuCheckbox]" />

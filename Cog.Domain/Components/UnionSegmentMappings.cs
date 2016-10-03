@@ -15,7 +15,7 @@ namespace SIL.Cog.Domain.Components
 			_segmentMappingsComponents = new ReadOnlyList<ISegmentMappings>(segmentMappingsComponents.ToList());
 		}
 
-		public IReadOnlyList<ISegmentMappings> SegmentMappingsComponents
+		public ReadOnlyList<ISegmentMappings> SegmentMappingsComponents
 		{
 			get { return _segmentMappingsComponents; }
 		}

@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>CogSetup</OutputName>
     <OutputType>Bundle</OutputType>
-	<BUILD_NUMBER Condition=" '$(BUILD_NUMBER)' == '' ">DEV_BUILD</BUILD_NUMBER>
+    <BUILD_NUMBER Condition=" '$(BUILD_NUMBER)' == '' ">DEV_BUILD</BUILD_NUMBER>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
   </PropertyGroup>
@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bundle.wxs" />
+    <Compile Include="NetFx461.wxs" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUtilExtension">
@@ -69,15 +70,15 @@
       <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
     </GetAssemblyIdentity>
     <!-- Create the MSBuild property $(VersionNumber) -->
-	<CreateProperty Value="%(AsmInfo.Version)">
-	  <Output TaskParameter="Value" PropertyName="AssemblyVersionNumber" />
-	</CreateProperty>
-	<CreateProperty Value="$(AssemblyVersionNumber.Substring(0, $(AssemblyVersionNumber.LastIndexOf('.'))))">
-	  <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
-	</CreateProperty>
-	<CreateProperty Value="$(ShortVersionNumber).$(BUILD_NUMBER)">
-	  <Output TaskParameter="Value" PropertyName="VersionNumber" />
-	</CreateProperty>
+    <CreateProperty Value="%(AsmInfo.Version)">
+      <Output TaskParameter="Value" PropertyName="AssemblyVersionNumber" />
+    </CreateProperty>
+    <CreateProperty Value="$(AssemblyVersionNumber.Substring(0, $(AssemblyVersionNumber.LastIndexOf('.'))))">
+      <Output TaskParameter="Value" PropertyName="ShortVersionNumber" />
+    </CreateProperty>
+    <CreateProperty Value="$(ShortVersionNumber).$(BUILD_NUMBER)">
+      <Output TaskParameter="Value" PropertyName="VersionNumber" />
+    </CreateProperty>
     <!-- Create the WiX preprocessor variable $(var.VersionNumber) -->
     <CreateProperty Value="$(DefineConstants);VersionNumber=$(ShortVersionNumber)">
       <Output TaskParameter="Value" PropertyName="DefineConstants" />

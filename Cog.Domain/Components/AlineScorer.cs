@@ -20,10 +20,10 @@ namespace SIL.Cog.Domain.Components
 		private const int SyllablePositionCost = 500;
 
 		private readonly SegmentPool _segmentPool;
-		private readonly IReadOnlySet<SymbolicFeature> _relevantConsFeatures;
-		private readonly IReadOnlySet<SymbolicFeature> _relevantVowelFeatures; 
-		private readonly IReadOnlyDictionary<SymbolicFeature, int> _featureWeights;
-		private readonly IReadOnlyDictionary<FeatureSymbol, int> _valueMetrics;
+		private readonly ReadOnlySet<SymbolicFeature> _relevantConsFeatures;
+		private readonly ReadOnlySet<SymbolicFeature> _relevantVowelFeatures; 
+		private readonly ReadOnlyDictionary<SymbolicFeature, int> _featureWeights;
+		private readonly ReadOnlyDictionary<FeatureSymbol, int> _valueMetrics;
 		private readonly SoundClass[] _contextualSoundClasses;
 		private readonly bool _soundChangeScoringEnabled;
 		private readonly bool _syllablePositionCostEnabled;
@@ -42,22 +42,22 @@ namespace SIL.Cog.Domain.Components
 			_syllablePositionCostEnabled = syllablePositionCostEnabled;
 		}
 
-		public IReadOnlySet<SymbolicFeature> RelevantVowelFeatures
+		public ReadOnlySet<SymbolicFeature> RelevantVowelFeatures
 		{
 			get { return _relevantVowelFeatures; }
 		}
 
-		public IReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
+		public ReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
 		{
 			get { return _relevantConsFeatures; }
 		} 
 
-		public IReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
+		public ReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
 		{
 			get { return _featureWeights; }
 		}
 
-		public IReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
+		public ReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
 		{
 			get { return _valueMetrics; }
 		}

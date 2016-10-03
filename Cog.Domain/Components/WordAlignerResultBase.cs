@@ -37,7 +37,7 @@ namespace SIL.Cog.Domain.Components
 			get { return _wordAligner; }
 		}
 
-		public abstract IReadOnlyList<Word> Words { get; }
+		public abstract ReadOnlyList<Word> Words { get; }
 
 		public abstract IEnumerable<Alignment<Word, ShapeNode>> GetAlignments();
 		public abstract int BestRawScore { get; }

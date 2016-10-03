@@ -26,22 +26,22 @@ namespace SIL.Cog.Domain.Components
 				settings.ContextualSoundClasses, settings.SoundChangeScoringEnabled, settings.SyllablePositionCostEnabled);
 		}
 
-		public IReadOnlySet<SymbolicFeature> RelevantVowelFeatures
+		public ReadOnlySet<SymbolicFeature> RelevantVowelFeatures
 		{
 			get { return _scorer.RelevantVowelFeatures; }
 		}
 
-		public IReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
+		public ReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
 		{
 			get { return _scorer.RelevantConsonantFeatures; }
 		} 
 
-		public IReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
+		public ReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
 		{
 			get { return _scorer.FeatureWeights; }
 		}
 
-		public IReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
+		public ReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
 		{
 			get { return _scorer.ValueMetrics; }
 		}

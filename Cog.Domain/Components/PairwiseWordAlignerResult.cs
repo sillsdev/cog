@@ -22,7 +22,7 @@ namespace SIL.Cog.Domain.Components
 			_algorithm.Compute();
 		}
 
-		public override IReadOnlyList<Word> Words
+		public override ReadOnlyList<Word> Words
 		{
 			get { return _words; }
 		}

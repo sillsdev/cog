@@ -30,11 +30,7 @@
 		<FileUpdate File="$(RootDir)/GlobalAssemblyInfo.cs" Regex='AssemblyVersion[(]"[^"]+"[)]' ReplacementText='AssemblyVersion("$(ShortVersionNumber)")' />
 	</Target>
 	
-	<Target Name="RestorePackages">
-		<Exec Command="nuget restore $(RootDir)/$(Solution)" />
-	</Target>
-
-	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber;RestorePackages">
+	<Target Name="BuildAll" DependsOnTargets="StampBuildNumber">
 		<MSBuild Projects="@(BuildFiles)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 	

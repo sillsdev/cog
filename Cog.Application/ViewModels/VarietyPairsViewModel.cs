@@ -396,6 +396,7 @@ namespace SIL.Cog.Application.ViewModels
 					{
 						oldCurVarietyPair.Cognates.SelectedWordPairs.CollectionChanged -= SelectedWordPairsChanged;
 						oldCurVarietyPair.Noncognates.SelectedWordPairs.CollectionChanged -= SelectedWordPairsChanged;
+						oldCurVarietyPair.UnregisterMessages();
 					}
 
 					if (_selectedVarietyPair != null)

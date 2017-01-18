@@ -153,5 +153,10 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			get { return _varietyPair; }
 		}
+
+		internal void UnregisterMessages()
+		{
+			Messenger.Default.Unregister(this);
+		}
 	}
 }

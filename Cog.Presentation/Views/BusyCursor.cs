@@ -32,7 +32,7 @@ namespace SIL.Cog.Presentation.Views
 			if (DispatcherHelper.UIDispatcher.CheckAccess())
 				StartBusy();
 			else
-				DispatcherHelper.UIDispatcher.Invoke(new Action(StartBusy));
+				DispatcherHelper.UIDispatcher.Invoke(StartBusy);
 			return new BusyCursorDisposable();
 		}
 
@@ -56,7 +56,7 @@ namespace SIL.Cog.Presentation.Views
 				if (DispatcherHelper.UIDispatcher.CheckAccess())
 					EndBusy();
 				else
-					DispatcherHelper.UIDispatcher.Invoke(new Action(EndBusy));
+					DispatcherHelper.UIDispatcher.Invoke(EndBusy);
 			}
 		}
 	}

@@ -27,7 +27,10 @@
                         <MenuItem Header="Save Project _As..." Command="{Binding SaveAsCommand}" />
                         <Separator />
                         <MenuItem Header="_Import">
-                            <MenuItem Header="Word Lists..." Command="{Binding ImportWordListsCommand}" />
+                            <MenuItem Header="Word Lists">
+                                <MenuItem Header="File..." Command="{Binding ImportWordListsFromFileCommand}" />
+                                <MenuItem Header="Clipboard..." Command="{Binding ImportWordListsFromClipboardCommand}" />
+                            </MenuItem>
                             <MenuItem Header="Regions..." Command="{Binding ImportGeographicRegionsCommand}" />
                         </MenuItem>
                         <MenuItem Header="_Export">

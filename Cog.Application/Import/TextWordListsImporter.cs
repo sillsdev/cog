@@ -73,7 +73,7 @@ namespace SIL.Cog.Application.Import
 				}
 
 				if (meanings.ContainsKey(gloss))
-					throw new ImportException(string.Format("The gloss, \"{0}\", is not unique. Line: 1", gloss));
+					throw new ImportException($"The gloss, \"{gloss}\", is not unique. Line: 1");
 				string category = null;
 				if (categoriesIncluded && categories != null)
 					category = categories[i].Trim();
@@ -87,13 +87,13 @@ namespace SIL.Cog.Application.Import
 			while (reader.ReadRow(out varietyRow))
 			{
 				if (varietyRow.Count != glosses.Count)
-					throw new ImportException(string.Format("Incorrect number of words specified for a variety. Line: {0}", line));
+					throw new ImportException($"Incorrect number of words specified for a variety. Line: {line}");
 				string name = varietyRow[0].Trim();
 				Variety variety = null;
 				if (!string.IsNullOrEmpty(name))
 				{
 					if (varieties.ContainsKey(name))
-						throw new ImportException(string.Format("The variety name, \"{0}\", is not unique. Line: {1}", name, line));
+						throw new ImportException($"The variety name, \"{name}\", is not unique. Line: {line}");
 					variety = new Variety(name);
 					varieties[name] = variety;
 				}
@@ -103,7 +103,7 @@ namespace SIL.Cog.Application.Import
 					if (!string.IsNullOrEmpty(wordStr))
 					{
 						if (variety == null)
-							throw new ImportException(string.Format("A blank variety name is not allowed. Line: {0}", line));
+							throw new ImportException($"A blank variety name is not allowed. Line: {line}");
 						if (blankColumns.Contains(j))
 							throw new ImportException("A blank gloss is not allowed. Line: 1");
 						foreach (string w in wordStr.Split(',', '/'))
@@ -144,7 +144,7 @@ namespace SIL.Cog.Application.Import
 				}
 
 				if (varieties.ContainsKey(name))
-					throw new ImportException(string.Format("The variety name, \"{0}\", is not unique. Line: 1", name));
+					throw new ImportException($"The variety name, \"{name}\", is not unique. Line: 1");
 				varieties[name] = new Variety(name);
 			}
 
@@ -154,19 +154,19 @@ namespace SIL.Cog.Application.Import
 			while (reader.ReadRow(out glossRow))
 			{
 				if (glossRow.Count != varietyNames.Count)
-					throw new ImportException(string.Format("Incorrect number of words specified for a gloss. Line: {0}", line));
+					throw new ImportException($"Incorrect number of words specified for a gloss. Line: {line}");
 				int column = 0;
 				string gloss = glossRow[column++].Trim();
 				Meaning meaning = null;
 				if (!string.IsNullOrEmpty(gloss))
 				{
 					if (meanings.ContainsKey(gloss))
-						throw new ImportException(string.Format("The gloss, \"{0}\", is not unique. Line: {1}", gloss, line));
+						throw new ImportException($"The gloss, \"{gloss}\", is not unique. Line: {line}");
 					string category = null;
 					if (categoriesIncluded)
 					{
 						if (glossRow.Count == 1)
-							throw new ImportException(string.Format("Missing categories column. Line: {0}", line));
+							throw new ImportException($"Missing categories column. Line: {line}");
 						category = glossRow[column++].Trim();
 					}
 					meaning = new Meaning(gloss, string.IsNullOrEmpty(category) ? null : category);
@@ -178,7 +178,7 @@ namespace SIL.Cog.Application.Import
 					if (!string.IsNullOrEmpty(wordStr))
 					{
 						if (meaning == null)
-							throw new ImportException(string.Format("A blank gloss is not allowed. Line: {0}", line));
+							throw new ImportException($"A blank gloss is not allowed. Line: {line}");
 						if (blankColumns.Contains(j))
 							throw new ImportException("A blank variety name is not allowed. Line: 1");
 						foreach (string w in wordStr.Split(',', '/'))

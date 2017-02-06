@@ -39,9 +39,6 @@ namespace SIL.Cog.Application.Services
 		private readonly ISettingsService _settingsService;
 		private readonly Lazy<IAnalysisService> _analysisService;
 
-		private CogProject _project;
-		private string _projectName;
-		private bool _isChanged;
 		private bool _isNew;
 		private FileStream _projectFileStream;
 
@@ -61,14 +58,14 @@ namespace SIL.Cog.Application.Services
 
 		private void HandleDomainModelChanged(DomainModelChangedMessage msg)
 		{
-			_isChanged = true;
+			IsChanged = true;
 			if (msg.AffectsComparison)
-				_project.VarietyPairs.Clear();
+				Project.VarietyPairs.Clear();
 		}
 
 		private void HandleComparisonPerformed(ComparisonPerformedMessage msg)
 		{
-			if (_projectFileStream != null && !_isChanged)
+			if (_projectFileStream != null && !IsChanged)
 				SaveComparisonCache();
 		}
 
@@ -113,7 +110,7 @@ namespace SIL.Cog.Application.Services
 
 		public bool New(object ownerViewModel)
 		{
-			if (_isNew && !_isChanged)
+			if (_isNew && !IsChanged)
 			{
 				var progressVM = new ProgressViewModel(NewProject, true, false);
 				_dialogService.ShowModalDialog(ownerViewModel, progressVM);
@@ -128,7 +125,7 @@ namespace SIL.Cog.Application.Services
 		{
 			_busyService.ShowBusyIndicator(() =>
 				{
-					Process process = Process.Start(Assembly.GetEntryAssembly().Location, string.Format("\"{0}\"", projectPath));
+					Process process = Process.Start(Assembly.GetEntryAssembly().Location, $"\"{projectPath}\"");
 					Debug.Assert(process != null);
 					var stopwatch = new Stopwatch();
 					stopwatch.Start();
@@ -154,7 +151,7 @@ namespace SIL.Cog.Application.Services
 
 		public bool Open(object ownerViewModel)
 		{
-			if (_isNew && !_isChanged)
+			if (_isNew && !IsChanged)
 			{
 				FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, CogProjectFileType);
 				if (result.IsValid && result.FileName != _settingsService.LastProject)
@@ -204,15 +201,15 @@ namespace SIL.Cog.Application.Services
 				_projectFileStream.Close();
 				_projectFileStream = null;
 			}
-			_project = null;
-			_projectName = null;
-			_isChanged = false;
+			Project = null;
+			ProjectName = null;
+			IsChanged = false;
 		}
 
 		private bool OpenProject(ProgressViewModel vm, string path, out string errorMsg)
 		{
 			string projectName = Path.GetFileNameWithoutExtension(path);
-			vm.DisplayName = string.Format("Opening {0} - Cog", projectName);
+			vm.DisplayName = $"Opening {projectName} - Cog";
 			vm.Text = "Loading project file...";
 			errorMsg = null;
 			FileStream fileStream = null;
@@ -221,7 +218,7 @@ namespace SIL.Cog.Application.Services
 			{
 				fileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 				if (ConfigManager.Load(_spanFactory, _segmentPool, fileStream, out project))
-					_isChanged = true;
+					IsChanged = true;
 			}
 			catch (ConfigException)
 			{
@@ -229,7 +226,7 @@ namespace SIL.Cog.Application.Services
 			}
 			catch (IOException ioe)
 			{
-				errorMsg = string.Format("Error opening project file:\n{0}", ioe.Message);
+				errorMsg = $"Error opening project file:\n{ioe.Message}";
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -237,8 +234,7 @@ namespace SIL.Cog.Application.Services
 			}
 			if (errorMsg != null)
 			{
-				if (fileStream != null)
-					fileStream.Close();
+				fileStream?.Close();
 				return false;
 			}
 			Debug.Assert(project != null);
@@ -293,22 +289,21 @@ namespace SIL.Cog.Application.Services
 
 		private void SaveAsProject(string path)
 		{
-			if (_projectFileStream != null)
-				_projectFileStream.Close();
+			_projectFileStream?.Close();
 			_projectFileStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 			SaveProject();
 			_settingsService.LastProject = path;
-			_projectName = Path.GetFileNameWithoutExtension(path);
+			ProjectName = Path.GetFileNameWithoutExtension(path);
 		}
 
 		private void SaveProject()
 		{
 			_projectFileStream.Seek(0, SeekOrigin.Begin);
-			ConfigManager.Save(_project, _projectFileStream);
+			ConfigManager.Save(Project, _projectFileStream);
 			_projectFileStream.Flush();
 			_projectFileStream.SetLength(_projectFileStream.Position);
 			SaveComparisonCache();
-			_isChanged = false;
+			IsChanged = false;
 			_isNew = false;
 		}
 
@@ -316,9 +311,9 @@ namespace SIL.Cog.Application.Services
 		{
 			_settingsService.LastProject = path;
 			if (MigrateProjectIfNeeded(vm, project))
-				_isChanged = true;
-			_project = project;
-			_projectName = name;
+				IsChanged = true;
+			Project = project;
+			ProjectName = name;
 
 			if (vm != null)
 				vm.Text = "Segmenting and syllabifying words...";
@@ -332,7 +327,7 @@ namespace SIL.Cog.Application.Services
 					if (vm != null)
 						vm.Text = "Loading cached results...";
 					bool delete = true;
-					if (!_isChanged)
+					if (!IsChanged)
 					{
 						try
 						{
@@ -344,8 +339,8 @@ namespace SIL.Cog.Application.Services
 									var hash = Serializer.DeserializeWithLengthPrefix<string>(fs, PrefixStyle.Base128, 1);
 									if (hash == CalcProjectHash())
 									{
-										_project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
-											.Select(surrogate => surrogate.ToVarietyPair(_segmentPool, _project)));
+										Project.VarietyPairs.AddRange(Serializer.DeserializeItems<VarietyPairSurrogate>(fs, PrefixStyle.Base128, 1)
+											.Select(surrogate => surrogate.ToVarietyPair(_segmentPool, Project)));
 										delete = false;
 									}
 								}
@@ -375,7 +370,7 @@ namespace SIL.Cog.Application.Services
 				{
 					Serializer.SerializeWithLengthPrefix(fs, CacheVersion, PrefixStyle.Base128, 1);
 					Serializer.SerializeWithLengthPrefix(fs, CalcProjectHash(), PrefixStyle.Base128, 1);
-					foreach (VarietyPair vp in _project.VarietyPairs)
+					foreach (VarietyPair vp in Project.VarietyPairs)
 					{
 						var surrogate = new VarietyPairSurrogate(vp);
 						Serializer.SerializeWithLengthPrefix(fs, surrogate, PrefixStyle.Base128, 1);
@@ -400,29 +395,12 @@ namespace SIL.Cog.Application.Services
 
 		private void OnProjectOpened(EventArgs e)
 		{
-			EventHandler<EventArgs> handler = ProjectOpened;
-			if (handler != null)
-				handler(this, e);
+			ProjectOpened?.Invoke(this, e);
 		}
 
-		public bool IsChanged
-		{
-			get { return _isChanged; }
-		}
-
-		public CogProject Project
-		{
-			get { return _project; }
-		}
-
-		public string ProjectName
-		{
-			get { return _projectName; }
-		}
-
-		public bool AreAllVarietiesCompared
-		{
-			get { return _project.Varieties.Count > 0 && _project.VarietyPairs.Count == ((_project.Varieties.Count - 1) * _project.Varieties.Count) / 2; }
-		}
+		public bool IsChanged { get; private set; }
+		public CogProject Project { get; private set; }
+		public string ProjectName { get; private set; }
+		public bool AreAllVarietiesCompared => Project.Varieties.Count > 0 && Project.VarietyPairs.Count == ((Project.Varieties.Count - 1) * Project.Varieties.Count) / 2;
 	}
 }

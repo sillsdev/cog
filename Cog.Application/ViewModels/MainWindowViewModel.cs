@@ -12,27 +12,7 @@ namespace SIL.Cog.Application.ViewModels
 {
 	public class MainWindowViewModel : ContainerViewModelBase
 	{
-		private readonly ICommand _nullCommand;
-
-		private readonly ICommand _newCommand;
-		private readonly ICommand _openCommand;
-		private readonly ICommand _saveCommand;
-		private readonly ICommand _saveAsCommand;
-		private readonly ICommand _importWordListsCommand;
-		private readonly ICommand _importGeographicRegionsCommand; 
-		private readonly ICommand _exportWordListsCommand;
-		private readonly ICommand _exportSimilarityMatrixCommand;
-		private readonly ICommand _exportCognateSetsCommand;
-		private readonly ICommand _exportSegmentFrequenciesCommand;
-		private readonly ICommand _exportHierarchicalGraphCommand;
-		private readonly ICommand _exportNetworkGraphCommand;
-		private readonly ICommand _exportGlobalCorrespondencesChartCommand;
-		private readonly ICommand _performComparisonCommand;
-		private readonly ICommand _runStemmerCommand;
 		private ICommand _findCommand;
-		private readonly ICommand _aboutCommand;
-		private readonly ICommand _showTutorialCommand;
-		private readonly ICommand _showGettingStartedCommand;
 
 		private readonly IDialogService _dialogService;
 		private readonly IImportService _importService;
@@ -52,41 +32,42 @@ namespace SIL.Cog.Application.ViewModels
 			_projectService = projectService;
 			_analysisService = analysisService;
 
-			_newCommand = new RelayCommand(New);
-			_openCommand = new RelayCommand(Open);
-			_saveCommand = new RelayCommand(Save, CanSave);
-			_saveAsCommand = new RelayCommand(SaveAs);
-			_importWordListsCommand = new RelayCommand(ImportWordLists);
-			_importGeographicRegionsCommand = new RelayCommand(ImportGeographicRegions);
-			_exportWordListsCommand = new RelayCommand(ExportWordLists, CanExportWordLists);
-			_exportSimilarityMatrixCommand = new RelayCommand(ExportSimilarityMatrix, CanExportSimilarityMatrix);
-			_exportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
-			_exportSegmentFrequenciesCommand = new RelayCommand(ExportSegmentFrequencies, CanExportSegmentFrequencies);
-			_exportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
-			_exportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
-			_exportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
-			_performComparisonCommand = new RelayCommand(PerformComparison, CanPerformComparison);
-			_runStemmerCommand = new RelayCommand(RunStemmer, CanRunStemmer);
-			_aboutCommand = new RelayCommand(ShowAbout);
-			_showTutorialCommand = new RelayCommand(() => Process.Start("https://github.com/sillsdev/cog/wiki/Cog-Tutorial"));
-			_showGettingStartedCommand = new RelayCommand(ShowGettingStarted);
+			NewCommand = new RelayCommand(New);
+			OpenCommand = new RelayCommand(Open);
+			SaveCommand = new RelayCommand(Save, CanSave);
+			SaveAsCommand = new RelayCommand(SaveAs);
+			ImportWordListsFromFileCommand = new RelayCommand(ImportWordListsFromFile);
+			ImportWordListsFromClipboardCommand = new RelayCommand(ImportWordListsFromClipboard, CanImportWordListsFromClipboard);
+			ImportGeographicRegionsCommand = new RelayCommand(ImportGeographicRegions);
+			ExportWordListsCommand = new RelayCommand(ExportWordLists, CanExportWordLists);
+			ExportSimilarityMatrixCommand = new RelayCommand(ExportSimilarityMatrix, CanExportSimilarityMatrix);
+			ExportCognateSetsCommand = new RelayCommand(ExportCognateSets, CanExportCognateSets);
+			ExportSegmentFrequenciesCommand = new RelayCommand(ExportSegmentFrequencies, CanExportSegmentFrequencies);
+			ExportHierarchicalGraphCommand = new RelayCommand(ExportHierarchicalGraph, CanExportHierarchicalGraph);
+			ExportNetworkGraphCommand = new RelayCommand(ExportNetworkGraph, CanExportNetworkGraph);
+			ExportGlobalCorrespondencesChartCommand = new RelayCommand(ExportGlobalCorrespondencesChart, CanExportGlobalCorrespondencesChart);
+			PerformComparisonCommand = new RelayCommand(PerformComparison, CanPerformComparison);
+			RunStemmerCommand = new RelayCommand(RunStemmer, CanRunStemmer);
+			AboutCommand = new RelayCommand(ShowAbout);
+			ShowTutorialCommand = new RelayCommand(() => Process.Start("https://github.com/sillsdev/cog/wiki/Cog-Tutorial"));
+			ShowGettingStartedCommand = new RelayCommand(ShowGettingStarted);
 
 			foreach (ContainerViewModelBase childView in Views.OfType<ContainerViewModelBase>())
 				childView.PropertyChanging += childView_PropertyChanging;
 
 			PropertyChanging += OnPropertyChanging;
 
-			_nullCommand = new RelayCommand(() => {}, () => false);
-			_findCommand = _nullCommand;
+			ICommand nullCommand = new RelayCommand(() => {}, () => false);
+			_findCommand = nullCommand;
 			Messenger.Default.Register<SwitchViewMessage>(this, HandleSwitchView);
-			Messenger.Default.Register<HookFindMessage>(this, msg => FindCommand = msg.FindCommand ?? _nullCommand);
+			Messenger.Default.Register<HookFindMessage>(this, msg => FindCommand = msg.FindCommand ?? nullCommand);
 		}
 
 		public bool Init()
 		{
 			if (_projectService.Init())
 			{
-				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+				DisplayName = $"{_projectService.ProjectName} - Cog";
 				SelectedView = Views[0];
 				return true;
 			}
@@ -122,10 +103,7 @@ namespace SIL.Cog.Application.ViewModels
 		private void CheckSettingsWorkspace(object view)
 		{
 			var childView = view as ContainerViewModelBase;
-			if (childView == null)
-				return;
-
-			var settingsWorkspace = childView.SelectedView as SettingsWorkspaceViewModelBase;
+			var settingsWorkspace = childView?.SelectedView as SettingsWorkspaceViewModelBase;
 			if (settingsWorkspace != null && settingsWorkspace.IsDirty)
 			{
 				if (_dialogService.ShowYesNoQuestion(this, "Do you wish to apply the current settings?", "Cog"))
@@ -140,7 +118,7 @@ namespace SIL.Cog.Application.ViewModels
 			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.New(this))
 			{
-				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+				DisplayName = $"{_projectService.ProjectName} - Cog";
 				SwitchView(typeof(WordListsViewModel));
 			}
 		}
@@ -150,7 +128,7 @@ namespace SIL.Cog.Application.ViewModels
 			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.Open(this))
 			{
-				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+				DisplayName = $"{_projectService.ProjectName} - Cog";
 				SwitchView(typeof(WordListsViewModel));
 			}
 		}
@@ -164,19 +142,29 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.Save(this))
-				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+				DisplayName = $"{_projectService.ProjectName} - Cog";
 		}
 
 		private void SaveAs()
 		{
 			CheckSettingsWorkspace(SelectedView);
 			if (_projectService.SaveAs(this))
-				DisplayName = string.Format("{0} - Cog", _projectService.ProjectName);
+				DisplayName = $"{_projectService.ProjectName} - Cog";
 		}
 
-		private void ImportWordLists()
+		private void ImportWordListsFromFile()
 		{
-			_importService.ImportWordLists(this);
+			_importService.ImportWordListsFromFile(this);
+		}
+
+		private bool CanImportWordListsFromClipboard()
+		{
+			return _importService.CanImportWordListsFromClipboard();
+		}
+
+		private void ImportWordListsFromClipboard()
+		{
+			_importService.ImportWordListsFromClipboard(this);
 		}
 
 		private void ImportGeographicRegions()
@@ -304,100 +292,29 @@ namespace SIL.Cog.Application.ViewModels
 				Process.Start(Path.Combine(exeDir, "Help", "GettingStartedWithCog.pdf"));
 		}
 
-		public ICommand NewCommand
-		{
-			get { return _newCommand; }
-		}
-
-		public ICommand OpenCommand
-		{
-			get { return _openCommand; }
-		}
-
-		public ICommand SaveCommand
-		{
-			get { return _saveCommand; }
-		}
-
-		public ICommand SaveAsCommand
-		{
-			get { return _saveAsCommand; }
-		}
-
-		public ICommand ImportWordListsCommand
-		{
-			get { return _importWordListsCommand; }
-		}
-
-		public ICommand ImportGeographicRegionsCommand
-		{
-			get { return _importGeographicRegionsCommand; }
-		}
-
-		public ICommand ExportWordListsCommand
-		{
-			get { return _exportWordListsCommand; }
-		}
-
-		public ICommand ExportSimilarityMatrixCommand
-		{
-			get { return _exportSimilarityMatrixCommand; }
-		}
-
-		public ICommand ExportCognateSetsCommand
-		{
-			get { return _exportCognateSetsCommand; }
-		}
-
-		public ICommand ExportSegmentFrequenciesCommand
-		{
-			get { return _exportSegmentFrequenciesCommand; }
-		}
-
-		public ICommand ExportHierarchicalGraphCommand
-		{
-			get { return _exportHierarchicalGraphCommand; }
-		}
-
-		public ICommand ExportNetworkGraphCommand
-		{
-			get { return _exportNetworkGraphCommand; }
-		}
-
-		public ICommand ExportGlobalCorrespondencesChartCommand
-		{
-			get { return _exportGlobalCorrespondencesChartCommand; }
-		}
-
-		public ICommand PerformComparisonCommand
-		{
-			get { return _performComparisonCommand; }
-		}
-
-		public ICommand RunStemmerCommand
-		{
-			get { return _runStemmerCommand; }
-		}
-
+		public ICommand NewCommand { get; }
+		public ICommand OpenCommand { get; }
+		public ICommand SaveCommand { get; }
+		public ICommand SaveAsCommand { get; }
+		public ICommand ImportWordListsFromFileCommand { get; }
+		public ICommand ImportWordListsFromClipboardCommand { get; }
+		public ICommand ImportGeographicRegionsCommand { get; }
+		public ICommand ExportWordListsCommand { get; }
+		public ICommand ExportSimilarityMatrixCommand { get; }
+		public ICommand ExportCognateSetsCommand { get; }
+		public ICommand ExportSegmentFrequenciesCommand { get; }
+		public ICommand ExportHierarchicalGraphCommand { get; }
+		public ICommand ExportNetworkGraphCommand { get; }
+		public ICommand ExportGlobalCorrespondencesChartCommand { get; }
+		public ICommand PerformComparisonCommand { get; }
+		public ICommand RunStemmerCommand { get; }
 		public ICommand FindCommand
 		{
 			get { return _findCommand; }
 			private set { Set(() => FindCommand, ref _findCommand, value); }
 		}
-
-		public ICommand AboutCommand
-		{
-			get { return _aboutCommand; }
-		}
-
-		public ICommand ShowTutorialCommand
-		{
-			get { return _showTutorialCommand; }
-		}
-
-		public ICommand ShowGettingStartedCommand
-		{
-			get { return _showGettingStartedCommand; }
-		}
+		public ICommand AboutCommand { get; }
+		public ICommand ShowTutorialCommand { get; }
+		public ICommand ShowGettingStartedCommand { get; }
 	}
 }

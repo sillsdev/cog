@@ -28,7 +28,8 @@ namespace SIL.Cog.Presentation.Views
 			WordListsGrid.ClipboardExporters.Clear();
 			WordListsGrid.ClipboardExporters.Add(DataFormats.UnicodeText, new UnicodeCsvClipboardExporter {IncludeColumnHeaders = false, FormatSettings = {TextQualifier = '\0'}});
 			_selectMonitor = new SimpleMonitor();
-			BusyCursor.DisplayUntilIdle();
+			if (!DesignerProperties.GetIsInDesignMode(this))
+				BusyCursor.DisplayUntilIdle();
 		}
 
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -38,7 +39,8 @@ namespace SIL.Cog.Presentation.Views
 				return;
 
 			vm.PropertyChanged += ViewModel_PropertyChanged;
-			vm.Meanings.CollectionChanged += Meanings_CollectionChanged;
+			if (vm.Meanings != null)
+				vm.Meanings.CollectionChanged += Meanings_CollectionChanged;
 		}
 
 		private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

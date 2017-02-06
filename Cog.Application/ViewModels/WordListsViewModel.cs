@@ -30,10 +30,6 @@ namespace SIL.Cog.Application.ViewModels
 		private bool _isEmpty;
 		private readonly ICommand _findCommand;
 		private ICollectionView _varietiesView;
-		private readonly ICommand _addNewVarietyCommand;
-		private readonly ICommand _addNewMeaningCommand;
-		private readonly ICommand _importWordListsCommand;
-		private readonly ICommand _showGettingStartedCommand;
 
 		private WordListsVarietyMeaningViewModel _startVarietyMeaning;
 		private FindViewModel _findViewModel;
@@ -60,15 +56,16 @@ namespace SIL.Cog.Application.ViewModels
 					new TaskAreaCommandViewModel("Add a new variety", new RelayCommand(AddNewVariety)),
 					new TaskAreaCommandViewModel("Add a new meaning", new RelayCommand(AddNewMeaning)),
 					new TaskAreaCommandViewModel("Find words", _findCommand),
-					new TaskAreaCommandViewModel("Import word lists", new RelayCommand(Import))));
+					new TaskAreaCommandViewModel("Import word lists from file", new RelayCommand(ImportFromFile)),
+					new TaskAreaCommandViewModel("Import word lists from clipboard", new RelayCommand(ImportFromClipboard, CanImportFromClipboard))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
 					new TaskAreaCommandViewModel("Export word lists", new RelayCommand(Export, CanExport)),
 					new TaskAreaCommandViewModel("Remove affixes from words in all varieties", new RelayCommand(RunStemmer, CanRunStemmer))));
-			_addNewVarietyCommand = new RelayCommand(AddNewVariety);
-			_addNewMeaningCommand = new RelayCommand(AddNewMeaning);
-			_importWordListsCommand = new RelayCommand(Import);
-			_showGettingStartedCommand = new RelayCommand(ShowGettingStarted);
+			AddNewVarietyCommand = new RelayCommand(AddNewVariety);
+			AddNewMeaningCommand = new RelayCommand(AddNewMeaning);
+			ImportWordListsCommand = new RelayCommand(ImportFromFile);
+			ShowGettingStartedCommand = new RelayCommand(ShowGettingStarted);
 			_isEmpty = true;
 		}
 
@@ -227,9 +224,19 @@ namespace SIL.Cog.Application.ViewModels
 			_startVarietyMeaning = null;
 		}
 
-		private void Import()
+		private void ImportFromFile()
 		{
-			_importService.ImportWordLists(this);
+			_importService.ImportWordListsFromFile(this);
+		}
+
+		private bool CanImportFromClipboard()
+		{
+			return _importService.CanImportWordListsFromClipboard();
+		}
+
+		private void ImportFromClipboard()
+		{
+			_importService.ImportWordListsFromClipboard(this);
 		}
 
 		private bool CanExport()
@@ -277,20 +284,11 @@ namespace SIL.Cog.Application.ViewModels
 			}
 		}
 
-		public ICommand FindCommand
-		{
-			get { return _findCommand; }
-		}
+		public ICommand FindCommand => _findCommand;
 
-		public ReadOnlyObservableList<MeaningViewModel> Meanings
-		{
-			get { return _meanings; }
-		}
+		public ReadOnlyObservableList<MeaningViewModel> Meanings => _meanings;
 
-		public ReadOnlyObservableList<WordListsVarietyViewModel> Varieties
-		{
-			get { return _varieties; }
-		}
+		public ReadOnlyObservableList<WordListsVarietyViewModel> Varieties => _varieties;
 
 		public ICollectionView VarietiesView
 		{
@@ -298,25 +296,10 @@ namespace SIL.Cog.Application.ViewModels
 			set { Set(() => VarietiesView, ref _varietiesView, value); }
 		}
 
-		public ICommand AddNewVarietyCommand
-		{
-			get { return _addNewVarietyCommand; }
-		}
-
-		public ICommand AddNewMeaningCommand
-		{
-			get { return _addNewMeaningCommand; }
-		}
-
-		public ICommand ImportWordListsCommand
-		{
-			get { return _importWordListsCommand; }
-		}
-
-		public ICommand ShowGettingStartedCommand
-		{
-			get { return _showGettingStartedCommand; }
-		}
+		public ICommand AddNewVarietyCommand { get; }
+		public ICommand AddNewMeaningCommand { get; }
+		public ICommand ImportWordListsCommand { get; }
+		public ICommand ShowGettingStartedCommand { get; }
 
 		private void MeaningsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{

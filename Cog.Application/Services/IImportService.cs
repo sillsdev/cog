@@ -5,7 +5,9 @@ namespace SIL.Cog.Application.Services
 {
 	public interface IImportService
 	{
-		bool ImportWordLists(object ownerViewModel);
+		bool ImportWordListsFromFile(object ownerViewModel);
+		bool CanImportWordListsFromClipboard();
+		bool ImportWordListsFromClipboard(object ownerViewModel);
 		bool ImportSegmentMappings(object ownerViewModel, out IEnumerable<Tuple<string, string>> mappings);
 		bool ImportGeographicRegions(object ownerViewModel);
 	}

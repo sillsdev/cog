@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Windows;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Import;
 using SIL.Cog.Application.ViewModels;
+using SIL.Collections;
 
 namespace SIL.Cog.Application.Services
 {
@@ -12,6 +15,7 @@ namespace SIL.Cog.Application.Services
 		private static readonly Dictionary<FileType, IWordListsImporter> WordListsImporters;
 		private static readonly Dictionary<FileType, ISegmentMappingsImporter> SegmentMappingsImporters;
 		private static readonly Dictionary<FileType, IGeographicRegionsImporter> GeographicRegionsImporters;
+		private static readonly IWordListsImporter ClipboardWordListsImporter = new TextWordListsImporter('\t');
 		static ImportService()
 		{
 			WordListsImporters = new Dictionary<FileType, IWordListsImporter>
@@ -38,6 +42,7 @@ namespace SIL.Cog.Application.Services
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
 		private readonly IAnalysisService _analysisService;
+		private readonly Dictionary<IImporter, object> _importerSettingsViewModels;
 
 		public ImportService(IProjectService projectService, IDialogService dialogService, IBusyService busyService, IAnalysisService analysisService)
 		{
@@ -45,9 +50,10 @@ namespace SIL.Cog.Application.Services
 			_dialogService = dialogService;
 			_busyService = busyService;
 			_analysisService = analysisService;
+			_importerSettingsViewModels = new Dictionary<IImporter, object>();
 		}
 
-		public bool ImportWordLists(object ownerViewModel)
+		public bool ImportWordListsFromFile(object ownerViewModel)
 		{
 			FileDialogResult result = _dialogService.ShowOpenFileDialog(ownerViewModel, "Import Word Lists", WordListsImporters.Keys);
 			if (result.IsValid)
@@ -60,6 +66,30 @@ namespace SIL.Cog.Application.Services
 					return true;
 				}
 			}
+			return false;
+		}
+
+		public bool CanImportWordListsFromClipboard()
+		{
+			return Clipboard.ContainsData(DataFormats.UnicodeText);
+		}
+
+		public bool ImportWordListsFromClipboard(object ownerViewModel)
+		{
+			if (!Clipboard.ContainsData(DataFormats.UnicodeText))
+				return false;
+
+			object importSettingsViewModel;
+			if (GetImportSettings(ownerViewModel, ClipboardWordListsImporter, out importSettingsViewModel))
+			{
+				var data = (string) Clipboard.GetData(DataFormats.UnicodeText);
+				using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(data)))
+					ClipboardWordListsImporter.Import(importSettingsViewModel, stream, _projectService.Project);
+				_analysisService.SegmentAll();
+				Messenger.Default.Send(new DomainModelChangedMessage(true));
+				return true;
+			}
+
 			return false;
 		}
 
@@ -109,11 +139,11 @@ namespace SIL.Cog.Application.Services
 				}
 				catch (IOException ioe)
 				{
-					_dialogService.ShowError(ownerViewModel, string.Format("Error importing file:\n{0}", ioe.Message), "Cog");
+					_dialogService.ShowError(ownerViewModel, $"Error importing file:\n{ioe.Message}", "Cog");
 				}
 				catch (ImportException ie)
 				{
-					_dialogService.ShowError(ownerViewModel, string.Format("Error importing file:\n{0}", ie.Message), "Cog");
+					_dialogService.ShowError(ownerViewModel, $"Error importing file:\n{ie.Message}", "Cog");
 				}
 			}
 			return false;
@@ -121,7 +151,7 @@ namespace SIL.Cog.Application.Services
 
 		private bool GetImportSettings(object ownerViewModel, IImporter importer, out object importSettingsViewModel)
 		{
-			importSettingsViewModel = importer.CreateImportSettingsViewModel();
+			importSettingsViewModel = _importerSettingsViewModels.GetValue(importer, importer.CreateImportSettingsViewModel);
 			if (importSettingsViewModel == null)
 				return true;
 

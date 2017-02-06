@@ -5,36 +5,25 @@ namespace SIL.Cog.Application.Services
 {
 	public class FileType
 	{
-        private readonly string _description;
-        private readonly List<string> _fileExtensions;
+		public FileType(string description, params string[] fileExtensions)
+		{
+			if (string.IsNullOrEmpty(description))
+				throw new ArgumentException("The description must not be null or empty.", nameof(description));
+			if (fileExtensions.Length == 0)
+				throw new ArgumentException("A file extension must be specified.", nameof(fileExtensions));
 
-        public FileType(string description, params string[] fileExtensions)
-        {
-            if (string.IsNullOrEmpty(description))
-				throw new ArgumentException("The description must not be null or empty.", "description");
-            if (fileExtensions.Length == 0)
-				throw new ArgumentException("A file extension must be specified.", "fileExtensions");
-
-            _description = description;
-			_fileExtensions = new List<string>();
+			Description = description;
 			foreach (string ext in fileExtensions)
 			{
 				if (string.IsNullOrEmpty(ext))
-					throw new ArgumentException("A file extension cannot be empty.", "fileExtensions");
+					throw new ArgumentException("A file extension cannot be empty.", nameof(fileExtensions));
 				if (ext[0] != '.')
-					throw new ArgumentException("A file extension must start with the '.' character.", "fileExtensions");
-				_fileExtensions.Add(ext);
+					throw new ArgumentException("A file extension must start with the '.' character.", nameof(fileExtensions));
 			}
-        }
-
-		public string Description
-		{
-			get { return _description; }
+			FileExtensions = fileExtensions;
 		}
 
-		public IEnumerable<string> FileExtensions
-		{
-			get { return _fileExtensions; }
-		}
+		public string Description { get; }
+		public IEnumerable<string> FileExtensions { get; }
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Application.Services.ProjectMigrations;
 using SIL.Cog.Domain;
@@ -20,7 +22,7 @@ namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 		public void SetUp()
 		{
 			_segmentPool = new SegmentPool();
-			_project = ConfigManager.Load(_spanFactory, _segmentPool, "Services\\ProjectMigrations\\ProjectMigration4Tests.cogx");
+			_project = ConfigManager.Load(_spanFactory, _segmentPool, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Services", "ProjectMigrations", "ProjectMigration4Tests.cogx"));
 		}
 
 		[Test]

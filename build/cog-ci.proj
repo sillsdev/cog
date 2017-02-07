@@ -37,7 +37,7 @@ File.WriteAllText(Path, content);
 		<CreateItem Include="$(RootDir)/**/bin/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-2.6.2" />
+		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-3.6.0" />
 	</Target>
 	
 	<Target Name="VersionNumber" DependsOnTargets="BuildAll">

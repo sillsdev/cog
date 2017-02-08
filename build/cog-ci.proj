@@ -1,10 +1,11 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<PropertyGroup>
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
 		<Solution>Cog.sln</Solution>
 		<Configuration>Release</Configuration>
 		<Platform>Mixed Platforms</Platform>
 		<LifecycleStage>Stable</LifecycleStage>
+		<NUnitVersion>3.6.0</NUnitVersion>
 	</PropertyGroup>
 	
 	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
@@ -23,7 +24,6 @@ File.WriteAllText(Path, content);
 			</Code>
 		</Task>
 	</UsingTask>
-	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 	
 	<Target Name="StampBuildNumber">
 		<TokenReplace Path="$(RootDir)/GlobalAssemblyInfo.cs" Token="DEV_BUILD" Replacement="$(BUILD_NUMBER)" />
@@ -34,15 +34,19 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="Test" DependsOnTargets="BuildAll">
-		<CreateItem Include="$(RootDir)/**/bin/$(Configuration)/*Tests.dll">
+		<Exec Command="$(teamcity_tool_NuGet_CommandLine_DEFAULT)\tools\nuget.exe install NUnit.Console -version $(NUnitVersion) -o $(RootDir)\packages -source https://www.nuget.org/api/v2/" />
+		<CreateItem Include="$(RootDir)\**\bin\$(Configuration)\*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-3.6.0" />
+		<Exec IgnoreExitCode="True" Command="$(RootDir)\packages\NUnit.ConsoleRunner.$(NUnitVersion)\tools\nunit3-console.exe @(TestAssemblies, ' ') --noresult --noheader">
+			<Output TaskParameter="ExitCode" ItemName="exitCode" />
+		</Exec>
+		<Error Text="Error while running tests" Condition="@(exitCode) &lt; 0" />
 	</Target>
 	
 	<Target Name="VersionNumber" DependsOnTargets="BuildAll">
 		<!-- Read the version from the .exe -->
-		<GetAssemblyIdentity AssemblyFiles="$(RootDir)/Cog.Presentation/bin/$(Configuration)/Cog.exe">
+		<GetAssemblyIdentity AssemblyFiles="$(RootDir)\Cog.Presentation\bin\$(Configuration)\Cog.exe">
 		  <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
 		</GetAssemblyIdentity>
 		<!-- Create the MSBuild property $(VersionNumber) -->
@@ -58,14 +62,14 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
-		<Copy SourceFiles="$(RootDir)/build/DownloadPointers.html" DestinationFolder="$(RootDir)/output" />
-		<TokenReplace Path="$(RootDir)/output/DownloadPointers.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage)" />
-		<TokenReplace Path="$(RootDir)/output/DownloadPointers.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
-		<TokenReplace Path="$(RootDir)/output/DownloadPointers.html" Token="RELEASE_DATE" Replacement="$([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
+		<Copy SourceFiles="$(RootDir)\build\DownloadPointers.html" DestinationFolder="$(RootDir)\output" />
+		<TokenReplace Path="$(RootDir)\output\DownloadPointers.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage)" />
+		<TokenReplace Path="$(RootDir)\output\DownloadPointers.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
+		<TokenReplace Path="$(RootDir)\output\DownloadPointers.html" Token="RELEASE_DATE" Replacement="$([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
 		
-		<Copy SourceFiles="$(RootDir)/build/DownloadButton.html" DestinationFolder="$(RootDir)/output" />
-		<TokenReplace Path="$(RootDir)/output/DownloadButton.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage.ToLower())" />
-		<TokenReplace Path="$(RootDir)/output/DownloadButton.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
+		<Copy SourceFiles="$(RootDir)\build\DownloadButton.html" DestinationFolder="$(RootDir)\output" />
+		<TokenReplace Path="$(RootDir)\output\DownloadButton.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage.ToLower())" />
+		<TokenReplace Path="$(RootDir)\output\DownloadButton.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
 	</Target>
 	
 	<Target Name="Installer" DependsOnTargets="VersionNumber;BuildAll">

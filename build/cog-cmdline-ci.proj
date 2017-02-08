@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<PropertyGroup>
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
 		<OutDir>$(RootDir)/build/output</OutDir>
@@ -7,13 +7,12 @@
 		<Configuration>Debug</Configuration>
 		<Platform>AnyCPU</Platform>
 		<LifecycleStage>Stable</LifecycleStage>
+		<NUnitVersion>3.6.0</NUnitVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<BuildFiles Include="$(RootDir)/$(Project)/$(Project).csproj" />
 		<BuildFiles Include="$(RootDir)/$(TestProject)/$(TestProject).csproj" />
 	</ItemGroup>
-	
-	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 	
 	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="FileUpdate" />
 	<Target Name="StampBuildNumber">
@@ -35,10 +34,14 @@
 	</Target>
 	
 	<Target Name="Test" DependsOnTargets="BuildAll">
+		<Exec Command="mono $(teamcity_tool_NuGet_CommandLine_DEFAULT)/tools/nuget.exe install NUnit.Console -version $(NUnitVersion) -o $(RootDir)/packages -source https://www.nuget.org/api/v2/" />
 		<CreateItem Include="$(RootDir)/$(Project).Tests/bin/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-		<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" NUnitVersion="NUnit-3.6.0" />
+		<Exec IgnoreExitCode="True" Command="mono $(RootDir)/packages/NUnit.ConsoleRunner.$(NUnitVersion)/tools/nunit3-console.exe @(TestAssemblies, ' ') --noresult --noheader">
+			<Output TaskParameter="ExitCode" ItemName="exitCode" />
+		</Exec>
+		<Error Text="Error while running tests" Condition="@(exitCode) &lt; 0" />
 	</Target>
 	
 	<UsingTask AssemblyFile="Palaso.BuildTasks.dll" TaskName="Split" />

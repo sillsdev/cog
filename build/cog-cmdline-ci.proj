@@ -39,7 +39,7 @@
 		<CreateItem Include="$(RootDir)/$(Project).Tests/bin/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-		<Exec IgnoreExitCode="True" Command="mono $(RootDir)/packages/NUnit.ConsoleRunner.$(NUnitVersion)/tools/nunit3-console.exe @(TestAssemblies, ' ') --noresult --noheader">
+		<Exec IgnoreExitCode="True" IgnoreStandardErrorWarningFormat="True" Command="mono $(RootDir)/packages/NUnit.ConsoleRunner.$(NUnitVersion)/tools/nunit3-console.exe @(TestAssemblies, ' ') --noresult --noheader">
 			<Output TaskParameter="ExitCode" ItemName="exitCode" />
 		</Exec>
 		<Error Text="Error while running tests" Condition="@(exitCode) &lt; 0" />

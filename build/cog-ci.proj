@@ -1,6 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<PropertyGroup>
-		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
+		<RootDir Condition="'$(RootDir)'==''">..</RootDir>
+		<NuGetExe Condition="'$(NuGetExe)'==''">nuget.exe</NuGetExe>
 		<Solution>Cog.sln</Solution>
 		<Configuration>Release</Configuration>
 		<Platform>Mixed Platforms</Platform>
@@ -34,7 +35,7 @@ File.WriteAllText(Path, content);
 	</Target>
 	
 	<Target Name="Test" DependsOnTargets="BuildAll">
-		<Exec Command="$(teamcity_tool_NuGet_CommandLine_DEFAULT)\tools\nuget.exe install NUnit.Console -version $(NUnitVersion) -o $(RootDir)\packages -source https://www.nuget.org/api/v2/" />
+		<Exec Command="$(NuGetExe) install NUnit.Console -version $(NUnitVersion) -o $(RootDir)\packages -source https://www.nuget.org/api/v2/" />
 		<CreateItem Include="$(RootDir)\**\bin\$(Configuration)\*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>

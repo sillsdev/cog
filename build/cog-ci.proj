@@ -39,7 +39,7 @@ File.WriteAllText(Path, content);
 		<CreateItem Include="$(RootDir)\**\bin\$(Configuration)\*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-		<Exec IgnoreExitCode="True" IgnoreStandardErrorWarningFormat="True" Command="$(RootDir)\packages\NUnit.ConsoleRunner.$(NUnitVersion)\tools\nunit3-console.exe @(TestAssemblies, ' ') --noresult --noheader --teamcity">
+		<Exec IgnoreExitCode="True" IgnoreStandardErrorWarningFormat="True" Command="$(RootDir)\packages\NUnit.ConsoleRunner.$(NUnitVersion)\tools\nunit3-console.exe @(TestAssemblies, ' ') --noresult --noheader">
 			<Output TaskParameter="ExitCode" ItemName="exitCode" />
 		</Exec>
 		<Error Text="Error while running tests" Condition="@(exitCode) &lt; 0" />

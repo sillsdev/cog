@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Application.ViewModels;
@@ -33,7 +34,7 @@ namespace SIL.Cog.Presentation.Views
 						{
 							var vm = (ProgressViewModel) DataContext;
 							if (vm.Exception != null)
-								throw vm.Exception;
+								throw new InvalidOperationException("An error occurred in the worker thread.", vm.Exception);
 							DialogResult = !vm.Canceled;
 						});
 					}

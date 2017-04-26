@@ -10,12 +10,10 @@ namespace SIL.Cog.Domain
 	{
 		private int _version;
 		private FeatureSystem _featSys;
-		private readonly Segmenter _segmenter;
 
 		private readonly VarietyCollection _varieties;
 		private readonly MeaningCollection _meanings;
 		private readonly VarietyPairCollection _varietyPairs;
-		private readonly CognacyDecisionCollection _cognacyDecisions;
 
 		private readonly ObservableDictionary<string, IWordAligner> _wordAligners;
 		private readonly ObservableDictionary<string, ICognateIdentifier> _cognateIdentifiers; 
@@ -26,13 +24,13 @@ namespace SIL.Cog.Domain
 
 		public CogProject(SpanFactory<ShapeNode> spanFactory)
 		{
-			_segmenter = new Segmenter(spanFactory);
+			Segmenter = new Segmenter(spanFactory);
 			_meanings = new MeaningCollection();
 			_meanings.CollectionChanged += MeaningsChanged;
 			_varieties = new VarietyCollection();
 			_varieties.CollectionChanged += VarietiesChanged;
 			_varietyPairs = new VarietyPairCollection();
-			_cognacyDecisions = new CognacyDecisionCollection();
+			CognacyDecisions = new CognacyDecisionCollection();
 
 			_wordAligners = new ObservableDictionary<string, IWordAligner>();
 			_cognateIdentifiers = new ObservableDictionary<string, ICognateIdentifier>();
@@ -96,54 +94,15 @@ namespace SIL.Cog.Domain
 			set { Set(() => FeatureSystem, ref _featSys, value); }
 		}
 
-		public Segmenter Segmenter
-		{
-			get { return _segmenter; }
-		}
-
-		public KeyedBulkObservableList<string, Meaning> Meanings
-		{
-			get { return _meanings; }
-		}
-
-		public KeyedBulkObservableList<string, Variety> Varieties
-		{
-			get { return _varieties; }
-		}
-
-		public CognacyDecisionCollection CognacyDecisions
-		{
-			get { return _cognacyDecisions; }
-		}
-
-		public BulkObservableList<VarietyPair> VarietyPairs
-		{
-			get { return _varietyPairs; }
-		}
-
-		public IObservableDictionary<string, IWordAligner> WordAligners
-		{
-			get { return _wordAligners; }
-		}
-
-		public IObservableDictionary<string, ICognateIdentifier> CognateIdentifiers
-		{
-			get { return _cognateIdentifiers; }
-		}
-
-		public IObservableDictionary<string, IProcessor<CogProject>> ProjectProcessors
-		{
-			get { return _projectProcessors; }
-		}
-
-		public IObservableDictionary<string, IProcessor<Variety>> VarietyProcessors
-		{
-			get { return _varietyProcessors; }
-		}
-
-		public IObservableDictionary<string, IProcessor<VarietyPair>> VarietyPairProcessors
-		{
-			get { return _varietyPairProcessors; }
-		}
+		public Segmenter Segmenter { get; }
+		public KeyedBulkObservableList<string, Meaning> Meanings => _meanings;
+		public KeyedBulkObservableList<string, Variety> Varieties => _varieties;
+		public CognacyDecisionCollection CognacyDecisions { get; }
+		public BulkObservableList<VarietyPair> VarietyPairs => _varietyPairs;
+		public IObservableDictionary<string, IWordAligner> WordAligners => _wordAligners;
+		public IObservableDictionary<string, ICognateIdentifier> CognateIdentifiers => _cognateIdentifiers;
+		public IObservableDictionary<string, IProcessor<CogProject>> ProjectProcessors => _projectProcessors;
+		public IObservableDictionary<string, IProcessor<Variety>> VarietyProcessors => _varietyProcessors;
+		public IObservableDictionary<string, IProcessor<VarietyPair>> VarietyPairProcessors => _varietyPairProcessors;
 	}
 }

@@ -11,18 +11,18 @@ namespace SIL.Cog.Domain.Components
 	{
 		private readonly SegmentPool _segmentPool;
 		private readonly CogProject _project;
-		private readonly string _alignerID;
+		private readonly string _alignerId;
 
-		public SoundCorrespondenceIdentifier(SegmentPool segmentPool, CogProject project, string alignerID)
+		public SoundCorrespondenceIdentifier(SegmentPool segmentPool, CogProject project, string alignerId)
 		{
 			_segmentPool = segmentPool;
 			_project = project;
-			_alignerID = alignerID;
+			_alignerId = alignerId;
 		}
 
 		public void Process(VarietyPair data)
 		{
-			IWordAligner aligner = _project.WordAligners[_alignerID];
+			IWordAligner aligner = _project.WordAligners[_alignerId];
 
 			var correspondenceColls = new Dictionary<FeatureSymbol, SoundCorrespondenceCollection>
 				{

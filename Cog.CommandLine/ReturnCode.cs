@@ -1,6 +1,6 @@
 namespace SIL.Cog.CommandLine
 {
-	public enum ReturnCodes
+	public enum ReturnCode
 	{
 		Okay = 0,
 		InputError = 1,

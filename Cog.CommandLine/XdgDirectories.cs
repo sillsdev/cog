@@ -10,19 +10,16 @@ namespace SIL.Cog.CommandLine
 		private static readonly string DefaultDataHome = ".local/share";
 		private static readonly string[] DefaultConfigDirs = { "/etc/xdg" };
 		private static readonly string[] DefaultDataDirs = { "/usr/local/share", "/usr/share" };
-		private static readonly string AssemblyName = typeof(Program).Assembly.GetName().Name; // Currently "cog-cmdline"
+		private static readonly string AssemblyName = typeof(Program).Assembly.GetName().Name; // Currently "cog-cli"
 
-		public static string Home
-		{
-			get { return Environment.GetEnvironmentVariable("HOME") ?? "/home/nobody"; } // That last is needed so we can run unit tests on Windows machines
-		}
+		public static string Home => Environment.GetEnvironmentVariable("HOME") ?? "/home/nobody";
 
 		public static string ConfigHome
 		{
 			get
 			{
-				string BaseDir = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ?? Path.Combine(Home, DefaultConfigHome);
-				return Path.Combine(BaseDir, AssemblyName);
+				string baseDir = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME") ?? Path.Combine(Home, DefaultConfigHome);
+				return Path.Combine(baseDir, AssemblyName);
 			}
 		}
 
@@ -30,8 +27,8 @@ namespace SIL.Cog.CommandLine
 		{
 			get
 			{
-				string BaseDir = Environment.GetEnvironmentVariable("XDG_DATA_HOME") ?? Path.Combine(Home, DefaultDataHome);
-				return Path.Combine(BaseDir, AssemblyName);
+				string baseDir = Environment.GetEnvironmentVariable("XDG_DATA_HOME") ?? Path.Combine(Home, DefaultDataHome);
+				return Path.Combine(baseDir, AssemblyName);
 			}
 		}
 
@@ -39,9 +36,9 @@ namespace SIL.Cog.CommandLine
 		{
 			get
 			{
-				string XdgPathSpec = Environment.GetEnvironmentVariable("XDG_CONFIG_DIRS");
-				string[] BaseDirs = (XdgPathSpec == null) ? DefaultConfigDirs : XdgPathSpec.Split(':');
-				return BaseDirs.Select(dir => Path.Combine(dir, AssemblyName)).ToArray();
+				string xdgPathSpec = Environment.GetEnvironmentVariable("XDG_CONFIG_DIRS");
+				string[] baseDirs = xdgPathSpec?.Split(':') ?? DefaultConfigDirs;
+				return baseDirs.Select(dir => Path.Combine(dir, AssemblyName)).ToArray();
 			}
 		}
 
@@ -49,9 +46,9 @@ namespace SIL.Cog.CommandLine
 		{
 			get
 			{
-				string XdgPathSpec = Environment.GetEnvironmentVariable("XDG_DATA_DIRS");
-				string[] BaseDirs = (XdgPathSpec == null) ? DefaultDataDirs : XdgPathSpec.Split(':');
-				return BaseDirs.Select(dir => Path.Combine(dir, AssemblyName)).ToArray();	
+				string xdgPathSpec = Environment.GetEnvironmentVariable("XDG_DATA_DIRS");
+				string[] baseDirs = xdgPathSpec?.Split(':') ?? DefaultDataDirs;
+				return baseDirs.Select(dir => Path.Combine(dir, AssemblyName)).ToArray();	
 			}
 		}
 	}

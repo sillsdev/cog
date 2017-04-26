@@ -8,9 +8,6 @@ namespace SIL.Cog.Domain
 {
 	public class VarietyPair : ObservableObject
 	{
-		private readonly Variety _variety1;
-		private readonly Variety _variety2;
-		private readonly WordPairCollection _wordPairs;
 		private IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> _cognateSoundCorrespondenceProbabilityDistribution;
 		private ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> _cognateSoundCorrespondenceFrequencyDistribution;
 		private double _defaultSoundCorrespondenceProb;
@@ -19,16 +16,16 @@ namespace SIL.Cog.Domain
 		private double _significance;
 		private double _precision;
 		private double _recall;
-		private readonly ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> _cognateSoundCorrespondencesByPosition;
 		private int _cognateCount;
 
 		public VarietyPair(Variety variety1, Variety variety2)
 		{
-			_variety1 = variety1;
-			_variety2 = variety2;
-			_wordPairs = new WordPairCollection(this);
+			Variety1 = variety1;
+			Variety2 = variety2;
+			WordPairs = new WordPairCollection(this);
 
-			_cognateSoundCorrespondencesByPosition = new ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection>(new Dictionary<FeatureSymbol, SoundCorrespondenceCollection>
+			CognateSoundCorrespondencesByPosition = new ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection>(
+				new Dictionary<FeatureSymbol, SoundCorrespondenceCollection>
 				{
 					{CogFeatureSystem.Onset, new SoundCorrespondenceCollection()},
 					{CogFeatureSystem.Nucleus, new SoundCorrespondenceCollection()},
@@ -36,88 +33,81 @@ namespace SIL.Cog.Domain
 				});
 		}
 
-		public Variety Variety1
-		{
-			get { return _variety1; }
-		}
-
-		public Variety Variety2
-		{
-			get { return _variety2; }
-		}
-
-		public WordPairCollection WordPairs
-		{
-			get { return _wordPairs; }
-		}
+		public Variety Variety1 { get; }
+		public Variety Variety2 { get; }
+		public WordPairCollection WordPairs { get; }
 
 		public Variety GetOtherVariety(Variety variety)
 		{
 			Variety otherVariety = null;
-			if (_variety1 == variety)
-				otherVariety = _variety2;
-			else if (_variety2 == variety)
-				otherVariety = _variety1;
+			if (Variety1 == variety)
+				otherVariety = Variety2;
+			else if (Variety2 == variety)
+				otherVariety = Variety1;
 			return otherVariety;
 		}
 
 		public double PhoneticSimilarityScore
 		{
 			get { return _phoneticSimilarityScore; }
-			set { Set(() => PhoneticSimilarityScore, ref _phoneticSimilarityScore, value); }
+			set { Set(nameof(PhoneticSimilarityScore), ref _phoneticSimilarityScore, value); }
 		}
 
 		public double LexicalSimilarityScore
 		{
 			get { return _lexicalSimilarityScore; }
-			set { Set(() => LexicalSimilarityScore, ref _lexicalSimilarityScore, value); }
+			set { Set(nameof(LexicalSimilarityScore), ref _lexicalSimilarityScore, value); }
 		}
 
 		public double Significance
 		{
 			get { return _significance; }
-			set { Set(() => Significance, ref _significance, value); }
+			set { Set(nameof(Significance), ref _significance, value); }
 		}
 
 		public double Precision
 		{
 			get { return _precision; }
-			set { Set(() => Precision, ref _precision, value); }
+			set { Set(nameof(Precision), ref _precision, value); }
 		}
 
 		public double Recall
 		{
 			get { return _recall; }
-			set { Set(() => Recall, ref _recall, value); }
+			set { Set(nameof(Recall), ref _recall, value); }
 		}
 
-		public ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> CognateSoundCorrespondencesByPosition
-		{
-			get { return _cognateSoundCorrespondencesByPosition; }
-		}
+		public ReadOnlyDictionary<FeatureSymbol, SoundCorrespondenceCollection> CognateSoundCorrespondencesByPosition { get; }
 
 		public ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> CognateSoundCorrespondenceFrequencyDistribution
 		{
 			get { return _cognateSoundCorrespondenceFrequencyDistribution; }
-			set { Set(() => CognateSoundCorrespondenceFrequencyDistribution, ref _cognateSoundCorrespondenceFrequencyDistribution, value); }
+			set
+			{
+				Set(nameof(CognateSoundCorrespondenceFrequencyDistribution), ref _cognateSoundCorrespondenceFrequencyDistribution, value);
+			}
 		}
 
 		public IConditionalProbabilityDistribution<SoundContext, Ngram<Segment>> CognateSoundCorrespondenceProbabilityDistribution
 		{
 			get { return _cognateSoundCorrespondenceProbabilityDistribution; }
-			set { Set(() => CognateSoundCorrespondenceProbabilityDistribution, ref _cognateSoundCorrespondenceProbabilityDistribution, value); }
+			set
+			{
+				Set(nameof(CognateSoundCorrespondenceProbabilityDistribution), ref _cognateSoundCorrespondenceProbabilityDistribution,
+					value);
+			}
 		}
 
 		public double DefaultSoundCorrespondenceProbability
 		{
 			get { return _defaultSoundCorrespondenceProb; }
-			set { Set(() => DefaultSoundCorrespondenceProbability, ref _defaultSoundCorrespondenceProb, value); }
+			set { Set(nameof(DefaultSoundCorrespondenceProbability), ref _defaultSoundCorrespondenceProb, value); }
 		}
 
 		public int CognateCount
 		{
 			get { return _cognateCount; }
-			set { Set(() => CognateCount, ref _cognateCount, value); }
+			set { Set(nameof(CognateCount), ref _cognateCount, value); }
 		}
 	}
 }

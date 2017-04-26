@@ -8,29 +8,32 @@ namespace SIL.Cog.CommandLine
 	[Verb("syllabify", HelpText = "Syllabify one or many words")]
 	public class SyllabifyVerb : VerbBase
 	{
-		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			ReturnCodes retcode = ReturnCodes.Okay;
-			SetUpProject();
-			IProcessor<Variety> syllabifier = Project.VarietyProcessors["syllabifier"];
+			ReturnCode retcode = ReturnCode.Okay;
+			SetupProject();
+			var variety = new Variety("variety1");
+			Project.Varieties.Add(variety);
+			Meaning meaning = MeaningFactory.Create();
+			Project.Meanings.Add(meaning);
+			IProcessor<Variety> syllabifier = Project.VarietyProcessors[ComponentIdentifiers.Syllabifier];
 
 			foreach (string line in ReadLines(inputReader))
 			{
 				string wordText = line; // In the future we might need to split the line into multiple words
-				Word word;
 				try
 				{
-					word = ParseWord(wordText, Meaning);
+					Word word = ParseWord(wordText, meaning);
 					Project.Segmenter.Segment(word);
-					Variety1.Words.Add(word);
+					variety.Words.Add(word);
 				}
 				catch (FormatException e)
 				{
 					Errors.Add(line, e.Message);
 				}
 			}
-			syllabifier.Process(Variety1);
-			foreach (Word word in Variety1.Words)
+			syllabifier.Process(variety);
+			foreach (Word word in variety.Words)
 			{
 //				output.WriteLine("{0} {1} {2}", word.StemIndex, word.StemLength, word.ToString().Replace(" ", ""));
 				outputWriter.WriteLine(word.ToString().Replace(" ", ""));

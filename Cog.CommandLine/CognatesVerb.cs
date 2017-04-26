@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CommandLine;
@@ -12,11 +11,16 @@ namespace SIL.Cog.CommandLine
 	[Verb("cognates", HelpText = "Test words for cognicity")]
 	public class CognatesVerb : VerbBase
 	{
-		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			ReturnCodes retcode = ReturnCodes.Okay;
+			ReturnCode retcode = ReturnCode.Okay;
 
-			SetUpProject();
+			SetupProject();
+			var variety1 = new Variety("variety1");
+			var variety2 = new Variety("variety2");
+			Project.Varieties.Add(variety1);
+			Project.Varieties.Add(variety2);
+			Project.VarietyPairs.Add(new VarietyPair(variety1, variety2));
 
 			foreach (string line in ReadLines(inputReader))
 			{
@@ -31,12 +35,13 @@ namespace SIL.Cog.CommandLine
 				Word[] words = wordTexts.Select(wordText => ParseWord(wordText, meaning)).ToArray();
 				if (words.Length != 2 || words.Any(w => w == null))
 				{
-					Errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
+					Errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}",
+						string.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
 					continue;
 				}
 
-				Variety1.Words.Add(words[0]);
-				Variety2.Words.Add(words[1]);
+				variety1.Words.Add(words[0]);
+				variety2.Words.Add(words[1]);
 			}
 
 			SegmentAll();
@@ -46,8 +51,10 @@ namespace SIL.Cog.CommandLine
 				Compare(varietyPair);
 				foreach (WordPair wordPair in varietyPair.WordPairs)
 				{
-					// Output format: "word1 word2 True/False score" where True means cognate and False means not cognate, and score is a number between 0.0 and 1.0
-					outputWriter.WriteLine("{0} {1} {2} {3}", wordPair.Word1.StrRep, wordPair.Word2.StrRep, wordPair.PredictedCognacy, wordPair.PredictedCognacyScore);
+					// Output format: "word1 word2 True/False score" where True means cognate and False means not cognate,
+					// and score is a number between 0.0 and 1.0
+					outputWriter.WriteLine("{0} {1} {2} {3}", wordPair.Word1.StrRep, wordPair.Word2.StrRep, wordPair.Cognacy,
+						wordPair.PredictedCognacyScore);
 				}
 			}
 
@@ -69,9 +76,10 @@ namespace SIL.Cog.CommandLine
 		{
 			var processors = new List<IProcessor<VarietyPair>>
 				{
-					Project.VarietyPairProcessors["wordPairGenerator"],
-					new EMSoundChangeInducer(_segmentPool, Project, "primary", "primary"),
-					new SoundCorrespondenceIdentifier(_segmentPool, Project, "primary")
+					Project.VarietyPairProcessors[ComponentIdentifiers.WordPairGenerator],
+					new EMSoundChangeInducer(SegmentPool, Project, ComponentIdentifiers.PrimaryWordAligner,
+						ComponentIdentifiers.PrimaryCognateIdentifier),
+					new SoundCorrespondenceIdentifier(SegmentPool, Project, ComponentIdentifiers.PrimaryWordAligner)
 				};
 			return processors;
 		}
@@ -94,8 +102,8 @@ namespace SIL.Cog.CommandLine
 			return new[]
 				{
 					new VarietySegmenter(Project.Segmenter),
-					Project.VarietyProcessors["syllabifier"],
-					new SegmentFrequencyDistributionCalculator(_segmentPool)
+					Project.VarietyProcessors[ComponentIdentifiers.Syllabifier],
+					new SegmentFrequencyDistributionCalculator(SegmentPool)
 				};
 		}
 	}

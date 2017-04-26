@@ -4,38 +4,21 @@ namespace SIL.Cog.Domain
 {
 	public class CognacyDecision : IEquatable<CognacyDecision>
 	{
-		private readonly Variety _variety1;
-		private readonly Variety _variety2;
-		private readonly Meaning _meaning;
-		private readonly bool _cognacy;
-
 		public CognacyDecision(Variety variety1, Variety variety2, Meaning meaning, bool cognacy)
 		{
-			_variety1 = variety1;
-			_variety2 = variety2;
-			_meaning = meaning;
-			_cognacy = cognacy;
+			Variety1 = variety1;
+			Variety2 = variety2;
+			Meaning = meaning;
+			Cognacy = cognacy;
 		}
 
-		public Variety Variety1
-		{
-			get { return _variety1; }
-		}
+		public Variety Variety1 { get; }
 
-		public Variety Variety2
-		{
-			get { return _variety2; }
-		}
+		public Variety Variety2 { get; }
 
-		public Meaning Meaning
-		{
-			get { return _meaning; }
-		}
+		public Meaning Meaning { get; }
 
-		public bool Cognacy
-		{
-			get { return _cognacy; }
-		}
+		public bool Cognacy { get; }
 
 		public override bool Equals(object obj)
 		{
@@ -46,16 +29,16 @@ namespace SIL.Cog.Domain
 
 		public bool Equals(CognacyDecision other)
 		{
-			return other != null && _variety1 == other._variety1 && _variety2 == other._variety2 && _meaning == other._meaning && _cognacy == other._cognacy;
+			return other != null && Variety1 == other.Variety1 && Variety2 == other.Variety2 && Meaning == other.Meaning && Cognacy == other.Cognacy;
 		}
 
 		public override int GetHashCode()
 		{
 			int code = 23;
-			code += code * 31 + _variety1.GetHashCode();
-			code += code * 31 + _variety2.GetHashCode();
-			code += code * 31 + _meaning.GetHashCode();
-			code += code * 31 + _cognacy.GetHashCode();
+			code += code * 31 + Variety1.GetHashCode();
+			code += code * 31 + Variety2.GetHashCode();
+			code += code * 31 + Meaning.GetHashCode();
+			code += code * 31 + Cognacy.GetHashCode();
 			return code;
 		}
 	}

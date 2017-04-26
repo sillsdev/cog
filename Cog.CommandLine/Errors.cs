@@ -5,20 +5,10 @@ using System.Text;
 
 namespace SIL.Cog.CommandLine
 {
-	
-
 	public class Errors
 	{
 		public class Error
 		{
-			public string Message { get; set; }
-			private readonly string _source;
-
-			public string Source
-			{
-				get { return _source; }
-			}
-
 			public Error(string message, params object[] formatParams)
 				: this(null, message, formatParams)
 			{
@@ -26,34 +16,36 @@ namespace SIL.Cog.CommandLine
 
 			public Error(string source, string message, params object[] formatParams)
 			{
-				_source = source;
+				Source = source;
 				Message = string.Format(message, formatParams);
 			}
 
+			public string Message { get; set; }
+
+			public string Source { get; }
+
 			public override string ToString()
 			{
-				if (_source == null)
+				if (Source == null)
 					return Message;
-				else
-				{
-					StringBuilder sb = new StringBuilder(Message);
-					sb.AppendLine();
-					sb.AppendFormat("  This was caused by the line: \"{0}\"", _source);
-					return sb.ToString();
-				}
+
+				StringBuilder sb = new StringBuilder(Message);
+				sb.AppendLine();
+				sb.Append($"  This was caused by the line: \"{Source}\"");
+				return sb.ToString();
 			}
 
 			// If needed, could implement ToXml(), ToJson(), or whatever
 		}
 
-		private List<Error> errors;
+		private readonly List<Error> _errors;
 
-		public bool Empty { get { return (errors.Count == 0); } }
-		public int Count { get { return errors.Count; } }
+		public bool Empty => _errors.Count == 0;
+		public int Count => _errors.Count;
 
 		public Errors()
 		{
-			errors = new List<Error>();
+			_errors = new List<Error>();
 		}
 
 		public void Add(string message, params object[] formatParams)
@@ -63,13 +55,13 @@ namespace SIL.Cog.CommandLine
 
 		public void Add(string source, string message, params object[] formatParams)
 		{
-			errors.Add(new Error(source, message, formatParams));
+			_errors.Add(new Error(source, message, formatParams));
 		}
 
 		public override string ToString()
 		{
 			StringBuilder result = new StringBuilder();
-			foreach (Error error in errors)
+			foreach (Error error in _errors)
 			{
 				result.AppendLine(error.ToString());
 			}

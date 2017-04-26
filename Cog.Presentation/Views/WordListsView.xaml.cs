@@ -103,6 +103,8 @@ namespace SIL.Cog.Presentation.Views
 		private void LoadCollectionView()
 		{
 			var vm = (WordListsViewModel) DataContext;
+			if (vm == null)
+				return;
 
 			WordListsGrid.CurrentColumn = null;
 			WordListsGrid.CurrentItem = null;
@@ -111,7 +113,7 @@ namespace SIL.Cog.Presentation.Views
 			view.ItemProperties.Add(new DataGridItemProperty("Variety", ".", typeof(WordListsVarietyViewModel)));
 			IComparer sortComparer = ProjectionComparer<WordListsVarietyMeaningViewModel>.Create(meaning => meaning.StrRep);
 			for (int i = 0; i < vm.Meanings.Count; i++)
-				view.ItemProperties.Add(new DataGridItemProperty("Meaning" + i, string.Format("Meanings[{0}]", i), typeof(WordListsVarietyMeaningViewModel)) {SortComparer = sortComparer});
+				view.ItemProperties.Add(new DataGridItemProperty("Meaning" + i, $"Meanings[{i}]", typeof(WordListsVarietyMeaningViewModel)) {SortComparer = sortComparer});
 			vm.VarietiesView = view;
 			WordListsGrid.Items.SortDescriptions.Clear();
 
@@ -123,7 +125,7 @@ namespace SIL.Cog.Presentation.Views
 			for (int i = 0; i < vm.Meanings.Count; i++)
 			{
 				var column = new Column {FieldName = "Meaning" + i, Width = 100, CellEditor = WordListsGrid.DefaultCellEditors[typeof(WordListsVarietyMeaningViewModel)]};
-				var titleBinding = new Binding(string.Format("DataGridControl.DataContext.Meanings[{0}].Gloss", i)) {RelativeSource = RelativeSource.Self};
+				var titleBinding = new Binding($"DataGridControl.DataContext.Meanings[{i}].Gloss") {RelativeSource = RelativeSource.Self};
 				BindingOperations.SetBinding(column, ColumnBase.TitleProperty, titleBinding);
 				WordListsGrid.Columns.Add(column);
 			}

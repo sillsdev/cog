@@ -4,9 +4,6 @@ namespace SIL.Cog.Domain
 {
 	public class WordPair : ObservableObject
 	{
-		private readonly Word _word1;
-		private readonly Word _word2;
-		private readonly ObservableList<string> _alignmentNotes;
 		private bool _cognacy;
 		private bool? _actualCognacy;
 		private bool _predictedCognacy;
@@ -15,39 +12,27 @@ namespace SIL.Cog.Domain
 
 		public WordPair(Word word1, Word word2)
 		{
-			_word1 = word1;
-			_word2 = word2;
-			_alignmentNotes = new ObservableList<string>();
+			Word1 = word1;
+			Word2 = word2;
+			AlignmentNotes = new ObservableList<string>();
 		}
 
 		public VarietyPair VarietyPair { get; internal set; }
 
-		public Word Word1
-		{
-			get { return _word1; }
-		}
+		public Word Word1 { get; }
 
-		public Word Word2
-		{
-			get { return _word2; }
-		}
+		public Word Word2 { get; }
 
 		public Word GetWord(Variety v)
 		{
 			if (VarietyPair.Variety1 == v)
-				return _word1;
-			return _word2;
+				return Word1;
+			return Word2;
 		}
 
-		public Meaning Meaning
-		{
-			get { return _word1.Meaning; }
-		}
+		public Meaning Meaning => Word1.Meaning;
 
-		public ObservableList<string> AlignmentNotes
-		{
-			get { return _alignmentNotes; }
-		}
+		public ObservableList<string> AlignmentNotes { get; }
 
 		public bool Cognacy
 		{

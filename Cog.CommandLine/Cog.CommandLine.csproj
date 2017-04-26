@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.Cog.CommandLine</RootNamespace>
-    <AssemblyName>cog-cmdline</AssemblyName>
+    <AssemblyName>cog-cli</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -87,8 +87,10 @@
     </Compile>
     <Compile Include="ClusterVerb.cs" />
     <Compile Include="CognatesVerb.cs" />
+    <Compile Include="ComponentIdentifiers.cs" />
     <Compile Include="MeaningFactory.cs" />
-    <Compile Include="ReturnCodes.cs" />
+    <Compile Include="ReturnCode.cs" />
+    <Compile Include="SimilarityVerb.cs" />
     <Compile Include="VerbBase.cs" />
     <Compile Include="AlignmentVerb.cs" />
     <Compile Include="Errors.cs" />
@@ -99,10 +101,10 @@
     <Compile Include="SyllabifyVerb.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <EmbeddedResource Include="NewProject.cogx">
+    <EmbeddedResource Include="DefaultProject.cogx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>

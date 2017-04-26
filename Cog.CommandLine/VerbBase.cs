@@ -21,80 +21,30 @@ namespace SIL.Cog.CommandLine
 		[Option('o', "output", Default = "-", HelpText = "Output filename (\"-\" for stdout)")]
 		public string OutputFilename { get; set; }
 
-		[Option('c', "config-file", HelpText = "Config file to use instead of default config (--config-data will override this, if passed)")]
+		[Option('c', "config-file",
+			HelpText = "Config file to use instead of default config (--config-data will override this, if passed)")]
 		public string ConfigFilename { get; set; }
 
 		[Option("config-data", HelpText = "Configuration to use, as a single long string (if passed, overrides --config-file)")]
 		public string ConfigData { get; set; }
 
-		[Usage(ApplicationAlias = "cog-cmdline")]
+		[Usage(ApplicationAlias = "cog-cli")]
 		public static IEnumerable<Example> Examples
 		{
 			get
 			{
-				yield return new Example("Specify a config file on the command line", new VerbBase { ConfigFilename = "cog-cmdline.conf" } );
-				yield return new Example("Read/write from files instead of stdin/out", new VerbBase { InputFilename = "infile.txt", OutputFilename = "outfile.txt" } );
+				yield return new Example("Specify a config file on the command line",
+					new VerbBase {ConfigFilename = "cog-cli.conf"});
+				yield return new Example("Read/write from files instead of stdin/out",
+					new VerbBase {InputFilename = "infile.txt", OutputFilename = "outfile.txt"});
 			}
 		}
 
-		protected SegmentPool _segmentPool;
-		protected SpanFactory<ShapeNode> _spanFactory;
-		protected CogProject _project;
-		protected Meaning _meaning;
-		protected Variety _variety1;
-		protected Variety _variety2;
-
-		public SegmentPool SegmentPool
-		{
-			get { return _segmentPool; }
-			set { _segmentPool = value; }
-		}
-
-		public SpanFactory<ShapeNode> SpanFactory
-		{
-			get { return _spanFactory; }
-			set { _spanFactory = value; }
-		}
-
-		public CogProject Project
-		{
-			get { return _project; }
-			set { _project = value; }
-		}
-
-		public Variety Variety1
-		{
-			get { return _variety1; }
-			set { _variety1 = value; }
-		}
-
-		public Variety Variety2
-		{
-			get { return _variety2; }
-			set { _variety2 = value; }
-		}
-
-		public Meaning Meaning
-		{
-			get { return _meaning; }
-			set { _meaning = value; }
-		}
-
-		private Errors _errors = new Errors();
-		private Errors _warnings = new Errors();
-
-		public Errors Errors
-		{
-			get { return _errors; }
-			set { _errors = value; }
-		}
-
-		public Errors Warnings
-		{
-			get { return _warnings; }
-			set { _warnings = value; }
-		}
-
+		public SegmentPool SegmentPool { get; set; }
+		public SpanFactory<ShapeNode> SpanFactory { get; set; }
+		public CogProject Project { get; set; }
+		public Errors Errors { get; set; } = new Errors();
+		public Errors Warnings { get; set; } = new Errors();
 
 		public virtual string GetVerbName()
 		{
@@ -102,33 +52,37 @@ namespace SIL.Cog.CommandLine
 			{
 				return attrib.Name;
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		protected IEnumerable<string> PossibleConfigFilenames
 		{ 
 			get
 			{
+				if (!Platform.IsMono)
+					yield break;
+
 				// We're slightly violating the XDG spec here: we look for the user's config in $XDG_CONFIG_HOME, but if
 				// he doesn't have a config file there, we get the default from $XDG_DATA_DIRS rather than $XDG_CONFIG_DIRS.
 				string assemblyName = typeof(Program).Assembly.GetName().Name;
 				string configFileName = assemblyName + ".conf";
 				yield return Path.Combine(XdgDirectories.ConfigHome, configFileName);
-				foreach (string BaseDir in XdgDirectories.DataDirs)
-					yield return Path.Combine(BaseDir, configFileName);
+				foreach (string baseDir in XdgDirectories.DataDirs)
+					yield return Path.Combine(baseDir, configFileName);
 			}
 		}
 
 		protected string FindConfigFilename()
 		{
-			// Note that we can't validate the config files due to the Mono XSD validation bug, so we just look for the first one that exists.
+			// Note that we can't validate the config files due to the Mono XSD validation bug,
+			// so we just look for the first one that exists.
 			foreach (string candidateFilename in PossibleConfigFilenames)
 				if (File.Exists(candidateFilename))
 					return candidateFilename;
 			return null;
 		}
 
-		public void SetUpProject() // Should this be protected? But the unit test needs to call it.
+		internal void SetupProject() // Should this be protected? But the unit test needs to call it.
 		{
 			if (ConfigData != null && ConfigFilename != null)
 			{
@@ -138,13 +92,11 @@ namespace SIL.Cog.CommandLine
 			if (ConfigData == null && ConfigFilename == null)
 			{
 				ConfigFilename = FindConfigFilename();
-				// If ConfigFilename is STILL null at this point, it's because no config files were found at all, so we'll use the default one from the resource.
+				// If ConfigFilename is STILL null at this point, it's because no config files were found at all,
+				// so we'll use the default one from the resource.
 			}
 			SpanFactory = new ShapeSpanFactory();
 			SegmentPool = new SegmentPool();
-			Variety1 = new Variety("variety1");
-			Variety2 = new Variety("variety2");
-			Meaning = new Meaning("gloss1", "cat1");
 			if (ConfigData == null && ConfigFilename == null)
 				Project = GetProjectFromResource(SpanFactory, SegmentPool);
 			else if (ConfigData != null)
@@ -153,15 +105,11 @@ namespace SIL.Cog.CommandLine
 				Project = GetProjectFromFilename(SpanFactory, SegmentPool, ConfigFilename);
 			else // Should never get here given checks above, but let's be safe and write the check anyway
 				Project = GetProjectFromResource(SpanFactory, SegmentPool);
-			Project.Meanings.Add(Meaning);
-			Project.Varieties.Add(Variety1);
-			Project.Varieties.Add(Variety2);
-			Project.VarietyPairs.Add(new VarietyPair(Variety1, Variety2));
 		}
 
-		public ReturnCodes DoWorkWithErrorChecking(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		public ReturnCode DoWorkWithErrorChecking(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			ReturnCodes retcode = DoWork(inputReader, outputWriter, errorWriter);
+			ReturnCode retcode = DoWork(inputReader, outputWriter, errorWriter);
 			if (!Warnings.Empty)
 			{
 				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(Warnings.Count, "warning"));
@@ -172,22 +120,22 @@ namespace SIL.Cog.CommandLine
 			{
 				errorWriter.WriteLine("Operation \"{0}\" produced {1}:", GetVerbName(), CountedNoun(Errors.Count, "error"));
 				Errors.Write(errorWriter);
-				retcode = (retcode == ReturnCodes.Okay) ? ReturnCodes.InputError : retcode;
+				retcode = retcode == ReturnCode.Okay ? ReturnCode.InputError : retcode;
 			}
 			return retcode;
 		}
 
-		protected virtual ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected virtual ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			return ReturnCodes.NotImplemented;
+			return ReturnCode.NotImplemented;
 		}
 
-		public ReturnCodes RunAsPipe()
+		public ReturnCode RunAsPipe()
 		{
 			return RunAsPipe(Console.Error);
 		}
 
-		public ReturnCodes RunAsPipe(TextWriter errorWriter)
+		public ReturnCode RunAsPipe(TextWriter errorWriter)
 		{
 			try
 			{
@@ -199,7 +147,8 @@ namespace SIL.Cog.CommandLine
 			{
 				// On Mono, piping into a closed process throws an IOException with "Write fault on path (something)"
 
-				// Try to get the message in English, if we can (some exceptions are only localized when the .Message property is accessed)
+				// Try to get the message in English,
+				// if we can (some exceptions are only localized when the .Message property is accessed)
 				CultureInfo originalCultureInfo = Thread.CurrentThread.CurrentUICulture;
 				Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 				string msg = exception.Message;
@@ -207,7 +156,7 @@ namespace SIL.Cog.CommandLine
 
 				if (!msg.StartsWith("Write fault on path"))
 					throw;
-				return ReturnCodes.Okay; // Having our output pipe closed on us is not a real error
+				return ReturnCode.Okay; // Having our output pipe closed on us is not a real error
 			}
 		}
 
@@ -218,7 +167,7 @@ namespace SIL.Cog.CommandLine
 			if (stemStartIdx != -1 && stemEndIdx < stemStartIdx)
 			{
 				// Only way this can happen is if there was only a single "|" in the word
-				throw new FormatException(String.Format("Words should have either 0 or 2 pipe characters representing word stems. Offending word: {0}", wordText));
+				throw new FormatException($"Words should have either 0 or 2 pipe characters representing word stems. Offending word: {wordText}");
 			}
 			var word = (stemStartIdx == -1) ?
 				new Word(wordText, meaning) :
@@ -279,20 +228,16 @@ namespace SIL.Cog.CommandLine
 
 		public static CogProject GetProjectFromResource(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
 		{
-			using (Stream stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("SIL.Cog.CommandLine.NewProject.cogx"))
+			using (Stream stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("SIL.Cog.CommandLine.DefaultProject.cogx"))
 				return ConfigManager.Load(spanFactory, segmentPool, stream);
 		}
 
-		public static CogProject GetProjectFromFilename(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string projectFilename)
+		public static CogProject GetProjectFromFilename(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool,
+			string projectFilename)
 		{
 			if (projectFilename == null)
-			{
 				return GetProjectFromResource(spanFactory, segmentPool);
-			}
-			else
-			{
-				return ConfigManager.Load(spanFactory, segmentPool, projectFilename);
-			}
+			return ConfigManager.Load(spanFactory, segmentPool, projectFilename);
 		}
 
 		public static CogProject GetProjectFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
@@ -307,7 +252,7 @@ namespace SIL.Cog.CommandLine
 
 		public static string CountedNoun(int count, string singular, string plural)
 		{
-			return String.Format("{0} {1}", count, count == 1 ? singular : plural);
+			return $"{count} {(count == 1 ? singular : plural)}";
 		}
 
 		public static IEnumerable<string> ReadLines(TextReader input)
@@ -315,7 +260,7 @@ namespace SIL.Cog.CommandLine
 			string line;
 			while ((line = input.ReadLine()) != null)
 			{
-				if (!String.IsNullOrWhiteSpace(line)) // Silently skip blank lines
+				if (!string.IsNullOrWhiteSpace(line)) // Silently skip blank lines
 					yield return line;
 			}
 		}

@@ -12,27 +12,35 @@ namespace SIL.Cog.CommandLine
 	[Verb("cluster", HelpText = "Cluster words")]
 	public class ClusterVerb : VerbBase
 	{
-		[Option('m', "method", Default = "upgma", HelpText = "Process name (case-insensitive); valid values are \"upgma\", \"dbscan\", and \"lsdbc\"")]
+		[Option('m', "method", Default = "upgma",
+			HelpText = "Process name (case-insensitive); valid values are \"upgma\", \"dbscan\", and \"lsdbc\"")]
 		public string Method { get; set; }
 
-		[Option('t', "threshhold", Default = 0.2, HelpText = "Distance threshhold for UPGMA clustering (between 0.0 and 1.0, higher for easier clustering)")]
+		[Option('t', "threshhold", Default = 0.2,
+			HelpText = "Distance threshhold for UPGMA clustering (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Threshhold { get; set; }
 
-		[Option('e', "epsilon", Default = 0.2, HelpText = "Epsilon value for DBSCAN clustering (between 0.0 and 1.0, higher for easier clustering)")]
+		[Option('e', "epsilon", Default = 0.2,
+			HelpText = "Epsilon value for DBSCAN clustering (between 0.0 and 1.0, higher for easier clustering)")]
 		public double Epsilon { get; set; }
 
-		[Option('M', "min-words", Default = 2, HelpText = "Minimum # of words to form a cluster in DBSCAN clustering")]
+		[Option('M', "min-words", Default = 2,
+			HelpText = "Minimum # of words to form a cluster in DBSCAN clustering")]
 		public int MinWords { get; set; }
 
-		[Option('a', "alpha", Default = 0.2, HelpText = "Alpha value for LSDBC clustering (weight factor for forming new clusters)")]
+		[Option('a', "alpha", Default = 0.2,
+			HelpText = "Alpha value for LSDBC clustering (weight factor for forming new clusters)")]
 		public double Alpha { get; set; }
 
-		[Option('k', Default = 3, HelpText = "How many neighbors to consider in LSDBC clustering (value of K for the K-nearest-neighbors algorithm)")]
+		[Option('k', Default = 3,
+			HelpText = "How many neighbors to consider in LSDBC clustering (value of K for the K-nearest-neighbors algorithm)")]
 		public int K { get; set; }
 
-		Dictionary<UnorderedTuple<string, string>, double> distanceDict = new Dictionary<UnorderedTuple<string, string>, double>();
-		Dictionary<string, List<Tuple<double, string>>> distanceGraph = new Dictionary<string, List<Tuple<double, string>>>();
-		HashSet<string> allWords = new HashSet<string>();
+		private readonly Dictionary<UnorderedTuple<string, string>, double> _distanceDict
+			= new Dictionary<UnorderedTuple<string, string>, double>();
+		private readonly Dictionary<string, List<Tuple<double, string>>> _distanceGraph
+			= new Dictionary<string, List<Tuple<double, string>>>();
+		private readonly HashSet<string> _allWords = new HashSet<string>();
 
 /* Commented out for now, because the CommandLine library doesn't like finding two Usage attributes and we already have one on VerbBase
 		[Usage(ApplicationAlias = "cog-cmdline")]
@@ -47,10 +55,10 @@ namespace SIL.Cog.CommandLine
 		}
 */
 
-		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			ReturnCodes retcode = ReturnCodes.Okay;
-			SetUpProject();
+			ReturnCode retcode = ReturnCode.Okay;
+			SetupProject();
 
 			string lowerMethod = Method.ToLowerInvariant();
 			switch (lowerMethod)
@@ -60,32 +68,33 @@ namespace SIL.Cog.CommandLine
 				case "upgma":
 					break;
 				default:
-					Errors.Add(string.Format("Invalid clustering method {0}. Valid values are \"upgma\", \"dbscan\", and \"lsdbc\" (not case-sensitive, e.g. \"Upgma\" also works.)", Method));
-					return ReturnCodes.InputError;
+					Errors.Add($"Invalid clustering method {Method}. Valid values are \"upgma\", \"dbscan\", and \"lsdbc\" (not case-sensitive, e.g. \"Upgma\" also works.)");
+					return ReturnCode.InputError;
 			}
 
 			foreach (string line in ReadLines(inputReader))
 			{
-				string[] words = line.Split(' '); // Format: word1 word2 score (where score is a floating-point number with 1.0 = 100% similarity)
+				// Format: word1 word2 score (where score is a floating-point number with 1.0 = 100% similarity)
+				string[] words = line.Split(' ');
 				if (words.Length < 3)
 				{
 					Errors.Add(line, "Each line should contain two words and one score, separated by spaces.");
 					continue;
 				}
-				double score = -1;
-				if (!Double.TryParse(words[2], NumberStyles.Float, CultureInfo.InvariantCulture, out score))
+				double score;
+				if (!double.TryParse(words[2], NumberStyles.Float, CultureInfo.InvariantCulture, out score))
 				{
-					Errors.Add(line, "Could not parse score \"{0}\". Scores should be a number between 0 and 1.", words[2]);
+					Errors.Add(line, $"Could not parse score \"{words[2]}\". Scores should be a number between 0 and 1.");
 					continue;
 				}
 				if (score < 0.0)
 				{
-					Errors.Add(line, "Invalid score \"{0}\". Scores should not be negative, but should be a number between 0 and 1.", words[2]);
+					Errors.Add(line, $"Invalid score \"{words[2]}\". Scores should not be negative, but should be a number between 0 and 1.");
 					continue;
 				}
 				if (score > 1.0)
 				{
-					Errors.Add(line, "Invalid score \"{0}\". Scores should not be greater than 1, but should be a number between 0 and 1.", words[2]);
+					Errors.Add(line, $"Invalid score \"{words[2]}\". Scores should not be greater than 1, but should be a number between 0 and 1.");
 					continue;
 				}
 
@@ -99,44 +108,49 @@ namespace SIL.Cog.CommandLine
 				case "dbscan":
 					// public DbscanClusterer(Func<T, IEnumerable<T>> getNeighbors, double minPoints)
 					KeepScoreForDbscanClusterer();
-					clusterer = new DbscanClusterer<string>(word => distanceGraph[word].TakeWhile(scoreWordTuple => scoreWordTuple.Item1 <= Epsilon).Select(scoreWordTuple => scoreWordTuple.Item2), MinWords);
+					clusterer = new DbscanClusterer<string>(word => _distanceGraph[word]
+						.TakeWhile(scoreWordTuple => scoreWordTuple.Item1 <= Epsilon)
+						.Select(scoreWordTuple => scoreWordTuple.Item2), MinWords);
 					break;
 
 				case "lsdbc":
 					// public LsdbcClusterer(double alpha, Func<T, IEnumerable<Tuple<T, double>>> getKNearestNeighbors)
 					KeepScoreForLsdbcClusterer();
-					clusterer = new LsdbcClusterer<string>(Alpha, word => distanceGraph[word].Take(K).Select(tuple => new Tuple<string, double>(tuple.Item2, tuple.Item1)));
+					clusterer = new LsdbcClusterer<string>(Alpha, word => _distanceGraph[word].Take(K)
+						.Select(tuple => new Tuple<string, double>(tuple.Item2, tuple.Item1)));
 					break;
 
-				case "upgma":
 				default:
-					clusterer = new FlatUpgmaClusterer<string>((w1, w2) => distanceDict[new UnorderedTuple<string, string>(w1, w2)], Threshhold);
+					clusterer = new FlatUpgmaClusterer<string>((w1, w2) =>
+						_distanceDict[new UnorderedTuple<string, string>(w1, w2)], Threshhold);
 					break;
 			}
-			IEnumerable<Cluster<string>> clusters = clusterer.GenerateClusters(allWords);
+			IEnumerable<Cluster<string>> clusters = clusterer.GenerateClusters(_allWords);
 			PrintResults(outputWriter, clusters);
 			return retcode;
 		}
 
 		private void KeepScoreForUpgmaClusterer(string word1, string word2, double distance)
 		{
-			distanceDict.Add(new UnorderedTuple<string, string>(word1, word2), distance);
+			_distanceDict.Add(new UnorderedTuple<string, string>(word1, word2), distance);
 
-			allWords.Add(word1);
-			allWords.Add(word2);
+			_allWords.Add(word1);
+			_allWords.Add(word2);
 		}
 
 		private void KeepScoreForLsdbcClusterer()
 		{
-			foreach (KeyValuePair<UnorderedTuple<string, string>, double> kv in distanceDict)
+			foreach (KeyValuePair<UnorderedTuple<string, string>, double> kv in _distanceDict)
 			{
 				UnorderedTuple<string, string> wordPair = kv.Key;
 				double distance = kv.Value;
-				AddToListDict(distanceGraph, wordPair.Item1, new Tuple<double, string>(distance, wordPair.Item2));
-				AddToListDict(distanceGraph, wordPair.Item2, new Tuple<double, string>(distance, wordPair.Item1));
+				AddToListDict(_distanceGraph, wordPair.Item1, new Tuple<double, string>(distance, wordPair.Item2));
+				AddToListDict(_distanceGraph, wordPair.Item2, new Tuple<double, string>(distance, wordPair.Item1));
 			}
-			foreach (List<Tuple<double, string>> scoreList in distanceGraph.Values)
-				scoreList.Sort(); // TODO: If performance is a serious issue, can replace scoreList with a BinaryHeap<> instead of a List<>. Leaving things simple for now.
+			// TODO: If performance is a serious issue, can replace scoreList with a BinaryHeap<> instead of a List<>.
+			// Leaving things simple for now.
+			foreach (List<Tuple<double, string>> scoreList in _distanceGraph.Values)
+				scoreList.Sort();
 		}
 
 		private void KeepScoreForDbscanClusterer()
@@ -146,7 +160,8 @@ namespace SIL.Cog.CommandLine
 
 		private static void AddToListDict<TKey, TValue>(Dictionary<TKey, List<TValue>> dictionary, TKey key, TValue value)
 		{
-			// Could be an extension method, but it's such a specialized case I don't think an extension method is worth the extra complexity of one more class.
+			// Could be an extension method,
+			// but it's such a specialized case I don't think an extension method is worth the extra complexity of one more class.
 			List<TValue> list;
 			if (!dictionary.TryGetValue(key, out list))
 			{

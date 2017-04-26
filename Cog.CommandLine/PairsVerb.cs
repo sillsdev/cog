@@ -8,9 +8,9 @@ namespace SIL.Cog.CommandLine
 	[Verb("pairs", HelpText = "Turn a list of words into unique word pairs")]
 	public class PairsVerb : VerbBase
 	{
-		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			ReturnCodes retcode = ReturnCodes.Okay;
+			ReturnCode retcode = ReturnCode.Okay;
 			var words = new List<string>();
 			foreach (string line in ReadLines(inputReader))
 			{

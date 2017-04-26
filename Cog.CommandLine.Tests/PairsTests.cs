@@ -3,7 +3,7 @@
 namespace SIL.Cog.CommandLine.Tests
 {
 	[TestFixture]
-    public class PairsTests : TestBase
+	public class PairsTests : TestBase
 	{
 		[Test, Sequential]
 		public void MakePairsProducesAllCombinations(

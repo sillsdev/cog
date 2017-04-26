@@ -12,16 +12,19 @@ namespace SIL.Cog.CommandLine
 	[Verb("alignment", HelpText = "Alignment between words")]
 	public class AlignmentVerb : VerbBase
 	{
-		[Option('r', "raw-scores", Default = false, HelpText = "Produce raw alignment scores (integers from 0 to infinity, where higher means better-aligned)")]
+		[Option('r', "raw-scores", Default = false,
+			HelpText = "Produce raw alignment scores (integers from 0 to infinity, where higher means better-aligned)")]
 		public bool RawScores { get; set; }
 
-		[Option('n', "normalized-scores", Default = false, HelpText = "Produce normalized alignment scores (real numbers between 0.0 and 1.0, where higher means better-aligned)")]
+		[Option('n', "normalized-scores", Default = false,
+			HelpText = "Produce normalized alignment scores (real numbers between 0.0 and 1.0, where higher means better-aligned)")]
 		public bool NormalizedScores { get; set; }
 
-		[Option('v', "verbose", Default = false, HelpText = "Produce more verbose output, showing possible alignments (changes output format)")]
+		[Option('v', "verbose", Default = false,
+			HelpText = "Produce more verbose output, showing possible alignments (changes output format)")]
 		public bool Verbose { get; set; }
 
-		private Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
+		private readonly Dictionary<string, Word> _parsedWords = new Dictionary<string, Word>();
 
 		protected Word ParseWordOnce(string wordText, Meaning meaning, CogProject project)
 		{
@@ -43,9 +46,9 @@ namespace SIL.Cog.CommandLine
 			return word;
 		}
 
-		protected override ReturnCodes DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
+		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
-			ReturnCodes retcode = ReturnCodes.Okay;
+			ReturnCode retcode = ReturnCode.Okay;
 
 			if (!RawScores && !NormalizedScores)
 			{
@@ -60,7 +63,8 @@ namespace SIL.Cog.CommandLine
 				NormalizedScores = true;
 			}
 
-			SetUpProject();
+			SetupProject();
+			Meaning meaning = MeaningFactory.Create();
 
 			IWordAligner wordAligner = Project.WordAligners["primary"];
 			foreach (string line in ReadLines(inputReader))
@@ -71,15 +75,17 @@ namespace SIL.Cog.CommandLine
 					Errors.Add(line, "Each line should have two space-separated words in it.");
 					continue;
 				}
-				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, Meaning, Project)).ToArray();
+				Word[] words = wordTexts.Select(wordText => ParseWordOnce(wordText, meaning, Project)).ToArray();
 				if (words.Length != 2 || words.Any(w => w == null))
 				{
-					Errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}", String.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
+					Errors.Add(line, "One or more of this line's words failed to parse. Successfully parsed words: {0}",
+						string.Join(", ", words.Where(w => w != null).Select(w => w.StrRep)));
 					continue;
 				}
 				IWordAlignerResult result = wordAligner.Compute(words[0], words[1]);
 				Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
-				outputWriter.WriteLine("{0} {1} {2}", words[0].StrRep, words[1].StrRep, RawScores ? alignment.RawScore : alignment.NormalizedScore);
+				outputWriter.WriteLine("{0} {1} {2}", words[0].StrRep, words[1].StrRep,
+					RawScores ? alignment.RawScore : alignment.NormalizedScore);
 				if (Verbose)
 				{
 					outputWriter.Write(alignment.ToString(Enumerable.Empty<string>()));

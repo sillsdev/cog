@@ -40,18 +40,21 @@ namespace SIL.Cog.Domain
 
 		public void UpdateActualCognacy(WordPair wordPair)
 		{
+			wordPair.ActualCognacy = GetCognacy(wordPair.VarietyPair, wordPair.Meaning);
+		}
+
+		public bool? GetCognacy(VarietyPair varietyPair, Meaning meaning)
+		{
 			Dictionary<Meaning, int> decisions;
-			if (_lookupDictionary.TryGetValue(UnorderedTuple.Create(wordPair.VarietyPair.Variety1, wordPair.VarietyPair.Variety2), out decisions))
+			if (_lookupDictionary.TryGetValue(UnorderedTuple.Create(varietyPair.Variety1, varietyPair.Variety2),
+				out decisions))
 			{
 				int index;
-				if (decisions.TryGetValue(wordPair.Meaning, out index))
-				{
-					wordPair.ActualCognacy = Items[index].Cognacy;
-					return;
-				}
+				if (decisions.TryGetValue(meaning, out index))
+					return Items[index].Cognacy;
 			}
 
-			wordPair.ActualCognacy = null;
+			return null;
 		}
 
 		protected override void InsertItem(int index, CognacyDecision item)
@@ -89,7 +92,9 @@ namespace SIL.Cog.Domain
 
 		private void AddToLookupDictionary(int index, CognacyDecision item)
 		{
-			_lookupDictionary.GetValue(UnorderedTuple.Create(item.Variety1, item.Variety2), () => new Dictionary<Meaning, int>())[item.Meaning] = index;
+			Dictionary<Meaning, int> lookup = _lookupDictionary.GetValue(UnorderedTuple.Create(item.Variety1, item.Variety2),
+				() => new Dictionary<Meaning, int>());
+			lookup[item.Meaning] = index;
 		}
 
 		private void RemoveFromLookupDictionary(int index)

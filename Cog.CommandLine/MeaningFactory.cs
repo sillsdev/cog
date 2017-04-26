@@ -4,12 +4,12 @@ namespace SIL.Cog.CommandLine
 {
 	public class MeaningFactory
 	{
-		private static int _counter = 0;
+		private static int _counter;
 
 		public static Meaning Create()
 		{
 			_counter++;
-			return new Meaning(string.Format("Meaning {0}", _counter), string.Format("Category {0}", _counter));
+			return new Meaning($"Meaning {_counter}", $"Category {_counter}");
 		}
 	}
 }

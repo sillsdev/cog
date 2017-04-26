@@ -42,10 +42,7 @@ namespace SIL.Cog.Domain
 			return ((IEnumerable<Word>) this).GetEnumerator();
 		}
 
-		public IEnumerable<Meaning> Meanings
-		{
-			get { return _words.Keys; }
-		}
+		public IEnumerable<Meaning> Meanings => _words.Keys;
 
 		public ReadOnlyCollection<Word> this[Meaning meaning]
 		{
@@ -145,10 +142,7 @@ namespace SIL.Cog.Domain
 			get { return _words.Values.Sum(list => list.Count); }
 		}
 
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
+		public bool IsReadOnly => false;
 
 		private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{

@@ -14,7 +14,8 @@ namespace SIL.Cog.CommandLine.Tests
 		public void CheckHome()
 		{
 			Assert.That(XdgDirectories.Home, Is.Not.Null);
-			Assert.That(XdgDirectories.Home, Is.EqualTo(Environment.GetEnvironmentVariable("HOME")) | Is.EqualTo("/home/nobody")); // Last is default value on Windows
+			// Last is default value on Windows
+			Assert.That(XdgDirectories.Home, Is.EqualTo(Environment.GetEnvironmentVariable("HOME")) | Is.EqualTo("/home/nobody"));
 		}
 
 		[Test]
@@ -34,15 +35,19 @@ namespace SIL.Cog.CommandLine.Tests
 		[Test]
 		public void CheckConfigDirs()
 		{
-			var ExpectedDirs = new string[] { Path.Combine("/etc/xdg", ExpectedAssemblyName) };
-			Assert.That(ExpectedDirs, Is.SubsetOf(XdgDirectories.ConfigDirs));
+			string[] expectedDirs = {Path.Combine("/etc/xdg", ExpectedAssemblyName)};
+			Assert.That(expectedDirs, Is.SubsetOf(XdgDirectories.ConfigDirs));
 		}
 
 		[Test]
 		public void CheckDataDirs()
 		{
-			var ExpectedDirs = new string[] { Path.Combine("/usr/local/share", ExpectedAssemblyName), Path.Combine("/usr/share", ExpectedAssemblyName) };
-			Assert.That(ExpectedDirs, Is.SubsetOf(XdgDirectories.DataDirs));
+			string[] expectedDirs =
+			{
+				Path.Combine("/usr/local/share", ExpectedAssemblyName),
+				Path.Combine("/usr/share", ExpectedAssemblyName)
+			};
+			Assert.That(expectedDirs, Is.SubsetOf(XdgDirectories.DataDirs));
 		}
 	}
 }

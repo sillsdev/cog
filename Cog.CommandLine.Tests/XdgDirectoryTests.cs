@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace SIL.Cog.CommandLine.Tests
 {
 	[TestFixture]
-	[Category("LinuxOnly")]
+	[Platform("Linux")]
 	public class XdgDirectoryTests
 	{
 		private const string ExpectedAssemblyName = "cog-cmdline";

@@ -12,6 +12,9 @@ namespace SIL.Cog.CommandLine
 	[Verb("similarity", HelpText = "Computes the lexical similarity for a given set of word lists and cognate sets")]
 	public class SimilarityVerb : VerbBase
 	{
+		[Option('d', "distance", Default = false, HelpText = "Outputs a distance matrix")]
+		public bool IsDistance { get; set; }
+
 		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			SetupProject();
@@ -106,13 +109,18 @@ namespace SIL.Cog.CommandLine
 			for (int i = 0; i < varieties.Length; i++)
 			{
 				outputWriter.Write(varieties[i].Name);
-				for (int j = 0; j < varieties.Length; j++)
+				for (int j = 0; j <= i; j++)
 				{
 					outputWriter.Write("\t");
-					if (i != j)
+					if (i == j)
+					{
+						outputWriter.Write(IsDistance ? "0.00" : "1.00");
+					}
+					else
 					{
 						VarietyPair varietyPair = varieties[i].VarietyPairs[varieties[j]];
-						outputWriter.Write("{0:0.00}", varietyPair.LexicalSimilarityScore);
+						double score = IsDistance ? 1.0 - varietyPair.LexicalSimilarityScore : varietyPair.LexicalSimilarityScore;
+						outputWriter.Write("{0:0.00}", score);
 					}
 				}
 				outputWriter.WriteLine();

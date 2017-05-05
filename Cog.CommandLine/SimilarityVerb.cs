@@ -15,6 +15,9 @@ namespace SIL.Cog.CommandLine
 		[Option('d', "distance", Default = false, HelpText = "Outputs a distance matrix")]
 		public bool IsDistance { get; set; }
 
+		[Option('h', "half", Default = false, HelpText = "Outputs a half matrix")]
+		public bool IsHalf { get; set; }
+
 		protected override ReturnCode DoWork(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
 		{
 			SetupProject();
@@ -109,7 +112,8 @@ namespace SIL.Cog.CommandLine
 			for (int i = 0; i < varieties.Length; i++)
 			{
 				outputWriter.Write(varieties[i].Name);
-				for (int j = 0; j <= i; j++)
+				int len = IsHalf ? i + 1 : varieties.Length;
+				for (int j = 0; j < len; j++)
 				{
 					outputWriter.Write("\t");
 					if (i == j)

@@ -67,9 +67,9 @@ namespace SIL.Cog.Domain.Components
 			return !match.Span.Contains(_spanFactory.Create(stemAnn.Span.Start, end));
 		}
 
-		private ShapeNode MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match, out Word output)
+		private Word MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match)
 		{
-			output = match.Input;
+			Word output = match.Input;
 			Annotation<ShapeNode> stemAnn = output.Stem;
 			int index = 0;
 			foreach (ShapeNode node in output.Shape)
@@ -105,7 +105,7 @@ namespace SIL.Cog.Domain.Components
 			}
 
 			_segmenter.Segment(output);
-			return null;
+			return output;
 		}
 	}
 }

@@ -6,7 +6,7 @@
 		<Configuration>Release</Configuration>
 		<Platform>Mixed Platforms</Platform>
 		<LifecycleStage>Stable</LifecycleStage>
-		<NUnitVersion>3.6.0</NUnitVersion>
+		<NUnitVersion>3.6.1</NUnitVersion>
 	</PropertyGroup>
 	
 	<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">

@@ -79,6 +79,15 @@
 			<Component Id="Cog.exe.config" Win64="$(var.Win64)">
 				<File Id="Cog.exe.config" Name="Cog.exe.config" Source="$(var.Cog.Presentation.TargetDir)\Cog.exe.config" KeyPath="yes" />
 			</Component>
+			<Component Id="cog_cli.exe" Win64="$(var.Win64)">
+				<File Id="cog_cli.exe" Name="cog-cli.exe" Source="$(var.Cog.CommandLine.TargetDir)\cog-cli.exe" KeyPath="yes" />
+			</Component>
+			<Component Id="cog_cli.pdb" Win64="$(var.Win64)">
+				<File Id="cog_cli.pdb" Name="cog-cli.pdb" Source="$(var.Cog.CommandLine.TargetDir)\cog-cli.pdb" KeyPath="yes" />
+			</Component>
+			<Component Id="CommandLine.dll" Win64="$(var.Win64)">
+				<File Id="CommandLine.dll" Name="CommandLine.dll" Source="$(var.Cog.CommandLine.TargetDir)\CommandLine.dll" KeyPath="yes" />
+			</Component>
 
 			<!-- Machine -->
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">

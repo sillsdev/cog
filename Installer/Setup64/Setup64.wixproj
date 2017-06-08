@@ -35,6 +35,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Cog.CommandLine\Cog.CommandLine.csproj">
+      <Name>Cog.CommandLine</Name>
+      <Project>{056afedf-63ef-4545-810a-dfa8f78346bd}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\Cog.Presentation\Cog.Presentation.csproj">
       <Name>Cog.Presentation</Name>
       <Project>{d5cdac30-0e8c-47a3-90ce-a2bff27adaa7}</Project>

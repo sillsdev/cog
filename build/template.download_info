@@ -1,0 +1,13 @@
+{
+  "name": "Cog",
+  "version": "_VERSION_",
+  "date": "_DATE_",
+  "platform": "win",
+  "platform_version": "Vista+",
+  "architecture": "",
+  "stability": "stable",
+  "file": "Cog-_VERSION_-Setup.exe",
+  "md5": "",
+  "type": "exe",
+  "build": ""
+}

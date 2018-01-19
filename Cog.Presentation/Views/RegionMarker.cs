@@ -18,17 +18,15 @@ namespace SIL.Cog.Presentation.Views
 	{
 		public event EventHandler Click;
 
-		private RegionHitMarker _regionHitMarker;
 		private readonly List<RegionPointMarker> _regionPoints;
 		private readonly List<RegionPointMarker> _regionMidpoints;
 		private int _currentPointIndex;
 		private bool _isMidpoint;
-		private readonly GeographicalRegionViewModel _region;
 
 		public RegionMarker(GeographicalRegionViewModel region)
 			: base(Enumerable.Empty<PointLatLng>())
 		{
-			_region = region;
+			Region = region;
 			Points.AddRange(region.Coordinates.Select(coord => new PointLatLng(coord.Item1, coord.Item2)));
 			Position = Points[0];
 			_regionPoints = new List<RegionPointMarker>();
@@ -78,12 +76,13 @@ namespace SIL.Cog.Presentation.Views
 							StrokeThickness = 3,
 							Opacity = 0.5,
 							IsHitTestVisible = true,
-							DataContext = _region,
-							Visibility = Shape == null ? Visibility.Visible : Shape.Visibility
+							DataContext = Region,
+							Visibility = Shape?.Visibility ?? Visibility.Visible
 						};
 					Shape = path;
 					Shape.MouseEnter += Shape_MouseEnter;
-					Shape.MouseLeave += Region_MouseLeave;
+					Shape.MouseLeave += Shape_MouseLeave;
+					Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
 				}
 				else
 				{
@@ -94,10 +93,7 @@ namespace SIL.Cog.Presentation.Views
 
 		public bool IsSelectable { get; set; }
 
-		public GeographicalRegionViewModel Region
-		{
-			get { return _region; }
-		}
+		public GeographicalRegionViewModel Region { get; }
 
 		private void Shape_MouseEnter(object sender, MouseEventArgs e)
 		{
@@ -113,12 +109,7 @@ namespace SIL.Cog.Presentation.Views
 					CreatePoint(i, curPoint);
 				}
 
-				_regionHitMarker = new RegionHitMarker(marker.Points);
-				_regionHitMarker.RegenerateShape(Map);
-				_regionHitMarker.Shape.MouseLeave += Region_MouseLeave;
-				_regionHitMarker.Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
 				Map.OnMapZoomChanged += Map_OnMapZoomChanged;
-				Map.Markers.Add(_regionHitMarker);
 			}
 		}
 
@@ -127,7 +118,7 @@ namespace SIL.Cog.Presentation.Views
 			CleanupSelection();
 		}
 
-		private void Region_MouseLeave(object sender, MouseEventArgs e)
+		private void Shape_MouseLeave(object sender, MouseEventArgs e)
 		{
 			if (CheckLeaving())
 				CleanupSelection();
@@ -135,7 +126,7 @@ namespace SIL.Cog.Presentation.Views
 
 		private bool CheckLeaving()
 		{
-			return _regionHitMarker != null && !_regionHitMarker.Shape.IsMouseOver
+			return !Shape.IsMouseOver
 			       && _regionPoints.All(pm => !pm.Shape.IsMouseOver) && _regionMidpoints.All(pm => !pm.Shape.IsMouseOver);
 		}
 
@@ -148,11 +139,6 @@ namespace SIL.Cog.Presentation.Views
 				pm.Dispose();
 			_regionMidpoints.Clear();
 
-			if (_regionHitMarker != null)
-			{
-				_regionHitMarker.Dispose();
-				_regionHitMarker = null;
-			}
 			Map.OnMapZoomChanged -= Map_OnMapZoomChanged;
 		}
 
@@ -162,7 +148,7 @@ namespace SIL.Cog.Presentation.Views
 			GPoint lp2 = Map.FromLatLngToLocal(p2);
 			var midpointMarker = new RegionPointMarker(Map.FromLocalToLatLng((int) (lp2.X + lp1.X) / 2, (int) (lp2.Y + lp1.Y) / 2)) {IsMidpoint = true};
 			midpointMarker.Shape.MouseLeftButtonDown += RegionPoint_MouseLeftButtonDown;
-			midpointMarker.Shape.MouseLeave += Region_MouseLeave;
+			midpointMarker.Shape.MouseLeave += Shape_MouseLeave;
 			_regionMidpoints.Insert(index, midpointMarker);
 			Map.Markers.Add(midpointMarker);
 		}
@@ -171,7 +157,7 @@ namespace SIL.Cog.Presentation.Views
 		{
 			var pointMarker = new RegionPointMarker(p);
 			pointMarker.Shape.MouseLeftButtonDown += RegionPoint_MouseLeftButtonDown;
-			pointMarker.Shape.MouseLeave += Region_MouseLeave;
+			pointMarker.Shape.MouseLeave += Shape_MouseLeave;
 			_regionPoints.Insert(index, pointMarker);
 			Map.Markers.Add(pointMarker);
 		}
@@ -179,11 +165,7 @@ namespace SIL.Cog.Presentation.Views
 		private void RegionHit_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			if (IsSelectable)
-			{
-				EventHandler handler = Click;
-				if (handler != null)
-					handler(this, new EventArgs());
-			}
+				Click?.Invoke(this, new EventArgs());
 		}
 
 		private void RegionPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -209,7 +191,6 @@ namespace SIL.Cog.Presentation.Views
 			if (_isMidpoint)
 			{
 				Points.Insert(_currentPointIndex + 1, pll);
-				_regionHitMarker.Points.Insert(_currentPointIndex + 1, pll);
 				_regionPoints.Insert(_currentPointIndex + 1, _regionMidpoints[_currentPointIndex]);
 				_regionMidpoints[_currentPointIndex].IsMidpoint = false;
 				_regionMidpoints.RemoveAt(_currentPointIndex);
@@ -236,10 +217,6 @@ namespace SIL.Cog.Presentation.Views
 			}
 			_regionPoints[_currentPointIndex].Position = pll;
 			RegenerateShape(Map);
-			_regionHitMarker.Points[_currentPointIndex] = pll;
-			_regionHitMarker.RegenerateShape(Map);
-			_regionHitMarker.Shape.MouseLeave += Region_MouseLeave;
-			_regionHitMarker.Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
 		}
 
 		private void RegionPoint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -252,18 +229,16 @@ namespace SIL.Cog.Presentation.Views
 					PointLatLng nextPoint = i == _regionPoints.Count - 1 ? _regionPoints[0].Position : _regionPoints[i + 1].Position;
 					CreateMidpoint(i, curPoint, nextPoint);
 				}
-				_region.Coordinates.Insert(_currentPointIndex, Tuple.Create(Points[_currentPointIndex].Lat, Points[_currentPointIndex].Lng));
+				Region.Coordinates.Insert(_currentPointIndex, Tuple.Create(Points[_currentPointIndex].Lat, Points[_currentPointIndex].Lng));
 			}
-			else if (Math.Abs(_region.Coordinates[_currentPointIndex].Item1 - Points[_currentPointIndex].Lat) > double.Epsilon
-				|| Math.Abs(_region.Coordinates[_currentPointIndex].Item2 - Points[_currentPointIndex].Lng) > double.Epsilon)
+			else if (Math.Abs(Region.Coordinates[_currentPointIndex].Item1 - Points[_currentPointIndex].Lat) > double.Epsilon
+				|| Math.Abs(Region.Coordinates[_currentPointIndex].Item2 - Points[_currentPointIndex].Lng) > double.Epsilon)
 			{
-				_region.Coordinates[_currentPointIndex] = Tuple.Create(Points[_currentPointIndex].Lat, Points[_currentPointIndex].Lng);
+				Region.Coordinates[_currentPointIndex] = Tuple.Create(Points[_currentPointIndex].Lat, Points[_currentPointIndex].Lng);
 			}
 			else
 			{
-				EventHandler handler = Click;
-				if (handler != null)
-					handler(this, new EventArgs());
+				Click?.Invoke(this, new EventArgs());
 			}
 			var pointShape = (UIElement) sender;
 			pointShape.MouseMove -= RegionPoint_MouseMove;

@@ -23,7 +23,7 @@ namespace SIL.Cog.Presentation.Views
 		public bool AddPoint(Point point)
 		{
 			GMapMarker selectedPointMarker = _regionPoints.FirstOrDefault(p => p.Shape.IsMouseOver);
-			PointLatLng latLng = selectedPointMarker != null ? selectedPointMarker.Position : Map.FromLocalToLatLng((int) point.X, (int) point.Y);
+			PointLatLng latLng = selectedPointMarker?.Position ?? Map.FromLocalToLatLng((int) point.X, (int) point.Y);
 
 			if (_regionPoints.Count > 0)
 			{
@@ -48,6 +48,7 @@ namespace SIL.Cog.Presentation.Views
 			{
 				if (Points.Count > 1)
 				{
+					Position = Points[0];
 					var localPath = new List<Point>();
 					var offset = map.FromLatLngToLocal(Points[0]);
 					foreach (PointLatLng i in Points)

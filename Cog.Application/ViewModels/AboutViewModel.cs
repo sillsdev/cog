@@ -18,7 +18,7 @@ namespace SIL.Cog.Application.ViewModels
 		public AboutViewModel()
 		{
 			_licenseCommand = new RelayCommand(() => Process.Start("http://sil.mit-license.org"));
-			_websiteCommand = new RelayCommand(() => Process.Start("http://sillsdev.github.io/cog/"));
+			_websiteCommand = new RelayCommand(() => Process.Start("http://software.sil.org/cog/"));
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
 			_version = fvi.FileVersion;

@@ -51,7 +51,8 @@ namespace SIL.Cog.Presentation.Views
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			LoadCollectionView();
+			if (!DesignerProperties.GetIsInDesignMode(this))
+				LoadCollectionView();
 		}
 
 		private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

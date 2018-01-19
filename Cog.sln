@@ -3,28 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{8F672B71-2BE4-43C8-94F0-FB8CBF6519BF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D5725B23-0281-49E8-A9CF-7CF69BA94032} = {D5725B23-0281-49E8-A9CF-7CF69BA94032}
-		{855AE745-848E-4212-90EA-1BFE313F027D} = {855AE745-848E-4212-90EA-1BFE313F027D}
-	EndProjectSection
-EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup32", "Installer\Setup32\Setup32.wixproj", "{D5725B23-0281-49E8-A9CF-7CF69BA94032}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7} = {D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7}
-	EndProjectSection
-EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup64", "Installer\Setup64\Setup64.wixproj", "{855AE745-848E-4212-90EA-1BFE313F027D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7} = {D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7}
-	EndProjectSection
-EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Bootstrapper", "Installer\Bootstrapper\Bootstrapper.wixproj", "{B397ABC0-DBF2-464D-9A3B-14E6D2EB7A72}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D5725B23-0281-49E8-A9CF-7CF69BA94032} = {D5725B23-0281-49E8-A9CF-7CF69BA94032}
-		{855AE745-848E-4212-90EA-1BFE313F027D} = {855AE745-848E-4212-90EA-1BFE313F027D}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.Presentation", "Cog.Presentation\Cog.Presentation.csproj", "{D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DA1D126F-5327-47C1-8967-03B44DCB2F02} = {DA1D126F-5327-47C1-8967-03B44DCB2F02}
@@ -62,6 +40,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.CommandLine", "Cog.Comm
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cog.CommandLine.Tests", "Cog.CommandLine.Tests\Cog.CommandLine.Tests.csproj", "{CA020F99-1EDC-4C0C-883C-83BD28509916}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{8F672B71-2BE4-43C8-94F0-FB8CBF6519BF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D5725B23-0281-49E8-A9CF-7CF69BA94032} = {D5725B23-0281-49E8-A9CF-7CF69BA94032}
+		{855AE745-848E-4212-90EA-1BFE313F027D} = {855AE745-848E-4212-90EA-1BFE313F027D}
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup32", "Installer\Setup32\Setup32.wixproj", "{D5725B23-0281-49E8-A9CF-7CF69BA94032}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7} = {D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7}
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup64", "Installer\Setup64\Setup64.wixproj", "{855AE745-848E-4212-90EA-1BFE313F027D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7} = {D5CDAC30-0E8C-47A3-90CE-A2BFF27ADAA7}
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Bootstrapper", "Installer\Bootstrapper\Bootstrapper.wixproj", "{B397ABC0-DBF2-464D-9A3B-14E6D2EB7A72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D5725B23-0281-49E8-A9CF-7CF69BA94032} = {D5725B23-0281-49E8-A9CF-7CF69BA94032}
+		{855AE745-848E-4212-90EA-1BFE313F027D} = {855AE745-848E-4212-90EA-1BFE313F027D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

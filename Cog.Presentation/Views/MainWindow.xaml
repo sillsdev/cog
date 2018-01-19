@@ -15,7 +15,7 @@
     </Window.InputBindings>
     <mmc:MetroWindow.LeftWindowCommands>
         <mmc:WindowCommands Background="Transparent" Height="30" ShowSeparators="True">
-            <c:DropDownButton Style="{StaticResource MetroWindowDropDownButtonStyle}">
+            <c:DropDownButton Style="{StaticResource DropDownMetroWindowButtonStyle}">
                 <c:DropDownButton.Content>
                     <Image Width="16" Height="16" Source="..\Images\menu-icon.png" />
                 </c:DropDownButton.Content>
@@ -59,24 +59,28 @@
     </mmc:MetroWindow.LeftWindowCommands>
     <mmc:MetroWindow.RightWindowCommands>
         <mmc:WindowCommands Background="Transparent" Height="30">
-            <Button Command="{Binding SaveCommand}" Style="{StaticResource MetroWindowButtonStyle}" ToolTip="Save">
+            <Button Command="{Binding SaveCommand}" Style="{StaticResource LightMetroWindowButtonStyle}" ToolTip="Save">
                 <Image Width="16" Height="16" Source="..\Images\save-icon.png" />
             </Button>
         </mmc:WindowCommands>
     </mmc:MetroWindow.RightWindowCommands>
-    <mmc:MetroWindow.WindowCloseButtonStyle>
-        <Style TargetType="Button" BasedOn="{StaticResource MetroWindowButtonStyle}">
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FFE81123" />
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FFF1707A" />
-                    <Setter Property="Foreground" Value="Black" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </mmc:MetroWindow.WindowCloseButtonStyle>
+    <mmc:MetroWindow.WindowButtonCommands>
+        <mmc:WindowButtonCommands>
+            <mmc:WindowButtonCommands.LightCloseButtonStyle>
+                <Style TargetType="Button" BasedOn="{StaticResource LightMetroWindowButtonStyle}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FFE81123" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FFF1707A" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </mmc:WindowButtonCommands.LightCloseButtonStyle>
+        </mmc:WindowButtonCommands>
+    </mmc:MetroWindow.WindowButtonCommands>
     <DockPanel>
         <c:TabControlEx Style="{StaticResource MainTabControlStyle}" ItemContainerStyle="{StaticResource MainTabItemStyle}" Padding="0" Margin="0" TabStripPlacement="Top" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Views}" SelectedItem="{Binding SelectedView}">
             <TabControl.ItemTemplate>

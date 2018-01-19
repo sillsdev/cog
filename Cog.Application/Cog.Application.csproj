@@ -36,9 +36,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.1.1.35051, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19038, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
     <Reference Include="GraphSharp, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphSharp.SIL.1.1.0-build00001\lib\net40-Client\GraphSharp.dll</HintPath>

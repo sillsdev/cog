@@ -60,9 +60,8 @@
     <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.1.1.35051, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19038, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
     <Reference Include="GMap.NET.Core, Version=1.7.5.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
       <HintPath>..\packages\GMap.NET.Presentation.1.7.5\lib\net40\GMap.NET.Core.dll</HintPath>

@@ -65,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cog.CommandLine\Cog.CommandLine.csproj">
-      <Project>{056afedf-63ef-4545-810a-dfa8f78346bd}</Project>
+      <Project>{056AFEDF-63EF-4545-810A-DFA8F78346BD}</Project>
       <Name>Cog.CommandLine</Name>
     </ProjectReference>
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">

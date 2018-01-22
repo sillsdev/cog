@@ -2,12 +2,14 @@
   "name": "Cog",
   "version": "_VERSION_",
   "date": "_DATE_",
+  "installer": "1",
   "platform": "win",
-  "platform_version": "Vista+",
+  "platform_version": "7+",
   "architecture": "",
   "stability": "stable",
   "file": "Cog-_VERSION_-Setup.exe",
   "md5": "",
   "type": "exe",
-  "build": ""
+  "build": "",
+  "sidebar": "yes"
 }

@@ -62,16 +62,7 @@ File.WriteAllText(Path, content);
 		</CreateProperty>
 	</Target>
 	
-	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumber">
-		<Copy SourceFiles="$(RootDir)\build\DownloadPointers.html" DestinationFolder="$(RootDir)\output" />
-		<TokenReplace Path="$(RootDir)\output\DownloadPointers.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage)" />
-		<TokenReplace Path="$(RootDir)\output\DownloadPointers.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
-		<TokenReplace Path="$(RootDir)\output\DownloadPointers.html" Token="RELEASE_DATE" Replacement="$([System.DateTime]::Now.ToString(`MMMM d, yyyy`))" />
-		
-		<Copy SourceFiles="$(RootDir)\build\DownloadButton.html" DestinationFolder="$(RootDir)\output" />
-		<TokenReplace Path="$(RootDir)\output\DownloadButton.html" Token="LIFECYCLE_STAGE" Replacement="$(LifecycleStage.ToLower())" />
-		<TokenReplace Path="$(RootDir)\output\DownloadButton.html" Token="VERSION_NUMBER" Replacement="$(ShortVersionNumber)" />
-
+	<Target Name="MakeDownloadInfo" DependsOnTargets="VersionNumber">
 		<Copy SourceFiles="$(RootDir)\build\template.download_info" DestinationFolder="$(RootDir)\output\Cog-$(VersionNumber)-Setup.download_info" />
 		<TokenReplace Path="$(RootDir)\output\Cog-$(VersionNumber)-Setup.download_info" Token="_VERSION_" Replacement="$(ShortVersionNumber)" />
 		<TokenReplace Path="$(RootDir)\output\Cog-$(VersionNumber)-Setup.download_info" Token="_DATE_" Replacement="$([System.DateTime]::UtcNow.ToString(`yyyy-MM-dd`))" />
@@ -90,10 +81,8 @@ File.WriteAllText(Path, content);
 		<Exec Command='sign "$(RootDir)\output\Cog-$(VersionNumber)-Setup.exe"' />
 	</Target>
 	
-	<Target Name="UploadRelease" DependsOnTargets="VersionNumber;Installer;MakeDownloadPointers">
+	<Target Name="UploadRelease" DependsOnTargets="VersionNumber;Installer;MakeDownloadInfo">
 		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=/cygdrive/c/BuildAgent/conf/known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/Cog-$(VersionNumber)-Setup.exe" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/cog/Cog-$(ShortVersionNumber)-Setup.exe' />
 		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=/cygdrive/c/BuildAgent/conf/known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/Cog-$(VersionNumber)-Setup.download_info" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/cog/Cog-$(ShortVersionNumber)-Setup.download_info' />
-		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=/cygdrive/c/BuildAgent/conf/known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/DownloadPointers.html" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/cog/' />
-		<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=/cygdrive/c/BuildAgent/conf/known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/DownloadButton.html" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/cog/' />
 	</Target>
 </Project>

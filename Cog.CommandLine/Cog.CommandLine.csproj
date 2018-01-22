@@ -70,12 +70,10 @@
       <HintPath>..\packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SIL.Machine.1.0.0-build00024\lib\net40-Client\SIL.Collections.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00033\lib\net40-Client\SIL.Collections.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SIL.Machine.1.0.0-build00024\lib\net40-Client\SIL.Machine.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00033\lib\net40-Client\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

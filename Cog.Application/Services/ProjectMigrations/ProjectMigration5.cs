@@ -9,7 +9,8 @@ namespace SIL.Cog.Application.Services.ProjectMigrations
 
 		public void Migrate(SegmentPool segmentPool, CogProject project)
 		{
-			if (project.Segmenter.Consonants.TryGetValue("ħ", out Symbol symbol))
+			Symbol symbol;
+			if (project.Segmenter.Consonants.TryGetValue("ħ", out symbol))
 			{
 				FeatureStruct fs = symbol.FeatureStruct.DeepClone();
 				fs.PriorityUnion(FeatureStruct.New(project.FeatureSystem)

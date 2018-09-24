@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CogProject xmlns="http://www.sil.org/CogProject/1.3"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			version="4">
+			version="5">
 	<FeatureSystem>
 		<Feature id="place" name="Place">
 			<Value id="bilabial" name="bilabial" />
@@ -999,8 +999,8 @@
 				<FeatureValue feature="airstream" value="pulmonic"/>
 			</Symbol>
 			<Symbol strRep="ħ">
-				<FeatureValue feature="place" value="dental"/>
-				<FeatureValue feature="manner" value="pharyngeal"/>
+				<FeatureValue feature="place" value="pharyngeal"/>
+				<FeatureValue feature="manner" value="fricative"/>
 				<FeatureValue feature="syllabic" value="syllabic-"/>
 				<FeatureValue feature="voice" value="voice-"/>
 				<FeatureValue feature="nasal" value="nasal-"/>

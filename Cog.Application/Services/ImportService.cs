@@ -79,15 +79,22 @@ namespace SIL.Cog.Application.Services
 			if (!Clipboard.ContainsData(DataFormats.UnicodeText))
 				return false;
 
-			object importSettingsViewModel;
-			if (GetImportSettings(ownerViewModel, ClipboardWordListsImporter, out importSettingsViewModel))
+			try
 			{
-				var data = (string) Clipboard.GetData(DataFormats.UnicodeText);
-				using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(data)))
-					ClipboardWordListsImporter.Import(importSettingsViewModel, stream, _projectService.Project);
-				_analysisService.SegmentAll();
-				Messenger.Default.Send(new DomainModelChangedMessage(true));
-				return true;
+				object importSettingsViewModel;
+				if (GetImportSettings(ownerViewModel, ClipboardWordListsImporter, out importSettingsViewModel))
+				{
+					var data = (string) Clipboard.GetData(DataFormats.UnicodeText);
+					using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(data)))
+						ClipboardWordListsImporter.Import(importSettingsViewModel, stream, _projectService.Project);
+					_analysisService.SegmentAll();
+					Messenger.Default.Send(new DomainModelChangedMessage(true));
+					return true;
+				}
+			}
+			catch (ImportException ie)
+			{
+				_dialogService.ShowError(ownerViewModel, $"Error importing from clipboard:\n{ie.Message}", "Cog");
 			}
 
 			return false;

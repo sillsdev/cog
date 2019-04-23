@@ -32,6 +32,25 @@ namespace SIL.Cog.Presentation.Views
 				BusyCursor.DisplayUntilIdle();
 		}
 
+		private Cell ActiveCell
+		{
+			get
+			{
+				if (WordListsGrid.CurrentColumn == null)
+					return null;
+				var currentRow = WordListsGrid.GetContainerFromItem(WordListsGrid.CurrentItem) as Row;
+				if (currentRow == null)
+					return null;
+				return currentRow.Cells[WordListsGrid.CurrentColumn.Index];
+			}
+		}
+
+		private void SelectActiveCell()
+		{
+			WordListsGrid.SelectedCellRanges.Clear();
+			WordListsGrid.SelectedCellRanges.Add(new SelectionCellRange(WordListsGrid.Items.IndexOf(WordListsGrid.CurrentItem), WordListsGrid.CurrentColumn.Index));
+		}
+
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var vm = DataContext as WordListsViewModel;
@@ -172,6 +191,54 @@ namespace SIL.Cog.Presentation.Views
 			var cell = (DataCell) sender;
 			if (cell.ParentColumn.Index != 0)
 				cell.Focus();
+		}
+
+		private void WordListsGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			Cell activeCell = ActiveCell;
+			if (activeCell == null)
+				return;
+			ColumnBase activeColumn = WordListsGrid.CurrentColumn;
+			object activeRow = WordListsGrid.CurrentItem;
+
+			switch (e.Key)
+			{
+				//These first 4 cases prevent the user from navigating off the edges of the grid
+				case Key.Down:
+					if (WordListsGrid.Items.IndexOf(activeRow) == WordListsGrid.Items.Count - 1)
+						e.Handled = true;
+					break;
+				case Key.Up:
+					if (WordListsGrid.Items.IndexOf(activeRow) == 0)
+						e.Handled = true;
+					break;
+				case Key.Left:
+					if (activeColumn.Index == WordListsGrid.VisibleColumns[0].Index)
+						e.Handled = true;
+					break;
+				case Key.Right:
+					if (activeColumn.Index == WordListsGrid.VisibleColumns[WordListsGrid.VisibleColumns.Count - 1].Index)
+						e.Handled = true;
+					break;
+
+				//Tab key should act as though the user hit 'Right'
+				case Key.Tab:
+					if (activeCell.IsBeingEdited) activeCell.EndEdit();
+					if (activeColumn.Index != WordListsGrid.VisibleColumns[WordListsGrid.VisibleColumns.Count - 1].Index)
+						WordListsGrid.CurrentColumn = WordListsGrid.VisibleColumns[WordListsGrid.VisibleColumns.IndexOf(activeColumn) + 1];
+					SelectActiveCell();
+					e.Handled = true;
+					break;
+
+				//Enter key should act as though the user hit 'Down'
+				case Key.Enter:
+					if (activeCell.IsBeingEdited) activeCell.EndEdit();
+					if (WordListsGrid.Items.IndexOf(activeRow) != WordListsGrid.Items.Count - 1)
+						WordListsGrid.CurrentItem = WordListsGrid.Items[WordListsGrid.Items.IndexOf(activeRow) + 1];
+					SelectActiveCell();
+					e.Handled = true;
+					break;
+			}
 		}
 	}
 }

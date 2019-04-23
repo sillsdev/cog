@@ -143,7 +143,16 @@ namespace SIL.Cog.Application.Services
 			var graph = new BidirectionalGraph<HierarchicalGraphVertex, HierarchicalGraphEdge>();
 			var root = new HierarchicalGraphVertex(0);
 			graph.AddVertex(root);
-			GenerateHierarchicalVertices(graph, root, tree, null, tree.GetCenter());
+			if (tree.VertexCount > 2)
+			{
+				GenerateHierarchicalVertices(graph, root, tree, null, tree.GetCenter());
+			}
+			else
+			{
+				foreach (Cluster<Variety> cluster in tree.Vertices)
+					GenerateHierarchicalVertices(graph, root, tree, null, cluster);
+			}
+			
 			return graph;
 		}
 

@@ -122,7 +122,10 @@ namespace SIL.Cog.Presentation.Controls
 			{
 				var vertex = (HierarchicalGraphVertex) varietyTextBlock.DataContext;
 				varietyTextBlock.Height = varietyNameHeight;
-				double x = OriginX + (tickWidth * ((vertex.Depth * 100) / maxDepth));
+				double tx = 0;
+				if (maxDepth > 0)
+					tx = tickWidth * ((vertex.Depth * 100) / maxDepth);
+				double x = OriginX + tx;
 				var border = new Border {BorderThickness = borderThickness, BorderBrush = Brushes.Transparent, Child = varietyTextBlock};
 				border.MouseEnter += border_MouseEnter;
 				border.MouseLeave += border_MouseLeave;
@@ -167,7 +170,10 @@ namespace SIL.Cog.Presentation.Controls
 			if (count >= Graph.Degree(vertex) - 1)
 			{
 				//double x = originx + (tickWidth * (((offset + vertex.Depth) * 100) / maxDepth));
-				double x = OriginX + (tickWidth * ((vertex.Depth * 100) / maxDepth));
+				double tx = 0;
+				if (maxDepth > 0)
+					tx = tickWidth * ((vertex.Depth * 100) / maxDepth);
+				double x = OriginX + tx;
 				double y = (maxy + miny) / 2;
 
 				var vertexLine = new Line {X1 = x, Y1 = miny - 1, X2 = x, Y2 = maxy + 1, Stroke = Brushes.Black, StrokeThickness = 2, DataContext = vertex};

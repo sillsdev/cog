@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using GraphSharp.Controls;
 using QuickGraph;
@@ -34,7 +35,7 @@ namespace SIL.Cog.Presentation.Controls
 			if (Graph == null)
 				return;
 
-			double fontSize = Scale(12);
+			double fontSize = Math.Min(Scale(12), 3600);
 			var borderThickness = new Thickness(Scale(2.0));
 			foreach (HierarchicalGraphVertex v in Graph.Vertices)
 			{

@@ -40,10 +40,10 @@
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SIL.Machine.1.0.0-build00033\lib\net40-Client\SIL.Collections.dll</HintPath>
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00034\lib\net40-Client\SIL.Collections.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SIL.Machine.1.0.0-build00033\lib\net40-Client\SIL.Machine.dll</HintPath>
+      <HintPath>..\packages\SIL.Machine.1.0.0-build00034\lib\net40-Client\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

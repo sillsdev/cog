@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
@@ -33,7 +34,7 @@ namespace SIL.Cog.Presentation.Views
 					return true;
 
 				Points.Add(latLng);
-				RegenerateShape(Map);
+				Map.RegenerateShape(this);
 			}
 
 			var pointMarker = new RegionPointMarker(latLng);
@@ -42,51 +43,51 @@ namespace SIL.Cog.Presentation.Views
 			return false;
 		}
 
-		public override void RegenerateShape(GMapControl map)
+		public override Path CreatePath(List<Point> localPath, bool addBlurEffect)
 		{
-			if (map != null)
+			// Create a StreamGeometry to use to specify myPath.
+			var geometry = new StreamGeometry();
+
+			using (StreamGeometryContext ctx = geometry.Open())
 			{
-				if (Points.Count > 1)
-				{
-					Position = Points[0];
-					var localPath = new List<Point>();
-					var offset = map.FromLatLngToLocal(Points[0]);
-					foreach (PointLatLng i in Points)
-					{
-						var p = map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-						localPath.Add(new Point(p.X - offset.X, p.Y - offset.Y));
-					}
+				ctx.BeginFigure(localPath[0], false, false);
 
-					// Create a StreamGeometry to use to specify myPath.
-					var geometry = new StreamGeometry();
-
-					using (StreamGeometryContext ctx = geometry.Open())
-					{
-						ctx.BeginFigure(localPath[0], false, false);
-
-						// Draw a line to the next specified point.
-						ctx.PolyLineTo(localPath, true, true);
-					}
-
-					// Freeze the geometry (make it unmodifiable)
-					// for additional performance benefits.
-					geometry.Freeze();
-
-					// Create a path to draw a geometry with.
-					Shape = new Path
-						{
-							Data = geometry,
-							Stroke = Brushes.Gray,
-							StrokeThickness = 3,
-							Opacity = 0.5,
-							IsHitTestVisible = true
-						};
-				}
-				else
-				{
-					Shape = null;
-				}
+				// Draw a line to the next specified point.
+				ctx.PolyLineTo(localPath, true, true);
 			}
+
+			// Freeze the geometry (make it unmodifiable)
+			// for additional performance benefits.
+			geometry.Freeze();
+
+			// Create a path to draw a geometry with.
+			var myPath = new Path();
+			{
+				// Specify the shape of the Path using the StreamGeometry.
+				myPath.Data = geometry;
+
+				if (addBlurEffect)
+				{
+					var ef = new BlurEffect();
+					{
+						ef.KernelType = KernelType.Gaussian;
+						ef.Radius = 3.0;
+						ef.RenderingBias = RenderingBias.Performance;
+					}
+
+					myPath.Effect = ef;
+				}
+
+				myPath.Stroke = Brushes.Gray;
+				myPath.StrokeThickness = 3;
+				myPath.StrokeLineJoin = PenLineJoin.Round;
+				myPath.StrokeStartLineCap = PenLineCap.Triangle;
+				myPath.StrokeEndLineCap = PenLineCap.Square;
+
+				myPath.Opacity = 0.5;
+				myPath.IsHitTestVisible = true;
+			}
+			return myPath;
 		}
 
 		public void Dispose()

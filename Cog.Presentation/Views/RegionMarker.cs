@@ -33,62 +33,64 @@ namespace SIL.Cog.Presentation.Views
 			_regionMidpoints = new List<RegionPointMarker>();
 		}
 
-		public override void RegenerateShape(GMapControl map)
+		public override Path CreatePath(List<Point> localPath, bool addBlurEffect)
 		{
-			if (map != null)
+			// Create a StreamGeometry to use to specify myPath.
+			var geometry = new StreamGeometry();
+
+			using (StreamGeometryContext ctx = geometry.Open())
 			{
-				if (Points.Count > 1)
-				{
-					var localPath = new List<Point>();
-					var offset = map.FromLatLngToLocal(Points[0]);
-					foreach (PointLatLng i in Points)
-					{
-						var p = map.FromLatLngToLocal(new PointLatLng(i.Lat, i.Lng));
-						localPath.Add(new Point(p.X - offset.X, p.Y - offset.Y));
-					}
+				ctx.BeginFigure(localPath[0], true, true);
 
-					// Create a StreamGeometry to use to specify myPath.
-					var geometry = new StreamGeometry();
-
-					using (StreamGeometryContext ctx = geometry.Open())
-					{
-						ctx.BeginFigure(localPath[0], true, true);
-
-						// Draw a line to the next specified point.
-						ctx.PolyLineTo(localPath, true, true);
-					}
-
-					// Freeze the geometry (make it unmodifiable)
-					// for additional performance benefits.
-					geometry.Freeze();
-
-					var fillBrush = new SolidColorBrush();
-					BindingOperations.SetBinding(fillBrush, SolidColorBrush.ColorProperty, new Binding("Variety.ClusterIndex") {Converter = new IndexToColorConverter(), ConverterParameter = Colors.CornflowerBlue});
-					var strokeBrush = new SolidColorBrush();
-					BindingOperations.SetBinding(strokeBrush, SolidColorBrush.ColorProperty, new Binding("Color") {Source = fillBrush, Converter = new ColorBrightnessConverter(), ConverterParameter = -0.15});
-					// Create a path to draw a geometry with.
-					var path = new Path
-						{
-							Data = geometry,
-							Effect = new BlurEffect {KernelType = KernelType.Gaussian, Radius = 3.0, RenderingBias = RenderingBias.Quality},
-							Stroke = strokeBrush,
-							Fill = fillBrush,
-							StrokeThickness = 3,
-							Opacity = 0.5,
-							IsHitTestVisible = true,
-							DataContext = Region,
-							Visibility = Shape?.Visibility ?? Visibility.Visible
-						};
-					Shape = path;
-					Shape.MouseEnter += Shape_MouseEnter;
-					Shape.MouseLeave += Shape_MouseLeave;
-					Shape.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
-				}
-				else
-				{
-					Shape = null;
-				}
+				// Draw a line to the next specified point.
+				ctx.PolyLineTo(localPath, true, true);
 			}
+
+			// Freeze the geometry (make it unmodifiable)
+			// for additional performance benefits.
+			geometry.Freeze();
+
+			// Create a path to draw a geometry with.
+			var myPath = new Path();
+			{
+				// Specify the shape of the Path using the StreamGeometry.
+				myPath.Data = geometry;
+
+				if (addBlurEffect)
+				{
+					var ef = new BlurEffect();
+					{
+						ef.KernelType = KernelType.Gaussian;
+						ef.Radius = 3.0;
+						ef.RenderingBias = RenderingBias.Performance;
+					}
+
+					myPath.Effect = ef;
+				}
+
+				var fillBrush = new SolidColorBrush();
+				BindingOperations.SetBinding(fillBrush, SolidColorBrush.ColorProperty, new Binding("Variety.ClusterIndex") { Converter = new IndexToColorConverter(), ConverterParameter = Colors.CornflowerBlue });
+				var strokeBrush = new SolidColorBrush();
+				BindingOperations.SetBinding(strokeBrush, SolidColorBrush.ColorProperty, new Binding("Color") { Source = fillBrush, Converter = new ColorBrightnessConverter(), ConverterParameter = -0.15 });
+
+				myPath.Stroke = strokeBrush;
+				myPath.StrokeThickness = 3;
+				myPath.StrokeLineJoin = PenLineJoin.Round;
+				myPath.StrokeStartLineCap = PenLineCap.Triangle;
+				myPath.StrokeEndLineCap = PenLineCap.Square;
+
+				myPath.Fill = fillBrush;
+
+				myPath.Opacity = 0.5;
+				myPath.IsHitTestVisible = true;
+				myPath.DataContext = Region;
+				myPath.Visibility = Shape?.Visibility ?? Visibility.Visible;
+
+				myPath.MouseEnter += Shape_MouseEnter;
+				myPath.MouseLeave += Shape_MouseLeave;
+				myPath.MouseLeftButtonUp += RegionHit_MouseLeftButtonUp;
+			}
+			return myPath;
 		}
 
 		public bool IsSelectable { get; set; }
@@ -216,7 +218,7 @@ namespace SIL.Cog.Presentation.Views
 				}
 			}
 			_regionPoints[_currentPointIndex].Position = pll;
-			RegenerateShape(Map);
+			Map.RegenerateShape(this);
 		}
 
 		private void RegionPoint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

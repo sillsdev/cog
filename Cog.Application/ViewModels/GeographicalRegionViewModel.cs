@@ -99,7 +99,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public string Description
 		{
-			get { return _region.Description; }
+			get { return _region.Description == "" ? null : _region.Description; }
 		}
 
 		public ICommand EditCommand

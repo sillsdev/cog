@@ -195,7 +195,7 @@ namespace SIL.Cog.Presentation.Views
 			{
 				var marker = new RegionMarker(region) {IsSelectable = _currentTool == Tool.Select};
 				marker.Click += Region_Click;
-				marker.RegenerateShape(MapControl);
+				MapControl.RegenerateShape(marker);
 
 				MapControl.Markers.Add(marker);
 			}
@@ -332,14 +332,13 @@ namespace SIL.Cog.Presentation.Views
 				GeoCoderStatusCode res = MapControl.SetPositionByKeywords(SearchTextBox.Text);
 				switch (res)
 				{
-					case GeoCoderStatusCode.G_GEO_SUCCESS:
+					case GeoCoderStatusCode.OK:
 						MapControl.Zoom = 11;
 						break;
-					case GeoCoderStatusCode.G_GEO_UNKNOWN_ADDRESS:
-					case GeoCoderStatusCode.Unknow:
+					case GeoCoderStatusCode.ZERO_RESULTS:
 						MessageBoxEx.Show(System.Windows.Application.Current.MainWindow, "Location not found.", "Cog", MessageBoxButton.OK, MessageBoxImage.Information);
 						break;
-					case GeoCoderStatusCode.G_GEO_SERVER_ERROR:
+					default:
 						MessageBoxEx.Show(System.Windows.Application.Current.MainWindow, "Unable to connect to map server.", "Cog", MessageBoxButton.OK, MessageBoxImage.Error);
 						break;
 				}

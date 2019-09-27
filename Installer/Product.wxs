@@ -120,6 +120,15 @@
 			<Component Id="GMap.NET.WindowsPresentation.dll" Win64="$(var.Win64)">
 				<File Id="GMap.NET.WindowsPresentation.dll" Name="GMap.NET.WindowsPresentation.dll" Source="$(var.Cog.Presentation.TargetDir)\GMap.NET.WindowsPresentation.dll" KeyPath="yes" />
 			</Component>
+			<Component Id="System.Data.SQLite.dll" Win64="$(var.Win64)">
+				<File Id="System.Data.SQLite.dll" Name="System.Data.SQLite.dll" Source="$(var.Cog.Presentation.TargetDir)\System.Data.SQLite.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="SQLite.Interop.dll" Win64="$(var.Win64)">
+				<File Id="SQLite.Interop.dll" Name="SQLite.Interop.dll" Source="$(var.Cog.Presentation.TargetDir)\$(var.Platform)\SQLite.Interop.dll" KeyPath="yes" />
+			</Component>
+			<Component Id="Newtonsoft.Json.dll" Win64="$(var.Win64)">
+				<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.Cog.Presentation.TargetDir)\Newtonsoft.Json.dll" KeyPath="yes" />
+			</Component>
 
 			<!-- Graph# -->
 			<Component Id="GraphSharp.Controls.dll" Win64="$(var.Win64)">

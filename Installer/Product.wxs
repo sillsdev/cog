@@ -171,14 +171,6 @@
 			<Component Id="protobuf_net.dll" Win64="$(var.Win64)">
 				<File Id="protobuf_net.dll" Name="protobuf-net.dll" Source="$(var.Cog.Presentation.TargetDir)\protobuf-net.dll" KeyPath="yes" />
 			</Component>
-
-			<!-- HockeyApp -->
-			<Component Id="Microsoft.HockeyApp.Core45.dll" Win64="$(var.Win64)">
-				<File Id="Microsoft.HockeyApp.Core45.dll" Name="Microsoft.HockeyApp.Core45.dll" Source="$(var.Cog.Presentation.TargetDir)\Microsoft.HockeyApp.Core45.dll" KeyPath="yes" />
-			</Component>
-			<Component Id="Microsoft.HockeyApp.Kit.dll" Win64="$(var.Win64)">
-				<File Id="Microsoft.HockeyApp.Kit.dll" Name="Microsoft.HockeyApp.Kit.dll" Source="$(var.Cog.Presentation.TargetDir)\Microsoft.HockeyApp.Kit.dll" KeyPath="yes" />
-			</Component>
 			
 			<!-- MahApps.Metro -->
 			<Component Id="MahApps.Metro.dll" Win64="$(var.Win64)">

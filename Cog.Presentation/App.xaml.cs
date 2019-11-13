@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
-using Microsoft.HockeyApp;
 using SIL.Cog.Presentation.Properties;
 using SIL.Cog.Presentation.Views;
 
@@ -16,7 +15,7 @@ namespace SIL.Cog.Presentation
 			DispatcherHelper.Initialize();
 		}
 
-		protected override async void OnStartup(StartupEventArgs e)
+		protected override void OnStartup(StartupEventArgs e)
 		{
 			if (Settings.Default.NeedsUpgrade)
 			{
@@ -39,9 +38,6 @@ namespace SIL.Cog.Presentation
 			{
 				Shutdown();
 			}
-
-			HockeyClient.Current.Configure("ad6db2188aaa413fa2fa5055af9fcfd3");
-			await HockeyClient.Current.SendCrashesAsync();
 		}
 	}
 }

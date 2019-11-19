@@ -50,14 +50,14 @@ namespace SIL.Cog.Domain.Config
 				.Select(t => (IConfigMigration) Activator.CreateInstance(t)).ToDictionary(cm => cm.FromNamespace);
 		}
 
-		public static CogProject Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, Stream configFileStream)
+		public static CogProject Load(SegmentPool segmentPool, Stream configFileStream)
 		{
 			CogProject project;
-			Load(spanFactory, segmentPool, configFileStream, out project);
+			Load(segmentPool, configFileStream, out project);
 			return project;
 		}
 
-		public static bool Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, Stream configFileStream, out CogProject project)
+		public static bool Load(SegmentPool segmentPool, Stream configFileStream, out CogProject project)
 		{
 			XDocument doc;
 			try
@@ -69,17 +69,17 @@ namespace SIL.Cog.Domain.Config
 				throw new ConfigException("The specified file is not a valid Cog config file", xe);
 			}
 
-			return LoadProject(spanFactory, segmentPool, doc, out project);
+			return LoadProject(segmentPool, doc, out project);
 		}
 
-		public static CogProject Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string configFilePath)
+		public static CogProject Load(SegmentPool segmentPool, string configFilePath)
 		{
 			CogProject project;
-			Load(spanFactory, segmentPool, configFilePath, out project);
+			Load(segmentPool, configFilePath, out project);
 			return project;
 		}
 
-		public static bool Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string configFilePath, out CogProject project)
+		public static bool Load(SegmentPool segmentPool, string configFilePath, out CogProject project)
 		{
 			XDocument doc;
 			try
@@ -91,17 +91,17 @@ namespace SIL.Cog.Domain.Config
 				throw new ConfigException("The specified file is not a valid Cog config file", xe);
 			}
 
-			return LoadProject(spanFactory, segmentPool, doc, out project);
+			return LoadProject(segmentPool, doc, out project);
 		}
 
-		public static CogProject LoadFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
+		public static CogProject LoadFromXmlString(SegmentPool segmentPool, string xmlString)
 		{
 			CogProject project;
-			LoadFromXmlString(spanFactory, segmentPool, xmlString, out project);
+			LoadFromXmlString(segmentPool, xmlString, out project);
 			return project;
 		}
 
-		public static bool LoadFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString, out CogProject project)
+		public static bool LoadFromXmlString(SegmentPool segmentPool, string xmlString, out CogProject project)
 		{
 			XDocument doc;
 			try
@@ -113,12 +113,12 @@ namespace SIL.Cog.Domain.Config
 				throw new ConfigException("The specified file is not a valid Cog config file", xe);
 			}
 
-			return LoadProject(spanFactory, segmentPool, doc, out project);
+			return LoadProject(segmentPool, doc, out project);
 		}
 
-		private static bool LoadProject(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, XDocument doc, out CogProject project)
+		private static bool LoadProject(SegmentPool segmentPool, XDocument doc, out CogProject project)
 		{
-			project = new CogProject(spanFactory);
+			project = new CogProject();
 
 			XElement root = doc.Root;
 			Debug.Assert(root != null);
@@ -201,12 +201,12 @@ namespace SIL.Cog.Domain.Config
 			XElement alignersElem = root.Element(Cog + "WordAligners");
 			Debug.Assert(alignersElem != null);
 			foreach (XElement alignerElem in alignersElem.Elements(Cog + "WordAligner"))
-				LoadComponent(spanFactory, segmentPool, project, alignerElem, project.WordAligners);
+				LoadComponent(segmentPool, project, alignerElem, project.WordAligners);
 
 			XElement cognateIdentifiersElem = root.Element(Cog + "CognateIdentifiers");
 			Debug.Assert(cognateIdentifiersElem != null);
 			foreach (XElement cognateIdentifierElem in cognateIdentifiersElem.Elements(Cog + "CognateIdentifier"))
-				LoadComponent(spanFactory, segmentPool, project, cognateIdentifierElem, project.CognateIdentifiers);
+				LoadComponent(segmentPool, project, cognateIdentifierElem, project.CognateIdentifiers);
 
 			XElement meaningsElem = root.Element(Cog + "Meanings");
 			Debug.Assert(meaningsElem != null);
@@ -283,34 +283,34 @@ namespace SIL.Cog.Domain.Config
 			XElement projectProcessorsElem = root.Element(Cog + "ProjectProcessors");
 			Debug.Assert(projectProcessorsElem != null);
 			foreach (XElement projectProcessorElem in projectProcessorsElem.Elements(Cog + "ProjectProcessor"))
-				LoadComponent(spanFactory, segmentPool, project, projectProcessorElem, project.ProjectProcessors);
+				LoadComponent(segmentPool, project, projectProcessorElem, project.ProjectProcessors);
 
 			XElement varietyProcessorsElem = root.Element(Cog + "VarietyProcessors");
 			Debug.Assert(varietyProcessorsElem != null);
 			foreach (XElement varietyProcessorElem in varietyProcessorsElem.Elements(Cog + "VarietyProcessor"))
-				LoadComponent(spanFactory, segmentPool, project, varietyProcessorElem, project.VarietyProcessors);
+				LoadComponent(segmentPool, project, varietyProcessorElem, project.VarietyProcessors);
 
 			XElement varietyPairProcessorsElem = root.Element(Cog + "VarietyPairProcessors");
 			Debug.Assert(varietyPairProcessorsElem != null);
 			foreach (XElement varietyPairProcessorElem in varietyPairProcessorsElem.Elements(Cog + "VarietyPairProcessor"))
-				LoadComponent(spanFactory, segmentPool, project, varietyPairProcessorElem, project.VarietyPairProcessors);
+				LoadComponent(segmentPool, project, varietyPairProcessorElem, project.VarietyPairProcessors);
 
 			return migrated;
 		}
 
-		internal static T LoadComponent<T>(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		internal static T LoadComponent<T>(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var typeStr = (string) elem.Attribute(Xsi + "type");
 			Type type = Type.GetType(string.Format("SIL.Cog.Domain.Config.Components.{0}Config", typeStr));
 			Debug.Assert(type != null);
 			var config = (IComponentConfig<T>) Activator.CreateInstance(type);
-			return config.Load(spanFactory, segmentPool, project, elem);
+			return config.Load(segmentPool, project, elem);
 		}
 
-		private static void LoadComponent<T>(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem, IDictionary<string, T> components)
+		private static void LoadComponent<T>(SegmentPool segmentPool, CogProject project, XElement elem, IDictionary<string, T> components)
 		{
 			var id = (string) elem.Attribute("id");
-			components[id] = LoadComponent<T>(spanFactory, segmentPool, project, elem);
+			components[id] = LoadComponent<T>(segmentPool, project, elem);
 		}
 
 		private static void ParseSymbols(FeatureSystem featSys, XElement elem, ICollection<Symbol> symbols)

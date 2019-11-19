@@ -2,7 +2,7 @@ using System.Linq;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

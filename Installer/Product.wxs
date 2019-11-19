@@ -93,14 +93,11 @@
 			<Component Id="SIL.Machine.dll" Win64="$(var.Win64)">
 				<File Id="SIL.Machine.dll" Name="SIL.Machine.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Machine.dll" KeyPath="yes" />
 			</Component>
-			<Component Id="SIL.Machine.pdb" Win64="$(var.Win64)">
-				<File Id="SIL.Machine.pdb" Name="SIL.Machine.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Machine.pdb" KeyPath="yes" />
+			<Component Id="SIL.Core.dll" Win64="$(var.Win64)">
+				<File Id="SIL.Core.dll" Name="SIL.Core.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Core.dll" KeyPath="yes" />
 			</Component>
-			<Component Id="SIL.Collections.dll" Win64="$(var.Win64)">
-				<File Id="SIL.Collections.dll" Name="SIL.Collections.dll" Source="$(var.Cog.Presentation.TargetDir)\SIL.Collections.dll" KeyPath="yes" />
-			</Component>
-			<Component Id="SIL.Collections.pdb" Win64="$(var.Win64)">
-				<File Id="SIL.Collections.pdb" Name="SIL.Collections.pdb" Source="$(var.Cog.Presentation.TargetDir)\SIL.Collections.pdb" KeyPath="yes" />
+			<Component Id="System.ValueTuple.dll" Win64="$(var.Win64)">
+				<File Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" Source="$(var.Cog.Presentation.TargetDir)\System.ValueTuple.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- MVVM Light -->
@@ -155,8 +152,8 @@
 			</Component>
 
 			<!-- QuickGraph -->
-			<Component Id="QuickGraph.dll" Win64="$(var.Win64)">
-				<File Id="QuickGraph.dll" Name="QuickGraph.dll" Source="$(var.Cog.Presentation.TargetDir)\QuickGraph.dll" KeyPath="yes" />
+			<Component Id="Sandwych.QuickGraph.Core.dll" Win64="$(var.Win64)">
+				<File Id="Sandwych.QuickGraph.Core.dll" Name="Sandwych.QuickGraph.Core.dll" Source="$(var.Cog.Presentation.TargetDir)\Sandwych.QuickGraph.Core.dll" KeyPath="yes" />
 			</Component>
 
 			<!-- Extended WPF Toolkit -->

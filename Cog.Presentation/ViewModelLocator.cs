@@ -17,7 +17,6 @@ using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Presentation.Services;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Presentation
 {
@@ -53,7 +52,6 @@ namespace SIL.Cog.Presentation
 			builder.RegisterType<WindowViewModelMappings>().As<IWindowViewModelMappings>().SingleInstance();
 			builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
 			builder.RegisterType<BusyService>().As<IBusyService>().SingleInstance();
-			builder.RegisterType<ShapeSpanFactory>().As<SpanFactory<ShapeNode>>().SingleInstance();
 			builder.RegisterType<ExportService>().As<IExportService>().SingleInstance();
 			builder.RegisterType<ImportService>().As<IImportService>().SingleInstance();
 			builder.RegisterType<ImageExportService>().As<IImageExportService>().SingleInstance();

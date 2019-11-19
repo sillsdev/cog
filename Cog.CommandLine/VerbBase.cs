@@ -9,7 +9,6 @@ using CommandLine;
 using CommandLine.Text;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.CommandLine
 {
@@ -41,7 +40,6 @@ namespace SIL.Cog.CommandLine
 		}
 
 		public SegmentPool SegmentPool { get; set; }
-		public SpanFactory<ShapeNode> SpanFactory { get; set; }
 		public CogProject Project { get; set; }
 		public Errors Errors { get; set; } = new Errors();
 		public Errors Warnings { get; set; } = new Errors();
@@ -95,16 +93,15 @@ namespace SIL.Cog.CommandLine
 				// If ConfigFilename is STILL null at this point, it's because no config files were found at all,
 				// so we'll use the default one from the resource.
 			}
-			SpanFactory = new ShapeSpanFactory();
 			SegmentPool = new SegmentPool();
 			if (ConfigData == null && ConfigFilename == null)
-				Project = GetProjectFromResource(SpanFactory, SegmentPool);
+				Project = GetProjectFromResource(SegmentPool);
 			else if (ConfigData != null)
-				Project = GetProjectFromXmlString(SpanFactory, SegmentPool, ConfigData);
+				Project = GetProjectFromXmlString(SegmentPool, ConfigData);
 			else if (ConfigFilename != null)
-				Project = GetProjectFromFilename(SpanFactory, SegmentPool, ConfigFilename);
+				Project = GetProjectFromFilename(SegmentPool, ConfigFilename);
 			else // Should never get here given checks above, but let's be safe and write the check anyway
-				Project = GetProjectFromResource(SpanFactory, SegmentPool);
+				Project = GetProjectFromResource(SegmentPool);
 		}
 
 		public ReturnCode DoWorkWithErrorChecking(TextReader inputReader, TextWriter outputWriter, TextWriter errorWriter)
@@ -226,23 +223,22 @@ namespace SIL.Cog.CommandLine
 
 		#endregion
 
-		public static CogProject GetProjectFromResource(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool)
+		public static CogProject GetProjectFromResource(SegmentPool segmentPool)
 		{
 			using (Stream stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("SIL.Cog.CommandLine.DefaultProject.cogx"))
-				return ConfigManager.Load(spanFactory, segmentPool, stream);
+				return ConfigManager.Load(segmentPool, stream);
 		}
 
-		public static CogProject GetProjectFromFilename(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool,
-			string projectFilename)
+		public static CogProject GetProjectFromFilename(SegmentPool segmentPool, string projectFilename)
 		{
 			if (projectFilename == null)
-				return GetProjectFromResource(spanFactory, segmentPool);
-			return ConfigManager.Load(spanFactory, segmentPool, projectFilename);
+				return GetProjectFromResource(segmentPool);
+			return ConfigManager.Load(segmentPool, projectFilename);
 		}
 
-		public static CogProject GetProjectFromXmlString(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, string xmlString)
+		public static CogProject GetProjectFromXmlString(SegmentPool segmentPool, string xmlString)
 		{
-			return ConfigManager.LoadFromXmlString(spanFactory, segmentPool, xmlString);
+			return ConfigManager.LoadFromXmlString(segmentPool, xmlString);
 		}
 
 		public static string CountedNoun(int count, string singular)

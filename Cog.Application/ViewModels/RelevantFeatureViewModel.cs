@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using SIL.Collections;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

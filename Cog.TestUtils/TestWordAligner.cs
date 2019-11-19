@@ -55,6 +55,11 @@ namespace SIL.Cog.TestUtils
 				return _segmentPool.Get(p).Equals(_segmentPool.Get(q)) ? 100 : 0;
 			}
 
+			public int GetTranspositionScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1, ShapeNode q2)
+			{
+				return 0;
+			}
+
 			public int GetExpansionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q1, ShapeNode q2)
 			{
 				Segment pSeg = _segmentPool.Get(p);

@@ -3,7 +3,7 @@ using System.Linq;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Machine.FeatureModel;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Services.ProjectMigrations
 {
@@ -75,13 +75,13 @@ namespace SIL.Cog.Application.Services.ProjectMigrations
 		private static void AddValue(SymbolCollection symbols, string strRep, FeatureSymbol value)
 		{
 			Symbol symbol;
-			if (symbols.TryGetValue(strRep, out symbol))
+			if (symbols.TryGet(strRep, out symbol))
 				AddValue(symbols, symbol, value);
 		}
 
 		private static void AddValue(SymbolCollection symbols, Symbol symbol, FeatureSymbol value)
 		{
-			FeatureStruct fs = symbol.FeatureStruct.DeepClone();
+			FeatureStruct fs = symbol.FeatureStruct.Clone();
 			fs.AddValue(value.Feature, value);
 			fs.Freeze();
 			symbols.Remove(symbol);

@@ -4,7 +4,7 @@ using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Tests.ViewModels
 {

@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using SIL.Collections;
+using SIL.Code;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -105,7 +106,7 @@ namespace SIL.Cog.Domain
 			get { return true; }
 		}
 
-		public bool TryGetValue(Variety key, out VarietyPair item)
+		public bool TryGet(Variety key, out VarietyPair item)
 		{
 			return _varietyPairs.TryGetValue(key, out item);
 		}

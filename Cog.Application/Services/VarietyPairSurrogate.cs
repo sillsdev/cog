@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
@@ -29,7 +29,7 @@ namespace SIL.Cog.Application.Services
 			Variety1 = vp.Variety1.Name;
 			Variety2 = vp.Variety2.Name;
 			var wordPairSurrogates = new Dictionary<WordPair, WordPairSurrogate>();
-			_wordPairs = vp.WordPairs.Select(wp => wordPairSurrogates.GetValue(wp, () => new WordPairSurrogate(wp))).ToList();
+			_wordPairs = vp.WordPairs.Select(wp => wordPairSurrogates.GetOrCreate(wp, () => new WordPairSurrogate(wp))).ToList();
 			PhoneticSimilarityScore = vp.PhoneticSimilarityScore;
 			LexicalSimilarityScore = vp.LexicalSimilarityScore;
 			DefaultSoundCorrespondenceProbability = vp.DefaultSoundCorrespondenceProbability;

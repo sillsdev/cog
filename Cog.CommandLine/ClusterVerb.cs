@@ -4,8 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CommandLine;
-using SIL.Collections;
 using SIL.Machine.Clusterers;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.CommandLine
 {

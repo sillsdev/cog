@@ -1,16 +1,14 @@
 ﻿using NUnit.Framework;
 using SIL.Cog.Application.Services.ProjectMigrations;
 using SIL.Cog.Domain;
-using SIL.Collections;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 {
 	[TestFixture]
 	public class ProjectMigration3Tests
 	{
-		private readonly ShapeSpanFactory _spanFactory = new ShapeSpanFactory();
 		private FeatureSystem _featSys;
 		private CogProject _project;
 		private SegmentPool _segmentPool;
@@ -35,7 +33,7 @@ namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 						new FeatureSymbol("epiglottal"),
 						new FeatureSymbol("glottal"))
 				};
-			_project = new CogProject(_spanFactory) {FeatureSystem = _featSys};
+			_project = new CogProject() {FeatureSystem = _featSys};
 			_segmentPool = new SegmentPool();
 		}
 

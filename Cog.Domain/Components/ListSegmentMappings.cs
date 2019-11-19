@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -53,11 +54,11 @@ namespace SIL.Cog.Domain.Components
 				{
 					var env1 = new Environment(leftEnv1, rightEnv1);
 					var env2 = new Environment(leftEnv2, rightEnv2);
-					Dictionary<string, List<Tuple<Environment, Environment>>> segments = _mappingLookup.GetValue(str1, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
-					List<Tuple<Environment, Environment>> contexts = segments.GetValue(str2, () => new List<Tuple<Environment, Environment>>());
+					Dictionary<string, List<Tuple<Environment, Environment>>> segments = _mappingLookup.GetOrCreate(str1, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
+					List<Tuple<Environment, Environment>> contexts = segments.GetOrCreate(str2, () => new List<Tuple<Environment, Environment>>());
 					contexts.Add(Tuple.Create(env1, env2));
-					segments = _mappingLookup.GetValue(str2, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
-					contexts = segments.GetValue(str1, () => new List<Tuple<Environment, Environment>>());
+					segments = _mappingLookup.GetOrCreate(str2, () => new Dictionary<string, List<Tuple<Environment, Environment>>>());
+					contexts = segments.GetOrCreate(str1, () => new List<Tuple<Environment, Environment>>());
 					contexts.Add(Tuple.Create(env2, env1));
 				}
 			}

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Collections
 {
@@ -75,9 +75,9 @@ namespace SIL.Cog.Application.Collections
 				_items.ReplaceAll(source.Select(item => _sourceToTarget(item)));
 		}
 
-		public bool TryGetValue(TSource key, out TTarget item)
+		public bool TryGet(TSource key, out TTarget item)
 		{
-			return _items.TryGetValue(key, out item);
+			return _items.TryGet(key, out item);
 		}
 
 		public TTarget this[TSource key]

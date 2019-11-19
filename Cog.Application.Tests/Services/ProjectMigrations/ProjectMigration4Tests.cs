@@ -6,7 +6,6 @@ using SIL.Cog.Application.Services.ProjectMigrations;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.Domain.Config;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
@@ -14,7 +13,6 @@ namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 	[TestFixture]
 	public class ProjectMigration4Tests
 	{
-		private readonly ShapeSpanFactory _spanFactory = new ShapeSpanFactory();
 		private CogProject _project;
 		private SegmentPool _segmentPool;
 
@@ -22,7 +20,7 @@ namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 		public void SetUp()
 		{
 			_segmentPool = new SegmentPool();
-			_project = ConfigManager.Load(_spanFactory, _segmentPool, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Services", "ProjectMigrations", "ProjectMigration4Tests.cogx"));
+			_project = ConfigManager.Load(_segmentPool, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Services", "ProjectMigrations", "ProjectMigration4Tests.cogx"));
 		}
 
 		[Test]

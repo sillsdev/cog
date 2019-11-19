@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class DolgopolskyCognateIdentifierConfig : IComponentConfig<ICognateIdentifier>
 	{
-		public ICognateIdentifier Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public ICognateIdentifier Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement soundClassesElem = elem.Element(ConfigManager.Cog + "SoundClasses");
 			Debug.Assert(soundClassesElem != null);

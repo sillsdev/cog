@@ -9,7 +9,6 @@ using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.TestUtils;
-using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
 
@@ -18,8 +17,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	[TestFixture]
 	public class MultipleWordAlignmentViewModelTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Meanings()
 		{
@@ -31,7 +28,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService, analysisService);
 
-			var project = new CogProject(_spanFactory)
+			var project = new CogProject()
 				{
 					Meanings = {new Meaning("gloss2", "cat2"), new Meaning("gloss1", "cat1"), new Meaning("gloss3", "cat3")}
 				};
@@ -58,11 +55,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var busyService = Substitute.For<IBusyService>();
 			var exportService = Substitute.For<IExportService>();
 			var dialogService = Substitute.For<IDialogService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 
 			var alignment = new MultipleWordAlignmentViewModel(projectService, busyService, exportService, analysisService);
 
-			var project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			var project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});

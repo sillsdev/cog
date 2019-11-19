@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.SequenceAlignment;
 using SIL.Machine.Statistics;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -105,6 +107,11 @@ namespace SIL.Cog.Domain.Components
 			return (MaxExpansionCompressionScore - (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct)
 				+ GetVowelCost(q) + Math.Max(GetVowelCost(p1), GetVowelCost(p2)) + Math.Max(GetSyllablePositionCost(p1, q), GetSyllablePositionCost(p2, q))))
 				+ GetSoundChangeScore(sequence1, p1, p2, sequence2, q, null);
+		}
+
+		public int GetTranspositionScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1, ShapeNode q2)
+		{
+			return 0;
 		}
 
 		public int GetMaxScore1(Word sequence1, ShapeNode p, Word sequence2)

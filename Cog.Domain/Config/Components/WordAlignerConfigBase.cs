@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.SequenceAlignment;
 
@@ -9,7 +8,7 @@ namespace SIL.Cog.Domain.Config.Components
 {
 	public abstract class WordAlignerConfigBase : IComponentConfig<IWordAligner>
 	{
-		public abstract IWordAligner Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem);
+		public abstract IWordAligner Load(SegmentPool segmentPool, CogProject project, XElement elem);
 
 		protected void LoadSettings(Segmenter segmenter, FeatureSystem featSys, XElement elem, WordPairAlignerSettings settings)
 		{

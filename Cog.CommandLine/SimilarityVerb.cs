@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.CommandLine
@@ -63,7 +63,7 @@ namespace SIL.Cog.CommandLine
 							continue;
 
 						Meaning meaning = Project.Meanings[i - 1];
-						List<HashSet<Variety>> sets = cognateSets.GetValue(meaning,
+						List<HashSet<Variety>> sets = cognateSets.GetOrCreate(meaning,
 							() => new List<HashSet<Variety>>(Enumerable.Repeat((HashSet<Variety>) null, setStr.Length)));
 						var cognateVarieties = new HashSet<Variety>();
 						for (int j = 0; j < setStr.Length; j++)

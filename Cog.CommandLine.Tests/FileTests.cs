@@ -5,7 +5,6 @@ using System.Text;
 using NUnit.Framework;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.CommandLine.Tests
@@ -14,9 +13,8 @@ namespace SIL.Cog.CommandLine.Tests
 	{
 		public CogProject GetDefaultProject()
 		{
-			var spanFactory = new ShapeSpanFactory();
 			var segmentPool = new SegmentPool();
-			return VerbBase.GetProjectFromResource(spanFactory, segmentPool);
+			return VerbBase.GetProjectFromResource(segmentPool);
 		}
 
 		public CogProject GetTestProject()

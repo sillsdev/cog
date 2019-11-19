@@ -6,7 +6,7 @@ using System.Windows;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Import;
 using SIL.Cog.Application.ViewModels;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Services
 {
@@ -158,7 +158,7 @@ namespace SIL.Cog.Application.Services
 
 		private bool GetImportSettings(object ownerViewModel, IImporter importer, out object importSettingsViewModel)
 		{
-			importSettingsViewModel = _importerSettingsViewModels.GetValue(importer, importer.CreateImportSettingsViewModel);
+			importSettingsViewModel = _importerSettingsViewModels.GetOrCreate(importer, importer.CreateImportSettingsViewModel);
 			if (importSettingsViewModel == null)
 				return true;
 

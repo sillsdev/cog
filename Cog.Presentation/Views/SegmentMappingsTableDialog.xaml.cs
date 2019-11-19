@@ -5,9 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
+using SIL.Code;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
-using SIL.Collections;
 using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views

@@ -5,8 +5,9 @@ using GalaSoft.MvvmLight;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -57,7 +58,7 @@ namespace SIL.Cog.Application.ViewModels
 				    && ListSegmentMappings.Normalize(projectService.Project.Segmenter, mapping.Segment2, out seg2, out leftEnv2, out rightEnv2))
 				{
 					UnorderedTuple<string, string> key = UnorderedTuple.Create(seg1, seg2);
-					HashSet<UnorderedTuple<string, string>> m = mappingLookup.GetValue(key, () => new HashSet<UnorderedTuple<string, string>>());
+					HashSet<UnorderedTuple<string, string>> m = mappingLookup.GetOrCreate(key, () => new HashSet<UnorderedTuple<string, string>>());
 					m.Add(UnorderedTuple.Create(mapping.Segment1, mapping.Segment2));
 				}
 			}

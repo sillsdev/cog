@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -22,9 +23,9 @@ namespace SIL.Cog.Domain
 		private readonly ObservableDictionary<string, IProcessor<Variety>> _varietyProcessors;
 		private readonly ObservableDictionary<string, IProcessor<VarietyPair>> _varietyPairProcessors;
 
-		public CogProject(SpanFactory<ShapeNode> spanFactory)
+		public CogProject()
 		{
-			Segmenter = new Segmenter(spanFactory);
+			Segmenter = new Segmenter();
 			_meanings = new MeaningCollection();
 			_meanings.CollectionChanged += MeaningsChanged;
 			_varieties = new VarietyCollection();

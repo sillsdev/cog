@@ -1,5 +1,5 @@
-using SIL.Collections;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {

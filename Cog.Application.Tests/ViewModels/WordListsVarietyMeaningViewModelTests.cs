@@ -11,7 +11,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	{
 		private CogProject SetupProject(WordListsViewModelTestEnvironment env)
 		{
-			var project = new CogProject(env.SpanFactory)
+			var project = new CogProject()
 			{
 				Meanings = {new Meaning("gloss1", "cat1")},
 				Varieties = {new Variety("variety1")}
@@ -121,7 +121,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				var segmenter = new Segmenter(env.SpanFactory)
+				var segmenter = new Segmenter()
 				{
 					Consonants = {"b", "t"},
 					Vowels = {"a"}

@@ -7,7 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Ionic.Zip;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Import
 {
@@ -58,11 +58,11 @@ namespace SIL.Cog.Application.Import
 			{
 				var name = (string) placemark.Element(Kml + "name");
 				Variety variety;
-				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGetValue(name, out variety))
+				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGet(name, out variety))
 				{
 					XElement polygon = placemark.Element(Kml + "Polygon");
 					if (polygon != null)
-						regions.GetValue(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "description")));
+						regions.GetOrCreate(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "description")));
 				}
 			}
 
@@ -70,7 +70,7 @@ namespace SIL.Cog.Application.Import
 			{
 				var name = (string) folder.Element(Kml + "name");
 				Variety variety;
-				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGetValue(name, out variety))
+				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGet(name, out variety))
 					LoadVarietyFolder(regions, variety, folder);
 				else
 					LoadFolder(project, regions, folder);
@@ -83,7 +83,7 @@ namespace SIL.Cog.Application.Import
 			{
 				XElement polygon = placemark.Element(Kml + "Polygon");
 				if (polygon != null)
-					regions.GetValue(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "name")));
+					regions.GetOrCreate(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "name")));
 			}
 
 			foreach (XElement folder in elem.Elements(Kml + "Folder"))

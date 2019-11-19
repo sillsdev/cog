@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Import
 {
@@ -42,7 +42,7 @@ namespace SIL.Cog.Application.Import
 					if (!string.IsNullOrEmpty(glossRow[0]))
 					{
 						string gloss = glossRow[0].Trim();
-						curMeaning = meanings.GetValue(gloss, () => new Meaning(gloss, null));
+						curMeaning = meanings.GetOrCreate(gloss, () => new Meaning(gloss, null));
 					}
 					if (curMeaning == null)
 						throw new ImportException("A gloss is missing.");

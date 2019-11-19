@@ -4,15 +4,12 @@ using System.Text;
 using NUnit.Framework;
 using SIL.Cog.Application.Import;
 using SIL.Cog.Domain;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.Import
 {
 	[TestFixture]
 	public class WordSurv7WordListsImporterTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Import()
 		{
@@ -20,7 +17,7 @@ namespace SIL.Cog.Application.Tests.Import
 
 			Assert.That(importer.CreateImportSettingsViewModel(), Is.Null);
 
-			var project = new CogProject(_spanFactory)
+			var project = new CogProject()
 				{
 					Varieties = {new Variety("variety")},
 					Meanings = {new Meaning("gloss", "cat")}

@@ -2,14 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
-using SIL.Machine.Annotations;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class ListSegmentMappingsConfig : IComponentConfig<ISegmentMappings>
 	{
-		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public ISegmentMappings Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			XElement mappingsElem = elem.Element(ConfigManager.Cog + "Mappings");
 			var implicitComplexSegments = (bool?) elem.Element(ConfigManager.Cog + "ImplicitComplexSegments") ?? false;

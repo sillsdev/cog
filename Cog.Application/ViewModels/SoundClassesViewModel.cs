@@ -6,8 +6,8 @@ using GalaSoft.MvvmLight.Command;
 using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

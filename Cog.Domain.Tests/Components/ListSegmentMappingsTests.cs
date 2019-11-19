@@ -1,23 +1,21 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain.Tests.Components
 {
 	[TestFixture]
 	public class ListSegmentMappingsTests
 	{
-		private SpanFactory<ShapeNode> _spanFactory;
 		private Segmenter _segmenter;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_spanFactory = new ShapeSpanFactory();
-			_segmenter = new Segmenter(_spanFactory)
+			_segmenter = new Segmenter()
 				{
 					Consonants = {"b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z"},
 					Vowels = {"a", "e", "i", "o", "u"},

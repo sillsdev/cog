@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Domain.Components
 {

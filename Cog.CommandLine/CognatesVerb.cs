@@ -4,7 +4,7 @@ using System.Linq;
 using CommandLine;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.CommandLine
 {

@@ -10,8 +10,7 @@ using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.TestUtils;
-using SIL.Collections;
-using SIL.Machine.Annotations;
+using SIL.Extensions;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
 
@@ -20,8 +19,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	[TestFixture]
 	public class GlobalCorrespondencesViewModelTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Graph()
 		{
@@ -32,13 +29,13 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var busyService = Substitute.For<IBusyService>();
 			var graphService = new GraphService(projectService);
 			var imageExportService = Substitute.For<IImageExportService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 
 			WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
 			WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(projectService, analysisService, pair, order);
 			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory, wordPairFactory);
 
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
@@ -90,13 +87,13 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var busyService = Substitute.For<IBusyService>();
 			var graphService = new GraphService(projectService);
 			var imageExportService = Substitute.For<IImageExportService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 
 			WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
 			WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(projectService, analysisService, pair, order);
 			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory, wordPairFactory);
 
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
@@ -157,13 +154,13 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var busyService = Substitute.For<IBusyService>();
 			var graphService = new GraphService(projectService);
 			var imageExportService = Substitute.For<IImageExportService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 
 			WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
 			WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(projectService, analysisService, pair, order);
 			var globalCorrespondences = new GlobalCorrespondencesViewModel(projectService, busyService, dialogService, imageExportService, graphService, wordPairsFactory, wordPairFactory);
 
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("kæd", project.Meanings[2])});

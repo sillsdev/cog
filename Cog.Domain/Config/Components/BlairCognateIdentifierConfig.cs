@@ -1,20 +1,19 @@
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class BlairCognateIdentifierConfig : IComponentConfig<ICognateIdentifier>
 	{
-		public ICognateIdentifier Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public ICognateIdentifier Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var ignoreRegularInsertionDeletion = (bool?) elem.Element(ConfigManager.Cog + "IgnoreRegularInsertionDeletion") ?? false;
 			var regularConsEqual = (bool?) elem.Element(ConfigManager.Cog + "RegularConsonantsAreEqual") ?? false;
 			var automaticRegularCorrespondenceThreshold = (bool?) elem.Element(ConfigManager.Cog + "AutomaticRegularCorrespondenceThreshold") ?? false;
 			var defaultRegularCorrespondenceThreshold = (int?) elem.Element(ConfigManager.Cog + "DefaultRegularCorrespondenceThreshold") ?? 3;
 
-			var ignoredMappings = ConfigManager.LoadComponent<ISegmentMappings>(spanFactory, segmentPool, project, elem.Element(ConfigManager.Cog + "IgnoredCorrespondences"));
-			var similarSegments = ConfigManager.LoadComponent<ISegmentMappings>(spanFactory, segmentPool, project, elem.Element(ConfigManager.Cog + "SimilarSegments"));
+			var ignoredMappings = ConfigManager.LoadComponent<ISegmentMappings>(segmentPool, project, elem.Element(ConfigManager.Cog + "IgnoredCorrespondences"));
+			var similarSegments = ConfigManager.LoadComponent<ISegmentMappings>(segmentPool, project, elem.Element(ConfigManager.Cog + "SimilarSegments"));
 
 			return new BlairCognateIdentifier(segmentPool, ignoreRegularInsertionDeletion, regularConsEqual, automaticRegularCorrespondenceThreshold,
 				defaultRegularCorrespondenceThreshold, ignoredMappings, similarSegments);

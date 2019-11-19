@@ -32,7 +32,6 @@ namespace SIL.Cog.Application.Services
 
 		public event EventHandler<EventArgs> ProjectOpened;
 
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly SegmentPool _segmentPool;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
@@ -42,10 +41,9 @@ namespace SIL.Cog.Application.Services
 		private bool _isNew;
 		private FileStream _projectFileStream;
 
-		public ProjectService(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IDialogService dialogService, IBusyService busyService,
+		public ProjectService(SegmentPool segmentPool, IDialogService dialogService, IBusyService busyService,
 			ISettingsService settingsService, Lazy<IAnalysisService> analysisService)
 		{
-			_spanFactory = spanFactory;
 			_segmentPool = segmentPool;
 			_dialogService = dialogService;
 			_busyService = busyService;
@@ -144,7 +142,7 @@ namespace SIL.Cog.Application.Services
 			vm.Text = "Loading project file...";
 			CogProject project;
 			using (Stream stream = Assembly.GetAssembly(GetType()).GetManifestResourceStream("SIL.Cog.Application.NewProject.cogx"))
-				project = ConfigManager.Load(_spanFactory, _segmentPool, stream);
+				project = ConfigManager.Load(_segmentPool, stream);
 			SetupProject(vm, null, "New Project", project);
 			_isNew = true;
 		}
@@ -217,7 +215,7 @@ namespace SIL.Cog.Application.Services
 			try
 			{
 				fileStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-				if (ConfigManager.Load(_spanFactory, _segmentPool, fileStream, out project))
+				if (ConfigManager.Load(_segmentPool, fileStream, out project))
 					IsChanged = true;
 			}
 			catch (ConfigException)

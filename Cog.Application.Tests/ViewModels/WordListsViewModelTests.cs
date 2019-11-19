@@ -13,7 +13,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	{
 		private CogProject SetupProjectWithThreeVarieties(WordListsViewModelTestEnvironment env)
 		{
-			var project = new CogProject(env.SpanFactory)
+			var project = new CogProject()
 			{
 				Varieties = {new Variety("variety1"), new Variety("variety2"), new Variety("variety3")}
 			};
@@ -23,7 +23,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 		private CogProject SetupProjectWithThreeMeanings(WordListsViewModelTestEnvironment env)
 		{
-			var project = new CogProject(env.SpanFactory)
+			var project = new CogProject()
 			{
 				Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")}
 			};
@@ -33,7 +33,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 		private void SetupProjectWithWords(WordListsViewModelTestEnvironment env)
 		{
-			var project = new CogProject(env.SpanFactory)
+			var project = new CogProject()
 				{
 					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
 					Varieties = {new Variety("variety1"), new Variety("variety2")}
@@ -74,7 +74,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				CogProject project = new CogProject(env.SpanFactory)
+				CogProject project = new CogProject()
 				{
 					Varieties = {new Variety("variety2"), new Variety("variety3")}
 				};
@@ -109,7 +109,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				Assert.That(env.WordListsViewModel.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1", "variety2", "variety3"}));
 				Assert.That(env.WordListsViewModel.IsEmpty, Is.False);
 
-				var project = new CogProject(env.SpanFactory) {Varieties = {new Variety("variety1")}};
+				var project = new CogProject() {Varieties = {new Variety("variety1")}};
 				env.OpenProject(project);
 
 				Assert.That(env.WordListsViewModel.Varieties.Select(v => v.Name), Is.EqualTo(new[] {"variety1"}));
@@ -122,7 +122,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				var project = new CogProject(env.SpanFactory);
+				var project = new CogProject();
 				env.OpenProject(project);
 
 				project.Meanings.Add(new Meaning("gloss1", "cat1"));
@@ -131,7 +131,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 				Assert.That(env.WordListsViewModel.Varieties[0].IsValid, Is.False);
 
-				var segmenter = new Segmenter(env.SpanFactory)
+				var segmenter = new Segmenter()
 				{
 					Consonants = {"b", "t"},
 					Vowels = {"a"}
@@ -173,7 +173,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new WordListsViewModelTestEnvironment())
 			{
-				CogProject project = new CogProject(env.SpanFactory)
+				CogProject project = new CogProject()
 				{
 					Meanings = {new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")}
 				};
@@ -208,7 +208,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				Assert.That(env.WordListsViewModel.Meanings.Select(s => s.Gloss), Is.EqualTo(new[] {"gloss1", "gloss2", "gloss3"}));
 				Assert.That(env.WordListsViewModel.IsEmpty, Is.False);
 
-				CogProject project = new CogProject(env.SpanFactory)
+				CogProject project = new CogProject()
 				{
 					Meanings = {new Meaning("gloss1", "cat1")}
 				};

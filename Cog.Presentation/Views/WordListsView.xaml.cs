@@ -8,9 +8,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
+using SIL.Code;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
-using SIL.Collections;
+using SIL.ObjectModel;
 using Xceed.Wpf.DataGrid;
 
 namespace SIL.Cog.Presentation.Views

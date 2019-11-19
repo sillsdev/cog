@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Components
@@ -39,7 +40,7 @@ namespace SIL.Cog.Domain.Components
 			if (word.Shape.Count == 0)
 				return;
 
-			var newShape = new Shape(word.Shape.SpanFactory, begin => new ShapeNode(word.Shape.SpanFactory, FeatureStruct.New()
+			var newShape = new Shape(begin => new ShapeNode(FeatureStruct.New()
 				.Symbol(CogFeatureSystem.AnchorType)
 				.Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 
@@ -71,26 +72,26 @@ namespace SIL.Cog.Domain.Components
 
 		private void SyllabifyAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			if (word.Shape.GetNodes(ann.Span).Any(n => n.Type() == CogFeatureSystem.ToneLetterType || n.StrRep() == "."))
+			if (word.Shape.GetNodes(ann.Range).Any(n => n.Type() == CogFeatureSystem.ToneLetterType || n.StrRep() == "."))
 			{
-				ShapeNode[] annNodes = word.Shape.GetNodes(ann.Span).ToArray();
+				ShapeNode[] annNodes = word.Shape.GetNodes(ann.Range).ToArray();
 				int i;
 				for (i = 0; i < annNodes.Length && annNodes[i].Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType); i++)
-					newShape.Add(annNodes[i].DeepClone());
+					newShape.Add(annNodes[i].Clone());
 				if (i < annNodes.Length)
 				{
 					ShapeNode syllableStart = annNodes[i];
 					ShapeNode node = syllableStart.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
-					while (ann.Span.Contains(node))
+					while (ann.Range.Contains(node))
 					{
 						if (syllableStart != node)
 							ProcessSyllable(syllableStart, node.Prev, newShape);
-						newShape.Add(node.DeepClone());
+						newShape.Add(node.Clone());
 						syllableStart = node.Next;
 						node = node.GetNext(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType));
 					}
-					if (ann.Span.Contains(syllableStart))
-						ProcessSyllable(syllableStart, ann.Span.End, newShape);
+					if (ann.Range.Contains(syllableStart))
+						ProcessSyllable(syllableStart, ann.Range.End, newShape);
 				}
 			}
 			else
@@ -101,7 +102,7 @@ namespace SIL.Cog.Domain.Components
 
 		protected virtual void SyllabifyUnmarkedAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			ProcessSyllable(ann.Span.Start, ann.Span.End, newShape);
+			ProcessSyllable(ann.Range.Start, ann.Range.End, newShape);
 		}
 
 		protected void ProcessSyllable(ShapeNode startNode, ShapeNode endNode, Shape newShape)
@@ -111,7 +112,7 @@ namespace SIL.Cog.Domain.Components
 
 			while (node.Type() == CogFeatureSystem.BoundaryType && node != endNode.Next)
 			{
-				ShapeNode newNode = node.DeepClone();
+				ShapeNode newNode = node.Clone();
 				newShape.Add(newNode);
 				if (newStartNode == null)
 					newStartNode = newNode;
@@ -156,7 +157,7 @@ namespace SIL.Cog.Domain.Components
 
 			while (node != endNode.Next)
 			{
-				newShape.Add(node.DeepClone());
+				newShape.Add(node.Clone());
 				node = node.Next;
 			}
 			newShape.Annotations.Add(newStartNode, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
@@ -167,13 +168,13 @@ namespace SIL.Cog.Domain.Components
 			ShapeNode newStart = null;
 			if (start == end)
 			{
-				newStart = start.DeepClone();
+				newStart = start.Clone();
 				newStart.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SyllablePosition, syllablePosition);
 				newShape.Add(newStart);
 			}
 			else if ((_combineVowels && syllablePosition == CogFeatureSystem.Nucleus) || (_combineConsonants && syllablePosition != CogFeatureSystem.Nucleus))
 			{
-				var fs = start.Annotation.FeatureStruct.DeepClone();
+				var fs = start.Annotation.FeatureStruct.Clone();
 				var strRep = new StringBuilder();
 				var origStrRep = new StringBuilder();
 				strRep.Append(start.StrRep());
@@ -214,7 +215,7 @@ namespace SIL.Cog.Domain.Components
 				ShapeNode node = start;
 				while (node != end.Next)
 				{
-					var newNode = node.DeepClone();
+					var newNode = node.Clone();
 					newNode.Annotation.FeatureStruct.AddValue(CogFeatureSystem.SyllablePosition, syllablePosition);
 					newShape.Add(newNode);
 					if (newStart == null)

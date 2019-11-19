@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Clusterers;
 
 namespace SIL.Cog.Application.Export

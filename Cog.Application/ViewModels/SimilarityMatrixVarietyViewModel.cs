@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -15,7 +15,7 @@ namespace SIL.Cog.Application.ViewModels
 			foreach (Variety v in varieties)
 			{
 				VarietyPair vp;
-				varietyPairs.Add(variety.VarietyPairs.TryGetValue(v, out vp) ? new SimilarityMatrixVarietyPairViewModel(similarityMetric, variety, vp) : new SimilarityMatrixVarietyPairViewModel(variety, v));
+				varietyPairs.Add(variety.VarietyPairs.TryGet(v, out vp) ? new SimilarityMatrixVarietyPairViewModel(similarityMetric, variety, vp) : new SimilarityMatrixVarietyPairViewModel(variety, v));
 			}
 			_varietyPairs = new ReadOnlyList<SimilarityMatrixVarietyPairViewModel>(varietyPairs);
 		}

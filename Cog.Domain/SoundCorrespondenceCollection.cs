@@ -1,4 +1,4 @@
-﻿using SIL.Collections;
+﻿using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -9,9 +9,9 @@ namespace SIL.Cog.Domain
 			return UnorderedTuple.Create(item.Segment1, item.Segment2);
 		}
 
-		public bool TryGetValue(Segment seg1, Segment seg2, out SoundCorrespondence value)
+		public bool TryGet(Segment seg1, Segment seg2, out SoundCorrespondence value)
 		{
-			return TryGetValue(UnorderedTuple.Create(seg1, seg2), out value);
+			return TryGet(UnorderedTuple.Create(seg1, seg2), out value);
 		}
 
 		public bool Contains(Segment seg1, Segment seg2)

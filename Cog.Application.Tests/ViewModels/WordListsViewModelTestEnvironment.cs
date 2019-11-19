@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
@@ -7,13 +6,11 @@ using NSubstitute;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.ViewModels
 {
 	internal class WordListsViewModelTestEnvironment : IDisposable
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 		private readonly WordListsViewModel _wordListsViewModel;
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
@@ -35,11 +32,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			WordListsVarietyViewModel.Factory varietyFactory = (parent, variety) => new WordListsVarietyViewModel(_projectService, varietyMeaningFactory, parent, variety);
 
 			_wordListsViewModel = new WordListsViewModel(_projectService, _dialogService, importService, exportService, _analysisService, varietyFactory);
-		}
-
-		public SpanFactory<ShapeNode> SpanFactory
-		{
-			get { return _spanFactory; }
 		}
 
 		public WordListsViewModel WordListsViewModel

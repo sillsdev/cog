@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
+using SIL.Code;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

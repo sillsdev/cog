@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GalaSoft.MvvmLight;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

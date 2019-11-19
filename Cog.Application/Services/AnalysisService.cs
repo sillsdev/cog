@@ -3,22 +3,19 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
-using SIL.Machine.Annotations;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Services
 {
 	public class AnalysisService : IAnalysisService
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly SegmentPool _segmentPool;
 		private readonly IProjectService _projectService;
 		private readonly IDialogService _dialogService;
 		private readonly IBusyService _busyService;
 
-		public AnalysisService(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService, IDialogService dialogService, IBusyService busyService)
+		public AnalysisService(SegmentPool segmentPool, IProjectService projectService, IDialogService dialogService, IBusyService busyService)
 		{
-			_spanFactory = spanFactory;
 			_segmentPool = segmentPool;
 			_projectService = projectService;
 			_dialogService = dialogService;
@@ -100,7 +97,7 @@ namespace SIL.Cog.Application.Services
 				processors.Add(syllabifier);
 				processors.Add(_projectService.Project.VarietyProcessors[ComponentIdentifiers.AffixIdentifier]);
 			}
-			processors.Add(new Stemmer(_spanFactory, project.Segmenter));
+			processors.Add(new Stemmer(project.Segmenter));
 			processors.Add(syllabifier);
 			processors.Add(new SegmentFrequencyDistributionCalculator(_segmentPool));
 			return processors;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.SequenceAlignment;
@@ -83,7 +83,7 @@ namespace SIL.Cog.Domain.Components
 			ICognateIdentifier cognateIdentifier = _project.CognateIdentifiers[_cognateIdentifierID];
 			for (int i = 0; i < ambiguousMeanings.Count; i++)
 			{
-				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> newCognateCorrCounts = cognateCorrCounts.DeepClone();
+				ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> newCognateCorrCounts = cognateCorrCounts.Clone();
 				int newCognateCount = cognateCount;
 				for (int j = i + 1; j < ambiguousMeanings.Count; j++)
 				{
@@ -98,7 +98,7 @@ namespace SIL.Cog.Domain.Components
 				WordPair bestWordPair = null;
 				foreach (IWordAlignerResult alignerResult in ambiguousMeanings[i].Item3)
 				{
-					ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> alignmentCognateCorrCounts = newCognateCorrCounts.DeepClone();
+					ConditionalFrequencyDistribution<SoundContext, Ngram<Segment>> alignmentCognateCorrCounts = newCognateCorrCounts.Clone();
 					int alignmentCognateCount = newCognateCount;
 					Alignment<Word, ShapeNode> alignment = alignerResult.GetAlignments().First();
 					varietyPair.WordPairs.Remove(ambiguousMeanings[i].Item1);

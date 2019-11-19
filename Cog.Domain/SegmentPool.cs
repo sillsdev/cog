@@ -21,7 +21,7 @@ namespace SIL.Cog.Domain
 
 			return _segments.GetOrAdd(node.StrRep(), s =>
 				{
-					FeatureStruct fs = node.Annotation.FeatureStruct.DeepClone();
+					FeatureStruct fs = node.Annotation.FeatureStruct.Clone();
 					fs.RemoveValue(CogFeatureSystem.OriginalStrRep);
 					fs.RemoveValue(CogFeatureSystem.SyllablePosition);
 					fs.Freeze();

@@ -5,10 +5,12 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Code;
 using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -427,7 +429,7 @@ namespace SIL.Cog.Application.ViewModels
 			if (_selectedVariety1 != null && _selectedVariety2 != null && _selectedVariety1 != _selectedVariety2)
 			{
 				VarietyPair pair;
-				if (_selectedVariety1.DomainVariety.VarietyPairs.TryGetValue(_selectedVariety2.DomainVariety, out pair))
+				if (_selectedVariety1.DomainVariety.VarietyPairs.TryGet(_selectedVariety2.DomainVariety, out pair))
 				{
 					_busyService.ShowBusyIndicatorUntilFinishDrawing();
 					SelectedVarietyPair = _varietyPairFactory(pair, _selectedVariety1.DomainVariety == pair.Variety1);

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.Clusterers;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.SequenceAlignment;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -21,7 +23,7 @@ namespace SIL.Cog.Domain
 
 		public static string OriginalStrRep(this Annotation<ShapeNode> ann)
 		{
-			return ann.Span.Start.GetNodes(ann.Span.End).OriginalStrRep();
+			return ann.Range.Start.GetNodes(ann.Range.End).OriginalStrRep();
 		}
 
 		public static string OriginalStrRep(this IEnumerable<ShapeNode> nodes)
@@ -36,7 +38,7 @@ namespace SIL.Cog.Domain
 
 		public static string StrRep(this Annotation<ShapeNode> ann)
 		{
-			return ann.Span.Start.GetNodes(ann.Span.End).StrRep();
+			return ann.Range.Start.GetNodes(ann.Range.End).StrRep();
 		}
 
 		public static string StrRep(this IEnumerable<ShapeNode> nodes)
@@ -93,21 +95,21 @@ namespace SIL.Cog.Domain
 		{
 			Annotation<ShapeNode> stemAnn = ((Shape) node.List).Annotations.First(ann => ann.Type() == CogFeatureSystem.StemType);
 			ShapeNode left = null;
-			if (stemAnn.Span.Contains(node) || node.Annotation.CompareTo(stemAnn) > 0)
+			if (stemAnn.Range.Contains(node) || node.Annotation.CompareTo(stemAnn) > 0)
 			{
 				ShapeNode leftNode = node.GetPrev(NodeFilter);
 				if (leftNode != null)
-					left = stemAnn.Span.Contains(leftNode) ? leftNode : node.List.Begin;
+					left = stemAnn.Range.Contains(leftNode) ? leftNode : node.List.Begin;
 			}
 
-			Ngram<Segment> target = stemAnn.Span.Contains(node) ? segmentPool.Get(node) : Segment.Anchor;
+			Ngram<Segment> target = stemAnn.Range.Contains(node) ? segmentPool.Get(node) : Segment.Anchor;
 
 			ShapeNode right = null;
-			if (stemAnn.Span.Contains(node) || node.Annotation.CompareTo(stemAnn) < 0)
+			if (stemAnn.Range.Contains(node) || node.Annotation.CompareTo(stemAnn) < 0)
 			{
 				ShapeNode rightNode = node.GetNext(NodeFilter);
 				if (rightNode != null)
-					right = stemAnn.Span.Contains(rightNode) ? rightNode : node.List.End;
+					right = stemAnn.Range.Contains(rightNode) ? rightNode : node.List.End;
 			}
 
 			soundClass = soundClasses.FirstOrDefault(sc => sc.Matches(left, target, right));
@@ -209,10 +211,10 @@ namespace SIL.Cog.Domain
 			while (notesList.Count < alignment.ColumnCount)
 				notesList.Add("");
 
-			int maxPrefixLen = alignment.Prefixes.Select(p => p.StrRep()).Concat("").Max(s => s.DisplayLength());
+			int maxPrefixLen = alignment.Prefixes.Select(p => p.StrRep()).Concat(new[] { "" }).Max(s => s.DisplayLength());
 			int[] maxColLens = Enumerable.Range(0, alignment.ColumnCount).Select(c => Enumerable.Range(0, alignment.SequenceCount)
-				.Select(s => alignment[s, c].StrRep()).Concat(notesList[c]).Max(s => s.DisplayLength())).ToArray();
-			int maxSuffixLen = alignment.Suffixes.Select(s => s.StrRep()).Concat("").Max(s => s.DisplayLength());
+				.Select(s => alignment[s, c].StrRep()).Concat(new[] { notesList[c] }).Max(s => s.DisplayLength())).ToArray();
+			int maxSuffixLen = alignment.Suffixes.Select(s => s.StrRep()).Concat(new[] { "" }).Max(s => s.DisplayLength());
 			for (int s = 0; s < alignment.SequenceCount; s++)
 			{
 				AppendSequence(sb, alignment.Prefixes[s].StrRep(), maxPrefixLen, Enumerable.Range(0, alignment.ColumnCount).Select(c => alignment[s, c].IsNull ? "-" : alignment[s, c].StrRep()), maxColLens,
@@ -309,7 +311,7 @@ namespace SIL.Cog.Domain
 			foreach (VarietyPair vp in project.VarietyPairs)
 			{
 				WordPair wp;
-				if (vp.WordPairs.TryGetValue(meaning, out wp))
+				if (vp.WordPairs.TryGet(meaning, out wp))
 				{
 					if (wp.Cognacy)
 					{
@@ -339,7 +341,7 @@ namespace SIL.Cog.Domain
 					Word w2 = wordArray[j];
 					double score = 0;
 					WordPair wp;
-					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGetValue(meaning, out wp) && wp.Cognacy
+					if (w1.Variety != w2.Variety && w1.Variety.VarietyPairs[w2.Variety].WordPairs.TryGet(meaning, out wp) && wp.Cognacy
 					    && wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2)
 					{
 						score = wp.PredictedCognacyScore;

@@ -8,13 +8,12 @@ namespace SIL.Cog.Domain.Tests
 	[TestFixture]
 	public class SegmenterTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 		private Segmenter _segmenter;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_segmenter = new Segmenter(_spanFactory)
+			_segmenter = new Segmenter()
 				{
 					Consonants = {"b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "sh", "t", "v", "w", "x", "z"},
 					Vowels = {"a", "e", "i", "o", "u"},
@@ -102,9 +101,9 @@ namespace SIL.Cog.Domain.Tests
 			AssertShapeNodeEqual(word.Shape.ElementAt(4), "e", CogFeatureSystem.VowelType);
 			AssertShapeNodeEqual(word.Shape.Last, "d", CogFeatureSystem.ConsonantType);
 			Annotation<ShapeNode> stemAnn = word.Shape.Annotations.Single(a => a.Type() == CogFeatureSystem.StemType);
-			Assert.That(stemAnn.Span, Is.EqualTo(_spanFactory.Create(word.Shape.First, word.Shape.ElementAt(3))));
+			Assert.That(stemAnn.Range, Is.EqualTo(Range<ShapeNode>.Create(word.Shape.First, word.Shape.ElementAt(3))));
 			Annotation<ShapeNode> suffixAnn = word.Shape.Annotations.Single(a => a.Type() == CogFeatureSystem.SuffixType);
-			Assert.That(suffixAnn.Span, Is.EqualTo(_spanFactory.Create(word.Shape.ElementAt(4), word.Shape.Last)));
+			Assert.That(suffixAnn.Range, Is.EqualTo(Range<ShapeNode>.Create(word.Shape.ElementAt(4), word.Shape.Last)));
 		}
 
 		[Test]

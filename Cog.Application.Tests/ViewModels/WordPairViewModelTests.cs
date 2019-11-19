@@ -7,7 +7,6 @@ using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.TestUtils;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.ViewModels
 {
@@ -24,10 +23,9 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				DispatcherHelper.Initialize();
 
 				var segmentPool = new SegmentPool();
-				var spanFactory = new ShapeSpanFactory();
 				var projectService = Substitute.For<IProjectService>();
 				var analysisService = Substitute.For<IAnalysisService>();
-				_project = TestHelpers.GetTestProject(spanFactory, segmentPool);
+				_project = TestHelpers.GetTestProject(segmentPool);
 				_project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 				_project.Meanings.Add(new Meaning("meaning1", null));
 				var word1 = new Word("wɜrd", _project.Meanings[0]);

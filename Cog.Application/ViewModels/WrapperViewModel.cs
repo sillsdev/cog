@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
 using GalaSoft.MvvmLight;
-using ObservableObject = SIL.Collections.ObservableObject;
+using ObservableObject = SIL.ObjectModel.ObservableObject;
 
 namespace SIL.Cog.Application.ViewModels
 {

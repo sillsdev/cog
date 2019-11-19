@@ -6,8 +6,9 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Clusterers;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

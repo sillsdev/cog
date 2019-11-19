@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Text;
 using System.Threading;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 
@@ -59,19 +60,19 @@ namespace SIL.Cog.Domain.Components
 			if (ann == null)
 				return null;
 
-			ShapeNode node = ann.Span.Start;
-			while (node.Type() == CogFeatureSystem.ConsonantType && ann.Span.Contains(node))
+			ShapeNode node = ann.Range.Start;
+			while (node.Type() == CogFeatureSystem.ConsonantType && ann.Range.Contains(node))
 				node = node.Next;
 
-			if (node == ann.Span.Start)
+			if (node == ann.Range.Start)
 				return null;
 
-			return ann.Span.Start.GetNodes(node.Prev).StrRep();
+			return ann.Range.Start.GetNodes(node.Prev).StrRep();
 		}
 
 		protected override void SyllabifyUnmarkedAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			ShapeNode[] annNodes = word.Shape.GetNodes(ann.Span).ToArray();
+			ShapeNode[] annNodes = word.Shape.GetNodes(ann.Range).ToArray();
 			ShapeNode syllableStart = null;
 			int prevSonority = -1, curSonority = -1;
 			FeatureSymbol prevType = null;
@@ -80,7 +81,7 @@ namespace SIL.Cog.Domain.Components
 			{
 				FeatureSymbol curType = node.Type();
 				ShapeNode nextNode = node.Next;
-				int nextSonority = ann.Span.Contains(nextNode) ? GetSonority(nextNode) : -1;
+				int nextSonority = ann.Range.Contains(nextNode) ? GetSonority(nextNode) : -1;
 				// stress markers indicate a syllable break
 				if (syllableStart != null && node.StrRep().IsOneOf("ˈ", "ˌ"))
 				{
@@ -113,9 +114,9 @@ namespace SIL.Cog.Domain.Components
 				curSonority = nextSonority;
 			}
 			if (useMaximalOnset)
-				ProcessSyllableWithMaximalOnset(syllableStart, ann.Span.End, newShape);
+				ProcessSyllableWithMaximalOnset(syllableStart, ann.Range.End, newShape);
 			else
-				ProcessSyllable(syllableStart, ann.Span.End, newShape);
+				ProcessSyllable(syllableStart, ann.Range.End, newShape);
 		}
 
 		private void ProcessSyllableWithMaximalOnset(ShapeNode startNode, ShapeNode endNode, Shape newShape)
@@ -152,7 +153,7 @@ namespace SIL.Cog.Domain.Components
 						Combine(CogFeatureSystem.Coda, newShape, onsetStart, n.Prev);
 						Annotation<ShapeNode> prevSyllableAnn = newShape.Annotations.Last(ann => ann.Type() == CogFeatureSystem.SyllableType);
 						prevSyllableAnn.Remove();
-						newShape.Annotations.Add(prevSyllableAnn.Span.Start, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
+						newShape.Annotations.Add(prevSyllableAnn.Range.Start, newShape.Last, FeatureStruct.New().Symbol(CogFeatureSystem.SyllableType).Value);
 					}
 					startNode = n;
 				}
@@ -199,7 +200,7 @@ namespace SIL.Cog.Domain.Components
 				ShapeNode n = start;
 				while (n != end.Next)
 				{
-					var newNode = n.DeepClone();
+					var newNode = n.Clone();
 					node.AddAfter(newNode);
 					node = newNode;
 					n = n.Next;

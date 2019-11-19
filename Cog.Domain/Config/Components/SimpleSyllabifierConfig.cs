@@ -1,12 +1,11 @@
 ﻿using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class SimpleSyllabifierConfig : IComponentConfig<IProcessor<Variety>>
 	{
-		public IProcessor<Variety> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public IProcessor<Variety> Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var combineVowels = (bool?) elem.Element(ConfigManager.Cog + "CombineVowels") ?? true;
 			var combineCons = (bool?) elem.Element(ConfigManager.Cog + "CombineConsonants") ?? true;

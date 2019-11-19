@@ -54,7 +54,7 @@ namespace SIL.Cog.Domain.Components
 							{
 								SoundCorrespondenceCollection correspondences = correspondenceColls[(FeatureSymbol) pos1];
 								SoundCorrespondence corr;
-								if (!correspondences.TryGetValue(seg1, seg2, out corr))
+								if (!correspondences.TryGet(seg1, seg2, out corr))
 								{
 									corr = new SoundCorrespondence(seg1, seg2);
 									correspondences.Add(corr);

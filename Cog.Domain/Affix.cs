@@ -1,6 +1,6 @@
-using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.Morphology;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {

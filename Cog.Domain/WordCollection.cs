@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using SIL.Collections;
+using SIL.Code;
+using SIL.Extensions;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -58,7 +60,7 @@ namespace SIL.Cog.Domain
 		public void Add(Word item)
 		{
 			CheckReentrancy();
-			HashSet<Word> meaningWords = _words.GetValue(item.Meaning, () => new HashSet<Word>());
+			HashSet<Word> meaningWords = _words.GetOrCreate(item.Meaning, () => new HashSet<Word>());
 			if (meaningWords.Add(item))
 			{
 				item.Variety = _variety;
@@ -73,7 +75,7 @@ namespace SIL.Cog.Domain
 			var added = new List<Word>();
 			foreach (Word word in words)
 			{
-				HashSet<Word> meaningWords = _words.GetValue(word.Meaning, () => new HashSet<Word>());
+				HashSet<Word> meaningWords = _words.GetOrCreate(word.Meaning, () => new HashSet<Word>());
 				if (meaningWords.Add(word))
 				{
 					word.Variety = _variety;

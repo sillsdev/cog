@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
-using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

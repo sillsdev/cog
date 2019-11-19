@@ -2,7 +2,7 @@ using System;
 using System.Collections.Specialized;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Collections
 {

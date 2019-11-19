@@ -13,7 +13,6 @@ namespace SIL.Cog.Domain.Tests.Components
 	{
 		private class TestEnvironment
 		{
-			private readonly ShapeSpanFactory _spanFactory = new ShapeSpanFactory();
 			private readonly CogProject _project;
 			private readonly BlairCognateIdentifier _cognateIdentifier;
 			private readonly TestWordAligner _aligner;
@@ -22,7 +21,7 @@ namespace SIL.Cog.Domain.Tests.Components
 			public TestEnvironment(string word1, string word2, bool ignoreRegularInsertionDeletion = false, bool regularConsEqual = false, bool automaticRegularCorrThreshold = false)
 			{
 				_segmentPool = new SegmentPool();
-				_project = TestHelpers.GetTestProject(_spanFactory, _segmentPool);
+				_project = TestHelpers.GetTestProject(_segmentPool);
 				_project.Meanings.Add(new Meaning("gloss1", "cat1"));
 				_project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 				_project.Varieties[0].Words.Add(new Word(word1, _project.Meanings[0]));

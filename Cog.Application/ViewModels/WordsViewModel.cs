@@ -4,9 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
+using SIL.Code;
 using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

@@ -10,8 +10,7 @@ using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.TestUtils;
-using SIL.Collections;
-using SIL.Machine.Annotations;
+using SIL.Extensions;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
 
@@ -390,7 +389,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 		private class TestEnvironment : IDisposable
 		{
-			private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 			private readonly VarietyPairsViewModel _varietyPairs;
 			private readonly IAnalysisService _analysisService;
 			private readonly IProjectService _projectService;
@@ -407,7 +405,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				_dialogService = Substitute.For<IDialogService>();
 				var busyService = Substitute.For<IBusyService>();
 				var exportService = Substitute.For<IExportService>();
-				_analysisService = new AnalysisService(_spanFactory, _segmentPool, _projectService, _dialogService, busyService);
+				_analysisService = new AnalysisService(_segmentPool, _projectService, _dialogService, busyService);
 
 				WordPairsViewModel.Factory wordPairsFactory = () => new WordPairsViewModel(busyService);
 				WordPairViewModel.Factory wordPairFactory = (pair, order) => new WordPairViewModel(_projectService, _analysisService, pair, order);
@@ -415,7 +413,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 				_varietyPairs = new VarietyPairsViewModel(_projectService, busyService, _dialogService, exportService, _analysisService, varietyPairFactory);
 
-				_project = TestHelpers.GetTestProject(_spanFactory, _segmentPool);
+				_project = TestHelpers.GetTestProject(_segmentPool);
 				_projectService.Project.Returns(_project);
 			}
 

@@ -1,6 +1,6 @@
-using SIL.Collections;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Statistics;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {

@@ -5,15 +5,14 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
 	public class Segmenter : ObservableObject
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory; 
 		private readonly SymbolCollection _vowels;
 		private readonly SymbolCollection _consonants;
 		private readonly SymbolCollection _modifiers;
@@ -26,9 +25,8 @@ namespace SIL.Cog.Domain
 		private int _maxConsonantLength = 1;
 		private int _maxVowelLength = 1;
 
-		public Segmenter(SpanFactory<ShapeNode> spanFactory)
+		public Segmenter()
 		{
-			_spanFactory = spanFactory;
 			_vowels = new SymbolCollection();
 			_vowels.CollectionChanged += SymbolCollectionChanged;
 			_consonants = new SymbolCollection();
@@ -42,7 +40,7 @@ namespace SIL.Cog.Domain
 			_boundaries = new SymbolCollection();
 			_boundaries.CollectionChanged += SymbolCollectionChanged;
 
-			_emptyShape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			_emptyShape = new Shape(begin => new ShapeNode(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 			_emptyShape.Freeze();
 		}
 
@@ -115,7 +113,7 @@ namespace SIL.Cog.Domain
 				return;
 			}
 
-			var shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			var shape = new Shape(begin => new ShapeNode(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 			if (SegmentString(shape, affix.StrRep))
 			{
 				shape.Freeze();
@@ -135,7 +133,7 @@ namespace SIL.Cog.Domain
 				return;
 			}
 
-			var shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			var shape = new Shape(begin => new ShapeNode(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 
 			string prefix = word.StrRep.Substring(0, word.StemIndex);
 			ShapeNode start = shape.Begin;
@@ -199,7 +197,7 @@ namespace SIL.Cog.Domain
 				return true;
 			}
 
-			shape = new Shape(_spanFactory, begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			shape = new Shape(begin => new ShapeNode(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 
 			if (SegmentString(shape, str))
 			{
@@ -285,7 +283,7 @@ namespace SIL.Cog.Domain
 						Group joinerGroup = match.Groups["joiner"];
 						if (joinerGroup.Success || vowelComp.Captures.Count > 1)
 						{
-							phonemeFS.AddValue(CogFeatureSystem.First, phonemeFS.DeepClone());
+							phonemeFS.AddValue(CogFeatureSystem.First, phonemeFS.Clone());
 							phonemeFS.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
 						}
 						else
@@ -334,7 +332,7 @@ namespace SIL.Cog.Domain
 						Group joinerGroup = match.Groups["joiner"];
 						if (joinerGroup.Success || consComp.Captures.Count > 1)
 						{
-							phonemeFS.AddValue(CogFeatureSystem.First, phonemeFS.DeepClone());
+							phonemeFS.AddValue(CogFeatureSystem.First, phonemeFS.Clone());
 							phonemeFS.AddValue(CogFeatureSystem.SegmentType, CogFeatureSystem.Complex);
 						}
 						else
@@ -405,11 +403,11 @@ namespace SIL.Cog.Domain
 			Group consBaseGroup = match.Groups["consBase"];
 			Symbol symbol;
 			if (joinerGroup.Success && (!modGroup.Success || modGroup.Index >= consBaseGroup.Index + consBaseGroup.Length)
-				&& bases.TryGetValue(string.Concat(consBaseGroup.Captures.Cast<Capture>().Select(cap => cap.Value)), out symbol))
+				&& bases.TryGet(string.Concat(consBaseGroup.Captures.Cast<Capture>().Select(cap => cap.Value)), out symbol))
 			{
 				var sb = new StringBuilder();
 				sb.Append(symbol.StrRep);
-				fs = symbol.FeatureStruct != null ? symbol.FeatureStruct.DeepClone() : new FeatureStruct();
+				fs = symbol.FeatureStruct != null ? symbol.FeatureStruct.Clone() : new FeatureStruct();
 				ApplyModifiers(match.Groups["mod"].Captures.Cast<Capture>(), sb, fs);
 				strRep = sb.ToString();
 				return true;
@@ -423,7 +421,7 @@ namespace SIL.Cog.Domain
 		{
 			string baseStr = match.Groups[baseGroupName].Captures.Cast<Capture>().Single(cap => capture.Index == cap.Index).Value.ToLowerInvariant();
 			FeatureStruct baseFs = bases[baseStr].FeatureStruct;
-			FeatureStruct fs = baseFs != null ? baseFs.DeepClone() : new FeatureStruct();
+			FeatureStruct fs = baseFs != null ? baseFs.Clone() : new FeatureStruct();
 			var sb = new StringBuilder();
 			sb.Append(baseStr);
 			ApplyModifiers(match.Groups["mod"].Captures.Cast<Capture>().Where(cap => capture.Index <= cap.Index && (capture.Index + capture.Length) >= (cap.Index + cap.Length)), sb, fs);

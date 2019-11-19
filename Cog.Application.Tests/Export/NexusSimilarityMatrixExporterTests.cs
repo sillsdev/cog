@@ -5,18 +5,15 @@ using SIL.Cog.Application.Export;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.Export
 {
 	[TestFixture]
 	public class NexusSimilarityMatrixExporterTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		private CogProject CreateProject()
 		{
-			var project = new CogProject(_spanFactory);
+			var project = new CogProject();
 			var variety1 = new Variety("variety1");
 			project.Varieties.Add(variety1);
 			var variety2 = new Variety("variety2");
@@ -79,7 +76,7 @@ END;
 		[Test]
 		public void Export_EmptyProject()
 		{
-			var project = new CogProject(_spanFactory);
+			var project = new CogProject();
 			var exporter = new NexusSimilarityMatrixExporter();
 			using (var stream = new MemoryStream())
 			{

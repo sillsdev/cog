@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -86,9 +87,9 @@ namespace SIL.Cog.Domain
 			}
 		}
 
-		public Span<ShapeNode> Span
+		public Range<ShapeNode> Range
 		{
-			get { return _shape.Span; }
+			get { return _shape.Range; }
 		}
 
 		public AnnotationList<ShapeNode> Annotations
@@ -127,7 +128,7 @@ namespace SIL.Cog.Domain
 		{
 			foreach (Annotation<ShapeNode> child in ann.Children)
 			{
-				foreach (ShapeNode node in _shape.GetNodes(child.Span))
+				foreach (ShapeNode node in _shape.GetNodes(child.Range))
 				{
 					string strRep = node.OriginalStrRep();
 					if (string.IsNullOrEmpty(strRep))
@@ -135,8 +136,8 @@ namespace SIL.Cog.Domain
 
 					yield return strRep;
 				}
-				if (child.Type() == CogFeatureSystem.SyllableType && child.Span.End != ann.Span.End
-					&& !child.Span.End.Next.Type().IsOneOf(CogFeatureSystem.BoundaryType, CogFeatureSystem.ToneLetterType))
+				if (child.Type() == CogFeatureSystem.SyllableType && child.Range.End != ann.Range.End
+					&& !child.Range.End.Next.Type().IsOneOf(CogFeatureSystem.BoundaryType, CogFeatureSystem.ToneLetterType))
 				{
 					yield return ".";
 				}

@@ -8,8 +8,8 @@ using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Presentation.Behaviors;
-using SIL.Collections;
 using Xceed.Wpf.DataGrid;
+using SIL.Code;
 
 namespace SIL.Cog.Presentation.Views
 {

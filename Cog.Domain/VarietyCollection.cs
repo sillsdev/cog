@@ -1,4 +1,4 @@
-﻿using SIL.Collections;
+﻿using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -40,7 +40,8 @@ namespace SIL.Cog.Domain
 
 		internal void ChangeVarietyName(Variety variety, string newName)
 		{
-			ChangeItemKey(variety, newName);
+			Dictionary.Remove(GetKeyForItem(variety));
+			Dictionary.Add(newName, variety);
 		}
 	}
 }

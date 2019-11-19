@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class SimpleWordPairGeneratorConfig : IComponentConfig<IProcessor<VarietyPair>>
 	{
-		public IProcessor<VarietyPair> Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public IProcessor<VarietyPair> Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var initialAlignmentThreshold = (double) elem.Element(ConfigManager.Cog + "InitialAlignmentThreshold");
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableWordAligner");

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
 using SIL.Machine.Morphology;
@@ -11,12 +12,10 @@ namespace SIL.Cog.Domain.Components
 {
 	public class Stemmer : IProcessor<Variety>
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly Segmenter _segmenter;
 
-		public Stemmer(SpanFactory<ShapeNode> spanFactory, Segmenter segmenter)
+		public Stemmer(Segmenter segmenter)
 		{
-			_spanFactory = spanFactory;
 			_segmenter = segmenter;
 		}
 
@@ -37,7 +36,7 @@ namespace SIL.Cog.Domain.Components
 				foreach (ShapeNode node in affix.Shape)
 				{
 					pattern.Children.Add(new Quantifier<Word, ShapeNode>(0, 1, new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.BoundaryType).Value)));
-					pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.FeatureStruct.DeepClone()));
+					pattern.Children.Add(new Constraint<Word, ShapeNode>(node.Annotation.FeatureStruct.Clone()));
 					pattern.Children.Add(new Quantifier<Word, ShapeNode>(0, 1, new Constraint<Word, ShapeNode>(FeatureStruct.New().Symbol(CogFeatureSystem.ToneLetterType).Value)));
 				}
 				if (dir == Direction.RightToLeft)
@@ -52,7 +51,7 @@ namespace SIL.Cog.Domain.Components
 					Filter = ann => ann.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType,
 						CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType)
 				};
-			var rule = new PatternRule<Word, ShapeNode>(_spanFactory, ruleSpec, matcherSettings);
+			var rule = new PatternRule<Word, ShapeNode>(ruleSpec, matcherSettings);
 
 			foreach (Word word in words.Where(w => w.Shape.Count > 0))
 				rule.Apply(word);
@@ -61,10 +60,10 @@ namespace SIL.Cog.Domain.Components
 		private bool CheckStemWholeWord(Match<Word, ShapeNode> match)
 		{
 			Annotation<ShapeNode> stemAnn = match.Input.Stem;
-			ShapeNode end = stemAnn.Span.End;
+			ShapeNode end = stemAnn.Range.End;
 			while (end.Type() == CogFeatureSystem.ToneLetterType)
 				end = end.Prev;
-			return !match.Span.Contains(_spanFactory.Create(stemAnn.Span.Start, end));
+			return !match.Range.Contains(Range<ShapeNode>.Create(stemAnn.Range.Start, end));
 		}
 
 		private Word MarkStem(PatternRule<Word, ShapeNode> rule, Match<Word, ShapeNode> match)
@@ -79,9 +78,9 @@ namespace SIL.Cog.Domain.Components
 				switch (rule.Matcher.Direction)
 				{
 					case Direction.LeftToRight:
-						if (node == match.Span.End.Next)
+						if (node == match.Range.End.Next)
 							output.StemIndex = index;
-						if (node == stemAnn.Span.End)
+						if (node == stemAnn.Range.End)
 						{
 							output.StemLength = index + len - output.StemIndex;
 							finished = true;
@@ -89,9 +88,9 @@ namespace SIL.Cog.Domain.Components
 						break;
 
 					case Direction.RightToLeft:
-						if (node == stemAnn.Span.Start)
+						if (node == stemAnn.Range.Start)
 							output.StemIndex = index;
-						if (node == match.Span.Start.Prev)
+						if (node == match.Range.Start.Prev)
 						{
 							output.StemLength = index + len - output.StemIndex;
 							finished = true;

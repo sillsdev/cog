@@ -9,16 +9,13 @@ using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.TestUtils;
-using SIL.Collections;
-using SIL.Machine.Annotations;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Tests.ViewModels
 {
 	[TestFixture]
 	public class SegmentsViewModelTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Segments()
 		{
@@ -27,7 +24,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var projectService = Substitute.For<IProjectService>();
 			var dialogService = Substitute.For<IDialogService>();
 			var busyService = Substitute.For<IBusyService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 			var exportService = Substitute.For<IExportService>();
 
 			WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
@@ -35,7 +32,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var segments = new SegmentsViewModel(projectService, dialogService, busyService, exportService, wordsFactory, wordFactory);
 
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
@@ -87,7 +84,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var projectService = Substitute.For<IProjectService>();
 			var dialogService = Substitute.For<IDialogService>();
 			var busyService = Substitute.For<IBusyService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 			var exportService = Substitute.For<IExportService>();
 
 			WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
@@ -95,7 +92,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var segments = new SegmentsViewModel(projectService, dialogService, busyService, exportService, wordsFactory, wordFactory);
 
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});
@@ -131,7 +128,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var projectService = Substitute.For<IProjectService>();
 			var dialogService = Substitute.For<IDialogService>();
 			var busyService = Substitute.For<IBusyService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
 			var exportService = Substitute.For<IExportService>();
 
 			WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
@@ -139,7 +136,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 			var segments = new SegmentsViewModel(projectService, dialogService, busyService, exportService, wordsFactory, wordFactory);
 
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hɛ.loʊ", project.Meanings[0]), new Word("gʊd", project.Meanings[1]), new Word("bæd", project.Meanings[2])});

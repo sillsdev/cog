@@ -6,9 +6,10 @@ using QuickGraph;
 using QuickGraph.Algorithms;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Clusterers;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Services
 {
@@ -224,10 +225,10 @@ namespace SIL.Cog.Application.Services
 							&& (height1 != height2 || backness1 != backness2 || round1 != round2))
 						{
 							Tuple<VowelHeight, VowelBackness, bool> key1 = Tuple.Create(height1, backness1, round1);
-							GlobalSegmentVertex vertex1 = vertices.GetValue(key1, () => new GlobalVowelVertex(height1, backness1, round1));
+							GlobalSegmentVertex vertex1 = vertices.GetOrCreate(key1, () => new GlobalVowelVertex(height1, backness1, round1));
 							vertex1.StrReps.Add(corr.Segment1.StrRep);
 							Tuple<VowelHeight, VowelBackness, bool> key2 = Tuple.Create(height2, backness2, round2);
-							GlobalSegmentVertex vertex2 = vertices.GetValue(key2, () => new GlobalVowelVertex(height2, backness2, round2));
+							GlobalSegmentVertex vertex2 = vertices.GetOrCreate(key2, () => new GlobalVowelVertex(height2, backness2, round2));
 							vertex2.StrReps.Add(corr.Segment2.StrRep);
 							int freq = AddEdge(edges, corr, key1, vertex1, key2, vertex2);
 							maxFreq = Math.Max(freq, maxFreq);
@@ -284,10 +285,10 @@ namespace SIL.Cog.Application.Services
 							&& (place1 != place2 || manner1 != manner2 || voiced1 != voiced2))
 						{
 							Tuple<ConsonantPlace, ConsonantManner, bool> key1 = Tuple.Create(place1, manner1, voiced1);
-							GlobalSegmentVertex vertex1 = vertices.GetValue(key1, () => new GlobalConsonantVertex(place1, manner1, voiced1));
+							GlobalSegmentVertex vertex1 = vertices.GetOrCreate(key1, () => new GlobalConsonantVertex(place1, manner1, voiced1));
 							vertex1.StrReps.Add(corr.Segment1.StrRep);
 							Tuple<ConsonantPlace, ConsonantManner, bool> key2 = Tuple.Create(place2, manner2, voiced2);
-							GlobalSegmentVertex vertex2 = vertices.GetValue(key2, () => new GlobalConsonantVertex(place2, manner2, voiced2));
+							GlobalSegmentVertex vertex2 = vertices.GetOrCreate(key2, () => new GlobalConsonantVertex(place2, manner2, voiced2));
 							vertex2.StrReps.Add(corr.Segment2.StrRep);
 
 							int freq = AddEdge(edges, corr, key1, vertex1, key2, vertex2);
@@ -310,7 +311,7 @@ namespace SIL.Cog.Application.Services
 		private static int AddEdge(Dictionary<UnorderedTuple<object, object>, GlobalCorrespondencesGraphEdge> edges, SoundCorrespondence corr,
 			object key1, GlobalSegmentVertex vertex1, object key2, GlobalSegmentVertex vertex2)
 		{
-			GlobalCorrespondencesGraphEdge edge = edges.GetValue(UnorderedTuple.Create(key1, key2), () => new GlobalCorrespondencesGraphEdge(vertex1, vertex2));
+			GlobalCorrespondencesGraphEdge edge = edges.GetOrCreate(UnorderedTuple.Create(key1, key2), () => new GlobalCorrespondencesGraphEdge(vertex1, vertex2));
 			edge.Frequency += corr.Frequency;
 			edge.DomainWordPairs.AddRange(corr.WordPairs);
 			return edge.Frequency;

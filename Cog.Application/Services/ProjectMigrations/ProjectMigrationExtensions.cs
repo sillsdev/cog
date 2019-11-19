@@ -9,9 +9,9 @@ namespace SIL.Cog.Application.Services.ProjectMigrations
 		{
 			Symbol basedOnSymbol;
 			if (!symbols.Contains(strRep)
-				&& symbols.TryGetValue(basedOnStrRep, out basedOnSymbol))
+				&& symbols.TryGet(basedOnStrRep, out basedOnSymbol))
 			{
-				FeatureStruct fs = basedOnSymbol.FeatureStruct.DeepClone();
+				FeatureStruct fs = basedOnSymbol.FeatureStruct.Clone();
 				foreach (FeatureSymbol value in values)
 					fs.AddValue(value.Feature, value);
 				fs.Freeze();

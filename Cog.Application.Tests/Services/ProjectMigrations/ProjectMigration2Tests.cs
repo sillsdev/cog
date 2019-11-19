@@ -5,16 +5,15 @@ using NUnit.Framework;
 using SIL.Cog.Application.Services.ProjectMigrations;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Collections;
-using SIL.Machine.Annotations;
+using SIL.Extensions;
 using SIL.Machine.FeatureModel;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 {
 	[TestFixture]
 	public class ProjectMigration2Tests
 	{
-		private readonly ShapeSpanFactory _spanFactory = new ShapeSpanFactory();
 		private FeatureSystem _featSys;
 		private CogProject _project;
 		private SegmentPool _segmentPool;
@@ -30,7 +29,7 @@ namespace SIL.Cog.Application.Tests.Services.ProjectMigrations
 						new FeatureSymbol("fricative"),
 						new FeatureSymbol("approximant"))
 				};
-			_project = new CogProject(_spanFactory) {FeatureSystem = _featSys};
+			_project = new CogProject() {FeatureSystem = _featSys};
 			_segmentPool = new SegmentPool();
 		}
 

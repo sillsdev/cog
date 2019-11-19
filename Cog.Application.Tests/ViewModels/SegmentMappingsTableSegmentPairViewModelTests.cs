@@ -6,7 +6,6 @@ using NUnit.Framework;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Application.Tests.ViewModels
@@ -102,7 +101,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 		private class TestEnvironment : IDisposable
 		{
-			private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 			private readonly SegmentMappingsTableSegmentPairViewModel _segmentPair;
 			private readonly IProjectService _projectService;
 
@@ -122,7 +120,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 					new SegmentMappingsTableSegmentViewModel(new Segment(FeatureStruct.New().Symbol(CogFeatureSystem.ConsonantType).Feature(CogFeatureSystem.StrRep).EqualTo("c").Value), SoundType.Consonant),
 					100, true);
 
-				var project = new CogProject(_spanFactory);
+				var project = new CogProject();
 				_projectService.Project.Returns(project);
 			}
 

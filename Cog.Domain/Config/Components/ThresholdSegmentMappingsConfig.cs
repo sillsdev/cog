@@ -1,13 +1,12 @@
 using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class ThresholdSegmentMappingsConfig : IComponentConfig<ISegmentMappings>
 	{
-		public ISegmentMappings Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public ISegmentMappings Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var threshold = (int) elem.Element(ConfigManager.Cog + "Threshold");
 			XElement alignerElem = elem.Element(ConfigManager.Cog + "ApplicableWordAligner");

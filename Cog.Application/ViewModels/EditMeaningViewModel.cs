@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -56,7 +56,7 @@ namespace SIL.Cog.Application.ViewModels
 						if (string.IsNullOrEmpty(_gloss))
 							return "Please enter a gloss.";
 						Meaning meaning;
-						if (_meanings.TryGetValue(_gloss, out meaning) && meaning != _meaning)
+						if (_meanings.TryGet(_gloss, out meaning) && meaning != _meaning)
 							return "A variety with that gloss already exists.";
 						break;
 				}

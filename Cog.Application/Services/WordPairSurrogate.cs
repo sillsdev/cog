@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Application.Services
 {

@@ -1,5 +1,5 @@
 using System.Collections.Specialized;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.Collections
 {

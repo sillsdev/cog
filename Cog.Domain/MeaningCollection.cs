@@ -1,4 +1,4 @@
-﻿using SIL.Collections;
+﻿using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -40,7 +40,8 @@ namespace SIL.Cog.Domain
 
 		internal void ChangeMeaningGloss(Meaning meaning, string newGloss)
 		{
-			ChangeItemKey(meaning, newGloss);
+			Dictionary.Remove(GetKeyForItem(meaning));
+			Dictionary.Add(newGloss, meaning);
 		}
 	}
 }

@@ -10,9 +10,11 @@ using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
 using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.Clusterers;
 using SIL.Machine.SequenceAlignment;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -101,7 +103,7 @@ namespace SIL.Cog.Application.ViewModels
 
 			VarietyPair vp = w1.Variety.VarietyPairs[w2.Variety];
 			WordPair wp;
-			if (vp.WordPairs.TryGetValue(_selectedMeaning.DomainMeaning, out wp))
+			if (vp.WordPairs.TryGet(_selectedMeaning.DomainMeaning, out wp))
 				return wp.GetWord(w1.Variety) == w1 && wp.GetWord(w2.Variety) == w2;
 			return false;
 		}
@@ -234,7 +236,7 @@ namespace SIL.Cog.Application.ViewModels
 			foreach (VarietyPair vp in _projectService.Project.VarietyPairs)
 			{
 				WordPair wp;
-				if (vp.WordPairs.TryGetValue(_selectedMeaning.DomainMeaning, out wp))
+				if (vp.WordPairs.TryGet(_selectedMeaning.DomainMeaning, out wp))
 				{
 					words.Add(wp.Word1);
 					words.Add(wp.Word2);
@@ -252,10 +254,10 @@ namespace SIL.Cog.Application.ViewModels
 			{
 				Word word = words.First();
 				Annotation<ShapeNode> prefixAnn = word.Prefix;
-				var prefix = new AlignmentCell<ShapeNode>(prefixAnn != null ? word.Shape.GetNodes(prefixAnn.Span).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
-				IEnumerable<AlignmentCell<ShapeNode>> columns = word.Shape.GetNodes(word.Stem.Span).Where(NodeFilter).Select(n => new AlignmentCell<ShapeNode>(n));
+				var prefix = new AlignmentCell<ShapeNode>(prefixAnn != null ? word.Shape.GetNodes(prefixAnn.Range).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
+				IEnumerable<AlignmentCell<ShapeNode>> columns = word.Shape.GetNodes(word.Stem.Range).Where(NodeFilter).Select(n => new AlignmentCell<ShapeNode>(n));
 				Annotation<ShapeNode> suffixAnn = word.Suffix;
-				var suffix = new AlignmentCell<ShapeNode>(suffixAnn != null ? word.Shape.GetNodes(suffixAnn.Span).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
+				var suffix = new AlignmentCell<ShapeNode>(suffixAnn != null ? word.Shape.GetNodes(suffixAnn.Range).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
 				alignment = new Alignment<Word, ShapeNode>(0, 0, Tuple.Create(word, prefix, columns, suffix));
 			}
 			else

@@ -1,5 +1,5 @@
 using SIL.Cog.Application.Collections;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

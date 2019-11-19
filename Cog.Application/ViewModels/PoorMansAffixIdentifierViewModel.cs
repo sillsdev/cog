@@ -1,22 +1,19 @@
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.ViewModels
 {
 	public class PoorMansAffixIdentifierViewModel : ComponentSettingsViewModelBase
 	{
 		private readonly IProjectService _projectService;
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly SegmentPool _segmentPool;
 		private int _threshold;
 		private int _maxAffixLength;
 
-		public PoorMansAffixIdentifierViewModel(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, IProjectService projectService)
+		public PoorMansAffixIdentifierViewModel(SegmentPool segmentPool, IProjectService projectService)
 			: base("Automatic stemmer", "Input-Settings#automatic-stemmer")
 		{
-			_spanFactory = spanFactory;
 			_segmentPool = segmentPool;
 			_projectService = projectService;
 		}
@@ -42,7 +39,7 @@ namespace SIL.Cog.Application.ViewModels
 
 		public override object UpdateComponent()
 		{
-			var affixIdentifier = new PoorMansAffixIdentifier(_spanFactory, _segmentPool, _threshold, _maxAffixLength);
+			var affixIdentifier = new PoorMansAffixIdentifier(_segmentPool, _threshold, _maxAffixLength);
 			_projectService.Project.VarietyProcessors[ComponentIdentifiers.AffixIdentifier] = affixIdentifier;
 			return affixIdentifier;
 		}

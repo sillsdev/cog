@@ -2,7 +2,6 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;
 using SIL.Machine.Statistics;
@@ -12,7 +11,6 @@ namespace SIL.Cog.Domain.Tests.Components
 	[TestFixture]
 	public class AlineScorerTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 		private FeatureSystem _featSys;
 		private SegmentPool _segmentPool;
 		private Segmenter _segmenter;
@@ -69,7 +67,7 @@ namespace SIL.Cog.Domain.Tests.Components
 			};
 
 			_segmentPool = new SegmentPool();
-			_segmenter = new Segmenter(_spanFactory)
+			_segmenter = new Segmenter()
 				{
 					Consonants =
 					{

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Morphology;
@@ -10,16 +10,14 @@ namespace SIL.Cog.Domain.Components
 {
 	public class PoorMansAffixIdentifier : IProcessor<Variety>
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory;
 		private readonly SegmentPool _segmentPool;
 		private readonly PoorMansAffixIdentifier<Word, Segment> _affixIdentifier; 
 
-		public PoorMansAffixIdentifier(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, double threshold, int maxAffixLength)
+		public PoorMansAffixIdentifier(SegmentPool segmentPool, double threshold, int maxAffixLength)
 		{
-			_spanFactory = spanFactory;
 			_segmentPool = segmentPool;
 			_affixIdentifier = new PoorMansAffixIdentifier<Word, Segment>(word => word.Stem.Children.Where(ann => ann.Type() == CogFeatureSystem.SyllableType)
-			    .Select(ann => word.Shape.GetNodes(ann.Span).Where(n => n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType)).Select(n => _segmentPool.Get(n))))
+			    .Select(ann => word.Shape.GetNodes(ann.Range).Where(n => n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType)).Select(n => _segmentPool.Get(n))))
 				{
 					MaxAffixLength = maxAffixLength,
 					Threshold = threshold
@@ -70,8 +68,7 @@ namespace SIL.Cog.Domain.Components
 
 		private Affix CreateAffix(Ngram<Segment> ngram, string category, double score)
 		{
-			var shape = new Shape(_spanFactory,
-				begin => new ShapeNode(_spanFactory, FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
+			var shape = new Shape(begin => new ShapeNode(FeatureStruct.New().Symbol(CogFeatureSystem.AnchorType).Feature(CogFeatureSystem.StrRep).EqualTo("#").Value));
 			foreach (Segment seg in ngram)
 			{
 				if (seg.Type != CogFeatureSystem.AnchorType)

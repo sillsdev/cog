@@ -7,7 +7,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using GMap.NET;
 using GMap.NET.WindowsPresentation;
-using SIL.Collections;
+using SIL.Extensions;
 
 namespace SIL.Cog.Presentation.Views
 {

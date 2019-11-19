@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using GalaSoft.MvvmLight.Messaging;
-using SIL.Collections;
+using SIL.Extensions;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {

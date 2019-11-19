@@ -2,20 +2,17 @@
 using NUnit.Framework;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.TestUtils;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Domain.Tests.Components
 {
 	[TestFixture]
 	public class CognacyWordPairGeneratorTests
 	{
-		private readonly ShapeSpanFactory _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Process()
 		{
 			var segmentPool = new SegmentPool();
-			CogProject project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3"), new Meaning("gloss4", "cat4")});
 			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 			project.Varieties[0].Words.AddRange(new[]

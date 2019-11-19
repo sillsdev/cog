@@ -10,9 +10,9 @@ namespace SIL.Cog.Application.Services.ProjectMigrations
 		public void Migrate(SegmentPool segmentPool, CogProject project)
 		{
 			Symbol symbol;
-			if (project.Segmenter.Consonants.TryGetValue("ħ", out symbol))
+			if (project.Segmenter.Consonants.TryGet("ħ", out symbol))
 			{
-				FeatureStruct fs = symbol.FeatureStruct.DeepClone();
+				FeatureStruct fs = symbol.FeatureStruct.Clone();
 				fs.PriorityUnion(FeatureStruct.New(project.FeatureSystem)
 					.Symbol("pharyngeal")
 					.Symbol("fricative").Value);

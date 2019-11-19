@@ -4,8 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using SIL.Code;
 using SIL.Cog.Application.ViewModels;
-using SIL.Collections;
 
 namespace SIL.Cog.Presentation.Views
 {

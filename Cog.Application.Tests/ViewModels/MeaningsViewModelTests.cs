@@ -7,7 +7,6 @@ using NUnit.Framework;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.ViewModels
 {
@@ -16,7 +15,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	{
 		private class TestEnvironment : IDisposable
 		{
-			private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
 			private readonly IProjectService _projectService;
 			private readonly IDialogService _dialogService;
 			private readonly MeaningsViewModel _meaningsViewModel;
@@ -29,11 +27,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				var busyService = Substitute.For<IBusyService>();
 
 				_meaningsViewModel = new MeaningsViewModel(_projectService, _dialogService, busyService);
-			}
-
-			public SpanFactory<ShapeNode> SpanFactory
-			{
-				get { return _spanFactory; }
 			}
 
 			public void OpenProject(CogProject project)
@@ -63,7 +56,7 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			using (var env = new TestEnvironment())
 			{
-				var project = new CogProject(env.SpanFactory)
+				var project = new CogProject()
 				{
 					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2")}
 				};

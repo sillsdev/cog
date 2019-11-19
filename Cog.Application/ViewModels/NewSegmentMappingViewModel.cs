@@ -1,9 +1,10 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.ViewModels

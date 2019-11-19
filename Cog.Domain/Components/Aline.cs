@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.SequenceAlignment;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain.Components
 {

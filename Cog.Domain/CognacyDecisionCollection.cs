@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using SIL.Collections;
+using SIL.Extensions;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
@@ -78,7 +79,7 @@ namespace SIL.Cog.Domain
 
 		private void AddToLookupDictionary(CognacyDecision item)
 		{
-			Dictionary<Meaning, CognacyDecision> lookup = _lookupDictionary.GetValue(UnorderedTuple.Create(item.Variety1, item.Variety2),
+			Dictionary<Meaning, CognacyDecision> lookup = _lookupDictionary.GetOrCreate(UnorderedTuple.Create(item.Variety1, item.Variety2),
 				() => new Dictionary<Meaning, CognacyDecision>());
 			lookup[item.Meaning] = item;
 		}

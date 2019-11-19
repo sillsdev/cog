@@ -5,15 +5,12 @@ using NUnit.Framework;
 using SIL.Cog.Application.Import;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Tests.Import
 {
 	[TestFixture]
 	public class TextWordListsImporterTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Import_VarietyRows()
 		{
@@ -23,7 +20,7 @@ namespace SIL.Cog.Application.Tests.Import
 			settings.Format = TextWordListsFormat.VarietyRows;
 			settings.CategoriesIncluded = true;
 
-			var project = new CogProject(_spanFactory)
+			var project = new CogProject()
 				{
 					Varieties = {new Variety("variety")},
 					Meanings = {new Meaning("gloss", "cat")}
@@ -133,7 +130,7 @@ namespace SIL.Cog.Application.Tests.Import
 			settings.Format = TextWordListsFormat.GlossRows;
 			settings.CategoriesIncluded = true;
 
-			var project = new CogProject(_spanFactory)
+			var project = new CogProject()
 				{
 					Varieties = {new Variety("variety")},
 					Meanings = {new Meaning("gloss", "cat")}

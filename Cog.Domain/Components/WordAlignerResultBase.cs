@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain.Components
 {
@@ -23,9 +24,9 @@ namespace SIL.Cog.Domain.Components
 			Annotation<ShapeNode> stemAnn1 = word.Stem;
 			foreach (ShapeNode node in word.Shape.Where(n => n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)))
 			{
-				if (node.CompareTo(stemAnn1.Span.Start) < 0)
+				if (node.CompareTo(stemAnn1.Range.Start) < 0)
 					startIndex++;
-				else if (stemAnn1.Span.Contains(node))
+				else if (stemAnn1.Range.Contains(node))
 					count++;
 				nodes.Add(node);
 			}

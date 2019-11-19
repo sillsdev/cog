@@ -5,11 +5,13 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using SIL.Code;
 using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -96,10 +98,10 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			foreach (Annotation<ShapeNode> child in ann.Children)
 			{
-				foreach (ShapeNode node in _word.Shape.GetNodes(child.Span))
+				foreach (ShapeNode node in _word.Shape.GetNodes(child.Range))
 					yield return new WordSegmentViewModel(node);
-				if (child.Type() == CogFeatureSystem.SyllableType && child.Span.End != ann.Span.End
-					&& !child.Span.End.Next.Type().IsOneOf(CogFeatureSystem.BoundaryType, CogFeatureSystem.ToneLetterType))
+				if (child.Type() == CogFeatureSystem.SyllableType && child.Range.End != ann.Range.End
+					&& !child.Range.End.Next.Type().IsOneOf(CogFeatureSystem.BoundaryType, CogFeatureSystem.ToneLetterType))
 				{
 					yield return new WordSegmentViewModel(".");
 				}

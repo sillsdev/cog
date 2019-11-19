@@ -3,14 +3,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Cog.Domain.Components;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.Cog.Domain.Config.Components
 {
 	public class AlineConfig : WordAlignerConfigBase
 	{
-		public override IWordAligner Load(SpanFactory<ShapeNode> spanFactory, SegmentPool segmentPool, CogProject project, XElement elem)
+		public override IWordAligner Load(SegmentPool segmentPool, CogProject project, XElement elem)
 		{
 			var settings = new AlineSettings();
 			LoadSettings(project.Segmenter, project.FeatureSystem, elem, settings);

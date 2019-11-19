@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.ObjectModel;
 
 namespace SIL.Cog.Application.ViewModels
 {
@@ -47,7 +47,7 @@ namespace SIL.Cog.Application.ViewModels
 						if (string.IsNullOrEmpty(_name))
 							return "Please enter a name.";
 						Variety variety;
-						if (_varieties.TryGetValue(_name, out variety) && variety != _variety)
+						if (_varieties.TryGet(_name, out variety) && variety != _variety)
 							return "A variety with that name already exists.";
 						break;
 				}

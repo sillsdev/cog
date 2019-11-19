@@ -12,8 +12,6 @@ namespace SIL.Cog.Application.Tests.ViewModels
 	[TestFixture]
 	public class WordViewModelTests
 	{
-		private readonly SpanFactory<ShapeNode> _spanFactory = new ShapeSpanFactory();
-
 		[Test]
 		public void Segments()
 		{
@@ -21,8 +19,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			var busyService = Substitute.For<IBusyService>();
 			var projectService = Substitute.For<IProjectService>();
 			var dialogService = Substitute.For<IDialogService>();
-			var analysisService = new AnalysisService(_spanFactory, segmentPool, projectService, dialogService, busyService);
-			var project = TestHelpers.GetTestProject(_spanFactory, segmentPool);
+			var analysisService = new AnalysisService(segmentPool, projectService, dialogService, busyService);
+			var project = TestHelpers.GetTestProject(segmentPool);
 			project.Meanings.Add(new Meaning("gloss1", "cat1"));
 			project.Varieties.Add(new Variety("variety1"));
 			var w = new Word("gugəl", project.Meanings[0]);
@@ -44,8 +42,8 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			Assert.That(word.Segments.Select(s => s.StrRep), Is.EqualTo(new[] {"g", "u", "|", "g", "ə", "l", "|"}));
 			Annotation<ShapeNode> prefixAnn = w.Prefix;
 			Assert.That(prefixAnn, Is.Not.Null);
-			Assert.That(w.Shape.GetNodes(prefixAnn.Span).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "u"}));
-			Assert.That(w.Shape.GetNodes(w.Stem.Span).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "ə", "l"}));
+			Assert.That(w.Shape.GetNodes(prefixAnn.Range).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "u"}));
+			Assert.That(w.Shape.GetNodes(w.Stem.Range).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "ə", "l"}));
 			Assert.That(w.Suffix, Is.Null);
 			Assert.That(w.StemIndex, Is.EqualTo(2));
 			Assert.That(w.StemLength, Is.EqualTo(3));
@@ -57,11 +55,11 @@ namespace SIL.Cog.Application.Tests.ViewModels
 			Assert.That(word.Segments.Select(s => s.StrRep), Is.EqualTo(new[] {"g", "u", "|", "g", "ə", "|", "l"}));
 			prefixAnn = w.Prefix;
 			Assert.That(prefixAnn, Is.Not.Null);
-			Assert.That(w.Shape.GetNodes(prefixAnn.Span).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "u"}));
-			Assert.That(w.Shape.GetNodes(w.Stem.Span).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "ə"}));
+			Assert.That(w.Shape.GetNodes(prefixAnn.Range).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "u"}));
+			Assert.That(w.Shape.GetNodes(w.Stem.Range).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"g", "ə"}));
 			Annotation<ShapeNode> suffixAnn = w.Suffix;
 			Assert.That(suffixAnn, Is.Not.Null);
-			Assert.That(w.Shape.GetNodes(suffixAnn.Span).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"l"}));
+			Assert.That(w.Shape.GetNodes(suffixAnn.Range).Select(n => n.OriginalStrRep()), Is.EqualTo(new[] {"l"}));
 			Assert.That(w.StemIndex, Is.EqualTo(2));
 			Assert.That(w.StemLength, Is.EqualTo(2));
 		}

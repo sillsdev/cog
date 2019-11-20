@@ -149,7 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cog.Domain\Cog.Domain.csproj">
-      <Project>{DA1D126F-5327-47C1-8967-03B44DCB2F02}</Project>
+      <Project>{27b09407-133d-4c13-bc1d-8252e25afd8e}</Project>
       <Name>Cog.Domain</Name>
     </ProjectReference>
   </ItemGroup>

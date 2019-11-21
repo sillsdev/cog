@@ -1,0 +1,24 @@
+﻿@page "/"
+@using EmbeddedBlazorContent
+@namespace SIL.Cog.Explorer.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cog Explorer</title>
+    <base href="~/" />
+    @Html.EmbeddedBlazorContent()
+    <link rel="stylesheet" type="text/css" href="site.css" />
+</head>
+<body>
+    <app>
+        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+    </app>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="jsinterop.js"></script>
+</body>
+</html>

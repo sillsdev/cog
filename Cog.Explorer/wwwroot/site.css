@@ -1,0 +1,108 @@
+﻿html, body {
+  margin: 0px;
+  width: 100vw;
+  height: 100vh;
+}
+
+app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  display: flex;
+  padding: 5px;
+}
+
+.no-data-label {
+  margin: 0;
+}
+
+.dense-col .tabulator-col-content {
+  padding-left: 0.3rem !important;
+  padding-right: 0.3rem !important;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+#titlebar {
+  display: flex;
+  background: linear-gradient(to left top, #3164a5, #8aaed4);
+}
+
+.titlebar-buttons {
+  padding: 4px;
+}
+
+.titlebar-drag-region {
+  margin-top: 4px;
+  -webkit-app-region: drag;
+  flex: 1 1 auto;
+}
+
+#window-controls {
+  height: 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  font-family: "Segoe MDL2 Assets";
+  font-size: 10px;
+  color: white;
+}
+
+#window-controls .button {
+  grid-row: 1 / span 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  cursor: default;
+}
+
+#min-button {
+  grid-column: 1;
+}
+
+#max-button, #restore-button {
+  grid-column: 2;
+}
+
+#close-button {
+  grid-column: 3;
+}
+
+#window-controls .button:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+#window-controls .button:active {
+  background: rgba(0,0,0,0.2);
+}
+
+#close-button:hover {
+  background: #E81123 !important;
+  color: white;
+}
+
+#close-button:active {
+  background: #f1707a !important;
+}
+
+#restore-button {
+  display: none !important;
+}
+
+#titlebar.maximized #restore-button {
+  display: flex !important;
+}
+
+#titlebar.maximized #max-button {
+  display: none;
+}

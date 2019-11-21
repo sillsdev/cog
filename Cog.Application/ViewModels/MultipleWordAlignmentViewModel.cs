@@ -9,7 +9,7 @@ using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Collections;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
-using SIL.Collections;
+using SIL.Cog.Domain.Components;
 using SIL.Extensions;
 using SIL.Machine.Annotations;
 using SIL.Machine.Clusterers;

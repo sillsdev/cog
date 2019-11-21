@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
+using SIL.Cog.Domain.Components;
 using SIL.Machine.Annotations;
 using SIL.Machine.SequenceAlignment;
 

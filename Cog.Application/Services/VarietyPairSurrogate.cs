@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 using SIL.Cog.Domain;
+using SIL.Cog.Domain.Components;
 using SIL.Extensions;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.NgramModeling;

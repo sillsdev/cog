@@ -1,0 +1,224 @@
+﻿@page "/"
+
+@using SIL.Extensions
+@using SIL.Machine.Annotations
+@using SIL.Machine.FeatureModel
+@using SIL.Machine.SequenceAlignment
+
+<header id="titlebar" class="@(_isMaximized ? "maximized" : "")">
+    <div class="titlebar-buttons">
+        <MatIconButton Icon="folder_open" OnClick="@OpenProjectAsync"></MatIconButton>
+    </div>
+    <div class="titlebar-drag-region"></div>
+    <div id="window-controls">
+        <div class="button" id="min-button" @onclick="HandleMinimize">
+            <span>&#xE921;</span>
+        </div>
+        <div class="button" id="max-button" @onclick="HandleMaximize">
+            <span>&#xE922;</span>
+        </div>
+        <div class="button" id="restore-button" @onclick="HandleUnmaximize">
+            <span>&#xE923;</span>
+        </div>
+        <div class="button" id="close-button" @onclick="HandleClose">
+            <span>&#xE8BB;</span>
+        </div>
+    </div>
+</header>
+<div class="main-content">
+    @if (_phrases == null)
+    {
+        <MatSubtitle1 Class="no-data-label">No project loaded.</MatSubtitle1>
+    }
+    else
+    {
+        <DataGrid Columns="@_columns" Items="@_phrases"></DataGrid>
+    }
+</div>
+
+@code {
+    CogProject _project;
+    SegmentPool _segmentPool = new SegmentPool();
+    List<DataGridColumn> _columns;
+    List<PhraseInfo> _phrases;
+    bool _isMaximized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BrowserWindow mainWindow = Electron.WindowManager.BrowserWindows.First();
+        mainWindow.OnMaximize += async () =>
+        {
+            await InvokeAsync(() =>
+            {
+                _isMaximized = true;
+                StateHasChanged();
+            });
+        };
+        mainWindow.OnUnmaximize += async () =>
+        {
+            await InvokeAsync(() =>
+            {
+                _isMaximized = false;
+                StateHasChanged();
+            });
+        };
+        _isMaximized = await mainWindow.IsMaximizedAsync();
+    }
+
+    private async Task OpenProjectAsync(MouseEventArgs e)
+    {
+        BrowserWindow mainWindow = Electron.WindowManager.BrowserWindows.First();
+        string[] files = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, new OpenDialogOptions
+        {
+            Title = "Open project",
+            Properties = new[] { OpenDialogProperty.openFile },
+            Filters = new[] { new FileFilter { Name = "Cog Project", Extensions = new[] { "cogx" } } }
+        });
+
+        if (files.Length > 0)
+        {
+            _project = ConfigManager.Load(_segmentPool, files[0]);
+            SegmentAll();
+            BuildDataGrid(_project.Varieties.First());
+        }
+    }
+
+    private void SegmentAll()
+    {
+        var pipeline = new MultiThreadedPipeline<Variety>(new IProcessor<Variety>[]
+        {
+            new VarietySegmenter(_project.Segmenter),
+            _project.VarietyProcessors[ComponentIdentifiers.Syllabifier],
+        });
+        pipeline.Process(_project.Varieties);
+        pipeline.WaitForComplete();
+    }
+
+    private void BuildDataGrid(Variety variety)
+    {
+        _phrases = new List<PhraseInfo>();
+
+        IWordAligner aligner = _project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
+        IWordAlignerResult result = aligner.Compute(variety.Words);
+        Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
+
+        var phrases = new List<PhraseInfo>();
+        var typeCounts = new Dictionary<string, Dictionary<FeatureSymbol, int>>();
+        for (int i = 0; i < alignment.SequenceCount; i++)
+        {
+            AlignmentCell<ShapeNode> prefix = alignment.Prefixes[i];
+            Word word = alignment.Sequences[i];
+            AlignmentCell<ShapeNode> suffix = alignment.Suffixes[i];
+
+            var segments = new Dictionary<string, string>();
+            for (int j = 0; j < alignment.ColumnCount; j++)
+            {
+                var key = $"col_{j}";
+                AlignmentCell<ShapeNode> cell = alignment[i, j];
+                string strRep;
+                if (cell.Count == 0)
+                {
+                    strRep = "-";
+                }
+                else
+                {
+                    strRep = cell.StrRep();
+                    var counts = typeCounts.GetOrCreate(key, () => new Dictionary<FeatureSymbol, int>());
+                    counts.UpdateValue(cell.First.Type(), () => 0, c => c + 1);
+                }
+                segments[key] = strRep;
+            }
+            phrases.Add(new PhraseInfo
+            {
+                Phrase = word.StrRep,
+                LeftContext = prefix.StrRep(),
+                RightContext = suffix.StrRep(),
+                Gloss = word.Meaning.Gloss,
+                Segments = segments
+            });
+        }
+
+        var segmentColumns = new List<DataGridValueColumn>();
+        for (int j = 0; j < alignment.ColumnCount; j++)
+        {
+            var key = $"col_{j}";
+            string title = "?";
+            if (typeCounts.TryGetValue(key, out Dictionary<FeatureSymbol, int> counts) && counts.Count > 0)
+            {
+                FeatureSymbol type = counts.MaxBy(kvp => kvp.Value).Key;
+                if (type == CogFeatureSystem.ConsonantType)
+                    title = "C";
+                else
+                    title = "V";
+            }
+            segmentColumns.Add(new DataGridValueColumn(title)
+            {
+                Field = $"{nameof(PhraseInfo.Segments)}.{key}",
+                MinWidth = 50,
+                CssClass = "dense-col",
+                Align = ColumnAlign.Center,
+                HeaderFilter = Editor.Select,
+                HeaderFilterParams = new SelectParams { Values = true },
+                HeaderFilterPlaceholder = " "
+            });
+        }
+
+        var columns = new List<DataGridColumn>
+        {
+            new DataGridValueColumn("Phrase/Word")
+            {
+                Field = nameof(PhraseInfo.Phrase),
+                HeaderFilter = Editor.Input,
+                HeaderFilterPlaceholder = " "
+            },
+            new DataGridValueColumn("Left Context")
+            {
+                Field = nameof(PhraseInfo.LeftContext),
+                Align = ColumnAlign.Right,
+                HeaderFilter = Editor.Input,
+                HeaderFilterPlaceholder = " "
+            },
+            new DataGridColumnGroup("Segments") { Columns = segmentColumns },
+            new DataGridValueColumn("Right Context")
+            {
+                Field = nameof(PhraseInfo.RightContext),
+                Align = ColumnAlign.Left,
+                HeaderFilter = Editor.Input,
+                HeaderFilterPlaceholder = " "
+            },
+            new DataGridValueColumn("Gloss")
+            {
+                Field = nameof(PhraseInfo.Gloss),
+                HeaderFilter = Editor.Input,
+                HeaderFilterPlaceholder = " "
+            }
+        };
+
+        _columns = columns;
+        _phrases = phrases;
+    }
+
+    private void HandleMinimize()
+    {
+        BrowserWindow window = Electron.WindowManager.BrowserWindows.First();
+        window.Minimize();
+    }
+
+    private void HandleMaximize()
+    {
+        BrowserWindow window = Electron.WindowManager.BrowserWindows.First();
+        window.Maximize();
+    }
+
+    private void HandleUnmaximize()
+    {
+        BrowserWindow window = Electron.WindowManager.BrowserWindows.First();
+        window.Unmaximize();
+    }
+
+    private void HandleClose()
+    {
+        BrowserWindow window = Electron.WindowManager.BrowserWindows.First();
+        window.Close();
+    }
+}

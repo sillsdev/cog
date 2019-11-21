@@ -34,3 +34,11 @@ _ReSharper*/
 packages/*
 output/
 .vs
+
+node_modules/
+dist/
+*.woff
+*.woff2
+*.ttf
+*.eot
+jsinterop.js

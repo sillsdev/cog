@@ -1,4 +1,4 @@
-namespace SIL.Cog.Application
+namespace SIL.Cog.Domain.Components
 {
 	public static class ComponentIdentifiers
 	{

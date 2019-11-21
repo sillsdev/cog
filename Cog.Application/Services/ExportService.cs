@@ -4,6 +4,7 @@ using System.IO;
 using SIL.Cog.Application.Export;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
+using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Application.Services
 {

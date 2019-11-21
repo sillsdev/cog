@@ -1,0 +1,69 @@
+﻿@using Newtonsoft.Json
+@using Newtonsoft.Json.Converters
+@using Newtonsoft.Json.Serialization
+
+@implements IDisposable
+@typeparam TItem
+@inject IJSRuntime JSRuntime
+
+<div id="@Id"></div>
+
+@code {
+    private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+    {
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+        NullValueHandling = NullValueHandling.Ignore,
+        Converters =
+        {
+            new StringEnumConverter(true)
+        }
+    };
+    private string Id = "table_" + Guid.NewGuid().ToString();
+    private IEnumerable<DataGridColumn> _columns;
+    private IEnumerable<TItem> _items;
+
+    [Parameter]
+    public IEnumerable<DataGridColumn> Columns
+    {
+        get => _columns;
+        set
+        {
+            if (_columns != value)
+            {
+                _columns = value;
+                JSRuntime.InvokeVoidAsync("TabulatorInterop.setColumns", Id,
+                    JsonConvert.SerializeObject(_columns, SerializerSettings));
+            }
+        }
+    }
+
+    [Parameter]
+    public IEnumerable<TItem> Items
+    {
+        get => _items;
+        set
+        {
+            if (_items != value)
+            {
+                _items = value;
+                JSRuntime.InvokeVoidAsync("TabulatorInterop.setData", Id,
+                    JsonConvert.SerializeObject(_items ?? new TItem[0], SerializerSettings));
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("TabulatorInterop.disposeTable", Id);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("TabulatorInterop.createTable", Id,
+                JsonConvert.SerializeObject(_columns, SerializerSettings),
+                JsonConvert.SerializeObject(_items ?? new TItem[0], SerializerSettings));
+        }
+    }
+}

@@ -4,6 +4,7 @@ using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
 using SIL.Cog.Application.Services;
 using SIL.Cog.Domain;
+using SIL.Cog.Domain.Components;
 using SIL.Extensions;
 using SIL.Machine.NgramModeling;
 using SIL.ObjectModel;

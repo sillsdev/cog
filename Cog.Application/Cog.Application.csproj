@@ -93,7 +93,6 @@
     <Compile Include="Collections\MirroredBindableCollection.cs" />
     <Compile Include="Collections\MirroredBindableList.cs" />
     <Compile Include="Collections\VarietyMeaningViewModelCollection.cs" />
-    <Compile Include="ComponentIdentifiers.cs" />
     <Compile Include="Export\ICognateSetsExporter.cs" />
     <Compile Include="Export\ISegmentFrequenciesExporter.cs" />
     <Compile Include="Export\ISimilarityMatrixExporter.cs" />

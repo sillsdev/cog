@@ -114,7 +114,7 @@ namespace SIL.Cog.Domain.Components
 			{
 				ShapeNode newNode = node.Clone();
 				newShape.Add(newNode);
-				if (newStartNode == null)
+				if (newStartNode == null && node.StrRep() != " ")
 					newStartNode = newNode;
 				node = node.Next;
 			}

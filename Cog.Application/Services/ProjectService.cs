@@ -11,7 +11,6 @@ using ProtoBuf;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Config;
-using SIL.Machine.Annotations;
 
 namespace SIL.Cog.Application.Services
 {

@@ -11,9 +11,7 @@ namespace SIL.Cog.Domain
 	{
 		private int _stemIndex;
 		private int _stemLength;
-		private readonly string _strRep;
 		private Shape _shape;
-		private readonly Meaning _meaning;
 
 		public Word(string strRep, Meaning meaning)
 			: this(strRep, 0, strRep.Length, meaning)
@@ -22,85 +20,58 @@ namespace SIL.Cog.Domain
 
 		public Word(string strRep, int stemIndex, int stemLength, Meaning meaning)
 		{
-			_strRep = strRep;
-			_meaning = meaning;
+			StrRep = strRep;
+			Meaning = meaning;
 			_stemIndex = stemIndex;
 			_stemLength = stemLength;
 		}
 
-		public string StrRep
-		{
-			get { return _strRep; }
-		}
+		public string StrRep { get; }
 
 		public int StemIndex
 		{
-			get { return _stemIndex; }
-			set { Set(() => StemIndex, ref _stemIndex, value); }
+			get => _stemIndex;
+			set => Set(() => StemIndex, ref _stemIndex, value);
 		}
 
 		public int StemLength
 		{
-			get { return _stemLength; }
-			set { Set(() => StemLength, ref _stemLength, value); }
+			get => _stemLength;
+			set => Set(() => StemLength, ref _stemLength, value);
 		}
 
 		public Shape Shape
 		{
-			get { return _shape; }
-			internal set { Set(() => Shape, ref _shape, value); }
+			get => _shape;
+			internal set => Set(() => Shape, ref _shape, value);
 		}
 
-		public bool IsValid
-		{
-			get { return _shape != null && _shape.Count > 0; }
-		}
+		public bool IsValid => _shape != null && _shape.Count > 0;
 
-		public Meaning Meaning
-		{
-			get { return _meaning; }
-		}
+		public Meaning Meaning { get; }
 
 		public Variety Variety { get; internal set; }
 
-		public Annotation<ShapeNode> Prefix
-		{
-			get
-			{
-				return _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
-			}
-		}
+		public Annotation<ShapeNode> Prefix => _shape.Annotations
+			.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.PrefixType);
 
-		public Annotation<ShapeNode> Stem
-		{
-			get
-			{
-				return _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
-			}
-		}
+		public Annotation<ShapeNode> Stem => _shape.Annotations
+			.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.StemType);
 
-		public Annotation<ShapeNode> Suffix
-		{
-			get
-			{
-				return _shape.Annotations.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
-			}
-		}
+		public Annotation<ShapeNode> Suffix => _shape.Annotations
+			.SingleOrDefault(ann => ann.Type() == CogFeatureSystem.SuffixType);
 
-		public Range<ShapeNode> Range
-		{
-			get { return _shape.Range; }
-		}
+		public Range<ShapeNode> Range => _shape.Range;
 
-		public AnnotationList<ShapeNode> Annotations
-		{
-			get { return _shape.Annotations; }
-		}
+		public AnnotationList<ShapeNode> Annotations => _shape.Annotations;
+
+		public Audio Audio { get; set; }
+		public IDictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 
 		public override string ToString()
 		{
 			if (_shape == null || _shape.Count == 0)
-				return _strRep;
+				return StrRep;
 
 			var sb = new StringBuilder();
 

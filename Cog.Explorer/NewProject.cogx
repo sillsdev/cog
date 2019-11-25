@@ -1,0 +1,2454 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CogProject xmlns="http://www.sil.org/CogProject/1.3"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			version="5">
+	<FeatureSystem>
+		<Feature id="place" name="Place">
+			<Value id="bilabial" name="bilabial" />
+			<Value id="labiodental" name="labiodental" />
+			<Value id="dental" name="dental"/>
+			<Value id="alveolar" name="alveolar"/>
+			<Value id="retroflex" name="retroflex"/>
+			<Value id="palato-alveolar" name="palato-alveolar"/>
+			<Value id="alveolo-palatal" name="alveolo-palatal"/>
+			<Value id="palatal" name="palatal"/>
+			<Value id="velar" name="velar"/>
+			<Value id="uvular" name="uvular"/>
+			<Value id="pharyngeal" name="pharyngeal"/>
+			<Value id="epiglottal" name="epiglottal"/>
+			<Value id="glottal" name="glottal"/>
+		</Feature>
+		<Feature id="manner" name="Manner">
+			<Value id="stop" name="stop"/>
+			<Value id="affricate" name="affricate"/>
+			<Value id="fricative" name="fricative"/>
+			<Value id="approximant" name="approximant"/>
+			<Value id="trill" name="trill"/>
+			<Value id="flap" name="flap"/>
+			<Value id="close-vowel" name="close-vowel"/>
+			<Value id="mid-vowel" name="mid-vowel"/>
+			<Value id="open-vowel" name="open-vowel"/>
+		</Feature>
+		<Feature id="syllabic" name="Syllabic">
+			<Value id="syllabic+" name="+"/>
+			<Value id="syllabic-" name="-"/>
+		</Feature>
+		<Feature id="voice" name="Voice">
+			<Value id="voice+" name="+"/>
+			<Value id="voice-" name="-"/>
+		</Feature>
+		<Feature id="nasal" name="Nasal">
+			<Value id="nasal+" name="+"/>
+			<Value id="nasal-" name="-"/>
+		</Feature>
+		<Feature id="lateral" name="Lateral">
+			<Value id="lateral+" name="+"/>
+			<Value id="lateral-" name="-"/>
+		</Feature>
+		<Feature id="aspirated" name="Aspirated">
+			<Value id="aspirated+" name="+"/>
+			<Value id="aspirated-" name="-"/>
+		</Feature>
+		<Feature id="palatalized" name="Palatalized">
+			<Value id="palatalized+" name="+"/>
+			<Value id="palatalized-" name="-"/>
+		</Feature>
+		<Feature id="labialized" name="Labialized">
+			<Value id="labialized+" name="+"/>
+			<Value id="labialized-" name="-"/>
+		</Feature>
+		<Feature id="velarized" name="Velarized">
+			<Value id="velarized+" name="+"/>
+			<Value id="velarized-" name="-"/>
+		</Feature>
+		<Feature id="pharyngealized" name="Pharyngealized">
+			<Value id="pharyngealized+" name="+"/>
+			<Value id="pharyngealized-" name="-"/>
+		</Feature>
+		<Feature id="breathy-voiced" name="Breathy-voiced">
+			<Value id="breathy-voiced+" name="+"/>
+			<Value id="breathy-voiced-" name="-"/>
+		</Feature>
+		<Feature id="airstream" name="Airstream">
+			<Value id="pulmonic" name="pulmonic"/>
+			<Value id="ejective" name="ejective"/>
+			<Value id="implosive" name="implosive"/>
+			<Value id="click" name="click"/>
+		</Feature>
+		
+		<Feature id="height" name="Height">
+			<Value id="close" name="close"/>
+			<Value id="near-close" name="near-close"/>
+			<Value id="close-mid" name="close-mid"/>
+			<Value id="mid" name="mid"/>
+			<Value id="open-mid" name="open-mid"/>
+			<Value id="near-open" name="near-open"/>
+			<Value id="open" name="open"/>
+		</Feature>
+		<Feature id="backness" name="Backness">
+			<Value id="front" name="front"/>
+			<Value id="near-front" name="near-front"/>
+			<Value id="central" name="central"/>
+			<Value id="near-back" name="near-back"/>
+			<Value id="back" name="back"/>
+		</Feature>
+		<Feature id="round" name="Round">
+			<Value id="round+" name="+"/>
+			<Value id="round-" name="-"/>
+		</Feature>
+		<Feature id="length" name="Length">
+			<Value id="long" name="long"/>
+			<Value id="half-long" name="half-long"/>
+			<Value id="short" name="short"/>
+			<Value id="extra-short" name="extra-short"/>
+		</Feature>
+	</FeatureSystem>
+	<Segmentation>
+		<Vowels>
+			<Symbol strRep="a">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="e">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="i">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="o">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="u">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="y">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="æ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="near-open"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ø">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="œ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɐ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="near-open"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɑ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɒ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɔ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɘ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ə">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɛ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɜ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɞ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɤ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɨ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɪ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="near-close"/>
+				<FeatureValue feature="backness" value="near-front"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɯ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɵ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close-mid"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ɶ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="open-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open"/>
+				<FeatureValue feature="backness" value="front"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ʉ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="close"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ʊ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="near-close"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ʌ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="open-mid"/>
+				<FeatureValue feature="backness" value="back"/>
+				<FeatureValue feature="round" value="round-"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+			<Symbol strRep="ʏ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="close-vowel"/>
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+
+				<FeatureValue feature="height" value="near-close"/>
+				<FeatureValue feature="backness" value="near-front"/>
+				<FeatureValue feature="round" value="round+"/>
+				<FeatureValue feature="length" value="short"/>
+			</Symbol>
+		</Vowels>
+		<Consonants>
+			<Symbol strRep="b">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="c">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="d">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="f">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="g">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="h">
+				<FeatureValue feature="place" value="glottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="j">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="k">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="l">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="m">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="n">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="p">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="q">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="r">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="trill"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="s">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="t">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="v">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="w">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="labialized" value="labialized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="x">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="z">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ç">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ð">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ħ">
+				<FeatureValue feature="place" value="pharyngeal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ŋ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɓ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
+			</Symbol>
+			<Symbol strRep="ɕ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɖ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɗ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
+			</Symbol>
+			<Symbol strRep="ɟ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɠ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
+			</Symbol>
+			<Symbol strRep="ɡ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɢ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɣ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɥ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="labialized" value="labialized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɦ">
+				<FeatureValue feature="place" value="glottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɧ">
+				<FeatureValue feature="place" value="velar palato-alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɫ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="velarized" value="velarized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɬ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɭ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɮ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɰ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɱ">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɲ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɳ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɴ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɸ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɹ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɺ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="flap"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɻ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɽ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="flap"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ɾ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="flap"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʀ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="trill"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʁ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʂ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʃ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʄ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
+			</Symbol>
+			<Symbol strRep="ʈ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʋ">
+				<FeatureValue feature="place" value="labiodental"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʍ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="labialized" value="labialized+"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʎ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʐ">
+				<FeatureValue feature="place" value="retroflex"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʑ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʒ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʔ">
+				<FeatureValue feature="place" value="glottal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʕ">
+				<FeatureValue feature="place" value="pharyngeal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʙ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="trill"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʛ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="implosive"/>
+			</Symbol>
+			<Symbol strRep="ʜ">
+				<FeatureValue feature="place" value="epiglottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʝ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʟ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʡ">
+				<FeatureValue feature="place" value="epiglottal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ʢ">
+				<FeatureValue feature="place" value="epiglottal"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="β">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="θ">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="χ">
+				<FeatureValue feature="place" value="uvular"/>
+				<FeatureValue feature="manner" value="fricative"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			
+			<Symbol strRep="ʘ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǀ">
+				<FeatureValue feature="place" value="dental"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǁ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǃ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+			<Symbol strRep="ǂ">
+				<FeatureValue feature="place" value="palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="click"/>
+			</Symbol>
+
+			<Symbol strRep="ts">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="dz">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="tʃ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="dʒ">
+				<FeatureValue feature="place" value="palato-alveolar"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="tɕ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="dʑ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="affricate"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			
+			<!-- extra-IPA alveolo-palatal consonants -->
+			<Symbol strRep="ȶ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice-"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ȡ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ȵ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ȴ">
+				<FeatureValue feature="place" value="alveolo-palatal"/>
+				<FeatureValue feature="manner" value="approximant"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal-"/>
+				<FeatureValue feature="lateral" value="lateral+"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			
+			<!-- extra-IPA prenasalized consonant superscripts -->
+			<Symbol strRep="ᵐ">
+				<FeatureValue feature="place" value="bilabial"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ⁿ">
+				<FeatureValue feature="place" value="alveolar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+			<Symbol strRep="ᵑ">
+				<FeatureValue feature="place" value="velar"/>
+				<FeatureValue feature="manner" value="stop"/>
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+				<FeatureValue feature="voice" value="voice+"/>
+				<FeatureValue feature="nasal" value="nasal+"/>
+				<FeatureValue feature="lateral" value="lateral-"/>
+				<FeatureValue feature="aspirated" value="aspirated-"/>
+				<FeatureValue feature="palatalized" value="palatalized-"/>
+				<FeatureValue feature="labialized" value="labialized-"/>
+				<FeatureValue feature="velarized" value="velarized-"/>
+				<FeatureValue feature="pharyngealized" value="pharyngealized-"/>
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced-"/>
+				<FeatureValue feature="airstream" value="pulmonic"/>
+			</Symbol>
+		</Consonants>
+		<Modifiers>
+			<Symbol strRep="ʰ">
+				<FeatureValue feature="aspirated" value="aspirated+"/>
+			</Symbol>
+			<Symbol strRep="ʲ">
+				<FeatureValue feature="palatalized" value="palatalized+"/>
+			</Symbol>
+			<Symbol strRep="ʷ">
+				<FeatureValue feature="labialized" value="labialized+"/>
+			</Symbol>
+			<Symbol strRep="ː">
+				<FeatureValue feature="length" value="long"/>
+			</Symbol>
+			<Symbol strRep="ˑ">
+				<FeatureValue feature="length" value="half-long"/>
+			</Symbol>
+			<Symbol strRep="ˠ">
+				<FeatureValue feature="velarized" value="velarized+"/>
+			</Symbol>
+			<Symbol strRep="ˤ">
+				<FeatureValue feature="pharyngealized" value="pharyngealized+"/>
+			</Symbol>
+			<Symbol strRep="&#x0303;">
+				<FeatureValue feature="nasal" value="nasal+"/>
+			</Symbol>
+			<Symbol strRep="&#x0306;">
+				<FeatureValue feature="length" value="extra-short"/>
+			</Symbol>
+			<Symbol strRep="&#x0308;">
+				<FeatureValue feature="backness" value="central"/>
+			</Symbol>
+			<Symbol strRep="&#x0325;">
+				<FeatureValue feature="voice" value="voice-"/>
+			</Symbol>
+			<Symbol strRep="&#x030A;">
+				<FeatureValue feature="voice" value="voice-"/>
+			</Symbol>
+			<Symbol strRep="&#x0329;">
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+			</Symbol>
+			<Symbol strRep="&#x030D;">
+				<FeatureValue feature="syllabic" value="syllabic+"/>
+			</Symbol>
+			<Symbol strRep="&#x032C;">
+				<FeatureValue feature="voice" value="voice+"/>
+			</Symbol>
+			<Symbol strRep="&#x032F;">
+				<FeatureValue feature="syllabic" value="syllabic-"/>
+			</Symbol>
+			<Symbol strRep="&#x0334;">
+				<FeatureValue feature="velarized" value="velarized+"/>
+			</Symbol>
+			<Symbol strRep="&#x033D;">
+				<FeatureValue feature="manner" value="mid-vowel"/>
+				<FeatureValue feature="backness" value="central"/>
+				<FeatureValue feature="height" value="mid"/>
+			</Symbol>
+			<Symbol strRep="ⁿ">
+				<FeatureValue feature="nasal" value="nasal+"/>
+			</Symbol>
+			<Symbol strRep="&#x032A;"/>
+			<Symbol strRep="&#x02DE;"/>
+			<Symbol strRep="ʼ">
+				<FeatureValue feature="airstream" value="ejective"/>
+			</Symbol>
+			<Symbol strRep="ˡ"/>
+			<Symbol strRep="&#x0318;"/>
+			<Symbol strRep="&#x0319;"/>
+			<Symbol strRep="&#x031A;"/>
+			<Symbol strRep="&#x031C;"/>
+			<Symbol strRep="&#x031D;"/>
+			<Symbol strRep="&#x031E;"/>
+			<Symbol strRep="&#x031F;"/>
+			<Symbol strRep="&#x0320;"/>
+			<Symbol strRep="&#x0324;">
+				<FeatureValue feature="breathy-voiced" value="breathy-voiced+"/>
+			</Symbol>
+			<Symbol strRep="&#x0330;"/>
+			<Symbol strRep="&#x0339;"/>
+			<Symbol strRep="&#x033A;"/>
+			<Symbol strRep="&#x033B;"/>
+			<Symbol strRep="&#x033C;"/>
+			
+			<!-- Tone diacritics -->
+			<Symbol strRep="&#x0301;"/>
+			<Symbol strRep="&#x030B;"/>
+			<Symbol strRep="&#x0304;"/>
+			<Symbol strRep="&#x0300;"/>
+			<Symbol strRep="&#x030F;"/>
+			<Symbol strRep="&#x030C;"/>
+			<Symbol strRep="&#x0302;"/>
+			
+			<!-- extra-IPA tone numbers -->
+			<Symbol strRep="¹"/>
+			<Symbol strRep="²"/>
+			<Symbol strRep="³"/>
+			<Symbol strRep="⁴"/>
+			<Symbol strRep="⁵"/>
+		</Modifiers>
+		<Boundaries>
+			<Symbol strRep="-"/>
+			<Symbol strRep="."/>
+			<Symbol strRep="|"/>
+			<Symbol strRep="ˈ"/>
+			<Symbol strRep="ˌ"/>
+			<Symbol strRep="‖"/>
+			<!-- word break -->
+			<Symbol strRep=" "/>
+		</Boundaries>
+		<ToneLetters>
+			<Symbol strRep="↑"/>
+			<Symbol strRep="↓"/>
+			<Symbol strRep="˥"/>
+			<Symbol strRep="˦"/>
+			<Symbol strRep="˧"/>
+			<Symbol strRep="˨"/>
+			<Symbol strRep="˩"/>
+		</ToneLetters>
+		<Joiners>
+			<Symbol strRep="&#x0361;"/>
+			<Symbol strRep="&#x035C;"/>
+		</Joiners>
+	</Segmentation>
+	<WordAligners>
+		<WordAligner id="primary" xsi:type="Aline">
+			<Mode>global</Mode>
+			<ExpansionCompressionEnabled>false</ExpansionCompressionEnabled>
+			<RelevantFeatures>
+				<RelevantFeature ref="height" weight="10" vowel="true">
+					<RelevantValue ref="close" metric="100"/>
+					<RelevantValue ref="near-close" metric="85"/>
+					<RelevantValue ref="close-mid" metric="65"/>
+					<RelevantValue ref="mid" metric="50"/>
+					<RelevantValue ref="open-mid" metric="35"/>
+					<RelevantValue ref="near-open" metric="15"/>
+					<RelevantValue ref="open" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="backness" weight="10" vowel="true">
+					<RelevantValue ref="front" metric="100"/>
+					<RelevantValue ref="near-front" metric="80"/>
+					<RelevantValue ref="central" metric="50"/>
+					<RelevantValue ref="near-back" metric="20"/>
+					<RelevantValue ref="back" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="round" weight="2" vowel="true">
+					<RelevantValue ref="round+" metric="100"/>
+					<RelevantValue ref="round-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="length" weight="1" vowel="true">
+					<RelevantValue ref="long" metric="100"/>
+					<RelevantValue ref="half-long" metric="66"/>
+					<RelevantValue ref="short" metric="33"/>
+					<RelevantValue ref="extra-short" metric="0"/>
+				</RelevantFeature>
+
+				<RelevantFeature ref="syllabic" weight="5" vowel="true" consonant="true">
+					<RelevantValue ref="syllabic+" metric="100"/>
+					<RelevantValue ref="syllabic-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="nasal" weight="5" vowel="true" consonant="true">
+					<RelevantValue ref="nasal+" metric="100"/>
+					<RelevantValue ref="nasal-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="breathy-voiced" weight="2" vowel="true" consonant="true">
+					<RelevantValue ref="breathy-voiced+" metric="100"/>
+					<RelevantValue ref="breathy-voiced-" metric="0"/>
+				</RelevantFeature>
+				
+				<RelevantFeature ref="manner" weight="50" consonant="true">
+					<RelevantValue ref="stop" metric="100"/>
+					<RelevantValue ref="affricate" metric="95"/>
+					<RelevantValue ref="fricative" metric="90"/>
+					<RelevantValue ref="approximant" metric="80"/>
+					<RelevantValue ref="trill" metric="60"/>
+					<RelevantValue ref="flap" metric="50"/>
+					<RelevantValue ref="close-vowel" metric="30"/>
+					<RelevantValue ref="mid-vowel" metric="15"/>
+					<RelevantValue ref="open-vowel" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="place" weight="40" consonant="true">
+					<RelevantValue ref="bilabial" metric="100"/>
+					<RelevantValue ref="labiodental" metric="95"/>
+					<RelevantValue ref="dental" metric="90"/>
+					<RelevantValue ref="alveolar" metric="80"/>
+					<RelevantValue ref="retroflex" metric="75"/>
+					<RelevantValue ref="palato-alveolar" metric="70"/>
+					<RelevantValue ref="alveolo-palatal" metric="65"/>
+					<RelevantValue ref="palatal" metric="60"/>
+					<RelevantValue ref="velar" metric="50"/>
+					<RelevantValue ref="uvular" metric="40"/>
+					<RelevantValue ref="pharyngeal" metric="30"/>
+					<RelevantValue ref="epiglottal" metric="20"/>
+					<RelevantValue ref="glottal" metric="10"/>
+				</RelevantFeature>
+				<RelevantFeature ref="voice" weight="5" consonant="true">
+					<RelevantValue ref="voice+" metric="100"/>
+					<RelevantValue ref="voice-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="lateral" weight="5" consonant="true">
+					<RelevantValue ref="lateral+" metric="100"/>
+					<RelevantValue ref="lateral-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="aspirated" weight="2" consonant="true">
+					<RelevantValue ref="aspirated+" metric="100"/>
+					<RelevantValue ref="aspirated-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="palatalized" weight="2" consonant="true">
+					<RelevantValue ref="palatalized+" metric="100"/>
+					<RelevantValue ref="palatalized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="labialized" weight="2" consonant="true">
+					<RelevantValue ref="labialized+" metric="100"/>
+					<RelevantValue ref="labialized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="velarized" weight="2" consonant="true">
+					<RelevantValue ref="velarized+" metric="100"/>
+					<RelevantValue ref="velarized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="pharyngealized" weight="2" consonant="true">
+					<RelevantValue ref="pharyngealized+" metric="100"/>
+					<RelevantValue ref="pharyngealized-" metric="0"/>
+				</RelevantFeature>
+				<RelevantFeature ref="airstream" weight="5" consonant="true">
+					<RelevantValue ref="pulmonic" metric="100"/>
+					<RelevantValue ref="ejective" metric="66"/>
+					<RelevantValue ref="implosive" metric="33"/>
+					<RelevantValue ref="click" metric="0"/>
+				</RelevantFeature>
+			</RelevantFeatures>
+		</WordAligner>
+	</WordAligners>
+	<CognateIdentifiers>
+		<CognateIdentifier id="primary" xsi:type="BlairCognateIdentifier">
+			<IgnoredCorrespondences xsi:type="ListSegmentMappings">
+				<Mappings />
+			</IgnoredCorrespondences>
+			<SimilarSegments xsi:type="TypeSegmentMappings">
+				<VowelMappings xsi:type="UnionSegmentMappings">
+					<SegmentMappings xsi:type="ThresholdSegmentMappings">
+						<Threshold>500</Threshold>
+						<ApplicableWordAligner ref="primary" />
+					</SegmentMappings>
+					<SegmentMappings xsi:type="ListSegmentMappings">
+						<Mappings />
+					</SegmentMappings>
+				</VowelMappings>
+				<ConsonantMappings xsi:type="UnionSegmentMappings">
+					<SegmentMappings xsi:type="ThresholdSegmentMappings">
+						<Threshold>600</Threshold>
+						<ApplicableWordAligner ref="primary" />
+					</SegmentMappings>
+					<SegmentMappings xsi:type="ListSegmentMappings">
+						<Mappings />
+					</SegmentMappings>
+				</ConsonantMappings>
+			</SimilarSegments>
+		</CognateIdentifier>
+	</CognateIdentifiers>
+	<Meanings />
+	<Varieties />
+	<CognacyDecisions />
+	<ProjectProcessors />
+	<VarietyProcessors>
+		<VarietyProcessor id="affixIdentifier" xsi:type="PoorMansAffixIdentifier">
+			<AffixThreshold>5</AffixThreshold>
+			<MaxAffixLength>3</MaxAffixLength>
+		</VarietyProcessor>
+		<VarietyProcessor id="syllabifier" xsi:type="SspSyllabifier">
+			<SonorityScale>
+				<SonorityClass sonority="1">
+					<UnnaturalClass name="Prenasal">
+						<Segment>ᵐ</Segment>
+						<Segment>ⁿ</Segment>
+						<Segment>ᵑ</Segment>
+					</UnnaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="2">
+					<NaturalClass name="Stop" type="consonant">
+						<FeatureValue feature="manner" value="stop" />
+						<FeatureValue feature="nasal" value="nasal-" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="3">
+					<NaturalClass name="Affricate" type="consonant">
+						<FeatureValue feature="manner" value="affricate" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="4">
+					<NaturalClass name="Fricative" type="consonant">
+						<FeatureValue feature="manner" value="fricative" />
+						<FeatureValue feature="lateral" value="lateral-" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="5">
+					<NaturalClass name="Nasal" type="consonant">
+						<FeatureValue feature="nasal" value="nasal+" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="6">
+					<NaturalClass name="Trill" type="consonant">
+						<FeatureValue feature="manner" value="trill" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="7">
+					<NaturalClass name="Lateral" type="consonant">
+						<FeatureValue feature="lateral" value="lateral+" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="8">
+					<NaturalClass name="Flap" type="consonant">
+						<FeatureValue feature="manner" value="flap" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="9">
+					<UnnaturalClass name="Glide" ignoreModifiers="true">
+						<Segment>j</Segment>
+						<Segment>ɥ</Segment>
+						<Segment>ɰ</Segment>
+						<Segment>w</Segment>
+					</UnnaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="9">
+					<NaturalClass name="Non-syllabic vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic-" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="10">
+					<NaturalClass name="Close vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="close" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="11">
+					<NaturalClass name="Near-close vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="near-close" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="12">
+					<NaturalClass name="Close-mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="close-mid" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="13">
+					<NaturalClass name="Mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="mid" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="14">
+					<NaturalClass name="Open-mid vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="open-mid" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="15">
+					<NaturalClass name="Near-open vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="near-open" />
+					</NaturalClass>
+				</SonorityClass>
+				<SonorityClass sonority="16">
+					<NaturalClass name="Open vowel" type="vowel">
+						<FeatureValue feature="syllabic" value="syllabic+" />
+						<FeatureValue feature="height" value="open" />
+					</NaturalClass>
+				</SonorityClass>
+			</SonorityScale>
+		</VarietyProcessor>
+	</VarietyProcessors>
+	<VarietyPairProcessors>
+		<VarietyPairProcessor id="wordPairGenerator" xsi:type="CognacyWordPairGenerator">
+			<InitialAlignmentThreshold>0.3</InitialAlignmentThreshold>
+			<ApplicableWordAligner ref="primary" />
+			<ApplicableCognateIdentifier ref="primary" />
+		</VarietyPairProcessor>
+	</VarietyPairProcessors>
+</CogProject>

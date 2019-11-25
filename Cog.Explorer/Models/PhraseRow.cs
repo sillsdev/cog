@@ -2,7 +2,7 @@
 
 namespace SIL.Cog.Explorer.Models
 {
-	public class PhraseInfo
+	public class PhraseRow
 	{
 		public string Phrase { get; set; }
 		public string LeftContext { get; set; }

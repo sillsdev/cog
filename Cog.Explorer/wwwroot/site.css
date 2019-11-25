@@ -13,6 +13,8 @@ app {
 .main-content {
   display: flex;
   padding: 5px;
+  flex: 1;
+  flex-direction: column;
 }
 
 .no-data-label {

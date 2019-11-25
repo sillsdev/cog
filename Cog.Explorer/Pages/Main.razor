@@ -5,6 +5,8 @@
 @using SIL.Machine.FeatureModel
 @using SIL.Machine.SequenceAlignment
 
+@inject ProjectService _projectService
+
 <header id="titlebar" class="@(_isMaximized ? "maximized" : "")">
     <div class="titlebar-buttons">
         <MatIconButton Icon="folder_open" OnClick="@OpenProjectAsync"></MatIconButton>
@@ -26,22 +28,45 @@
     </div>
 </header>
 <div class="main-content">
-    @if (_phrases == null)
+    @if (!_projectService.IsLoaded)
     {
         <MatSubtitle1 Class="no-data-label">No project loaded.</MatSubtitle1>
     }
     else
     {
-        <DataGrid Columns="@_columns" Items="@_phrases"></DataGrid>
+        <div>
+            <MatTextField Label="Syllable Pattern" @bind-Value="@SyllablePattern" Dense="true"></MatTextField>
+        </div>
+        if (_rows.Count == 0)
+        {
+            <MatSubtitle1 Class="no-data-label">No matching phrases.</MatSubtitle1>
+        }
+        else
+        {
+            <DataGrid Columns="@_columns" Items="@_rows"></DataGrid>
+        }
     }
 </div>
 
 @code {
-    CogProject _project;
-    SegmentPool _segmentPool = new SegmentPool();
-    List<DataGridColumn> _columns;
-    List<PhraseInfo> _phrases;
+    string _syllablePattern;
+    List<DataGridColumn> _columns = new List<DataGridColumn>();
+    List<PhraseRow> _rows = new List<PhraseRow>();
     bool _isMaximized = false;
+
+    private string SyllablePattern
+    {
+        get => _syllablePattern;
+        set
+        {
+            if (_syllablePattern != value)
+            {
+                _syllablePattern = value;
+                StateHasChanged();
+                BuildDataGrid(_projectService.Project.Varieties.First());
+            }
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,48 +92,27 @@
 
     private async Task OpenProjectAsync(MouseEventArgs e)
     {
-        BrowserWindow mainWindow = Electron.WindowManager.BrowserWindows.First();
-        string[] files = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, new OpenDialogOptions
-        {
-            Title = "Open project",
-            Properties = new[] { OpenDialogProperty.openFile },
-            Filters = new[] { new FileFilter { Name = "Cog Project", Extensions = new[] { "cogx" } } }
-        });
-
-        if (files.Length > 0)
-        {
-            _project = ConfigManager.Load(_segmentPool, files[0]);
-            SegmentAll();
-            BuildDataGrid(_project.Varieties.First());
-        }
-    }
-
-    private void SegmentAll()
-    {
-        var pipeline = new MultiThreadedPipeline<Variety>(new IProcessor<Variety>[]
-        {
-            new VarietySegmenter(_project.Segmenter),
-            _project.VarietyProcessors[ComponentIdentifiers.Syllabifier],
-        });
-        pipeline.Process(_project.Varieties);
-        pipeline.WaitForComplete();
+        await _projectService.OpenAsync();
+        BuildDataGrid(_projectService.Project.Varieties.First());
     }
 
     private void BuildDataGrid(Variety variety)
     {
-        _phrases = new List<PhraseInfo>();
+        _rows = new List<PhraseRow>();
+        if (string.IsNullOrEmpty(_syllablePattern))
+            return;
 
-        IWordAligner aligner = _project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
-        IWordAlignerResult result = aligner.Compute(variety.Words);
+        IReadOnlyList<Word> words = _projectService.FocusWords(variety, _syllablePattern);
+
+        IWordAligner aligner = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
+        IWordAlignerResult result = aligner.Compute(words);
         Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
 
-        var phrases = new List<PhraseInfo>();
+        var rows = new List<PhraseRow>();
         var typeCounts = new Dictionary<string, Dictionary<FeatureSymbol, int>>();
         for (int i = 0; i < alignment.SequenceCount; i++)
         {
-            AlignmentCell<ShapeNode> prefix = alignment.Prefixes[i];
             Word word = alignment.Sequences[i];
-            AlignmentCell<ShapeNode> suffix = alignment.Suffixes[i];
 
             var segments = new Dictionary<string, string>();
             for (int j = 0; j < alignment.ColumnCount; j++)
@@ -122,17 +126,17 @@
                 }
                 else
                 {
-                    strRep = cell.StrRep();
+                    strRep = cell.OriginalStrRep();
                     var counts = typeCounts.GetOrCreate(key, () => new Dictionary<FeatureSymbol, int>());
                     counts.UpdateValue(cell.First.Type(), () => 0, c => c + 1);
                 }
                 segments[key] = strRep;
             }
-            phrases.Add(new PhraseInfo
+            rows.Add(new PhraseRow
             {
                 Phrase = word.StrRep,
-                LeftContext = prefix.StrRep(),
-                RightContext = suffix.StrRep(),
+                LeftContext = word.Prefix?.OriginalStrRep() ?? "",
+                RightContext = word.Suffix?.OriginalStrRep() ?? "",
                 Gloss = word.Meaning.Gloss,
                 Segments = segments
             });
@@ -153,7 +157,7 @@
             }
             segmentColumns.Add(new DataGridValueColumn(title)
             {
-                Field = $"{nameof(PhraseInfo.Segments)}.{key}",
+                Field = $"{nameof(PhraseRow.Segments)}.{key}",
                 MinWidth = 50,
                 CssClass = "dense-col",
                 Align = ColumnAlign.Center,
@@ -167,35 +171,35 @@
         {
             new DataGridValueColumn("Phrase/Word")
             {
-                Field = nameof(PhraseInfo.Phrase),
+                Field = nameof(PhraseRow.Phrase),
                 HeaderFilter = Editor.Input,
                 HeaderFilterPlaceholder = " "
             },
-            new DataGridValueColumn("Left Context")
+            new DataGridValueColumn("Left")
             {
-                Field = nameof(PhraseInfo.LeftContext),
+                Field = nameof(PhraseRow.LeftContext),
                 Align = ColumnAlign.Right,
                 HeaderFilter = Editor.Input,
                 HeaderFilterPlaceholder = " "
             },
             new DataGridColumnGroup("Segments") { Columns = segmentColumns },
-            new DataGridValueColumn("Right Context")
+            new DataGridValueColumn("Right")
             {
-                Field = nameof(PhraseInfo.RightContext),
+                Field = nameof(PhraseRow.RightContext),
                 Align = ColumnAlign.Left,
                 HeaderFilter = Editor.Input,
                 HeaderFilterPlaceholder = " "
             },
             new DataGridValueColumn("Gloss")
             {
-                Field = nameof(PhraseInfo.Gloss),
+                Field = nameof(PhraseRow.Gloss),
                 HeaderFilter = Editor.Input,
                 HeaderFilterPlaceholder = " "
             }
         };
 
         _columns = columns;
-        _phrases = phrases;
+        _rows = rows;
     }
 
     private void HandleMinimize()

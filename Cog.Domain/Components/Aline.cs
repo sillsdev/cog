@@ -9,52 +9,79 @@ namespace SIL.Cog.Domain.Components
 	public class Aline : WordAlignerBase
 	{
 		private readonly AlineScorer _scorer;
-		private readonly AlineSettings _settings;
 
-		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
-			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics)
-			: this(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics, new AlineSettings())
+		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures,
+			IEnumerable<SymbolicFeature> relevantConsFeatures, IDictionary<SymbolicFeature, int> featureWeights,
+			IDictionary<FeatureSymbol, int> valueMetrics)
+			: this(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
+				  new AlineSettings())
 		{
 		}
 
-		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
-			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, AlineSettings settings)
+		public Aline(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures,
+			IEnumerable<SymbolicFeature> relevantConsFeatures, IDictionary<SymbolicFeature, int> featureWeights,
+			IDictionary<FeatureSymbol, int> valueMetrics, AlineSettings settings)
 			: base(settings)
 		{
-			_settings = settings;
-			_scorer = new AlineScorer(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights, valueMetrics,
-				settings.ContextualSoundClasses, settings.SoundChangeScoringEnabled, settings.SyllablePositionCostEnabled);
+			Settings = settings;
+			_scorer = new AlineScorer(segmentPool, relevantVowelFeatures, relevantConsFeatures, featureWeights,
+				valueMetrics, settings.ContextualSoundClasses, settings.SoundChangeScoringEnabled,
+				settings.SyllablePositionCostEnabled);
 		}
 
-		public ReadOnlySet<SymbolicFeature> RelevantVowelFeatures
+		public int MaxIndelScore
 		{
-			get { return _scorer.RelevantVowelFeatures; }
+			get => _scorer.MaxIndelScore;
+			set => _scorer.MaxIndelScore = value;
 		}
 
-		public ReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
+		public int MaxSoundChangeScore
 		{
-			get { return _scorer.RelevantConsonantFeatures; }
-		} 
-
-		public ReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
-		{
-			get { return _scorer.FeatureWeights; }
+			get => _scorer.MaxSoundChangeScore;
+			set => _scorer.MaxSoundChangeScore = value;
 		}
 
-		public ReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
+		public int MaxSubstitutionScore
 		{
-			get { return _scorer.ValueMetrics; }
+			get => _scorer.MaxSubstitutionScore;
+			set => _scorer.MaxSubstitutionScore = value;
 		}
 
-		public AlineSettings Settings
+		public int MaxExpansionCompressionScore
 		{
-			get { return _settings; }
+			get => _scorer.MaxExpansionCompressionScore;
+			set => _scorer.MaxExpansionCompressionScore = value;
 		}
 
-		protected override IPairwiseAlignmentScorer<Word, ShapeNode> Scorer
+		public int IndelCost
 		{
-			get { return _scorer; }
+			get => _scorer.IndelCost;
+			set => _scorer.IndelCost = value;
 		}
+
+		public int VowelCost
+		{
+			get => _scorer.VowelCost;
+			set => _scorer.VowelCost = value;
+		}
+
+		public int SyllablePositionCost
+		{
+			get => _scorer.SyllablePositionCost;
+			set => _scorer.SyllablePositionCost = value;
+		}
+
+		public ReadOnlySet<SymbolicFeature> RelevantVowelFeatures => _scorer.RelevantVowelFeatures;
+
+		public ReadOnlySet<SymbolicFeature> RelevantConsonantFeatures => _scorer.RelevantConsonantFeatures;
+
+		public ReadOnlyDictionary<SymbolicFeature, int> FeatureWeights => _scorer.FeatureWeights;
+
+		public ReadOnlyDictionary<FeatureSymbol, int> ValueMetrics => _scorer.ValueMetrics;
+
+		public AlineSettings Settings { get; }
+
+		protected override IPairwiseAlignmentScorer<Word, ShapeNode> Scorer => _scorer;
 
 		public override int Delta(FeatureStruct fs1, FeatureStruct fs2)
 		{

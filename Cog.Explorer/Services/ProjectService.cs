@@ -9,7 +9,9 @@ using ElectronNET.API.Entities;
 using SIL.Cog.Domain;
 using SIL.Cog.Domain.Components;
 using SIL.Cog.Domain.Config;
+using SIL.Extensions;
 using SIL.Machine.Annotations;
+using SIL.Machine.SequenceAlignment;
 
 namespace SIL.Cog.Explorer.Services
 {
@@ -61,64 +63,80 @@ namespace SIL.Cog.Explorer.Services
 						importer.Import(fileName, Project);
 						break;
 				}
-				SegmentAll(false);
+				if (Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner] is Aline aline)
+				{
+					aline.MaxIndelScore = 50;
+					aline.IndelCost = 0;
+				}
+				SegmentAll(Project.Varieties);
 				return true;
 			}
 			return false;
 		}
 
-		public IReadOnlyList<Word> FocusWords(Variety variety, string syllablePattern)
+		public Dictionary<Word, Range<int>> SearchWords(Variety variety, string syllablePattern)
 		{
-			SegmentAll(true);
-
-			var results = new List<Word>();
+			var newVariety = new Variety(variety.Name);
+			var results = new Dictionary<Word, Range<int>>();
 			foreach (Word word in variety.Words.Where(w => w.Shape.Count > 0))
 			{
 				int wordStartIndex = 0;
 				int curIndex = 0;
-				bool match = false;
+				Range<ShapeNode> range = Range<ShapeNode>.Null;
 				foreach (Annotation<ShapeNode> ann in word.Stem.Children)
 				{
 					string strRep = GetOriginalStrRep(word, ann.Range);
 					if (ann.Type() == CogFeatureSystem.BoundaryType && strRep == " ")
 					{
-						if (match)
+						if (!range.Equals(Range<ShapeNode>.Null))
 						{
-							MarkWord(word, wordStartIndex, curIndex);
-							results.Add(word);
-							match = false;
-							break;
+							Word newWord = CloneWord(word, wordStartIndex, curIndex);
+							results[newWord] = Range<int>.Create(word.Shape.IndexOf(range.Start),
+								word.Shape.IndexOf(range.End) + 1);
+							newVariety.Words.Add(newWord);
+							range = Range<ShapeNode>.Null;
 						}
 						wordStartIndex = curIndex + strRep.Length;
 					}
 					else if (ann.Type() == CogFeatureSystem.SyllableType)
 					{
 						if (strRep.StartsWith(syllablePattern))
-							match = true;
+						{
+							range = ann.Range;
+						}
 					}
 					curIndex += strRep.Length;
 				}
 
-				if (match)
+				if (!range.Equals(Range<ShapeNode>.Null))
 				{
-					MarkWord(word, wordStartIndex, curIndex);
-					results.Add(word);
+					Word newWord = CloneWord(word, wordStartIndex, curIndex);
+					results[newWord] = Range<int>.Create(word.Shape.IndexOf(range.Start),
+						word.Shape.IndexOf(range.End) + 1);
+					newVariety.Words.Add(newWord);
 				}
 			}
 
-			SegmentAll(false);
+			SegmentAll(new[] { newVariety });
 			return results;
 		}
 
-		private void SegmentAll(bool stripAffixes)
+		public Alignment<Word, ShapeNode> Align(IEnumerable<Word> words)
 		{
-			var processors = new List<IProcessor<Variety>>();
-			if (stripAffixes)
-				processors.Add(new AffixStripper(Project.Segmenter));
-			processors.Add(new VarietySegmenter(Project.Segmenter));
-			processors.Add(Project.VarietyProcessors[ComponentIdentifiers.Syllabifier]);
+			IWordAligner aligner = Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
+			IWordAlignerResult result = aligner.Compute(words);
+			return result.GetAlignments().First();
+		}
+
+		private void SegmentAll(IEnumerable<Variety> varieties)
+		{
+			var processors = new List<IProcessor<Variety>>
+			{
+				new VarietySegmenter(Project.Segmenter),
+				Project.VarietyProcessors[ComponentIdentifiers.Syllabifier]
+			};
 			var pipeline = new MultiThreadedPipeline<Variety>(processors);
-			pipeline.Process(Project.Varieties);
+			pipeline.Process(varieties);
 			pipeline.WaitForComplete();
 		}
 
@@ -133,10 +151,12 @@ namespace SIL.Cog.Explorer.Services
 			return sb.ToString();
 		}
 
-		private void MarkWord(Word word, int startIndex, int endIndex)
+		private Word CloneWord(Word word, int startIndex, int endIndex)
 		{
-			word.StemIndex = startIndex;
-			word.StemLength = endIndex - startIndex;
+			Word newWord = word.Clone();
+			newWord.StemIndex = startIndex;
+			newWord.StemLength = endIndex - startIndex;
+			return newWord;
 		}
 	}
 }

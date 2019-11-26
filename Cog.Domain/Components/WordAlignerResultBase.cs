@@ -9,11 +9,9 @@ namespace SIL.Cog.Domain.Components
 {
 	internal abstract class WordAlignerResultBase : IWordAlignerResult
 	{
-		private readonly IWordAligner _wordAligner;
-
 		protected WordAlignerResultBase(IWordAligner wordAligner)
 		{
-			_wordAligner = wordAligner;
+			WordAligner = wordAligner;
 		}
 
 		protected static IEnumerable<ShapeNode> GetNodes(Word word, out int startIndex, out int count)
@@ -22,7 +20,7 @@ namespace SIL.Cog.Domain.Components
 			count = 0;
 			var nodes = new List<ShapeNode>();
 			Annotation<ShapeNode> stemAnn1 = word.Stem;
-			foreach (ShapeNode node in word.Shape.Where(n => n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType)))
+			foreach (ShapeNode node in word.Shape.Where(NodeFilter))
 			{
 				if (node.CompareTo(stemAnn1.Range.Start) < 0)
 					startIndex++;
@@ -33,10 +31,13 @@ namespace SIL.Cog.Domain.Components
 			return nodes;
 		}
 
-		public IWordAligner WordAligner
+		protected static bool NodeFilter(ShapeNode n)
 		{
-			get { return _wordAligner; }
+			return n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType,
+				CogFeatureSystem.AnchorType);
 		}
+
+		public IWordAligner WordAligner { get; }
 
 		public abstract ReadOnlyList<Word> Words { get; }
 

@@ -8,6 +8,7 @@ export class TabulatorInterop {
     const data = JSON.parse(dataStr);
     const table = new Tabulator(`#${id}`, {
       height: '100%',
+      selectable: false,
       columns,
       data,
       layoutColumnsOnNewData: true,

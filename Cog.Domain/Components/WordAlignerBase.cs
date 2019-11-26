@@ -39,6 +39,8 @@ namespace SIL.Cog.Domain.Components
 		public IWordAlignerResult Compute(IEnumerable<Word> words)
 		{
 			Word[] wordArray = words.ToArray();
+			if (wordArray.Length == 1)
+				return new SingleWordAlignmentResult(this, wordArray[0]);
 			if (wordArray.Length == 2)
 				return new PairwiseWordAlignerResult(this, Scorer, new WordPairAlignerSettings(), wordArray[0], wordArray[1]);
 			return new MultipleWordAlignerResult(this, Scorer, wordArray);

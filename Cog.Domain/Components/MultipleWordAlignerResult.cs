@@ -29,9 +29,6 @@ namespace SIL.Cog.Domain.Components
 			yield return _algorithm.GetAlignment();
 		}
 
-		public override int BestRawScore
-		{
-			get { return 0; }
-		}
+		public override int BestRawScore => 0;
 	}
 }

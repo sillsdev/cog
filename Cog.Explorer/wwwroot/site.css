@@ -2,6 +2,7 @@
   margin: 0px;
   width: 100vw;
   height: 100vh;
+  font-family: Roboto, sans-serif
 }
 
 app {
@@ -12,13 +13,25 @@ app {
 
 .main-content {
   display: flex;
-  padding: 5px;
+  padding: 8px;
   flex: 1;
   flex-direction: column;
 }
 
+.data-grid-container {
+  display: flex;
+  flex: 1;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, 0.12);
+  border-style: solid;
+}
+
 .no-data-label {
   margin: 0;
+}
+
+.syllable-pattern-field {
+  margin: 5px;
 }
 
 .dense-col .tabulator-col-content {
@@ -107,4 +120,12 @@ input[type="search"]::-webkit-search-results-decoration {
 
 #titlebar.maximized #max-button {
   display: none;
+}
+
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: #315599;
+}
+
+.mdc-select:not(.mdc-select--disabled).mdc-select--focused .mdc-floating-label {
+  color: #315599;
 }

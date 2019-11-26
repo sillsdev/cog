@@ -33,12 +33,10 @@ namespace SIL.Cog.Application.ViewModels
 		private readonly IExportService _exportService;
 		private bool _groupByCognateSet;
 		private string _sortByProp;
-		private readonly ICommand _showInVarietyPairsCommand;
-		private readonly ICommand _performComparisonCommand;
 		private bool _isEmpty;
 
-		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService, IExportService exportService, IAnalysisService analysisService)
-			: base("Multiple Word Alignment")
+		public MultipleWordAlignmentViewModel(IProjectService projectService, IBusyService busyService,
+			IExportService exportService, IAnalysisService analysisService) : base("Multiple Word Alignment")
 		{
 			_projectService = projectService;
 			_busyService = busyService;
@@ -52,17 +50,20 @@ namespace SIL.Cog.Application.ViewModels
 			TaskAreas.Add(new TaskAreaItemsViewModel("Common tasks",
 				new TaskAreaItemsViewModel("Sort words by",
 					new TaskAreaCommandGroupViewModel(
-						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortBy("StrRep", ListSortDirection.Ascending))),
-						new TaskAreaCommandViewModel("Variety", new RelayCommand(() => SortBy("Variety", ListSortDirection.Ascending)))),
+						new TaskAreaCommandViewModel("Form",
+							new RelayCommand(() => SortBy("StrRep", ListSortDirection.Ascending))),
+						new TaskAreaCommandViewModel("Variety",
+							new RelayCommand(() => SortBy("Variety", ListSortDirection.Ascending)))),
 					showCognateSets)));
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks",
-				new TaskAreaCommandViewModel("Export all cognate sets", new RelayCommand(ExportCognateSets, CanExportCognateSets))));
+				new TaskAreaCommandViewModel("Export all cognate sets",
+					new RelayCommand(ExportCognateSets, CanExportCognateSets))));
 
 			_words = new BindableList<MultipleWordAlignmentWordViewModel>();
 			_selectedWords = new BindableList<MultipleWordAlignmentWordViewModel>();
 
-			_showInVarietyPairsCommand = new RelayCommand(ShowInVarietyPairs, CanShowInVarietyPairs);
-			_performComparisonCommand = new RelayCommand(PerformComparison);
+			ShowInVarietyPairsCommand = new RelayCommand(ShowInVarietyPairs, CanShowInVarietyPairs);
+			PerformComparisonCommand = new RelayCommand(PerformComparison);
 
 			_groupByCognateSet = true;
 			_sortByProp = "StrRep";
@@ -80,7 +81,8 @@ namespace SIL.Cog.Application.ViewModels
 		private void _projectService_ProjectOpened(object sender, EventArgs e)
 		{
 			IsEmpty = true;
-			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(_projectService.Project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
+			Set("Meanings", ref _meanings, new MirroredBindableList<Meaning, MeaningViewModel>(
+				_projectService.Project.Meanings, meaning => new MeaningViewModel(meaning), vm => vm.DomainMeaning));
 			_selectedMeaning = null;
 		}
 
@@ -160,7 +162,11 @@ namespace SIL.Cog.Application.ViewModels
 					_meaningsView.SortDescriptions.Add(new SortDescription("Gloss", ListSortDirection.Ascending));
 					_meaningsView.CollectionChanged += MeaningsChanged;
 					if (_selectedMeaning == null)
-						SelectedMeaning = !_meaningsView.IsEmpty ? _meaningsView.Cast<MeaningViewModel>().First() : null;
+					{
+						SelectedMeaning = !_meaningsView.IsEmpty
+							? _meaningsView.Cast<MeaningViewModel>().First()
+							: null;
+					}
 				}
 			}
 		}
@@ -194,7 +200,10 @@ namespace SIL.Cog.Application.ViewModels
 				if (Set(() => WordsView, ref _wordsView, value))
 				{
 					if (_groupByCognateSet)
-						_wordsView.SortDescriptions.Add(new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
+					{
+						_wordsView.SortDescriptions.Add(new SortDescription("CognateSetIndex",
+							ListSortDirection.Ascending));
+					}
 					_wordsView.SortDescriptions.Add(new SortDescription(_sortByProp, ListSortDirection.Ascending));
 				}
 			}
@@ -208,9 +217,14 @@ namespace SIL.Cog.Application.ViewModels
 				if (Set(() => GroupByCognateSet, ref _groupByCognateSet, value))
 				{
 					if (_groupByCognateSet)
-						_wordsView.SortDescriptions.Insert(0, new SortDescription("CognateSetIndex", ListSortDirection.Ascending));
+					{
+						_wordsView.SortDescriptions.Insert(0, new SortDescription("CognateSetIndex",
+							ListSortDirection.Ascending));
+					}
 					else
+					{
 						_wordsView.SortDescriptions.RemoveAt(0);
+					}
 				}
 			}
 		}
@@ -249,24 +263,14 @@ namespace SIL.Cog.Application.ViewModels
 			}
 
 			IWordAligner aligner = _projectService.Project.WordAligners[ComponentIdentifiers.PrimaryWordAligner];
-			Alignment<Word, ShapeNode> alignment;
-			if (words.Count == 1)
-			{
-				Word word = words.First();
-				Annotation<ShapeNode> prefixAnn = word.Prefix;
-				var prefix = new AlignmentCell<ShapeNode>(prefixAnn != null ? word.Shape.GetNodes(prefixAnn.Range).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
-				IEnumerable<AlignmentCell<ShapeNode>> columns = word.Shape.GetNodes(word.Stem.Range).Where(NodeFilter).Select(n => new AlignmentCell<ShapeNode>(n));
-				Annotation<ShapeNode> suffixAnn = word.Suffix;
-				var suffix = new AlignmentCell<ShapeNode>(suffixAnn != null ? word.Shape.GetNodes(suffixAnn.Range).Where(NodeFilter) : Enumerable.Empty<ShapeNode>());
-				alignment = new Alignment<Word, ShapeNode>(0, 0, Tuple.Create(word, prefix, columns, suffix));
-			}
-			else
-			{
-				IWordAlignerResult result = aligner.Compute(words);
-				alignment = result.GetAlignments().First();
-			}
+			IWordAlignerResult result = aligner.Compute(words);
+			Alignment<Word, ShapeNode> alignment = result.GetAlignments().First();
 
-			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(_selectedMeaning.DomainMeaning).OrderBy(c => c.Noise).ThenByDescending(c => c.DataObjects.Count).ToList();
+			List<Cluster<Word>> cognateSets = _projectService.Project.GenerateCognateSets(
+				_selectedMeaning.DomainMeaning)
+					.OrderBy(c => c.Noise)
+					.ThenByDescending(c => c.DataObjects.Count)
+					.ToList();
 			ColumnCount = alignment.ColumnCount;
 			using (_words.BulkUpdate())
 			{
@@ -275,18 +279,15 @@ namespace SIL.Cog.Application.ViewModels
 				{
 					AlignmentCell<ShapeNode> prefix = alignment.Prefixes[i];
 					Word word = alignment.Sequences[i];
-					IEnumerable<AlignmentCell<ShapeNode>> columns = Enumerable.Range(0, alignment.ColumnCount).Select(col => alignment[i, col]);
+					IEnumerable<AlignmentCell<ShapeNode>> columns = Enumerable.Range(0, alignment.ColumnCount)
+						.Select(col => alignment[i, col]);
 					AlignmentCell<ShapeNode> suffix = alignment.Suffixes[i];
 					int cognateSetIndex = cognateSets.FindIndex(set => set.DataObjects.Contains(word));
-					_words.Add(new MultipleWordAlignmentWordViewModel(this, word, prefix, columns, suffix, cognateSetIndex == cognateSets.Count - 1 ? int.MaxValue : cognateSetIndex + 1));
+					_words.Add(new MultipleWordAlignmentWordViewModel(this, word, prefix, columns, suffix,
+						cognateSetIndex == cognateSets.Count - 1 ? int.MaxValue : cognateSetIndex + 1));
 				}
 			}
 			IsEmpty = false;
-		}
-
-		private bool NodeFilter(ShapeNode n)
-		{
-			return n.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType);
 		}
 
 		private void HandleSwitchView(SwitchViewMessage msg)
@@ -300,7 +301,11 @@ namespace SIL.Cog.Application.ViewModels
 				if (msg.DomainModels.Count > 1)
 				{
 					var wp = (WordPair) msg.DomainModels[1];
-					_selectedWords.ReplaceAll(new[] { _words.First(w => w.DomainWord == wp.Word1), _words.First(w => w.DomainWord == wp.Word2)});
+					_selectedWords.ReplaceAll(new[]
+					{
+						_words.First(w => w.DomainWord == wp.Word1),
+						_words.First(w => w.DomainWord == wp.Word2)
+					});
 				}
 			}
 		}
@@ -321,14 +326,8 @@ namespace SIL.Cog.Application.ViewModels
 			get { return _selectedWords; }
 		}
 
-		public ICommand ShowInVarietyPairsCommand
-		{
-			get { return _showInVarietyPairsCommand; }
-		}
+		public ICommand ShowInVarietyPairsCommand { get; }
 
-		public ICommand PerformComparisonCommand
-		{
-			get { return _performComparisonCommand; }
-		}
+		public ICommand PerformComparisonCommand { get; }
 	}
 }

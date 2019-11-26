@@ -14,65 +14,38 @@ namespace SIL.Cog.Domain.Components
 {
 	public class AlineScorer : IPairwiseAlignmentScorer<Word, ShapeNode>
 	{
-		private const int MaxSoundChangeScore = 800;
-		private const int MaxSubstitutionScore = 3500;
-		private const int MaxExpansionCompressionScore = 4500;
-		private const int IndelCost = 1000;
-		private const int VowelCost = 0;
-		private const int SyllablePositionCost = 500;
-
 		private readonly SegmentPool _segmentPool;
-		private readonly ReadOnlySet<SymbolicFeature> _relevantConsFeatures;
-		private readonly ReadOnlySet<SymbolicFeature> _relevantVowelFeatures; 
-		private readonly ReadOnlyDictionary<SymbolicFeature, int> _featureWeights;
-		private readonly ReadOnlyDictionary<FeatureSymbol, int> _valueMetrics;
 		private readonly SoundClass[] _contextualSoundClasses;
-		private readonly bool _soundChangeScoringEnabled;
-		private readonly bool _syllablePositionCostEnabled;
 
-		public AlineScorer(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures, IEnumerable<SymbolicFeature> relevantConsFeatures,
-			IDictionary<SymbolicFeature, int> featureWeights, IDictionary<FeatureSymbol, int> valueMetrics, IEnumerable<SoundClass> contextualSoundClasses,
+		public AlineScorer(SegmentPool segmentPool, IEnumerable<SymbolicFeature> relevantVowelFeatures,
+			IEnumerable<SymbolicFeature> relevantConsFeatures, IDictionary<SymbolicFeature, int> featureWeights,
+			IDictionary<FeatureSymbol, int> valueMetrics, IEnumerable<SoundClass> contextualSoundClasses,
 			bool soundChangeScoringEnabled, bool syllablePositionCostEnabled)
 		{
 			_segmentPool = segmentPool;
-			_relevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures).ToReadOnlySet();
-			_relevantConsFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures).ToReadOnlySet();
-			_featureWeights = new Dictionary<SymbolicFeature, int>(featureWeights).ToReadOnlyDictionary();
-			_valueMetrics = new Dictionary<FeatureSymbol, int>(valueMetrics).ToReadOnlyDictionary();
+			RelevantVowelFeatures = new IDBearerSet<SymbolicFeature>(relevantVowelFeatures).ToReadOnlySet();
+			RelevantConsonantFeatures = new IDBearerSet<SymbolicFeature>(relevantConsFeatures).ToReadOnlySet();
+			FeatureWeights = new Dictionary<SymbolicFeature, int>(featureWeights).ToReadOnlyDictionary();
+			ValueMetrics = new Dictionary<FeatureSymbol, int>(valueMetrics).ToReadOnlyDictionary();
 			_contextualSoundClasses = contextualSoundClasses.ToArray();
-			_soundChangeScoringEnabled = soundChangeScoringEnabled;
-			_syllablePositionCostEnabled = syllablePositionCostEnabled;
+			SoundChangeScoringEnabled = soundChangeScoringEnabled;
+			SyllablePositionCostEnabled = syllablePositionCostEnabled;
 		}
 
-		public ReadOnlySet<SymbolicFeature> RelevantVowelFeatures
-		{
-			get { return _relevantVowelFeatures; }
-		}
+		public int MaxIndelScore { get; set; } = 0;
+		public int MaxSoundChangeScore { get; set; } = 800;
+		public int MaxSubstitutionScore { get; set; } = 3500;
+		public int MaxExpansionCompressionScore { get; set; } = 4500;
+		public int IndelCost { get; set; } = 1000;
+		public int VowelCost { get; set; } = 0;
+		public int SyllablePositionCost { get; set; } = 500;
 
-		public ReadOnlySet<SymbolicFeature> RelevantConsonantFeatures
-		{
-			get { return _relevantConsFeatures; }
-		} 
-
-		public ReadOnlyDictionary<SymbolicFeature, int> FeatureWeights
-		{
-			get { return _featureWeights; }
-		}
-
-		public ReadOnlyDictionary<FeatureSymbol, int> ValueMetrics
-		{
-			get { return _valueMetrics; }
-		}
-
-		public bool SoundChangeScoringEnabled
-		{
-			get { return _soundChangeScoringEnabled; }
-		}
-
-		public bool SyllablePositionCostEnabled
-		{
-			get { return _syllablePositionCostEnabled; }
-		}
+		public ReadOnlySet<SymbolicFeature> RelevantVowelFeatures { get; }
+		public ReadOnlySet<SymbolicFeature> RelevantConsonantFeatures { get; }
+		public ReadOnlyDictionary<SymbolicFeature, int> FeatureWeights { get; }
+		public ReadOnlyDictionary<FeatureSymbol, int> ValueMetrics { get; }
+		public bool SoundChangeScoringEnabled { get; }
+		public bool SyllablePositionCostEnabled { get; }
 
 		public int GetGapPenalty(Word sequence1, Word sequence2)
 		{
@@ -81,35 +54,43 @@ namespace SIL.Cog.Domain.Components
 
 		public int GetInsertionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q)
 		{
-			return GetSoundChangeScore(sequence1, null, p, sequence2, q, null);
+			return MaxIndelScore + GetSoundChangeScore(sequence1, null, p, sequence2, q, null);
 		}
 
 		public int GetDeletionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q)
 		{
-			return GetSoundChangeScore(sequence1, p, null, sequence2, null, q);
+			return MaxIndelScore + GetSoundChangeScore(sequence1, p, null, sequence2, null, q);
 		}
 
 		public int GetSubstitutionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q)
 		{
-			return (MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + GetVowelCost(p) + GetVowelCost(q) + GetSyllablePositionCost(p, q)))
+			return MaxSubstitutionScore - (Delta(p.Annotation.FeatureStruct, q.Annotation.FeatureStruct)
+					+ GetVowelCost(p) + GetVowelCost(q) + GetSyllablePositionCost(p, q))
 				+ GetSoundChangeScore(sequence1, p, null, sequence2, q, null);
 		}
 
 		public int GetExpansionScore(Word sequence1, ShapeNode p, Word sequence2, ShapeNode q1, ShapeNode q2)
 		{
-			return (MaxExpansionCompressionScore - (Delta(p.Annotation.FeatureStruct, q1.Annotation.FeatureStruct) + Delta(p.Annotation.FeatureStruct, q2.Annotation.FeatureStruct)
-				+ GetVowelCost(p) + Math.Max(GetVowelCost(q1), GetVowelCost(q2)) + Math.Max(GetSyllablePositionCost(p, q1), GetSyllablePositionCost(p, q2))))
+			return MaxExpansionCompressionScore
+				- (Delta(p.Annotation.FeatureStruct, q1.Annotation.FeatureStruct)
+					+ Delta(p.Annotation.FeatureStruct, q2.Annotation.FeatureStruct) + GetVowelCost(p)
+					+ Math.Max(GetVowelCost(q1), GetVowelCost(q2))
+					+ Math.Max(GetSyllablePositionCost(p, q1), GetSyllablePositionCost(p, q2)))
 				+ GetSoundChangeScore(sequence1, p, null, sequence2, q1, q2);
 		}
 
 		public int GetCompressionScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q)
 		{
-			return (MaxExpansionCompressionScore - (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct)
-				+ GetVowelCost(q) + Math.Max(GetVowelCost(p1), GetVowelCost(p2)) + Math.Max(GetSyllablePositionCost(p1, q), GetSyllablePositionCost(p2, q))))
+			return MaxExpansionCompressionScore
+				- (Delta(p1.Annotation.FeatureStruct, q.Annotation.FeatureStruct)
+					+ Delta(p2.Annotation.FeatureStruct, q.Annotation.FeatureStruct) + GetVowelCost(q)
+					+ Math.Max(GetVowelCost(p1), GetVowelCost(p2))
+					+ Math.Max(GetSyllablePositionCost(p1, q), GetSyllablePositionCost(p2, q)))
 				+ GetSoundChangeScore(sequence1, p1, p2, sequence2, q, null);
 		}
 
-		public int GetTranspositionScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1, ShapeNode q2)
+		public int GetTranspositionScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1,
+			ShapeNode q2)
 		{
 			return 0;
 		}
@@ -126,18 +107,21 @@ namespace SIL.Cog.Domain.Components
 
 		private int GetSyllablePositionCost(ShapeNode p1, ShapeNode q1)
 		{
-			if (!_syllablePositionCostEnabled)
+			if (!SyllablePositionCostEnabled)
 				return 0;
 
 			SymbolicFeatureValue pos1, pos2;
-			if (p1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos1) && q1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos2))
-				return (FeatureSymbol) pos1 == (FeatureSymbol) pos2 ? 0 : SyllablePositionCost;
+			if (p1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos1)
+				&& q1.Annotation.FeatureStruct.TryGetValue(CogFeatureSystem.SyllablePosition, out pos2))
+			{
+				return (FeatureSymbol)pos1 == (FeatureSymbol)pos2 ? 0 : SyllablePositionCost;
+			}
 			return 0;
 		}
 
 		private int GetMaxSoundChangeScore(Word word, ShapeNode node, Word otherWord)
 		{
-			if (!_soundChangeScoringEnabled)
+			if (!SoundChangeScoringEnabled)
 				return 0;
 
 			if (word.Variety == otherWord.Variety)
@@ -153,16 +137,20 @@ namespace SIL.Cog.Domain.Components
 				SoundContext lhs = node.ToSoundContext(_segmentPool, _contextualSoundClasses);
 				prob = varietyPair.DefaultSoundCorrespondenceProbability;
 				IProbabilityDistribution<Ngram<Segment>> probDist;
-				if (varietyPair.CognateSoundCorrespondenceProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) && probDist.Samples.Count > 0)
+				if (varietyPair.CognateSoundCorrespondenceProbabilityDistribution.TryGetProbabilityDistribution(lhs,
+					out probDist) && probDist.Samples.Count > 0)
+				{
 					prob = probDist.Samples.Max(nseg => probDist[nseg]);
+				}
 			}
 			else
 			{
 				Ngram<Segment> corr = _segmentPool.GetExisting(node);
 				prob = varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions.Count == 0 ? 0
-					: varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions.Max(lhs => varietyPair.CognateSoundCorrespondenceProbabilityDistribution[lhs][corr]);
+					: varietyPair.CognateSoundCorrespondenceProbabilityDistribution.Conditions
+						.Max(lhs => varietyPair.CognateSoundCorrespondenceProbabilityDistribution[lhs][corr]);
 			}
-			return (int) (MaxSoundChangeScore * prob);
+			return (int)(MaxSoundChangeScore * prob);
 		}
 
 		private int GetMaxScore(ShapeNode node)
@@ -172,11 +160,12 @@ namespace SIL.Cog.Domain.Components
 
 		public int Delta(FeatureStruct fs1, FeatureStruct fs2)
 		{
-			IEnumerable<SymbolicFeature> features = ((FeatureSymbol) fs1.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
-				&& ((FeatureSymbol) fs2.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
-				? _relevantVowelFeatures : _relevantConsFeatures;
+			IEnumerable<SymbolicFeature> features =
+				((FeatureSymbol)fs1.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
+					&& ((FeatureSymbol)fs2.GetValue(CogFeatureSystem.Type)) == CogFeatureSystem.VowelType
+				? RelevantVowelFeatures : RelevantConsonantFeatures;
 
-			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * _featureWeights[feat]));
+			return features.Aggregate(0, (val, feat) => val + (Diff(fs1, fs2, feat) * FeatureWeights[feat]));
 		}
 
 		private int Diff(FeatureStruct fs1, FeatureStruct fs2, SymbolicFeature feature)
@@ -199,7 +188,8 @@ namespace SIL.Cog.Domain.Components
 				values1 = values2;
 				values2 = temp;
 			}
-			return (int) Math.Round(values1.Average(s1 => values2.Min(s2 => Math.Abs(_valueMetrics[s1] - _valueMetrics[s2]))));
+			return (int)Math.Round(values1.Average(s1 => values2
+				.Min(s2 => Math.Abs(ValueMetrics[s1] - ValueMetrics[s2]))));
 		}
 
 		private int GetVowelCost(ShapeNode node)
@@ -207,9 +197,10 @@ namespace SIL.Cog.Domain.Components
 			return node.Annotation.Type() == CogFeatureSystem.VowelType ? VowelCost : 0;
 		}
 
-		private int GetSoundChangeScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1, ShapeNode q2)
+		private int GetSoundChangeScore(Word sequence1, ShapeNode p1, ShapeNode p2, Word sequence2, ShapeNode q1,
+			ShapeNode q2)
 		{
-			if (!_soundChangeScoringEnabled)
+			if (!SoundChangeScoringEnabled)
 				return 0;
 
 			if (sequence1.Variety == sequence2.Variety)
@@ -254,25 +245,31 @@ namespace SIL.Cog.Domain.Components
 			}
 
 			ShapeNode leftNode = p1 == null ? p2 : p1.GetPrev(NodeFilter);
-			SoundClass leftEnv;
-			if (leftNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(_segmentPool, leftNode, out leftEnv))
+			if (leftNode == null
+				|| !_contextualSoundClasses.TryGetMatchingSoundClass(_segmentPool, leftNode, out SoundClass leftEnv))
+			{
 				leftEnv = null;
+			}
 			ShapeNode pRight = p2 ?? p1;
 			ShapeNode rightNode = pRight == null ? null : pRight.GetNext(NodeFilter);
-			SoundClass rightEnv;
-			if (rightNode == null || !_contextualSoundClasses.TryGetMatchingSoundClass(_segmentPool, rightNode, out rightEnv))
+			if (rightNode == null
+				|| !_contextualSoundClasses.TryGetMatchingSoundClass(_segmentPool, rightNode, out SoundClass rightEnv))
+			{
 				rightEnv = null;
+			}
 
 			var lhs = new SoundContext(leftEnv, target, rightEnv);
-			IProbabilityDistribution<Ngram<Segment>> probDist;
-			double prob = varietyPair.CognateSoundCorrespondenceProbabilityDistribution.TryGetProbabilityDistribution(lhs, out probDist) ? probDist[corr]
-				: varietyPair.DefaultSoundCorrespondenceProbability;
-			return (int) (MaxSoundChangeScore * prob);
+			double prob = varietyPair.CognateSoundCorrespondenceProbabilityDistribution
+				.TryGetProbabilityDistribution(lhs, out IProbabilityDistribution<Ngram<Segment>> probDist)
+					? probDist[corr]
+					: varietyPair.DefaultSoundCorrespondenceProbability;
+			return (int)(MaxSoundChangeScore * prob);
 		}
 
 		private static bool NodeFilter(ShapeNode node)
 		{
-			return node.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType, CogFeatureSystem.AnchorType);
+			return node.Type().IsOneOf(CogFeatureSystem.ConsonantType, CogFeatureSystem.VowelType,
+				CogFeatureSystem.AnchorType);
 		}
 	}
 }

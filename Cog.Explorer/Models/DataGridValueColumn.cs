@@ -17,6 +17,13 @@ namespace SIL.Cog.Explorer.Models
 		Number
 	}
 
+	public enum Formatter
+	{
+		Plaintext,
+		Textarea,
+		Html
+	}
+
 	public class DataGridValueColumn : DataGridColumn
 	{
 		public DataGridValueColumn(string title)
@@ -33,6 +40,7 @@ namespace SIL.Cog.Explorer.Models
 		public Editor? HeaderFilter { get; set; }
 		public EditorParams HeaderFilterParams { get; set; }
 		public string HeaderFilterPlaceholder { get; set; }
+		public Formatter? Formatter { get; set; }
 	}
 
 	public abstract class EditorParams { }

@@ -1,6 +1,6 @@
 import 'typeface-roboto/index.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-import 'tabulator-tables/dist/css/bootstrap/tabulator_bootstrap4.css';
+import 'tabulator-tables/dist/css/materialize/tabulator_materialize.css';
 
 import { TabulatorInterop } from "./tabulator-interop";
 

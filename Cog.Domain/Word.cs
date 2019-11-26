@@ -7,7 +7,7 @@ using SIL.ObjectModel;
 
 namespace SIL.Cog.Domain
 {
-	public class Word : ObservableObject, IAnnotatedData<ShapeNode>
+	public class Word : ObservableObject, IAnnotatedData<ShapeNode>, ICloneable<Word>
 	{
 		private int _stemIndex;
 		private int _stemLength;
@@ -24,6 +24,17 @@ namespace SIL.Cog.Domain
 			Meaning = meaning;
 			_stemIndex = stemIndex;
 			_stemLength = stemLength;
+		}
+
+		public Word(Word word)
+		{
+			StrRep = word.StrRep;
+			Meaning = word.Meaning;
+			_stemIndex = word._stemIndex;
+			_stemLength = word._stemLength;
+			_shape = word._shape.Clone();
+			Audio = word.Audio;
+			Properties = new Dictionary<string, object>(word.Properties);
 		}
 
 		public string StrRep { get; }
@@ -67,6 +78,11 @@ namespace SIL.Cog.Domain
 
 		public Audio Audio { get; set; }
 		public IDictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
+
+		public Word Clone()
+		{
+			return new Word(this);
+		}
 
 		public override string ToString()
 		{

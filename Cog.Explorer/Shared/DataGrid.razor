@@ -4,7 +4,7 @@
 
 @implements IDisposable
 @typeparam TItem
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime _jsRuntime
 
 <div id="@Id" class="@Class"></div>
 
@@ -19,14 +19,15 @@
         }
     };
     private string Id = "table_" + Guid.NewGuid().ToString();
-    private IEnumerable<DataGridColumn> _columns;
+    private IReadOnlyList<DataGridColumn> _columns;
     private IEnumerable<TItem> _items;
+    private decimal _playbackRate = 1;
 
     [Parameter]
     public string Class { get; set; }
 
     [Parameter]
-    public IEnumerable<DataGridColumn> Columns
+    public IReadOnlyList<DataGridColumn> Columns
     {
         get => _columns;
         set
@@ -34,7 +35,7 @@
             if (_columns != value)
             {
                 _columns = value;
-                JSRuntime.InvokeVoidAsync("TabulatorInterop.setColumns", Id,
+                _jsRuntime.InvokeVoidAsync("TabulatorInterop.setColumns", Id,
                     JsonConvert.SerializeObject(_columns, SerializerSettings));
             }
         }
@@ -49,22 +50,36 @@
             if (_items != value)
             {
                 _items = value;
-                JSRuntime.InvokeVoidAsync("TabulatorInterop.setData", Id,
+                _jsRuntime.InvokeVoidAsync("TabulatorInterop.setData", Id,
                     JsonConvert.SerializeObject(_items ?? new TItem[0], SerializerSettings));
+            }
+        }
+    }
+
+    [Parameter]
+    public decimal PlaybackRate
+    {
+        get => _playbackRate;
+        set
+        {
+            if (_playbackRate != value)
+            {
+                _playbackRate = value;
+                _jsRuntime.InvokeVoidAsync("TabulatorInterop.setPlaybackRate", Id, _playbackRate);
             }
         }
     }
 
     public void Dispose()
     {
-        JSRuntime.InvokeVoidAsync("TabulatorInterop.disposeTable", Id);
+        _jsRuntime.InvokeVoidAsync("TabulatorInterop.disposeTable", Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("TabulatorInterop.createTable", Id,
+            await _jsRuntime.InvokeVoidAsync("TabulatorInterop.createTable", Id,
                 JsonConvert.SerializeObject(_columns, SerializerSettings),
                 JsonConvert.SerializeObject(_items ?? new TItem[0], SerializerSettings));
         }

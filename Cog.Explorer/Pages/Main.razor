@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@using System.IO;
+@using System.Text;
 @using System.Threading
 @using SIL.Extensions
 @using SIL.Machine.Annotations
@@ -7,12 +9,24 @@
 @using SIL.Machine.SequenceAlignment
 
 @inject ProjectService _projectService
+@inject DomService _domService
 
 <header id="titlebar" class="@(_isMaximized ? "maximized" : "")">
     <div class="titlebar-buttons">
-        <MatIconButton Icon="folder_open" OnClick="@HandleOpenProjectAsync"></MatIconButton>
+        <div>
+            <MatIconButton Icon="menu" OnClick="@HandleOpenMenuAsync"></MatIconButton>
+            <div @ref="_menuAnchor"></div>
+        </div>
+
+        <MatMenu @ref="_menu">
+            <MatList Class="mdc-list--dense">
+                <MatListItem OnClick="@HandleOpenProjectAsync">Open...</MatListItem>
+                <MatDivider></MatDivider>
+                <MatListItem OnClick="@HandleClose">Exit</MatListItem>
+            </MatList>
+        </MatMenu>
     </div>
-    <div class="titlebar-drag-region"></div>
+    <div class="titlebar-drag-region">Cog Explorer @ProjectName</div>
     <div id="window-controls">
         <div class="button" id="min-button" @onclick="HandleMinimize">
             <span>&#xE921;</span>
@@ -31,27 +45,44 @@
 <div class="main-content">
     @if (!_projectService.IsLoaded)
     {
-        <MatSubtitle1 Class="no-data-label">No project loaded.</MatSubtitle1>
+        <div class="mat-subtitle1">No project loaded.</div>
     }
     else
     {
-        <div class="syllable-pattern-field">
-            <MatTextField Label="Syllable Pattern"
+        <div class="main-controls">
+            <MatTextField @ref="_syllablePatternField"
+                          Label="Syllable pattern"
                           OnInput="@HandleSyllablePatternInputAsync">
             </MatTextField>
+            <div class="playback-rate-container">
+                <div class="mat-caption playback-rate-label">Playback rate</div>
+                <div class="playback-rate-slider">
+                    <div class="mat-caption">0.5</div>
+                    <MatSlider @bind-Value="@PlaybackRate"
+                               ValueMin="0.5m"
+                               ValueMax="1.0m"
+                               Step="0.1m">
+                    </MatSlider>
+                    <div class="mat-caption">1.0</div>
+                </div>
+            </div>
         </div>
         <div class="data-grid-container">
-            <DataGrid Columns="@_columns" Items="@_rows"></DataGrid>
+            <DataGrid Columns="@_columns" Items="@_rows" PlaybackRate="@_playbackRate"></DataGrid>
         </div>
     }
 </div>
 
 @code {
+    private ElementReference _menuAnchor;
+    private MatMenu _menu;
+    private MatTextField _syllablePatternField;
     private string _syllablePattern;
     private List<DataGridColumn> _columns = new List<DataGridColumn>();
     private List<PhraseRow> _rows = new List<PhraseRow>();
     private bool _isMaximized = false;
     private CancellationTokenSource _cts;
+    private decimal _playbackRate = 1;
 
     private string SyllablePattern
     {
@@ -66,6 +97,21 @@
             }
         }
     }
+
+    private decimal PlaybackRate
+    {
+        get => _playbackRate;
+        set
+        {
+            if (_playbackRate != value)
+            {
+                _playbackRate = value;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private string ProjectName => _projectService.IsLoaded ? $"- {_projectService.ProjectName}" : "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -89,10 +135,19 @@
         _isMaximized = await mainWindow.IsMaximizedAsync();
     }
 
+    private async Task HandleOpenMenuAsync(MouseEventArgs e)
+    {
+        await _menu.OpenAsync(_menuAnchor);
+    }
+
     private async Task HandleOpenProjectAsync(MouseEventArgs e)
     {
-        await _projectService.OpenAsync();
-        BuildDataGrid(_projectService.Project.Varieties.First());
+        if (await _projectService.OpenAsync())
+        {
+            BuildDataGrid(_projectService.Project.Varieties.First());
+            StateHasChanged();
+            await _domService.FocusElementAsync(_syllablePatternField.InputRef);
+        }
     }
 
     private async Task HandleSyllablePatternInputAsync(ChangeEventArgs e)
@@ -107,117 +162,149 @@
             {
                 SyllablePattern = e.Value.ToString();
             }
-        } catch (OperationCanceledException)
+        }
+        catch (OperationCanceledException)
         {
         }
-    }
-
-    private void HandleAlign(MouseEventArgs e)
-    {
-        BuildDataGrid(_projectService.Project.Varieties.First());
     }
 
     private void BuildDataGrid(Variety variety)
     {
         _rows = new List<PhraseRow>();
-        Dictionary<Word, Range<int>> results;
-        if (string.IsNullOrEmpty(_syllablePattern))
-            results = variety.Words.ToDictionary(w => w, w => Range<int>.Null);
-        else
-            results = _projectService.SearchWords(variety, _syllablePattern);
-        if (results.Count == 0)
+        if (variety.Words.Count == 0)
             return;
-
-        Alignment<Word, ShapeNode> alignment = _projectService.Align(results.Keys);
         var rows = new List<PhraseRow>();
-        var typeCounts = new Dictionary<string, Dictionary<FeatureSymbol, int>>();
-        for (int i = 0; i < alignment.SequenceCount; i++)
+        var columns = new List<DataGridColumn>();
+        if (string.IsNullOrEmpty(_syllablePattern))
         {
-            Word word = alignment.Sequences[i];
-            Range<int> range = results[word];
+            foreach (Word word in variety.Words)
+            {
+                rows.Add(new PhraseRow
+                {
+                    Phrase = word.StrRep,
+                    Gloss = word.Meaning.Gloss,
+                    AudioSegment = CreateAudioSegment(word.Audio),
+                    Participants = word.Participants
+                });
+            }
+        }
+        else
+        {
+            Dictionary<Word, Range<int>> results = _projectService.SearchWords(variety, _syllablePattern);
+            if (results.Count == 0)
+                return;
+            Alignment<Word, ShapeNode> alignment = _projectService.Align(results.Keys);
+            var typeCounts = new Dictionary<string, Dictionary<FeatureSymbol, int>>();
+            for (int i = 0; i < alignment.SequenceCount; i++)
+            {
+                Word word = alignment.Sequences[i];
+                Range<int> range = results[word];
 
-            var segments = new Dictionary<string, string>();
+                var segments = new Dictionary<string, string>();
+                for (int j = 0; j < alignment.ColumnCount; j++)
+                {
+                    var key = $"col_{j}";
+                    AlignmentCell<ShapeNode> cell = alignment[i, j];
+                    string strRep;
+                    if (cell.Count == 0)
+                    {
+                        strRep = "-";
+                    }
+                    else
+                    {
+                        strRep = cell.OriginalStrRep();
+                        var counts = typeCounts.GetOrCreate(key, () => new Dictionary<FeatureSymbol, int>());
+                        counts.UpdateValue(cell.First.Type(), () => 0, c => c + 1);
+                        if (range.Contains(word.Shape.IndexOf(cell.First)))
+                            strRep = $"<b>{strRep}</b>";
+                    }
+                    segments[key] = strRep;
+                }
+                rows.Add(new PhraseRow
+                {
+                    Phrase = word.StrRep,
+                    LeftContext = word.Prefix?.OriginalStrRep() ?? "",
+                    RightContext = word.Suffix?.OriginalStrRep() ?? "",
+                    Gloss = word.Meaning.Gloss,
+                    Segments = segments,
+                    AudioSegment = CreateAudioSegment(word.Audio),
+                    Participants = word.Participants
+                });
+            }
+
+            var segmentColumns = new List<DataGridValueColumn>();
+            segmentColumns.Add(new DataGridValueColumn
+            {
+                Title = "Left",
+                Field = nameof(PhraseRow.LeftContext),
+                Align = ColumnAlign.Right,
+                HeaderFilter = Editor.Input,
+                HeaderFilterPlaceholder = " "
+            });
             for (int j = 0; j < alignment.ColumnCount; j++)
             {
                 var key = $"col_{j}";
-                AlignmentCell<ShapeNode> cell = alignment[i, j];
-                string strRep;
-                if (cell.Count == 0)
+                string title = "?";
+                if (typeCounts.TryGetValue(key, out Dictionary<FeatureSymbol, int> counts) && counts.Count > 0)
                 {
-                    strRep = "-";
+                    FeatureSymbol type = counts.MaxBy(kvp => kvp.Value).Key;
+                    if (type == CogFeatureSystem.ConsonantType)
+                        title = "C";
+                    else
+                        title = "V";
                 }
-                else
+                segmentColumns.Add(new DataGridValueColumn
                 {
-                    strRep = cell.OriginalStrRep();
-                    var counts = typeCounts.GetOrCreate(key, () => new Dictionary<FeatureSymbol, int>());
-                    counts.UpdateValue(cell.First.Type(), () => 0, c => c + 1);
-                    if (range.Contains(word.Shape.IndexOf(cell.First)))
-                        strRep = $"<b>{strRep}</b>";
-                }
-                segments[key] = strRep;
+                    Title = title,
+                    Field = $"{nameof(PhraseRow.Segments)}.{key}",
+                    MinWidth = 50,
+                    CssClass = "dense-col",
+                    Align = ColumnAlign.Center,
+                    HeaderFilter = Editor.Select,
+                    HeaderFilterParams = new SelectParams { Values = true },
+                    HeaderFilterPlaceholder = " ",
+                    Formatter = Formatter.Html
+                });
             }
-            rows.Add(new PhraseRow
+            segmentColumns.Add(new DataGridValueColumn
             {
-                Phrase = word.StrRep,
-                LeftContext = word.Prefix?.OriginalStrRep() ?? "",
-                RightContext = word.Suffix?.OriginalStrRep() ?? "",
-                Gloss = word.Meaning.Gloss,
-                Segments = segments
+                Title = "Right",
+                Field = nameof(PhraseRow.RightContext),
+                Align = ColumnAlign.Left,
+                HeaderFilter = Editor.Input,
+                HeaderFilterPlaceholder = " "
+            });
+            columns.Add(new DataGridColumnGroup
+            {
+                Title = "Alignment",
+                Columns = segmentColumns
             });
         }
 
-        var segmentColumns = new List<DataGridValueColumn>();
-        segmentColumns.Add(new DataGridValueColumn("Left")
+        columns.Add(new DataGridValueColumn
         {
-            Field = nameof(PhraseRow.LeftContext),
-            Align = ColumnAlign.Right,
-            HeaderFilter = Editor.Input,
-            HeaderFilterPlaceholder = " "
-        });
-        for (int j = 0; j < alignment.ColumnCount; j++)
-        {
-            var key = $"col_{j}";
-            string title = "?";
-            if (typeCounts.TryGetValue(key, out Dictionary<FeatureSymbol, int> counts) && counts.Count > 0)
-            {
-                FeatureSymbol type = counts.MaxBy(kvp => kvp.Value).Key;
-                if (type == CogFeatureSystem.ConsonantType)
-                    title = "C";
-                else
-                    title = "V";
-            }
-            segmentColumns.Add(new DataGridValueColumn(title)
-            {
-                Field = $"{nameof(PhraseRow.Segments)}.{key}",
-                MinWidth = 50,
-                CssClass = "dense-col",
-                Align = ColumnAlign.Center,
-                HeaderFilter = Editor.Select,
-                HeaderFilterParams = new SelectParams { Values = true },
-                HeaderFilterPlaceholder = " ",
-                Formatter = Formatter.Html
-            });
-        }
-        segmentColumns.Add(new DataGridValueColumn("Right")
-        {
-            Field = nameof(PhraseRow.RightContext),
-            Align = ColumnAlign.Left,
-            HeaderFilter = Editor.Input,
-            HeaderFilterPlaceholder = " "
-        });
-
-        var columns = new List<DataGridColumn>();
-        if (!string.IsNullOrEmpty(_syllablePattern))
-            columns.Add(new DataGridColumnGroup("Alignment") { Columns = segmentColumns });
-        columns.Add(new DataGridValueColumn("Phrase/Word")
-        {
+            Title = "Phrase/Word",
             Field = nameof(PhraseRow.Phrase),
             HeaderFilter = Editor.Input,
             HeaderFilterPlaceholder = " "
         });
-        columns.Add(new DataGridValueColumn("Gloss")
+        columns.Add(new DataGridValueColumn
         {
+            Field = nameof(PhraseRow.AudioSegment),
+            HeaderSort = false,
+            Formatter = Formatter.Audio
+        });
+        columns.Add(new DataGridValueColumn
+        {
+            Title = "Gloss",
             Field = nameof(PhraseRow.Gloss),
+            HeaderFilter = Editor.Input,
+            HeaderFilterPlaceholder = " "
+        });
+        columns.Add(new DataGridValueColumn
+        {
+            Title = "People",
+            Field = nameof(PhraseRow.Participants),
             HeaderFilter = Editor.Input,
             HeaderFilterPlaceholder = " "
         });
@@ -248,5 +335,44 @@
     {
         BrowserWindow window = Electron.WindowManager.BrowserWindows.First();
         window.Close();
+    }
+
+    private static AudioSegment CreateAudioSegment(Audio audio)
+    {
+        string fileUrl = FilePathToFileUrl(audio.FileName);
+        float start = audio.StartOffset / 1000f;
+        float end = audio.EndOffset / 1000f;
+        return new AudioSegment
+        {
+            Url = fileUrl,
+            StartOffset = start,
+            EndOffset = end
+        };
+    }
+
+    private static string FilePathToFileUrl(string filePath)
+    {
+        var uri = new StringBuilder();
+        foreach (char v in filePath)
+        {
+            if ((v >= 'a' && v <= 'z') || (v >= 'A' && v <= 'Z') || (v >= '0' && v <= '9') || v == '+' || v == '/'
+                    || v == ':' || v == '.' || v == '-' || v == '_' || v == '~' || v > '\xFF')
+            {
+                uri.Append(v);
+            }
+            else if (v == Path.DirectorySeparatorChar || v == Path.AltDirectorySeparatorChar)
+            {
+                uri.Append('/');
+            }
+            else
+            {
+                uri.Append(String.Format("%{0:X2}", (int)v));
+            }
+        }
+        if (uri.Length >= 2 && uri[0] == '/' && uri[1] == '/') // UNC path
+            uri.Insert(0, "file:");
+        else
+            uri.Insert(0, "file:///");
+        return uri.ToString();
     }
 }

@@ -34,7 +34,7 @@ namespace SIL.Cog.Domain
 			_stemLength = word._stemLength;
 			_shape = word._shape.Clone();
 			Audio = word.Audio;
-			Properties = new Dictionary<string, object>(word.Properties);
+			Participants = word.Participants;
 		}
 
 		public string StrRep { get; }
@@ -77,7 +77,7 @@ namespace SIL.Cog.Domain
 		public AnnotationList<ShapeNode> Annotations => _shape.Annotations;
 
 		public Audio Audio { get; set; }
-		public IDictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
+		public string Participants { get; set; }
 
 		public Word Clone()
 		{

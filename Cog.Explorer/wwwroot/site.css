@@ -2,7 +2,8 @@
   margin: 0px;
   width: 100vw;
   height: 100vh;
-  font-family: Roboto, sans-serif
+  font-family: Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 app {
@@ -26,12 +27,32 @@ app {
   border-style: solid;
 }
 
-.no-data-label {
-  margin: 0;
+.main-controls {
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  align-items: center;
 }
 
-.syllable-pattern-field {
-  margin: 5px;
+.playback-rate-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 18px;
+  width: 140px;
+}
+
+.playback-rate-label {
+  align-self: center;
+}
+
+.playback-rate-slider {
+  display: flex;
+  align-items: center;
+}
+
+.playback-rate-slider .mdc-slider {
+  margin-left: 8px;
+  margin-right: 8px;
 }
 
 .dense-col .tabulator-col-content {
@@ -46,6 +67,30 @@ input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 
+.mdc-icon-button.audio-button {
+  width: 19px;
+  height: 19px;
+  font-size: 19px;
+  padding: 0;
+}
+
+.mdc-icon-button.audio-button i.material-icons {
+  font-size: 19px;
+}
+
+.tabulator-row .tabulator-cell[tabulator-field='audioSegment'] {
+  font-family: Material Icons;
+  background: none;
+  transition: none;
+  -webkit-transform: translateZ(0);
+}
+
+.tabulator-row .tabulator-cell[tabulator-field='audioSegment'].animate-progress {
+  transition: background-size 250ms linear;
+  background: linear-gradient(#D2DEF4, #D2DEF4) no-repeat;
+  background-size: 0;
+}
+
 #titlebar {
   display: flex;
   background: linear-gradient(to left top, #3164a5, #8aaed4);
@@ -53,12 +98,17 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .titlebar-buttons {
   padding: 4px;
+  color: white;
 }
 
 .titlebar-drag-region {
-  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  margin: 4px;
   -webkit-app-region: drag;
   flex: 1 1 auto;
+  padding-left: 10px;
+  color: white;
 }
 
 #window-controls {

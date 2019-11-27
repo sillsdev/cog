@@ -21,16 +21,12 @@ namespace SIL.Cog.Explorer.Models
 	{
 		Plaintext,
 		Textarea,
-		Html
+		Html,
+		Audio
 	}
 
 	public class DataGridValueColumn : DataGridColumn
 	{
-		public DataGridValueColumn(string title)
-			: base(title)
-		{
-		}
-
 		[JsonConverter(typeof(FieldConverter))]
 		public string Field { get; set; }
 		public bool? Visible { get; set; }
@@ -40,7 +36,9 @@ namespace SIL.Cog.Explorer.Models
 		public Editor? HeaderFilter { get; set; }
 		public EditorParams HeaderFilterParams { get; set; }
 		public string HeaderFilterPlaceholder { get; set; }
+		public bool? HeaderSort { get; set; }
 		public Formatter? Formatter { get; set; }
+		public object FormatterParams { get; set; }
 	}
 
 	public abstract class EditorParams { }

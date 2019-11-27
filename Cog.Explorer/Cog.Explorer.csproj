@@ -5,6 +5,8 @@
     <RootNamespace>SIL.Cog.Explorer</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="JSInterop\dom-interop.ts" />
+    <None Remove="JSInterop\table.ts" />
     <None Remove="NewProject.cogx" />
   </ItemGroup>
   <ItemGroup>

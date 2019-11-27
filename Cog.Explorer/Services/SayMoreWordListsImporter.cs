@@ -38,17 +38,13 @@ namespace SIL.Cog.Explorer.Services
 		private static void LoadSession(string sessionFileName, Variety variety, Dictionary<string, Meaning> meanings)
 		{
 			var sessionDoc = XDocument.Load(sessionFileName);
-			var properties = new Dictionary<string, object>
-			{
-				["participants"] = (string)sessionDoc.Root.Element("participants")
-			};
 			string sessionDir = Path.GetDirectoryName(sessionFileName);
 			foreach (string annotationsFileName in Directory.EnumerateFiles(sessionDir, "*.annotations.eaf"))
-				LoadAnnotations(annotationsFileName, variety, meanings, properties);
+				LoadAnnotations(annotationsFileName, variety, meanings, sessionDoc.Root);
 		}
 
 		private static void LoadAnnotations(string annotationsFileName, Variety variety,
-			Dictionary<string, Meaning> meanings, Dictionary<string, object> properties)
+			Dictionary<string, Meaning> meanings, XElement sessionElem)
 		{
 			string sessionDir = Path.GetDirectoryName(annotationsFileName);
 			var annotationsDoc = XDocument.Load(annotationsFileName);
@@ -91,7 +87,7 @@ namespace SIL.Cog.Explorer.Services
 				var word = new Word(strRep, meaning)
 				{
 					Audio = new Audio(Path.Combine(sessionDir, audioFileName), start, end),
-					Properties = new Dictionary<string, object>(properties)
+					Participants = (string)sessionElem.Element("participants")
 				};
 				variety.Words.Add(word);
 			}

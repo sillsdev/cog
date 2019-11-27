@@ -2,11 +2,6 @@
 {
 	public abstract class DataGridColumn
 	{
-		protected DataGridColumn(string title)
-		{
-			Title = title;
-		}
-
-		public string Title { get; }
+		public string Title { get; set; }
 	}
 }

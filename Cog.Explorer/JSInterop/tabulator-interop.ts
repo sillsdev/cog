@@ -3,8 +3,8 @@
 export class TabulatorInterop {
   private readonly tables = new Map<string, Table>();
 
-  createTable(id: string, columnsStr: string, dataStr: string): void {
-    const table = new Table(id, JSON.parse(columnsStr), JSON.parse(dataStr));
+  createTable(id: string, paramsStr: string, columnsStr: string, dataStr: string): void {
+    const table = new Table(id, JSON.parse(paramsStr), JSON.parse(columnsStr), JSON.parse(dataStr));
     this.tables.set(id, table);
   }
 

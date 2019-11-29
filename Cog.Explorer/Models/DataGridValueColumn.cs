@@ -3,27 +3,6 @@ using Newtonsoft.Json;
 
 namespace SIL.Cog.Explorer.Models
 {
-	public enum ColumnAlign
-	{
-		Left,
-		Center,
-		Right
-	}
-
-	public enum Editor
-	{
-		Input,
-		Select,
-		Number
-	}
-
-	public enum Formatter
-	{
-		Plaintext,
-		Textarea,
-		Html,
-		Audio
-	}
 
 	public class DataGridValueColumn : DataGridColumn
 	{
@@ -32,12 +11,12 @@ namespace SIL.Cog.Explorer.Models
 		public bool? Visible { get; set; }
 		public int? MinWidth { get; set; }
 		public string CssClass { get; set; }
-		public ColumnAlign? Align { get; set; }
-		public Editor? HeaderFilter { get; set; }
+		public DataGridHorzAlign? Align { get; set; }
+		public DataGridEditor? HeaderFilter { get; set; }
 		public EditorParams HeaderFilterParams { get; set; }
 		public string HeaderFilterPlaceholder { get; set; }
 		public bool? HeaderSort { get; set; }
-		public Formatter? Formatter { get; set; }
+		public DataGridFormatter? Formatter { get; set; }
 		public object FormatterParams { get; set; }
 	}
 

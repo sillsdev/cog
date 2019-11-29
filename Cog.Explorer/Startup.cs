@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading.Tasks;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
@@ -26,7 +27,7 @@ namespace SIL.Cog.Explorer
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddRazorPages();
-			services.AddServerSideBlazor().AddCircuitOptions(options => options.DetailedErrors = true);
+			services.AddServerSideBlazor();
 			services.AddSingleton<SegmentPool>();
 			services.AddSingleton<ProjectService>();
 			services.AddTransient<DomService>();
@@ -70,6 +71,7 @@ namespace SIL.Cog.Explorer
 						Height = 600,
 						Show = false,
 						Frame = false,
+						Icon = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Assets", "cog.png"),
 						WebPreferences = new WebPreferences
 						{
 							WebSecurity = false,

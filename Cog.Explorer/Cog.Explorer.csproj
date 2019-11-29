@@ -3,10 +3,36 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>SIL.Cog.Explorer</AssemblyName>
     <RootNamespace>SIL.Cog.Explorer</RootNamespace>
+    <JSInteropRoot>JSInterop\</JSInteropRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(JSInteropRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Remove="JSInterop\dom-interop.ts" />
-    <None Remove="JSInterop\table.ts" />
+    <Content Remove="$(JSInteropRoot)**" />
+    <None Remove="$(JSInteropRoot)**" />
+    <TypeScriptCompile Remove="$(JSInteropRoot)**" />
+    <None Include="$(JSInteropRoot)**" Exclude="$(JSInteropRoot)node_modules\**" />
+  </ItemGroup>
+
+  <Target Name="EnsureNodeInstalled">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+  </Target>
+
+  <Target Name="DebugEnsureNodeEnv" DependsOnTargets="EnsureNodeInstalled" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(JSInteropRoot)node_modules') ">
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm install" />
+  </Target>
+
+  <Target Name="BuildJSInterop" DependsOnTargets="EnsureNodeInstalled" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <Message Importance="high" Text="Building JS interop..." />
+    <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm run build" />
+  </Target>
+  
+  <ItemGroup>
     <None Remove="NewProject.cogx" />
   </ItemGroup>
   <ItemGroup>

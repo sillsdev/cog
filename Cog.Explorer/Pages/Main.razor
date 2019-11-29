@@ -55,7 +55,7 @@
                           OnInput="@HandleSyllablePatternInputAsync">
             </MatTextField>
             <div class="playback-rate-container">
-                <div class="mat-caption playback-rate-label">Playback rate</div>
+                <div class="mat-caption playback-rate-label">Playback speed</div>
                 <div class="playback-rate-slider">
                     <div class="mat-caption">0.5</div>
                     <MatSlider @bind-Value="@PlaybackRate"
@@ -68,7 +68,13 @@
             </div>
         </div>
         <div class="data-grid-container">
-            <DataGrid Columns="@_columns" Items="@_rows" PlaybackRate="@_playbackRate"></DataGrid>
+            <DataGrid Height="100%"
+                      Selectable="false"
+                      ColumnHeaderVertAlign="DataGridVertAlign.Bottom"
+                      Columns="@_columns"
+                      Rows="@_rows"
+                      PlaybackRate="@_playbackRate">
+            </DataGrid>
         </div>
     }
 </div>
@@ -195,12 +201,14 @@
                 return;
             Alignment<Word, ShapeNode> alignment = _projectService.Align(results.Keys);
             var typeCounts = new Dictionary<string, Dictionary<FeatureSymbol, int>>();
+            var syllableBreakCounts = new Dictionary<string, (int, int)>();
             for (int i = 0; i < alignment.SequenceCount; i++)
             {
                 Word word = alignment.Sequences[i];
                 Range<int> range = results[word];
 
                 var segments = new Dictionary<string, string>();
+                var syllableBreaks = new Dictionary<string, string>();
                 for (int j = 0; j < alignment.ColumnCount; j++)
                 {
                     var key = $"col_{j}";
@@ -218,6 +226,39 @@
                         if (range.Contains(word.Shape.IndexOf(cell.First)))
                             strRep = $"<b>{strRep}</b>";
                     }
+
+                    if (j > 0)
+                    {
+                        int prevIndex = j - 1;
+                        while (prevIndex >= 0 && alignment[i, prevIndex].Count == 0)
+                            prevIndex--;
+                        int curIndex = j;
+                        while (curIndex < alignment.ColumnCount && alignment[i, curIndex].Count == 0)
+                            curIndex++;
+                        if (prevIndex >= 0 && curIndex < alignment.ColumnCount)
+                        {
+                            AlignmentCell<ShapeNode> prevCell = alignment[i, prevIndex];
+                            Annotation<ShapeNode> prevSyllableAnn = GetSyllableAnn(prevCell.First);
+                            AlignmentCell<ShapeNode> curCell = alignment[i, curIndex];
+                            Annotation<ShapeNode> curSyllableAnn = GetSyllableAnn(curCell.First);
+
+                            if (prevSyllableAnn != curSyllableAnn)
+                                syllableBreaks[key] = ".";
+                        }
+                        if (!syllableBreaks.ContainsKey(key))
+                            syllableBreaks[key] = "";
+                        syllableBreakCounts.UpdateValue(key, () => (0, 0), c =>
+                        {
+                            int breakCount = c.Item1;
+                            if (syllableBreaks[key] == ".")
+                                breakCount++;
+                            int seqCount = c.Item2;
+                            if (prevIndex == j - 1 && curIndex == j)
+                                seqCount++;
+                            return (breakCount, seqCount);
+                        });
+                    }
+
                     segments[key] = strRep;
                 }
                 rows.Add(new PhraseRow
@@ -227,6 +268,7 @@
                     RightContext = word.Suffix?.OriginalStrRep() ?? "",
                     Gloss = word.Meaning.Gloss,
                     Segments = segments,
+                    SyllableBreaks = syllableBreaks,
                     AudioSegment = CreateAudioSegment(word.Audio),
                     Participants = word.Participants
                 });
@@ -237,17 +279,32 @@
             {
                 Title = "Left",
                 Field = nameof(PhraseRow.LeftContext),
-                Align = ColumnAlign.Right,
-                HeaderFilter = Editor.Input,
+                Align = DataGridHorzAlign.Right,
+                HeaderFilter = DataGridEditor.Input,
                 HeaderFilterPlaceholder = " "
             });
             for (int j = 0; j < alignment.ColumnCount; j++)
             {
                 var key = $"col_{j}";
-                string title = "?";
-                if (typeCounts.TryGetValue(key, out Dictionary<FeatureSymbol, int> counts) && counts.Count > 0)
+
+                if (syllableBreakCounts.TryGetValue(key, out (int, int) sbCounts))
                 {
-                    FeatureSymbol type = counts.MaxBy(kvp => kvp.Value).Key;
+                    if ((double) sbCounts.Item1 / sbCounts.Item2 >= 0.5)
+                    {
+                        segmentColumns.Add(new DataGridValueColumn
+                        {
+                            Field = $"{nameof(PhraseRow.SyllableBreaks)}.{key}",
+                            CssClass = "dense-col",
+                            Align = DataGridHorzAlign.Center,
+                            HeaderSort = false
+                        });
+                    }
+                }
+
+                string title = "?";
+                if (typeCounts.TryGetValue(key, out Dictionary<FeatureSymbol, int> tCounts) && tCounts.Count > 0)
+                {
+                    FeatureSymbol type = tCounts.MaxBy(kvp => kvp.Value).Key;
                     if (type == CogFeatureSystem.ConsonantType)
                         title = "C";
                     else
@@ -259,19 +316,19 @@
                     Field = $"{nameof(PhraseRow.Segments)}.{key}",
                     MinWidth = 50,
                     CssClass = "dense-col",
-                    Align = ColumnAlign.Center,
-                    HeaderFilter = Editor.Select,
+                    Align = DataGridHorzAlign.Center,
+                    HeaderFilter = DataGridEditor.Select,
                     HeaderFilterParams = new SelectParams { Values = true },
                     HeaderFilterPlaceholder = " ",
-                    Formatter = Formatter.Html
+                    Formatter = DataGridFormatter.Html
                 });
             }
             segmentColumns.Add(new DataGridValueColumn
             {
                 Title = "Right",
                 Field = nameof(PhraseRow.RightContext),
-                Align = ColumnAlign.Left,
-                HeaderFilter = Editor.Input,
+                Align = DataGridHorzAlign.Left,
+                HeaderFilter = DataGridEditor.Input,
                 HeaderFilterPlaceholder = " "
             });
             columns.Add(new DataGridColumnGroup
@@ -285,32 +342,40 @@
         {
             Title = "Phrase/Word",
             Field = nameof(PhraseRow.Phrase),
-            HeaderFilter = Editor.Input,
+            HeaderFilter = DataGridEditor.Input,
             HeaderFilterPlaceholder = " "
         });
         columns.Add(new DataGridValueColumn
         {
             Field = nameof(PhraseRow.AudioSegment),
             HeaderSort = false,
-            Formatter = Formatter.Audio
+            Formatter = DataGridFormatter.Audio
         });
         columns.Add(new DataGridValueColumn
         {
             Title = "Gloss",
             Field = nameof(PhraseRow.Gloss),
-            HeaderFilter = Editor.Input,
+            HeaderFilter = DataGridEditor.Input,
             HeaderFilterPlaceholder = " "
         });
         columns.Add(new DataGridValueColumn
         {
             Title = "People",
             Field = nameof(PhraseRow.Participants),
-            HeaderFilter = Editor.Input,
+            HeaderFilter = DataGridEditor.Input,
             HeaderFilterPlaceholder = " "
         });
 
         _columns = columns;
         _rows = rows;
+    }
+
+    private Annotation<ShapeNode> GetSyllableAnn(ShapeNode node)
+    {
+        Annotation<ShapeNode> ann = node.Annotation;
+        while (ann != null && ann.Type() != CogFeatureSystem.SyllableType)
+            ann = ann.Parent;
+        return ann;
     }
 
     private void HandleMinimize()

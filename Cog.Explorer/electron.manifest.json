@@ -10,6 +10,9 @@
     "copyright": "Copyright © 2019",
     "buildVersion": "1.0.0",
     "compression": "maximum",
+    "win": {
+      "icon": "../../../Assets/cog.png"
+    },
     "directories": {
       "output": "../../../bin/Desktop"
     },
@@ -17,14 +20,14 @@
       {
         "from": "./bin",
         "to": "bin",
-        "filter": ["**/*"]
+        "filter": [ "**/*" ]
       }
     ],
     "files": [
       {
         "from": "./ElectronHostHook/node_modules",
         "to": "ElectronHostHook/node_modules",
-        "filter": ["**/*"]
+        "filter": [ "**/*" ]
       },
       "**/*"
     ]

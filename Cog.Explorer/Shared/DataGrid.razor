@@ -3,7 +3,7 @@
 @using Newtonsoft.Json.Serialization
 
 @implements IDisposable
-@typeparam TItem
+@typeparam TRow
 @inject IJSRuntime _jsRuntime
 
 <div id="@Id" class="@Class"></div>
@@ -19,15 +19,15 @@
         }
     };
     private string Id = "table_" + Guid.NewGuid().ToString();
-    private IReadOnlyList<DataGridColumn> _columns;
-    private IEnumerable<TItem> _items;
+    private IEnumerable<DataGridColumn> _columns;
+    private IEnumerable<TRow> _rows;
     private decimal _playbackRate = 1;
 
     [Parameter]
     public string Class { get; set; }
 
     [Parameter]
-    public IReadOnlyList<DataGridColumn> Columns
+    public IEnumerable<DataGridColumn> Columns
     {
         get => _columns;
         set
@@ -42,16 +42,16 @@
     }
 
     [Parameter]
-    public IEnumerable<TItem> Items
+    public IEnumerable<TRow> Rows
     {
-        get => _items;
+        get => _rows;
         set
         {
-            if (_items != value)
+            if (_rows != value)
             {
-                _items = value;
+                _rows = value;
                 _jsRuntime.InvokeVoidAsync("TabulatorInterop.setData", Id,
-                    JsonConvert.SerializeObject(_items ?? new TItem[0], SerializerSettings));
+                    JsonConvert.SerializeObject(_rows ?? new TRow[0], SerializerSettings));
             }
         }
     }
@@ -70,6 +70,15 @@
         }
     }
 
+    [Parameter]
+    public string Height { get; set; }
+
+    [Parameter]
+    public bool? Selectable { get; set; }
+
+    [Parameter]
+    public DataGridVertAlign? ColumnHeaderVertAlign { get; set; }
+
     public void Dispose()
     {
         _jsRuntime.InvokeVoidAsync("TabulatorInterop.disposeTable", Id);
@@ -79,9 +88,16 @@
     {
         if (firstRender)
         {
+            var tableParams = new
+            {
+                Height = Height,
+                Selectable = Selectable,
+                ColumnHeaderVertAlign = ColumnHeaderVertAlign
+            };
             await _jsRuntime.InvokeVoidAsync("TabulatorInterop.createTable", Id,
+                JsonConvert.SerializeObject(tableParams, SerializerSettings),
                 JsonConvert.SerializeObject(_columns, SerializerSettings),
-                JsonConvert.SerializeObject(_items ?? new TItem[0], SerializerSettings));
+                JsonConvert.SerializeObject(_rows ?? new TRow[0], SerializerSettings));
         }
     }
 }

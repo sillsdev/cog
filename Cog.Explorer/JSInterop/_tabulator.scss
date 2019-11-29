@@ -1,0 +1,48 @@
+﻿$primary-color: #315599;
+@import '~tabulator-tables/src/scss/materialize/tabulator_materialize';
+
+.tabulator > .tabulator-header .tabulator-col.dense-col > .tabulator-col-content {
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+}
+
+.tabulator-header-filter > input[type="search"] {
+  &::-webkit-search-decoration,
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    display: none;
+  }
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item.active {
+  background-color: unset;
+
+  &:hover {
+    background-color: $primary-color;
+  }
+}
+
+.tabulator-row > .tabulator-cell[tabulator-field='audioSegment'] {
+  font-family: Material Icons;
+  background: none;
+  transition: none;
+  -webkit-transform: translateZ(0);
+
+  &.animate-progress {
+    transition: background-size 250ms linear;
+    background: linear-gradient(#D2DEF4, #D2DEF4) no-repeat;
+    background-size: 0;
+  }
+
+  > .mdc-icon-button.audio-button {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+    padding: 0;
+
+    > i.material-icons {
+      font-size: 19px;
+    }
+  }
+}

@@ -29,6 +29,12 @@
 
   <Target Name="BuildJSInterop" DependsOnTargets="EnsureNodeInstalled" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
     <Message Importance="high" Text="Building JS interop..." />
+    <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm run build:dev" />
+  </Target>
+
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="'$(Configuration)' == 'Release'">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm run build" />
   </Target>
   

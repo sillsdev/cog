@@ -13,18 +13,11 @@ namespace SIL.Cog.Explorer.Models
 		public string CssClass { get; set; }
 		public DataGridHorzAlign? Align { get; set; }
 		public DataGridEditor? HeaderFilter { get; set; }
-		public EditorParams HeaderFilterParams { get; set; }
+		public DataGridEditorParams HeaderFilterParams { get; set; }
 		public string HeaderFilterPlaceholder { get; set; }
 		public bool? HeaderSort { get; set; }
 		public DataGridFormatter? Formatter { get; set; }
 		public object FormatterParams { get; set; }
-	}
-
-	public abstract class EditorParams { }
-
-	public class SelectParams : EditorParams
-	{
-		public object Values { get; set; }
 	}
 
 	public class FieldConverter : JsonConverter<string>

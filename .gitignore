@@ -36,7 +36,6 @@ output/
 .vs
 
 node_modules/
-dist/
 *.woff
 *.woff2
 *.ttf

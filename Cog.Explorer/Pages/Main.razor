@@ -202,6 +202,7 @@
             Alignment<Word, ShapeNode> alignment = _projectService.Align(results.Keys);
             var typeCounts = new Dictionary<string, Dictionary<FeatureSymbol, int>>();
             var syllableBreakCounts = new Dictionary<string, (int, int)>();
+            var values = new Dictionary<string, HashSet<string>>();
             for (int i = 0; i < alignment.SequenceCount; i++)
             {
                 Word word = alignment.Sequences[i];
@@ -217,10 +218,12 @@
                     if (cell.Count == 0)
                     {
                         strRep = "-";
+                        values.GetOrCreate(key, () => new HashSet<string>()).Add(strRep);
                     }
                     else
                     {
                         strRep = cell.OriginalStrRep();
+                        values.GetOrCreate(key, () => new HashSet<string>()).Add(strRep);
                         var counts = typeCounts.GetOrCreate(key, () => new Dictionary<FeatureSymbol, int>());
                         counts.UpdateValue(cell.First.Type(), () => 0, c => c + 1);
                         if (range.Contains(word.Shape.IndexOf(cell.First)))
@@ -310,6 +313,13 @@
                     else
                         title = "V";
                 }
+                List<string> filterValues;
+                if (values.TryGetValue(key, out HashSet<string> strReps))
+                    filterValues = strReps.OrderBy(s => s).ToList();
+                else
+                    filterValues = new List<string>();
+                filterValues.Insert(0, "");
+
                 segmentColumns.Add(new DataGridValueColumn
                 {
                     Title = title,
@@ -318,7 +328,7 @@
                     CssClass = "dense-col",
                     Align = DataGridHorzAlign.Center,
                     HeaderFilter = DataGridEditor.Select,
-                    HeaderFilterParams = new SelectParams { Values = true },
+                    HeaderFilterParams = new DataGridSelectParams { Values = filterValues },
                     HeaderFilterPlaceholder = " ",
                     Formatter = DataGridFormatter.Html
                 });

@@ -63,8 +63,7 @@ export class Table {
             }
             buttonElem.classList.add(ICON_BUTTON_ON);
             const audioSegment: AudioSegment = cell.getRow().getData()[cell.getField()];
-            this.playAudio(audioSegment.url, audioSegment.startOffset, audioSegment.endOffset);
-            this.playingCellElement = elem;
+            this.playAudio(elem, audioSegment.url, audioSegment.startOffset, audioSegment.endOffset);
           }
           elem.setAttribute('aria-pressed', `${!isOn}`)
         };
@@ -73,11 +72,13 @@ export class Table {
     return columns;
   }
 
-  private playAudio(url: string, start: number, end: number): void {
+  private playAudio(cellElement: HTMLElement, url: string, start: number, end: number): void {
     this.stopAudio();
 
     this.audio.src = url;
     this.audio.currentTime = start;
+    this.playingCellElement = cellElement;
+    this.playingCellElement.classList.add('animate-progress');
     this.audioProgressTimer = setInterval(() => {
       if (this.playingCellElement == null) {
         return;
@@ -98,7 +99,6 @@ export class Table {
       this.playingCellElement.style.backgroundSize = `${pcnt}% 100%`;
       this.lastPcnt = pcnt;
     }, 250);
-
     this.audio.play();
   }
 
@@ -106,9 +106,11 @@ export class Table {
     if (this.playingCellElement != null) {
       this.playingCellElement.classList.remove('animate-progress');
       this.playingCellElement.style.backgroundSize = '';
+      this.playingCellElement = undefined;
     }
     if (this.audioProgressTimer != null) {
       clearInterval(this.audioProgressTimer);
+      this.audioProgressTimer = undefined;
     }
     this.lastPcnt = 0;
     if (!this.audio.paused) {

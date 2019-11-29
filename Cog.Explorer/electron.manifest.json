@@ -1,7 +1,7 @@
 {
   "executable": "SIL.Cog.Explorer",
   "splashscreen": {
-    "imageFile": ""
+    "imageFile": "/wwwroot/splash-screen.png"
   },
   "singleInstance": false,
   "build": {

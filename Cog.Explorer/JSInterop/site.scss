@@ -1,0 +1,27 @@
+﻿$material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
+@import '~material-design-icons-iconfont/src/material-design-icons';
+
+@import 'tabulator';
+@import 'main';
+
+html, body {
+  margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  font-family: Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: #315599;
+}
+
+.mdc-select:not(.mdc-select--disabled).mdc-select--focused .mdc-floating-label {
+  color: #315599;
+}

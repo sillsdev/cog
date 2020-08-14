@@ -166,11 +166,8 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			if (_dialogService.ShowYesNoQuestion(this, "Are you sure you want to remove this variety?", "Cog"))
 			{
-				int index = _varieties.IndexOf(_selectedVariety);
 				_projectService.Project.Varieties.Remove(_selectedVariety.DomainVariety);
 				Messenger.Default.Send(new DomainModelChangedMessage(true));
-				if (index == _varieties.Count)
-					index--;
 				SelectedVariety = _varieties.Count > 0 ? _varietiesView.Cast<VarietiesVarietyViewModel>().First() : null;
 			}
 		}

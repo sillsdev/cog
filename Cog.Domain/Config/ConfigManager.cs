@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Morphology;
 
@@ -275,8 +274,17 @@ namespace SIL.Cog.Domain.Config
 			Debug.Assert(cognacyDecisionsElem != null);
 			foreach (XElement cognacyDecisionElem in cognacyDecisionsElem.Elements(Cog + "CognacyDecision"))
 			{
-				project.CognacyDecisions.Add(new CognacyDecision(project.Varieties[(string) cognacyDecisionElem.Attribute("variety1")],
-					project.Varieties[(string) cognacyDecisionElem.Attribute("variety2")], project.Meanings[(string) cognacyDecisionElem.Attribute("meaning")],
+				Variety variety1;
+				if (!project.Varieties.TryGet((string) cognacyDecisionElem.Attribute("variety1"), out variety1))
+					continue;
+				Variety variety2;
+				if (!project.Varieties.TryGet((string) cognacyDecisionElem.Attribute("variety2"), out variety2))
+					continue;
+				Meaning meaning;
+				if (!project.Meanings.TryGet((string) cognacyDecisionElem.Attribute("meaning"), out meaning))
+					continue;
+
+				project.CognacyDecisions.Add(new CognacyDecision(variety1, variety2, meaning,
 					(bool) cognacyDecisionElem.Attribute("cognacy")));
 			}
 

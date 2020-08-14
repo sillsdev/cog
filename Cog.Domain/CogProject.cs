@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using SIL.Extensions;
-using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.ObjectModel;
 
@@ -53,11 +52,13 @@ namespace SIL.Cog.Domain
 						var meanings = new HashSet<Meaning>(_meanings);
 						foreach (Variety variety in _varieties)
 							variety.Words.RemoveAll(w => !meanings.Contains(w.Meaning));
+						CognacyDecisions.RemoveAll(cd => !meanings.Contains(cd.Meaning));
 					}
 					else
 					{
 						foreach (Variety variety in _varieties)
 							variety.Words.Clear();
+						CognacyDecisions.Clear();
 					}
 					break;
 			}
@@ -74,10 +75,12 @@ namespace SIL.Cog.Domain
 					{
 						var varieties = new HashSet<Variety>(_varieties);
 						_varietyPairs.RemoveAll(vp => !varieties.Contains(vp.Variety1) || !varieties.Contains(vp.Variety2));
+						CognacyDecisions.RemoveAll(cd => !varieties.Contains(cd.Variety1) || !varieties.Contains(cd.Variety2));
 					}
 					else
 					{
 						_varietyPairs.Clear();
+						CognacyDecisions.Clear();
 					}
 					break;
 			}

@@ -119,9 +119,26 @@ namespace SIL.Cog.Application.ViewModels
 		{
 			_busyService.ShowBusyIndicatorUntilFinishDrawing();
 			if (_wordsView.SortDescriptions.Count == 0)
+			{
 				_wordsView.SortDescriptions.Add(sortDesc);
+			}
 			else
+			{
 				_wordsView.SortDescriptions[0] = sortDesc;
+			}
+
+			if (sortDesc.PropertyName == "IsValid")
+			{
+				var glossSortDesc = new SortDescription("Meaning.Gloss", ListSortDirection.Ascending);
+				if (_wordsView.SortDescriptions.Count <= 1)
+					_wordsView.SortDescriptions.Add(glossSortDesc);
+				else
+					_wordsView.SortDescriptions[1] = glossSortDesc;
+			}
+			else if (_wordsView.SortDescriptions.Count == 2)
+			{
+				_wordsView.SortDescriptions.RemoveAt(1);
+			}
 		}
 
 		internal bool FindNext(FindField field, string str)

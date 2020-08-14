@@ -55,7 +55,8 @@ namespace SIL.Cog.Application.ViewModels
 					new TaskAreaCommandViewModel("Find words", _findCommand),
 					new TaskAreaItemsViewModel("Sort words by", new TaskAreaCommandGroupViewModel(
 						new TaskAreaCommandViewModel("Gloss", new RelayCommand(() => SortWordsBy("Meaning.Gloss", ListSortDirection.Ascending))),
-						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending)))))));
+						new TaskAreaCommandViewModel("Form", new RelayCommand(() => SortWordsBy("StrRep", ListSortDirection.Ascending))),
+						new TaskAreaCommandViewModel("Validity", new RelayCommand(() => SortWordsBy("IsValid", ListSortDirection.Ascending)))))));
 
 			TaskAreas.Add(new TaskAreaItemsViewModel("Other tasks", 
 				new TaskAreaCommandViewModel("Remove affixes from words", new RelayCommand(RunStemmer, CanRunStemmer))));

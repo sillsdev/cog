@@ -22,13 +22,13 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		{
 			_busyService = Substitute.For<IBusyService>();
 			_analysisService = Substitute.For<IAnalysisService>();
+			_meaning = new Meaning("gloss", "category");
 			_words = new ObservableList<WordViewModel>
 			{
 				new WordViewModel(_busyService, _analysisService, new Word("valid", _meaning)) {IsValid = true},
 				new WordViewModel(_busyService, _analysisService, new Word("invalid", _meaning)) {IsValid = false}
 			};
 			_wordsViewModel = new WordsViewModel(_busyService, new ReadOnlyBindableList<WordViewModel>(_words));
-			_meaning = new Meaning("gloss", "category");
 		}
 
 		[Test]

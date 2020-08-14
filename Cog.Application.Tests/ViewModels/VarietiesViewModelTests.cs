@@ -9,6 +9,8 @@ using SIL.Cog.Application.Services;
 using SIL.Cog.Application.ViewModels;
 using SIL.Cog.Domain;
 using SIL.Extensions;
+using SIL.Cog.TestUtils;
+using SIL.Cog.Domain.Components;
 
 namespace SIL.Cog.Application.Tests.ViewModels
 {
@@ -18,57 +20,45 @@ namespace SIL.Cog.Application.Tests.ViewModels
 		private class TestEnvironment : IDisposable
 		{
 			private readonly IProjectService _projectService;
-			private readonly IDialogService _dialogService;
-			private readonly VarietiesViewModel _varietiesViewModel;
-			private FindViewModel _findViewModel;
 
 			public TestEnvironment()
 			{
 				DispatcherHelper.Initialize();
 				_projectService = Substitute.For<IProjectService>();
-				_dialogService = Substitute.For<IDialogService>();
+				DialogService = Substitute.For<IDialogService>();
 				var busyService = Substitute.For<IBusyService>();
 				var analysisService = Substitute.For<IAnalysisService>();
 
 				WordsViewModel.Factory wordsFactory = words => new WordsViewModel(busyService, words);
 				WordViewModel.Factory wordFactory = word => new WordViewModel(busyService, analysisService, word);
-				VarietiesVarietyViewModel.Factory varietyFactory = variety => new VarietiesVarietyViewModel(_projectService, _dialogService, wordsFactory, wordFactory, variety);
+				VarietiesVarietyViewModel.Factory varietyFactory = variety => new VarietiesVarietyViewModel(_projectService, DialogService, wordsFactory, wordFactory, variety);
 
-				_varietiesViewModel = new VarietiesViewModel(_projectService, _dialogService, analysisService, varietyFactory);
+				VarietiesViewModel = new VarietiesViewModel(_projectService, DialogService, analysisService, varietyFactory);
 			}
 
 			public void OpenProject(CogProject project)
 			{
 				_projectService.Project.Returns(project);
 				_projectService.ProjectOpened += Raise.Event();
-				_varietiesViewModel.VarietiesView = new ListCollectionView(_varietiesViewModel.Varieties);
-				if (_varietiesViewModel.SelectedVariety != null)
+				VarietiesViewModel.VarietiesView = new ListCollectionView(VarietiesViewModel.Varieties);
+				if (VarietiesViewModel.SelectedVariety != null)
 				{
-					WordsViewModel wordsViewModel = _varietiesViewModel.SelectedVariety.Words;
+					WordsViewModel wordsViewModel = VarietiesViewModel.SelectedVariety.Words;
 					wordsViewModel.WordsView = new ListCollectionView(wordsViewModel.Words);
 				}
 			}
 
 			public void OpenFindDialog()
 			{
-				_dialogService.ShowModelessDialog(_varietiesViewModel, Arg.Do<FindViewModel>(vm => _findViewModel = vm), Arg.Any<Action>());
-				_varietiesViewModel.FindCommand.Execute(null);
+				DialogService.ShowModelessDialog(VarietiesViewModel, Arg.Do((Action<FindViewModel>)(vm => FindViewModel = vm)), Arg.Any<Action>());
+				VarietiesViewModel.FindCommand.Execute(null);
 			}
 
-			public IDialogService DialogService
-			{
-				get { return _dialogService; }
-			}
+			public IDialogService DialogService { get; }
 
-			public VarietiesViewModel VarietiesViewModel
-			{
-				get { return _varietiesViewModel; }
-			}
+			public VarietiesViewModel VarietiesViewModel { get; }
 
-			public FindViewModel FindViewModel
-			{
-				get { return _findViewModel; }
-			}
+			public FindViewModel FindViewModel { get; private set; }
 
 			public void Dispose()
 			{
@@ -122,13 +112,17 @@ namespace SIL.Cog.Application.Tests.ViewModels
 
 		private CogProject SetupProjectWithWords(TestEnvironment env)
 		{
-			var project = new CogProject()
-				{
-					Meanings = {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")},
-					Varieties = {new Variety("variety1"), new Variety("variety2")}
-				};
+			var segmentPool = new SegmentPool();
+			CogProject project = TestHelpers.GetTestProject(segmentPool);
+			project.Meanings.AddRange(new[] {new Meaning("gloss1", "cat1"), new Meaning("gloss2", "cat2"), new Meaning("gloss3", "cat3")});
+			project.Varieties.AddRange(new[] {new Variety("variety1"), new Variety("variety2")});
 			project.Varieties[0].Words.AddRange(new[] {new Word("hello", project.Meanings[0]), new Word("good", project.Meanings[1]), new Word("bad", project.Meanings[2])});
-			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google", project.Meanings[1]), new Word("goofy", project.Meanings[2])});
+			project.Varieties[1].Words.AddRange(new[] {new Word("help", project.Meanings[0]), new Word("google search", project.Meanings[1]), new Word("goofy", project.Meanings[2])});
+
+			var segmenter = new Segmenter();
+			var varietySegmenter = new VarietySegmenter(project.Segmenter);
+			foreach (Variety variety in project.Varieties)
+				varietySegmenter.Process(variety);
 
 			env.OpenProject(project);
 			return project;
@@ -344,11 +338,15 @@ namespace SIL.Cog.Application.Tests.ViewModels
 				// default sorting is by gloss, change to form
 				sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[1];
 				sortWordsByGroup.SelectedCommand.Command.Execute(null);
-				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"goofy", "google", "help"}));
+				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"goofy", "google search", "help"}));
+				// sort by validity
+				sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[2];
+				sortWordsByGroup.SelectedCommand.Command.Execute(null);
+				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"google search", "help", "goofy"}));
 				// change sorting back to gloss
 				sortWordsByGroup.SelectedCommand = sortWordsByGroup.Commands[0];
 				sortWordsByGroup.SelectedCommand.Command.Execute(null);
-				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"help", "google", "goofy"}));
+				Assert.That(wordsViewModel.WordsView.Cast<WordViewModel>().Select(w => w.StrRep), Is.EqualTo(new[] {"help", "google search", "goofy"}));
 			}
 		}
 	}

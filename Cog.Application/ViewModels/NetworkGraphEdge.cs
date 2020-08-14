@@ -1,3 +1,4 @@
+using System;
 using GraphSharp;
 using QuickGraph;
 using SIL.Cog.Domain;
@@ -11,7 +12,8 @@ namespace SIL.Cog.Application.ViewModels
 		public NetworkGraphEdge(NetworkGraphVertex source, NetworkGraphVertex target, VarietyPair varietyPair, SimilarityMetric similarityMetric)
 			: base(source, target)
 		{
-		    _weight = similarityMetric == SimilarityMetric.Lexical ? varietyPair.LexicalSimilarityScore : varietyPair.PhoneticSimilarityScore;
+			double weight = similarityMetric == SimilarityMetric.Lexical ? varietyPair.LexicalSimilarityScore : varietyPair.PhoneticSimilarityScore;
+			_weight = Math.Min(weight, 0.99);
 		}
 
 	    public double Weight

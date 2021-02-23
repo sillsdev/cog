@@ -61,6 +61,7 @@ namespace SIL.Cog.Presentation.Controls
 		}
 
 		private const double OriginX = 3;
+		private const double VertexVerticalPadding = 5;
 
 		private void Relayout()
 		{
@@ -108,10 +109,10 @@ namespace SIL.Cog.Presentation.Controls
 			foreach (HierarchicalGraphVertex vertex in Graph.Vertices)
 				maxDepth = Math.Max(vertex.Depth, maxDepth);
 
-			double textBlocky = 5;
+			double textBlocky = VertexVerticalPadding;
 
 			var borderThickness = new Thickness(2);
-			double totalHeight = textBlocky + (varietyTextBlocks.Count * (varietyNameHeight + borderThickness.Top + borderThickness.Bottom + 5));
+			double totalHeight = textBlocky + (varietyTextBlocks.Count * (varietyNameHeight + borderThickness.Top + borderThickness.Bottom + VertexVerticalPadding));
 			double totalWidth = totalHeight * 1.5;
 			_desiredSize = new Size(totalWidth, totalHeight);
 
@@ -121,7 +122,6 @@ namespace SIL.Cog.Presentation.Controls
 			foreach (TextBlock varietyTextBlock in varietyTextBlocks)
 			{
 				var vertex = (HierarchicalGraphVertex) varietyTextBlock.DataContext;
-				varietyTextBlock.Height = varietyNameHeight;
 				double tx = 0;
 				if (maxDepth > 0)
 					tx = tickWidth * ((vertex.Depth * 100) / maxDepth);
@@ -135,7 +135,7 @@ namespace SIL.Cog.Presentation.Controls
 				_varietyVertices[vertex] = border;
 				vertex.PropertyChanged += vertex_PropertyChanged;
 				positions[vertex] = new Point(x, textBlocky + ((varietyNameHeight + borderThickness.Top + borderThickness.Bottom) / 2));
-				textBlocky += varietyNameHeight + borderThickness.Top + borderThickness.Bottom + 5;
+				textBlocky += varietyNameHeight + borderThickness.Top + borderThickness.Bottom + VertexVerticalPadding;
 			}
 
 			while (positions.Count < Graph.VertexCount - 1)

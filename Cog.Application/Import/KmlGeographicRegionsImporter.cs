@@ -56,19 +56,19 @@ namespace SIL.Cog.Application.Import
 		{
 			foreach (XElement placemark in elem.Elements(Kml + "Placemark"))
 			{
-				var name = (string) placemark.Element(Kml + "name");
+				var name = ((string)placemark.Element(Kml + "name")).Trim();
 				Variety variety;
 				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGet(name, out variety))
 				{
 					XElement polygon = placemark.Element(Kml + "Polygon");
 					if (polygon != null)
-						regions.GetOrCreate(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "description")));
+						regions.GetOrCreate(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string)placemark.Element(Kml + "description")));
 				}
 			}
 
 			foreach (XElement folder in elem.Elements(Kml + "Folder"))
 			{
-				var name = (string) folder.Element(Kml + "name");
+				var name = ((string)folder.Element(Kml + "name")).Trim();
 				Variety variety;
 				if (!string.IsNullOrEmpty(name) && project.Varieties.TryGet(name, out variety))
 					LoadVarietyFolder(regions, variety, folder);
@@ -83,7 +83,7 @@ namespace SIL.Cog.Application.Import
 			{
 				XElement polygon = placemark.Element(Kml + "Polygon");
 				if (polygon != null)
-					regions.GetOrCreate(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string) placemark.Element(Kml + "name")));
+					regions.GetOrCreate(variety, () => new List<GeographicRegion>()).Add(LoadRegion(polygon, (string)placemark.Element(Kml + "name")));
 			}
 
 			foreach (XElement folder in elem.Elements(Kml + "Folder"))
@@ -93,11 +93,11 @@ namespace SIL.Cog.Application.Import
 		private GeographicRegion LoadRegion(XElement polygon, string desc)
 		{
 			XElement coords = polygon.Elements(Kml + "outerBoundaryIs").Elements(Kml + "LinearRing").Elements(Kml + "coordinates").FirstOrDefault();
-			if (coords == null || string.IsNullOrEmpty((string) coords))
-				throw new ImportException(string.Format("A Polygon element does not contain coordinates. Line: {0}", ((IXmlLineInfo) polygon).LineNumber));
+			if (coords == null || string.IsNullOrEmpty((string)coords))
+				throw new ImportException(string.Format("A Polygon element does not contain coordinates. Line: {0}", ((IXmlLineInfo)polygon).LineNumber));
 
-			var region = new GeographicRegion {Description = desc};
-			string[] coordsArray = ((string) coords).Split().Where(coord => !string.IsNullOrEmpty(coord)).ToArray();
+			var region = new GeographicRegion { Description = desc };
+			string[] coordsArray = ((string)coords).Split().Where(coord => !string.IsNullOrEmpty(coord)).ToArray();
 			for (int i = 0; i < coordsArray.Length - 1; i++)
 			{
 				string[] coordArray = coordsArray[i].Split(',');

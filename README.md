@@ -14,7 +14,7 @@ comparison
 - Word alignment: aligns segments between word pairs
 - Sound correspondence identification: automatically identifies sound correspondences and the
 environments in which they occur
-- Cognate identification: provides various methods for identifying cognates
+- Likely cognate identification: provides various methods for identifying likely cognates
 - Lexical/phonetic similarity: calculates lexical/phonetic similarity for multiple language
 varieties
 - Visualization: generates similarity matrices, hierarchical graphs (UPGMA, Neighbor-joining), and

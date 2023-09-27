@@ -72,7 +72,7 @@ namespace SIL.Cog.Domain.Components
 
 		private void SyllabifyAnnotation(Word word, Annotation<ShapeNode> ann, Shape newShape)
 		{
-			if (word.Shape.GetNodes(ann.Range).Any(n => n.Type() == CogFeatureSystem.ToneLetterType || n.StrRep() == "."))
+			if (word.Shape.GetNodes(ann.Range).Any(n => n.Type().IsOneOf(CogFeatureSystem.ToneLetterType, CogFeatureSystem.BoundaryType)))
 			{
 				ShapeNode[] annNodes = word.Shape.GetNodes(ann.Range).ToArray();
 				int i;

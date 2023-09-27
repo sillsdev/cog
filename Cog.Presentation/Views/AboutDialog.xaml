@@ -26,7 +26,7 @@
             <TextBlock Text="{Binding Version}" />
             <TextBlock Text="{Binding BuildDate, StringFormat={}({0:d})}" />
         </TextBlock>
-        <TextBlock Grid.Row="2" Grid.Column="1" Margin="5">© 2021 SIL International®</TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="1" Margin="5" Text="© 2023 SIL International®"/>
         <TextBlock Grid.Row="3" Grid.Column="1" Margin="5">
             <Run>Code licensed under the</Run>
             <Hyperlink Command="{Binding LicenseCommand}">MIT License</Hyperlink>
